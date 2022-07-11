@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IBLBaker": {
+      "commandName": "Project",
+      "commandLineArgs": "cube SkyWater.dds"
+    }
+  }
+}

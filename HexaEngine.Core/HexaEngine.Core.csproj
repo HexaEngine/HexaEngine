@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;TRACELEAK</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE</DefineConstants>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Silk.NET.SDL" Version="2.15.0" />
+		<PackageReference Include="BepuPhysics" Version="2.4.0" />
+		<PackageReference Include="BepuUtilities" Version="2.4.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
+	  <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
+	  <ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET.csproj" />
+	  <ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
+	  <ProjectReference Include="..\ImPlot.NET\ImPlot.NET.csproj" />
+	</ItemGroup>
+</Project>

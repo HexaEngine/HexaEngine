@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AssetsBundler": {
+      "commandName": "Project",
+      "commandLineArgs": "create C:\\Users\\Tom\\source\\repos\\HexaCore\\Application\\bin\\x64\\Debug\\net5.0\\assets"
+    }
+  }
+}

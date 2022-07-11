@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>A .NET wrapper for the imnodes library.</Description>
+    <AssemblyVersion>0.3.0</AssemblyVersion>
+    <Authors>Eric Mellino</Authors>
+    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>portable</DebugType>
+    <AssemblyName>ImNodes.NET</AssemblyName>
+    <PackageId>ImNodes.NET</PackageId>
+    <PackagePrereleaseIdentifier></PackagePrereleaseIdentifier>
+    <PackageVersion>$(AssemblyVersion)$(PackagePrereleaseIdentifier)</PackageVersion>
+    <PackageTags>imnodes ImGui ImGui.NET Immediate Mode GUI</PackageTags>
+    <PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
+    <DocumentationFile Condition="'$(Configuration)' == 'Release'">$(OutputPath)\imnodes.NET.xml</DocumentationFile>
+    <RootNamespace>imnodesNET</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Numerics.Vectors" Version="4.4.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
+    <PackageReference Include="System.Buffers" Version="4.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
+  </ItemGroup>
+</Project>

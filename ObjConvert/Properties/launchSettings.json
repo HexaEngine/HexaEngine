@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ObjConvert": {
+      "commandName": "Project",
+      "commandLineArgs": ".\\sphere.obj"
+    }
+  }
+}

@@ -1,0 +1,3 @@
+﻿namespace HexaEngine.Core.Graphics
+{
+}

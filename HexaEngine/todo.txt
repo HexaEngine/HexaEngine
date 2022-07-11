@@ -1,0 +1,35 @@
+﻿----------
+Planned:
+
+Point-, Spot-, Area- Lights
+Bloom
+SSS (Sub Surface Scattering)
+DoF (Depth of Field) + Bokeh 
+Motion Blur (could be annoying)
+Specular and Specular Tint Textures
+Ansiotropic (IBL and SSS)
+Cleancoat / Glossy
+Emission
+Redo shadow mapping with atlas depth maps
+Cascaded shadow mapping
+
+-----------
+
+Work in progress:
+
+Editor
+Project import
+Scene serialization
+Dynamic Mesh loading
+Dynamic Texture loading
+
+-----------
+Done:
+
+Deferred Shading
+Basic shadow mapping
+PBR (Physically Based Rendering) and IBL (Image Based Lightning) (direct and indirect: diffuse, specular lightning)
+SSAO (Screen Space Ambient Occulusion)
+HBAO (Horizon Based Ambient Occulusion)
+FXAA (Fast approximate anti-aliasing)
+SSR (Screen Space Reflections)

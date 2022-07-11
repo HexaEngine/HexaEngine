@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FontTool": {
+      "commandName": "Project",
+      "commandLineArgs": "-p \"C:\\Users\\Tom\\source\\repos\\HexaCore\\FontTool\\bin\\Debug\\net5.0\\font01.txt\" -t \"C:\\Users\\Tom\\source\\repos\\HexaCore\\FontTool\\bin\\Debug\\net5.0\\font01.png\""
+    }
+  }
+}
