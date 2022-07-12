@@ -13,13 +13,13 @@
 
         public IBuffer CreateBuffer(BufferDescription description);
 
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged;
+        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct;
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
+        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct;
 
-        public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : unmanaged;
+        public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : struct;
 
-        public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
+        public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct;
 
         public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description);
 

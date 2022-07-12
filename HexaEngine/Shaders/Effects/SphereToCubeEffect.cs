@@ -58,6 +58,7 @@
             PixelShader = "effects/equitocube/ps.hlsl"
         })
         {
+            AutoSetTarget = false;
             SetViewPoint(Vector3.Zero);
             mvpBuffer = CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
             Mesh = new Cube(device);

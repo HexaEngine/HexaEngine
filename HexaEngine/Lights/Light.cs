@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Lights
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
-    using System;
     using System.Numerics;
 
     public abstract class Light : SceneNode
     {
         protected const float DegToRadFactor = 0.0174532925f;
-        protected Vector4 color;
+        protected Vector4 color = Vector4.One;
 
         [EditorProperty("Color", EditorPropertyMode.Colorpicker)]
         public Vector4 Color { get => color; set => color = value; }
@@ -19,14 +16,6 @@
         public bool CastShadows { get; set; }
 
         public abstract LightType Type { get; }
-
-        public abstract void ClearDepth(IGraphicsContext context);
-
-        public abstract void BindDepth(IGraphicsContext context, int startSlot);
-
-        public abstract void RenderDepth(IGraphicsContext context, Action<IGraphicsContext, Viewport, IView> callback);
-
-        public abstract void Render(IGraphicsContext context, Viewport viewport, IView view, IView scene, int indexCount);
 
         /*
 

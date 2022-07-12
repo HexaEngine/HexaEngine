@@ -11,7 +11,7 @@
     public class NormalVisualizerComponent : IForwardRendererComponent
     {
         private SceneNode node;
-        private VertexBuffer<LineVertex> _vertexBuffer;
+        private VertexBuffer<VertexPositionColor> _vertexBuffer;
         private LineShader shader;
 
         public string Model { get; set; }
@@ -26,8 +26,8 @@
             _vertexBuffer = new();
             foreach (MeshVertex vertex in mesh.Vertices)
             {
-                _vertexBuffer.Append(new LineVertex(vertex.Position, new(0, 0, 1, 1)), new LineVertex(vertex.Position + vertex.Normal * 0.1f, new(0, 0, 1, 1)));
-                _vertexBuffer.Append(new LineVertex(vertex.Position, new(1, 0, 0, 1)), new LineVertex(vertex.Position + vertex.Tangent * 0.1f, new(1, 0, 0, 1)));
+                _vertexBuffer.Append(new VertexPositionColor(vertex.Position, new(0, 0, 1, 1)), new VertexPositionColor(vertex.Position + vertex.Normal * 0.1f, new(0, 0, 1, 1)));
+                _vertexBuffer.Append(new VertexPositionColor(vertex.Position, new(1, 0, 0, 1)), new VertexPositionColor(vertex.Position + vertex.Tangent * 0.1f, new(1, 0, 0, 1)));
             }
 
             shader = new(device);

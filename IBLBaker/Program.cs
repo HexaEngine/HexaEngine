@@ -1,22 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using DirectXTexNet;
-using HexaEngine.Rendering.D3D;
+using HexaEngine.Core.Graphics;
+using HexaEngine.D3D11;
+using HexaEngine.Graphics;
 using HexaEngine.Shaders.Effects;
-using Vortice.Direct3D11;
-using Vortice.DXGI;
-
-static void ExportDDS(Texture cube, string name)
-{
-    ScratchImage image = TexHelper.Instance.CaptureTexture(D3D11DeviceManager.ID3D11Device.NativePointer, D3D11DeviceManager.ID3D11DeviceContext.NativePointer, ((ID3D11Texture2D)cube).NativePointer);
-
-    {
-        ScratchImage image1 = image.Compress(DXGI_FORMAT.BC1_UNORM, TEX_COMPRESS_FLAGS.PARALLEL, 0.5f);
-        image.Dispose();
-        image = image1;
-    }
-
-    image.SaveToDDSFile(DDS_FLAGS.NONE, name);
-}
 
 if (args.Length != 2)
 {
@@ -37,55 +24,68 @@ if (!File.Exists(args[1]))
     return;
 }
 
-D3D11DeviceManager.Initialize();
+D3D11GraphicsDevice device = new(null);
+D3D11GraphicsContext context = (D3D11GraphicsContext)device.Context;
 
-IrradianceFilterEffect irradianceFilter = new();
-PreFilterEffect preFilter = new();
+void ExportDDS(Texture cube, string name)
+{
+    ScratchImage image = TexHelper.Instance.CaptureTexture(device.NativePointer, context.NativePointer, cube.Resource.NativePointer);
+
+    {
+        ScratchImage image1 = image.Compress(DXGI_FORMAT.BC1_UNORM, TEX_COMPRESS_FLAGS.PARALLEL, 0.5f);
+        image.Dispose();
+        image = image1;
+    }
+
+    image.SaveToDDSFile(DDS_FLAGS.NONE, name);
+}
+
+IrradianceFilterEffect irradianceFilter = new(device);
+PreFilterEffect preFilter = new(device);
 preFilter.Roughness = 0;
 
-Texture irr = new(D3D11DeviceManager.ID3D11Device, TextureDescription.CreateTextureCubeWithRTV(512, 1, Format.R32G32B32A32_Float));
-Texture prf = new(D3D11DeviceManager.ID3D11Device, TextureDescription.CreateTextureCubeWithRTV(1024, 1, Format.R32G32B32A32_Float));
-irradianceFilter.Targets = irr;
-preFilter.Targets = prf;
+Texture irr = new(device, TextureDescription.CreateTextureCubeWithRTV(512, 1, Format.RGBA32Float));
+Texture prf = new(device, TextureDescription.CreateTextureCubeWithRTV(1024, 1, Format.RGBA32Float));
+var irrRTV = irr.CreateRTVArray(device);
+var prfRTV = prf.CreateRTVArray(device);
+irradianceFilter.Targets = irrRTV;
+preFilter.Targets = prfRTV;
 
-SamplerState samplerState = new(SamplerDescription.AnisotropicClamp);
-samplerState.Add(new(ShaderStage.Pixel, 0));
-irradianceFilter.Samplers.Add(samplerState);
-preFilter.Samplers.Add(samplerState);
+ISamplerState samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+irradianceFilter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
+preFilter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
 
 Console.WriteLine("Load Texture");
 switch (mode)
 {
     case Mode.Cube:
-        TextureCube cube = new(D3D11DeviceManager.ID3D11Device, BindFlags.ShaderResource | BindFlags.RenderTarget, args[1]);
-        cube.AddBinding(new(ShaderStage.Pixel, 0));
-        irradianceFilter.Resources.Add(cube);
-        preFilter.Resources.Add(cube);
+        Texture cube = new(device, new TextureFileDescription(args[1], TextureDimension.TextureCube));
+        irradianceFilter.Resources.Add(new(cube.ResourceView, ShaderStage.Pixel, 0));
+        preFilter.Resources.Add(new(cube.ResourceView, ShaderStage.Pixel, 0));
         break;
 
     case Mode.Panorama:
-        Texture source = new(D3D11DeviceManager.ID3D11Device, new TextureFileDescription(args[1], 1));
-        source.AddBinding(new(ShaderStage.Pixel, 0));
-        EquiRectangularToCubeEffect filter = new();
-        filter.Resources.Add(source);
-        filter.Samplers.Add(samplerState);
-        Texture cube1 = new(D3D11DeviceManager.ID3D11Device, TextureDescription.CreateTextureCubeWithRTV(2048, 1, Format.R32G32B32A32_Float));
-        cube1.AddBinding(new(ShaderStage.Pixel, 0));
-        filter.Targets = cube1;
-        filter.Draw(D3D11DeviceManager.ID3D11DeviceContext, null);
-        D3D11DeviceManager.ID3D11DeviceContext.GenerateMips(cube1);
+        Texture source = new(device, new TextureFileDescription(args[1]));
+        EquiRectangularToCubeEffect filter = new(device);
+        filter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
+        filter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
+        Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(2048, 1, Format.RGBA32Float));
+        var cu = cube1.CreateRTVArray(device);
+        filter.Targets = cu;
+        filter.Draw(context, null);
+        context.GenerateMips(cube1.ResourceView);
         ExportDDS(cube1, "env_o.dds");
-        irradianceFilter.Resources.Add(cube1);
-        preFilter.Resources.Add(cube1);
+        irradianceFilter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
+        preFilter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
         break;
 }
 
 Console.WriteLine("Filter IrradianceFilter");
-irradianceFilter.Draw(D3D11DeviceManager.ID3D11DeviceContext, null);
-D3D11DeviceManager.ID3D11DeviceContext.GenerateMips(irr);
+irradianceFilter.Draw(context, null);
+context.GenerateMips(irr.ResourceView);
 Console.WriteLine("Filter PreFilter");
-preFilter.Draw(D3D11DeviceManager.ID3D11DeviceContext, null);
-D3D11DeviceManager.ID3D11DeviceContext.GenerateMips(prf);
+preFilter.Draw(context, null);
+context.GenerateMips(prf.ResourceView);
 
 Console.WriteLine("Exporting");
 ExportDDS(irr, "irradiance_o.dds");

@@ -3,7 +3,7 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct OrthoVertex
     {
         public Vector3 Position;

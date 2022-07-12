@@ -1,7 +1,8 @@
 ﻿----------
 Planned:
 
-Point-, Spot-, Area- Lights
+
+Volumetric Lights
 Bloom
 SSS (Sub Surface Scattering)
 DoF (Depth of Field) + Bokeh 
@@ -16,6 +17,8 @@ Cascaded shadow mapping
 -----------
 
 Work in progress:
+
+Point-, Spot-, Lights 50% done
 
 Editor
 Project import

@@ -5,6 +5,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
+    using Newtonsoft.Json;
     using System.Collections.Generic;
 
     public abstract class SceneNode
@@ -21,6 +22,7 @@
         private bool isSelected;
         private static SceneNode selectedNode;
 
+        [JsonIgnore]
         public virtual SceneNode Parent
         {
             get => parent;
@@ -35,6 +37,7 @@
             get => selectedNode;
         }
 
+        [JsonIgnore]
         public bool IsSelected
         {
             get => isSelected;
@@ -51,6 +54,7 @@
 
         public virtual IReadOnlyList<IComponent> Components => components;
 
+        [JsonIgnore]
         public bool Initialized => initialized;
 
         public virtual void AddChild(SceneNode node)

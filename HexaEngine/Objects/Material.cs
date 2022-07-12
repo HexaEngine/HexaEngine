@@ -3,13 +3,16 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Graphics;
+    using Newtonsoft.Json;
     using System;
     using System.Numerics;
     using System.Runtime.InteropServices;
 
     public class Material : IDisposable
     {
+        [JsonIgnore]
         public IBuffer CB;
+
         private bool disposedValue;
         private string albedoTextureMap = string.Empty;
         private string normalTextureMap = string.Empty;
@@ -34,18 +37,25 @@
 
         public Vector3 Emissivness { get; set; }
 
+        [JsonIgnore]
         public Texture Albedo { get; private set; }
 
+        [JsonIgnore]
         public Texture Normal { get; private set; }
 
+        [JsonIgnore]
         public Texture Displacement { get; private set; }
 
+        [JsonIgnore]
         public Texture RoughnessTexture { get; private set; }
 
+        [JsonIgnore]
         public Texture MetalnessTexture { get; private set; }
 
+        [JsonIgnore]
         public Texture EmissiveTexture { get; private set; }
 
+        [JsonIgnore]
         public Texture AoTexture { get; private set; }
 
         public string AlbedoTextureMap

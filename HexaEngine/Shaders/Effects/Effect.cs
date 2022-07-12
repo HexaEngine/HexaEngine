@@ -12,6 +12,7 @@
     {
         public bool AutoClear;
         public bool AutoClearDepth;
+        public bool AutoSetTarget = true;
 
         public Effect(IGraphicsDevice device, PipelineDesc desc) : base(device, desc)
         {
@@ -39,7 +40,8 @@
             if (AutoClearDepth)
                 context.ClearDepthStencilView(DepthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
 
-            context.SetRenderTargets(Target, DepthStencilView);
+            if (AutoSetTarget)
+                context.SetRenderTargets(Target, DepthStencilView);
 
             base.BeginDraw(context, viewport, view, transform);
         }

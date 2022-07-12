@@ -7,13 +7,13 @@
     {
         public IGraphicsDevice Device { get; }
 
-        public void Write<T>(IBuffer buffer, T value) where T : unmanaged;
+        public void Write<T>(IBuffer buffer, T value) where T : struct;
 
-        public void Write<T>(IBuffer buffer, T[] values) where T : unmanaged;
+        public void Write<T>(IBuffer buffer, T[] values) where T : struct;
 
-        public void Read<T>(IBuffer buffer, T value) where T : unmanaged;
+        public void Read<T>(IBuffer buffer, T value) where T : struct;
 
-        public void Read<T>(IBuffer buffer, T[] values) where T : unmanaged;
+        public void Read<T>(IBuffer buffer, T[] values) where T : struct;
 
         public MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags);
 

@@ -53,7 +53,7 @@ namespace HexaEngine.Rendering
             var io = ImGui.GetIO();
             io.Fonts.AddFontDefault();
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
-            io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
+            io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.HasMouseCursors;
 
             CreateDeviceObjects();
             inputHandler = new(window);
@@ -143,7 +143,7 @@ namespace HexaEngine.Rendering
             var constResource = ctx.Map(constantBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
             var span = constResource.AsSpan<byte>(VertexConstantBufferSize);
             ImGuiIOPtr io = ImGui.GetIO();
-            Matrix4x4 mvp = Extensions.OrthoOffCenterLH(0f, io.DisplaySize.X, io.DisplaySize.Y, 0, -1, 1);
+            Matrix4x4 mvp = MathUtil.OrthoOffCenterLH(0f, io.DisplaySize.X, io.DisplaySize.Y, 0, -1, 1);
             MemoryMarshal.Write(span, ref mvp);
             ctx.Unmap(constantBuffer, 0);
 

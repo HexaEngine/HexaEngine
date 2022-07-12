@@ -4,13 +4,16 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
+    using HexaEngine.Mathematics;
+    using System;
     using System.Numerics;
 
     public static class CameraManager
     {
         internal static readonly Camera camera = new();
         private static Vector3 center = default;
-        private static CameraEditorMode mode = CameraEditorMode.Free;
+        private static CameraEditorMode mode = CameraEditorMode.Orbit;
+        private static Vector3 sc = new(10, 0, 0);
 
         private static bool inEditMode;
 
@@ -27,12 +30,61 @@
 
         public static Camera Current => Designer.InDesignMode ? inEditMode ? SceneManager.Current.CurrentCamera : camera : SceneManager.Current.CurrentCamera;
 
+        private static Vector3 GetSphericalCoordinates(Vector3 cartesian)
+        {
+            float r = MathF.Sqrt(
+                MathF.Pow(cartesian.X, 2) +
+                MathF.Pow(cartesian.Y, 2) +
+                MathF.Pow(cartesian.Z, 2)
+            );
+
+            // use atan2 for built-in checks
+            float phi = MathF.Atan2(cartesian.Z / cartesian.X, cartesian.X);
+            float theta = MathF.Acos(cartesian.Y / r);
+
+            return new Vector3(r, phi, theta);
+        }
+
+        private static Vector3 GetCartesianCoordinates(Vector3 spherical)
+        {
+            Vector3 ret = new();
+
+            ret.Z = -(spherical.X * MathF.Cos(spherical.Z) * MathF.Cos(spherical.Y));
+            ret.Y = spherical.X * MathF.Sin(spherical.Z);
+            ret.X = spherical.X * MathF.Cos(spherical.Z) * MathF.Sin(spherical.Y);
+
+            return ret;
+        }
+
         public static void Update()
         {
             if (!Designer.InDesignMode) return;
             Camera camera = Current;
             if (mode == CameraEditorMode.Orbit)
             {
+                Vector2 delta = Vector2.Zero;
+                if (Mouse.IsDown(MouseButton.Middle))
+                    delta = Mouse.GetDelta();
+
+                var wheel = Mouse.WheelDelta.Y;
+
+                // Only update the camera's position if the mouse got moved in either direction
+                if (delta.X != 0f || delta.Y != 0f || wheel != 0f)
+                {
+                    sc.X += -wheel;
+
+                    // Rotate the camera left and right
+                    sc.Y += -delta.X * Time.Delta;
+
+                    // Rotate the camera up and down
+                    // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
+                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta, -1.5f, 1.5f);
+
+                    // Calculate the cartesian coordinates for unity
+                    Vector3 pos = GetCartesianCoordinates(sc) + center;
+                    var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
+                    camera.Transform.PositionRotation = (pos, orientation);
+                }
             }
             if (mode == CameraEditorMode.Free)
             {

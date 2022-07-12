@@ -70,6 +70,7 @@
             PixelShader = "effects/prefilter/ps.hlsl"
         })
         {
+            AutoSetTarget = false;
             SetViewPoint(Vector3.Zero);
             mvpBuffer = CreateConstantBuffer<ViewProj>(ShaderStage.Vertex, 0);
             rghbuffer = CreateConstantBuffer<RoughnessBuffer>(ShaderStage.Pixel, 0);

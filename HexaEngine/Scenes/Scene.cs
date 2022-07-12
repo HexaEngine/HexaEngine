@@ -11,9 +11,9 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
-    using HexaEngine.Objects.Components;
     using HexaEngine.Physics;
     using HexaEngine.Rendering;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -28,13 +28,16 @@
         private readonly List<Mesh> meshes = new();
         private readonly List<Material> materials = new();
         private readonly List<Texture> textures = new();
-        private readonly List<IDeferredRendererComponent> deferredRenderers = new();
-        private readonly List<IForwardRendererComponent> forwardRenderers = new();
-        private readonly List<IDepthRendererComponent> depthRenderers = new();
+
+        [JsonIgnore]
         public readonly Simulation Simulation;
 
+        [JsonIgnore]
         public readonly BufferPool BufferPool;
+
+        [JsonIgnore]
         public readonly ThreadDispatcher ThreadDispatcher;
+
         private readonly SceneNode root;
         public int ActiveCamera;
 
@@ -55,26 +58,28 @@
 
         public string Name { get; }
 
+        [JsonIgnore]
         public ISceneRenderer Renderer { get => renderer; set => renderer = value; }
 
+        [JsonIgnore]
         public SceneDispatcher Dispatcher { get; } = new();
 
+        [JsonIgnore]
         public IReadOnlyList<Camera> Cameras => cameras;
 
+        [JsonIgnore]
         public IReadOnlyList<Light> Lights => lights;
 
+        [JsonIgnore]
         public IReadOnlyList<Mesh> Meshes => meshes;
 
+        [JsonIgnore]
         public IReadOnlyList<Material> Materials => materials;
 
+        [JsonIgnore]
         public IReadOnlyList<Texture> Textures => textures;
 
-        public IReadOnlyList<IDeferredRendererComponent> DeferredRenderers => deferredRenderers;
-
-        public IReadOnlyList<IForwardRendererComponent> ForwardRenderers => forwardRenderers;
-
-        public IReadOnlyList<IDepthRendererComponent> DepthRenderers => depthRenderers;
-
+        [JsonIgnore]
         public Camera CurrentCamera => cameras[ActiveCamera];
 
         public SceneNode Root => root;
@@ -140,7 +145,7 @@
 
         private class SceneRootNode : SceneNode
         {
-            private Scene parent;
+            private readonly Scene parent;
 
             public SceneRootNode(Scene parent)
             {
@@ -156,9 +161,6 @@
         public void AddChild(SceneNode node)
         {
             root.AddChild(node);
-            forwardRenderers.AddRange(node.GetComponents<IForwardRendererComponent>());
-            deferredRenderers.AddRange(node.GetComponents<IDeferredRendererComponent>());
-            depthRenderers.AddRange(node.GetComponents<IDepthRendererComponent>());
             cameras.AddIfIs(node);
             lights.AddIfIs(node);
             meshes.AddIfIs(node);
@@ -169,9 +171,6 @@
             cameras.RemoveIfIs(node);
             lights.RemoveIfIs(node);
             meshes.RemoveIfIs(node);
-            forwardRenderers.RemoveAll(x => node.GetComponents<IForwardRendererComponent>().Any(y => x == y));
-            deferredRenderers.RemoveAll(x => node.GetComponents<IDeferredRendererComponent>().Any(y => x == y));
-            depthRenderers.RemoveAll(x => node.GetComponents<IDepthRendererComponent>().Any(y => x == y));
             root.RemoveChild(node);
         }
 

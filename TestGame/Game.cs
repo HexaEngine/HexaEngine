@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
-    using HexaEngine.Rendering;
+    using HexaEngine.Graphics;
     using HexaEngine.Scenes;
     using HexaEngine.Windows;
 
@@ -38,7 +38,7 @@
                 }
                 if (e.KeyCode == Keys.F5)
                 {
-                    //SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());
+                    SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());
                 }
                 if (e.KeyCode == Keys.F10)
                 {

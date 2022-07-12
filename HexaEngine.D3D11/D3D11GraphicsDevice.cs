@@ -89,6 +89,8 @@
 #endif
             Context = new D3D11GraphicsContext(this);
 
+            if (window == null) return;
+
             SwapChainDesc1 desc = new()
             {
                 Width = (uint)window.Width,
@@ -136,53 +138,62 @@
             return new D3D11Buffer(buffer, description);
         }
 
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
+        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct
         {
             if (description.ByteWidth == 0)
             {
-                description.ByteWidth = sizeof(T);
+                description.ByteWidth = Marshal.SizeOf<T>();
             }
 
             SubresourceData data;
-            fixed (void* ptr = new T[] { value })
-            {
-                data = new(ptr, description.ByteWidth);
-            }
-            var datas = Helper.Convert(new SubresourceData[] { data });
+
+            var basePtr = Marshal.AllocHGlobal(description.ByteWidth);
+            data = new(basePtr, description.ByteWidth);
+            Marshal.StructureToPtr(value, basePtr, true);
 
             ID3D11Buffer* buffer;
             BufferDesc desc = Helper.Convert(description);
-            Device->CreateBuffer(&desc, Utils.AsPointer(datas), &buffer).ThrowHResult();
+            Device->CreateBuffer(&desc, Utils.AsPointer(Helper.Convert(new SubresourceData[] { data })), &buffer).ThrowHResult();
+
+            Marshal.FreeHGlobal(basePtr);
+
             return new D3D11Buffer(buffer, description);
         }
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(value, description);
         }
 
-        public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : unmanaged
+        public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : struct
         {
+            int size = Marshal.SizeOf<T>();
             if (description.ByteWidth == 0)
             {
-                description.ByteWidth = sizeof(T) * values.Length;
+                description.ByteWidth = size * values.Length;
             }
-
             SubresourceData data;
-            fixed (void* ptr = values)
+
+            var basePtr = Marshal.AllocHGlobal(description.ByteWidth);
+            data = new(basePtr, description.ByteWidth);
+            long ptr = basePtr.ToInt64();
+            for (int i = 0; i < values.Length; i++)
             {
-                data = new(ptr, description.ByteWidth);
+                Marshal.StructureToPtr(values[i], (IntPtr)ptr, true);
+                ptr += size;
             }
-            var datas = Helper.Convert(new SubresourceData[] { data });
 
             ID3D11Buffer* buffer;
             BufferDesc desc = Helper.Convert(description);
-            Device->CreateBuffer(&desc, Utils.AsPointer(datas), &buffer).ThrowHResult();
+            Device->CreateBuffer(&desc, Utils.AsPointer(Helper.Convert(new SubresourceData[] { data })), &buffer).ThrowHResult();
+
+            Marshal.FreeHGlobal(basePtr);
+
             return new D3D11Buffer(buffer, description);
         }
 
-        public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(values, description);

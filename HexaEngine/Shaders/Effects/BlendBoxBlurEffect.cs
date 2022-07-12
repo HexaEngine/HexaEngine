@@ -17,7 +17,7 @@
 
             public Params()
             {
-                Size = 1;
+                Size = 2;
                 Padd = new();
             }
         }
@@ -49,7 +49,7 @@
         public override void Draw(IGraphicsContext context, IView view)
         {
             context.Write(paramsBuffer, new Params() { Size = size });
-            DrawAuto(context, default, null);
+            DrawAuto(context, Target.Viewport, null);
         }
     }
 

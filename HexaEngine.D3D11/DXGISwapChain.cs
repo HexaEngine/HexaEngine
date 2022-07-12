@@ -32,6 +32,7 @@
             BackbufferDSV = device.CreateDepthStencilView(depthStencil);
             Width = description.Width;
             Height = description.Height;
+            Viewport = new(0, 0, Width, Height);
         }
 
         public ITexture2D Backbuffer { get; private set; }
@@ -45,6 +46,8 @@
         public int Width { get; private set; }
 
         public int Height { get; private set; }
+
+        public Mathematics.Viewport Viewport { get; private set; }
 
         public event EventHandler? Resizing;
 
@@ -69,6 +72,7 @@
             swapChain->ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
             Width = width;
             Height = height;
+            Viewport = new(0, 0, Width, Height);
 
             ID3D11Texture2D* backbuffer;
             swapChain->GetBuffer(0, Utils.Guid(ID3D11Texture2D.Guid), (void**)&backbuffer);

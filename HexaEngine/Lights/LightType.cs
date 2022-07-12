@@ -5,6 +5,5 @@
         Directional,
         Point,
         Spot,
-        Area,
     }
 }

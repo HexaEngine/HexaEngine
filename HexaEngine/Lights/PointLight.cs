@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Mathematics;
     using System;
 
     [EditorNode("Point Light")]
@@ -47,26 +46,10 @@
 
         public BoundingFrustum RightFrustum => rightFrustum;
               */
+
+        [EditorProperty("Strength")]
+        public float Strength { get; set; } = 1000;
+
         public override LightType Type => LightType.Point;
-
-        public override void BindDepth(IGraphicsContext context, int startSlot)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ClearDepth(IGraphicsContext context)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Render(IGraphicsContext context, Viewport viewport, IView view, IView scene, int indexCount)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override void RenderDepth(IGraphicsContext context, Action<IGraphicsContext, Viewport, IView> callback)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

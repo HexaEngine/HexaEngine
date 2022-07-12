@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Mathematics
 {
+    using Newtonsoft.Json;
     using System.Numerics;
 
     public class CameraTransform : Transform
@@ -20,8 +21,10 @@
             Recalculate();
         }
 
+        [JsonIgnore]
         public Matrix4x4 Projection { get => projection; }
 
+        [JsonIgnore]
         public Matrix4x4 ProjectionInv => projectionInv;
 
         public ProjectionType ProjectionType
@@ -57,6 +60,7 @@
             }
         }
 
+        [JsonIgnore]
         public float AspectRatio => aspectRatio;
 
         public float Fov
@@ -93,6 +97,7 @@
             }
         }
 
+        [JsonIgnore]
         public BoundingFrustum Frustum => frustum;
 
         protected override void Recalculate()
@@ -102,11 +107,11 @@
             switch (projectionType)
             {
                 case ProjectionType.Othro:
-                    projection = Extensions.OrthoLH(width, height, near, far);
+                    projection = MathUtil.OrthoLH(width, height, near, far);
                     break;
 
                 case ProjectionType.Perspective:
-                    projection = Extensions.PerspectiveFovLH(fov, aspectRatio, near, far);
+                    projection = MathUtil.PerspectiveFovLH(fov, aspectRatio, near, far);
                     break;
             }
             Matrix4x4.Invert(projection, out projectionInv);

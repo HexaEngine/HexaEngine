@@ -29,13 +29,13 @@
         internal static void Draw()
         {
             if (!isShown || !inDesignMode) return;
-
-            ImGui.Begin("MainWindow", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoFocusOnAppearing);
-            dockid = ImGui.GetWindowDockID();
-            ImGui.SetWindowPos(new());
-            ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-            ImGui.End();
             MainMenuBar.Draw();
+            ImGui.Begin("Editor", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.DockNodeHost);
+            dockid = ImGui.GetWindowDockID();
+            ImGui.SetWindowPos(new(0, MainMenuBar.Height));
+            ImGui.SetWindowSize(ImGui.GetIO().DisplaySize - new System.Numerics.Vector2(0, MainMenuBar.Height));
+            ImGui.End();
+
             Inspector.Draw();
             FramebufferDebugger.Draw();
             SceneLayout.Draw();

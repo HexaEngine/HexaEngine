@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core.Input;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using ImGuiNET;
@@ -31,6 +30,7 @@
                 {
                     cache.Add(type.GetCustomAttribute<EditorNodeAttribute>().Name, type);
                 }
+                cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
             }
 
             if (!ImGui.Begin("Layout", ref isShown, ImGuiWindowFlags.MenuBar))
@@ -63,13 +63,12 @@
                         var node = (SceneNode)Activator.CreateInstance(item.Value);
                         if (newInstances.TryGetValue(item.Key, out int instance))
                         {
-                            newInstances[item.Key]++;
-                            node.Name = $"{item.Key} {instance}";
+                            node.Name = $"{item.Key} {newInstances[item.Key]++}";
                             scene.AddChild(node);
                         }
                         else
                         {
-                            newInstances.Add(item.Key, 1);
+                            newInstances.Add(item.Key, 2);
                             node.Name = $"{item.Key} {1}";
                             scene.AddChild(node);
                         }
@@ -96,6 +95,14 @@
                         flags |= ImGuiTreeNodeFlags.Leaf;
                     if (ImGui.TreeNodeEx(element.Name, flags))
                     {
+                        if (ImGui.BeginPopupContextWindow())
+                        {
+                            if (ImGui.MenuItem("Delete"))
+                            {
+                                element.GetScene().RemoveChild(element);
+                            }
+                            ImGui.EndPopup();
+                        }
                         for (int j = 0; j < element.Children.Count; j++)
                         {
                             DisplayNode(element.Children[j]);

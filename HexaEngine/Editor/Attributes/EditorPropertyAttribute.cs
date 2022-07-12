@@ -11,14 +11,29 @@
             Mode = mode;
         }
 
+        public EditorPropertyAttribute(string name, EditorPropertyMode mode, object min, object max)
+        {
+            Name = name;
+            Mode = mode;
+            Min = min;
+            Max = max;
+        }
+
         public string Name { get; }
+
         public EditorPropertyMode Mode { get; }
+
+        public object Min { get; }
+
+        public object Max { get; }
     }
 
     public enum EditorPropertyMode
     {
         Default,
         Colorpicker,
+        Slider,
+        SliderAngle,
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

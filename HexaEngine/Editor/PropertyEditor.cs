@@ -86,6 +86,24 @@
                     continue;
                 }
 
+                if (nameAttr.Mode == EditorPropertyMode.Slider)
+                    if (propType == typeof(float))
+                    {
+                        float min = (float)nameAttr.Min;
+                        float max = (float)nameAttr.Max;
+                        if (!(property.CanWrite && property.CanRead)) continue;
+                        values.Add(new(property, value =>
+                        {
+                            float val = (float)value;
+                            if (ImGui.SliderFloat(name, ref val, min, max))
+                            {
+                                return (true, val);
+                            }
+                            return (false, null);
+                        }));
+                        continue;
+                    }
+
                 if (propType == typeof(float))
                 {
                     if (!(property.CanWrite && property.CanRead)) continue;
@@ -202,7 +220,8 @@
                     values.Add(new(property, value =>
                     {
                         Texture val = (Texture)value;
-                        ImGui.Image(ImGuiRenderer.TryRegisterTexture(val.ResourceView), new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
+                        if (val != null)
+                            ImGui.Image(ImGuiRenderer.TryRegisterTexture(val.ResourceView), new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
                         return (false, null);
                     }));
                     continue;

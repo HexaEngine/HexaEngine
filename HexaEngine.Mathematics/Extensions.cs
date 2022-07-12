@@ -4,10 +4,14 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
-    public static class Extensions
+    public static class MathUtil
     {
         public const double DegToRadFactor = Math.PI / 180;
         public const double RadToDefFactor = 180 / Math.PI;
+
+        public const float PI2 = 2 * MathF.PI;
+
+        public const float PIDIV2 = MathF.PI / 2;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Round(this float x)
@@ -73,9 +77,14 @@
             return new Vector3((float)(v.X * DegToRadFactor), (float)(v.Y * DegToRadFactor), (float)(v.Z * DegToRadFactor));
         }
 
-        public static float ToRad(this float v)
+        public static float ToDeg(this float v)
         {
             return (float)(v * RadToDefFactor);
+        }
+
+        public static float ToRad(this float v)
+        {
+            return (float)(v * DegToRadFactor);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -245,6 +254,23 @@
             if (normalizedZ < 0)
                 normalizedZ += 360;
             return new(normalizedX, normalizedY, normalizedZ);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 NormalizeEulerAngleDegrees(this Vector2 angle)
+        {
+            float normalizedX = angle.X % 360;
+            float normalizedY = angle.Y % 360;
+            if (normalizedX < 0)
+                normalizedX += 360;
+            if (normalizedY < 0)
+                normalizedY += 360;
+            return new(normalizedX, normalizedY);
+        }
+
+        public static float Lerp(float x, float y, float s)
+        {
+            return x * (1 - s) + y * s;
         }
     }
 }

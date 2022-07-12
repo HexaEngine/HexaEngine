@@ -594,30 +594,40 @@
 
         #region IShaderResource
 
+        public RenderTargetViewArray CreateRTVArray(IGraphicsDevice device)
+        {
+            return new RenderTargetViewArray(device, resource, Description.ArraySize, Viewport);
+        }
+
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddBinding(ShaderStage stage, int slot)
         {
             AddBinding(new(stage, slot));
         }
 
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveBinding(ShaderStage stage, int slot)
         {
             RemoveBinding(new(stage, slot));
         }
 
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddBinding(ShaderBinding binding)
         {
             bindings.Add(binding);
         }
 
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveBinding(ShaderBinding binding)
         {
             bindings.Remove(binding);
         }
 
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearBindings()
         {

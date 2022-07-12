@@ -45,13 +45,9 @@ float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
 }
 
 
-float3 BRDFDirect(float3 lightColor, float3 lightDir, float3 F0, float3 V, float3 N, float3 albedo, float roughness, float metalness)
+float3 BRDFDirect(float3 radiance, float3 L, float3 F0, float3 V, float3 N, float3 albedo, float roughness, float metalness)
 {
-    float3 L = normalize(lightDir);
     float3 H = normalize(V + L);
-    float distance = length(lightDir);
-    float attenuation = 1.0 / (distance * distance);
-    float3 radiance = lightColor * attenuation;
         
     // cook-torrance brdf
     float NDF = DistributionGGX(N, H, roughness);

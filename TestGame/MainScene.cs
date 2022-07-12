@@ -56,7 +56,6 @@
             light.Transform.Position = new(0, 5, -5);
             light.Transform.Rotation = new(0, 45, 0);
             light.Color = new(1, 1, 1, 1);
-            light.CastShadows = true;
             AddChild(light);
         }
     }

@@ -76,6 +76,11 @@
             DeviceContext->Unmap((ID3D11Resource*)resource.NativePointer, (uint)subresourceIndex);
         }
 
+        public void GenerateMips(IShaderResourceView resourceView)
+        {
+            DeviceContext->GenerateMips((ID3D11ShaderResourceView*)resourceView.NativePointer);
+        }
+
         public void SetConstantBuffer(IBuffer constantBuffer, ShaderStage stage, int slot)
         {
             switch (stage)
@@ -328,34 +333,43 @@
                 DeviceContext->CSSetShader(null, null, 0);
         }
 
-        public void Write<T>(IBuffer buffer, T value) where T : unmanaged
+        public void Write<T>(IBuffer buffer, T value) where T : struct
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
             DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.MapWriteDiscard, 0, &data);
-            MemoryMarshal.Write(new Span<byte>(data.PData, (int)data.DepthPitch), ref value);
+            var size = Marshal.SizeOf<T>();
+            var ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(value, ptr, true);
+            Buffer.MemoryCopy((void*)ptr, data.PData, data.RowPitch, size);
+            Marshal.FreeHGlobal(ptr);
             DeviceContext->Unmap(resource, 0);
         }
 
-        public void Write<T>(IBuffer buffer, T[] values) where T : unmanaged
+        public void Write<T>(IBuffer buffer, T[] values) where T : struct
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
             DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.MapWriteDiscard, 0, &data);
-
-            Span<byte> src = MemoryMarshal.Cast<T, byte>(values.AsSpan());
-            Span<byte> dest = new(data.PData, (int)data.DepthPitch);
-            src.CopyTo(dest);
-
+            var size = Marshal.SizeOf<T>();
+            var basePtr = Marshal.AllocHGlobal(size * values.Length);
+            var ptr = basePtr.ToInt64();
+            for (int i = 0; i < values.Length; i++)
+            {
+                Marshal.StructureToPtr(values[i], (IntPtr)ptr, true);
+                ptr += size;
+            }
+            Buffer.MemoryCopy((void*)basePtr, data.PData, data.RowPitch, size * values.Length);
+            Marshal.FreeHGlobal(basePtr);
             DeviceContext->Unmap(resource, 0);
         }
 
-        public void Read<T>(IBuffer buffer, T value) where T : unmanaged
+        public void Read<T>(IBuffer buffer, T value) where T : struct
         {
             throw new NotImplementedException();
         }
 
-        public void Read<T>(IBuffer buffer, T[] values) where T : unmanaged
+        public void Read<T>(IBuffer buffer, T[] values) where T : struct
         {
             throw new NotImplementedException();
         }

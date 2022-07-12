@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Windows
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
@@ -55,6 +56,7 @@
                 swapChain = device.SwapChain;
             }
 
+            DebugDraw.Init(device);
             renderer = new(this);
             framebuffer = new(device);
             renderDispatcher = Dispatcher.CurrentDispatcher;
@@ -66,6 +68,7 @@
             {
                 Time.FrameUpdate();
                 Dispatcher.ExecuteQueue();
+                framebuffer.SourceViewport = Viewport;
                 framebuffer.Update(context);
                 renderer.BeginDraw();
                 framebuffer.Draw();
@@ -97,7 +100,7 @@
             }
 
             renderer.Dispose();
-
+            DebugDraw.Dispose();
             Trace.WriteLine("Perfoming Shutdown");
             SceneManager.Unload();
             Context.Dispose();

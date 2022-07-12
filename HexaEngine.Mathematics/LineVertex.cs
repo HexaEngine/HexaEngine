@@ -4,9 +4,9 @@
     using System.Runtime.InteropServices;
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct LineVertex
+    public struct VertexPositionColor
     {
-        public LineVertex(Vector3 position, Vector4 color)
+        public VertexPositionColor(Vector3 position, Vector4 color)
         {
             Position = position;
             Color = color;

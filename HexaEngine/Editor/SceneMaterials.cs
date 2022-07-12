@@ -48,19 +48,19 @@
                     material.Color = color;
 
                 var opacity = material.Opacity;
-                if (ImGui.InputFloat("Opacity", ref opacity))
+                if (ImGui.SliderFloat("Opacity", ref opacity, 0, 1))
                     material.Opacity = opacity;
 
                 var roughness = material.Roughness;
-                if (ImGui.InputFloat("Roughness", ref roughness))
+                if (ImGui.SliderFloat("Roughness", ref roughness, 0, 1))
                     material.Roughness = roughness;
 
                 var Metalness = material.Metalness;
-                if (ImGui.InputFloat("Metalness", ref Metalness))
+                if (ImGui.SliderFloat("Metalness", ref Metalness, 0, 1))
                     material.Metalness = Metalness;
 
                 var Ao = material.Ao;
-                if (ImGui.InputFloat("Ao", ref Ao))
+                if (ImGui.SliderFloat("Ao", ref Ao, 0, 1))
                     material.Ao = Ao;
 
                 var Emissivness = material.Emissivness;

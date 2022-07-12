@@ -2,7 +2,7 @@
 {
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using Extensions = Mathematics.Extensions;
+    using MathUtil = Mathematics.MathUtil;
 
     public class SurfaceCamera : CameraBase
     {
@@ -27,7 +27,7 @@
         /// </summary>
         public void UpdateProjection()
         {
-            Projection = Extensions.OrthoLH(Width, Height, viewport.MinDepth, viewport.MaxDepth);
+            Projection = MathUtil.OrthoLH(Width, Height, viewport.MinDepth, viewport.MaxDepth);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@
         public void UpdateView()
         {
             UpdateProjection();
-            View = Extensions.LookAtLH(-Vector3.UnitZ, Vector3.UnitZ + -Vector3.UnitZ, Vector3.UnitY);
+            View = MathUtil.LookAtLH(-Vector3.UnitZ, Vector3.UnitZ + -Vector3.UnitZ, Vector3.UnitY);
             Frustum = new(Projection * View);
         }
 

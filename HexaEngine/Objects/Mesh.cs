@@ -10,6 +10,7 @@
     using HexaEngine.Rendering;
     using HexaEngine.Scenes;
     using HexaEngine.Shaders;
+    using Newtonsoft.Json;
     using System.Linq;
     using System.Numerics;
 
@@ -55,8 +56,10 @@
             }
         }
 
+        [JsonIgnore]
         public bool Drawable => drawable;
 
+        [JsonIgnore]
         public Material Material => material;
 
         public override void Initialize(IGraphicsDevice device)

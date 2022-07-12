@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Events;
+    using HexaEngine.Mathematics;
 
     public interface ISwapChain : IDisposable
     {
@@ -19,5 +20,6 @@
         IDepthStencilView BackbufferDSV { get; }
         int Width { get; }
         int Height { get; }
+        Viewport Viewport { get; }
     }
 }
