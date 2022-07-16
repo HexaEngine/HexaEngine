@@ -45,7 +45,7 @@
 
         public Viewport Viewport { get; }
 
-        public IDepthStencilView DepthStencil { get; set; }
+        public IDepthStencilView? DepthStencil { get; set; }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetTargets(IGraphicsContext context)
@@ -70,7 +70,7 @@
         public void ClearAndSetTarget(IGraphicsContext context, int i)
         {
             context.ClearRenderTargetView(views[i], new(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W));
-            context.SetRenderTargets(views[i], DepthStencil);
+            context.SetRenderTarget(views[i], DepthStencil);
         }
 
         public void ClearTarget(IGraphicsContext context, int i)
@@ -80,7 +80,7 @@
 
         public void SetTarget(IGraphicsContext context, int i)
         {
-            context.SetRenderTargets(views[i], DepthStencil);
+            context.SetRenderTarget(views[i], DepthStencil);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -89,7 +89,7 @@
             {
                 foreach (IRenderTargetView view in views)
                     view.Dispose();
-                views = null;
+
                 disposedValue = true;
             }
         }

@@ -1,3 +1,4 @@
+#include "../../camera.hlsl"
 struct VSOut
 {
     float4 Pos : SV_Position;
@@ -11,19 +12,12 @@ Texture2D emissionTexture : register(t4);
 Texture2D misc0Texture : register(t5);
 Texture2D misc1Texture : register(t6);
 Texture2D misc2Texture : register(t7);
-Texture2D noise : register(t0);
 
 SamplerState samplerState;
 
-cbuffer mvp : register(b0)
-{
-    matrix view;
-    matrix projection;
-};
-
 static const float3 taps[16] =
 {
-                        float3(-0.364452, -0.014985, -0.513535),
+    float3(-0.364452, -0.014985, -0.513535),
                         float3(0.004669, -0.445692, -0.165899),
                         float3(0.607166, -0.571184, 0.377880),
                         float3(-0.607685, -0.352123, -0.663045),
@@ -61,9 +55,9 @@ float4 main(VSOut input) : SV_Target
     float start_Y = 1.0 - input.Tex.y; // texture coordinates for D3D have origin in top left, but in camera space origin is in bottom left
     float3 start_Pos = float3(input.Tex.x, start_Y, start_Z);
     float3 ndc_Pos = (2.0 * start_Pos) - 1.0;
-    float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, ndc_Pos.z, 1.0), view);
+    float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, ndc_Pos.z, 1.0), projInv);
     float3 viewPos = unproject.xyz / unproject.w;
-    float3 viewNorm = normalTexture.Sample(samplerState, input.Tex).xyz;
+    float3 viewNorm = mul(float4(normalTexture.Sample(samplerState, input.Tex).xyz, 1), view).xyz;
 
 	// WORKNOTE: start_Z was a huge negative value at one point because we had a D16_UNORM depth target
 	// but we set the shader resource view format to R16_FLOAT instead of R16_UNORM
@@ -89,7 +83,7 @@ float4 main(VSOut input) : SV_Target
             float off_start_Z = positionTexture.Sample(samplerState, offTex).w;
             float3 off_start_Pos = float3(offTex.x, start_Y + sampleOffset.y, off_start_Z);
             float3 off_ndc_Pos = (2.0 * off_start_Pos) - 1.0;
-            float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_ndc_Pos.z, 1.0), view);
+            float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_ndc_Pos.z, 1.0), projInv);
             float3 off_viewPos = off_unproject.xyz / off_unproject.w;
             // we now have the view space position of the offset point
             float3 diff = off_viewPos.xyz - viewPos.xyz;
@@ -105,9 +99,9 @@ float4 main(VSOut input) : SV_Target
             }
         }
         // the paper uses this attenuation but I like the other way better
-        //float normDiff = length(lastDiff) / SAMPLING_RADIUS;
-        //float attenuation = 1 - normDiff*normDiff;
-        float attenuation = 1.0 / (1 + length(lastDiff));
+        float normDiff = length(lastDiff) / SAMPLING_RADIUS;
+        float attenuation = 1 - normDiff * normDiff;
+        //float attenuation = 1.0 / (1 + length(lastDiff));
         // now compare horizon angle to tangent angle to get ambient occlusion
         float occlusion = clamp(attenuation * (sin(horizonAngle) - sin(tangentAngle)), 0.0, 1.0);
         total += 1.0 - occlusion;

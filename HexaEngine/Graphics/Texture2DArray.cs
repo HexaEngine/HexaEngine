@@ -113,8 +113,6 @@
                     texture.Dispose();
                 foreach (IShaderResourceView view in resourceViews)
                     view.Dispose();
-                textures = null;
-                resourceViews = null;
                 RenderTargets.Dispose();
 
                 disposedValue = true;

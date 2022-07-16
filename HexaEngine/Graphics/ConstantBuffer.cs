@@ -140,7 +140,6 @@
             if (!disposedValue)
             {
                 buffer.Dispose();
-                buffer = null;
                 disposedValue = true;
             }
         }

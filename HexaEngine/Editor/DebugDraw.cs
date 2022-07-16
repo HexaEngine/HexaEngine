@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Core.Debugging
+﻿#nullable disable
+
+namespace HexaEngine.Editor
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;

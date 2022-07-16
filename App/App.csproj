@@ -3,7 +3,10 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-	<DebugType>embedded</DebugType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
 
@@ -17,12 +20,14 @@
 	  <None Update="untitled.dae">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="untitled.glb">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 	<Target Name="BuildPackAssets" AfterTargets="AfterBuild">
 		<Exec Command="xcopy /y /d  &quot;$(SolutionDir)x64\Debug\*.dll&quot; &quot;$(ProjectDir)$(OutDir)runtimes\win-x64\native\&quot;" />
 	</Target>
   <Target Name="BuildPackAssets0" AfterTargets="AfterBuild" Condition="'$(Configuration)'!='DEBUG'">
-    <Exec Command="$(SolutionDir)AssetsBundler\bin\Debug\net6.0\AssetsBundler.exe -m gen -p $(TargetDir)assets\" />
     <Exec Command="xcopy /y /d  &quot;$(SolutionDir)x64\Debug\*.dll&quot; &quot;$(ProjectDir)$(OutDir)runtimes\win-x64\native\&quot;" />
   </Target>
 	<Target Name="PublishPackAssets" AfterTargets="Publish">

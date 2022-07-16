@@ -5,19 +5,18 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;
-    using System.Numerics;
 
-    public class Pipeline
+    public abstract class Pipeline
     {
-        private IVertexShader vs;
-        private IHullShader hs;
-        private IDomainShader ds;
-        private IGeometryShader gs;
-        private IPixelShader ps;
-        private IInputLayout layout;
-        private IRasterizerState rasterizerState;
-        private IDepthStencilState depthStencilState;
-        private IBlendState blendState;
+        private IVertexShader? vs;
+        private IHullShader? hs;
+        private IDomainShader? ds;
+        private IGeometryShader? gs;
+        private IPixelShader? ps;
+        private IInputLayout? layout;
+        private IRasterizerState? rasterizerState;
+        private IDepthStencilState? depthStencilState;
+        private IBlendState? blendState;
         private readonly PipelineDesc desc;
         private PipelineState state = PipelineState.Default;
         private readonly IGraphicsDevice device;
@@ -53,18 +52,23 @@
             }
         }
 
+        protected virtual ShaderMacro[] GetShaderMacros()
+        {
+            return Array.Empty<ShaderMacro>();
+        }
+
         #region Hotreload
 
-        public static event EventHandler Reload;
+        public static event EventHandler? Reload;
 
         public static void ReloadShaders()
         {
             ImGuiConsole.Log(ConsoleMessageType.Info, "recompiling shaders ...");
-            Reload?.Invoke(null, null);
+            Reload?.Invoke(null, EventArgs.Empty);
             ImGuiConsole.Log(ConsoleMessageType.Info, "recompiling shaders ... done!");
         }
 
-        protected virtual void OnReload(object sender, EventArgs args)
+        protected virtual void OnReload(object? sender, EventArgs args)
         {
             vs?.Dispose();
             hs?.Dispose();
@@ -79,8 +83,9 @@
 
         private void Compile()
         {
+            ShaderMacro[] macros = GetShaderMacros();
             if (desc.VertexShader != null)
-                if (ShaderCache.GetShader(desc.VertexShader, out var data))
+                if (ShaderCache.GetShader(desc.VertexShader, macros, out var data))
                 {
                     vs = device.CreateVertexShader(data);
                     vs.DebugName = GetType().Name + nameof(vs);
@@ -89,12 +94,12 @@
                 }
                 else
                 {
-                    device.CompileFromFile(desc.VertexShader, desc.VertexShaderEntrypoint, "vs_5_0", out var vBlob);
+                    device.CompileFromFile(desc.VertexShader, macros, desc.VertexShaderEntrypoint, "vs_5_0", out var vBlob);
                     if (vBlob == null)
                     {
                         return;
                     }
-                    ShaderCache.CacheShader(desc.VertexShader, vBlob);
+                    ShaderCache.CacheShader(desc.VertexShader, macros, vBlob);
                     vs = device.CreateVertexShader(vBlob.AsBytes());
                     vs.DebugName = GetType().Name + nameof(vs);
                     layout = device.CreateInputLayout(vBlob);
@@ -102,80 +107,80 @@
                     vBlob.Dispose();
                 }
             if (desc.HullShader != null)
-                if (ShaderCache.GetShader(desc.HullShader, out var data))
+                if (ShaderCache.GetShader(desc.HullShader, macros, out var data))
                 {
                     hs = device.CreateHullShader(data);
                     hs.DebugName = GetType().Name + nameof(hs);
                 }
                 else
                 {
-                    device.CompileFromFile(desc.HullShader, desc.HullShaderEntrypoint, "hs_5_0", out var pBlob);
+                    device.CompileFromFile(desc.HullShader, macros, desc.HullShaderEntrypoint, "hs_5_0", out var pBlob);
                     if (pBlob == null)
                     {
                         return;
                     }
-                    ShaderCache.CacheShader(desc.HullShader, pBlob);
+                    ShaderCache.CacheShader(desc.HullShader, macros, pBlob);
                     hs = device.CreateHullShader(pBlob);
                     hs.DebugName = GetType().Name + nameof(hs);
                     pBlob.Dispose();
                 }
             if (desc.DomainShader != null)
-                if (ShaderCache.GetShader(desc.DomainShader, out var data))
+                if (ShaderCache.GetShader(desc.DomainShader, macros, out var data))
                 {
                     ds = device.CreateDomainShader(data);
                     ds.DebugName = GetType().Name + nameof(ds);
                 }
                 else
                 {
-                    device.CompileFromFile(desc.DomainShader, desc.DomainShaderEntrypoint, "ds_5_0", out var pBlob);
+                    device.CompileFromFile(desc.DomainShader, macros, desc.DomainShaderEntrypoint, "ds_5_0", out var pBlob);
                     if (pBlob == null)
                     {
                         return;
                     }
-                    ShaderCache.CacheShader(desc.DomainShader, pBlob);
+                    ShaderCache.CacheShader(desc.DomainShader, macros, pBlob);
                     ds = device.CreateDomainShader(pBlob);
                     ds.DebugName = GetType().Name + nameof(ds);
                     pBlob.Dispose();
                 }
             if (desc.GeometryShader != null)
-                if (ShaderCache.GetShader(desc.GeometryShader, out var data))
+                if (ShaderCache.GetShader(desc.GeometryShader, macros, out var data))
                 {
                     gs = device.CreateGeometryShader(data);
                     gs.DebugName = GetType().Name + nameof(gs);
                 }
                 else
                 {
-                    device.CompileFromFile(desc.GeometryShader, desc.GeometryShaderEntrypoint, "gs_5_0", out var pBlob);
+                    device.CompileFromFile(desc.GeometryShader, macros, desc.GeometryShaderEntrypoint, "gs_5_0", out var pBlob);
                     if (pBlob == null)
                     {
                         return;
                     }
-                    ShaderCache.CacheShader(desc.GeometryShader, pBlob);
+                    ShaderCache.CacheShader(desc.GeometryShader, macros, pBlob);
                     gs = device.CreateGeometryShader(pBlob);
                     gs.DebugName = GetType().Name + nameof(gs);
                     pBlob.Dispose();
                 }
             if (desc.PixelShader != null)
-                if (ShaderCache.GetShader(desc.PixelShader, out var data))
+                if (ShaderCache.GetShader(desc.PixelShader, macros, out var data))
                 {
                     ps = device.CreatePixelShader(data);
                     ps.DebugName = GetType().Name + nameof(ps);
                 }
                 else
                 {
-                    device.CompileFromFile(desc.PixelShader, desc.PixelShaderEntrypoint, "ps_5_0", out var pBlob);
+                    device.CompileFromFile(desc.PixelShader, macros, desc.PixelShaderEntrypoint, "ps_5_0", out var pBlob);
                     if (pBlob == null)
                     {
                         return;
                     }
-                    ShaderCache.CacheShader(desc.PixelShader, pBlob);
+                    ShaderCache.CacheShader(desc.PixelShader, macros, pBlob);
                     ps = device.CreatePixelShader(pBlob);
                     ps.DebugName = GetType().Name + nameof(ps);
                     pBlob.Dispose();
                 }
         }
 
-        protected virtual void BeginDraw(IGraphicsContext context, Viewport viewport, IView view, Matrix4x4 transform)
+        protected virtual void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
             for (int i = 0; i < constants.Count; i++)
             {
@@ -209,30 +214,30 @@
             context.ClearState();
         }
 
-        public void Draw(IGraphicsContext context, Viewport viewport, IView view, Matrix4x4 transform, int vertexCount, int offset)
+        public void Draw(IGraphicsContext context, Viewport viewport, int vertexCount, int offset)
         {
-            BeginDraw(context, viewport, view, transform);
+            BeginDraw(context, viewport);
             context.Draw(vertexCount, offset);
             EndDraw(context);
         }
 
-        public void DrawIndexed(IGraphicsContext context, Viewport viewport, IView view, Matrix4x4 transform, int indexCount, int indexOffset, int vertexOffset)
+        public void DrawIndexed(IGraphicsContext context, Viewport viewport, int indexCount, int indexOffset, int vertexOffset)
         {
-            BeginDraw(context, viewport, view, transform);
+            BeginDraw(context, viewport);
             context.DrawIndexed(indexCount, indexOffset, vertexOffset);
             EndDraw(context);
         }
 
-        public void DrawInstanced(IGraphicsContext context, Viewport viewport, IView view, Matrix4x4 transform, int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
+        public void DrawInstanced(IGraphicsContext context, Viewport viewport, int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
         {
-            BeginDraw(context, viewport, view, transform);
+            BeginDraw(context, viewport);
             context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
             EndDraw(context);
         }
 
-        public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, IView view, Matrix4x4 transform, int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset)
+        public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset)
         {
-            BeginDraw(context, viewport, view, transform);
+            BeginDraw(context, viewport);
             context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
             EndDraw(context);
         }
@@ -270,11 +275,11 @@
             Reload -= OnReload;
 
             foreach (var constant in constants)
-                constant.Constant.Dispose();
+                constant.Constant?.Dispose();
             foreach (var resource in resources)
-                resource.Resource.Dispose();
+                resource.Resource?.Dispose();
             foreach (var sampler in samplers)
-                sampler.Sampler.Dispose();
+                sampler.Sampler?.Dispose();
 
             if (vs is not null)
                 vs.Dispose();

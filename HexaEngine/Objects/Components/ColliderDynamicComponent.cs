@@ -7,8 +7,10 @@
 
     public class ColliderDynamicComponent : IComponent
     {
+#nullable disable
         private SceneNode node;
         private Scene scene;
+#nullable enable
         public BodyDescription BodyDescription { get; set; }
 
         public BodyHandle Handle { get; private set; }

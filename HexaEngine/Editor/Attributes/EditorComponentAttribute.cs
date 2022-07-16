@@ -41,8 +41,8 @@
 
         public bool IsInternal { get; }
 
-        public Type[] AllowedTypes { get; }
+        public Type[]? AllowedTypes { get; }
 
-        public Type[] DisallowedTypes { get; }
+        public Type[]? DisallowedTypes { get; }
     }
 }

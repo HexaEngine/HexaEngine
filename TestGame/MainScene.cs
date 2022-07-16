@@ -11,7 +11,7 @@
             AddMaterial(new()
             {
                 Name = "Sphere",
-                Color = new(1, 0, 0),
+                Albedo = new(1, 0, 0),
                 Metalness = 0,
                 Roughness = 0.2f,
                 Ao = 1,
@@ -19,7 +19,7 @@
             AddMaterial(new()
             {
                 Name = "Box1",
-                Color = new(0, 1, 0),
+                Albedo = new(0, 1, 0),
                 Metalness = 0,
                 Roughness = 0.2f,
                 Ao = 1,
@@ -27,7 +27,7 @@
             AddMaterial(new()
             {
                 Name = "Box2",
-                Color = new(1, 0, 0),
+                Albedo = new(1, 0, 0),
                 Metalness = 0,
                 Roughness = 0.2f,
                 Ao = 1,

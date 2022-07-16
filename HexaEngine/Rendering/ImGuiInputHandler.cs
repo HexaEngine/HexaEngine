@@ -24,26 +24,26 @@ namespace HexaEngine.Rendering
             InitKeyMap();
         }
 
-        private void KeyboardCharInput(object sender, Core.Input.Events.KeyboardCharEventArgs e)
+        private void KeyboardCharInput(object? sender, Core.Input.Events.KeyboardCharEventArgs e)
         {
             var io = ImGui.GetIO();
             io.AddInputCharactersUTF8(e.Char.ToString());
         }
 
-        private void KeyboardInput(object sender, Core.Input.Events.KeyboardEventArgs e)
+        private void KeyboardInput(object? sender, Core.Input.Events.KeyboardEventArgs e)
         {
             var io = ImGui.GetIO();
             io.KeysDown[(int)e.KeyCode] = e.KeyState == KeyState.Pressed;
         }
 
-        private void MouseWheelInput(object sender, Core.Input.Events.MouseWheelEventArgs e)
+        private void MouseWheelInput(object? sender, Core.Input.Events.MouseWheelEventArgs e)
         {
             var io = ImGui.GetIO();
             io.MouseWheel = e.Y;
             io.MouseWheelH = e.X;
         }
 
-        private void MouseButtonInput(object sender, Core.Input.Events.MouseButtonEventArgs e)
+        private void MouseButtonInput(object? sender, Core.Input.Events.MouseButtonEventArgs e)
         {
             window.RenderDispatcher.Invoke(() =>
             {

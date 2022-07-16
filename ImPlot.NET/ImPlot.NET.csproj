@@ -12,7 +12,6 @@
     <PackageVersion>$(AssemblyVersion)$(PackagePrereleaseIdentifier)</PackageVersion>
     <PackageTags>ImPlot ImGui ImGui.NET Immediate Mode GUI</PackageTags>
     <PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
-    <DocumentationFile Condition="'$(Configuration)' == 'Release'">$(OutputPath)\ImPlot.NET.xml</DocumentationFile>
     <RootNamespace>ImPlotNET</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
@@ -28,5 +27,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="build\net40\ImPlot.NET.targets" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\deps\cimgui\win-x64\cimplot.dll">
+      <PackagePath>runtimes/win-x64/native</PackagePath>
+      <Pack>true</Pack>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

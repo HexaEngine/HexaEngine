@@ -7,7 +7,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
@@ -16,18 +15,23 @@
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
 
     public class Scene
     {
+#nullable disable
         private IGraphicsDevice device;
         private ISceneRenderer renderer;
+#nullable enable
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
         private readonly List<Mesh> meshes = new();
         private readonly List<Material> materials = new();
-        private readonly List<Texture> textures = new();
+        private readonly Dictionary<string, IShaderResourceView> textures = new();
+
+        public readonly Queue<SceneCommand> CommandQueue = new();
 
         [JsonIgnore]
         public readonly Simulation Simulation;
@@ -77,9 +81,6 @@
         public IReadOnlyList<Material> Materials => materials;
 
         [JsonIgnore]
-        public IReadOnlyList<Texture> Textures => textures;
-
-        [JsonIgnore]
         public Camera CurrentCamera => cameras[ActiveCamera];
 
         public SceneNode Root => root;
@@ -91,20 +92,37 @@
             Time.Initialize();
             Time.FrameUpdate();
             renderer.Initialize(device, window);
-            materials.ForEach(x => x.Initialize(device));
+            materials.ForEach(x => { x.Initialize(this, device); CommandQueue.Enqueue(new() { Sender = x, Type = CommandType.Load }); });
+
             root.Initialize(device);
         }
 
-        public bool TryGetMaterial(string name, out Material material)
+        public bool TryGetMaterial(string name, [NotNullWhen(true)] out Material? material)
         {
             material = materials.FirstOrDefault(x => x.Name == name);
             return material != null;
         }
 
+        public IShaderResourceView LoadTexture(string name)
+        {
+            if (textures.TryGetValue(name, out var texture))
+            {
+                if (!texture.IsDisposed)
+                    return texture;
+                else
+                    textures.Remove(name);
+            }
+            var tex = device.LoadTexture2D(name);
+            texture = device.CreateShaderResourceView(tex);
+            tex.Dispose();
+            textures.Add(name, texture);
+            return texture;
+        }
+
         public void AddMaterial(Material material)
         {
             if (root.Initialized)
-                material.Initialize(device);
+                material.Initialize(this, device);
             materials.Add(material);
         }
 
@@ -115,7 +133,7 @@
             materials.Remove(material);
         }
 
-        private void FixedUpdate(object sender, EventArgs e)
+        private void FixedUpdate(object? sender, EventArgs e)
         {
             root.Children.ForEach(x => x.FixedUpdate());
         }
@@ -178,15 +196,8 @@
         {
             root.Uninitialize();
             materials.ForEach(x => x.Dispose());
+            textures.ForEach(x => x.Value.Dispose());
             Renderer.Dispose();
         }
-    }
-
-    [Flags]
-    public enum SceneUpdateFlags
-    {
-        ImmediateData = 1,
-        Resources = 2,
-        All = ImmediateData | Resources,
     }
 }

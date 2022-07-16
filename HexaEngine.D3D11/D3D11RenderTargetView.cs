@@ -5,23 +5,19 @@
     using System;
     using Viewport = Mathematics.Viewport;
 
-    public unsafe class D3D11RenderTargetView : DisposableBase, IRenderTargetView
+    public unsafe class D3D11RenderTargetView : DeviceChildBase, IRenderTargetView
     {
         private readonly ID3D11RenderTargetView* rtv;
 
         public D3D11RenderTargetView(ID3D11RenderTargetView* rtv, RenderTargetViewDescription description, Viewport viewport)
         {
             this.rtv = rtv;
-            NativePointer = new(rtv);
+            nativePointer = new(rtv);
             Description = description;
             Viewport = viewport;
         }
 
         public RenderTargetViewDescription Description { get; }
-
-        public IntPtr NativePointer { get; }
-
-        public string? DebugName { get; set; } = string.Empty;
 
         public Viewport Viewport { get; }
 

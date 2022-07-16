@@ -2,18 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using SharpGen.Runtime;
-    using Silk.NET.Core.Native;
-    using Silk.NET.Direct3D11;
-    using System.Runtime.CompilerServices;
-    using System.Text;
     using Vortice.D3DCompiler;
-    using Vortice.Direct3D;
     using Blob = Core.Graphics.Blob;
 
     public static unsafe class ShaderCompiler
     {
-        public static void Compile(string source, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        public static bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             ShaderFlags flags = (ShaderFlags)(1 << 21);
 #if DEBUG && !RELEASE && !SHADER_FORCE_OPTIMIZE
@@ -22,15 +16,30 @@
 #if SHADER_FORCE_OPTIMIZE
             flags |= ShaderFlags.OptimizationLevel3;
 #endif
-
+#nullable disable
+            var vmacros = macros.Select(x => new Vortice.Direct3D.ShaderMacro(x.Name, x.Definition)).Union(new Vortice.Direct3D.ShaderMacro[] { new(null, null) }).ToArray();
+#nullable enable
             ShaderIncludeHandler handler = new(Path.Combine(Paths.CurrentShaderPath, sourceName));
-            Compiler.Compile(source, null, handler, entryPoint, sourceName, profile, flags, out var vBlob, out var vError);
+            Compiler.Compile(source, vmacros, handler, entryPoint, sourceName, profile, flags, out var vBlob, out var vError);
 
-            shaderBlob = new(vBlob.BufferPointer, (int)vBlob.BufferSize);
             if (vError != null)
+            {
                 errorBlob = new(vError.BufferPointer, (int)vError.BufferSize);
+                if (vBlob == null)
+                {
+                    shaderBlob = null;
+                    return false;
+                }
+
+                shaderBlob = new(vBlob.BufferPointer, (int)vBlob.BufferSize);
+            }
             else
+            {
                 errorBlob = null;
+                shaderBlob = new(vBlob.BufferPointer, (int)vBlob.BufferSize);
+            }
+
+            return true;
         }
 
         public static Blob GetInputSignature(Blob shader)

@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="build\netstandard2.0\SPIRVCross.targets" />
+    <None Remove="native\linux-x64\libspirv-cross-c-shared.so" />
+    <None Remove="native\osx-x64\libspirv-cross-c-shared.dylib" />
+    <None Remove="native\win-x64\spirv-cross-c-shared.dll" />
+    <None Remove="native\win-x86\spirv-cross-c-shared.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="build\netstandard2.0\SPIRVCross.targets">
+      <PackagePath>build/netstandard2.0/SPIRVCross.targets</PackagePath>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="native\linux-x64\libspirv-cross-c-shared.so">
+      <PackagePath>runtimes/linux-x64/native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="native\osx-x64\libspirv-cross-c-shared.dylib">
+      <PackagePath>runtimes/osx-x64/native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="native\win-x64\spirv-cross-c-shared.dll">
+      <PackagePath>runtimes/win-x64/native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </Content>
+    <Content Include="native\win-x86\spirv-cross-c-shared.dll">
+      <PackagePath>runtimes/win-x86/native</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+    </Content>
+  </ItemGroup>
+  
+</Project>

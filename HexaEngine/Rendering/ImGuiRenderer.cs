@@ -1,4 +1,5 @@
 ﻿//based on https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_dx11.cpp
+#nullable disable
 
 using HexaEngine.Core.Debugging;
 using HexaEngine.Core.Graphics;
@@ -7,8 +8,7 @@ using HexaEngine.Mathematics;
 using HexaEngine.Windows;
 using ImGuiNET;
 using ImGuizmoNET;
-using System;
-using System.Collections.Generic;
+using ImPlotNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImDrawIdx = System.UInt16;
@@ -44,6 +44,10 @@ namespace HexaEngine.Rendering
         {
             IntPtr igContext = ImGui.CreateContext();
             ImGui.SetCurrentContext(igContext);
+            ImPlot.SetImGuiContext(igContext);
+            var ip = ImPlot.CreateContext();
+            ImPlot.SetCurrentContext(ip);
+
             ImGuizmo.SetImGuiContext(igContext);
 
             device = window.Device;
@@ -54,8 +58,10 @@ namespace HexaEngine.Rendering
             io.Fonts.AddFontDefault();
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.HasMouseCursors;
-
             CreateDeviceObjects();
+
+            ImPlot.StyleColorsDark();
+
             inputHandler = new(window);
         }
 
@@ -63,6 +69,7 @@ namespace HexaEngine.Rendering
         {
             inputHandler.Update();
             ImGui.NewFrame();
+
             ImGuizmo.BeginFrame();
             ImGuiConsole.Draw();
             Designer.Draw();
@@ -72,7 +79,7 @@ namespace HexaEngine.Rendering
         {
             ImGui.Render();
             ImGui.EndFrame();
-            context.SetRenderTargets(swapChain.BackbufferRTV, null);
+            context.SetRenderTarget(swapChain.BackbufferRTV, null);
             Render(ImGui.GetDrawData());
         }
 

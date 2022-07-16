@@ -36,7 +36,7 @@
         internal IDXGISwapChain1* swapChain;
 
         [SupportedOSPlatform("windows")]
-        public D3D11GraphicsDevice(SdlWindow window)
+        public D3D11GraphicsDevice(SdlWindow? window)
         {
             DXGI = DXGI.GetApi();
             D3D11 = D3D11.GetApi();
@@ -125,10 +125,12 @@
         public IGraphicsContext Context { get; }
 
         public IntPtr NativePointer { get; }
-        public static Guid WKPDID_D3DDebugObjectName = new(0x429b8c22, 0x9188, 0x4b0c, 0x87, 0x42, 0xac, 0xb0, 0xbf, 0x85, 0xc2, 0x00);
 
         public string? DebugName { get; set; } = string.Empty;
-        public ISwapChain SwapChain { get; }
+
+        public bool IsDisposed => disposedValue;
+
+        public ISwapChain? SwapChain { get; }
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
@@ -368,25 +370,28 @@
             return new D3D11Texture1D(texture, description);
         }
 
-        public ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[] subresources)
+        public ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[]? subresources)
         {
             ID3D11Texture1D* texture;
             Texture1DDesc desc = Helper.Convert(description);
-            var data = Helper.Convert(subresources);
-            Device->CreateTexture1D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+            if (subresources != null)
+            {
+                var data = Helper.Convert(subresources);
+                Device->CreateTexture1D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+            }
+            else
+            {
+                Device->CreateTexture1D(ref desc, null, &texture).ThrowHResult();
+            }
             return new D3D11Texture1D(texture, description);
         }
 
-        public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, object value, BindFlags bindFlags, ResourceMiscFlag misc)
+        public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag misc)
         {
-            Texture1DDescription description = new(format, width, arraySize, mipLevels, bindFlags, miscFlags: misc);
-            ID3D11Texture1D* texture;
-            Texture1DDesc desc = Helper.Convert(description);
-            Device->CreateTexture1D(ref desc, null, &texture).ThrowHResult();
-            return new D3D11Texture1D(texture, description);
+            return CreateTexture1D(format, width, arraySize, mipLevels, subresources, bindFlags, Usage.Default, CpuAccessFlags.None, misc);
         }
 
-        public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[] subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
+        public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture1DDescription description = new(format, width, arraySize, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
             ID3D11Texture1D* texture;
@@ -413,22 +418,25 @@
             return new D3D11Texture2D(texture, description);
         }
 
-        public ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[] subresources)
+        public ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[]? subresources)
         {
             ID3D11Texture2D* texture;
             Texture2DDesc desc = Helper.Convert(description);
-            var data = Helper.Convert(subresources);
-            Device->CreateTexture2D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+            if (subresources != null)
+            {
+                var data = Helper.Convert(subresources);
+                Device->CreateTexture2D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+            }
+            else
+            {
+                Device->CreateTexture2D(ref desc, null, &texture).ThrowHResult();
+            }
             return new D3D11Texture2D(texture, description);
         }
 
-        public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, object value, BindFlags bindFlags, ResourceMiscFlag misc)
+        public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag misc)
         {
-            Texture2DDescription description = new(format, width, height, arraySize, mipLevels, bindFlags, miscFlags: misc);
-            ID3D11Texture2D* texture;
-            Texture2DDesc desc = Helper.Convert(description);
-            Device->CreateTexture2D(ref desc, null, &texture).ThrowHResult();
-            return new D3D11Texture2D(texture, description);
+            return CreateTexture2D(format, width, height, arraySize, mipLevels, subresources, bindFlags, Usage.Default, CpuAccessFlags.None, 1, 0, misc);
         }
 
         public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag misc = ResourceMiscFlag.None)
@@ -458,25 +466,28 @@
             return new D3D11Texture3D(texture, description);
         }
 
-        public ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[] subresources)
+        public ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[]? subresources)
         {
             ID3D11Texture3D* texture;
             Texture3DDesc desc = Helper.Convert(description);
-            var data = Helper.Convert(subresources);
-            Device->CreateTexture3D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+            if (subresources != null)
+            {
+                var data = Helper.Convert(subresources);
+                Device->CreateTexture3D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+            }
+            else
+            {
+                Device->CreateTexture3D(ref desc, null, &texture).ThrowHResult();
+            }
             return new D3D11Texture3D(texture, description);
         }
 
-        public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, object value, BindFlags bindFlags, ResourceMiscFlag misc)
+        public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag misc)
         {
-            Texture3DDescription description = new(format, width, height, height, mipLevels, bindFlags, miscFlags: misc);
-            ID3D11Texture3D* texture;
-            Texture3DDesc desc = Helper.Convert(description);
-            Device->CreateTexture3D(ref desc, null, &texture).ThrowHResult();
-            return new D3D11Texture3D(texture, description);
+            return CreateTexture3D(format, width, height, depth, mipLevels, subresources, bindFlags, Usage.Default, CpuAccessFlags.None, misc);
         }
 
-        public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[] subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
+        public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture3DDescription description = new(format, width, height, height, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
             ID3D11Texture3D* texture;
@@ -517,7 +528,7 @@
 
         private IResource LoadTextureAuto(string path, TextureDimension dimension)
         {
-            ScratchImage image = LoadAuto(path);
+            ScratchImage? image = LoadAuto(path);
             if (image == null)
             {
                 return InitFallback(dimension);
@@ -617,11 +628,11 @@
             throw new ArgumentOutOfRangeException(nameof(dimension));
         }
 
-        private ScratchImage LoadAuto(string path)
+        private static ScratchImage? LoadAuto(string path)
         {
-            VirtualStream fs = FileSystem.Open(path);
-            if (fs == null)
+            if (!FileSystem.TryOpen(path, out VirtualStream? fs))
                 return null;
+
             IntPtr ptr = fs.GetIntPtr(out _);
             string extension = Path.GetExtension(path);
             return extension switch
@@ -631,6 +642,117 @@
                 ".hdr" => TexHelper.Instance.LoadFromHDRMemory(ptr, fs.Length),
                 _ => TexHelper.Instance.LoadFromWICMemory(ptr, fs.Length, WIC_FLAGS.NONE),
             };
+        }
+
+        public void SaveTexture1D(ITexture1D texture, string path)
+        {
+            SaveAuto(texture, path);
+        }
+
+        public void SaveTexture2D(ITexture2D texture, string path)
+        {
+            SaveAuto(texture, path);
+        }
+
+        public void SaveTexture3D(ITexture3D texture, string path)
+        {
+            SaveAuto(texture, path);
+        }
+
+        public void SaveTextureCube(ITexture2D texture, string path)
+        {
+            SaveAuto(texture, path);
+        }
+
+        private void SaveAuto(IResource resource, string path)
+        {
+            ScratchImage image = TexHelper.Instance.CaptureTexture(NativePointer, Context.NativePointer, resource.NativePointer);
+            switch (Path.GetExtension(path))
+            {
+                case ".dds":
+                    image.SaveToDDSFile(DDS_FLAGS.NONE, path);
+                    break;
+
+                case ".tga":
+                    image.SaveToTGAFile(0, path);
+                    break;
+
+                case ".hdr":
+                    image.SaveToHDRFile(0, path);
+                    break;
+
+                case ".jpg":
+                    image.SaveToJPGFile(0, 100, path);
+                    break;
+
+                default:
+                    image.SaveToWICFile(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG), path);
+                    break;
+            }
+            image.Dispose();
+        }
+
+        public void SaveTexture1D(ITexture1D texture, Format format, string path)
+        {
+            SaveAuto(texture, format, path);
+        }
+
+        public void SaveTexture2D(ITexture2D texture, Format format, string path)
+        {
+            SaveAuto(texture, format, path);
+        }
+
+        public void SaveTexture3D(ITexture3D texture, Format format, string path)
+        {
+            SaveAuto(texture, format, path);
+        }
+
+        public void SaveTextureCube(ITexture2D texture, Format format, string path)
+        {
+            SaveAuto(texture, format, path);
+        }
+
+        private void SaveAuto(IResource resource, Format format, string path)
+        {
+            ScratchImage image = TexHelper.Instance.CaptureTexture(NativePointer, Context.NativePointer, resource.NativePointer);
+            if (TexHelper.Instance.IsCompressed((DXGI_FORMAT)Helper.Convert(format)))
+            {
+                TEX_COMPRESS_FLAGS flags = TEX_COMPRESS_FLAGS.PARALLEL;
+                if (format == Format.BC7RGBAUNorm)
+                    flags |= TEX_COMPRESS_FLAGS.BC7_QUICK;
+                ScratchImage image1 = image.Compress((DXGI_FORMAT)Helper.Convert(format), flags, 0.5f);
+                image.Dispose();
+                image = image1;
+            }
+            else
+            {
+                ScratchImage image1 = image.Convert((DXGI_FORMAT)Helper.Convert(format), TEX_FILTER_FLAGS.DEFAULT, 0.5f);
+                image.Dispose();
+                image = image1;
+            }
+            switch (Path.GetExtension(path))
+            {
+                case ".dds":
+                    image.SaveToDDSFile(DDS_FLAGS.NONE, path);
+                    break;
+
+                case ".tga":
+                    image.SaveToTGAFile(0, path);
+                    break;
+
+                case ".hdr":
+                    image.SaveToHDRFile(0, path);
+                    break;
+
+                case ".jpg":
+                    image.SaveToJPGFile(0, 100, path);
+                    break;
+
+                default:
+                    image.SaveToWICFile(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG), path);
+                    break;
+            }
+            image.Dispose();
         }
 
         public IVertexShader CreateVertexShader(byte[] bytecode)
@@ -689,9 +811,21 @@
             return new D3D11InputLayout(layout);
         }
 
+        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        {
+            ShaderCompiler.Compile(code, macros, entry, sourceName, profile, out shaderBlob, out errorBlob);
+            if (errorBlob != null)
+                ImGuiConsole.Log(errorBlob.AsString());
+        }
+
         public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
-            ShaderCompiler.Compile(code, entry, sourceName, profile, out shaderBlob, out errorBlob);
+            Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, out shaderBlob, out errorBlob);
+        }
+
+        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob)
+        {
+            Compile(code, macros, entry, sourceName, profile, out shaderBlob, out _);
         }
 
         public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob)
@@ -699,11 +833,21 @@
             Compile(code, entry, sourceName, profile, out shaderBlob, out _);
         }
 
-        public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
-            ShaderCompiler.Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), entry, path, profile, out shaderBlob, out errorBlob);
+            ShaderCompiler.Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out shaderBlob, out errorBlob);
             if (errorBlob != null)
                 ImGuiConsole.Log(errorBlob.AsString());
+        }
+
+        public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        {
+            CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, out shaderBlob, out errorBlob);
+        }
+
+        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob)
+        {
+            CompileFromFile(path, macros, entry, profile, out shaderBlob, out _);
         }
 
         public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob)
@@ -862,7 +1006,7 @@
         {
             if (!disposedValue)
             {
-                SwapChain.Dispose();
+                SwapChain?.Dispose();
                 Context.Dispose();
                 Device->Release();
                 IDXGIAdapter->Release();
@@ -882,12 +1026,11 @@
             }
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~D3D11GraphicsDevice()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
+        ~D3D11GraphicsDevice()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
 
         public void Dispose()
         {

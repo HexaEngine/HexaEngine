@@ -1,7 +1,8 @@
-﻿namespace HexaEngine.Editor
+﻿#nullable disable
+
+namespace HexaEngine.Editor
 {
     using HexaEngine.Cameras;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;

@@ -6,7 +6,7 @@
     using Silk.NET.DXGI;
     using System;
 
-    public unsafe class DXGISwapChain : DisposableBase, ISwapChain
+    public unsafe class DXGISwapChain : DeviceChildBase, ISwapChain
     {
         private IDXGISwapChain1* swapChain;
         private SwapChainFlag flags;

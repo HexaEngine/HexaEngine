@@ -43,9 +43,9 @@
                 if (ImGui.InputText("Name", ref name, 256))
                     material.Name = name;
 
-                var color = material.Color;
+                var color = material.Albedo;
                 if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))
-                    material.Color = color;
+                    material.Albedo = color;
 
                 var opacity = material.Opacity;
                 if (ImGui.SliderFloat("Opacity", ref opacity, 0, 1))
@@ -66,6 +66,34 @@
                 var Emissivness = material.Emissivness;
                 if (ImGui.ColorEdit3("Emissivness", ref Emissivness, ImGuiColorEditFlags.Float))
                     material.Emissivness = Emissivness;
+
+                var texAlbedo = material.AlbedoTextureMap;
+                if (ImGui.InputText("Albedo Tex", ref texAlbedo, 256))
+                    material.AlbedoTextureMap = texAlbedo;
+
+                var texNormal = material.NormalTextureMap;
+                if (ImGui.InputText("Normal Tex", ref texNormal, 256))
+                    material.NormalTextureMap = texNormal;
+
+                var texdisplacement = material.DisplacementTextureMap;
+                if (ImGui.InputText("Displacement Tex", ref texdisplacement, 256))
+                    material.DisplacementTextureMap = texdisplacement;
+
+                var texRoughness = material.RoughnessTextureMap;
+                if (ImGui.InputText("Roughness Tex", ref texRoughness, 256))
+                    material.RoughnessTextureMap = texRoughness;
+
+                var texMetalness = material.MetalnessTextureMap;
+                if (ImGui.InputText("Metalness Tex", ref texMetalness, 256))
+                    material.MetalnessTextureMap = texMetalness;
+
+                var texEmissive = material.EmissiveTextureMap;
+                if (ImGui.InputText("Emissive Tex", ref texEmissive, 256))
+                    material.EmissiveTextureMap = texEmissive;
+
+                var texAo = material.AoTextureMap;
+                if (ImGui.InputText("Ao Tex", ref texAo, 256))
+                    material.AoTextureMap = texAo;
             }
 
             ImGui.End();

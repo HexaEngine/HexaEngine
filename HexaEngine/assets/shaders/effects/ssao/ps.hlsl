@@ -1,3 +1,5 @@
+#include "../../camera.hlsl"
+
 struct VSOut
 {
     float4 Pos : SV_Position;
@@ -11,15 +13,8 @@ Texture2D emissionTexture : register(t4);
 Texture2D misc0Texture : register(t5);
 Texture2D misc1Texture : register(t6);
 Texture2D misc2Texture : register(t7);
-Texture2D noise : register(t0);
 
 SamplerState samplerState;
-
-cbuffer mvp : register(b0)
-{
-    matrix view;
-    matrix projection;
-};
 
 static const float3 taps[16] =
 {

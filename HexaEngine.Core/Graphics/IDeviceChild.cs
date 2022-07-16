@@ -4,6 +4,8 @@
     {
         public IntPtr NativePointer { get; }
 
-        string DebugName { get; set; }
+        string? DebugName { get; set; }
+
+        bool IsDisposed { get; }
     }
 }

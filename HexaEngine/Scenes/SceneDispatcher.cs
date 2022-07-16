@@ -13,7 +13,7 @@
 
         public void ExecuteInvokes()
         {
-            while (invokes.TryDequeue(out Action action))
+            while (invokes.TryDequeue(out Action? action))
             {
                 action.Invoke();
             }

@@ -17,7 +17,7 @@
 
         public static float FixedUpdatePerSecond => FixedUpdateRate / 1000F;
 
-        public static event EventHandler FixedUpdate;
+        public static event EventHandler? FixedUpdate;
 
         // Public Methods
         public static void Initialize()
@@ -39,7 +39,7 @@
             while (fixedTime > FixedUpdatePerSecond)
             {
                 fixedTime -= FixedUpdatePerSecond;
-                FixedUpdate?.Invoke(null, null);
+                FixedUpdate?.Invoke(null, EventArgs.Empty);
             }
         }
     }

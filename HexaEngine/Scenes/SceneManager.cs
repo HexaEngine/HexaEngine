@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Scenes
+﻿#nullable disable
+
+namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
     using HexaEngine.Windows;

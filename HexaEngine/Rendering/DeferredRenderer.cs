@@ -12,18 +12,69 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Pipelines;
+    using HexaEngine.Pipelines.Deferred;
+    using HexaEngine.Pipelines.Deferred.PrePass;
+    using HexaEngine.Pipelines.Effects;
+    using HexaEngine.Pipelines.Forward;
+    using HexaEngine.Rendering.ConstantBuffers;
     using HexaEngine.Scenes;
-    using HexaEngine.Shaders;
-    using HexaEngine.Shaders.Effects;
     using ImGuiNET;
     using System;
-    using System.Collections.Generic;
     using System.Numerics;
-    using System.Runtime.InteropServices;
-    using MathUtil = Mathematics.MathUtil;
 
     public unsafe class DeferredRenderer : ISceneRenderer
     {
+        public class ModelTexture
+        {
+            public string Name;
+            public IShaderResourceView SRV;
+            public int Instances;
+
+            public ModelTexture(string name, IShaderResourceView sRV, int instances)
+            {
+                Name = name;
+                SRV = sRV;
+                Instances = instances;
+            }
+        }
+
+        public class ModelMaterial
+        {
+            public IBuffer CB;
+            public ModelTexture? AlbedoTexture;
+            public ModelTexture? NormalTexture;
+            public ModelTexture? DisplacementTexture;
+            public ModelTexture? RoughnessTexture;
+            public ModelTexture? MetalnessTexture;
+            public ModelTexture? EmissiveTexture;
+            public ModelTexture? AoTexture;
+            public int Instances;
+
+            public ModelMaterial(IBuffer cB)
+            {
+                CB = cB;
+            }
+        }
+
+        public class ModelMesh
+        {
+            public IBuffer? VB;
+            public IBuffer? IB;
+            public IBuffer? ISB;
+            public int VertexCount;
+            public int IndexCount;
+            public int InstanceCount;
+            public ModelMaterial? Material;
+            public bool Drawable;
+            public BoundingBox Box;
+        }
+
+        private readonly Dictionary<Mesh, ModelMesh> meshes = new();
+        private readonly Dictionary<string, ModelMaterial> materials = new();
+        private readonly Dictionary<string, ModelTexture> textures = new();
+
+#nullable disable
         private bool disposedValue;
         private IGraphicsDevice device;
         private IGraphicsContext context;
@@ -34,20 +85,21 @@
 
         private IBuffer cameraBuffer;
         private IBuffer lightBuffer;
+        private IBuffer skyboxBuffer;
         private MTLShader materialShader;
         private MTLDepthShaderBack materialDepthBackface;
         private MTLDepthShaderFront materialDepthFrontface;
-        private LightShader lightShader;
-        private SkyboxShader skyboxShader;
+        private PBRBRDFPipeline pbrlightShader;
+        private SkyboxPipeline skyboxShader;
 
         private RenderTextureArray gbuffers;
 
-        private Texture shadowMap;
-        private Texture ssaoBuffer;
-        private Texture lightMap;
-        private Texture fxaaBuffer;
-        private Texture ssrBuffer;
-        private Texture frontdepthbuffer;
+        private RenderTexture shadowMap;
+        private RenderTexture ssaoBuffer;
+        private RenderTexture lightMap;
+        private RenderTexture fxaaBuffer;
+        private RenderTexture ssrBuffer;
+        private RenderTexture frontdepthbuffer;
 
         private ISamplerState pointSampler;
 
@@ -60,11 +112,19 @@
         private BRDFEffect brdfFilter;
 
         private ISamplerState envsmp;
-        private Texture env;
-        private Texture envirr;
-        private Texture envfilter;
+        private RenderTexture env;
+        private RenderTexture envirr;
+        private RenderTexture envfilter;
 
-        private Texture brdflut;
+        private RenderTexture brdflut;
+
+        private ShadingModel currentShadingModel;
+        private ShadingModel[] availableShadingModels;
+        private string[] availableShadingModelStrings;
+        private int currentShadingModelIndex;
+        private bool enableSSR;
+        private bool enableAO;
+#nullable enable
 
         public DeferredRenderer()
         {
@@ -73,32 +133,46 @@
 
         public void Initialize(IGraphicsDevice device, SdlWindow window)
         {
+            availableShadingModels = new ShadingModel[] { ShadingModel.Flat, ShadingModel.PbrBrdf };
+            availableShadingModelStrings = availableShadingModels.Select(x => x.ToString()).ToArray();
+            currentShadingModel = ShadingModel.PbrBrdf;
+            currentShadingModelIndex = Array.IndexOf(availableShadingModels, currentShadingModel);
             var size = sizeof(Matrix4x4);
             var size2 = sizeof(CBWorld);
             var size3 = sizeof(CBCamera);
             this.device = device;
             context = device.Context;
-            swapChain = device.SwapChain;
+            swapChain = device.SwapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
             swapChain.Resizing += OnResizeBegin;
             swapChain.Resized += OnResizeEnd;
 
             quad = new(device);
             skycube = new(device);
 
+            pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+
             cameraBuffer = device.CreateBuffer(new CBCamera(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             lightBuffer = device.CreateBuffer(new CBLight(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            skyboxBuffer = device.CreateBuffer(new CBWorld(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             materialShader = new(device);
+            materialShader.Constants.Add(new(cameraBuffer, ShaderStage.Domain, 1));
             materialDepthBackface = new(device);
+            materialDepthBackface.Constants.Add(new(cameraBuffer, ShaderStage.Domain, 1));
             materialDepthFrontface = new(device);
-            lightShader = new(device);
+            materialDepthFrontface.Constants.Add(new(cameraBuffer, ShaderStage.Domain, 1));
+            pbrlightShader = new(device);
+            pbrlightShader.Constants.Add(new(lightBuffer, ShaderStage.Pixel, 0));
+            pbrlightShader.Constants.Add(new(cameraBuffer, ShaderStage.Pixel, 1));
+            pbrlightShader.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
             skyboxShader = new(device);
+            skyboxShader.Constants.Add(new(skyboxBuffer, ShaderStage.Vertex, 0));
+            skyboxShader.Constants.Add(new(cameraBuffer, ShaderStage.Vertex, 1));
 
             gbuffers = new RenderTextureArray(device, 1280, 720, 8, Format.RGBA32Float);
             gbuffers.RenderTargets.DepthStencil = swapChain.BackbufferDSV;
             gbuffers.Add(new(ShaderStage.Pixel, 0));
 
             frontdepthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(1280, 720, 1, Format.R32Float), DepthStencilDesc.Default);
-            pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
 
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(1280, 720, 1));
             shadowMap = new(device, TextureDescription.CreateTexture2DArrayWithRTV(IResource.MaximumTexture2DSize, IResource.MaximumTexture2DSize, 1, 1, Format.R32Float));
@@ -129,9 +203,7 @@
             blendEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
 
             env = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
-            env.AddBinding(new(ShaderStage.Pixel, 0));
             envirr = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "irradiance_o.dds", TextureDimension.TextureCube));
-            envirr.AddBinding(new(ShaderStage.Pixel, 0));
             envfilter = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "prefilter_o.dds", TextureDimension.TextureCube));
 
             envsmp = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
@@ -140,7 +212,7 @@
 
             brdfFilter = new(device);
             brdfFilter.Target = brdflut.RenderTargetView;
-            brdfFilter.Draw(context, null);
+            brdfFilter.Draw(context);
 
             ImGuiConsole.RegisterCommand("recompile_shaders", _ =>
             {
@@ -157,14 +229,16 @@
                 gbuffers.GetResourceView(5),
                 gbuffers.GetResourceView(6),
                 gbuffers.GetResourceView(7),
+#nullable disable
                 lightMap.ResourceView,
                 ssaoBuffer.ResourceView,
                 ssrBuffer.ResourceView,
                 fxaaBuffer.ResourceView,
+#nullable enable
             });
         }
 
-        private void OnResizeBegin(object sender, EventArgs e)
+        private void OnResizeBegin(object? sender, EventArgs e)
         {
             FramebufferDebugger.Clear();
             gbuffers.Dispose();
@@ -175,7 +249,7 @@
             frontdepthbuffer.Dispose();
         }
 
-        private void OnResizeEnd(object sender, ResizedEventArgs e)
+        private void OnResizeEnd(object? sender, ResizedEventArgs e)
         {
             gbuffers = new RenderTextureArray(device, e.NewWidth, e.NewHeight, 8, Format.RGBA32Float);
             gbuffers.RenderTargets.DepthStencil = swapChain.BackbufferDSV;
@@ -210,10 +284,12 @@
                 gbuffers.GetResourceView(5),
                 gbuffers.GetResourceView(6),
                 gbuffers.GetResourceView(7),
+                #nullable disable
                 lightMap.ResourceView,
                 ssaoBuffer.ResourceView,
                 ssrBuffer.ResourceView,
                 fxaaBuffer.ResourceView,
+                #nullable enable
             });
 
             gbuffers.GetResourceView(0).DebugName = "Albedo";
@@ -224,15 +300,171 @@
             gbuffers.GetResourceView(5).DebugName = "Misc 0";
             gbuffers.GetResourceView(6).DebugName = "Misc 1";
             gbuffers.GetResourceView(7).DebugName = "Misc 2";
+#nullable disable
             lightMap.ResourceView.DebugName = "Light Buffer";
             ssaoBuffer.ResourceView.DebugName = "SSAO/HBAO Buffer";
             ssrBuffer.ResourceView.DebugName = "SSR/DDASSR Buffer";
             fxaaBuffer.ResourceView.DebugName = "FXAA Buffer";
+#nullable enable
+        }
+
+        private void Update(Scene scene)
+        {
+            while (scene.CommandQueue.TryDequeue(out var cmd))
+            {
+                if (cmd.Sender is Mesh mesh)
+                {
+                    switch (cmd.Type)
+                    {
+                        case CommandType.Load:
+                            {
+                                ModelMesh model = new();
+                                if (mesh.Vertices != null)
+                                {
+                                    IBuffer vb = device.CreateBuffer(mesh.Vertices, BindFlags.VertexBuffer);
+                                    model.VB = vb;
+                                    model.VertexCount = mesh.Vertices.Length;
+                                }
+                                if (mesh.Indices != null)
+                                {
+                                    IBuffer ib = device.CreateBuffer(mesh.Indices, BindFlags.IndexBuffer);
+                                    model.IB = ib;
+                                    model.IndexCount = mesh.Indices.Length;
+                                }
+                                if (!string.IsNullOrEmpty(mesh.MaterialName))
+                                {
+                                    model.Material = materials.GetValueOrDefault(mesh.MaterialName);
+                                }
+
+                                model.Drawable = model.VB != null && model.IB != null && model.ISB != null && model.Material != null;
+                                meshes.Add(mesh, model);
+                            }
+                            break;
+
+                        case CommandType.Unload:
+                            {
+                                var model = meshes[mesh];
+                                model.VB?.Dispose();
+                                model.IB?.Dispose();
+                                model.ISB?.Dispose();
+                                meshes.Remove(mesh);
+                            }
+                            break;
+
+                        case CommandType.Update:
+                            {
+                                var model = meshes[mesh];
+                                if (mesh.Vertices != null)
+                                {
+                                    model.VB?.Dispose();
+                                    IBuffer vb = device.CreateBuffer(mesh.Vertices, BindFlags.VertexBuffer);
+                                    model.VB = vb;
+                                    model.VertexCount = mesh.Vertices.Length;
+                                }
+                                if (mesh.Indices != null)
+                                {
+                                    model.IB?.Dispose();
+                                    IBuffer ib = device.CreateBuffer(mesh.Indices, BindFlags.IndexBuffer);
+                                    model.IB = ib;
+                                    model.IndexCount = mesh.Indices.Length;
+                                }
+                                if (string.IsNullOrEmpty(mesh.MaterialName))
+                                {
+                                    model.Material = materials.GetValueOrDefault(mesh.MaterialName);
+                                }
+                            }
+                            break;
+                    }
+                }
+
+                if (cmd.Sender is Material material)
+                {
+                    switch (cmd.Type)
+                    {
+                        case CommandType.Load:
+                            {
+                                ModelMaterial modelMaterial = new(device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+                                modelMaterial.AlbedoTexture = LoadTexture(material.AlbedoTextureMap);
+                                modelMaterial.NormalTexture = LoadTexture(material.NormalTextureMap);
+                                modelMaterial.DisplacementTexture = LoadTexture(material.DisplacementTextureMap);
+                                modelMaterial.RoughnessTexture = LoadTexture(material.RoughnessTextureMap);
+                                modelMaterial.MetalnessTexture = LoadTexture(material.MetalnessTextureMap);
+                                modelMaterial.EmissiveTexture = LoadTexture(material.EmissiveTextureMap);
+                                modelMaterial.AoTexture = LoadTexture(material.AoTextureMap);
+                                materials.Add(material.Name, modelMaterial);
+                            }
+                            break;
+
+                        case CommandType.Unload:
+                            {
+                                ModelMaterial modelMaterial = new(device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+                                materials.Remove(material.Name);
+                                UnloadTexture(modelMaterial.AlbedoTexture);
+                                UnloadTexture(modelMaterial.NormalTexture);
+                                UnloadTexture(modelMaterial.DisplacementTexture);
+                                UnloadTexture(modelMaterial.RoughnessTexture);
+                                UnloadTexture(modelMaterial.MetalnessTexture);
+                                UnloadTexture(modelMaterial.EmissiveTexture);
+                                UnloadTexture(modelMaterial.AoTexture);
+                            }
+                            break;
+
+                        case CommandType.Update:
+                            {
+                                ModelMaterial modelMaterial = materials[material.Name];
+                                UpdateTexture(ref modelMaterial.AlbedoTexture, material.AlbedoTextureMap);
+                                UpdateTexture(ref modelMaterial.NormalTexture, material.NormalTextureMap);
+                                UpdateTexture(ref modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
+                                UpdateTexture(ref modelMaterial.RoughnessTexture, material.RoughnessTextureMap);
+                                UpdateTexture(ref modelMaterial.MetalnessTexture, material.MetalnessTextureMap);
+                                UpdateTexture(ref modelMaterial.EmissiveTexture, material.EmissiveTextureMap);
+                                UpdateTexture(ref modelMaterial.AoTexture, material.AoTextureMap);
+                                context.Write(modelMaterial.CB, new CBMaterial(material));
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        public ModelTexture? LoadTexture(string? name)
+        {
+            if (string.IsNullOrEmpty(name)) return null;
+            if (textures.TryGetValue(name, out var texture))
+            {
+                texture.Instances++;
+                return texture;
+            }
+            var tex = device.LoadTexture2D(name);
+            texture = new(name, device.CreateShaderResourceView(tex), 1);
+            tex.Dispose();
+            textures.Add(name, texture);
+            return texture;
+        }
+
+        public void UnloadTexture(ModelTexture? texture)
+        {
+            if (texture == null) return;
+            texture.Instances--;
+            if (texture.Instances == 0)
+            {
+                textures.Remove(texture.Name);
+                texture.SRV.Dispose();
+            }
+        }
+
+        public void UpdateTexture(ref ModelTexture? texture, string name)
+        {
+            if (texture?.Name == name) return;
+            UnloadTexture(texture);
+            texture = LoadTexture(name);
         }
 
         public void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera camera)
         {
+            Update(scene);
             context.Write(cameraBuffer, new CBCamera(camera));
+            context.Write(skyboxBuffer, new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
             context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
 
             // Fill Geometry Buffer
@@ -242,9 +474,8 @@
                 Mesh mesh = scene.Meshes[i];
                 if (!mesh.Drawable) continue;
                 gbuffers.RenderTargets.SetTargets(context);
-                context.SetConstantBuffer(cameraBuffer, ShaderStage.Domain, 1);
                 mesh.Material.Bind(context);
-                mesh.DrawAuto(context, materialShader, gbuffers.Viewport, camera);
+                mesh.DrawAuto(context, materialShader, gbuffers.Viewport);
             }
 
             // Draw backface depth
@@ -254,9 +485,8 @@
                 Mesh mesh = scene.Meshes[i];
                 if (!mesh.Drawable) continue;
                 frontdepthbuffer.SetTarget(context);
-                context.SetConstantBuffer(cameraBuffer, ShaderStage.Domain, 1);
                 mesh.Material.Bind(context);
-                mesh.DrawAuto(context, materialDepthBackface, frontdepthbuffer.Viewport, null);
+                mesh.DrawAuto(context, materialDepthBackface, frontdepthbuffer.Viewport);
             }
 
             // Draw light depth
@@ -278,39 +508,41 @@
             }
 
             gbuffers.Bind(context);
-            ssaoEffect.Draw(context, camera);
+            context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
+            ssaoBuffer.ClearTarget(context, Vector4.One);
+            ssaoEffect.Draw(context);
 
             lightMap.ClearTarget(context, Vector4.Zero);
-            var cbuffer = new CBLight(scene.Lights);
-            context.Write(lightBuffer, cbuffer);
-            context.SetConstantBuffer(lightBuffer, ShaderStage.Pixel, 0);
-            context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
-            context.SetSampler(pointSampler, ShaderStage.Pixel, 0);
+            context.Write(lightBuffer, new CBLight(scene.Lights));
             gbuffers.Bind(context);
             envirr.Bind(context, 9);
             envfilter.Bind(context, 10);
             brdflut.Bind(context, 11);
             ssaoBuffer.Bind(context, 12);
             lightMap.SetTarget(context);
-            quad.DrawAuto(context, lightShader, lightMap.Viewport, default, default);
+            quad.DrawAuto(context, pbrlightShader, lightMap.Viewport);
 
             fxaaBuffer.ClearTarget(context, Vector4.Zero);
             lightMap.Bind(context, 0);
-            blendEffect.Draw(context, null);
+            blendEffect.Draw(context);
 
-            gbuffers.Bind(context);
-            lightMap.Bind(context, 0);
-            frontdepthbuffer.Bind(context, 3);
-            ssrEffect.Draw(context, camera);
+            if (enableSSR)
+            {
+                gbuffers.Bind(context);
+                context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
+                lightMap.Bind(context, 0);
+                frontdepthbuffer.Bind(context, 3);
+                ssrEffect.Draw(context);
 
-            ssrBuffer.Bind(context, 0);
-            ssrBlurEffect.Draw(context, null);
+                ssrBuffer.Bind(context, 0);
+                ssrBlurEffect.Draw(context);
+            }
 
             {
                 fxaaBuffer.SetTarget(context);
-                env.Bind(context);
+                context.SetShaderResource(env.ResourceView, ShaderStage.Pixel, 0);
                 context.SetSampler(envsmp, ShaderStage.Pixel, 0);
-                skycube.DrawAuto(context, skyboxShader, fxaaBuffer.Viewport, camera, Matrix4x4.Identity);
+                skycube.DrawAuto(context, skyboxShader, fxaaBuffer.Viewport);
             }
 
             /*
@@ -326,6 +558,21 @@
             fxaaEffect.Draw(context, viewport);
         }
 
+        public void DrawSettings()
+        {
+            if (ImGui.Combo("Shading Model", ref currentShadingModelIndex, availableShadingModelStrings, availableShadingModelStrings.Length))
+            {
+                currentShadingModel = availableShadingModels[currentShadingModelIndex];
+            }
+
+            ImGui.Separator();
+
+            ImGui.Checkbox("Enable SSAO", ref enableAO);
+            ImGui.Checkbox("Enable SSR", ref enableSSR);
+
+            ssrEffect.DrawSettings();
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -338,7 +585,7 @@
                 materialShader.Dispose();
                 materialDepthBackface.Dispose();
                 materialDepthFrontface.Dispose();
-                lightShader.Dispose();
+                pbrlightShader.Dispose();
                 skyboxShader.Dispose();
                 gbuffers.Dispose();
 
@@ -378,334 +625,6 @@
         {
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-    }
-
-    public struct CBCamera
-    {
-        public Matrix4x4 View;
-        public Matrix4x4 Proj;
-        public Matrix4x4 ViewInv;
-        public Matrix4x4 ProjInv;
-
-        public CBCamera(Camera camera)
-        {
-            Proj = Matrix4x4.Transpose(camera.Transform.Projection);
-            View = Matrix4x4.Transpose(camera.Transform.View);
-            ProjInv = Matrix4x4.Transpose(camera.Transform.ProjectionInv);
-            ViewInv = Matrix4x4.Transpose(camera.Transform.ViewInv);
-        }
-
-        public CBCamera(CameraTransform camera)
-        {
-            Proj = Matrix4x4.Transpose(camera.Projection);
-            View = Matrix4x4.Transpose(camera.View);
-            ProjInv = Matrix4x4.Transpose(camera.ProjectionInv);
-            ViewInv = Matrix4x4.Transpose(camera.ViewInv);
-        }
-    }
-
-    public struct CBWorld
-    {
-        public Matrix4x4 World;
-        public Matrix4x4 WorldInv;
-
-        public CBWorld(Mesh mesh)
-        {
-            World = Matrix4x4.Transpose(mesh.Transform.Matrix);
-            WorldInv = Matrix4x4.Transpose(mesh.Transform.MatrixInv);
-        }
-    }
-
-    public struct CBDirectionalLightSD
-    {
-        public Matrix4x4 View;
-        public Matrix4x4 Proj;
-        public Vector4 Color;
-        public Vector3 Direction;
-        public int padd;
-
-        public CBDirectionalLightSD(DirectionalLight light)
-        {
-            View = Matrix4x4.Transpose(light.Transform.View);
-            Proj = Matrix4x4.Transpose(light.Transform.Projection);
-            Color = light.Color;
-            Direction = light.Transform.Forward;
-            padd = default;
-        }
-    }
-
-    public struct CBDirectionalLight
-    {
-        public Vector4 Color;
-        public Vector3 Direction;
-        public int padd;
-
-        public CBDirectionalLight(DirectionalLight light)
-        {
-            Color = light.Color;
-            Direction = light.Transform.Forward;
-            padd = default;
-        }
-    }
-
-    public struct CBPointLightSD
-    {
-        public Matrix4x4 Y;
-        public Matrix4x4 Yneg;
-        public Matrix4x4 X;
-        public Matrix4x4 Xneg;
-        public Matrix4x4 Z;
-        public Matrix4x4 Zneg;
-        public Matrix4x4 Proj;
-        public Vector4 Color;
-        public Vector3 Position;
-        public int padd;
-
-        public CBPointLightSD(PointLight point) : this()
-        {
-            Y = default;
-            Yneg = default;
-            X = default;
-            Xneg = default;
-            Z = default;
-            Zneg = default;
-            Proj = default;
-            Color = point.Color * point.Strength;
-            Position = point.Transform.Position;
-            padd = default;
-        }
-    }
-
-    public struct CBPointLight
-    {
-        public Vector4 Color;
-        public Vector3 Position;
-        public int padd;
-
-        public CBPointLight(PointLight point) : this()
-        {
-            Color = point.Color * point.Strength;
-            Position = point.Transform.Position;
-        }
-    }
-
-    public struct CBSpotlightSD
-    {
-        public Matrix4x4 View;
-        public Matrix4x4 Proj;
-        public Vector4 Color;
-        public Vector3 Position;
-        public float CutOff;
-        public Vector3 Direction;
-        public float OuterCutOff;
-
-        public CBSpotlightSD(Spotlight spotlight)
-        {
-            View = Matrix4x4.Transpose(spotlight.Transform.View);
-            Proj = Matrix4x4.Transpose(spotlight.Transform.Projection);
-            Color = spotlight.Color * spotlight.Strength;
-            Position = spotlight.Transform.Position;
-            CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());
-            Direction = spotlight.Transform.Forward;
-            OuterCutOff = MathF.Cos((MathUtil.Lerp(0, spotlight.ConeAngle, 1 - spotlight.Blend) / 2).ToRad());
-        }
-    }
-
-    public struct CBSpotlight
-    {
-        public Vector4 Color;
-        public Vector3 Position;
-        public float CutOff;
-        public Vector3 Direction;
-        public float OuterCutOff;
-
-        public CBSpotlight(Spotlight spotlight)
-        {
-            Color = spotlight.Color * spotlight.Strength;
-            Position = spotlight.Transform.Position;
-            CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());
-            Direction = spotlight.Transform.Forward;
-            OuterCutOff = MathF.Cos((MathUtil.Lerp(0, spotlight.ConeAngle, 1 - spotlight.Blend) / 2).ToRad());
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct CBLight
-    {
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDirectionalLightSDs)]
-        public CBDirectionalLightSD[] DirectionalLightSDs;
-
-        public int DirectionalLightSDCount;
-        public Vector3 padd1;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPointLightSDs)]
-        public CBPointLightSD[] PointLightSDs;
-
-        public int PointLightSDCount;
-        public Vector3 padd2;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDirectionalLights)]
-        public CBDirectionalLight[] DirectionalLights;
-
-        public int DirectionalLightCount;
-        public Vector3 padd3;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxPointLights)]
-        public CBPointLight[] PointLights;
-
-        public int PointLightCount;
-        public Vector3 padd4;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxSpotlightSDs)]
-        public CBSpotlightSD[] SpotlightSDs;
-
-        public int SpotlightSDCount;
-        public Vector3 padd5;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxSpotlights)]
-        public CBSpotlight[] Spotlights;
-
-        public int SpotlightCount;
-        public Vector3 padd6;
-
-        public const int MaxDirectionalLightSDs = 1;
-        public const int MaxPointLightSDs = 8;
-        public const int MaxSpotlightSDs = 8;
-        public const int MaxDirectionalLights = 4;
-        public const int MaxPointLights = 32;
-        public const int MaxSpotlights = 32;
-
-        public CBLight(Light[] lights)
-        {
-            DirectionalLightSDs = new CBDirectionalLightSD[MaxDirectionalLightSDs];
-            DirectionalLightSDCount = 0;
-            DirectionalLights = new CBDirectionalLight[MaxDirectionalLights];
-            DirectionalLightCount = 0;
-            PointLightSDs = new CBPointLightSD[MaxPointLightSDs];
-            PointLightSDCount = 0;
-            PointLights = new CBPointLight[MaxPointLights];
-            PointLightCount = 0;
-            SpotlightSDs = new CBSpotlightSD[MaxSpotlightSDs];
-            SpotlightSDCount = 0;
-            Spotlights = new CBSpotlight[MaxSpotlights];
-            SpotlightCount = 0;
-            padd1 = default;
-            padd2 = default;
-            padd3 = default;
-            padd4 = default;
-            padd5 = default;
-            padd6 = default;
-
-            for (int i = 0; i < lights.Length; i++)
-            {
-                Light light = lights[i];
-                if (light is DirectionalLight directional)
-                {
-                    if (directional.CastShadows && DirectionalLightSDCount != MaxDirectionalLightSDs)
-                    {
-                        DirectionalLightSDs[DirectionalLightSDCount] = new(directional);
-                        DirectionalLightSDCount++;
-                    }
-                    else if (DirectionalLightCount != MaxDirectionalLights)
-                    {
-                        DirectionalLights[DirectionalLightCount] = new(directional);
-                        DirectionalLightCount++;
-                    }
-                }
-                if (light is PointLight point)
-                {
-                    if (point.CastShadows && PointLightSDCount != MaxPointLightSDs)
-                    {
-                        PointLightSDs[PointLightSDCount] = new(point);
-                        PointLightSDCount++;
-                    }
-                    else if (PointLightCount != MaxPointLights)
-                    {
-                        PointLights[PointLightCount] = new(point);
-                        PointLightCount++;
-                    }
-                }
-                if (light is Spotlight spotlight)
-                {
-                    if (spotlight.CastShadows && SpotlightSDCount != MaxSpotlightSDs)
-                    {
-                        SpotlightSDs[SpotlightSDCount] = new(spotlight);
-                        SpotlightSDCount++;
-                    }
-                    else if (SpotlightCount != MaxSpotlights)
-                    {
-                        Spotlights[SpotlightCount] = new(spotlight);
-                        SpotlightCount++;
-                    }
-                }
-            }
-        }
-
-        public CBLight(IReadOnlyList<Light> lights)
-        {
-            DirectionalLightSDs = new CBDirectionalLightSD[MaxDirectionalLightSDs];
-            DirectionalLightSDCount = 0;
-            DirectionalLights = new CBDirectionalLight[MaxDirectionalLights];
-            DirectionalLightCount = 0;
-            PointLightSDs = new CBPointLightSD[MaxPointLightSDs];
-            PointLightSDCount = 0;
-            PointLights = new CBPointLight[MaxPointLights];
-            PointLightCount = 0;
-            SpotlightSDs = new CBSpotlightSD[MaxSpotlightSDs];
-            SpotlightSDCount = 0;
-            Spotlights = new CBSpotlight[MaxSpotlights];
-            SpotlightCount = 0;
-            padd1 = default;
-            padd2 = default;
-            padd3 = default;
-            padd4 = default;
-            padd5 = default;
-            padd6 = default;
-
-            for (int i = 0; i < lights.Count; i++)
-            {
-                Light light = lights[i];
-                if (light is DirectionalLight directional)
-                {
-                    if (directional.CastShadows && DirectionalLightSDCount != MaxDirectionalLightSDs)
-                    {
-                        DirectionalLightSDs[DirectionalLightSDCount] = new(directional);
-                        DirectionalLightSDCount++;
-                    }
-                    else if (DirectionalLightCount != MaxDirectionalLights)
-                    {
-                        DirectionalLights[DirectionalLightCount] = new(directional);
-                        DirectionalLightCount++;
-                    }
-                }
-                if (light is PointLight point)
-                {
-                    if (point.CastShadows && PointLightSDCount != MaxPointLightSDs)
-                    {
-                        PointLightSDs[PointLightSDCount] = new(point);
-                        PointLightSDCount++;
-                    }
-                    else if (PointLightCount != MaxPointLights)
-                    {
-                        PointLights[PointLightCount] = new(point);
-                        PointLightCount++;
-                    }
-                }
-                if (light is Spotlight spotlight)
-                {
-                    if (spotlight.CastShadows && SpotlightSDCount != MaxSpotlightSDs)
-                    {
-                        SpotlightSDs[SpotlightSDCount] = new(spotlight);
-                        SpotlightSDCount++;
-                    }
-                    else if (SpotlightCount != MaxSpotlights)
-                    {
-                        Spotlights[SpotlightCount] = new(spotlight);
-                        SpotlightCount++;
-                    }
-                }
-            }
         }
     }
 }

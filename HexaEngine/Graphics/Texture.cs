@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Specialized;
     using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;
@@ -9,15 +8,15 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
-    public class Texture
+    public class RenderTexture : IDisposable
     {
         #region Fields
 
         private readonly IResource resource;
-        private readonly IShaderResourceView resourceView;
-        private readonly IRenderTargetView renderTargetView;
-        private readonly IResource depthStencil;
-        public IDepthStencilView DepthStencilView;
+        private readonly IShaderResourceView? resourceView;
+        private readonly IRenderTargetView? renderTargetView;
+        private readonly IResource? depthStencil;
+        public IDepthStencilView? DepthStencilView;
         private readonly List<ShaderBinding> bindings = new();
         private bool disposedValue;
         private readonly bool overrwittenDSV;
@@ -30,17 +29,17 @@
 
         public IResource Resource => resource;
 
-        public IShaderResourceView ResourceView => resourceView;
+        public IShaderResourceView? ResourceView => resourceView;
 
-        public IRenderTargetView RenderTargetView => renderTargetView;
+        public IRenderTargetView? RenderTargetView => renderTargetView;
 
-        public IResource DepthStencil => depthStencil;
+        public IResource? DepthStencil => depthStencil;
 
         #endregion Properties
 
         #region Constructors
 
-        public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, IResource resource)
+        public RenderTexture(IGraphicsDevice device, IDepthStencilView depthStencil, IResource resource)
         {
             Description = new(resource);
 
@@ -54,7 +53,7 @@
             overrwittenDSV = true;
         }
 
-        public Texture(IGraphicsDevice device, IResource resource, DepthStencilDesc desc)
+        public RenderTexture(IGraphicsDevice device, IResource resource, DepthStencilDesc desc)
         {
             Description = new(resource);
             DepthStencilViewDescription depthStencilViewDesc = new()
@@ -136,6 +135,9 @@
                         depthStencil = device.CreateTexture2D(depthStencilDesc);
                     }
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(desc));
             }
 
             switch (depthStencilViewDesc.ViewDimension)
@@ -163,6 +165,9 @@
                 case DepthStencilViewDimension.Texture2DMultisampledArray:
                     depthStencilViewDesc.Texture2DMSArray = new() { ArraySize = Description.ArraySize };
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(desc));
             }
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
@@ -174,7 +179,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public Texture(IGraphicsDevice device, IResource resource)
+        public RenderTexture(IGraphicsDevice device, IResource resource)
         {
             Description = new(resource);
 
@@ -186,29 +191,18 @@
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
         }
 
-        public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
+        public RenderTexture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
         {
             Description = description;
 
-            switch (description.Dimension)
+            resource = description.Dimension switch
             {
-                case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture3D:
-                    resource = device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.TextureCube:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube);
-                    break;
-            }
-
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube),
+                _ => throw new ArgumentOutOfRangeException(nameof(description)),
+            };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
                 resourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
@@ -219,7 +213,7 @@
             DepthStencilView = depthStencil;
         }
 
-        public Texture(IGraphicsDevice device, TextureDescription description, DepthStencilDesc desc)
+        public RenderTexture(IGraphicsDevice device, TextureDescription description, DepthStencilDesc desc)
         {
             Description = description;
             DepthStencilViewDescription depthStencilViewDesc = new()
@@ -303,6 +297,9 @@
                         depthStencil = device.CreateTexture2D(depthStencilDesc);
                     }
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(description));
             }
 
             switch (depthStencilViewDesc.ViewDimension)
@@ -341,29 +338,18 @@
             Viewport = Description.GetViewport();
         }
 
-        public Texture(IGraphicsDevice device, TextureDescription description)
+        public RenderTexture(IGraphicsDevice device, TextureDescription description)
         {
             Description = description;
 
-            switch (description.Dimension)
+            resource = description.Dimension switch
             {
-                case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture3D:
-                    resource = device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.TextureCube:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube);
-                    break;
-            }
-
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube),
+                _ => throw new ArgumentOutOfRangeException(nameof(description)),
+            };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
                 resourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
@@ -372,7 +358,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public unsafe Texture(IGraphicsDevice device, TextureFileDescription description)
+        public unsafe RenderTexture(IGraphicsDevice device, TextureFileDescription description)
         {
             switch (description.Dimension)
             {
@@ -439,77 +425,8 @@
                         };
                     }
                     break;
-            }
 
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
-
-            Viewport = Description.GetViewport();
-        }
-
-        public unsafe Texture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, int slicePitch, TextureDescription description)
-        {
-            SubresourceData subresourceData;
-            fixed (byte* ptr = rawPixelData)
-            {
-                subresourceData = new(ptr, rowPitch, slicePitch);
-            }
-            SubresourceData[] subresources = new SubresourceData[] { subresourceData };
-
-            Description = description;
-
-            switch (description.Dimension)
-            {
-                case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture3D:
-                    resource = device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.TextureCube:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube);
-                    break;
-            }
-
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
-
-            Viewport = Description.GetViewport();
-        }
-
-        public unsafe Texture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, TextureDescription description)
-        {
-            SubresourceData subresourceData;
-            fixed (byte* ptr = rawPixelData)
-            {
-                subresourceData = new(ptr, rowPitch, 0);
-            }
-            SubresourceData[] subresources = new SubresourceData[] { subresourceData };
-
-            Description = description;
-
-            switch (description.Dimension)
-            {
-                case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture3D:
-                case TextureDimension.TextureCube:
+                default:
                     throw new ArgumentOutOfRangeException(nameof(description));
             }
 
@@ -521,7 +438,59 @@
             Viewport = Description.GetViewport();
         }
 
-        public unsafe Texture(IGraphicsDevice device, byte[][] rawPixelData, int rowPitch, TextureDescription description)
+        public unsafe RenderTexture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, int slicePitch, TextureDescription description)
+        {
+            SubresourceData subresourceData;
+            fixed (byte* ptr = rawPixelData)
+            {
+                subresourceData = new(ptr, rowPitch, slicePitch);
+            }
+            SubresourceData[] subresources = new SubresourceData[] { subresourceData };
+
+            Description = description;
+
+            resource = description.Dimension switch
+            {
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube),
+                _ => throw new ArgumentOutOfRangeException(nameof(description)),
+            };
+            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+                resourceView = device.CreateShaderResourceView(resource);
+            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+
+            Viewport = Description.GetViewport();
+        }
+
+        public unsafe RenderTexture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, TextureDescription description)
+        {
+            SubresourceData subresourceData;
+            fixed (byte* ptr = rawPixelData)
+            {
+                subresourceData = new(ptr, rowPitch, 0);
+            }
+            SubresourceData[] subresources = new SubresourceData[] { subresourceData };
+
+            Description = description;
+
+            resource = description.Dimension switch
+            {
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                _ => throw new ArgumentOutOfRangeException(nameof(description)),
+            };
+            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+                resourceView = device.CreateShaderResourceView(resource);
+            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+
+            Viewport = Description.GetViewport();
+        }
+
+        public unsafe RenderTexture(IGraphicsDevice device, byte[][] rawPixelData, int rowPitch, TextureDescription description)
         {
             SubresourceData[] subresources = new SubresourceData[rawPixelData.Length];
 
@@ -536,24 +505,13 @@
 
             Description = description;
 
-            switch (description.Dimension)
+            resource = description.Dimension switch
             {
-                case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None);
-                    break;
-
-                case TextureDimension.TextureCube:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube);
-                    break;
-
-                case TextureDimension.Texture3D:
-                    throw new ArgumentOutOfRangeException(nameof(description));
-            }
-
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube),
+                _ => throw new ArgumentOutOfRangeException(nameof(description)),
+            };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
                 resourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
@@ -587,7 +545,7 @@
             {
                 return device.CreateTexture2D(Format.RGBA32Float, 4, 4, 6, 1, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback }, BindFlags.ShaderResource, ResourceMiscFlag.TextureCube);
             }
-            return default;
+            throw new NotSupportedException();
         }
 
         #endregion Constructors
@@ -599,41 +557,42 @@
             return new RenderTargetViewArray(device, resource, Description.ArraySize, Viewport);
         }
 
-        [Obsolete]
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddBinding(ShaderStage stage, int slot)
         {
             AddBinding(new(stage, slot));
         }
 
-        [Obsolete]
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveBinding(ShaderStage stage, int slot)
         {
             RemoveBinding(new(stage, slot));
         }
 
-        [Obsolete]
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddBinding(ShaderBinding binding)
         {
             bindings.Add(binding);
         }
 
-        [Obsolete]
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveBinding(ShaderBinding binding)
         {
             bindings.Remove(binding);
         }
 
-        [Obsolete]
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearBindings()
         {
             bindings.Clear();
         }
 
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Bind(IGraphicsContext context)
         {
@@ -643,12 +602,14 @@
             }
         }
 
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Bind(IGraphicsContext context, int slot)
         {
             context.SetShaderResource(resourceView, ShaderStage.Pixel, slot);
         }
 
+        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Bind(IGraphicsContext context, int slot, ShaderStage stage)
         {
@@ -664,14 +625,16 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAndSetTarget(IGraphicsContext context, Vector4 color, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
+            if (renderTargetView == null) return;
             context.ClearRenderTargetView(renderTargetView, color);
             ClearDepthStencil(context, flags, depth, stencil);
-            context.SetRenderTargets(renderTargetView, DepthStencilView);
+            context.SetRenderTarget(renderTargetView, DepthStencilView);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearTarget(IGraphicsContext context, Vector4 color, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
+            if (renderTargetView == null) return;
             ClearDepthStencil(context, flags, depth, stencil);
             context.ClearRenderTargetView(renderTargetView, new(color.X, color.Y, color.Z, color.W));
         }
@@ -679,7 +642,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetTarget(IGraphicsContext context)
         {
-            context.SetRenderTargets(renderTargetView, DepthStencilView);
+            context.SetRenderTarget(renderTargetView, DepthStencilView);
         }
 
         #endregion IRenderTargetView
@@ -689,7 +652,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearDepthStencil(IGraphicsContext context, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
-            if (depthStencil != null && flags != DepthStencilClearFlags.None)
+            if (DepthStencilView != null && flags != DepthStencilClearFlags.None)
                 context.ClearDepthStencilView(DepthStencilView, flags, depth, stencil);
         }
 
@@ -711,7 +674,7 @@
             }
         }
 
-        ~Texture()
+        ~RenderTexture()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

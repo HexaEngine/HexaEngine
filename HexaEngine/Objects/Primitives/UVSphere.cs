@@ -12,7 +12,7 @@
         {
         }
 
-        protected override (VertexBuffer<Vertex>, IndexBuffer, InstanceBuffer) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<Vertex>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             CreateSphere(out var vertexBuffer, out var indexBuffer);
             return (vertexBuffer, indexBuffer, null);

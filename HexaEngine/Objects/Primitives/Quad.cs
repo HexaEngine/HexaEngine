@@ -4,19 +4,22 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
     public class Quad : Primitive<OrthoVertex>
     {
+#nullable disable
         private static int instances;
         private static VertexBuffer<OrthoVertex> VertexBuffer;
         private static IndexBuffer IndexBuffer;
+#nullable enable
 
         public Quad(IGraphicsDevice device) : base(device)
         {
         }
 
-        protected override (VertexBuffer<OrthoVertex>, IndexBuffer, InstanceBuffer) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<OrthoVertex>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             if (instances == 0)
             {

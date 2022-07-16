@@ -1,11 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class Utils
@@ -13,11 +11,6 @@
         public static Guid* Guid(Guid guid)
         {
             return (Guid*)Unsafe.AsPointer(ref guid);
-        }
-
-        public static string GetString(ID3D10Blob* error)
-        {
-            return error != null ? Marshal.PtrToStringUTF8(new IntPtr(error->GetBufferPointer())) : string.Empty;
         }
 
         public static T2** ToPointerArray<T1, T2>(T1[] values) where T1 : IDeviceChild where T2 : unmanaged
@@ -28,6 +21,19 @@
                 ptrs[i] = (T2*)values[i].NativePointer;
             }
             return AsPointer(ptrs);
+        }
+
+        public static void** ToPointerArray<T1>(T1[] values) where T1 : IDeviceChild
+        {
+            void*[] ptrs = new void*[values.Length];
+            for (int i = 0; i < values.Length; i++)
+            {
+                ptrs[i] = (void*)values[i].NativePointer;
+            }
+            fixed (void** ptr = ptrs)
+            {
+                return ptr;
+            }
         }
 
         public static T** AsPointer<T>(T* value) where T : unmanaged

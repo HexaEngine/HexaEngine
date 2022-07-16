@@ -13,7 +13,7 @@
         private static readonly Dictionary<uint, SdlWindow> windows = new();
         private static readonly Sdl sdl = Sdl.GetApi();
         private static readonly List<Action<Event>> hooks = new();
-        private static SdlWindow mainWindow;
+        private static SdlWindow? mainWindow;
 
 #nullable disable
         public static SdlWindow MainWindow => mainWindow;

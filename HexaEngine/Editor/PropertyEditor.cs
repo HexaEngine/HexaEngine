@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Editor
+﻿#nullable disable
+
+namespace HexaEngine.Editor
 {
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Graphics;
@@ -13,6 +15,7 @@
     {
         private readonly KeyValuePair<PropertyInfo, Func<object, (bool, object)>>[] callbacks;
         private static readonly Dictionary<Type, KeyValuePair<Array, string[]>> enumCache = new();
+        private static readonly Dictionary<Type, KeyValuePair<Type[], string[]>> typeCache = new();
         private readonly string name;
         private readonly bool isHidden;
 
@@ -49,6 +52,28 @@
                 }
 
                 var name = nameAttr.Name;
+
+                if (propType == typeof(Type) && nameAttr.Mode == EditorPropertyMode.TypeSelector)
+                {
+                    if (!(property.CanWrite && property.CanRead)) continue;
+                    if (!typeCache.ContainsKey(nameAttr.Type))
+                    {
+                        var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).AsParallel().Where(x => x.IsAssignableTo(nameAttr.Type) && !x.IsInterface && !x.IsAbstract).ToArray();
+                        var names = types.Select(x => x.Name).ToArray();
+                        typeCache.Add(nameAttr.Type, new(types, names));
+                    }
+
+                    values.Add(new(property, value =>
+                    {
+                        var types = typeCache[nameAttr.Type];
+                        int index = Array.IndexOf(types.Key, value);
+                        if (ImGui.Combo(name, ref index, types.Value, types.Value.Length))
+                        {
+                            return (true, types.Key.GetValue(index));
+                        }
+                        return (false, null);
+                    }));
+                }
 
                 if (propType.IsEnum)
                 {
@@ -214,12 +239,12 @@
                     continue;
                 }
 
-                if (propType == typeof(Texture))
+                if (propType == typeof(RenderTexture))
                 {
                     if (!(property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        Texture val = (Texture)value;
+                        RenderTexture val = (RenderTexture)value;
                         if (val != null)
                             ImGui.Image(ImGuiRenderer.TryRegisterTexture(val.ResourceView), new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
                         return (false, null);

@@ -5,14 +5,14 @@
     using System;
     using ResourceDimension = Core.Graphics.ResourceDimension;
 
-    public unsafe class D3D11Buffer : DisposableBase, IBuffer
+    public unsafe class D3D11Buffer : DeviceChildBase, IBuffer
     {
         private readonly ID3D11Buffer* buffer;
 
         internal D3D11Buffer(ID3D11Buffer* buffer, BufferDescription desc)
         {
             this.buffer = buffer;
-            NativePointer = new(buffer);
+            nativePointer = new(buffer);
             Description = desc;
             Length = desc.ByteWidth;
         }
@@ -22,10 +22,6 @@
         public int Length { get; }
 
         public ResourceDimension Dimension => ResourceDimension.Buffer;
-
-        public IntPtr NativePointer { get; }
-
-        public string? DebugName { get; set; } = string.Empty;
 
         protected override void DisposeCore()
         {

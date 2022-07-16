@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
 
@@ -46,11 +47,42 @@
                 var asset = assetBundles.Find(x => x.Path == rel);
 
                 if (asset == null)
+                {
                     ImGuiConsole.Log(ConsoleMessageType.Warning, $"Warning asset {path} is missing!");
+                    throw new FileNotFoundException(path);
+                }
 
-                return asset?.GetStream();
+                return asset.GetStream();
             }
-            return null;
+
+            throw new FileNotFoundException(path);
+        }
+
+        public static bool TryOpen(string path, [NotNullWhen(true)] out VirtualStream? stream)
+        {
+            if (File.Exists(path))
+            {
+                var fs = File.OpenRead(path);
+                stream = new(fs, 0, fs.Length, true);
+                return true;
+            }
+            else if (!string.IsNullOrWhiteSpace(path))
+            {
+                var rel = Path.GetRelativePath("assets/", path);
+                var asset = assetBundles.Find(x => x.Path == rel);
+
+                if (asset == null)
+                {
+                    ImGuiConsole.Log(ConsoleMessageType.Warning, $"Warning asset {path} is missing!");
+                    stream = default;
+                    return false;
+                }
+
+                stream = asset.GetStream();
+                return true;
+            }
+            stream = default;
+            return false;
         }
 
         public static string[] GetFiles(string path)
@@ -65,11 +97,36 @@
             return reader.ReadToEnd().Split(Environment.NewLine);
         }
 
+        public static bool ReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
+        {
+            if (TryOpen(path, out var fs))
+            {
+                var reader = new StreamReader(fs);
+                lines = reader.ReadToEnd().Split(Environment.NewLine);
+                return true;
+            }
+
+            lines = null;
+            return false;
+        }
+
         public static string ReadAllText(string path)
         {
             var fs = Open(path);
             var reader = new StreamReader(fs);
             return reader.ReadToEnd();
+        }
+
+        public static bool TryReadAllText(string path, [NotNullWhen(true)] out string? text)
+        {
+            if (TryOpen(path, out var fs))
+            {
+                var reader = new StreamReader(fs);
+                text = reader.ReadToEnd();
+                return true;
+            }
+            text = null;
+            return false;
         }
     }
 }

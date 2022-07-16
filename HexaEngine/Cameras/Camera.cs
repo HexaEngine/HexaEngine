@@ -46,20 +46,22 @@
 
         public override void Initialize(IGraphicsDevice device)
         {
-            device.SwapChain.Resized += Resized;
+            if (device.SwapChain != null)
+                device.SwapChain.Resized += Resized;
             base.Initialize(device);
-            if (!autoSize) return;
+            if (!autoSize || device.SwapChain == null) return;
             Transform.Width = device.SwapChain.BackbufferRTV.Viewport.Width;
             Transform.Height = device.SwapChain.BackbufferRTV.Viewport.Height;
         }
 
         public override void Uninitialize()
         {
-            Device.SwapChain.Resized -= Resized;
+            if (Device.SwapChain != null)
+                Device.SwapChain.Resized -= Resized;
             base.Uninitialize();
         }
 
-        private void Resized(object sender, ResizedEventArgs e)
+        private void Resized(object? sender, ResizedEventArgs e)
         {
             if (!autoSize) return;
             Transform.Width = e.NewWidth;

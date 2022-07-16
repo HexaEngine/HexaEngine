@@ -6,33 +6,47 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Objects.Components;
-    using HexaEngine.Rendering;
+    using HexaEngine.Rendering.ConstantBuffers;
     using HexaEngine.Scenes;
-    using HexaEngine.Shaders;
     using Newtonsoft.Json;
     using System.Linq;
-    using System.Numerics;
 
     [EditorNode("Mesh")]
     public unsafe class Mesh : SceneNode
     {
+#nullable disable
+
+        /// <summary>
+        /// Nullabillity is tested though <see cref="drawable"/>
+        /// </summary>
         private IBuffer CB;
+
+        /// <summary>
+        /// Nullabillity is tested though <see cref="drawable"/>
+        /// </summary>
         private IBuffer VB;
+
+        /// <summary>
+        /// Nullabillity is tested though <see cref="drawable"/>
+        /// </summary>
         private IBuffer IB;
-        private IBuffer ISB;
+
+        /// <summary>
+        /// Nullabillity is tested though <see cref="drawable"/>
+        /// </summary>
+        private Material material;
+
+        public MeshFile MeshFile;
+        public MeshVertex[] Vertices;
+        public int[] Indices;
+
+#nullable enable
         private int vertexCount;
         private int indexCount;
-        private int instanceCount;
-        private Material material;
-        private string meshPath = string.Empty;
-        private string materialName;
-        private bool drawable;
 
-        public Mesh()
-        {
-            AddComponent(new MeshComponent());
-        }
+        private string meshPath = string.Empty;
+        private string materialName = string.Empty;
+        private bool drawable;
 
         [EditorProperty("Path")]
         public string MeshPath
@@ -64,6 +78,7 @@
 
         public override void Initialize(IGraphicsDevice device)
         {
+            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Load, Sender = this });
             CB = device.CreateBuffer(new CBWorld(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             base.Initialize(device);
             InitializeMesh();
@@ -75,7 +90,7 @@
             CB.Dispose();
             VB?.Dispose();
             IB?.Dispose();
-
+            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Unload, Sender = this });
             base.Uninitialize();
         }
 
@@ -86,16 +101,16 @@
             {
                 VB?.Dispose();
                 IB?.Dispose();
-                var result = MeshFactory.Instance.Load(Paths.CurrentModelPath + MeshPath);
-                var vertices = result.Vertices;
-                var indices = result.Groups[0].Indices;
-                VB = Device.CreateBuffer(vertices, BindFlags.VertexBuffer);
-                IB = Device.CreateBuffer(indices, BindFlags.IndexBuffer);
-                vertexCount = vertices.Length;
-                indexCount = indices.Length;
+                var result = MeshFile = MeshFactory.Instance.Load(Paths.CurrentModelPath + MeshPath);
+                Vertices = result.Vertices;
+                Indices = result.Groups[0].Indices;
+                VB = Device.CreateBuffer(Vertices, BindFlags.VertexBuffer);
+                IB = Device.CreateBuffer(Indices, BindFlags.IndexBuffer);
+                vertexCount = Vertices.Length;
+                indexCount = Indices.Length;
             }
-
-            drawable = VB != null && IB != null && material != null;
+            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Update, Sender = this });
+            drawable = CB != null && VB != null && IB != null && material != null;
         }
 
         private void InitializeMaterial()
@@ -103,91 +118,25 @@
             if (!Initialized) return;
             Scene scene = GetScene();
             material = scene.Materials.FirstOrDefault(x => x.Name == materialName);
-
-            drawable = VB != null && IB != null && material != null;
+            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Update, Sender = this });
+            drawable = CB != null && VB != null && IB != null && material != null;
         }
 
-        public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport, IView view)
+        public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
         {
             if (!drawable) return;
+
             context.Write(CB, new CBWorld(this));
             context.SetConstantBuffer(CB, ShaderStage.Domain, 0);
             context.SetVertexBuffer(VB, sizeof(MeshVertex));
             if (IB != null)
             {
                 context.SetIndexBuffer(IB, Format.R32UInt, 0);
-                if (ISB != null)
-                {
-                    context.SetVertexBuffer(1, ISB, sizeof(MeshVertex));
-                    pipeline.DrawIndexedInstanced(context, viewport, view, Transform, indexCount, instanceCount, 0, 0, 0);
-                }
-                else
-                {
-                    pipeline.DrawIndexed(context, viewport, view, Transform, indexCount, 0, 0);
-                }
+                pipeline.DrawIndexed(context, viewport, indexCount, 0, 0);
             }
             else
             {
-                if (ISB != null)
-                {
-                    context.SetVertexBuffer(1, ISB, sizeof(MeshVertex));
-                    pipeline.DrawInstanced(context, viewport, view, Transform, vertexCount, instanceCount, 0, 0);
-                }
-                else
-                {
-                    pipeline.Draw(context, viewport, view, Transform, vertexCount, 0);
-                }
-            }
-        }
-
-        [EditorComponent(typeof(MeshComponent), "MeshComponentInternal", true, true)]
-        private unsafe class MeshComponent : IDeferredRendererComponent, IDepthRendererComponent
-        {
-            private Mesh mesh;
-            private MTLShader shader;
-            private MTLDepthShaderBack depthShaderBack;
-            private MTLDepthShaderFront depthShaderFront;
-
-            public void Initialize(IGraphicsDevice device, SceneNode node)
-            {
-                mesh = (Mesh)node;
-                shader = new(device);
-                depthShaderBack = new(device);
-                depthShaderFront = new(device);
-            }
-
-            public void Render(IGraphicsContext context, Viewport viewport, IView view)
-            {
-                if (!mesh.drawable) return;
-                context.SetVertexBuffer(mesh.VB, sizeof(MeshVertex));
-                context.SetIndexBuffer(mesh.IB, Format.R32UInt, 0);
-                mesh.material.Bind(context);
-                shader.DrawIndexed(context, viewport, view, mesh.Transform, mesh.indexCount, 0, 0);
-            }
-
-            public void RenderDepthBackface(IGraphicsContext context, Viewport viewport, IView view)
-            {
-                if (!mesh.drawable) return;
-                context.SetVertexBuffer(mesh.VB, sizeof(MeshVertex));
-                context.SetIndexBuffer(mesh.IB, Format.R32UInt, 0);
-                mesh.material.Bind(context);
-                depthShaderBack.DrawIndexed(context, viewport, view, mesh.Transform, mesh.indexCount, 0, 0);
-            }
-
-            public void RenderDepthFrontface(IGraphicsContext context, Viewport viewport, IView view)
-            {
-                if (!mesh.drawable) return;
-                context.SetVertexBuffer(mesh.VB, sizeof(MeshVertex));
-                context.SetIndexBuffer(mesh.IB, Format.R32UInt, 0);
-                mesh.material.Bind(context);
-                depthShaderFront.DrawIndexed(context, viewport, view, mesh.Transform, mesh.indexCount, 0, 0);
-            }
-
-            public void Uninitialize()
-            {
-                shader.Dispose();
-                depthShaderBack.Dispose();
-                depthShaderFront.Dispose();
+                pipeline.Draw(context, viewport, vertexCount, 0);
             }
         }
     }

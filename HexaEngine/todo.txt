@@ -1,10 +1,10 @@
 ﻿----------
 Planned:
 
-
 Volumetric Lights
 Bloom
 SSS (Sub Surface Scattering)
+revisit SSR (for roughness support and physical correctness)
 DoF (Depth of Field) + Bokeh 
 Motion Blur (could be annoying)
 Specular and Specular Tint Textures
@@ -18,21 +18,25 @@ Cascaded shadow mapping
 
 Work in progress:
 
-Point-, Spot-, Lights 50% done
-
+Texture sharing between materials
+Reintegrate Physics engine
+Assimp scene import
+Shadow mapping!!!
 Editor
 Project import
 Scene serialization
-Dynamic Mesh loading
-Dynamic Texture loading
+
 
 -----------
-Done:
+Done/Optimization/"Working" Stage:
 
 Deferred Shading
-Basic shadow mapping
+Directional lights, Point/Omni lights, Spotlights
 PBR (Physically Based Rendering) and IBL (Image Based Lightning) (direct and indirect: diffuse, specular lightning)
 SSAO (Screen Space Ambient Occulusion)
 HBAO (Horizon Based Ambient Occulusion)
 FXAA (Fast approximate anti-aliasing)
 SSR (Screen Space Reflections)
+
+Dynamic Mesh loading
+Dynamic Texture loading

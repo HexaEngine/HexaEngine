@@ -22,11 +22,11 @@
 
         public static bool GlobalInput { get; set; }
 
-        public static event EventHandler<KeyboardEventArgs> OnKeyDown;
+        public static event EventHandler<KeyboardEventArgs>? OnKeyDown;
 
-        public static event EventHandler<KeyboardEventArgs> OnKeyUp;
+        public static event EventHandler<KeyboardEventArgs>? OnKeyUp;
 
-        public static event EventHandler<KeyboardCharEventArgs> OnChar;
+        public static event EventHandler<KeyboardCharEventArgs>? OnChar;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Update(KeyboardEventArgs args)

@@ -5,8 +5,8 @@
       <author>Blender User</author>
       <authoring_tool>Blender 3.2.1 commit date:2022-07-05, commit time:15:44, hash:a2d59b2dac9e</authoring_tool>
     </contributor>
-    <created>2022-07-12T20:57:54</created>
-    <modified>2022-07-12T20:57:54</modified>
+    <created>2022-07-14T01:12:52</created>
+    <modified>2022-07-14T01:12:52</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
@@ -87,7 +87,7 @@
               <color sid="diffuse">0.8 0.8 0.8 1</color>
             </diffuse>
             <reflectivity>
-              <float sid="specular">0.4227273</float>
+              <float sid="specular">0.2090909</float>
             </reflectivity>
             <index_of_refraction>
               <float sid="ior">1.45</float>
@@ -107,7 +107,7 @@
     <geometry id="Cube-mesh" name="Cube">
       <mesh>
         <source id="Cube-mesh-positions">
-          <float_array id="Cube-mesh-positions-array" count="24">-1 1 1 -1 -1 1 -1 1 -1 -1 -1 -1 1 1 1 1 -1 1 1 1 -1 1 -1 -1</float_array>
+          <float_array id="Cube-mesh-positions-array" count="24">1 1 1 1 1 -1 1 -1 1 1 -1 -1 -1 1 1 -1 1 -1 -1 -1 1 -1 -1 -1</float_array>
           <technique_common>
             <accessor source="#Cube-mesh-positions-array" count="8" stride="3">
               <param name="X" type="float"/>
@@ -117,7 +117,7 @@
           </technique_common>
         </source>
         <source id="Cube-mesh-normals">
-          <float_array id="Cube-mesh-normals-array" count="18">0 1 0 0 0 -1 1 0 0 0 -1 0 -1 0 0 0 0 1</float_array>
+          <float_array id="Cube-mesh-normals-array" count="18">0 0 1 0 -1 0 -1 0 0 0 0 -1 1 0 0 0 1 0</float_array>
           <technique_common>
             <accessor source="#Cube-mesh-normals-array" count="6" stride="3">
               <param name="X" type="float"/>
@@ -150,11 +150,11 @@
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
       <node id="Camera" name="Camera" type="NODE">
-        <matrix sid="transform">0.6859207 -0.6515582 0.3240135 -7.358891 0 0.4452714 0.8953956 4.958309 -0.7276763 -0.6141704 0.3054208 -6.925791 0 0 0 1</matrix>
+        <matrix sid="transform">0.6859207 -0.3240135 0.6515582 7.358891 0.7276763 0.3054208 -0.6141704 -6.925791 0 0.8953956 0.4452714 4.958309 0 0 0 1</matrix>
         <instance_camera url="#Camera-camera"/>
       </node>
       <node id="Light" name="Light" type="NODE">
-        <matrix sid="transform">-0.2908646 -0.5663932 0.7711008 -4.076245 0.05518906 0.7946723 0.6045247 5.903862 -0.9551712 0.2183912 -0.1998834 1.005454 0 0 0 1</matrix>
+        <matrix sid="transform">-0.2908646 -0.7711008 0.5663932 4.076245 0.9551712 -0.1998834 0.2183912 1.005454 -0.05518906 0.6045247 0.7946723 5.903862 0 0 0 1</matrix>
         <instance_light url="#Light-light"/>
       </node>
       <node id="Cube" name="Cube" type="NODE">

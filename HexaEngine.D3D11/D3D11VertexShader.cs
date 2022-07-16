@@ -2,21 +2,16 @@
 {
     using HexaEngine.Core.Graphics;
     using Silk.NET.Direct3D11;
-    using System;
 
-    public unsafe class D3D11VertexShader : DisposableBase, IVertexShader
+    public unsafe class D3D11VertexShader : DeviceChildBase, IVertexShader
     {
         private readonly ID3D11VertexShader* vs;
 
         internal D3D11VertexShader(ID3D11VertexShader* vs)
         {
             this.vs = vs;
-            NativePointer = new(vs);
+            nativePointer = new(vs);
         }
-
-        public IntPtr NativePointer { get; }
-
-        public string? DebugName { get; set; } = string.Empty;
 
         public void Bind(IGraphicsContext context)
         {

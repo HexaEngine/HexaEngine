@@ -10,10 +10,21 @@
         /// </summary>
         /// <param name="name">The macro name.</param>
         /// <param name="definition">The macro definition.</param>
-        public ShaderMacro(string name, object definition)
+        public ShaderMacro(string name, object? definition)
         {
             Name = name;
-            Definition = definition?.ToString();
+            Definition = definition?.ToString() ?? throw new ArgumentNullException(nameof(definition));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShaderMacro"/> struct.
+        /// </summary>
+        /// <param name="name">The macro name.</param>
+        /// <param name="definition">The macro definition.</param>
+        public ShaderMacro(string name, string definition = "")
+        {
+            Name = name;
+            Definition = definition;
         }
 
         public bool Equals(ShaderMacro other)
@@ -21,7 +32,7 @@
             return string.Equals(Name, other.Name) && string.Equals(Definition, other.Definition);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj))
                 return false;

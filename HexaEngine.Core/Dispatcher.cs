@@ -23,7 +23,7 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (instances.TryGetValue(Environment.CurrentManagedThreadId, out Dispatcher dispatcher))
+                if (instances.TryGetValue(Environment.CurrentManagedThreadId, out Dispatcher? dispatcher))
                 {
                     return dispatcher;
                 }
@@ -39,7 +39,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ExecuteQueue()
         {
-            while (CurrentDispatcher.queue.TryDequeue(out Action item))
+            while (CurrentDispatcher.queue.TryDequeue(out Action? item))
             {
                 item();
             }
@@ -56,7 +56,6 @@
             if (!disposedValue)
             {
                 queue.Clear();
-                queue = null;
                 disposedValue = true;
             }
         }

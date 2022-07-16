@@ -13,7 +13,7 @@
         {
 #if !RELEASE
             var fileInfo = new FileInfo(file);
-            fileInfo.Directory.Create();
+            fileInfo.Directory?.Create();
             stream = new(File.Create(file));
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
@@ -22,7 +22,7 @@
 
 #if !RELEASE
 
-        private void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        private void CurrentDomain_ProcessExit(object? sender, EventArgs e)
         {
             stream.Flush();
             stream.Close();
@@ -36,15 +36,19 @@
 
 #endif
 
-        public override void Write(string message)
+        public override void Write(string? message)
         {
+            if (message == null)
+                return;
 #if !RELEASE
             stream.Write(Encoding.UTF8.GetBytes(message));
 #endif
         }
 
-        public override void WriteLine(string message)
+        public override void WriteLine(string? message)
         {
+            if (message == null)
+                return;
 #if !RELEASE
             stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
 #endif

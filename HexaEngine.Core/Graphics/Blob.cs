@@ -32,7 +32,7 @@
 
         public string AsString()
         {
-            return Marshal.PtrToStringAnsi(BufferPointer);
+            return Marshal.PtrToStringAnsi(BufferPointer) ?? string.Empty;
         }
 
         public byte[] AsBytes()

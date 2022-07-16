@@ -4,19 +4,15 @@
     using Silk.NET.Direct3D11;
     using System;
 
-    public unsafe class D3D11GeometryShader : DisposableBase, IGeometryShader
+    public unsafe class D3D11GeometryShader : DeviceChildBase, IGeometryShader
     {
         private readonly ID3D11GeometryShader* gs;
 
         internal D3D11GeometryShader(ID3D11GeometryShader* gs)
         {
             this.gs = gs;
-            NativePointer = new(gs);
+            nativePointer = new(gs);
         }
-
-        public IntPtr NativePointer { get; }
-
-        public string? DebugName { get; set; } = string.Empty;
 
         public void Bind(IGraphicsContext context)
         {

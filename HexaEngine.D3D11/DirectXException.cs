@@ -5,7 +5,7 @@
 
     public class D3D11Exception : Exception
     {
-        public D3D11Exception(ResultCode code) : base(Marshal.GetExceptionForHR((int)code).Message)
+        public D3D11Exception(ResultCode code) : base((Marshal.GetExceptionForHR((int)code) ?? new Exception("Unable to get exception from HRESULT")).Message)
         {
         }
     }

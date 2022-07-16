@@ -8,7 +8,7 @@
     {
         public Matrix4x4 Transform;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is InstanceData instance)
             {

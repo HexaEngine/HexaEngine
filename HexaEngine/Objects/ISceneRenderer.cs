@@ -13,5 +13,6 @@ namespace HexaEngine.Objects
         void Initialize(IGraphicsDevice device, SdlWindow window);
 
         void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera camera);
+        void DrawSettings();
     }
 }

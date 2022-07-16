@@ -33,7 +33,7 @@
             return ToString(null, null);
         }
 
-        public string ToString(string format, IFormatProvider formatProvider)
+        public string ToString(string? format, IFormatProvider? formatProvider)
         {
             return string.Format(formatProvider ?? CultureInfo.CurrentCulture, string.IsNullOrEmpty(format) ? "{0}" : ("{0:" + format + "}"), _size);
         }
@@ -53,7 +53,7 @@
             return _size.Equals(other._size);
         }
 
-        public override bool Equals(object value)
+        public override bool Equals(object? value)
         {
             if (value == null)
             {

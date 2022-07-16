@@ -1,14 +1,40 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <version>1.0.5</version>
+    <LangVersion>latest</LangVersion>
+    <title>HexaEngine.ShaderCompiler</title>
+    <authors>Juna Meinhold</authors>
+    <description>Compiles shaders to spir-v bytecode</description>
+    <tags>MyTags</tags>
+    <copyright>Copyright © Juna Meinhold</copyright>
+    <!-- we need the assemblies bundled, so set this so we don't expose any dependencies to the outside world -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+    <DebugType>embedded</DebugType>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Vortice.D3DCompiler" Version="2.1.19" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.2.0" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.2.0" />
+  </ItemGroup>
+
+  <Target Name="CopyProjectReferencesToPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <!-- the dependencies of your MSBuild task must be packaged inside the package, they cannot be expressed as normal PackageReferences -->
+
+      <!--example: <BuildOutputInPackage Include="$(PkgFParsec)/lib/netstandard2.0/FParsecCS.dll" />-->
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <!-- these lines pack the build props/targets files to the `build` folder in the generated package.
+      by convention, the .NET SDK will look for build\<Package Id>.props and build\<Package Id>.targets
+      for automatic inclusion in the build. -->
+    <Content Include="build\ShaderCompiler.props" PackagePath="build\" />
+    <Content Include="build\ShaderCompiler.targets" PackagePath="build\" />
   </ItemGroup>
 
 </Project>

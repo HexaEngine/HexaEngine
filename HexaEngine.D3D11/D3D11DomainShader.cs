@@ -4,19 +4,15 @@
     using Silk.NET.Direct3D11;
     using System;
 
-    public unsafe class D3D11DomainShader : DisposableBase, IDomainShader
+    public unsafe class D3D11DomainShader : DeviceChildBase, IDomainShader
     {
         private readonly ID3D11DomainShader* ds;
 
         internal D3D11DomainShader(ID3D11DomainShader* ds)
         {
             this.ds = ds;
-            NativePointer = new(ds);
+            nativePointer = new(ds);
         }
-
-        public IntPtr NativePointer { get; }
-
-        public string? DebugName { get; set; } = string.Empty;
 
         public void Bind(IGraphicsContext context)
         {

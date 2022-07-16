@@ -33,7 +33,8 @@
             Span<byte> buffer = new byte[stream.Length];
             stream.Read(buffer);
             library.Read(buffer);
-            Materials.AddRange(library.Materials);
+            if (library.Materials != null)
+                Materials.AddRange(library.Materials);
             return library;
         }
 

@@ -1,30 +1,25 @@
+#include "../../camera.hlsl"
+
 struct VSOut
 {
     float4 Pos : SV_Position;
     float2 Tex : TEXCOORD;
 };
 
-
-cbuffer mvp : register(b0)
-{
-    matrix view;
-    matrix viewInv;
-    matrix projection;
-    matrix projectionInv;
-};
-
 static const float g_FarPlaneDist = 100;
 static const float g_nearPlaneDist = 0.001f;
 
-static const float2 g_targetSize = float2(200, 200);
-static const float2 g_invTargetSize = 1 / float2(200, 200);
-
-static const int g_maxBinarySearchStep = 40;
-static const int g_maxRayStep = 70;
-static const float g_depthbias = 0.0001f;
-static const float g_rayStepScale = 1.05f;
-static const float g_maxThickness = 1.8f;
-static const float g_maxRayLength = 200.f;
+cbuffer ConfigBuffer
+{
+    float2 g_targetSize = float2(200, 200);
+    float2 g_invTargetSize = 1 / float2(200, 200);
+    int g_maxRayStep = 70;
+    float3 padd0;
+    float g_depthbias = 0.0001f;
+    float g_rayStepScale = 1.05f;
+    float g_maxThickness = 1.8f;
+    float g_maxRayLength = 200.f;
+};
 
 Texture2D colorTexture : register(t0);
 Texture2D positionTexture : register(t1);
@@ -53,8 +48,8 @@ bool TraceScreenSpaceRay(float3 dir, float3 viewPos, out float3 hitPixel_alpha)
 
     float3 rayEnd = viewPos + dir * rayLength;
 
-    float4 ssRayBegin = mul(float4(viewPos, 1.0), projection);
-    float4 ssRayEnd = mul(float4(rayEnd, 1.0), projection);
+    float4 ssRayBegin = mul(float4(viewPos, 1.0), proj);
+    float4 ssRayEnd = mul(float4(rayEnd, 1.0), proj);
 
     float k0 = 1 / ssRayBegin.w;
     float k1 = 1 / ssRayEnd.w;
@@ -88,11 +83,11 @@ bool TraceScreenSpaceRay(float3 dir, float3 viewPos, out float3 hitPixel_alpha)
 
     float3 Pk = float3(P0, k0);
     float3 dPk = float3(float2(stepDir, delta.y * invdx), (k1 - k0) * invdx);
-
+    
     dPk *= g_rayStepScale;
 
-	// float jitter = Noise( Pk.xy );
-	// Pk += dPk * jitter;
+	//float jitter = Noise( Pk.xy );
+	//Pk += dPk * jitter;
 
     float thickness = g_maxThickness;
 

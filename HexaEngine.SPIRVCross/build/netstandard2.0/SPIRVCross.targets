@@ -1,0 +1,13 @@
+﻿<Project>
+  <PropertyGroup>
+    <CopyNativeAssemblies_SPIRVCross Condition="'$(CopyNativeAssemblies_SPIRVCross)' == ''">true</CopyNativeAssemblies_SPIRVCross>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CopyNativeAssemblies_SPIRVCross)' == true">
+    <None Include="$(MSBuildThisFileDirectory)\..\..\runtimes\win-x64\native\*.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>False</Visible>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-		<DefineConstants>TRACE;DEBUG;</DefineConstants>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<DebugType>embedded</DebugType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>embedded</DebugType>
+    <SettingNamespace>MSBuildConsoleExample</SettingNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,13 +14,52 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AssimpNet" Version="4.1.0" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="BepuUtilities" Version="2.4.0" />
+		<PackageReference Include="Silk.NET.Assimp" Version="2.15.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="assets\shaders\deferred\prepass\defs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\prepass\ds.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\prepass\hs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\prepass\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\prepass\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\downsample\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\downsample\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\upsample\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\upsample\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\light.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\flat\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\flat\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\pbrbrdf\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\pbrbrdf\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\world.hlsl">
@@ -31,12 +72,6 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\indirect\vs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\debugging\ps.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\debugging\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\effects\blend\ps.hlsl">
@@ -117,76 +152,22 @@
 	  <None Update="assets\shaders\brdf.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\point\PixelShader.hlsl">
+	  <None Update="assets\shaders\forward\line\defs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\point\VertexShader.hlsl">
+	  <None Update="assets\shaders\forward\line\PixelShader.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\line\defs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\line\PixelShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\line\VertexShader.hlsl">
+	  <None Update="assets\shaders\forward\line\VertexShader.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\common.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\compose\ps.hlsl">
+	  <None Update="assets\shaders\forward\font\FontPixel.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\compose\vs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\font\FontPixel.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\font\FontVertex.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\light\ps.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\light\vs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\depth\defs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\depth\DomainShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\depth\HullShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\depth\PixelShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\depth\VertexShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\DomainShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\HullShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\defs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\PixelShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\material\VertexShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\particle\ParticlePixelShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\particle\ParticleVertexShader.hlsl">
+	  <None Update="assets\shaders\forward\font\FontVertex.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\effects\equitocube\ps.hlsl">
@@ -195,16 +176,10 @@
 	  <None Update="assets\shaders\effects\equitocube\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\skybox\ps.hlsl">
+	  <None Update="assets\shaders\forward\skybox\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\skybox\vs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\texture\PixelShader.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\texture\VertexShader.hlsl">
+	  <None Update="assets\shaders\forward\skybox\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -223,10 +198,20 @@
 
 
 	<ItemGroup>
-	  <Folder Include="assets\shaders\effects\ssao\blur\" />
+	  <Folder Include="assets\shaders\deferred\blinn\" />
+	  <Folder Include="assets\shaders\deferred\toon\" />
+	  <Folder Include="assets\shaders\deferred\phong\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
 	  <Folder Include="Windows\" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <PixelShader Include="assets\shaders\point\PixelShader.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </PixelShader>
 	</ItemGroup>
 
 

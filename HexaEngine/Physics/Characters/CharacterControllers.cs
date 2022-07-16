@@ -1,14 +1,14 @@
-﻿using BepuPhysics;
+﻿#nullable disable
+
+using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuPhysics.CollisionDetection;
 using BepuUtilities;
 using BepuUtilities.Collections;
 using BepuUtilities.Memory;
-using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace HexaEngine.Physics.Characters
 {
@@ -467,7 +467,7 @@ namespace HexaEngine.Physics.Characters
         /// <summary>
         /// Preallocates space for support data collected during the narrow phase. Should be called before the narrow phase executes.
         /// </summary>
-        private void PrepareForContacts(float dt, IThreadDispatcher threadDispatcher = null)
+        private void PrepareForContacts(float dt, IThreadDispatcher threadDispatcher)
         {
             Debug.Assert(!contactCollectionWorkerCaches.Allocated, "Worker caches were already allocated; did you forget to call AnalyzeContacts after collision detection to flush the previous frame's results?");
             var threadCount = threadDispatcher == null ? 1 : threadDispatcher.ThreadCount;

@@ -14,16 +14,16 @@
 
     public struct BoundResource
     {
-        public IShaderResourceView Resource;
+        public IShaderResourceView? Resource;
         public List<ShaderBinding> Bindings;
 
-        public BoundResource(IShaderResourceView resource, params ShaderBinding[] bindings)
+        public BoundResource(IShaderResourceView? resource, params ShaderBinding[] bindings)
         {
             Resource = resource;
             Bindings = new(bindings);
         }
 
-        public BoundResource(IShaderResourceView resource, ShaderStage stage, int slot)
+        public BoundResource(IShaderResourceView? resource, ShaderStage stage, int slot)
         {
             Resource = resource;
             Bindings = new List<ShaderBinding>();
@@ -41,16 +41,16 @@
 
     public struct BoundSampler
     {
-        public ISamplerState Sampler;
+        public ISamplerState? Sampler;
         public List<ShaderBinding> Bindings;
 
-        public BoundSampler(ISamplerState sampler, params ShaderBinding[] bindings)
+        public BoundSampler(ISamplerState? sampler, params ShaderBinding[] bindings)
         {
             Sampler = sampler;
             Bindings = new(bindings);
         }
 
-        public BoundSampler(ISamplerState sampler, ShaderStage stage, int slot)
+        public BoundSampler(ISamplerState? sampler, ShaderStage stage, int slot)
         {
             Sampler = sampler;
             Bindings = new List<ShaderBinding>();
@@ -68,16 +68,16 @@
 
     public struct BoundConstant
     {
-        public IBuffer Constant;
+        public IBuffer? Constant;
         public List<ShaderBinding> Bindings;
 
-        public BoundConstant(IBuffer constant, params ShaderBinding[] bindings)
+        public BoundConstant(IBuffer? constant, params ShaderBinding[] bindings)
         {
             Constant = constant;
             Bindings = new(bindings);
         }
 
-        public BoundConstant(IBuffer constant, ShaderStage stage, int slot)
+        public BoundConstant(IBuffer? constant, ShaderStage stage, int slot)
         {
             Constant = constant;
             Bindings = new List<ShaderBinding>();

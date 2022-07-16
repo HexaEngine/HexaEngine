@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using Newtonsoft.Json;
@@ -10,20 +8,22 @@
 
     public abstract class SceneNode
     {
+#nullable disable
         protected IGraphicsDevice Device;
+#nullable enable
         private readonly List<SceneNode> children = new();
         private readonly List<IComponent> components = new();
-        private Scene scene;
-        private SceneNode parent;
+        private Scene? scene;
+        private SceneNode? parent;
         private bool initialized;
 
         public Transform Transform = new();
         public string Name = string.Empty;
         private bool isSelected;
-        private static SceneNode selectedNode;
+        private static SceneNode? selectedNode;
 
         [JsonIgnore]
-        public virtual SceneNode Parent
+        public virtual SceneNode? Parent
         {
             get => parent;
             set
@@ -32,7 +32,7 @@
             }
         }
 
-        public static SceneNode SelectedNode
+        public static SceneNode? SelectedNode
         {
             get => selectedNode;
         }
@@ -145,24 +145,24 @@
         {
             if (scene != null)
                 return scene;
-            return parent.GetScene();
+            return parent?.GetScene() ?? throw new("Node tree invalid");
         }
 
-        public virtual T GetParentNodeOf<T>() where T : SceneNode
+        public virtual T? GetParentNodeOf<T>() where T : SceneNode
         {
-            SceneNode current = parent;
+            SceneNode? current = parent;
             while (true)
             {
                 if (current is T t)
                     return t;
-                else if (current.parent is not null)
+                else if (current?.parent is not null)
                     current = current.parent;
                 else
                     return null;
             }
         }
 
-        public virtual T GetComponent<T>() where T : IComponent
+        public virtual T? GetComponent<T>() where T : IComponent
         {
             for (int i = 0; i < components.Count; i++)
             {

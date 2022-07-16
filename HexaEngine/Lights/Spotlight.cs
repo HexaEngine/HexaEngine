@@ -22,10 +22,10 @@
         [EditorProperty("Strength")]
         public float Strength { get; set; } = 1000;
 
-        [EditorProperty("Cone Angle", EditorPropertyMode.Slider, 1f, 180f)]
+        [EditorProperty("Cone Angle", 1f, 180f, EditorPropertyMode.Slider)]
         public float ConeAngle { get => coneAngle; set => coneAngle = value; }
 
-        [EditorProperty("Blend", EditorPropertyMode.Slider, 0f, 1f)]
+        [EditorProperty("Blend", 0f, 1f, EditorPropertyMode.Slider)]
         public float Blend { get => blend; set => blend = value; }
 
         public float GetConeRadius(float z)

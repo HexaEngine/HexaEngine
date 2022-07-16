@@ -185,47 +185,47 @@
 
         #region Events
 
-        public event EventHandler<ShownEventArgs> Shown;
+        public event EventHandler<ShownEventArgs>? Shown;
 
-        public event EventHandler<HiddenEventArgs> Hidden;
+        public event EventHandler<HiddenEventArgs>? Hidden;
 
-        public event EventHandler<ExposedEventArgs> Exposed;
+        public event EventHandler<ExposedEventArgs>? Exposed;
 
-        public event EventHandler<MovedEventArgs> Moved;
+        public event EventHandler<MovedEventArgs>? Moved;
 
-        public event EventHandler<ResizedEventArgs> Resized;
+        public event EventHandler<ResizedEventArgs>? Resized;
 
-        public event EventHandler<SizeChangedEventArgs> SizeChanged;
+        public event EventHandler<SizeChangedEventArgs>? SizeChanged;
 
-        public event EventHandler<MinimizedEventArgs> Minimized;
+        public event EventHandler<MinimizedEventArgs>? Minimized;
 
-        public event EventHandler<MaximizedEventArgs> Maximized;
+        public event EventHandler<MaximizedEventArgs>? Maximized;
 
-        public event EventHandler<RestoredEventArgs> Restored;
+        public event EventHandler<RestoredEventArgs>? Restored;
 
-        public event EventHandler<EnterEventArgs> Enter;
+        public event EventHandler<EnterEventArgs>? Enter;
 
-        public event EventHandler<LeaveEventArgs> Leave;
+        public event EventHandler<LeaveEventArgs>? Leave;
 
-        public event EventHandler<FocusGainedEventArgs> FocusGained;
+        public event EventHandler<FocusGainedEventArgs>? FocusGained;
 
-        public event EventHandler<FocusLostEventArgs> FocusLost;
+        public event EventHandler<FocusLostEventArgs>? FocusLost;
 
-        public event EventHandler<CloseEventArgs> Closing;
+        public event EventHandler<CloseEventArgs>? Closing;
 
-        public event EventHandler<TakeFocusEventArgs> TakeFocus;
+        public event EventHandler<TakeFocusEventArgs>? TakeFocus;
 
-        public event EventHandler<HitTestEventArgs> HitTest;
+        public event EventHandler<HitTestEventArgs>? HitTest;
 
-        public event EventHandler<KeyboardEventArgs> KeyboardInput;
+        public event EventHandler<KeyboardEventArgs>? KeyboardInput;
 
-        public event EventHandler<KeyboardCharEventArgs> KeyboardCharInput;
+        public event EventHandler<KeyboardCharEventArgs>? KeyboardCharInput;
 
-        public event EventHandler<MouseButtonEventArgs> MouseButtonInput;
+        public event EventHandler<MouseButtonEventArgs>? MouseButtonInput;
 
-        public event EventHandler<MouseMotionEventArgs> MouseMotionInput;
+        public event EventHandler<MouseMotionEventArgs>? MouseMotionInput;
 
-        public event EventHandler<MouseWheelEventArgs> MouseWheelInput;
+        public event EventHandler<MouseWheelEventArgs>? MouseWheelInput;
 
         #endregion Events
 

@@ -15,7 +15,7 @@
         private static void Main()
         {
             Trace.Listeners.Add(new DebugListener("output.log"));
-            AssimpSceneLoader.Load("untitled.dae");
+            AssimpSceneLoader.Load("untitled.glb");
             Game game = new();
             game.Initialize();
             Application.Run(new GameWindow(game));

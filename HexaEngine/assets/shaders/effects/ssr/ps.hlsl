@@ -1,16 +1,8 @@
+#include "../../camera.hlsl"
 struct VSOut
 {
     float4 Pos : SV_Position;
     float2 Tex : TEXCOORD;
-};
-
-
-cbuffer mvp : register(b0)
-{
-    matrix view;
-    matrix viewInv;
-    matrix projection;
-    matrix projectionInv;
 };
 
 static const float g_FarPlaneDist = 100;
@@ -35,7 +27,7 @@ float Noise(float2 seed)
 
 float3 GetTexCoordXYLinearDepthZ(float3 viewPos)
 {
-    float4 projPos = mul(float4(viewPos, 1.f), projection);
+    float4 projPos = mul(float4(viewPos, 1.f), proj);
     projPos.xy /= projPos.w;
     projPos.xy = projPos.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
     projPos.z = viewPos.z / 100;

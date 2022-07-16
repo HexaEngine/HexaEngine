@@ -1,4 +1,14 @@
-struct Material {
+struct Material
+{
+    float4 Color;    
+    float4 RoughnessMetalnessAo;  
+    float4 Emissive;
+    // Displacement Albedo Normal Roughness
+    bool4 DANR;
+    // Metalness Emissive Ao 
+    bool4 MEAo;
+};
+struct MaterialOld {
     float3 Color;
     float reserved1;
     
@@ -14,10 +24,13 @@ struct Material {
     float Ao;
     float3 reserved5;
     
+   
+    
     bool HasDisplacementMap;
     bool HasAlbedoMap;
     bool HasNormalMap;
     bool HasRoughnessMap;
+    
     bool HasMetalnessMap;
     bool HasEmissiveMap;
     bool HasAoMap;

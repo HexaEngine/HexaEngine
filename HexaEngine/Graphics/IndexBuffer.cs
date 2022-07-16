@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Graphics
+﻿#nullable disable
+
+namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.Graphics;
     using System.Collections.Generic;

@@ -4,13 +4,12 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using System;
-    using System.Numerics;
 
     public abstract class Primitive<T> : IPrimitive where T : unmanaged
     {
         protected VertexBuffer<T> vertexBuffer;
-        protected IndexBuffer indexBuffer;
-        protected InstanceBuffer instanceBuffer;
+        protected IndexBuffer? indexBuffer;
+        protected InstanceBuffer? instanceBuffer;
         private bool disposedValue;
 
         public Primitive(IGraphicsDevice device)
@@ -18,9 +17,9 @@
             (vertexBuffer, indexBuffer, instanceBuffer) = InitializeMesh(device);
         }
 
-        protected abstract (VertexBuffer<T>, IndexBuffer, InstanceBuffer) InitializeMesh(IGraphicsDevice device);
+        protected abstract (VertexBuffer<T>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device);
 
-        public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport, IView view, Matrix4x4 transfrom)
+        public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
         {
             vertexBuffer.Bind(context);
             if (indexBuffer != null)
@@ -29,11 +28,11 @@
                 if (instanceBuffer != null)
                 {
                     instanceBuffer.Bind(context, 1);
-                    pipeline.DrawIndexedInstanced(context, viewport, view, transfrom, indexBuffer.Count, instanceBuffer.Count, 0, 0, 0);
+                    pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, instanceBuffer.Count, 0, 0, 0);
                 }
                 else
                 {
-                    pipeline.DrawIndexed(context, viewport, view, transfrom, indexBuffer.Count, 0, 0);
+                    pipeline.DrawIndexed(context, viewport, indexBuffer.Count, 0, 0);
                 }
             }
             else
@@ -41,11 +40,11 @@
                 if (instanceBuffer != null)
                 {
                     instanceBuffer.Bind(context, 1);
-                    pipeline.DrawInstanced(context, viewport, view, transfrom, vertexBuffer.Count, instanceBuffer.Count, 0, 0);
+                    pipeline.DrawInstanced(context, viewport, vertexBuffer.Count, instanceBuffer.Count, 0, 0);
                 }
                 else
                 {
-                    pipeline.Draw(context, viewport, view, transfrom, vertexBuffer.Count, 0);
+                    pipeline.Draw(context, viewport, vertexBuffer.Count, 0);
                 }
             }
         }

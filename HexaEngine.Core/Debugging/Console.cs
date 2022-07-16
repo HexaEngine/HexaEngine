@@ -88,8 +88,10 @@
 
         private class ConsoleTraceListener : TraceListener
         {
-            public override void Write(string message)
+            public override void Write(string? message)
             {
+                if (message == null)
+                    return;
                 if (messages.Count > 0)
                 {
                     if (messages[^1].Text.EndsWith(Environment.NewLine))
@@ -108,8 +110,10 @@
                     messages.Add(new() { Type = ConsoleMessageType.Log, Text = message, Timestamp = DateTime.Now });
             }
 
-            public override void WriteLine(string message)
+            public override void WriteLine(string? message)
             {
+                if (message == null)
+                    return;
                 messages.Add(new() { Type = ConsoleMessageType.Log, Text = message, Timestamp = DateTime.Now });
                 m_ScrollToBottom = true;
             }

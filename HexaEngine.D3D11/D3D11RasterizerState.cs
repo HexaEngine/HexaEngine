@@ -4,20 +4,16 @@
     using Silk.NET.Direct3D11;
     using System;
 
-    public unsafe class D3D11RasterizerState : DisposableBase, IRasterizerState
+    public unsafe class D3D11RasterizerState : DeviceChildBase, IRasterizerState
     {
         private readonly ID3D11RasterizerState* state;
 
         internal D3D11RasterizerState(ID3D11RasterizerState* state, RasterizerDescription description)
         {
             this.state = state;
-            NativePointer = new(state);
+            nativePointer = new(state);
             Description = description;
         }
-
-        public IntPtr NativePointer { get; }
-
-        public string? DebugName { get; set; } = string.Empty;
 
         public RasterizerDescription Description { get; }
 

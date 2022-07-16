@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Mathematics;
-    using System;
-    using System.Numerics;
 
     public interface IRenderTargetView : IDeviceChild
     {

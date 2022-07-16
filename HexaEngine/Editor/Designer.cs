@@ -1,12 +1,15 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core;
     using ImGuiNET;
+    using ImPlotNET;
 
     public static class Designer
     {
         private static bool isShown;
         private static bool inDesignMode = true;
         private static uint dockid;
+        private static readonly float[] data = new float[10];
 
         public static bool IsShown
         {

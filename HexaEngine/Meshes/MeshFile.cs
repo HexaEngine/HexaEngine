@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using BepuPhysics.Collidables;
     using System;
 
     public class MeshFile : IBinarySerializable
@@ -26,6 +27,17 @@
             int idx = BinaryHelper.ReadBinaryArray(src, out Groups);
             idx += BinaryHelper.ReadStructArray(src[idx..], sizeof(MeshVertex), out Vertices);
             return idx;
+        }
+
+        public Triangle[] GetTriangles()
+        {
+            Triangle[] triangles = new Triangle[Groups[0].Faces.Length];
+            for (int i = 0; i < Groups[0].Faces.Length; i++)
+            {
+                var face = Groups[0].Faces[i];
+                triangles[i] = new(Vertices[face.Vertex1].Position, Vertices[face.Vertex2].Position, Vertices[face.Vertex3].Position);
+            }
+            return triangles;
         }
     }
 }

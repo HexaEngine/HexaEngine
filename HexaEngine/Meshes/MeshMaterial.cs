@@ -165,7 +165,7 @@
             return new()
             {
                 NormalTextureMap = material.BumpMap,
-                Color = material.DiffuseColor,
+                Albedo = material.DiffuseColor,
                 AlbedoTextureMap = material.DiffuseTextureMap,
                 DisplacementTextureMap = material.DisplacementMap,
                 MetalnessTextureMap = material.MetallicTextureMap,

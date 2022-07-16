@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Editor
+﻿#nullable disable
+
+namespace HexaEngine.Editor
 {
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
@@ -95,7 +97,7 @@
                         flags |= ImGuiTreeNodeFlags.Leaf;
                     if (ImGui.TreeNodeEx(element.Name, flags))
                     {
-                        if (ImGui.BeginPopupContextWindow())
+                        if (ImGui.BeginPopupContextWindow(element.Name))
                         {
                             if (ImGui.MenuItem("Delete"))
                             {
@@ -116,6 +118,16 @@
                     }
                 }
             }
+
+            ImGui.End();
+
+            if (!ImGui.Begin("Renderer Settings"))
+            {
+                ImGui.End();
+                return;
+            }
+
+            scene.Renderer.DrawSettings();
 
             ImGui.End();
         }

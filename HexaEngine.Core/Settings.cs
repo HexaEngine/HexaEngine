@@ -55,7 +55,7 @@
         {
             if (File.Exists("config.json"))
             {
-                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("config.json"));
+                Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("config.json")) ?? new();
             }
             else
             {

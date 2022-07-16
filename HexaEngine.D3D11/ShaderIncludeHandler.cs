@@ -13,7 +13,7 @@
             TargetPath = targetPath;
         }
 
-        public Stream Open(IncludeType type, string fileName, Stream parentStream)
+        public Stream Open(IncludeType type, string fileName, Stream? parentStream)
         {
             var includeFile = GetFilePath(fileName);
 
@@ -27,7 +27,7 @@
 
         private string GetFilePath(string fileName)
         {
-            var path = Path.Combine(Path.GetDirectoryName(TargetPath), fileName);
+            var path = Path.Combine(Path.GetDirectoryName(TargetPath) ?? string.Empty, fileName);
             return path;
         }
 

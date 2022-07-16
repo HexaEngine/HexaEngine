@@ -44,7 +44,7 @@ namespace HexaEngine.Core.Debugging.Collections
     {
         private readonly Func<char, char, int> _compare;
         private readonly IComparer<string> _comparer;
-        private TstDictionaryEntry<T> _root;
+        private TstDictionaryEntry<T>? _root;
         private long _version;
 
         /// <summary>
@@ -99,21 +99,9 @@ namespace HexaEngine.Core.Debugging.Collections
         }
 
         /// <summary>
-        /// Create a dictionary with a specified root.
-        /// </summary>
-        /// <param name="root">Root of the new dictionary</param>
-        protected TernarySearchTreeDictionary(TstDictionaryEntry<T> root)
-        {
-            if (root == null)
-                throw new ArgumentNullException("root is null");
-            _root = root;
-            _version = 0;
-        }
-
-        /// <summary>
         /// Returns the comparer used to compare keys in the <see cref="TstDictionary"/>
         /// </summary>
-        public IComparer<string> Comparer
+        public IComparer<string>? Comparer
         {
             get { return _comparer; }
         }
@@ -195,8 +183,9 @@ namespace HexaEngine.Core.Debugging.Collections
         {
             get
             {
-                TstDictionaryEntry<T> entry;
-                if (!TryGetNode(key, null, out entry))
+                if (!TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? entry))
+                    throw new KeyNotFoundException();
+                if (entry == null)
                     throw new KeyNotFoundException();
                 return entry.Value.Value;
             }
@@ -376,17 +365,20 @@ namespace HexaEngine.Core.Debugging.Collections
         public virtual bool Remove(string key)
         {
             if (key == null)
-                throw new ArgumentNullException("key is null");
+                throw new ArgumentNullException(nameof(key));
             if (key.Length == 0)
                 throw new ArgumentException("key length cannot be 0");
             // updating version
             ++_version;
 
-            TstDictionaryEntry<T> p;
             var stack = new Stack<TstDictionaryEntry<T>>();
-            if (!TryGetNode(key, stack, out p))
+            if (!TryGetNode(key, stack, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? p))
                 return false;
             stack.Pop();
+
+            if (p == null)
+                return false;
+
             p.Value = default;
 
             while (!p.IsKey && !p.HasChildren && stack.Count > 0)
@@ -418,9 +410,9 @@ namespace HexaEngine.Core.Debugging.Collections
         }
 
         private void StartingWith(char split
-          , TstDictionaryEntry<T> low
-          , TstDictionaryEntry<T> eq
-          , TstDictionaryEntry<T> high
+          , TstDictionaryEntry<T>? low
+          , TstDictionaryEntry<T>? eq
+          , TstDictionaryEntry<T>? high
           , KeyValuePair<string, T> value
           , string key
           , int index
@@ -455,15 +447,19 @@ namespace HexaEngine.Core.Debugging.Collections
         /// </exception>
         public bool TryGetValue(string key, out T value)
         {
+#pragma warning disable CS8601 // Possible null reference assignment.
             value = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
-            TstDictionaryEntry<T> entry;
-            if (!TryGetNode(key, null, out entry))
+            if (!TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? entry))
                 return false;
 
-            value = entry.Value.Value;
+            if (entry == null)
+                return false;
+            else
+                value = entry.Value.Value;
             return true;
         }
 
@@ -472,10 +468,9 @@ namespace HexaEngine.Core.Debugging.Collections
         /// </summary>
         /// <returns>the <see cref="TstDictionaryEntry"/> mathcing the key, null if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is null.</exception>
-        protected virtual TstDictionaryEntry<T> Find(string key)
+        protected virtual TstDictionaryEntry<T>? Find(string key)
         {
-            TstDictionaryEntry<T> result;
-            if (TryGetNode(key, null, out result))
+            if (TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? result))
                 return result;
             return null;
         }
@@ -485,13 +480,13 @@ namespace HexaEngine.Core.Debugging.Collections
         /// </summary>
         /// <returns>the <see cref="TstDictionaryEntry"/> mathcing the key, null if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is null.</exception>
-        protected virtual bool TryGetNode(string key, Stack<TstDictionaryEntry<T>> stack, out TstDictionaryEntry<T> entry)
+        protected virtual bool TryGetNode(string key, Stack<TstDictionaryEntry<T>>? stack, out TstDictionaryEntry<T>? entry)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
             var n = key.Length;
             if (n == 0)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             var p = _root;
             var index = 0;
@@ -657,8 +652,7 @@ namespace HexaEngine.Core.Debugging.Collections
 
         bool ICollection<KeyValuePair<string, T>>.Contains(KeyValuePair<string, T> item)
         {
-            T value;
-            return TryGetValue(item.Key, out value) && Equals(item.Value, value);
+            return TryGetValue(item.Key, out T? value) && Equals(item.Value, value);
         }
 
         void ICollection<KeyValuePair<string, T>>.CopyTo(KeyValuePair<string, T>[] array, int arrayIndex)
@@ -693,9 +687,9 @@ namespace HexaEngine.Core.Debugging.Collections
         /// </summary>
         protected sealed class TstDictionaryEnumerator<S> : IEnumerator<KeyValuePair<string, S>>
         {
-            private TernarySearchTreeDictionary<S>.TstDictionaryEntry<S> _currentNode;
-            private readonly TernarySearchTreeDictionary<S> _dictionary;
-            private Stack<TernarySearchTreeDictionary<S>.TstDictionaryEntry<S>> _stack;
+            private TernarySearchTreeDictionary<S>.TstDictionaryEntry<S>? _currentNode;
+            private readonly TernarySearchTreeDictionary<S>? _dictionary;
+            private Stack<TernarySearchTreeDictionary<S>.TstDictionaryEntry<S>>? _stack;
             private readonly long _version;
 
             /// <summary>Constructs an enumerator over <paramref name="tst"/></summary>
@@ -703,10 +697,8 @@ namespace HexaEngine.Core.Debugging.Collections
             /// <exception cref="ArgumentNullException">tst is null</exception>
             public TstDictionaryEnumerator(TernarySearchTreeDictionary<S> tst)
             {
-                if (tst == null)
-                    throw new ArgumentNullException("tst");
                 _currentNode = null;
-                _dictionary = tst;
+                _dictionary = tst ?? throw new ArgumentNullException(nameof(tst));
                 _stack = null;
                 _version = tst._version;
             }
@@ -717,7 +709,7 @@ namespace HexaEngine.Core.Debugging.Collections
             public void Reset()
             {
                 ThrowIfChanged();
-                _stack.Clear();
+                _stack?.Clear();
                 _stack = null;
             }
 
@@ -761,7 +753,7 @@ namespace HexaEngine.Core.Debugging.Collections
                 {
                     _stack = new Stack<TernarySearchTreeDictionary<S>.TstDictionaryEntry<S>>();
                     _currentNode = null;
-                    if (_dictionary._root != null)
+                    if (_dictionary?._root != null)
                     {
                         _stack.Push(_dictionary._root);
                     }
@@ -792,7 +784,7 @@ namespace HexaEngine.Core.Debugging.Collections
 
             internal void ThrowIfChanged()
             {
-                if (_version != _dictionary._version)
+                if (_version != _dictionary?._version)
                     throw new InvalidOperationException("Collection changed");
             }
 
@@ -807,9 +799,9 @@ namespace HexaEngine.Core.Debugging.Collections
         /// </summary>
         protected class TstDictionaryEntry<S>
         {
-            private TstDictionaryEntry<S> _eqChild;
-            private TstDictionaryEntry<S> _highChild;
-            private TstDictionaryEntry<S> _lowChild;
+            private TstDictionaryEntry<S>? _eqChild;
+            private TstDictionaryEntry<S>? _highChild;
+            private TstDictionaryEntry<S>? _lowChild;
             private readonly char _splitChar;
             private KeyValuePair<string, S> _value;
 
@@ -867,7 +859,7 @@ namespace HexaEngine.Core.Debugging.Collections
             /// <value>
             /// The low child.
             /// </value>
-            public TstDictionaryEntry<S> LowChild
+            public TstDictionaryEntry<S>? LowChild
             {
                 get { return _lowChild; }
                 set { _lowChild = value; }
@@ -879,7 +871,7 @@ namespace HexaEngine.Core.Debugging.Collections
             /// <value>
             /// The eq child.
             /// </value>
-            public TstDictionaryEntry<S> EqChild
+            public TstDictionaryEntry<S>? EqChild
             {
                 get { return _eqChild; }
                 set { _eqChild = value; }
@@ -891,7 +883,7 @@ namespace HexaEngine.Core.Debugging.Collections
             /// <value>
             /// The high child.
             /// </value>
-            public TstDictionaryEntry<S> HighChild
+            public TstDictionaryEntry<S>? HighChild
             {
                 get { return _highChild; }
                 set { _highChild = value; }

@@ -10,6 +10,6 @@
 
         public abstract void Uninitialize();
 
-        public GameSettings Settings { get; set; }
+        public GameSettings? Settings { get; set; }
     }
 }

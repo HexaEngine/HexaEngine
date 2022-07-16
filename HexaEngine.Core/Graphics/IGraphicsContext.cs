@@ -19,27 +19,33 @@
 
         public void Unmap(IResource resource, int subresourceIndex);
 
-        void SetVertexBuffer(IBuffer vertexBuffer, int stride);
+        public void SetVertexBuffer(IBuffer? vertexBuffer, int stride);
 
-        public void SetVertexBuffer(IBuffer vertexBuffer, int stride, int offset);
+        public void SetVertexBuffer(IBuffer? vertexBuffer, int stride, int offset);
 
-        void SetVertexBuffer(int slot, IBuffer vertexBuffer, int stride);
+        public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride);
 
-        public void SetVertexBuffer(int slot, IBuffer vertexBuffer, int stride, int offset);
+        public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride, int offset);
 
-        public void SetIndexBuffer(IBuffer indexBuffer, Format format, int offset);
+        public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
 
-        public void SetConstantBuffer(IBuffer constantBuffer, ShaderStage stage, int slot);
+        public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot);
 
-        public void SetShaderResource(IShaderResourceView shaderResourceView, ShaderStage stage, int slot);
+        public void SetConstantBuffers(Unsafes.Vector<IBuffer> constantBuffers, ShaderStage stage, int slot);
+
+        public void SetShaderResource(IShaderResourceView? shaderResourceView, ShaderStage stage, int slot);
+
+        public void SetShaderResources(Unsafes.Vector<IShaderResourceView> shaderResourceViews, ShaderStage stage, int slot);
 
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
 
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
 
-        public void SetRenderTargets(IRenderTargetView renderTargetView, IDepthStencilView depthStencilView);
+        public void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView);
 
-        public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView depthStencilView);
+        public void SetRenderTargets(IRenderTargetView[]? views, IDepthStencilView? depthStencilView);
+
+        public void SetRenderTargets(Unsafes.Vector<IRenderTargetView> views, IDepthStencilView? depthStencilView);
 
         void SetScissorRect(int x, int y, int z, int w);
 
@@ -47,29 +53,31 @@
 
         void SetViewport(Viewport viewport);
 
-        void SetBlendState(IBlendState blendState, Vector4? factor = null, uint sampleMask = uint.MaxValue);
+        void SetBlendState(IBlendState? blendState, Vector4? factor = null, uint sampleMask = uint.MaxValue);
 
-        void SetDepthStencilState(IDepthStencilState depthStencilState, int stencilRef = 0);
+        void SetDepthStencilState(IDepthStencilState? depthStencilState, int stencilRef = 0);
 
-        void SetRasterizerState(IRasterizerState rasterizerState);
+        void SetRasterizerState(IRasterizerState? rasterizerState);
 
-        void SetSampler(ISamplerState sampler, ShaderStage stage, int slot);
+        void SetSampler(ISamplerState? sampler, ShaderStage stage, int slot);
+
+        void SetSamplers(Unsafes.Vector<ISamplerState> samplers, ShaderStage stage, int slot);
 
         void SetPrimitiveTopology(PrimitiveTopology topology);
 
-        void VSSetShader(IVertexShader vertexShader);
+        void VSSetShader(IVertexShader? vertexShader);
 
-        void PSSetShader(IPixelShader pixelShader);
+        void PSSetShader(IPixelShader? pixelShader);
 
-        void GSSetShader(IGeometryShader geometryShader);
+        void GSSetShader(IGeometryShader? geometryShader);
 
-        void HSSetShader(IHullShader hullShader);
+        void HSSetShader(IHullShader? hullShader);
 
-        void DSSetShader(IDomainShader domainShader);
+        void DSSetShader(IDomainShader? domainShader);
 
-        void CSSetShader(IComputeShader computeShader);
+        void CSSetShader(IComputeShader? computeShader);
 
-        void SetInputLayout(IInputLayout inputLayout);
+        void SetInputLayout(IInputLayout? inputLayout);
 
         void Draw(int vertexCount, int offset);
 

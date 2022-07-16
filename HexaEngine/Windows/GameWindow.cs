@@ -1,7 +1,8 @@
-﻿namespace HexaEngine.Windows
+﻿#nullable disable
+
+namespace HexaEngine.Windows
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
@@ -11,7 +12,6 @@
     using HexaEngine.Scenes;
     using System;
     using System.Diagnostics;
-    using System.Numerics;
     using System.Threading;
 
     public class GameWindow : SdlWindow
