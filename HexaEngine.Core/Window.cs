@@ -61,6 +61,12 @@
             Sdl.ShowWindow(window);
         }
 
+        public void ShowHidden()
+        {
+            if (!created)
+                PlatformConstruct();
+        }
+
         public void Close()
         {
             CloseEventArgs args = new();
@@ -87,6 +93,8 @@
             Sdl.GetWindowWMInfo(window, &wmInfo);
             return wmInfo.Info.Win.Hwnd;
         }
+
+        public Window* GetWindow() => window;
 
         public uint WindowID { get; private set; }
 

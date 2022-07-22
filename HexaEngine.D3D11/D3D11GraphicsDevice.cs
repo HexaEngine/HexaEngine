@@ -29,8 +29,8 @@
         internal IDXGIFactory2* IDXGIFactory;
         internal IDXGIAdapter1* IDXGIAdapter;
 
-        internal ID3D11Device1* Device;
-        internal ID3D11DeviceContext1* DeviceContext;
+        public ID3D11Device1* Device;
+        public ID3D11DeviceContext1* DeviceContext;
         internal ID3D11Debug* Debug;
 
         internal IDXGISwapChain1* swapChain;
@@ -489,7 +489,7 @@
 
         public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
-            Texture3DDescription description = new(format, width, height, height, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
+            Texture3DDescription description = new(format, width, height, depth, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
             ID3D11Texture3D* texture;
             Texture3DDesc desc = Helper.Convert(description);
 
@@ -619,6 +619,11 @@
             if (dimension == TextureDimension.Texture2D)
             {
                 return CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource);
+            }
+            if (dimension == TextureDimension.Texture3D)
+            {
+                fallback.SlicePitch = 1;
+                return CreateTexture3D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback, }, BindFlags.ShaderResource);
             }
             if (dimension == TextureDimension.TextureCube)
             {
@@ -1037,6 +1042,30 @@
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public IQuery CreateQuery()
+        {
+            ID3D11Query* query;
+            QueryDesc desc = new(Query.QueryEvent, 0);
+            Device->CreateQuery(&desc, &query);
+            return new D3D11Query(query);
+        }
+    }
+
+    public unsafe class D3D11Query : DeviceChildBase, IQuery
+    {
+        private ID3D11Query* query;
+
+        public D3D11Query(ID3D11Query* query)
+        {
+            this.query = query;
+            nativePointer = new(query);
+        }
+
+        protected override void DisposeCore()
+        {
+            query->Release();
         }
     }
 }

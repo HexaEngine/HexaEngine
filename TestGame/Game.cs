@@ -1,5 +1,6 @@
 ﻿namespace TestGame
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
@@ -30,6 +31,10 @@
         /// <param name="window">The window.</param>
         public override void InitializeWindow(GameWindow window)
         {
+            ImGuiConsole.RegisterCommand("recompile_shaders", _ =>
+            {
+                SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());
+            });
             Keyboard.OnKeyUp += (s, e) =>
             {
                 if (e.KeyCode == Keys.Escape)

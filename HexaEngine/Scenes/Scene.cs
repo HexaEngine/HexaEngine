@@ -14,6 +14,7 @@
     using HexaEngine.Rendering;
     using Newtonsoft.Json;
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -25,13 +26,14 @@
         private IGraphicsDevice device;
         private ISceneRenderer renderer;
 #nullable enable
+        private readonly Dictionary<Guid, SceneNode> nodes = new();
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
         private readonly List<Mesh> meshes = new();
         private readonly List<Material> materials = new();
-        private readonly Dictionary<string, IShaderResourceView> textures = new();
+        private Task? rendererUpdateTask;
 
-        public readonly Queue<SceneCommand> CommandQueue = new();
+        public readonly ConcurrentQueue<SceneCommand> CommandQueue = new();
 
         [JsonIgnore]
         public readonly Simulation Simulation;
@@ -92,44 +94,25 @@
             Time.Initialize();
             Time.FrameUpdate();
             renderer.Initialize(device, window);
-            materials.ForEach(x => { x.Initialize(this, device); CommandQueue.Enqueue(new() { Sender = x, Type = CommandType.Load }); });
-
+            materials.ForEach(x => { x.Initialize(this); CommandQueue.Enqueue(new() { Sender = x, Type = CommandType.Load }); });
+            meshes.ForEach(x => CommandQueue.Enqueue(new(CommandType.Load, x)));
             root.Initialize(device);
-        }
-
-        public bool TryGetMaterial(string name, [NotNullWhen(true)] out Material? material)
-        {
-            material = materials.FirstOrDefault(x => x.Name == name);
-            return material != null;
-        }
-
-        public IShaderResourceView LoadTexture(string name)
-        {
-            if (textures.TryGetValue(name, out var texture))
-            {
-                if (!texture.IsDisposed)
-                    return texture;
-                else
-                    textures.Remove(name);
-            }
-            var tex = device.LoadTexture2D(name);
-            texture = device.CreateShaderResourceView(tex);
-            tex.Dispose();
-            textures.Add(name, texture);
-            return texture;
         }
 
         public void AddMaterial(Material material)
         {
             if (root.Initialized)
-                material.Initialize(this, device);
+            {
+                CommandQueue.Enqueue(new(CommandType.Load, material));
+                material.Initialize(this);
+            }
             materials.Add(material);
         }
 
         public void RemoveMaterial(Material material)
         {
             if (root.Initialized)
-                material.Dispose();
+                CommandQueue.Enqueue(new(CommandType.Unload, material));
             materials.Remove(material);
         }
 
@@ -144,6 +127,8 @@
             Simulate(Time.Delta);
             Dispatcher.ExecuteInvokes();
             root.Children.ForEach(x => x.Update());
+            if (rendererUpdateTask?.IsCompleted ?? true)
+                rendererUpdateTask = renderer.Update(this);
             renderer.Render(context, window, viewport, this, CameraManager.Current);
             Mouse.Clear();
         }
@@ -161,6 +146,25 @@
             }
         }
 
+        public SceneNode Find(Guid guid)
+        {
+            return nodes[guid];
+        }
+
+        internal void RegisterChild(SceneNode node)
+        {
+            nodes.Add(node.ID, node);
+            cameras.AddIfIs(node);
+            lights.AddIfIs(node);
+        }
+
+        internal void UnregisterChild(SceneNode node)
+        {
+            nodes.Remove(node.ID);
+            cameras.RemoveIfIs(node);
+            lights.RemoveIfIs(node);
+        }
+
         private class SceneRootNode : SceneNode
         {
             private readonly Scene parent;
@@ -176,28 +180,27 @@
             }
         }
 
+        public void AddMesh(Mesh mesh)
+        {
+            if (root.Initialized)
+                CommandQueue.Enqueue(new(CommandType.Load, mesh));
+            meshes.Add(mesh);
+        }
+
         public void AddChild(SceneNode node)
         {
             root.AddChild(node);
-            cameras.AddIfIs(node);
-            lights.AddIfIs(node);
-            meshes.AddIfIs(node);
         }
 
         public void RemoveChild(SceneNode node)
         {
-            cameras.RemoveIfIs(node);
-            lights.RemoveIfIs(node);
-            meshes.RemoveIfIs(node);
             root.RemoveChild(node);
         }
 
         public void Uninitialize()
         {
             root.Uninitialize();
-            materials.ForEach(x => x.Dispose());
-            textures.ForEach(x => x.Value.Dispose());
-            Renderer.Dispose();
+            renderer.Dispose();
         }
     }
 }

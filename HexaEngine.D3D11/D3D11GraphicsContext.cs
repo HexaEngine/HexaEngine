@@ -41,6 +41,14 @@
             DeviceContext->ClearRenderTargetView((ID3D11RenderTargetView*)renderTargetView.NativePointer, value.ToFloatPtr());
         }
 
+        public void ClearRenderTargetViews(IRenderTargetView[] rtvs, Vector4 value)
+        {
+            for (int i = 0; i < rtvs.Length; i++)
+            {
+                ClearRenderTargetView(rtvs[i], value);
+            }
+        }
+
         public void ClearState()
         {
             DeviceContext->ClearState();
@@ -141,10 +149,10 @@
                 }
         }
 
-        public void SetConstantBuffers(Core.Unsafes.Vector<IBuffer> constantBuffers, ShaderStage stage, int slot)
+        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot)
         {
-            ID3D11Buffer** ptr = (ID3D11Buffer**)constantBuffers.Data;
-            uint count = constantBuffers.Length;
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
             if (count == 0) return;
             switch (stage)
             {
@@ -208,22 +216,11 @@
 
         public void SetRenderTargets(IRenderTargetView[]? views, IDepthStencilView? depthStencilView)
         {
-            if (views != null)
-                if (depthStencilView != null)
-                    DeviceContext->OMSetRenderTargets((uint)views.Length, Utils.ToPointerArray<IRenderTargetView, ID3D11RenderTargetView>(views), (ID3D11DepthStencilView*)depthStencilView.NativePointer);
-                else
-                    DeviceContext->OMSetRenderTargets((uint)views.Length, Utils.ToPointerArray<IRenderTargetView, ID3D11RenderTargetView>(views), (ID3D11DepthStencilView*)null);
-            else
-                throw new ArgumentNullException(nameof(views));
-        }
-
-        public void SetRenderTargets(Core.Unsafes.Vector<IRenderTargetView> views, IDepthStencilView? depthStencilView)
-        {
-            ID3D11RenderTargetView** ptr = (ID3D11RenderTargetView**)views.Data;
+            ID3D11RenderTargetView** ptr = Utils.ToPointerArray<IRenderTargetView, ID3D11RenderTargetView>(views);
             if (depthStencilView != null)
-                DeviceContext->OMSetRenderTargets(views.Length, ptr, (ID3D11DepthStencilView*)depthStencilView.NativePointer);
+                DeviceContext->OMSetRenderTargets((uint)views.Length, ptr, (ID3D11DepthStencilView*)depthStencilView.NativePointer);
             else
-                DeviceContext->OMSetRenderTargets(views.Length, ptr, (ID3D11DepthStencilView*)null);
+                DeviceContext->OMSetRenderTargets((uint)views.Length, ptr, (ID3D11DepthStencilView*)null);
         }
 
         public void SetSampler(ISamplerState? sampler, ShaderStage stage, int slot)
@@ -284,33 +281,33 @@
                 }
         }
 
-        public void SetSamplers(Core.Unsafes.Vector<ISamplerState> samplers, ShaderStage stage, int slot)
+        public void SetSamplers(ISamplerState[] samplers, ShaderStage stage, int slot)
         {
-            ID3D11SamplerState** ptr = (ID3D11SamplerState**)samplers.Data;
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
             switch (stage)
             {
                 case ShaderStage.Vertex:
-                    DeviceContext->VSSetSamplers((uint)slot, samplers.Length, ptr);
+                    DeviceContext->VSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
                     break;
 
                 case ShaderStage.Hull:
-                    DeviceContext->HSSetSamplers((uint)slot, samplers.Length, ptr);
+                    DeviceContext->HSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
                     break;
 
                 case ShaderStage.Domain:
-                    DeviceContext->DSSetSamplers((uint)slot, samplers.Length, ptr);
+                    DeviceContext->DSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
                     break;
 
                 case ShaderStage.Geometry:
-                    DeviceContext->GSSetSamplers((uint)slot, samplers.Length, ptr);
+                    DeviceContext->GSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
                     break;
 
                 case ShaderStage.Pixel:
-                    DeviceContext->PSSetSamplers((uint)slot, samplers.Length, ptr);
+                    DeviceContext->PSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
                     break;
 
                 case ShaderStage.Compute:
-                    DeviceContext->CSSetSamplers((uint)slot, samplers.Length, ptr);
+                    DeviceContext->CSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
                     break;
             }
         }
@@ -379,33 +376,37 @@
                 }
         }
 
-        public void SetShaderResources(Core.Unsafes.Vector<IShaderResourceView> shaderResourceViews, ShaderStage stage, int slot)
+        public void SetShaderResources(IShaderResourceView[] shaderResourceViews, ShaderStage stage, int slot)
         {
-            ID3D11ShaderResourceView** ptr = (ID3D11ShaderResourceView**)shaderResourceViews.Data;
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            for (int i = 0; i < shaderResourceViews.Length; i++)
+            {
+                var ptr2 = ptr[i];
+            }
             switch (stage)
             {
                 case ShaderStage.Vertex:
-                    DeviceContext->VSSetShaderResources((uint)slot, shaderResourceViews.Length, ptr);
+                    DeviceContext->VSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
                     break;
 
                 case ShaderStage.Hull:
-                    DeviceContext->HSSetShaderResources((uint)slot, shaderResourceViews.Length, ptr);
+                    DeviceContext->HSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
                     break;
 
                 case ShaderStage.Domain:
-                    DeviceContext->DSSetShaderResources((uint)slot, shaderResourceViews.Length, ptr);
+                    DeviceContext->DSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
                     break;
 
                 case ShaderStage.Geometry:
-                    DeviceContext->GSSetShaderResources((uint)slot, shaderResourceViews.Length, ptr);
+                    DeviceContext->GSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
                     break;
 
                 case ShaderStage.Pixel:
-                    DeviceContext->PSSetShaderResources((uint)slot, shaderResourceViews.Length, ptr);
+                    DeviceContext->PSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
                     break;
 
                 case ShaderStage.Compute:
-                    DeviceContext->CSSetShaderResources((uint)slot, shaderResourceViews.Length, ptr);
+                    DeviceContext->CSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
                     break;
             }
         }
@@ -476,7 +477,7 @@
 
         public void VSSetShader(IVertexShader? vertexShader)
         {
-            if (vertexShader is not null)
+            if (vertexShader is not null && !vertexShader.IsDisposed)
                 DeviceContext->VSSetShader((ID3D11VertexShader*)vertexShader.NativePointer, null, 0);
             else
                 DeviceContext->VSSetShader(null, null, 0);
@@ -484,7 +485,7 @@
 
         public void HSSetShader(IHullShader? hullShader)
         {
-            if (hullShader is not null)
+            if (hullShader is not null && !hullShader.IsDisposed)
                 DeviceContext->HSSetShader((ID3D11HullShader*)hullShader.NativePointer, null, 0);
             else
                 DeviceContext->HSSetShader(null, null, 0);
@@ -492,7 +493,7 @@
 
         public void DSSetShader(IDomainShader? domainShader)
         {
-            if (domainShader is not null)
+            if (domainShader is not null && !domainShader.IsDisposed)
                 DeviceContext->DSSetShader((ID3D11DomainShader*)domainShader.NativePointer, null, 0);
             else
                 DeviceContext->DSSetShader(null, null, 0);
@@ -500,7 +501,7 @@
 
         public void GSSetShader(IGeometryShader? geometryShader)
         {
-            if (geometryShader is not null)
+            if (geometryShader is not null && !geometryShader.IsDisposed)
                 DeviceContext->GSSetShader((ID3D11GeometryShader*)geometryShader.NativePointer, null, 0);
             else
                 DeviceContext->GSSetShader(null, null, 0);
@@ -508,7 +509,7 @@
 
         public void PSSetShader(IPixelShader? pixelShader)
         {
-            if (pixelShader is not null)
+            if (pixelShader is not null && !pixelShader.IsDisposed)
                 DeviceContext->PSSetShader((ID3D11PixelShader*)pixelShader.NativePointer, null, 0);
             else
                 DeviceContext->PSSetShader(null, null, 0);
@@ -516,7 +517,7 @@
 
         public void CSSetShader(IComputeShader? computeShader)
         {
-            if (computeShader is not null)
+            if (computeShader is not null && !computeShader.IsDisposed)
                 DeviceContext->CSSetShader((ID3D11ComputeShader*)computeShader.NativePointer, null, 0);
             else
                 DeviceContext->CSSetShader(null, null, 0);
@@ -585,6 +586,26 @@
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public void QueryBegin(IQuery query)
+        {
+            DeviceContext->Begin((ID3D11Asynchronous*)query.NativePointer);
+        }
+
+        public void QueryEnd(IQuery query)
+        {
+            DeviceContext->End((ID3D11Asynchronous*)query.NativePointer);
+        }
+
+        public void QueryGetData(IQuery query)
+        {
+            DeviceContext->GetData((ID3D11Asynchronous*)query.NativePointer, null, 0, 0);
+        }
+
+        public void Flush()
+        {
+            DeviceContext->Flush();
         }
     }
 }

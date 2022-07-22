@@ -176,8 +176,9 @@
 
         public bool Equals(ShaderCacheEntry other)
         {
-            if (!Name.Equals(other.Name)) return false;
+            if (Name != other.Name) return false;
             if (!Timestamp.Equals(other.Timestamp)) return false;
+            if (Macros == other.Macros) return true;
             return Macros.SequenceEqual(other.Macros);
         }
 

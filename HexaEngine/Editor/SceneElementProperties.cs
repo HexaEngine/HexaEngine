@@ -214,6 +214,19 @@ namespace HexaEngine.Editor
             {
                 element.Transform.Matrix = transform;
             }
+
+            for (int i = 0; i < element.Meshes.Count; i++)
+            {
+                var mesh = element.Meshes[i];
+                for (int j = 0; j < mesh.Bones.Length; j++)
+                {
+                    var skele = mesh.Skeleton;
+                    var bone = mesh.Bones[j];
+                    var origin = Vector3.Transform(Vector3.Zero, skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName));
+                    var dest = Vector3.Transform(origin, skele.GetGlobalTransform(bone.Name));
+                    DebugDraw.DrawLine(origin, dest, false, Vector4.One);
+                }
+            }
         }
     }
 }

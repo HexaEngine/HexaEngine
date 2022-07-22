@@ -92,9 +92,13 @@
             context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
             for (int i = 0; i < 6; i++)
             {
+                IQuery query = context.Device.CreateQuery();
                 context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
                 Targets.ClearAndSetTarget(context, i);
                 base.DrawAuto(context, Targets.Viewport);
+                context.QueryEnd(query);
+                context.QueryGetData(query);
+                query.Dispose();
             }
         }
 

@@ -13,8 +13,9 @@
             return (Guid*)Unsafe.AsPointer(ref guid);
         }
 
-        public static T2** ToPointerArray<T1, T2>(T1[] values) where T1 : IDeviceChild where T2 : unmanaged
+        public static T2** ToPointerArray<T1, T2>(T1[]? values) where T1 : IDeviceChild where T2 : unmanaged
         {
+            if (values == null) return null;
             T2*[] ptrs = new T2*[values.Length];
             for (int i = 0; i < values.Length; i++)
             {

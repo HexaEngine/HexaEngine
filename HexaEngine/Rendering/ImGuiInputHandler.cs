@@ -122,7 +122,7 @@ namespace HexaEngine.Rendering
         {
             var io = ImGui.GetIO();
             io.DisplaySize = new(window.Width, window.Height);
-
+            io.DeltaTime = Time.Delta;
             UpdateKeyModifiers();
             UpdateMousePosition();
 

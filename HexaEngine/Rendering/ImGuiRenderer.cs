@@ -44,10 +44,6 @@ namespace HexaEngine.Rendering
         {
             IntPtr igContext = ImGui.CreateContext();
             ImGui.SetCurrentContext(igContext);
-            ImPlot.SetImGuiContext(igContext);
-            var ip = ImPlot.CreateContext();
-            ImPlot.SetCurrentContext(ip);
-
             ImGuizmo.SetImGuiContext(igContext);
 
             device = window.Device;
@@ -55,12 +51,21 @@ namespace HexaEngine.Rendering
             swapChain = window.Device.SwapChain;
 
             var io = ImGui.GetIO();
-            io.Fonts.AddFontDefault();
+            var config = new ImFontConfigPtr(ImGuiNative.ImFontConfig_ImFontConfig());
+
+            io.Fonts.AddFontDefault(config);
+            config.MergeMode = true;
+            config.GlyphMinAdvanceX = 18;
+            config.GlyphOffset = new(0, 4);
+            var range = new char[] { (char)0xE700, (char)0xF800, (char)0 };
+            fixed (char* buffer = range)
+            {
+                io.Fonts.AddFontFromFileTTF("C:\\windows\\fonts\\SegoeIcons.ttf", 14, config, (IntPtr)buffer);
+            }
+
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.HasMouseCursors;
             CreateDeviceObjects();
-
-            ImPlot.StyleColorsDark();
 
             inputHandler = new(window);
         }

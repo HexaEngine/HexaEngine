@@ -39,7 +39,7 @@ namespace HexaEngine.Scenes
         {
             var window = Application.MainWindow as GameWindow;
 
-            window.RenderDispatcher.Invoke(() =>
+            window.RenderDispatcher.InvokeBlocking(() =>
             {
                 scene.Initialize(window.Device, window);
                 if (Current == null)
@@ -65,11 +65,27 @@ namespace HexaEngine.Scenes
         /// <param name="scene">The scene.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task AsyncLoad(Scene scene)
+        public static async Task AsyncLoad(Scene scene)
         {
-            return Task.Factory.StartNew(() =>
+            var window = Application.MainWindow as GameWindow;
+
+            await window.RenderDispatcher.InvokeAsync(() =>
             {
-                Load(scene);
+                scene.Initialize(window.Device, window);
+                if (Current == null)
+                {
+                    Current = scene;
+                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    return;
+                }
+                lock (Current)
+                {
+                    Current?.Uninitialize();
+                    Current = scene;
+                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                }
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             });
         }
 

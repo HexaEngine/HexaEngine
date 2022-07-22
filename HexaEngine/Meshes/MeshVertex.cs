@@ -3,6 +3,26 @@
     using System;
     using System.Numerics;
 
+    public struct MeshBone
+    {
+        public string Name;
+        public MeshWeight[] Weights;
+        public Matrix4x4 Offset;
+
+        public MeshBone(string name, MeshWeight[] weights, Matrix4x4 offset)
+        {
+            Name = name;
+            Weights = weights;
+            Offset = offset;
+        }
+    }
+
+    public struct MeshWeight
+    {
+        public uint VertexId;
+        public float Weight;
+    }
+
     public struct MeshVertex
     {
         public Vector3 Position;

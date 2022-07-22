@@ -63,5 +63,6 @@ namespace HexaEngine.Core.Graphics
         BC6HRGBFloat,
         BC7RGBAUNorm,
         BC7RGBAUNormSrgb,
+        R32Typeless,
     }
 }

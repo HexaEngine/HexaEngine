@@ -7,11 +7,12 @@
     {
         private static long lastTicks;
         private static float fixedTime;
+        private static float cumulativeFrameTime;
 
         // Properties
         public static float Delta { get; private set; }
 
-        public static float CumulativeFrameTime { get; private set; }
+        public static float CumulativeFrameTime { get => cumulativeFrameTime; }
 
         public static int FixedUpdateRate { get; set; } = 3;
 
@@ -23,6 +24,7 @@
         public static void Initialize()
         {
             lastTicks = Stopwatch.GetTimestamp();
+            cumulativeFrameTime = 0;
         }
 
         public static void FrameUpdate()
@@ -33,7 +35,7 @@
             lastTicks = ticks;
             // Calculate the frame time by the time difference over the timer speed resolution.
             Delta = deltaTime;
-            CumulativeFrameTime += Delta;
+            cumulativeFrameTime += Delta;
             fixedTime += Delta;
             //Trace.WriteLine(Delta);
             while (fixedTime > FixedUpdatePerSecond)

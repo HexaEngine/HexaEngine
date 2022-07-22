@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
-    using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
     public class RenderTextureArray : IDisposable
     {
-        private readonly List<ShaderBinding> bindings = new();
-        private ITexture2D[] textures;
-        private IShaderResourceView[] resourceViews;
         private bool disposedValue;
 
         public int Width { get; }
@@ -21,7 +18,8 @@
 
         public int Count { get; }
 
-        public RenderTargetViewArray RenderTargets { get; }
+        public readonly IShaderResourceView[] SRVs;
+        public readonly IRenderTargetView[] RTVs;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public RenderTextureArray(IGraphicsDevice device, int width, int height, int count = 1, Format format = Format.RGBA32Float)
@@ -29,91 +27,25 @@
             Count = count;
             Width = width;
             Height = height;
-            textures = new ITexture2D[count];
-            resourceViews = new IShaderResourceView[count];
+            RTVs = new IRenderTargetView[count];
+            SRVs = new IShaderResourceView[count];
             for (int i = 0; i < count; i++)
             {
-                ITexture2D texture;
-                IShaderResourceView resourceView;
-
-                Texture2DDescription textureDesc = new()
-                {
-                    Width = Width,
-                    Height = Height,
-                    MipLevels = 1,
-                    ArraySize = 1,
-                    Format = format,
-                    SampleDescription = new SampleDescription(1, 0),
-                    Usage = Usage.Default,
-                    BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
-                    CPUAccessFlags = CpuAccessFlags.None,
-                    MiscFlags = ResourceMiscFlag.None
-                };
-
-                texture = device.CreateTexture2D(textureDesc);
-
-                ShaderResourceViewDescription srvDesc = new()
-                {
-                    Format = texture.Description.Format,
-                    ViewDimension = ShaderResourceViewDimension.Texture2D,
-                };
-
-                srvDesc.Texture2D.MipLevels = 1;
-                srvDesc.Texture2D.MostDetailedMip = 0;
-
-                resourceView = device.CreateShaderResourceView(texture, srvDesc);
-
-                textures[i] = texture;
-                resourceViews[i] = resourceView;
+                ITexture2D tex = device.CreateTexture2D(format, Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                SRVs[i] = device.CreateShaderResourceView(tex);
+                RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
+                tex.Dispose();
             }
-
-            RenderTargets = new(device, textures, new(width, height));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add(ShaderBinding binding)
-        {
-            bindings.Add(binding);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Bind(IGraphicsContext context)
-        {
-            foreach (ShaderBinding binding in bindings)
-            {
-                for (int i = 0; i < resourceViews.Length; i++)
-                {
-                    context.SetShaderResource(resourceViews[i], binding.Stage, binding.Slot + i);
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Bind(IGraphicsContext context, int index)
-        {
-            context.SetShaderResource(resourceViews[index], bindings[index].Stage, bindings[index].Slot);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(ShaderBinding binding)
-        {
-            bindings.Remove(binding);
-        }
-
-        public IShaderResourceView GetResourceView(int index)
-        {
-            return resourceViews[index];
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                foreach (ITexture2D texture in textures)
-                    texture.Dispose();
-                foreach (IShaderResourceView view in resourceViews)
-                    view.Dispose();
-                RenderTargets.Dispose();
+                foreach (IRenderTargetView rtv in RTVs)
+                    rtv.Dispose();
+                foreach (IShaderResourceView srv in SRVs)
+                    srv.Dispose();
 
                 disposedValue = true;
             }

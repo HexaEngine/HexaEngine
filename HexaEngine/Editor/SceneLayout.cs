@@ -2,11 +2,13 @@
 
 namespace HexaEngine.Editor
 {
+    using HexaEngine.Core;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
 
@@ -88,33 +90,60 @@ namespace HexaEngine.Editor
 
                 DisplayNode(element);
 
-                static void DisplayNode(SceneNode element)
+                void DisplayNode(SceneNode element)
                 {
                     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
                     if (element.IsSelected)
                         flags |= ImGuiTreeNodeFlags.Selected;
                     if (element.Children.Count == 0)
                         flags |= ImGuiTreeNodeFlags.Leaf;
-                    if (ImGui.TreeNodeEx(element.Name, flags))
+                    bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
+
+                    ImGui.PushID(element.Name);
+                    if (ImGui.BeginPopupContextItem(element.Name))
                     {
-                        if (ImGui.BeginPopupContextWindow(element.Name))
+                        if (ImGui.MenuItem("Delete"))
                         {
-                            if (ImGui.MenuItem("Delete"))
-                            {
-                                element.GetScene().RemoveChild(element);
-                            }
-                            ImGui.EndPopup();
+                            element.Parent.RemoveChild(element);
                         }
+                        ImGui.EndPopup();
+                    }
+                    ImGui.PopID();
+                    if (ImGui.BeginDragDropTarget())
+                    {
+                        unsafe
+                        {
+                            var payload = ImGui.AcceptDragDropPayload(nameof(SceneNode));
+                            if (payload.NativePtr != null)
+                            {
+                                Guid id = ((Guid*)payload.Data)[0];
+                                element.AddChild(scene.Find(id));
+                                Trace.WriteLine($"{payload.Preview} {payload.Delivery}");
+                            }
+                        }
+                        ImGui.EndDragDropTarget();
+                    }
+                    if (ImGui.BeginDragDropSource())
+                    {
+                        unsafe
+                        {
+                            ImGui.SetDragDropPayload(nameof(SceneNode), (IntPtr)Utilities.AsPointer(element.ID), (uint)sizeof(Guid));
+                        }
+                        ImGui.Text(element.Name);
+                        ImGui.EndDragDropSource();
+                    }
+                    if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                    {
+                        element.IsSelected = true;
+                    }
+
+                    if (isOpen)
+                    {
                         for (int j = 0; j < element.Children.Count; j++)
                         {
                             DisplayNode(element.Children[j]);
                         }
                         ImGui.TreePop();
-                    }
-
-                    if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
-                    {
-                        element.IsSelected = true;
                     }
                 }
             }

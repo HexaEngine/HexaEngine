@@ -94,6 +94,10 @@
                 var texAo = material.AoTextureMap;
                 if (ImGui.InputText("Ao Tex", ref texAo, 256))
                     material.AoTextureMap = texAo;
+
+                var texRM = material.RoughnessMetalnessTextureMap;
+                if (ImGui.InputText("RM Tex", ref texRM, 256))
+                    material.RoughnessMetalnessTextureMap = texRM;
             }
 
             ImGui.End();

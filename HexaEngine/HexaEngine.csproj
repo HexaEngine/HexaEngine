@@ -35,6 +35,12 @@
 	  <None Update="assets\shaders\deferred\prepass\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shaders\deferred\solid\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\solid\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\effects\downsample\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -47,17 +53,29 @@
 	  <None Update="assets\shaders\effects\upsample\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shaders\forward\csm\defs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\forward\csm\ds.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\forward\csm\hs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\forward\csm\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\forward\csm\gs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\forward\csm\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\light.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\deferred\flat\ps.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\deferred\flat\vs.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	  <None Update="assets\shaders\deferred\pbrbrdf\ps.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\deferred\pbrbrdf\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -198,9 +216,6 @@
 
 
 	<ItemGroup>
-	  <Folder Include="assets\shaders\deferred\blinn\" />
-	  <Folder Include="assets\shaders\deferred\toon\" />
-	  <Folder Include="assets\shaders\deferred\phong\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
 	  <Folder Include="Windows\" />
@@ -213,10 +228,4 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </PixelShader>
 	</ItemGroup>
-
-
-
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy /y /d  &quot;$(SolutionDir)x64\Debug\*.dll&quot; &quot;$(ProjectDir)$(OutDir)runtimes\win-x64\native\&quot;" />
-	</Target>
 </Project>

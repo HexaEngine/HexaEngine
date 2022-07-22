@@ -66,7 +66,7 @@
             Mesh = new Cube(device);
             State = new()
             {
-                DepthStencil = DepthStencilDescription.Default,
+                DepthStencil = DepthStencilDescription.None,
                 Rasterizer = RasterizerDescription.CullNone,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
@@ -81,6 +81,7 @@
                 context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
                 Targets.ClearAndSetTarget(context, i);
                 base.DrawAuto(context, Targets.Viewport);
+                context.Flush();
             }
         }
 

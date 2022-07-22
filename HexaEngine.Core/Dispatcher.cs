@@ -8,6 +8,7 @@
     {
         private static readonly Dictionary<int, Dispatcher> instances = new();
         protected ConcurrentQueue<Action> queue = new();
+        protected ConcurrentQueue<ValueTuple<Action, EventWaitHandle>> waitingQueue = new();
 
         private bool disposedValue;
 
@@ -43,12 +44,56 @@
             {
                 item();
             }
+            while (CurrentDispatcher.waitingQueue.TryDequeue(out var item))
+            {
+                item.Item1();
+                item.Item2.Set();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Invoke(Action action)
         {
-            queue.Enqueue(action);
+            if (DispatcherThread == Thread.CurrentThread)
+            {
+                action();
+            }
+            else
+            {
+                queue.Enqueue(action);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void InvokeBlocking(Action action)
+        {
+            if (DispatcherThread == Thread.CurrentThread)
+            {
+                action();
+            }
+            else
+            {
+                EventWaitHandle handle = new(false, EventResetMode.ManualReset);
+                waitingQueue.Enqueue((action, handle));
+                handle.WaitOne();
+                handle.Dispose();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public async Task InvokeAsync(Action action)
+        {
+            if (DispatcherThread == Thread.CurrentThread)
+            {
+                action();
+            }
+            else
+            {
+                EventWaitHandle handle = new(false, EventResetMode.ManualReset);
+                waitingQueue.Enqueue((action, handle));
+                await Task.Run(() => handle.WaitOne());
+                handle.Dispose();
+            }
         }
 
         protected virtual void Dispose(bool disposing)

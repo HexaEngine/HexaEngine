@@ -31,21 +31,21 @@
 
         public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot);
 
-        public void SetConstantBuffers(Unsafes.Vector<IBuffer> constantBuffers, ShaderStage stage, int slot);
+        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot);
 
         public void SetShaderResource(IShaderResourceView? shaderResourceView, ShaderStage stage, int slot);
 
-        public void SetShaderResources(Unsafes.Vector<IShaderResourceView> shaderResourceViews, ShaderStage stage, int slot);
+        public void SetShaderResources(IShaderResourceView[] shaderResourceViews, ShaderStage stage, int slot);
 
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
+
+        public void ClearRenderTargetViews(IRenderTargetView[] rtvs, Vector4 value);
 
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
 
         public void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView);
 
         public void SetRenderTargets(IRenderTargetView[]? views, IDepthStencilView? depthStencilView);
-
-        public void SetRenderTargets(Unsafes.Vector<IRenderTargetView> views, IDepthStencilView? depthStencilView);
 
         void SetScissorRect(int x, int y, int z, int w);
 
@@ -61,7 +61,7 @@
 
         void SetSampler(ISamplerState? sampler, ShaderStage stage, int slot);
 
-        void SetSamplers(Unsafes.Vector<ISamplerState> samplers, ShaderStage stage, int slot);
+        void SetSamplers(ISamplerState[] samplers, ShaderStage stage, int slot);
 
         void SetPrimitiveTopology(PrimitiveTopology topology);
 
@@ -86,5 +86,17 @@
         void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset);
 
         void DrawIndexedInstanced(int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset);
+
+        void QueryBegin(IQuery query);
+
+        void QueryEnd(IQuery query);
+
+        void QueryGetData(IQuery query);
+
+        void Flush();
+    }
+
+    public interface IQuery : IDeviceChild
+    {
     }
 }

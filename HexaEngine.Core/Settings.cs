@@ -20,7 +20,7 @@
         public int ShadowRange = 1024 / 8;
 
         [JsonProperty]
-        public int MipLevels = 8;
+        public int MipLevels = 2;
 
         [JsonProperty]
         public bool ShaderCache = true;

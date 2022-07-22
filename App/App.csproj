@@ -14,16 +14,6 @@
 	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	  <ProjectReference Include="..\TestGame\TestGame.csproj" />
 	</ItemGroup>
-
-
-	<ItemGroup>
-	  <None Update="untitled.dae">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="untitled.glb">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 	<Target Name="BuildPackAssets" AfterTargets="AfterBuild">
 		<Exec Command="xcopy /y /d  &quot;$(SolutionDir)x64\Debug\*.dll&quot; &quot;$(ProjectDir)$(OutDir)runtimes\win-x64\native\&quot;" />
 	</Target>

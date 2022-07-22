@@ -1124,6 +1124,7 @@
                 Format.BC6HRGBFloat => Silk.NET.DXGI.Format.FormatBC6HSF16,
                 Format.BC7RGBAUNorm => Silk.NET.DXGI.Format.FormatBC7Unorm,
                 Format.BC7RGBAUNormSrgb => Silk.NET.DXGI.Format.FormatBC7UnormSrgb,
+                Format.R32Typeless => Silk.NET.DXGI.Format.FormatR32Typeless,
                 _ => Silk.NET.DXGI.Format.FormatUnknown,
             };
         }
@@ -1192,6 +1193,7 @@
                 Silk.NET.DXGI.Format.FormatBC6HSF16 => Format.BC6HRGBFloat,
                 Silk.NET.DXGI.Format.FormatBC7Unorm => Format.BC7RGBAUNorm,
                 Silk.NET.DXGI.Format.FormatBC7UnormSrgb => Format.BC7RGBAUNormSrgb,
+                Silk.NET.DXGI.Format.FormatR32Typeless => Format.R32Typeless,
                 _ => Format.Unknown,
             };
         }

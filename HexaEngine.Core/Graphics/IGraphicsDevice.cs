@@ -189,5 +189,7 @@
         public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob);
 
         public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob);
+
+        IQuery CreateQuery();
     }
 }

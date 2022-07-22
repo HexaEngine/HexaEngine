@@ -13,7 +13,7 @@
         #region Fields
 
         private readonly IResource resource;
-        private readonly IShaderResourceView? resourceView;
+        public readonly IShaderResourceView? ResourceView;
         private readonly IRenderTargetView? renderTargetView;
         private readonly IResource? depthStencil;
         public IDepthStencilView? DepthStencilView;
@@ -28,8 +28,6 @@
         #region Properties
 
         public IResource Resource => resource;
-
-        public IShaderResourceView? ResourceView => resourceView;
 
         public IRenderTargetView? RenderTargetView => renderTargetView;
 
@@ -46,7 +44,7 @@
             this.resource = resource;
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
             DepthStencilView = depthStencil;
@@ -171,7 +169,7 @@
             }
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -186,7 +184,7 @@
             this.resource = resource;
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
         }
@@ -204,7 +202,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -330,7 +328,7 @@
             }
 
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -351,7 +349,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -431,7 +429,7 @@
             }
 
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -458,7 +456,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -483,7 +481,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -513,7 +511,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                resourceView = device.CreateShaderResourceView(resource);
+                ResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -598,7 +596,7 @@
         {
             for (int i = 0; i < bindings.Count; i++)
             {
-                context.SetShaderResource(resourceView, bindings[i].Stage, bindings[i].Slot);
+                context.SetShaderResource(ResourceView, bindings[i].Stage, bindings[i].Slot);
             }
         }
 
@@ -606,14 +604,14 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Bind(IGraphicsContext context, int slot)
         {
-            context.SetShaderResource(resourceView, ShaderStage.Pixel, slot);
+            context.SetShaderResource(ResourceView, ShaderStage.Pixel, slot);
         }
 
         [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Bind(IGraphicsContext context, int slot, ShaderStage stage)
         {
-            context.SetShaderResource(resourceView, stage, slot);
+            context.SetShaderResource(ResourceView, stage, slot);
         }
 
         #endregion IShaderResource
@@ -665,7 +663,7 @@
             if (!disposedValue)
             {
                 resource.Dispose();
-                resourceView?.Dispose();
+                ResourceView?.Dispose();
                 renderTargetView?.Dispose();
                 depthStencil?.Dispose();
                 if (!overrwittenDSV)

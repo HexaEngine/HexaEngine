@@ -1,52 +1,90 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Graphics;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
-    using HexaEngine.Rendering.ConstantBuffers;
-    using HexaEngine.Scenes;
-    using Newtonsoft.Json;
-    using System.Linq;
+    using System.Numerics;
+
+    public class Skeleton
+    {
+        public List<MeshBone> Bones = new();
+        public Dictionary<string, MeshBone> BonesDictionary = new();
+        public Dictionary<string, Relation> Relationships = new();
+        public Dictionary<Relation, string> RelationshipsDictionary = new();
+
+        public void AddBone(MeshBone bone)
+        {
+            Bones.Add(bone);
+            BonesDictionary.Add(bone.Name, bone);
+        }
+
+        public void AddRelation(string name, string parent)
+        {
+            if (Relationships.TryGetValue(parent, out Relation? parentRelation) && !Relationships.ContainsKey(name))
+            {
+                var childRelation = new Relation() { Parent = parentRelation, ParentName = parent };
+                Relationships.Add(name, childRelation);
+                RelationshipsDictionary.Add(childRelation, name);
+            }
+            else if (Relationships.TryGetValue(name, out Relation? childRelation) && !Relationships.ContainsKey(parent))
+            {
+                parentRelation = new Relation() { Parent = null, ParentName = null };
+                childRelation.Parent = parentRelation;
+                childRelation.ParentName = parent;
+                Relationships.Add(parent, parentRelation);
+                RelationshipsDictionary.Add(parentRelation, parent);
+            }
+            else if (Relationships.TryGetValue(parent, out parentRelation) && Relationships.TryGetValue(name, out childRelation))
+            {
+                childRelation.Parent = parentRelation;
+                childRelation.ParentName = parent;
+            }
+            else
+            {
+                parentRelation = new();
+                Relationships.Add(parent, parentRelation);
+                RelationshipsDictionary.Add(parentRelation, parent);
+                childRelation = new() { Parent = parentRelation, ParentName = parent };
+                Relationships.Add(name, childRelation);
+                RelationshipsDictionary.Add(childRelation, name);
+            }
+        }
+
+        public Matrix4x4 GetGlobalTransform(string name)
+        {
+            Stack<Relation> relations = new();
+            Relation? relation = Relationships[name];
+            while (relation != null)
+            {
+                relations.Push(relation);
+                relation = relation.Parent;
+            }
+            relations.Pop();
+            Matrix4x4 result = Matrix4x4.Identity;
+            while (relations.TryPop(out relation))
+            {
+                result *= BonesDictionary[RelationshipsDictionary[relation]].Offset;
+            }
+            return result;
+        }
+    }
+
+    public class Relation
+    {
+        public string? ParentName;
+        public Relation? Parent;
+    }
 
     [EditorNode("Mesh")]
-    public unsafe class Mesh : SceneNode
+    public unsafe class Mesh
     {
-#nullable disable
-
-        /// <summary>
-        /// Nullabillity is tested though <see cref="drawable"/>
-        /// </summary>
-        private IBuffer CB;
-
-        /// <summary>
-        /// Nullabillity is tested though <see cref="drawable"/>
-        /// </summary>
-        private IBuffer VB;
-
-        /// <summary>
-        /// Nullabillity is tested though <see cref="drawable"/>
-        /// </summary>
-        private IBuffer IB;
-
-        /// <summary>
-        /// Nullabillity is tested though <see cref="drawable"/>
-        /// </summary>
-        private Material material;
-
-        public MeshFile MeshFile;
-        public MeshVertex[] Vertices;
-        public int[] Indices;
-
-#nullable enable
-        private int vertexCount;
-        private int indexCount;
-
+        public MeshVertex[]? Vertices;
+        public int[]? Indices;
+        public MeshBone[]? Bones;
+        public Skeleton? Skeleton;
+        public int MaterialIndex = -1;
         private string meshPath = string.Empty;
         private string materialName = string.Empty;
-        private bool drawable;
 
         [EditorProperty("Path")]
         public string MeshPath
@@ -55,7 +93,6 @@
             set
             {
                 meshPath = value;
-                InitializeMesh();
             }
         }
 
@@ -66,78 +103,28 @@
             set
             {
                 materialName = value;
-                InitializeMaterial();
             }
         }
 
-        [JsonIgnore]
-        public bool Drawable => drawable;
-
-        [JsonIgnore]
-        public Material Material => material;
-
-        public override void Initialize(IGraphicsDevice device)
+        public static Mesh LoadFromBin(string path)
         {
-            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Load, Sender = this });
-            CB = device.CreateBuffer(new CBWorld(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            base.Initialize(device);
-            InitializeMesh();
-            InitializeMaterial();
-        }
-
-        public override void Uninitialize()
-        {
-            CB.Dispose();
-            VB?.Dispose();
-            IB?.Dispose();
-            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Unload, Sender = this });
-            base.Uninitialize();
-        }
-
-        private void InitializeMesh()
-        {
-            if (!Initialized) return;
-            if (FileSystem.Exists(Paths.CurrentModelPath + MeshPath))
+            var result = MeshFactory.Instance.Load(Paths.CurrentModelPath + path);
+            return new()
             {
-                VB?.Dispose();
-                IB?.Dispose();
-                var result = MeshFile = MeshFactory.Instance.Load(Paths.CurrentModelPath + MeshPath);
-                Vertices = result.Vertices;
-                Indices = result.Groups[0].Indices;
-                VB = Device.CreateBuffer(Vertices, BindFlags.VertexBuffer);
-                IB = Device.CreateBuffer(Indices, BindFlags.IndexBuffer);
-                vertexCount = Vertices.Length;
-                indexCount = Indices.Length;
-            }
-            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Update, Sender = this });
-            drawable = CB != null && VB != null && IB != null && material != null;
+                Vertices = result.Vertices,
+                Indices = result.Groups[0].Indices,
+            };
         }
 
-        private void InitializeMaterial()
+        public Mesh Clone()
         {
-            if (!Initialized) return;
-            Scene scene = GetScene();
-            material = scene.Materials.FirstOrDefault(x => x.Name == materialName);
-            GetScene().CommandQueue.Enqueue(new() { Type = CommandType.Update, Sender = this });
-            drawable = CB != null && VB != null && IB != null && material != null;
-        }
-
-        public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
-        {
-            if (!drawable) return;
-
-            context.Write(CB, new CBWorld(this));
-            context.SetConstantBuffer(CB, ShaderStage.Domain, 0);
-            context.SetVertexBuffer(VB, sizeof(MeshVertex));
-            if (IB != null)
+            return new()
             {
-                context.SetIndexBuffer(IB, Format.R32UInt, 0);
-                pipeline.DrawIndexed(context, viewport, indexCount, 0, 0);
-            }
-            else
-            {
-                pipeline.Draw(context, viewport, vertexCount, 0);
-            }
+                Indices = Indices,
+                materialName = materialName,
+                meshPath = meshPath,
+                Vertices = Vertices,
+            };
         }
     }
 }

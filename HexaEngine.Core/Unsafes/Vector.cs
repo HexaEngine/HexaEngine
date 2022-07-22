@@ -2,13 +2,29 @@
 {
     using HexaEngine.Core.Graphics;
     using System;
+    using System.Collections;
+    using System.Runtime.CompilerServices;
 
-    public unsafe class Vector<T> where T : IDeviceChild
+    public unsafe struct Vector<T> : IEnumerable<T> where T : IDeviceChild
     {
         private IDeviceChild[] children = Array.Empty<IDeviceChild>();
         private void** data;
 
-        public T this[int index] { get => (T)children[index]; set => children[index] = value; }
+        public Vector(IDeviceChild[] children)
+        {
+            this.children = children;
+            data = Utilities.ToPointerArray(children);
+        }
+
+        public T this[int index]
+        {
+            get => (T)children[index];
+            set
+            {
+                children[index] = value;
+                data = Utilities.ToPointerArray(children);
+            }
+        }
 
         public uint Length => (uint)children.Length;
 
@@ -37,6 +53,16 @@
         {
             Array.Resize(ref children, (int)length);
             data = Utilities.ToPointerArray(children);
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            return (IEnumerator<T>)children.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return children.GetEnumerator();
         }
     }
 
@@ -81,7 +107,7 @@
 
         public override int GetHashCode()
         {
-            return Data->GetHashCode();
+            return ((IntPtr)Data).GetHashCode();
         }
     }
 

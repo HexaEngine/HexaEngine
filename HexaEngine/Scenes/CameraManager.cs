@@ -74,7 +74,7 @@
                 // Only update the camera's position if the mouse got moved in either direction
                 if (delta.X != 0f || delta.Y != 0f || wheel != 0f || first)
                 {
-                    sc.X += -wheel;
+                    sc.X += sc.X / 2 * -wheel;
 
                     // Rotate the camera left and right
                     sc.Y += -delta.X * Time.Delta;

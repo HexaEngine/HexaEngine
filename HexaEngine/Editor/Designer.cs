@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Editor.Widgets;
     using ImGuiNET;
-    using ImPlotNET;
 
     public static class Designer
     {
@@ -44,6 +44,7 @@
             SceneLayout.Draw();
             SceneElementProperties.Draw();
             SceneMaterials.Draw();
+            AssetExplorer.Draw();
         }
     }
 }

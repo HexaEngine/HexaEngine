@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Rendering.ConstantBuffers
 {
     using HexaEngine.Objects;
+    using HexaEngine.Scenes;
     using System.Numerics;
 
     public struct CBWorld
@@ -8,7 +9,7 @@
         public Matrix4x4 World;
         public Matrix4x4 WorldInv;
 
-        public CBWorld(Mesh mesh)
+        public CBWorld(SceneNode mesh)
         {
             World = Matrix4x4.Transpose(mesh.Transform.Matrix);
             WorldInv = Matrix4x4.Transpose(mesh.Transform.MatrixInv);

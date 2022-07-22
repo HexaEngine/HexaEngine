@@ -28,11 +28,6 @@
             set
             {
                 shapeType = value;
-                if (value == typeof(BepuPhysics.Collidables.Mesh) && node is Objects.Mesh mesh1)
-                {
-                    Triangle[] triangles = mesh1.MeshFile.GetTriangles();
-                    // var mesh = new BepuPhysics.Collidables.Mesh(new BepuUtilities.Memory.Buffer<Triangle>(triangles), Vector3.One, scene.BufferPool);
-                }
             }
         }
 

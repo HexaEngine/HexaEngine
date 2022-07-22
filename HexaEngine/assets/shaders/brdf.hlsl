@@ -45,7 +45,7 @@ float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
 }
 
 
-float3 BRDFDirect(float3 radiance, float3 L, float3 F0, float3 V, float3 N, float3 albedo, float roughness, float metalness)
+float3 BRDFDirect(float3 radiance, float3 L, float3 F0, float3 V, float3 N, float3 baseColor, float roughness, float metalness)
 {
     float3 H = normalize(V + L);
         
@@ -63,14 +63,14 @@ float3 BRDFDirect(float3 radiance, float3 L, float3 F0, float3 V, float3 N, floa
             
     // add to outgoing radiance Lo
     float NdotL = max(dot(N, L), 0.0);
-    return (kD * albedo / 3.14159265359 + specular) * radiance * NdotL;
+    return (kD * baseColor / 3.14159265359 + specular) * radiance * NdotL;
 }
 
-float3 BRDFIndirect(float3 irradiance, float3 F0, float3 N, float3 V, float3 albedo, float roughness, float ao)
+float3 BRDFIndirect(float3 irradiance, float3 F0, float3 N, float3 V, float3 baseColor, float roughness, float ao)
 {
     float3 kS = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     float3 kD = 1.0 - kS;
-    float3 diffuse = irradiance * albedo;
+    float3 diffuse = irradiance * baseColor;
     return (kD * diffuse) * ao;
 }
 
@@ -79,12 +79,12 @@ SamplerState samplerState,
 TextureCube irradianceTex, 
 TextureCube prefilterMap, 
 Texture2D brdfLUT, 
-float3 F0, float3 N, float3 V, float3 albedo, float roughness, float ao)
+float3 F0, float3 N, float3 V, float3 baseColor, float roughness, float ao)
 {
     float3 irradiance = irradianceTex.Sample(samplerState, N).rgb;
     float3 kS = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     float3 kD = 1.0 - kS;
-    float3 diffuse = irradiance * albedo;
+    float3 diffuse = irradiance * baseColor;
     
     float3 R = reflect(-V, N);
     const float MAX_REFLECTION_LOD = 4.0;

@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Editor.Widgets;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using Newtonsoft.Json;
@@ -10,6 +12,9 @@
     {
         private static float height;
         private static bool isShown;
+        private static FilePicker filePicker = new();
+        private static bool filePickerIsOpen = false;
+        private static Action<FilePickerResult, string>? filePickerCallback;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -17,6 +22,13 @@
 
         internal static void Draw()
         {
+            if (filePickerIsOpen)
+            {
+                if (filePicker.Draw())
+                {
+                    filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
+                }
+            }
             if (!isShown) return;
 
             if (ImGui.BeginMainMenuBar())
@@ -26,6 +38,18 @@
                     if (ImGui.MenuItem("Save scene"))
                     {
                         File.WriteAllText("scene.json", JsonConvert.SerializeObject(SceneManager.Current, Formatting.Indented));
+                    }
+                    if (ImGui.MenuItem("Import"))
+                    {
+                        filePickerIsOpen = true;
+                        filePickerCallback = (r, path) =>
+                        {
+                            if (r == FilePickerResult.Ok)
+                            {
+                                AssimpSceneLoader.ImportAsync(filePicker.SelectedFile);
+                            }
+                            filePickerIsOpen = false;
+                        };
                     }
 
                     ImGui.EndMenu();

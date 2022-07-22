@@ -1,64 +1,82 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Scenes;
-    using Newtonsoft.Json;
-    using SharpGen.Runtime;
-    using System;
     using System.Numerics;
     using System.Runtime.InteropServices;
 
-    public class Material : IDisposable
+    public class Material
     {
         private Scene? scene;
-        private IGraphicsDevice? device;
-        private IBuffer? CB;
-        private ISamplerState? samplerState;
-
-        private bool disposedValue;
         private string albedoTextureMap = string.Empty;
         private string normalTextureMap = string.Empty;
         private string displacementTextureMap = string.Empty;
         private string roughnessTextureMap = string.Empty;
         private string metalnessTextureMap = string.Empty;
+        private string roughnessmetalnessTextureMap = string.Empty;
         private string emissiveTextureMap = string.Empty;
         private string aoTextureMap = string.Empty;
+        private Vector3 emissivness;
+        private float ao;
+        private float metalness;
+        private float roughness;
+        private float opacity;
+        private Vector3 albedo;
 
         public string Name { get; set; } = string.Empty;
 
-        public Vector3 Albedo { get; set; }
+        public Vector3 Albedo
+        {
+            get => albedo; set
+            {
+                albedo = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
 
-        public float Opacity { get; set; }
+        public float Opacity
+        {
+            get => opacity; set
+            {
+                opacity = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
 
-        public float Roughness { get; set; }
+        public float Roughness
+        {
+            get => roughness; set
+            {
+                roughness = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
 
-        public float Metalness { get; set; }
+        public float Metalness
+        {
+            get => metalness; set
+            {
+                metalness = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
 
-        public float Ao { get; set; }
+        public float Ao
+        {
+            get => ao; set
+            {
+                ao = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
 
-        public Vector3 Emissivness { get; set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? AlbedoTexture { get; private set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? NormalTexture { get; private set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? DisplacementTexture { get; private set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? RoughnessTexture { get; private set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? MetalnessTexture { get; private set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? EmissiveTexture { get; private set; }
-
-        [JsonIgnore]
-        public IShaderResourceView? AoTexture { get; private set; }
+        public Vector3 Emissivness
+        {
+            get => emissivness; set
+            {
+                emissivness = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
 
         public string AlbedoTextureMap
         {
@@ -67,14 +85,7 @@
             {
                 albedoTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(AlbedoTextureMap))
-                {
-                    AlbedoTexture = scene.LoadTexture(Paths.CurrentTexturePath + AlbedoTextureMap);
-                }
-                else
-                {
-                    AlbedoTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
@@ -85,14 +96,7 @@
             {
                 normalTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(NormalTextureMap))
-                {
-                    NormalTexture = scene.LoadTexture(Paths.CurrentTexturePath + NormalTextureMap);
-                }
-                else
-                {
-                    NormalTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
@@ -103,14 +107,7 @@
             {
                 displacementTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(DisplacementTextureMap))
-                {
-                    DisplacementTexture = scene.LoadTexture(Paths.CurrentTexturePath + DisplacementTextureMap);
-                }
-                else
-                {
-                    DisplacementTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
@@ -121,14 +118,7 @@
             {
                 roughnessTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(RoughnessTextureMap))
-                {
-                    RoughnessTexture = scene.LoadTexture(Paths.CurrentTexturePath + RoughnessTextureMap);
-                }
-                else
-                {
-                    RoughnessTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
@@ -139,14 +129,18 @@
             {
                 metalnessTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(MetalnessTextureMap))
-                {
-                    MetalnessTexture = scene.LoadTexture(Paths.CurrentTexturePath + MetalnessTextureMap);
-                }
-                else
-                {
-                    MetalnessTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string RoughnessMetalnessTextureMap
+        {
+            get => roughnessmetalnessTextureMap;
+            set
+            {
+                roughnessmetalnessTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
@@ -157,14 +151,7 @@
             {
                 emissiveTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(EmissiveTextureMap))
-                {
-                    EmissiveTexture = scene.LoadTexture(Paths.CurrentTexturePath + EmissiveTextureMap);
-                }
-                else
-                {
-                    EmissiveTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
@@ -175,97 +162,18 @@
             {
                 aoTextureMap = value;
                 if (scene == null) return;
-                if (!string.IsNullOrEmpty(AoTextureMap))
-                {
-                    AoTexture = scene.LoadTexture(Paths.CurrentTexturePath + AoTextureMap);
-                }
-                else
-                {
-                    AoTexture = null;
-                }
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
 
-        public void Bind(IGraphicsContext context)
-        {
-            if (CB != null)
-                context.Write(CB, new CBMaterial(this));
-            context.SetConstantBuffer(CB, ShaderStage.Domain, 2);
-            context.SetConstantBuffer(CB, ShaderStage.Pixel, 2);
-            context.SetSampler(samplerState, ShaderStage.Pixel, 0);
-            context.SetSampler(samplerState, ShaderStage.Domain, 0);
-            context.SetShaderResource(AlbedoTexture, ShaderStage.Pixel, 0);
-            context.SetShaderResource(NormalTexture, ShaderStage.Pixel, 1);
-            context.SetShaderResource(RoughnessTexture, ShaderStage.Pixel, 2);
-            context.SetShaderResource(MetalnessTexture, ShaderStage.Pixel, 3);
-            context.SetShaderResource(EmissiveTexture, ShaderStage.Pixel, 4);
-            context.SetShaderResource(AoTexture, ShaderStage.Pixel, 5);
-            context.SetShaderResource(DisplacementTexture, ShaderStage.Domain, 0);
-        }
-
-        public void Initialize(Scene scene, IGraphicsDevice device)
+        public void Initialize(Scene scene)
         {
             this.scene = scene;
-            this.device = device;
-            CB = device.CreateBuffer(new CBMaterial(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-            if (!string.IsNullOrEmpty(AlbedoTextureMap) && AlbedoTexture == null)
-            {
-                AlbedoTexture = scene.LoadTexture(Paths.CurrentTexturePath + AlbedoTextureMap);
-            }
-            if (!string.IsNullOrEmpty(NormalTextureMap) && NormalTexture == null)
-            {
-                NormalTexture = scene.LoadTexture(Paths.CurrentTexturePath + NormalTextureMap);
-            }
-            if (!string.IsNullOrEmpty(DisplacementTextureMap) && DisplacementTexture == null)
-            {
-                DisplacementTexture = scene.LoadTexture(Paths.CurrentTexturePath + DisplacementTextureMap);
-            }
-            if (!string.IsNullOrEmpty(RoughnessTextureMap) && RoughnessTexture == null)
-            {
-                RoughnessTexture = scene.LoadTexture(Paths.CurrentTexturePath + RoughnessTextureMap);
-            }
-            if (!string.IsNullOrEmpty(MetalnessTextureMap) && MetalnessTexture == null)
-            {
-                MetalnessTexture = scene.LoadTexture(Paths.CurrentTexturePath + MetalnessTextureMap);
-            }
-            if (!string.IsNullOrEmpty(EmissiveTextureMap) && EmissiveTexture == null)
-            {
-                EmissiveTexture = scene.LoadTexture(Paths.CurrentTexturePath + EmissiveTextureMap);
-            }
-            if (!string.IsNullOrEmpty(AoTextureMap) && AoTexture == null)
-            {
-                AoTexture = scene.LoadTexture(Paths.CurrentTexturePath + AoTextureMap);
-            }
         }
 
         public static implicit operator CBMaterial(Material material)
         {
             return new(material);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                device = null;
-                CB?.Dispose();
-                samplerState?.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~Material()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 
@@ -300,14 +208,14 @@
             Roughness = material.Roughness;
             Ao = material.Ao;
 
-            HasAlbedoMap = material.AlbedoTexture is not null ? 1 : 0;
-            HasNormalMap = material.NormalTexture is not null ? 1 : 0;
-            HasDisplacementMap = material.DisplacementTexture is not null ? 1 : 0;
+            HasAlbedoMap = string.IsNullOrEmpty(material.AlbedoTextureMap) ? 0 : 1;
+            HasNormalMap = string.IsNullOrEmpty(material.NormalTextureMap) ? 0 : 1;
+            HasDisplacementMap = string.IsNullOrEmpty(material.DisplacementTextureMap) ? 0 : 1;
 
-            HasMetalnessMap = material.MetalnessTexture is not null ? 1 : 0;
-            HasRoughnessMap = material.RoughnessTexture is not null ? 1 : 0;
-            HasEmissiveMap = material.EmissiveTexture is not null ? 1 : 0;
-            HasAoMap = material.AoTexture is not null ? 1 : 0;
+            HasMetalnessMap = string.IsNullOrEmpty(material.MetalnessTextureMap) ? 0 : 1;
+            HasRoughnessMap = string.IsNullOrEmpty(material.RoughnessTextureMap) ? 0 : 1;
+            HasEmissiveMap = string.IsNullOrEmpty(material.EmissiveTextureMap) ? 0 : 1;
+            HasAoMap = string.IsNullOrEmpty(material.AoTextureMap) ? 0 : 1;
 
             reserved = default;
             reserved1 = default;
@@ -325,14 +233,14 @@
         public Vector4 RMAo;
         public Vector4 Emissive;
 
-        public RawBool HasDisplacementMap;
+        public int HasDisplacementMap;
         public int HasAlbedoMap;
         public int HasNormalMap;
         public int HasRoughnessMap;
         public int HasMetalnessMap;
         public int HasEmissiveMap;
         public int HasAoMap;
-        public int reserved;
+        public int HasRoughnessMetalnessMap;
 
         public CBMaterial(Material material)
         {
@@ -340,16 +248,16 @@
             Emissive = new(material.Emissivness, 1);
             RMAo = new(material.Roughness, material.Metalness, material.Ao, 1);
 
-            HasAlbedoMap = material.AlbedoTexture is not null ? 1 : 0;
-            HasNormalMap = material.NormalTexture is not null ? 1 : 0;
-            HasDisplacementMap = material.DisplacementTexture is not null;
+            HasAlbedoMap = string.IsNullOrEmpty(material.AlbedoTextureMap) ? 0 : 1;
+            HasNormalMap = string.IsNullOrEmpty(material.NormalTextureMap) ? 0 : 1;
+            HasDisplacementMap = string.IsNullOrEmpty(material.DisplacementTextureMap) ? 0 : 1;
 
-            HasMetalnessMap = material.MetalnessTexture is not null ? 1 : 0;
-            HasRoughnessMap = material.RoughnessTexture is not null ? 1 : 0;
-            HasEmissiveMap = material.EmissiveTexture is not null ? 1 : 0;
-            HasAoMap = material.AoTexture is not null ? 1 : 0;
+            HasMetalnessMap = string.IsNullOrEmpty(material.MetalnessTextureMap) ? 0 : 1;
+            HasRoughnessMap = string.IsNullOrEmpty(material.RoughnessTextureMap) ? 0 : 1;
+            HasEmissiveMap = string.IsNullOrEmpty(material.EmissiveTextureMap) ? 0 : 1;
+            HasAoMap = string.IsNullOrEmpty(material.AoTextureMap) ? 0 : 1;
 
-            reserved = default;
+            HasRoughnessMetalnessMap = string.IsNullOrEmpty(material.RoughnessMetalnessTextureMap) ? 0 : 1;
         }
     }
 }

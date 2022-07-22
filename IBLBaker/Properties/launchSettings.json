@@ -2,7 +2,7 @@
   "profiles": {
     "IBLBaker": {
       "commandName": "Project",
-      "commandLineArgs": "cube SkyWater.dds"
+      "commandLineArgs": "Panorama .\\texturify_pano-1-13.jpg"
     }
   }
 }

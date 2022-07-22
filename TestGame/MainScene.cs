@@ -8,6 +8,7 @@
     {
         public MainScene()
         {
+            /*
             AddMaterial(new()
             {
                 Name = "Sphere",
@@ -32,31 +33,39 @@
                 Roughness = 0.2f,
                 Ao = 1,
             });
-            Mesh sphere = new()
-            {
-                MeshPath = "output.msh",
-                Name = "Sphere",
-                MaterialName = "Sphere"
-            };
+            Mesh sphereMesh = Mesh.LoadFromBin("output.msh");
+            sphereMesh.MaterialName = "Sphere";
+            AddMesh(sphereMesh);
 
-            AddChild(sphere);
+            SceneNode node = new() { Name = "Sphere" };
+            node.AddMesh(sphereMesh);
+            AddChild(node);
 
-            Mesh element2 = new() { Name = "Box 1", MaterialName = "Box1", MeshPath = "box.msh" };
-            element2.Transform.Position = new(0, -2, 0);
+            Mesh boxMesh = Mesh.LoadFromBin("box.msh");
+            boxMesh.MaterialName = "Box1";
+            AddMesh(boxMesh);
 
-            AddChild(element2);
+            SceneNode node1 = new() { Name = "Box 1" };
+            node1.AddMesh(boxMesh);
+            node1.Transform.Position = new(0, -2, 0);
+            AddChild(node1);
 
-            Mesh element3 = new() { Name = "Box 2", MaterialName = "Box2", MeshPath = "box.msh" };
-            element3.Transform.Position = new(0, 0, 6);
-            element3.Transform.Rotation = new(0, 90, 0);
+            Mesh box1Mesh = boxMesh.Clone();
+            box1Mesh.MaterialName = "Box2";
+            AddMesh(box1Mesh);
 
-            AddChild(element3);
+            SceneNode node2 = new() { Name = "Box 2" };
+            node2.AddMesh(box1Mesh);
+            node2.Transform.Position = new(0, 0, 6);
+            node2.Transform.Rotation = new(0, 90, 0);
+            AddChild(node2);
 
             DirectionalLight light = new() { Name = "Sun" };
             light.Transform.Position = new(0, 5, -5);
             light.Transform.Rotation = new(0, 45, 0);
             light.Color = new(1, 1, 1, 1);
             AddChild(light);
+            */
         }
     }
 }

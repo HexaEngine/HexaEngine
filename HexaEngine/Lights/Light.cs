@@ -16,20 +16,5 @@
         public bool CastShadows { get; set; }
 
         public abstract LightType Type { get; }
-
-        /*
-
-        /// <summary>
-        /// Tests a BoundingBox for intersection.
-        /// </summary>
-        /// <returns>returns false if shape is not in frustum, true when shape is in the frustum.</returns>
-        public abstract bool CullTest(BoundingBox box);
-
-        /// <summary>
-        /// Tests a BoundingSphere for intersection.
-        /// </summary>
-        /// <returns>returns false if shape is not in frustum, true when shape is in the frustum.</returns>
-        public abstract bool CullTest(BoundingSphere sphere);
-        */
     }
 }

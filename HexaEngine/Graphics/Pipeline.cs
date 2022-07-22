@@ -6,7 +6,7 @@
     using System;
     using System.Collections.Generic;
 
-    public abstract class Pipeline
+    public class Pipeline
     {
         private IVertexShader? vs;
         private IHullShader? hs;
@@ -28,6 +28,15 @@
         {
             this.device = device;
             this.desc = desc;
+            Compile();
+            Reload += OnReload;
+        }
+
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.state = state;
             Compile();
             Reload += OnReload;
         }
@@ -211,7 +220,6 @@
 
         protected virtual void EndDraw(IGraphicsContext context)
         {
-            context.ClearState();
         }
 
         public void Draw(IGraphicsContext context, Viewport viewport, int vertexCount, int offset)

@@ -250,6 +250,22 @@ float4 main(PixelInputType pixel) : SV_TARGET
             BatchDraw(verts, PrimitiveTopology.LineStrip);
         }
 
+        public static void DrawLine(Vector3 origin, Vector3 direction, bool normalize, Vector4 color)
+        {
+            VertexPositionColor[] verts = new VertexPositionColor[2];
+            verts[0].Position = origin;
+
+            Vector3 normDirection = Vector3.Normalize(direction);
+            Vector3 rayDirection = normalize ? normDirection : direction;
+
+            verts[1].Position = rayDirection + origin;
+
+            verts[0].Color = color;
+            verts[1].Color = color;
+
+            BatchDraw(verts, PrimitiveTopology.LineStrip);
+        }
+
         public static void DrawRing(Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
         {
             const int c_ringSegments = 32;

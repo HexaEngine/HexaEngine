@@ -19,6 +19,30 @@
         public static SdlWindow MainWindow => mainWindow;
 #nullable enable
 
+        public enum SpecialFolder
+        {
+            Assets,
+            Shaders,
+            Sounds,
+            Models,
+            Textures,
+            Scenes,
+        }
+
+        public static string GetFolder(SpecialFolder folder)
+        {
+            return folder switch
+            {
+                SpecialFolder.Assets => Path.GetFullPath("assets/"),
+                SpecialFolder.Shaders => Path.GetFullPath("assets/shaders/"),
+                SpecialFolder.Sounds => Path.GetFullPath("assets/sounds/"),
+                SpecialFolder.Models => Path.GetFullPath("assets/models/"),
+                SpecialFolder.Textures => Path.GetFullPath("assets/textures/"),
+                SpecialFolder.Scenes => Path.GetFullPath("assets/scenes/"),
+                _ => throw new ArgumentOutOfRangeException(nameof(folder)),
+            };
+        }
+
         public static void Run(SdlWindow mainWindow)
         {
             sdl.Init(Sdl.InitEverything);
