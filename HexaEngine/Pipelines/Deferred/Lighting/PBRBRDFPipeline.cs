@@ -15,7 +15,7 @@
             {
                 DepthStencil = DepthStencilDescription.None,
                 Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Opaque,
+                Blend = BlendDescription.Additive,
                 Topology = PrimitiveTopology.TriangleList,
             };
         }

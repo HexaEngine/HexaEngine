@@ -2,7 +2,6 @@
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
@@ -82,6 +81,22 @@
             }
         }
 
+        public struct CBOSM
+        {
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public Matrix4x4[] Views;
+
+            public uint Offset;
+            public Vector3 Padd;
+
+            public CBOSM(Matrix4x4[] views, uint offset)
+            {
+                Views = views;
+                Offset = offset;
+                Padd = default;
+            }
+        }
+
         public class ModelMesh
         {
             public IBuffer? VB;
@@ -137,28 +152,6 @@
             }
         }
 
-        private struct CBCSM
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public Matrix4x4[] Matrices;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-            public float[] Views;
-
-            public int Count;
-            public Vector3 padd;
-
-            public CBCSM(Matrix4x4[] matrices, float[] views, int count)
-            {
-                Matrices = matrices;
-                Array.Resize(ref Matrices, 16);
-                Views = views;
-                Array.Resize(ref Views, 16);
-                Count = count;
-                padd = Vector3.Zero;
-            }
-        }
-
         private readonly ConcurrentDictionary<Mesh, ModelMesh> meshes = new();
         private readonly ConcurrentDictionary<string, ModelMaterial> materials = new();
         private readonly ConcurrentDictionary<string, ModelTexture> textures = new();
@@ -176,7 +169,6 @@
         private IBuffer cameraBuffer;
         private IBuffer lightBuffer;
         private IBuffer skyboxBuffer;
-        private IBuffer shadowBuffer;
         private MTLShader materialShader;
         private MTLDepthShaderBack materialDepthBackface;
         private MTLDepthShaderFront materialDepthFrontface;
@@ -192,8 +184,13 @@
         private RenderTexture depthbuffer;
 
         private CSMPipeline csmPipeline;
-        private IBuffer csmBuffer;
         private RenderTexture csmDepthBuffer;
+        private IBuffer csmMvpBuffer;
+
+        private OSMPipeline osmPipeline;
+        private IBuffer osmBuffer;
+        private IBuffer paramosmBuffer;
+        private RenderTexture osmDepthBuffer;
 
         private ISamplerState pointSampler;
         private ISamplerState ansioSampler;
@@ -252,12 +249,18 @@
             cameraBuffer = device.CreateBuffer(new CBCamera(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             lightBuffer = device.CreateBuffer(new CBLight(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             skyboxBuffer = device.CreateBuffer(new CBWorld(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            shadowBuffer = device.CreateBuffer(new CBCSM(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
             csmDepthBuffer = new(device, TextureDescription.CreateTexture2DArrayWithRTV(2048, 2048, 3, 1, Format.R32Float), DepthStencilDesc.Default);
-            csmBuffer = device.CreateBuffer(new Matrix4x4[3], BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            csmMvpBuffer = device.CreateBuffer(new Matrix4x4[16], BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             csmPipeline = new(device);
-            csmPipeline.Constants.Add(new(csmBuffer, ShaderStage.Geometry, 0));
+            csmPipeline.Constants.Add(new(csmMvpBuffer, ShaderStage.Geometry, 0));
+
+            osmDepthBuffer = new(device, TextureDescription.CreateTextureCubeArrayWithRTV(2048, 8, 1, Format.R32Float), DepthStencilDesc.Default);
+            osmBuffer = device.CreateBuffer(new CBOSM(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            paramosmBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            osmPipeline = new(device);
+            osmPipeline.Constants.Add(new(osmBuffer, ShaderStage.Geometry, 0));
+            osmPipeline.Constants.Add(new(paramosmBuffer, ShaderStage.Pixel, 0));
 
             materialShader = new(device);
             materialShader.Constants.Add(new(cameraBuffer, ShaderStage.Domain, 1));
@@ -268,7 +271,6 @@
             pbrlightShader = new(device);
             pbrlightShader.Constants.Add(new(lightBuffer, ShaderStage.Pixel, 0));
             pbrlightShader.Constants.Add(new(cameraBuffer, ShaderStage.Pixel, 1));
-            pbrlightShader.Constants.Add(new(shadowBuffer, ShaderStage.Pixel, 2));
             pbrlightShader.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
             skyboxShader = new(device);
             skyboxShader.Constants.Add(new(skyboxBuffer, ShaderStage.Vertex, 0));
@@ -648,6 +650,9 @@
                 }
             }
 
+            var lights = new CBLight(scene.Lights);
+            uint pointsd = 0;
+            osmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
             // Draw light depth
             for (int i = 0; i < scene.Lights.Count; i++)
             {
@@ -657,8 +662,9 @@
                 {
                     case LightType.Directional:
                         var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, light.Transform);
-                        context.Write(shadowBuffer, new CBCSM(mtxs, CSMHelper.GetCascades(camera), 3));
-                        context.Write(csmBuffer, mtxs);
+                        lights.DirectionalLightSDs[0].Views = mtxs;
+                        lights.DirectionalLightSDs[0].Cascades = CSMHelper.GetCascades(camera);
+                        context.Write(csmMvpBuffer, mtxs);
                         csmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
@@ -671,6 +677,18 @@
                         break;
 
                     case LightType.Point:
+                        var mt = OSMHelper.GetLightSpaceMatrices(light.Transform);
+                        context.Write(osmBuffer, new CBOSM(mt, pointsd));
+                        context.Write(paramosmBuffer, new Vector4(light.Transform.Position, 25));
+                        for (int j = 0; j < scene.Meshes.Count; j++)
+                        {
+                            if (instances.TryGetValue(scene.Meshes[j], out var instance))
+                            {
+                                context.SetRenderTarget(osmDepthBuffer.RenderTargetView, osmDepthBuffer.DepthStencilView);
+                                instance.DrawAuto(context, osmPipeline, osmDepthBuffer.Viewport);
+                            }
+                        }
+                        pointsd++;
                         break;
 
                     case LightType.Spot:
@@ -690,13 +708,14 @@
 
             // Light Pass
             lightMap.ClearTarget(context, Vector4.Zero);
-            context.Write(lightBuffer, new CBLight(scene.Lights));
+            context.Write(lightBuffer, lights);
             context.SetShaderResources(gbuffers.SRVs, ShaderStage.Pixel, 0);
             context.SetShaderResource(envirr.ResourceView, ShaderStage.Pixel, 8);
             context.SetShaderResource(envfilter.ResourceView, ShaderStage.Pixel, 9);
             context.SetShaderResource(brdflut.ResourceView, ShaderStage.Pixel, 10);
             context.SetShaderResource(ssaoBuffer.ResourceView, ShaderStage.Pixel, 11);
             context.SetShaderResource(csmDepthBuffer.ResourceView, ShaderStage.Pixel, 12);
+            context.SetShaderResource(osmDepthBuffer.ResourceView, ShaderStage.Pixel, 13);
             lightMap.SetTarget(context);
             quad.DrawAuto(context, pbrlightShader, lightMap.Viewport);
             context.ClearState();
@@ -797,9 +816,8 @@
                 skyboxShader.Dispose();
                 gbuffers.Dispose();
 
-                shadowBuffer.Dispose();
                 csmPipeline.Dispose();
-                csmBuffer.Dispose();
+                csmMvpBuffer.Dispose();
                 csmDepthBuffer.Dispose();
 
                 ssaoBuffer.Dispose();

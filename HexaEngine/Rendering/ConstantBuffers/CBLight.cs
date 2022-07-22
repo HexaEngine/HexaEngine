@@ -20,6 +20,12 @@
         public int PointLightSDCount;
         public Vector3 padd2;
 
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxSpotlightSDs)]
+        public CBSpotlightSD[] SpotlightSDs;
+
+        public int SpotlightSDCount;
+        public Vector3 padd5;
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxDirectionalLights)]
         public CBDirectionalLight[] DirectionalLights;
 
@@ -31,12 +37,6 @@
 
         public int PointLightCount;
         public Vector3 padd4;
-
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxSpotlightSDs)]
-        public CBSpotlightSD[] SpotlightSDs;
-
-        public int SpotlightSDCount;
-        public Vector3 padd5;
 
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = MaxSpotlights)]
         public CBSpotlight[] Spotlights;

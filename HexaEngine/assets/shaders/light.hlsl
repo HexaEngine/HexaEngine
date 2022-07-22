@@ -1,7 +1,7 @@
 struct DirectionalLightSD
 {
-    matrix view;
-    matrix proj;
+    matrix views[16];
+    float4 cascades[4];
     float4 color;
     float3 dir;
     int padd;
@@ -16,13 +16,6 @@ struct DirectionalLight
 
 struct PointLightSD
 {
-    matrix y;
-    matrix yneg;
-    matrix x;
-    matrix xneg;
-    matrix z;
-    matrix zneg;
-    matrix proj;
     float4 color;
     float3 position;
     int padd;
@@ -59,27 +52,27 @@ struct Spotlight
 cbuffer LightBuffer : register(b0)
 {
     DirectionalLightSD directionalLightSDs[1];
-    int directionalLightSDCount;
+    uint directionalLightSDCount;
     float3 padd1;
     
     PointLightSD pointLightSDs[8];
-    int pointLightSDCount;
+    uint pointLightSDCount;
     float3 padd2;
     
+    SpotlightSD spotlightSDs[8];
+    uint spotlightSDCount;
+    float3 padd5;
+    
     DirectionalLight directionalLights[4];
-    int directionalLightCount;
+    uint directionalLightCount;
     float3 padd3;
     
     PointLight pointLights[32];
-    int pointLightCount;
+    uint pointLightCount;
     float3 padd4;
     
-    SpotlightSD spotlightSDs[8];
-    int spotlightSDCount;
-    float3 padd5;
-    
     Spotlight spotlights[32];
-    int spotlightCount;
+    uint spotlightCount;
     float3 padd6;
 };
 

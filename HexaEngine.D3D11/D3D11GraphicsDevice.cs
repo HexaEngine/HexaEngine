@@ -339,7 +339,9 @@
                 else
                     dimension = ShaderResourceViewDimension.Texture2D;
                 if (texture2d.Description.MiscFlags.HasFlag(ResourceMiscFlag.TextureCube))
-                    dimension = ShaderResourceViewDimension.TextureCube;
+                {
+                    dimension = texture2d.Description.ArraySize / 6 > 1 ? ShaderResourceViewDimension.TextureCubeArray : ShaderResourceViewDimension.TextureCube;
+                }
                 description = new(texture2d, dimension);
             }
             else if (resource is ITexture3D texture3d)

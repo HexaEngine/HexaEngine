@@ -242,6 +242,11 @@
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
+        public static TextureDescription CreateTextureCubeArrayWithRTV(int width, int size, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        {
+            return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6 * size, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
+        }
+
         public static TextureDescription CreateTexture3D(int width, int height, int depth, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture3D, width, height, depth, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
