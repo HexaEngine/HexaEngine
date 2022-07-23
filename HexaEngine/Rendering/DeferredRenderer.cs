@@ -81,22 +81,6 @@
             }
         }
 
-        public struct CBOSM
-        {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-            public Matrix4x4[] Views;
-
-            public uint Offset;
-            public Vector3 Padd;
-
-            public CBOSM(Matrix4x4[] views, uint offset)
-            {
-                Views = views;
-                Offset = offset;
-                Padd = default;
-            }
-        }
-
         public class ModelMesh
         {
             public IBuffer? VB;
@@ -190,7 +174,8 @@
         private OSMPipeline osmPipeline;
         private IBuffer osmBuffer;
         private IBuffer paramosmBuffer;
-        private RenderTexture osmDepthBuffer;
+        private RenderTexture[] osmDepthBuffers;
+        private IShaderResourceView[] osmSRVs;
 
         private ISamplerState pointSampler;
         private ISamplerState ansioSampler;
@@ -255,8 +240,15 @@
             csmPipeline = new(device);
             csmPipeline.Constants.Add(new(csmMvpBuffer, ShaderStage.Geometry, 0));
 
-            osmDepthBuffer = new(device, TextureDescription.CreateTextureCubeArrayWithRTV(2048, 8, 1, Format.R32Float), DepthStencilDesc.Default);
-            osmBuffer = device.CreateBuffer(new CBOSM(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            osmDepthBuffers = new RenderTexture[8];
+            osmSRVs = new IShaderResourceView[8];
+            for (int i = 0; i < 8; i++)
+            {
+                osmDepthBuffers[i] = new(device, TextureDescription.CreateTextureCubeWithRTV(2048, 1, Format.R32Float), DepthStencilDesc.Default);
+                osmSRVs[i] = osmDepthBuffers[i].ResourceView;
+            }
+
+            osmBuffer = device.CreateBuffer(new Matrix4x4[6], BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             paramosmBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             osmPipeline = new(device);
             osmPipeline.Constants.Add(new(osmBuffer, ShaderStage.Geometry, 0));
@@ -652,7 +644,7 @@
 
             var lights = new CBLight(scene.Lights);
             uint pointsd = 0;
-            osmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
+
             // Draw light depth
             for (int i = 0; i < scene.Lights.Count; i++)
             {
@@ -678,14 +670,15 @@
 
                     case LightType.Point:
                         var mt = OSMHelper.GetLightSpaceMatrices(light.Transform);
-                        context.Write(osmBuffer, new CBOSM(mt, pointsd));
+                        context.Write(osmBuffer, mt);
                         context.Write(paramosmBuffer, new Vector4(light.Transform.Position, 25));
+                        osmDepthBuffers[pointsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
                             if (instances.TryGetValue(scene.Meshes[j], out var instance))
                             {
-                                context.SetRenderTarget(osmDepthBuffer.RenderTargetView, osmDepthBuffer.DepthStencilView);
-                                instance.DrawAuto(context, osmPipeline, osmDepthBuffer.Viewport);
+                                context.SetRenderTarget(osmDepthBuffers[pointsd].RenderTargetView, osmDepthBuffers[pointsd].DepthStencilView);
+                                instance.DrawAuto(context, osmPipeline, osmDepthBuffers[pointsd].Viewport);
                             }
                         }
                         pointsd++;
@@ -715,7 +708,7 @@
             context.SetShaderResource(brdflut.ResourceView, ShaderStage.Pixel, 10);
             context.SetShaderResource(ssaoBuffer.ResourceView, ShaderStage.Pixel, 11);
             context.SetShaderResource(csmDepthBuffer.ResourceView, ShaderStage.Pixel, 12);
-            context.SetShaderResource(osmDepthBuffer.ResourceView, ShaderStage.Pixel, 13);
+            context.SetShaderResources(osmSRVs, ShaderStage.Pixel, 13);
             lightMap.SetTarget(context);
             quad.DrawAuto(context, pbrlightShader, lightMap.Viewport);
             context.ClearState();

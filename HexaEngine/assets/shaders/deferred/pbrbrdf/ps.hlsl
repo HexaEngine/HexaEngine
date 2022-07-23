@@ -5,12 +5,6 @@
 #include "../../brdf.hlsl"
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
-#define Shininess 20.0;
-#define SHADOW_SAMPLE_COUNT 17;
-#define SHADOW_SAMPLE_COUNT_HALF 8;
-#define SHADOW_SAMPLE_COUNT_HALF_NEG -8;
-#define SHADOW_SAMPLE_COUNT_SQUARE 289;
-#define PI 3.14159265359;
 
 Texture2D colorTexture : register(t0);
 Texture2D positionTexture : register(t1);
@@ -26,7 +20,7 @@ Texture2D brdfLUT : register(t10);
 Texture2D ssao : register(t11);
 
 Texture2DArray depthMapTexture : register(t12);
-TextureCubeArray depthOSM : register(t13);
+TextureCube depthOSM[8] : register(t13);
 
 SamplerState SampleTypePoint : register(s0);
 
@@ -39,13 +33,12 @@ struct VSOut
     float2 Tex : TEXCOORD;
 };
 
-float ShadowCalculation(PointLightSD light, float3 fragPos, uint index, TextureCubeArray depthTex, SamplerState state)
+float ShadowCalculation(PointLightSD light, float3 fragPos, TextureCube depthTex, SamplerState state)
 {
     // get vector between fragment position and light position
     float3 fragToLight = fragPos - light.position;
-    float3 texCoord = float3(fragToLight.x, fragToLight.y, fragToLight.z);
     // use the light to fragment vector to sample from the depth map    
-    float closestDepth = depthTex.Sample(state, float4(texCoord, index)).r; //texture(depthMap, fragToLight).r;
+    float closestDepth = depthTex.Sample(state, fragToLight).r; //texture(depthMap, fragToLight).r;
     // it is currently in linear range between [0,1]. Re-transform back to original value
     closestDepth *= 25;
     // now get current linear depth as the length between the fragment and light position
@@ -176,7 +169,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
         
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
-        float shadow = ShadowCalculation(light, attrs.pos, zd, depthOSM, SampleTypePoint);
+        float shadow = ShadowCalculation(light, attrs.pos, depthOSM[zd], SampleTypePoint);
         //Lo = float3(shadow,0,0);
         Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
     }

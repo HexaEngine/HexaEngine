@@ -3,8 +3,6 @@
 cbuffer LIGHT_VIEW_PROJECTION : register(b0)
 {
     matrix g_lightSpace[6];
-    uint offset;
-    float3 padd;
 };
 
 [maxvertexcount(3 * 6)]
@@ -18,7 +16,7 @@ void main(triangle GeometryInput input[3], inout TriangleStream<PixelInput> triS
         {
             output.shadowCoord = input[j].position;
             output.position = mul(input[j].position, g_lightSpace[i]);
-            output.rtIndex = i + offset * 6;
+            output.rtIndex = i;
             triStream.Append(output);
         }
         triStream.RestartStrip();
