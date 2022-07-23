@@ -11,8 +11,6 @@ Specular and Specular Tint Textures
 Ansiotropic (IBL and SSS)
 Cleancoat / Glossy
 Emission
-Redo shadow mapping with atlas depth maps
-Cascaded shadow mapping
 
 -----------
 
@@ -21,7 +19,6 @@ Work in progress:
 Texture sharing between materials
 Reintegrate Physics engine
 Assimp scene import
-Shadow mapping!!!
 Editor
 Project import
 Scene serialization
@@ -32,6 +29,8 @@ Done/Optimization/"Working" Stage:
 
 Deferred Shading
 Directional lights, Point/Omni lights, Spotlights
+Cascaded shadow mapping
+Omni directional shadow mapping
 PBR (Physically Based Rendering) and IBL (Image Based Lightning) (direct and indirect: diffuse, specular lightning)
 SSAO (Screen Space Ambient Occulusion)
 HBAO (Horizon Based Ambient Occulusion)

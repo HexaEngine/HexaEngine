@@ -23,7 +23,6 @@
     using System;
     using System.Collections.Concurrent;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     public class DeferredRenderer : ISceneRenderer
     {
@@ -173,9 +172,14 @@
 
         private OSMPipeline osmPipeline;
         private IBuffer osmBuffer;
-        private IBuffer paramosmBuffer;
+        private IBuffer osmParamBuffer;
         private RenderTexture[] osmDepthBuffers;
         private IShaderResourceView[] osmSRVs;
+
+        private PSMPipeline psmPipeline;
+        private IBuffer psmBuffer;
+        private RenderTexture[] psmDepthBuffers;
+        private IShaderResourceView[] psmSRVs;
 
         private ISamplerState pointSampler;
         private ISamplerState ansioSampler;
@@ -249,10 +253,22 @@
             }
 
             osmBuffer = device.CreateBuffer(new Matrix4x4[6], BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            paramosmBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            osmParamBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             osmPipeline = new(device);
             osmPipeline.Constants.Add(new(osmBuffer, ShaderStage.Geometry, 0));
-            osmPipeline.Constants.Add(new(paramosmBuffer, ShaderStage.Pixel, 0));
+            osmPipeline.Constants.Add(new(osmParamBuffer, ShaderStage.Pixel, 0));
+
+            psmDepthBuffers = new RenderTexture[8];
+            psmSRVs = new IShaderResourceView[8];
+            for (int i = 0; i < 8; i++)
+            {
+                psmDepthBuffers[i] = new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
+                psmSRVs[i] = psmDepthBuffers[i].ResourceView;
+            }
+
+            psmBuffer = device.CreateBuffer(new Matrix4x4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            psmPipeline = new(device);
+            psmPipeline.Constants.Add(new(psmBuffer, ShaderStage.Domain, 1));
 
             materialShader = new(device);
             materialShader.Constants.Add(new(cameraBuffer, ShaderStage.Domain, 1));
@@ -644,6 +660,7 @@
 
             var lights = new CBLight(scene.Lights);
             uint pointsd = 0;
+            uint spotsd = 0;
 
             // Draw light depth
             for (int i = 0; i < scene.Lights.Count; i++)
@@ -671,7 +688,7 @@
                     case LightType.Point:
                         var mt = OSMHelper.GetLightSpaceMatrices(light.Transform);
                         context.Write(osmBuffer, mt);
-                        context.Write(paramosmBuffer, new Vector4(light.Transform.Position, 25));
+                        context.Write(osmParamBuffer, new Vector4(light.Transform.Position, 25));
                         osmDepthBuffers[pointsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
@@ -685,6 +702,19 @@
                         break;
 
                     case LightType.Spot:
+                        var mts = PSMHelper.GetLightSpaceMatrices(light.Transform, ((Spotlight)light).ConeAngle.ToRad());
+                        lights.SpotlightSDs[spotsd].View = mts[0];
+                        context.Write(psmBuffer, mts);
+                        psmDepthBuffers[spotsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
+                        for (int j = 0; j < scene.Meshes.Count; j++)
+                        {
+                            if (instances.TryGetValue(scene.Meshes[j], out var instance))
+                            {
+                                context.SetRenderTarget(psmDepthBuffers[spotsd].RenderTargetView, psmDepthBuffers[spotsd].DepthStencilView);
+                                instance.DrawAuto(context, psmPipeline, psmDepthBuffers[spotsd].Viewport);
+                            }
+                        }
+                        spotsd++;
                         break;
                 }
             }
@@ -709,6 +739,7 @@
             context.SetShaderResource(ssaoBuffer.ResourceView, ShaderStage.Pixel, 11);
             context.SetShaderResource(csmDepthBuffer.ResourceView, ShaderStage.Pixel, 12);
             context.SetShaderResources(osmSRVs, ShaderStage.Pixel, 13);
+            context.SetShaderResources(psmSRVs, ShaderStage.Pixel, 21);
             lightMap.SetTarget(context);
             quad.DrawAuto(context, pbrlightShader, lightMap.Viewport);
             context.ClearState();

@@ -21,6 +21,7 @@ Texture2D ssao : register(t11);
 
 Texture2DArray depthMapTexture : register(t12);
 TextureCube depthOSM[8] : register(t13);
+Texture2D depthPSM[8] : register(t21);
 
 SamplerState SampleTypePoint : register(s0);
 
@@ -32,6 +33,26 @@ struct VSOut
     float4 Pos : SV_Position;
     float2 Tex : TEXCOORD;
 };
+
+float ShadowCalculation(SpotlightSD light, float3 fragPos, Texture2D depthTex, SamplerState state)
+{
+    float4 fragPosLightSpace = mul(float4(fragPos, 1.0), light.view);
+    fragPosLightSpace.y = -fragPosLightSpace.y;
+    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    float currentDepth = projCoords.z;
+    if (currentDepth > 1.0)
+        return 0.0f;
+    projCoords = projCoords * 0.5 + 0.5;
+    
+    // use the light to fragment vector to sample from the depth map    
+    float closestDepth = depthTex.Sample(state, projCoords.xy).r;
+
+    // now test for shadows
+    float bias = 0.005;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+    return shadow;
+}
 
 float ShadowCalculation(PointLightSD light, float3 fragPos, TextureCube depthTex, SamplerState state)
 {
@@ -170,7 +191,6 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
         float shadow = ShadowCalculation(light, attrs.pos, depthOSM[zd], SampleTypePoint);
-        //Lo = float3(shadow,0,0);
         Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
     }
     
@@ -193,6 +213,28 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
             Lo += BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
         }
     }
+
+    for (uint wd = 0; wd < spotlightSDCount; wd++)
+    {
+        SpotlightSD light = spotlightSDs[wd];
+        float3 LN = light.pos - position;
+        float3 L = normalize(LN);
+        
+        float theta = dot(L, normalize(-light.dir));
+        if (theta > light.cutOff)
+        {
+            float distance = length(LN);
+            float attenuation = 1.0 / (distance * distance);
+            float epsilon = light.cutOff - light.outerCutOff;
+            float falloff = 1;
+            if (epsilon != 0)
+                falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
+            float3 radiance = light.color.rgb * attenuation * falloff;
+            float shadow = ShadowCalculation(light, attrs.pos, depthPSM[wd], SampleTypePoint);
+            Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
+        }
+    }
+
 		
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
     float3 ambient = BRDFIndirect2(SampleTypePoint, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao);
