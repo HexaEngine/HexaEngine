@@ -13,10 +13,10 @@
         private ID3D11Texture2D* backbuffer;
         private ITexture2D depthStencil;
 
-        internal DXGISwapChain(D3D11GraphicsDevice device, SwapChainFlag flags)
+        internal DXGISwapChain(D3D11GraphicsDevice device, IDXGISwapChain1* swapChain, SwapChainFlag flags)
         {
             Device = device;
-            swapChain = device.swapChain;
+            this.swapChain = swapChain;
             this.flags = flags;
 
             ID3D11Texture2D* backbuffer;

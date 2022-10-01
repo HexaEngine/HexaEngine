@@ -115,7 +115,7 @@
         {
             return flags switch
             {
-                MapFlags.DoNotWait => Silk.NET.Direct3D11.MapFlag.MapFlagDONotWait,
+                MapFlags.DoNotWait => Silk.NET.Direct3D11.MapFlag.DONotWait,
                 MapFlags.None => 0,
                 _ => throw new ArgumentOutOfRangeException(nameof(flags)),
             };
@@ -125,11 +125,11 @@
         {
             return mode switch
             {
-                MapMode.Read => Silk.NET.Direct3D11.Map.MapRead,
-                MapMode.Write => Silk.NET.Direct3D11.Map.MapWrite,
-                MapMode.ReadWrite => Silk.NET.Direct3D11.Map.MapReadWrite,
-                MapMode.WriteDiscard => Silk.NET.Direct3D11.Map.MapWriteDiscard,
-                MapMode.WriteNoOverwrite => Silk.NET.Direct3D11.Map.MapWriteNoOverwrite,
+                MapMode.Read => Silk.NET.Direct3D11.Map.Read,
+                MapMode.Write => Silk.NET.Direct3D11.Map.Write,
+                MapMode.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
+                MapMode.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
+                MapMode.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
                 _ => throw new ArgumentOutOfRangeException(nameof(mode)),
             };
         }
@@ -139,9 +139,9 @@
             return flags switch
             {
                 DepthStencilClearFlags.None => 0,
-                DepthStencilClearFlags.Depth => Silk.NET.Direct3D11.ClearFlag.ClearDepth,
-                DepthStencilClearFlags.Stencil => Silk.NET.Direct3D11.ClearFlag.ClearStencil,
-                DepthStencilClearFlags.All => Silk.NET.Direct3D11.ClearFlag.ClearDepth | Silk.NET.Direct3D11.ClearFlag.ClearStencil,
+                DepthStencilClearFlags.Depth => Silk.NET.Direct3D11.ClearFlag.Depth,
+                DepthStencilClearFlags.Stencil => Silk.NET.Direct3D11.ClearFlag.Stencil,
+                DepthStencilClearFlags.All => Silk.NET.Direct3D11.ClearFlag.Depth | Silk.NET.Direct3D11.ClearFlag.Stencil,
                 _ => throw new ArgumentOutOfRangeException(nameof(flags)),
             };
         }
@@ -165,9 +165,9 @@
 
         private static CpuAccessFlags ConvertBack(Silk.NET.Direct3D11.CpuAccessFlag flags)
         {
-            if (flags == Silk.NET.Direct3D11.CpuAccessFlag.CpuAccessWrite)
+            if (flags == Silk.NET.Direct3D11.CpuAccessFlag.Write)
                 return CpuAccessFlags.Write;
-            if (flags == Silk.NET.Direct3D11.CpuAccessFlag.CpuAccessRead)
+            if (flags == Silk.NET.Direct3D11.CpuAccessFlag.Read)
                 return CpuAccessFlags.Read;
             return CpuAccessFlags.None;
         }
@@ -175,25 +175,25 @@
         private static ResourceMiscFlag ConvertBack(Silk.NET.Direct3D11.ResourceMiscFlag flags)
         {
             ResourceMiscFlag result = 0;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscGenerateMips)) result |= ResourceMiscFlag.GenerateMips;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscShared)) result |= ResourceMiscFlag.Shared;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscTexturecube)) result |= ResourceMiscFlag.TextureCube;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscDrawindirectArgs)) result |= ResourceMiscFlag.DrawIndirectArguments;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscBufferAllowRawViews)) result |= ResourceMiscFlag.BufferAllowRawViews;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscBufferStructured)) result |= ResourceMiscFlag.BufferStructured;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscResourceClamp)) result |= ResourceMiscFlag.ResourceClamp;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedKeyedmutex)) result |= ResourceMiscFlag.SharedKeyedMutex;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscGdiCompatible)) result |= ResourceMiscFlag.GdiCompatible;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedNthandle)) result |= ResourceMiscFlag.SharedNTHandle;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscRestrictedContent)) result |= ResourceMiscFlag.RestrictedContent;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscRestrictSharedResource)) result |= ResourceMiscFlag.RestrictSharedResource;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscRestrictSharedResourceDriver)) result |= ResourceMiscFlag.RestrictSharedResourceDriver;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscGuarded)) result |= ResourceMiscFlag.Guarded;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscTilePool)) result |= ResourceMiscFlag.TilePool;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscTiled)) result |= ResourceMiscFlag.Tiled;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscHWProtected)) result |= ResourceMiscFlag.HardwareProtected;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedDisplayable)) result |= ResourceMiscFlag.SharedDisplayable;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedExclusiveWriter)) result |= ResourceMiscFlag.SharedExclusiveWriter;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips)) result |= ResourceMiscFlag.GenerateMips;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Shared)) result |= ResourceMiscFlag.Shared;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube)) result |= ResourceMiscFlag.TextureCube;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs)) result |= ResourceMiscFlag.DrawIndirectArguments;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews)) result |= ResourceMiscFlag.BufferAllowRawViews;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured)) result |= ResourceMiscFlag.BufferStructured;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp)) result |= ResourceMiscFlag.ResourceClamp;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex)) result |= ResourceMiscFlag.SharedKeyedMutex;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible)) result |= ResourceMiscFlag.GdiCompatible;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle)) result |= ResourceMiscFlag.SharedNTHandle;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent)) result |= ResourceMiscFlag.RestrictedContent;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource)) result |= ResourceMiscFlag.RestrictSharedResource;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver)) result |= ResourceMiscFlag.RestrictSharedResourceDriver;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Guarded)) result |= ResourceMiscFlag.Guarded;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.TilePool)) result |= ResourceMiscFlag.TilePool;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Tiled)) result |= ResourceMiscFlag.Tiled;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected)) result |= ResourceMiscFlag.HardwareProtected;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable)) result |= ResourceMiscFlag.SharedDisplayable;
+            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter)) result |= ResourceMiscFlag.SharedExclusiveWriter;
             return result;
         }
 
@@ -210,10 +210,10 @@
         {
             return usage switch
             {
-                Silk.NET.Direct3D11.Usage.UsageDefault => Usage.Default,
-                Silk.NET.Direct3D11.Usage.UsageImmutable => Usage.Immutable,
-                Silk.NET.Direct3D11.Usage.UsageDynamic => Usage.Dynamic,
-                Silk.NET.Direct3D11.Usage.UsageStaging => Usage.Staging,
+                Silk.NET.Direct3D11.Usage.Default => Usage.Default,
+                Silk.NET.Direct3D11.Usage.Immutable => Usage.Immutable,
+                Silk.NET.Direct3D11.Usage.Dynamic => Usage.Dynamic,
+                Silk.NET.Direct3D11.Usage.Staging => Usage.Staging,
                 _ => throw new ArgumentOutOfRangeException(nameof(usage)),
             };
         }
@@ -221,25 +221,25 @@
         private static BindFlags ConvertBack(Silk.NET.Direct3D11.BindFlag flags)
         {
             BindFlags result = 0;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindVertexBuffer))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.VertexBuffer))
                 result |= BindFlags.VertexBuffer;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindIndexBuffer))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.IndexBuffer))
                 result |= BindFlags.IndexBuffer;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindConstantBuffer))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.ConstantBuffer))
                 result |= BindFlags.ConstantBuffer;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindShaderResource))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.ShaderResource))
                 result |= BindFlags.ShaderResource;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindStreamOutput))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.StreamOutput))
                 result |= BindFlags.StreamOutput;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindRenderTarget))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.RenderTarget))
                 result |= BindFlags.RenderTarget;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindUnorderedAccess))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.UnorderedAccess))
                 result |= BindFlags.UnorderedAccess;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindDepthStencil))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.DepthStencil))
                 result |= BindFlags.DepthStencil;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindDecoder))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.Decoder))
                 result |= BindFlags.Decoder;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.BindVideoEncoder))
+            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.VideoEncoder))
                 result |= BindFlags.VideoEncoder;
             return result;
         }
@@ -266,42 +266,42 @@
         {
             return filter switch
             {
-                Filter.MinMagMipPoint => Silk.NET.Direct3D11.Filter.FilterMinMagMipPoint,
-                Filter.MinMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterMinMagPointMipLinear,
-                Filter.MinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterMinPointMagLinearMipPoint,
-                Filter.MinPointMagMipLinear => Silk.NET.Direct3D11.Filter.FilterMinPointMagMipLinear,
-                Filter.MinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.FilterMinLinearMagMipPoint,
-                Filter.MinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterMinLinearMagPointMipLinear,
-                Filter.MinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterMinMagLinearMipPoint,
-                Filter.MinMagMipLinear => Silk.NET.Direct3D11.Filter.FilterMinMagMipLinear,
-                Filter.Anisotropic => Silk.NET.Direct3D11.Filter.FilterAnisotropic,
-                Filter.ComparisonMinMagMipPoint => Silk.NET.Direct3D11.Filter.FilterComparisonMinMagMipPoint,
-                Filter.ComparisonMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterComparisonMinMagPointMipLinear,
-                Filter.ComparisonMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterComparisonMinPointMagLinearMipPoint,
-                Filter.ComparisonMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.FilterComparisonMinPointMagMipLinear,
-                Filter.ComparisonMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.FilterComparisonMinLinearMagMipPoint,
-                Filter.ComparisonMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterComparisonMinLinearMagPointMipLinear,
-                Filter.ComparisonMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterComparisonMinMagLinearMipPoint,
-                Filter.ComparisonMinMagMipLinear => Silk.NET.Direct3D11.Filter.FilterComparisonMinMagMipLinear,
-                Filter.ComparisonAnisotropic => Silk.NET.Direct3D11.Filter.FilterComparisonAnisotropic,
-                Filter.MinimumMinMagMipPoint => Silk.NET.Direct3D11.Filter.FilterMinimumMinMagMipPoint,
-                Filter.MinimumMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterMinimumMinMagPointMipLinear,
-                Filter.MinimumMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterMinimumMinPointMagLinearMipPoint,
-                Filter.MinimumMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.FilterMinimumMinPointMagMipLinear,
-                Filter.MinimumMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.FilterMinimumMinLinearMagMipPoint,
-                Filter.MinimumMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterMinimumMinLinearMagPointMipLinear,
-                Filter.MinimumMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterMinimumMinMagLinearMipPoint,
-                Filter.MinimumMinMagMipLinear => Silk.NET.Direct3D11.Filter.FilterMinimumMinMagMipLinear,
-                Filter.MinimumAnisotropic => Silk.NET.Direct3D11.Filter.FilterMinimumAnisotropic,
-                Filter.MaximumMinMagMipPoint => Silk.NET.Direct3D11.Filter.FilterMaximumMinMagMipPoint,
-                Filter.MaximumMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterMaximumMinMagPointMipLinear,
-                Filter.MaximumMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterMaximumMinPointMagLinearMipPoint,
-                Filter.MaximumMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.FilterMaximumMinPointMagMipLinear,
-                Filter.MaximumMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.FilterMaximumMinLinearMagMipPoint,
-                Filter.MaximumMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.FilterMaximumMinLinearMagPointMipLinear,
-                Filter.MaximumMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.FilterMaximumMinMagLinearMipPoint,
-                Filter.MaximumMinMagMipLinear => Silk.NET.Direct3D11.Filter.FilterMaximumMinMagMipLinear,
-                Filter.MaximumAnisotropic => Silk.NET.Direct3D11.Filter.FilterMaximumAnisotropic,
+                Filter.MinMagMipPoint => Silk.NET.Direct3D11.Filter.MinMagMipPoint,
+                Filter.MinMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinMagPointMipLinear,
+                Filter.MinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinPointMagLinearMipPoint,
+                Filter.MinPointMagMipLinear => Silk.NET.Direct3D11.Filter.MinPointMagMipLinear,
+                Filter.MinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.MinLinearMagMipPoint,
+                Filter.MinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinLinearMagPointMipLinear,
+                Filter.MinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinMagLinearMipPoint,
+                Filter.MinMagMipLinear => Silk.NET.Direct3D11.Filter.MinMagMipLinear,
+                Filter.Anisotropic => Silk.NET.Direct3D11.Filter.Anisotropic,
+                Filter.ComparisonMinMagMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinMagMipPoint,
+                Filter.ComparisonMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinMagPointMipLinear,
+                Filter.ComparisonMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinPointMagLinearMipPoint,
+                Filter.ComparisonMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinPointMagMipLinear,
+                Filter.ComparisonMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinLinearMagMipPoint,
+                Filter.ComparisonMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinLinearMagPointMipLinear,
+                Filter.ComparisonMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.ComparisonMinMagLinearMipPoint,
+                Filter.ComparisonMinMagMipLinear => Silk.NET.Direct3D11.Filter.ComparisonMinMagMipLinear,
+                Filter.ComparisonAnisotropic => Silk.NET.Direct3D11.Filter.ComparisonAnisotropic,
+                Filter.MinimumMinMagMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinMagMipPoint,
+                Filter.MinimumMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinMagPointMipLinear,
+                Filter.MinimumMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinPointMagLinearMipPoint,
+                Filter.MinimumMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinPointMagMipLinear,
+                Filter.MinimumMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinLinearMagMipPoint,
+                Filter.MinimumMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinLinearMagPointMipLinear,
+                Filter.MinimumMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MinimumMinMagLinearMipPoint,
+                Filter.MinimumMinMagMipLinear => Silk.NET.Direct3D11.Filter.MinimumMinMagMipLinear,
+                Filter.MinimumAnisotropic => Silk.NET.Direct3D11.Filter.MinimumAnisotropic,
+                Filter.MaximumMinMagMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinMagMipPoint,
+                Filter.MaximumMinMagPointMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinMagPointMipLinear,
+                Filter.MaximumMinPointMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinPointMagLinearMipPoint,
+                Filter.MaximumMinPointMagMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinPointMagMipLinear,
+                Filter.MaximumMinLinearMagMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinLinearMagMipPoint,
+                Filter.MaximumMinLinearMagPointMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinLinearMagPointMipLinear,
+                Filter.MaximumMinMagLinearMipPoint => Silk.NET.Direct3D11.Filter.MaximumMinMagLinearMipPoint,
+                Filter.MaximumMinMagMipLinear => Silk.NET.Direct3D11.Filter.MaximumMinMagMipLinear,
+                Filter.MaximumAnisotropic => Silk.NET.Direct3D11.Filter.MaximumAnisotropic,
                 _ => throw new ArgumentOutOfRangeException(nameof(filter)),
             };
         }
@@ -310,11 +310,11 @@
         {
             return address switch
             {
-                TextureAddressMode.Wrap => Silk.NET.Direct3D11.TextureAddressMode.TextureAddressWrap,
-                TextureAddressMode.Mirror => Silk.NET.Direct3D11.TextureAddressMode.TextureAddressMirror,
-                TextureAddressMode.Clamp => Silk.NET.Direct3D11.TextureAddressMode.TextureAddressClamp,
-                TextureAddressMode.Border => Silk.NET.Direct3D11.TextureAddressMode.TextureAddressBorder,
-                TextureAddressMode.MirrorOnce => Silk.NET.Direct3D11.TextureAddressMode.TextureAddressMirrorOnce,
+                TextureAddressMode.Wrap => Silk.NET.Direct3D11.TextureAddressMode.Wrap,
+                TextureAddressMode.Mirror => Silk.NET.Direct3D11.TextureAddressMode.Mirror,
+                TextureAddressMode.Clamp => Silk.NET.Direct3D11.TextureAddressMode.Clamp,
+                TextureAddressMode.Border => Silk.NET.Direct3D11.TextureAddressMode.Border,
+                TextureAddressMode.MirrorOnce => Silk.NET.Direct3D11.TextureAddressMode.MirrorOnce,
                 _ => throw new ArgumentOutOfRangeException(nameof(address)),
             };
         }
@@ -333,14 +333,14 @@
         {
             return viewDimension switch
             {
-                RenderTargetViewDimension.Buffer => Silk.NET.Direct3D11.RtvDimension.RtvDimensionBuffer,
-                RenderTargetViewDimension.Texture1D => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture1D,
-                RenderTargetViewDimension.Texture1DArray => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture1Darray,
-                RenderTargetViewDimension.Texture2D => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture2D,
-                RenderTargetViewDimension.Texture2DArray => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture2Darray,
-                RenderTargetViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture2Dms,
-                RenderTargetViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture2Dmsarray,
-                RenderTargetViewDimension.Texture3D => Silk.NET.Direct3D11.RtvDimension.RtvDimensionTexture3D,
+                RenderTargetViewDimension.Buffer => Silk.NET.Direct3D11.RtvDimension.Buffer,
+                RenderTargetViewDimension.Texture1D => Silk.NET.Direct3D11.RtvDimension.Texture1D,
+                RenderTargetViewDimension.Texture1DArray => Silk.NET.Direct3D11.RtvDimension.Texture1Darray,
+                RenderTargetViewDimension.Texture2D => Silk.NET.Direct3D11.RtvDimension.Texture2D,
+                RenderTargetViewDimension.Texture2DArray => Silk.NET.Direct3D11.RtvDimension.Texture2Darray,
+                RenderTargetViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.RtvDimension.Texture2Dms,
+                RenderTargetViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.RtvDimension.Texture2Dmsarray,
+                RenderTargetViewDimension.Texture3D => Silk.NET.Direct3D11.RtvDimension.Texture3D,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -428,12 +428,12 @@
         {
             return viewDimension switch
             {
-                DepthStencilViewDimension.Texture1D => Silk.NET.Direct3D11.DsvDimension.DsvDimensionTexture1D,
-                DepthStencilViewDimension.Texture1DArray => Silk.NET.Direct3D11.DsvDimension.DsvDimensionTexture1Darray,
-                DepthStencilViewDimension.Texture2D => Silk.NET.Direct3D11.DsvDimension.DsvDimensionTexture2D,
-                DepthStencilViewDimension.Texture2DArray => Silk.NET.Direct3D11.DsvDimension.DsvDimensionTexture2Darray,
-                DepthStencilViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.DsvDimension.DsvDimensionTexture2Dms,
-                DepthStencilViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.DsvDimension.DsvDimensionTexture2Dmsarray,
+                DepthStencilViewDimension.Texture1D => Silk.NET.Direct3D11.DsvDimension.Texture1D,
+                DepthStencilViewDimension.Texture1DArray => Silk.NET.Direct3D11.DsvDimension.Texture1Darray,
+                DepthStencilViewDimension.Texture2D => Silk.NET.Direct3D11.DsvDimension.Texture2D,
+                DepthStencilViewDimension.Texture2DArray => Silk.NET.Direct3D11.DsvDimension.Texture2Darray,
+                DepthStencilViewDimension.Texture2DMultisampled => Silk.NET.Direct3D11.DsvDimension.Texture2Dms,
+                DepthStencilViewDimension.Texture2DMultisampledArray => Silk.NET.Direct3D11.DsvDimension.Texture2Dmsarray,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -444,9 +444,9 @@
             if (flags == DepthStencilViewFlags.None)
                 return 0;
             if (flags.HasFlag(DepthStencilViewFlags.ReadOnlyDepth))
-                result |= Silk.NET.Direct3D11.DsvFlag.DsvReadOnlyDepth;
+                result |= Silk.NET.Direct3D11.DsvFlag.Depth;
             if (flags.HasFlag(DepthStencilViewFlags.ReadOnlyStencil))
-                result |= Silk.NET.Direct3D11.DsvFlag.DsvReadOnlyStencil;
+                result |= Silk.NET.Direct3D11.DsvFlag.Stencil;
             return result;
         }
 
@@ -531,7 +531,7 @@
         public static Silk.NET.Direct3D11.BufferexSrvFlag Convert(BufferExtendedShaderResourceViewFlags flags)
         {
             if (flags.HasFlag(BufferExtendedShaderResourceViewFlags.Raw))
-                return Silk.NET.Direct3D11.BufferexSrvFlag.BufferexSrvFlagRaw;
+                return Silk.NET.Direct3D11.BufferexSrvFlag.Raw;
             else
                 return 0;
         }
@@ -745,18 +745,42 @@
             };
         }
 
+        internal static Silk.NET.Direct3D11.Query Convert(Query query)
+        {
+            return query switch
+            {
+                Query.Event => Silk.NET.Direct3D11.Query.Event,
+                Query.Occlusion => Silk.NET.Direct3D11.Query.Occlusion,
+                Query.Timestamp => Silk.NET.Direct3D11.Query.Timestamp,
+                Query.TimestampDisjoint => Silk.NET.Direct3D11.Query.TimestampDisjoint,
+                Query.PipelineStatistics => Silk.NET.Direct3D11.Query.PipelineStatistics,
+                Query.OcclusionPredicate => Silk.NET.Direct3D11.Query.OcclusionPredicate,
+                Query.SOStatistics => Silk.NET.Direct3D11.Query.SOStatistics,
+                Query.SOOverflowPredicate => Silk.NET.Direct3D11.Query.SOOverflowPredicate,
+                Query.SOStatisticsStream0 => Silk.NET.Direct3D11.Query.SOStatisticsStream0,
+                Query.SOOverflowPredicateStream0 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream0,
+                Query.SOStatisticsStream1 => Silk.NET.Direct3D11.Query.SOStatisticsStream1,
+                Query.SOOverflowPredicateStream1 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream1,
+                Query.SOStatisticsStream2 => Silk.NET.Direct3D11.Query.SOStatisticsStream2,
+                Query.SOOverflowPredicateStream2 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream2,
+                Query.SOStatisticsStream3 => Silk.NET.Direct3D11.Query.SOStatisticsStream3,
+                Query.SOOverflowPredicateStream3 => Silk.NET.Direct3D11.Query.SOOverflowPredicateStream3,
+                _ => throw new NotSupportedException()
+            };
+        }
+
         public static Silk.NET.Direct3D11.StencilOp Convert(StencilOperation operation)
         {
             return operation switch
             {
-                StencilOperation.Keep => Silk.NET.Direct3D11.StencilOp.StencilOpKeep,
-                StencilOperation.Zero => Silk.NET.Direct3D11.StencilOp.StencilOpZero,
-                StencilOperation.Replace => Silk.NET.Direct3D11.StencilOp.StencilOpReplace,
-                StencilOperation.IncrementSaturate => Silk.NET.Direct3D11.StencilOp.StencilOpIncrSat,
-                StencilOperation.DecrementSaturate => Silk.NET.Direct3D11.StencilOp.StencilOpDecrSat,
-                StencilOperation.Invert => Silk.NET.Direct3D11.StencilOp.StencilOpInvert,
-                StencilOperation.Increment => Silk.NET.Direct3D11.StencilOp.StencilOpIncr,
-                StencilOperation.Decrement => Silk.NET.Direct3D11.StencilOp.StencilOpDecr,
+                StencilOperation.Keep => Silk.NET.Direct3D11.StencilOp.Keep,
+                StencilOperation.Zero => Silk.NET.Direct3D11.StencilOp.Zero,
+                StencilOperation.Replace => Silk.NET.Direct3D11.StencilOp.Replace,
+                StencilOperation.IncrementSaturate => Silk.NET.Direct3D11.StencilOp.IncrSat,
+                StencilOperation.DecrementSaturate => Silk.NET.Direct3D11.StencilOp.DecrSat,
+                StencilOperation.Invert => Silk.NET.Direct3D11.StencilOp.Invert,
+                StencilOperation.Increment => Silk.NET.Direct3D11.StencilOp.Incr,
+                StencilOperation.Decrement => Silk.NET.Direct3D11.StencilOp.Decr,
                 _ => 0,
             };
         }
@@ -765,14 +789,14 @@
         {
             return function switch
             {
-                ComparisonFunction.Never => Silk.NET.Direct3D11.ComparisonFunc.ComparisonNever,
-                ComparisonFunction.Less => Silk.NET.Direct3D11.ComparisonFunc.ComparisonLess,
-                ComparisonFunction.Equal => Silk.NET.Direct3D11.ComparisonFunc.ComparisonEqual,
-                ComparisonFunction.LessEqual => Silk.NET.Direct3D11.ComparisonFunc.ComparisonLessEqual,
-                ComparisonFunction.Greater => Silk.NET.Direct3D11.ComparisonFunc.ComparisonGreater,
-                ComparisonFunction.NotEqual => Silk.NET.Direct3D11.ComparisonFunc.ComparisonNotEqual,
-                ComparisonFunction.GreaterEqual => Silk.NET.Direct3D11.ComparisonFunc.ComparisonGreaterEqual,
-                ComparisonFunction.Always => Silk.NET.Direct3D11.ComparisonFunc.ComparisonAlways,
+                ComparisonFunction.Never => Silk.NET.Direct3D11.ComparisonFunc.Never,
+                ComparisonFunction.Less => Silk.NET.Direct3D11.ComparisonFunc.Less,
+                ComparisonFunction.Equal => Silk.NET.Direct3D11.ComparisonFunc.Equal,
+                ComparisonFunction.LessEqual => Silk.NET.Direct3D11.ComparisonFunc.LessEqual,
+                ComparisonFunction.Greater => Silk.NET.Direct3D11.ComparisonFunc.Greater,
+                ComparisonFunction.NotEqual => Silk.NET.Direct3D11.ComparisonFunc.NotEqual,
+                ComparisonFunction.GreaterEqual => Silk.NET.Direct3D11.ComparisonFunc.GreaterEqual,
+                ComparisonFunction.Always => Silk.NET.Direct3D11.ComparisonFunc.Always,
                 _ => 0
             };
         }
@@ -781,8 +805,8 @@
         {
             return mask switch
             {
-                DepthWriteMask.Zero => Silk.NET.Direct3D11.DepthWriteMask.DepthWriteMaskZero,
-                DepthWriteMask.All => Silk.NET.Direct3D11.DepthWriteMask.DepthWriteMaskAll,
+                DepthWriteMask.Zero => Silk.NET.Direct3D11.DepthWriteMask.Zero,
+                DepthWriteMask.All => Silk.NET.Direct3D11.DepthWriteMask.All,
                 _ => 0
             };
         }
@@ -808,8 +832,8 @@
         {
             return mode switch
             {
-                FillMode.Solid => Silk.NET.Direct3D11.FillMode.FillSolid,
-                FillMode.Wireframe => Silk.NET.Direct3D11.FillMode.FillWireframe,
+                FillMode.Solid => Silk.NET.Direct3D11.FillMode.Solid,
+                FillMode.Wireframe => Silk.NET.Direct3D11.FillMode.Wireframe,
                 _ => 0
             };
         }
@@ -818,9 +842,9 @@
         {
             return mode switch
             {
-                CullMode.None => Silk.NET.Direct3D11.CullMode.CullNone,
-                CullMode.Front => Silk.NET.Direct3D11.CullMode.CullFront,
-                CullMode.Back => Silk.NET.Direct3D11.CullMode.CullBack,
+                CullMode.None => Silk.NET.Direct3D11.CullMode.None,
+                CullMode.Front => Silk.NET.Direct3D11.CullMode.Front,
+                CullMode.Back => Silk.NET.Direct3D11.CullMode.Back,
                 _ => 0
             };
         }
@@ -869,15 +893,15 @@
         {
             Silk.NET.Direct3D11.ColorWriteEnable result = 0;
             if (flags == ColorWriteEnable.All)
-                return Silk.NET.Direct3D11.ColorWriteEnable.ColorWriteEnableAll;
+                return Silk.NET.Direct3D11.ColorWriteEnable.All;
             if (flags.HasFlag(ColorWriteEnable.Red))
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.ColorWriteEnableRed;
+                result |= Silk.NET.Direct3D11.ColorWriteEnable.Red;
             if (flags.HasFlag(ColorWriteEnable.Green))
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.ColorWriteEnableGreen;
+                result |= Silk.NET.Direct3D11.ColorWriteEnable.Green;
             if (flags.HasFlag(ColorWriteEnable.Blue))
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.ColorWriteEnableBlue;
+                result |= Silk.NET.Direct3D11.ColorWriteEnable.Blue;
             if (flags.HasFlag(ColorWriteEnable.Alpha))
-                result |= Silk.NET.Direct3D11.ColorWriteEnable.ColorWriteEnableAlpha;
+                result |= Silk.NET.Direct3D11.ColorWriteEnable.Alpha;
             return result;
         }
 
@@ -885,23 +909,23 @@
         {
             return blend switch
             {
-                Blend.Zero => Silk.NET.Direct3D11.Blend.BlendZero,
-                Blend.One => Silk.NET.Direct3D11.Blend.BlendOne,
-                Blend.SourceColor => Silk.NET.Direct3D11.Blend.BlendSrcColor,
-                Blend.InverseSourceColor => Silk.NET.Direct3D11.Blend.BlendInvSrcColor,
-                Blend.SourceAlpha => Silk.NET.Direct3D11.Blend.BlendSrcAlpha,
-                Blend.InverseSourceAlpha => Silk.NET.Direct3D11.Blend.BlendInvSrcAlpha,
-                Blend.DestinationAlpha => Silk.NET.Direct3D11.Blend.BlendDestAlpha,
-                Blend.InverseDestinationAlpha => Silk.NET.Direct3D11.Blend.BlendInvDestAlpha,
-                Blend.DestinationColor => Silk.NET.Direct3D11.Blend.BlendDestColor,
-                Blend.InverseDestinationColor => Silk.NET.Direct3D11.Blend.BlendInvDestColor,
-                Blend.SourceAlphaSaturate => Silk.NET.Direct3D11.Blend.BlendSrcAlphaSat,
-                Blend.BlendFactor => Silk.NET.Direct3D11.Blend.BlendBlendFactor,
-                Blend.InverseBlendFactor => Silk.NET.Direct3D11.Blend.BlendInvBlendFactor,
-                Blend.Source1Color => Silk.NET.Direct3D11.Blend.BlendSrc1Color,
-                Blend.InverseSource1Color => Silk.NET.Direct3D11.Blend.BlendInvSrc1Color,
-                Blend.Source1Alpha => Silk.NET.Direct3D11.Blend.BlendSrc1Alpha,
-                Blend.InverseSource1Alpha => Silk.NET.Direct3D11.Blend.BlendInvSrc1Alpha,
+                Blend.Zero => Silk.NET.Direct3D11.Blend.Zero,
+                Blend.One => Silk.NET.Direct3D11.Blend.One,
+                Blend.SourceColor => Silk.NET.Direct3D11.Blend.SrcColor,
+                Blend.InverseSourceColor => Silk.NET.Direct3D11.Blend.InvSrcColor,
+                Blend.SourceAlpha => Silk.NET.Direct3D11.Blend.SrcAlpha,
+                Blend.InverseSourceAlpha => Silk.NET.Direct3D11.Blend.InvSrcAlpha,
+                Blend.DestinationAlpha => Silk.NET.Direct3D11.Blend.DestAlpha,
+                Blend.InverseDestinationAlpha => Silk.NET.Direct3D11.Blend.InvDestAlpha,
+                Blend.DestinationColor => Silk.NET.Direct3D11.Blend.DestColor,
+                Blend.InverseDestinationColor => Silk.NET.Direct3D11.Blend.InvDestColor,
+                Blend.SourceAlphaSaturate => Silk.NET.Direct3D11.Blend.SrcAlphaSat,
+                Blend.BlendFactor => Silk.NET.Direct3D11.Blend.BlendFactor,
+                Blend.InverseBlendFactor => Silk.NET.Direct3D11.Blend.InvBlendFactor,
+                Blend.Source1Color => Silk.NET.Direct3D11.Blend.Src1Color,
+                Blend.InverseSource1Color => Silk.NET.Direct3D11.Blend.InvSrc1Color,
+                Blend.Source1Alpha => Silk.NET.Direct3D11.Blend.Src1Alpha,
+                Blend.InverseSource1Alpha => Silk.NET.Direct3D11.Blend.InvSrc1Alpha,
                 _ => 0
             };
         }
@@ -910,11 +934,11 @@
         {
             return operation switch
             {
-                BlendOperation.Add => Silk.NET.Direct3D11.BlendOp.BlendOpAdd,
-                BlendOperation.Subtract => Silk.NET.Direct3D11.BlendOp.BlendOpSubtract,
-                BlendOperation.ReverseSubtract => Silk.NET.Direct3D11.BlendOp.BlendOpRevSubtract,
-                BlendOperation.Min => Silk.NET.Direct3D11.BlendOp.BlendOpMin,
-                BlendOperation.Max => Silk.NET.Direct3D11.BlendOp.BlendOpMax,
+                BlendOperation.Add => Silk.NET.Direct3D11.BlendOp.Add,
+                BlendOperation.Subtract => Silk.NET.Direct3D11.BlendOp.Subtract,
+                BlendOperation.ReverseSubtract => Silk.NET.Direct3D11.BlendOp.RevSubtract,
+                BlendOperation.Min => Silk.NET.Direct3D11.BlendOp.Min,
+                BlendOperation.Max => Silk.NET.Direct3D11.BlendOp.Max,
                 _ => 0
             };
         }
@@ -936,9 +960,9 @@
         {
             Silk.NET.Direct3D11.CpuAccessFlag result = 0;
             if (flags.HasFlag(CpuAccessFlags.Write))
-                result |= Silk.NET.Direct3D11.CpuAccessFlag.CpuAccessWrite;
+                result |= Silk.NET.Direct3D11.CpuAccessFlag.Write;
             if (flags.HasFlag(CpuAccessFlags.Read))
-                result |= Silk.NET.Direct3D11.CpuAccessFlag.CpuAccessRead;
+                result |= Silk.NET.Direct3D11.CpuAccessFlag.Read;
             return result;
         }
 
@@ -946,43 +970,43 @@
         {
             Silk.NET.Direct3D11.ResourceMiscFlag result = 0;
             if (flags.HasFlag(ResourceMiscFlag.GenerateMips))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscGenerateMips;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips;
             if (flags.HasFlag(ResourceMiscFlag.Shared))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscShared;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Shared;
             if (flags.HasFlag(ResourceMiscFlag.TextureCube))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscTexturecube;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube;
             if (flags.HasFlag(ResourceMiscFlag.DrawIndirectArguments))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscDrawindirectArgs;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs;
             if (flags.HasFlag(ResourceMiscFlag.BufferAllowRawViews))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscBufferAllowRawViews;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews;
             if (flags.HasFlag(ResourceMiscFlag.BufferStructured))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscBufferStructured;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured;
             if (flags.HasFlag(ResourceMiscFlag.ResourceClamp))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscResourceClamp;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp;
             if (flags.HasFlag(ResourceMiscFlag.SharedKeyedMutex))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedKeyedmutex;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex;
             if (flags.HasFlag(ResourceMiscFlag.GdiCompatible))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscGdiCompatible;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible;
             if (flags.HasFlag(ResourceMiscFlag.SharedNTHandle))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedNthandle;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle;
             if (flags.HasFlag(ResourceMiscFlag.RestrictedContent))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscRestrictedContent;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent;
             if (flags.HasFlag(ResourceMiscFlag.RestrictSharedResource))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscRestrictSharedResource;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource;
             if (flags.HasFlag(ResourceMiscFlag.RestrictSharedResourceDriver))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscRestrictSharedResourceDriver;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver;
             if (flags.HasFlag(ResourceMiscFlag.Guarded))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscGuarded;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Guarded;
             if (flags.HasFlag(ResourceMiscFlag.TilePool))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscTilePool;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.TilePool;
             if (flags.HasFlag(ResourceMiscFlag.Tiled))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscTiled;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.Tiled;
             if (flags.HasFlag(ResourceMiscFlag.HardwareProtected))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscHWProtected;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected;
             if (flags.HasFlag(ResourceMiscFlag.SharedDisplayable))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedDisplayable;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable;
             if (flags.HasFlag(ResourceMiscFlag.SharedExclusiveWriter))
-                result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceMiscSharedExclusiveWriter;
+                result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter;
             if (flags.HasFlag(ResourceMiscFlag.None))
                 result |= 0;
             return result;
@@ -992,10 +1016,10 @@
         {
             return usage switch
             {
-                Usage.Default => Silk.NET.Direct3D11.Usage.UsageDefault,
-                Usage.Immutable => Silk.NET.Direct3D11.Usage.UsageImmutable,
-                Usage.Dynamic => Silk.NET.Direct3D11.Usage.UsageDynamic,
-                Usage.Staging => Silk.NET.Direct3D11.Usage.UsageStaging,
+                Usage.Default => Silk.NET.Direct3D11.Usage.Default,
+                Usage.Immutable => Silk.NET.Direct3D11.Usage.Immutable,
+                Usage.Dynamic => Silk.NET.Direct3D11.Usage.Dynamic,
+                Usage.Staging => Silk.NET.Direct3D11.Usage.Staging,
                 _ => throw new ArgumentOutOfRangeException(nameof(usage))
             };
         }
@@ -1004,25 +1028,25 @@
         {
             Silk.NET.Direct3D11.BindFlag result = 0;
             if (flags.HasFlag(BindFlags.VertexBuffer))
-                result |= Silk.NET.Direct3D11.BindFlag.BindVertexBuffer;
+                result |= Silk.NET.Direct3D11.BindFlag.VertexBuffer;
             if (flags.HasFlag(BindFlags.IndexBuffer))
-                result |= Silk.NET.Direct3D11.BindFlag.BindIndexBuffer;
+                result |= Silk.NET.Direct3D11.BindFlag.IndexBuffer;
             if (flags.HasFlag(BindFlags.ConstantBuffer))
-                result |= Silk.NET.Direct3D11.BindFlag.BindConstantBuffer;
+                result |= Silk.NET.Direct3D11.BindFlag.ConstantBuffer;
             if (flags.HasFlag(BindFlags.ShaderResource))
-                result |= Silk.NET.Direct3D11.BindFlag.BindShaderResource;
+                result |= Silk.NET.Direct3D11.BindFlag.ShaderResource;
             if (flags.HasFlag(BindFlags.StreamOutput))
-                result |= Silk.NET.Direct3D11.BindFlag.BindStreamOutput;
+                result |= Silk.NET.Direct3D11.BindFlag.StreamOutput;
             if (flags.HasFlag(BindFlags.RenderTarget))
-                result |= Silk.NET.Direct3D11.BindFlag.BindRenderTarget;
+                result |= Silk.NET.Direct3D11.BindFlag.RenderTarget;
             if (flags.HasFlag(BindFlags.DepthStencil))
-                result |= Silk.NET.Direct3D11.BindFlag.BindDepthStencil;
+                result |= Silk.NET.Direct3D11.BindFlag.DepthStencil;
             if (flags.HasFlag(BindFlags.UnorderedAccess))
-                result |= Silk.NET.Direct3D11.BindFlag.BindUnorderedAccess;
+                result |= Silk.NET.Direct3D11.BindFlag.UnorderedAccess;
             if (flags.HasFlag(BindFlags.Decoder))
-                result |= Silk.NET.Direct3D11.BindFlag.BindDecoder;
+                result |= Silk.NET.Direct3D11.BindFlag.Decoder;
             if (flags.HasFlag(BindFlags.VideoEncoder))
-                result |= Silk.NET.Direct3D11.BindFlag.BindVideoEncoder;
+                result |= Silk.NET.Direct3D11.BindFlag.VideoEncoder;
             return result;
         }
 
@@ -1054,8 +1078,8 @@
         {
             return classification switch
             {
-                InputClassification.PerVertexData => Silk.NET.Direct3D11.InputClassification.InputPerVertexData,
-                InputClassification.PerInstanceData => Silk.NET.Direct3D11.InputClassification.InputPerInstanceData,
+                InputClassification.PerVertexData => Silk.NET.Direct3D11.InputClassification.PerVertexData,
+                InputClassification.PerInstanceData => Silk.NET.Direct3D11.InputClassification.PerInstanceData,
                 _ => throw new NotImplementedException()
             };
         }
@@ -1125,6 +1149,7 @@
                 Format.BC7RGBAUNorm => Silk.NET.DXGI.Format.FormatBC7Unorm,
                 Format.BC7RGBAUNormSrgb => Silk.NET.DXGI.Format.FormatBC7UnormSrgb,
                 Format.R32Typeless => Silk.NET.DXGI.Format.FormatR32Typeless,
+                Format.RGB32Float => Silk.NET.DXGI.Format.FormatR32G32B32Float,
                 _ => Silk.NET.DXGI.Format.FormatUnknown,
             };
         }
@@ -1194,6 +1219,7 @@
                 Silk.NET.DXGI.Format.FormatBC7Unorm => Format.BC7RGBAUNorm,
                 Silk.NET.DXGI.Format.FormatBC7UnormSrgb => Format.BC7RGBAUNormSrgb,
                 Silk.NET.DXGI.Format.FormatR32Typeless => Format.R32Typeless,
+                Silk.NET.DXGI.Format.FormatR32G32B32Float => Format.RGB32Float,
                 _ => Format.Unknown,
             };
         }

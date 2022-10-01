@@ -3,6 +3,7 @@ using BepuPhysics.Collidables;
 using BepuUtilities;
 using HexaEngine.Cameras;
 using HexaEngine.Core.Input;
+using Silk.NET.SDL;
 using System;
 using System.Diagnostics;
 using System.Numerics;
@@ -24,12 +25,12 @@ namespace HexaEngine.Physics.Characters
         private readonly CharacterControllers characters;
         private readonly float speed;
         private Capsule shape;
-        private static Keys moveForward = Keys.W;
-        private static Keys moveBackward = Keys.S;
-        private static Keys moveRight = Keys.D;
-        private static Keys moveLeft = Keys.A;
-        private static Keys sprint = Keys.Lshift;
-        private static Keys jump = Keys.Space;
+        private static KeyCode moveForward = KeyCode.KW;
+        private static KeyCode moveBackward = KeyCode.KS;
+        private static KeyCode moveRight = KeyCode.KD;
+        private static KeyCode moveLeft = KeyCode.KA;
+        private static KeyCode sprint = KeyCode.KLshift;
+        private static KeyCode jump = KeyCode.KSpace;
 
         public BodyHandle BodyHandle => bodyHandle;
 
@@ -53,12 +54,12 @@ namespace HexaEngine.Physics.Characters
             this.shape = shape;
         }
 
-        public static Keys MoveForward { get => moveForward; set => moveForward = value; }
-        public static Keys MoveBackward { get => moveBackward; set => moveBackward = value; }
-        public static Keys MoveRight { get => moveRight; set => moveRight = value; }
-        public static Keys MoveLeft { get => moveLeft; set => moveLeft = value; }
-        public static Keys Sprint { get => sprint; set => sprint = value; }
-        public static Keys Jump { get => jump; set => jump = value; }
+        public static KeyCode MoveForward { get => moveForward; set => moveForward = value; }
+        public static KeyCode MoveBackward { get => moveBackward; set => moveBackward = value; }
+        public static KeyCode MoveRight { get => moveRight; set => moveRight = value; }
+        public static KeyCode MoveLeft { get => moveLeft; set => moveLeft = value; }
+        public static KeyCode Sprint { get => sprint; set => sprint = value; }
+        public static KeyCode Jump { get => jump; set => jump = value; }
 
         public void UpdateCharacterGoals(Camera camera, float simulationTimestepDuration)
         {

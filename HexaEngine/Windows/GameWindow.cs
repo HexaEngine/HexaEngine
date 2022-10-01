@@ -51,13 +51,13 @@ namespace HexaEngine.Windows
         {
             if (OperatingSystem.IsWindows())
             {
-                device = new D3D11GraphicsDevice(this);
+                device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
                 context = device.Context;
                 swapChain = device.SwapChain;
             }
 
             DebugDraw.Init(device);
-            renderer = new(this);
+            renderer = new(this, device);
             framebuffer = new(device);
             renderDispatcher = Dispatcher.CurrentDispatcher;
             SceneManager.SceneChanged += (_, _) => { firstFrame = true; };

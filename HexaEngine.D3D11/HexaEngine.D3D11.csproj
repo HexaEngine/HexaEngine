@@ -9,9 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="Vortice.D3DCompiler" Version="2.1.19" PrivateAssets="contentfiles;analyzers;build" />
-    <PackageReference Include="Silk.NET.Direct3D11" Version="2.15.0" PrivateAssets="contentfiles;analyzers;build" />
-    <PackageReference Include="Silk.NET.Direct3D12" Version="2.15.0" PrivateAssets="contentfiles;analyzers;build" />
-    <PackageReference Include="Silk.NET.DXGI" Version="2.15.0" PrivateAssets="contentfiles;analyzers;build" />
+    <PackageReference Include="Silk.NET.Direct3D11" Version="2.16.0" PrivateAssets="contentfiles;analyzers;build" />
+    <PackageReference Include="Silk.NET.Direct3D12" Version="2.16.0" PrivateAssets="contentfiles;analyzers;build" />
+    <PackageReference Include="Silk.NET.DXGI" Version="2.16.0" PrivateAssets="contentfiles;analyzers;build" />
   </ItemGroup>
 
   <ItemGroup>

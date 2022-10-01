@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "HexaEngine.Tests.Pix": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

@@ -45,7 +45,7 @@
 
         public void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView);
 
-        public void SetRenderTargets(IRenderTargetView[]? views, IDepthStencilView? depthStencilView);
+        public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView? depthStencilView);
 
         void SetScissorRect(int x, int y, int z, int w);
 
@@ -94,6 +94,13 @@
         void QueryGetData(IQuery query);
 
         void Flush();
+
+        void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot, uint firstConstant, uint constantCount);
+
+        void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount);
+
+        void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ);
+        void GenerateMips(IShaderResourceView resourceView);
     }
 
     public interface IQuery : IDeviceChild

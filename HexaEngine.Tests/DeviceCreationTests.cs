@@ -25,7 +25,7 @@ namespace HexaEngine.Tests
             }
             try
             {
-                device = new D3D11GraphicsDevice(null);
+                device = new D3D11GraphicsDevice(new DXGIAdapter(), null);
             }
             catch (Exception e)
             {
@@ -48,7 +48,7 @@ namespace HexaEngine.Tests
             window.ShowHidden();
             try
             {
-                device = new D3D11GraphicsDevice(window);
+                device = new D3D11GraphicsDevice(new DXGIAdapter(), null);
             }
             catch (Exception e)
             {

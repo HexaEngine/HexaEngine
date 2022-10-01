@@ -37,6 +37,11 @@
             throw new NotImplementedException();
         }
 
+        public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -68,6 +73,11 @@
         }
 
         public void Flush()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GenerateMips(IShaderResourceView resourceView)
         {
             throw new NotImplementedException();
         }
@@ -127,7 +137,17 @@
             throw new NotImplementedException();
         }
 
+        public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
         {
             throw new NotImplementedException();
         }

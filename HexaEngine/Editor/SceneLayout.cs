@@ -14,7 +14,7 @@ namespace HexaEngine.Editor
 
     public static class SceneLayout
     {
-        private static bool isShown;
+        private static bool isShown = true;
         private static Dictionary<string, Type> cache = new();
         private static Dictionary<string, int> newInstances = new();
 
@@ -36,7 +36,7 @@ namespace HexaEngine.Editor
                 }
                 cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
             }
-
+            if (!isShown) return;
             if (!ImGui.Begin("Layout", ref isShown, ImGuiWindowFlags.MenuBar))
             {
                 ImGui.End();
@@ -48,12 +48,6 @@ namespace HexaEngine.Editor
             {
                 ImGui.End();
                 return;
-            }
-
-            int cameraIndex = scene.ActiveCamera;
-            if (ImGui.Combo("Current Camera", ref cameraIndex, scene.Cameras.Select(x => x.Name).ToArray(), scene.Cameras.Count))
-            {
-                scene.ActiveCamera = cameraIndex;
             }
 
             ImGui.Separator();
@@ -102,9 +96,14 @@ namespace HexaEngine.Editor
                     ImGui.PushID(element.Name);
                     if (ImGui.BeginPopupContextItem(element.Name))
                     {
+                        if (ImGui.MenuItem("Unselect"))
+                        {
+                            SceneNode.SelectedNode.IsSelected = false;
+                        }
                         if (ImGui.MenuItem("Delete"))
                         {
                             element.Parent.RemoveChild(element);
+                            element.IsSelected = false;
                         }
                         ImGui.EndPopup();
                     }

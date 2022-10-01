@@ -9,12 +9,12 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
-    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using Format = Core.Graphics.Format;
+    using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using SubresourceData = Core.Graphics.SubresourceData;
     using Usage = Core.Graphics.Usage;
@@ -22,45 +22,32 @@
 
     public unsafe class D3D11GraphicsDevice : IGraphicsDevice
     {
-        internal readonly DXGI DXGI;
         internal readonly D3D11 D3D11;
         private bool disposedValue;
-
-        internal IDXGIFactory2* IDXGIFactory;
-        internal IDXGIAdapter1* IDXGIAdapter;
 
         public ID3D11Device1* Device;
         public ID3D11DeviceContext1* DeviceContext;
         internal ID3D11Debug* Debug;
 
-        internal IDXGISwapChain1* swapChain;
-
         [SupportedOSPlatform("windows")]
-        public D3D11GraphicsDevice(SdlWindow? window)
+        public D3D11GraphicsDevice(DXGIAdapter adapter, SdlWindow? window)
         {
-            DXGI = DXGI.GetApi();
             D3D11 = D3D11.GetApi();
-
-            IDXGIFactory2* factory;
-            DXGI.CreateDXGIFactory2(0, Utils.Guid(IDXGIFactory2.Guid), (void**)&factory);
-            IDXGIFactory = factory;
-
-            IDXGIAdapter = GetHardwareAdapter();
 
 #if D3D11On12
 
 #else
             D3DFeatureLevel[] levelsArr = new D3DFeatureLevel[]
             {
-                D3DFeatureLevel.D3DFeatureLevel121,
-                D3DFeatureLevel.D3DFeatureLevel120,
-                D3DFeatureLevel.D3DFeatureLevel111,
+                D3DFeatureLevel.Level121,
+                D3DFeatureLevel.Level120,
+                D3DFeatureLevel.Level111,
             };
 
-            CreateDeviceFlag flags = CreateDeviceFlag.CreateDeviceBgraSupport;
+            CreateDeviceFlag flags = CreateDeviceFlag.BgraSupport;
 
 #if DEBUG
-            flags |= CreateDeviceFlag.CreateDeviceDebug;
+            flags |= CreateDeviceFlag.Debug;
 #endif
             ID3D11Device* tempDevice;
             ID3D11DeviceContext* tempContext;
@@ -68,7 +55,7 @@
             D3DFeatureLevel level = 0;
             D3DFeatureLevel* levels = (D3DFeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
 
-            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)IDXGIAdapter, D3DDriverType.D3DDriverTypeUnknown, IntPtr.Zero, (uint)flags, levels, 3, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
+            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 3, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
 
             ID3D11Device1* device;
             ID3D11DeviceContext1* context;
@@ -91,35 +78,7 @@
 
             if (window == null) return;
 
-            SwapChainDesc1 desc = new()
-            {
-                Width = (uint)window.Width,
-                Height = (uint)window.Height,
-                Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
-                BufferCount = 2,
-                BufferUsage = DXGI.UsageRenderTargetOutput,
-                SampleDesc = new(1, 0),
-                Scaling = Scaling.ScalingStretch,
-                SwapEffect = SwapEffect.SwapEffectFlipSequential,
-                Flags = (uint)(SwapChainFlag.SwapChainFlagAllowModeSwitch | SwapChainFlag.SwapChainFlagAllowTearing)
-            };
-
-            SwapChainFullscreenDesc fullscreenDesc = new()
-            {
-                Windowed = 1,
-                RefreshRate = new Rational(0, 1),
-                Scaling = ModeScaling.ModeScalingUnspecified,
-                ScanlineOrdering = ModeScanlineOrder.ModeScanlineOrderUnspecified,
-            };
-
-            IDXGISwapChain1* pswapChain;
-            IntPtr hwnd = window.GetHWND();
-            IDXGIFactory->CreateSwapChainForHwnd((IUnknown*)device, hwnd, &desc, &fullscreenDesc, null, &pswapChain);
-            IDXGIFactory->MakeWindowAssociation(hwnd, 1 << 0);
-
-            swapChain = pswapChain;
-
-            SwapChain = new DXGISwapChain(this, (SwapChainFlag)desc.Flags);
+            SwapChain = adapter.CreateSwapChainForWindow(this, window);
         }
 
         public IGraphicsContext Context { get; }
@@ -536,16 +495,9 @@
                 return InitFallback(dimension);
             }
             TexMetadata metadata = image.GetMetadata();
-            if (!metadata.IsCompressed())
-            {
-                ScratchImage image1 = image.GenerateMipMaps(0, TEX_FILTER_FLAGS.DEFAULT, Nucleus.Settings.MipLevels, true);
-                image.Dispose();
-                image = image1;
-            }
 
-            metadata = image.GetMetadata();
             ResourceMiscFlag optionFlags = metadata.IsCubemap() ? ResourceMiscFlag.TextureCube : ResourceMiscFlag.None;
-            var resource = image.CreateTextureEx((IntPtr)Device, D3D11_USAGE.DEFAULT, D3D11_BIND_FLAG.SHADER_RESOURCE, 0, (D3D11_RESOURCE_MISC_FLAG)Helper.Convert(optionFlags), false);
+            var resource = image.CreateTextureEx((IntPtr)Device, D3D11_USAGE.IMMUTABLE, D3D11_BIND_FLAG.SHADER_RESOURCE, 0, (D3D11_RESOURCE_MISC_FLAG)Helper.Convert(optionFlags), false);
 
             switch (dimension)
             {
@@ -616,20 +568,20 @@
 
             if (dimension == TextureDimension.Texture1D)
             {
-                return CreateTexture1D(Format.RGBA32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource);
+                return CreateTexture1D(Format.RGBA32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
             }
             if (dimension == TextureDimension.Texture2D)
             {
-                return CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource);
+                return CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
             }
             if (dimension == TextureDimension.Texture3D)
             {
                 fallback.SlicePitch = 1;
-                return CreateTexture3D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback, }, BindFlags.ShaderResource);
+                return CreateTexture3D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback, }, BindFlags.ShaderResource, Usage.Immutable);
             }
             if (dimension == TextureDimension.TextureCube)
             {
-                return CreateTexture2D(Format.RGBA32Float, 4, 4, 6, 1, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback }, BindFlags.ShaderResource, ResourceMiscFlag.TextureCube);
+                return CreateTexture2D(Format.RGBA32Float, 4, 4, 6, 1, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback }, BindFlags.ShaderResource, Usage.Immutable, misc: ResourceMiscFlag.TextureCube);
             }
 
             throw new ArgumentOutOfRangeException(nameof(dimension));
@@ -810,6 +762,15 @@
             return new D3D11InputLayout(layout);
         }
 
+        public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data)
+        {
+            Blob blob = new(data);
+            ID3D11InputLayout* layout;
+            InputElementDesc[] descs = Helper.Convert(inputElements);
+            Device->CreateInputLayout(Utils.AsPointer(descs), (uint)descs.Length, blob.BufferPointer.ToPointer(), (uint)(int)blob.PointerSize, &layout).ThrowHResult();
+            return new D3D11InputLayout(layout);
+        }
+
         public IInputLayout CreateInputLayout(byte[] data)
         {
             Blob blob = new(data);
@@ -894,7 +855,7 @@
                     SemanticIndex = parameterDesc.SemanticIndex,
                     InputSlot = 0,
                     AlignedByteOffset = D3D11.AppendAlignedElement,
-                    InputSlotClass = Silk.NET.Direct3D11.InputClassification.InputPerVertexData,
+                    InputSlotClass = Silk.NET.Direct3D11.InputClassification.PerVertexData,
                     InstanceDataStepRate = 0
                 };
 
@@ -950,65 +911,6 @@
             Device->CreateInputLayout(ptr, (uint)inputElements.Length, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout);
         }
 
-        private IDXGIAdapter1* GetHardwareAdapter()
-        {
-            IDXGIAdapter1* adapter = null;
-            Guid* adapterGuid = Utils.Guid(IDXGIAdapter1.Guid);
-            IDXGIFactory6* factory6;
-            IDXGIFactory->QueryInterface(Utils.Guid(IDXGIFactory6.Guid), (void**)&factory6);
-
-            if (factory6 != null)
-            {
-                for (uint adapterIndex = 0;
-                    (ResultCode)factory6->EnumAdapterByGpuPreference(adapterIndex, GpuPreference.GpuPreferenceHighPerformance, adapterGuid, (void**)&adapter) !=
-                    ResultCode.DXGI_ERROR_NOT_FOUND;
-                    adapterIndex++)
-                {
-                    AdapterDesc1 desc;
-                    adapter->GetDesc1(&desc);
-                    string name = new(desc.Description);
-
-                    Trace.WriteLine($"Found Adapter {name}");
-
-                    if (((AdapterFlag)desc.Flags & AdapterFlag.AdapterFlagSoftware) != AdapterFlag.AdapterFlagNone)
-                    {
-                        // Don't select the Basic Render Driver adapter.
-                        adapter->Release();
-                        continue;
-                    }
-
-                    Trace.WriteLine($"Using {name}");
-
-                    return adapter;
-                }
-
-                factory6->Release();
-            }
-
-            if (adapter == null)
-                for (uint adapterIndex = 0;
-                    (ResultCode)IDXGIFactory->EnumAdapters1(adapterIndex, &adapter) != ResultCode.DXGI_ERROR_NOT_FOUND;
-                    adapterIndex++)
-                {
-                    AdapterDesc1 desc;
-                    adapter->GetDesc1(&desc);
-                    string name = new(desc.Description);
-
-                    Trace.WriteLine($"Found Adapter {name}");
-
-                    if (((AdapterFlag)desc.Flags & AdapterFlag.AdapterFlagSoftware) != AdapterFlag.AdapterFlagNone)
-                    {
-                        // Don't select the Basic Render Driver adapter.
-                        adapter->Release();
-                        continue;
-                    }
-
-                    return adapter;
-                }
-
-            return adapter;
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -1016,17 +918,16 @@
                 SwapChain?.Dispose();
                 Context.Dispose();
                 Device->Release();
-                IDXGIAdapter->Release();
-                IDXGIFactory->Release();
 
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
 
-                Debug->ReportLiveDeviceObjects(RldoFlags.RldoDetail | RldoFlags.RldoIgnoreInternal);
+#if DEBUG
+                Debug->ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
                 Debug->Release();
+#endif
 
                 LeakTracer.ReportLiveInstances();
 
-                DXGI.Dispose();
                 D3D11.Dispose();
 
                 disposedValue = true;
@@ -1048,11 +949,22 @@
 
         public IQuery CreateQuery()
         {
+            return CreateQuery(Query.Event);
+        }
+
+        public IQuery CreateQuery(Query type)
+        {
             ID3D11Query* query;
-            QueryDesc desc = new(Query.QueryEvent, 0);
+            QueryDesc desc = new(Helper.Convert(type), 0);
             Device->CreateQuery(&desc, &query);
             return new D3D11Query(query);
         }
+
+        /*
+        public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDesc)
+        {
+            Device->CreateUnorderedAccessView()
+        }*/
     }
 
     public unsafe class D3D11Query : DeviceChildBase, IQuery

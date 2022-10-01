@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.D3D11;
+    using Silk.NET.SDL;
     using System;
     using System.Numerics;
 
@@ -18,7 +19,7 @@
                 Assert.Fail("Only windows is supported");
                 return;
             }
-            device = new D3D11GraphicsDevice(null);
+            device = new D3D11GraphicsDevice(new DXGIAdapter(), null);
         }
 
         [Test]

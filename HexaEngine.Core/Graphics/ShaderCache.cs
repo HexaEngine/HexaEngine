@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.Debugging;
     using System;
     using System.Buffers.Binary;
     using System.Collections.Generic;
@@ -32,8 +33,7 @@
         public static void CacheShader(string path, ShaderMacro[] macros, Blob blob)
         {
             if (DisableCache) return;
-            var datetime = File.GetLastWriteTime(path);
-            var entry = new ShaderCacheEntry(path, datetime, macros, blob.AsBytes());
+            var entry = new ShaderCacheEntry(path, macros, blob.AsBytes());
             entries.RemoveAll(x => x.Name == path);
             entries.Add(entry);
         }
@@ -42,8 +42,8 @@
         {
             data = default;
             if (DisableCache) return false;
-            var datetime = File.GetLastWriteTime(path);
-            var ventry = new ShaderCacheEntry(path, datetime, macros, null);
+
+            var ventry = new ShaderCacheEntry(path, macros, null);
             var entry = entries.FirstOrDefault(x => x.Equals(ventry));
             if (entry != default)
             {
@@ -51,6 +51,13 @@
                 return true;
             }
             return false;
+        }
+
+        public static void Clear()
+        {
+            ImGuiConsole.Log(ConsoleMessageType.Info, "Clearing shader cache ...");
+            entries.Clear();
+            ImGuiConsole.Log(ConsoleMessageType.Info, "Clearing shader cache ... done");
         }
 
         private static void Load()
@@ -65,7 +72,7 @@
             for (int i = 0; i < count; i++)
             {
                 var entry = new ShaderCacheEntry();
-                entry.Read(span[idx..], decoder);
+                idx += entry.Read(span[idx..], decoder);
                 entries.Add(entry);
             }
         }
@@ -92,14 +99,12 @@
     public struct ShaderCacheEntry : IEquatable<ShaderCacheEntry>
     {
         public string Name;
-        public DateTime Timestamp;
         public ShaderMacro[] Macros;
         public byte[] Bytecode;
 
-        public ShaderCacheEntry(string name, DateTime timestamp, ShaderMacro[] macros, byte[] bytecode)
+        public ShaderCacheEntry(string name, ShaderMacro[] macros, byte[] bytecode)
         {
             Name = name;
-            Timestamp = timestamp;
             Macros = macros;
             Bytecode = bytecode;
         }
@@ -108,8 +113,6 @@
         {
             int idx = 0;
             idx += WriteString(dest[idx..], Name, encoder);
-            BinaryPrimitives.WriteInt64LittleEndian(dest[idx..], Timestamp.ToFileTime());
-            idx += 8;
             BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], Macros.Length);
             idx += 4;
             for (int i = 0; i < Macros.Length; i++)
@@ -129,8 +132,6 @@
         {
             int idx = 0;
             idx += ReadString(src, out Name, decoder);
-            Timestamp = DateTime.FromFileTime(BinaryPrimitives.ReadInt64LittleEndian(src[idx..]));
-            idx += 8;
             int count = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
             Macros = new ShaderMacro[count];
@@ -177,7 +178,6 @@
         public bool Equals(ShaderCacheEntry other)
         {
             if (Name != other.Name) return false;
-            if (!Timestamp.Equals(other.Timestamp)) return false;
             if (Macros == other.Macros) return true;
             return Macros.SequenceEqual(other.Macros);
         }
@@ -199,7 +199,7 @@
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Name, Timestamp, Macros);
+            return HashCode.Combine(Name, Macros);
         }
     }
 }

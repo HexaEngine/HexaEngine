@@ -14,6 +14,7 @@
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines;
     using HexaEngine.Pipelines.Deferred;
+    using HexaEngine.Pipelines.Deferred.Lighting;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
@@ -129,6 +130,7 @@
                 {
                     context.Write(CB, new CBWorld(Nodes[i]));
                     context.SetConstantBuffer(CB, ShaderStage.Domain, 0);
+                    context.SetConstantBuffer(CB, ShaderStage.Vertex, 0);
                     Mesh.DrawAuto(context, pipeline, viewport);
                 }
                 context.ClearState();
@@ -155,7 +157,9 @@
         private MTLShader materialShader;
         private MTLDepthShaderBack materialDepthBackface;
         private MTLDepthShaderFront materialDepthFrontface;
-        private PBRBRDFPipeline pbrlightShader;
+        private BRDFPipeline pbrlightShader;
+        private FlatPipeline flatlightShader;
+        private Pipeline activeShader;
         private SkyboxPipeline skyboxShader;
 
         private RenderTextureArray gbuffers;
@@ -210,7 +214,6 @@
 
         public DeferredRenderer()
         {
-            ImGui.StyleColorsDark();
         }
 
         public unsafe void Initialize(IGraphicsDevice device, SdlWindow window)
@@ -280,6 +283,15 @@
             pbrlightShader.Constants.Add(new(lightBuffer, ShaderStage.Pixel, 0));
             pbrlightShader.Constants.Add(new(cameraBuffer, ShaderStage.Pixel, 1));
             pbrlightShader.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
+            pbrlightShader.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 1));
+            flatlightShader = new(device);
+            flatlightShader.Constants.Add(new(lightBuffer, ShaderStage.Pixel, 0));
+            flatlightShader.Constants.Add(new(cameraBuffer, ShaderStage.Pixel, 1));
+            flatlightShader.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
+            flatlightShader.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 1));
+
+            activeShader = pbrlightShader;
+
             skyboxShader = new(device);
             skyboxShader.Constants.Add(new(skyboxBuffer, ShaderStage.Vertex, 0));
             skyboxShader.Constants.Add(new(cameraBuffer, ShaderStage.Vertex, 1));
@@ -290,7 +302,7 @@
 
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
 
-            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1, Format.R32Float));
+            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width / 2, window.Height / 2, 1, Format.R32Float));
             ssaoEffect = new(device);
             ssaoEffect.Target = ssaoBuffer.RenderTargetView;
             ssaoEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
@@ -328,29 +340,10 @@
             brdfFilter.Draw(context);
 
             context.ClearState();
-
-            FramebufferDebugger.AddRange(new IShaderResourceView[]
-            {
-                gbuffers.SRVs[0],
-                gbuffers.SRVs[1],
-                gbuffers.SRVs[2],
-                gbuffers.SRVs[3],
-                gbuffers.SRVs[4],
-                gbuffers.SRVs[5],
-                gbuffers.SRVs[6],
-                gbuffers.SRVs[7],
-#nullable disable
-                lightMap.ResourceView,
-                ssaoBuffer.ResourceView,
-                ssrBuffer.ResourceView,
-                fxaaBuffer.ResourceView,
-#nullable enable
-            });
         }
 
         private void OnResizeBegin(object? sender, EventArgs e)
         {
-            FramebufferDebugger.Clear();
             gbuffers.Dispose();
             lightMap.Dispose();
             ssaoBuffer.Dispose();
@@ -366,7 +359,7 @@
 
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
 
-            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1, Format.R32Float));
+            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth / 2, e.NewHeight / 2, 1, Format.R32Float));
             ssaoEffect.Target = ssaoBuffer.RenderTargetView;
 
             fxaaBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
@@ -382,23 +375,6 @@
             ssrBlurEffect.Resources.Add(new(ssrBuffer.ResourceView, ShaderStage.Pixel, 0));
 
             blendEffect.Target = fxaaBuffer.RenderTargetView;
-            FramebufferDebugger.AddRange(new IShaderResourceView[]
-            {
-                gbuffers.SRVs[0],
-                gbuffers.SRVs[1],
-                gbuffers.SRVs[2],
-                gbuffers.SRVs[3],
-                gbuffers.SRVs[4],
-                gbuffers.SRVs[5],
-                gbuffers.SRVs[6],
-                gbuffers.SRVs[7],
-                #nullable disable
-                lightMap.ResourceView,
-                ssaoBuffer.ResourceView,
-                ssrBuffer.ResourceView,
-                fxaaBuffer.ResourceView,
-                #nullable enable
-            });
 
             gbuffers.SRVs[0].DebugName = "Albedo";
             gbuffers.SRVs[1].DebugName = "Position Depth";
@@ -467,13 +443,13 @@
                                 ModelMesh model = new();
                                 if (mesh.Vertices != null)
                                 {
-                                    IBuffer vb = device.CreateBuffer(mesh.Vertices, BindFlags.VertexBuffer);
+                                    IBuffer vb = device.CreateBuffer(mesh.Vertices, BindFlags.VertexBuffer, Usage.Immutable);
                                     model.VB = vb;
                                     model.VertexCount = mesh.Vertices.Length;
                                 }
                                 if (mesh.Indices != null)
                                 {
-                                    IBuffer ib = device.CreateBuffer(mesh.Indices, BindFlags.IndexBuffer);
+                                    IBuffer ib = device.CreateBuffer(mesh.Indices, BindFlags.IndexBuffer, Usage.Immutable);
                                     model.IB = ib;
                                     model.IndexCount = mesh.Indices.Length;
                                 }
@@ -504,14 +480,14 @@
                                 if (mesh.Vertices != null)
                                 {
                                     model.VB?.Dispose();
-                                    IBuffer vb = device.CreateBuffer(mesh.Vertices, BindFlags.VertexBuffer);
+                                    IBuffer vb = device.CreateBuffer(mesh.Vertices, BindFlags.VertexBuffer, Usage.Immutable);
                                     model.VB = vb;
                                     model.VertexCount = mesh.Vertices.Length;
                                 }
                                 if (mesh.Indices != null)
                                 {
                                     model.IB?.Dispose();
-                                    IBuffer ib = device.CreateBuffer(mesh.Indices, BindFlags.IndexBuffer);
+                                    IBuffer ib = device.CreateBuffer(mesh.Indices, BindFlags.IndexBuffer, Usage.Immutable);
                                     model.IB = ib;
                                     model.IndexCount = mesh.Indices.Length;
                                 }
@@ -688,7 +664,7 @@
                     case LightType.Point:
                         var mt = OSMHelper.GetLightSpaceMatrices(light.Transform);
                         context.Write(osmBuffer, mt);
-                        context.Write(osmParamBuffer, new Vector4(light.Transform.Position, 25));
+                        context.Write(osmParamBuffer, new Vector4(light.Transform.GlobalPosition, 25));
                         osmDepthBuffers[pointsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
@@ -741,7 +717,7 @@
             context.SetShaderResources(osmSRVs, ShaderStage.Pixel, 13);
             context.SetShaderResources(psmSRVs, ShaderStage.Pixel, 21);
             lightMap.SetTarget(context);
-            quad.DrawAuto(context, pbrlightShader, lightMap.Viewport);
+            quad.DrawAuto(context, activeShader, lightMap.Viewport);
             context.ClearState();
 
             fxaaBuffer.ClearTarget(context, Vector4.Zero);
@@ -790,6 +766,16 @@
             if (ImGui.Combo("Shading Model", ref currentShadingModelIndex, availableShadingModelStrings, availableShadingModelStrings.Length))
             {
                 currentShadingModel = availableShadingModels[currentShadingModelIndex];
+                switch (currentShadingModel)
+                {
+                    case ShadingModel.Flat:
+                        activeShader = flatlightShader;
+                        break;
+
+                    case ShadingModel.PbrBrdf:
+                        activeShader = pbrlightShader;
+                        break;
+                }
             }
 
             ImGui.Separator();
@@ -798,6 +784,7 @@
             ImGui.Checkbox("Enable SSR", ref enableSSR);
 
             ssrEffect.DrawSettings();
+            ssaoEffect.DrawSettings();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -837,12 +824,24 @@
                 materialDepthBackface.Dispose();
                 materialDepthFrontface.Dispose();
                 pbrlightShader.Dispose();
+                flatlightShader.Dispose();
                 skyboxShader.Dispose();
                 gbuffers.Dispose();
 
                 csmPipeline.Dispose();
                 csmMvpBuffer.Dispose();
                 csmDepthBuffer.Dispose();
+
+                osmPipeline.Dispose();
+                osmBuffer.Dispose();
+                osmParamBuffer.Dispose();
+                foreach (var buffer in osmDepthBuffers)
+                    buffer.Dispose();
+
+                psmPipeline.Dispose();
+                psmBuffer.Dispose();
+                foreach (var buffer in psmDepthBuffers)
+                    buffer.Dispose();
 
                 ssaoBuffer.Dispose();
                 lightMap.Dispose();

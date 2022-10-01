@@ -19,11 +19,12 @@ TextureCube prefilterTexture : register(t9);
 Texture2D brdfLUT : register(t10);
 Texture2D ssao : register(t11);
 
-Texture2DArray depthMapTexture : register(t12);
+Texture2DArray depthCSM : register(t12);
 TextureCube depthOSM[8] : register(t13);
 Texture2D depthPSM[8] : register(t21);
 
 SamplerState SampleTypePoint : register(s0);
+SamplerState SampleTypeAnsio : register(s1);
 
 //////////////
 // TYPEDEFS //
@@ -34,28 +35,55 @@ struct VSOut
     float2 Tex : TEXCOORD;
 };
 
-float ShadowCalculation(SpotlightSD light, float3 fragPos, Texture2D depthTex, SamplerState state)
+float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D depthTex, SamplerState state)
 {
     float4 fragPosLightSpace = mul(float4(fragPos, 1.0), light.view);
     fragPosLightSpace.y = -fragPosLightSpace.y;
     float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     float currentDepth = projCoords.z;
-    if (currentDepth > 1.0)
-        return 0.0f;
+
     projCoords = projCoords * 0.5 + 0.5;
     
-    // use the light to fragment vector to sample from the depth map    
-    float closestDepth = depthTex.Sample(state, projCoords.xy).r;
+    float w;
+    float h;
+    depthTex.GetDimensions(w, h);
 
-    // now test for shadows
-    float bias = 0.005;
-    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+    // PCF
+    float shadow = 0.0;
+    float2 texelSize = 1.0 / float2(w, h);
+    [unroll]
+    for (int x = -1; x <= 1; ++x)
+    {
+        [unroll]
+        for (int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = depthTex.Sample(state, projCoords.xy + float2(x, y) * texelSize).r;
+            shadow += (currentDepth - bias) > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+
+    shadow /= 9;
+
+    if (currentDepth > 1.0)
+        shadow = 0;
 
     return shadow;
 }
 
-float ShadowCalculation(PointLightSD light, float3 fragPos, TextureCube depthTex, SamplerState state)
+// array of offset direction for sampling
+float3 gridSamplingDisk[20] =
 {
+    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
+   float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
+   float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
+   float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
+   float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
+};
+
+
+float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCube depthTex, SamplerState state)
+{
+#if (HARD_POINT_SHADOWS)
     // get vector between fragment position and light position
     float3 fragToLight = fragPos - light.position;
     // use the light to fragment vector to sample from the depth map    
@@ -69,9 +97,29 @@ float ShadowCalculation(PointLightSD light, float3 fragPos, TextureCube depthTex
     float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 
     return shadow;
+#else
+    // get vector between fragment position and light position
+    float3 fragToLight = fragPos - light.position;
+    // now get current linear depth as the length between the fragment and light position
+    float currentDepth = length(fragToLight);
+    float shadow = 0.0;
+    float bias = 0.15;
+    float viewDistance = length(V);
+    float diskRadius = (1.0 + (viewDistance / 25)) / 25.0;
+    
+    [unroll]
+    for (int i = 0; i < 20; ++i)
+    {
+        float closestDepth = depthTex.Sample(state, fragToLight + gridSamplingDisk[i] * diskRadius).r;
+        closestDepth *= 25; // undo mapping [0;1]
+        shadow += (currentDepth - bias) > closestDepth ? 1.0 : 0.0;
+    }
+    shadow /= 20;
+    return shadow;
+#endif
 }
 
-float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, float3 normal)
+float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, float3 normal, Texture2DArray depthTex, SamplerState state)
 {
     float cascadePlaneDistances[16] = (float[16]) light.cascades;
     float farPlane = 100;
@@ -79,7 +127,7 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, floa
     float w;
     float h;
     uint cascadeCount;
-    depthMapTexture.GetDimensions(w, h, cascadeCount);
+    depthTex.GetDimensions(w, h, cascadeCount);
 
     // select cascade layer
     float4 fragPosViewSpace = mul(float4(fragPosWorldSpace, 1.0), view);
@@ -124,7 +172,7 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, floa
         [unroll]
         for (int y = -1; y <= 1; ++y)
         {
-            float pcfDepth = depthMapTexture.Sample(SampleTypePoint, float3(projCoords.xy + float2(x, y) * texelSize, layer)).r;
+            float pcfDepth = depthTex.Sample(state, float3(projCoords.xy + float2(x, y) * texelSize, layer)).r;
             shadow += (currentDepth - 0.005) > pcfDepth ? 1.0 : 0.0;
         }
     }
@@ -164,7 +212,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
     {
         DirectionalLightSD light = directionalLightSDs[y];
         float bias = max(0.05f * (1.0 - dot(N, V)), 0.005f);
-        float shadow = ShadowCalculation(light, attrs.pos, N);
+        float shadow = ShadowCalculation(light, attrs.pos, N, depthCSM, SampleTypeAnsio);
         Lo += (1.0f - shadow) * BRDFDirect(light.color.rgb, normalize(-light.dir), F0, V, N, baseColor, roughness, metalness);
     }
     
@@ -190,7 +238,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
         
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
-        float shadow = ShadowCalculation(light, attrs.pos, depthOSM[zd], SampleTypePoint);
+        float shadow = ShadowCalculation(light, attrs.pos, V, depthOSM[zd], SampleTypeAnsio);
         Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
     }
     
@@ -230,14 +278,17 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
             if (epsilon != 0)
                 falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
             float3 radiance = light.color.rgb * attenuation * falloff;
-            float shadow = ShadowCalculation(light, attrs.pos, depthPSM[wd], SampleTypePoint);
+            float cosTheta = dot(N, -L);
+            float bias = clamp(0.005 * tan(acos(cosTheta)), 0, 0.01);
+            float shadow = ShadowCalculation(light, attrs.pos, bias, depthPSM[wd], SampleTypeAnsio);
+            
             Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
         }
     }
 
 		
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
-    float3 ambient = BRDFIndirect2(SampleTypePoint, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao);
+    float3 ambient = BRDFIndirect2(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao);
 	
     float3 color = ambient + Lo;
     
@@ -251,7 +302,7 @@ float3 ACESFilm(float3 x)
 
 float3 OECF_sRGBFast(float3 color)
 {
-    float gamma = 2.0;
+    float gamma = 2.2;
     return pow(color.rgb, float3(1.0 / gamma, 1.0 / gamma, 1.0 / gamma));
 }
 

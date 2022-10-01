@@ -151,6 +151,11 @@
             messages.Add(new ConsoleMessage() { Type = type, Text = msg, Timestamp = DateTime.Now });
         }
 
+        public static void Log(Exception e)
+        {
+            messages.Add(new ConsoleMessage() { Type = ConsoleMessageType.Error, Text = e.ToString(), Timestamp = DateTime.Now });
+        }
+
         public static void Log(string msg)
         {
             ConsoleMessageType type = ConsoleMessageType.Log;
@@ -177,6 +182,7 @@
                 ImGui.End();
                 return;
             }
+
             ImGui.PopStyleVar();
 
             ///////////////

@@ -87,6 +87,8 @@
 
         public SceneNode Root => root;
 
+        public bool IsSimulating;
+
         public void Initialize(IGraphicsDevice device, SdlWindow window)
         {
             this.device = device;
@@ -138,6 +140,7 @@
 
         public void Simulate(float delta)
         {
+            if (!IsSimulating) return;
             interpol += delta;
             while (interpol > stepsize)
             {

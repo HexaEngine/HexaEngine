@@ -112,7 +112,7 @@
                             {
                                 SdlWindow window = windows[evnt.Window.WindowID];
                                 window.ProcessEvent(evnt.Window);
-                                if ((WindowEventID)evnt.Window.Event == WindowEventID.WindoweventClose && window == mainWindow)
+                                if ((WindowEventID)evnt.Window.Event == WindowEventID.Close && window == mainWindow)
                                 {
                                     exiting = true;
                                 }

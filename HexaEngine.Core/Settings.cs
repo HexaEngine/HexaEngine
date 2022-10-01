@@ -17,12 +17,6 @@
         public int ShadowMapSize = 1024 * 8;
 
         [JsonProperty]
-        public int ShadowRange = 1024 / 8;
-
-        [JsonProperty]
-        public int MipLevels = 2;
-
-        [JsonProperty]
         public bool ShaderCache = true;
 
         [JsonIgnore]
@@ -36,12 +30,6 @@
 
         [JsonIgnore]
         public int MSAASampleQuality;
-
-        [JsonIgnore]
-        public float MaxDepth = 1000f;
-
-        [JsonIgnore]
-        public float MinDepth = .001f;
 
         internal void Save()
         {

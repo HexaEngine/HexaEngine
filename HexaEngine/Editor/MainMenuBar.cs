@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Graphics;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using Newtonsoft.Json;
@@ -54,7 +55,21 @@
 
                     ImGui.EndMenu();
                 }
-                if (ImGui.BeginMenu("Scene"))
+
+                if (ImGui.BeginMenu("Edit"))
+                {
+                    if (ImGui.MenuItem("Undo (CTRL+Z)", Designer.History.CanUndo))
+                    {
+                        Designer.History.Undo();
+                    }
+                    if (ImGui.MenuItem("Redo (CTRL+Y)", Designer.History.CanRedo))
+                    {
+                        Designer.History.Redo();
+                    }
+
+                    ImGui.EndMenu();
+                }
+                if (ImGui.BeginMenu("Window"))
                 {
                     if (ImGui.MenuItem("Layout"))
                     {
@@ -90,9 +105,9 @@
                 if (ImGui.BeginMenu("Debug"))
                 {
                     ImGui.TextDisabled("Shaders");
-                    if (ImGui.MenuItem("Framebuffers"))
+                    if (ImGui.MenuItem("Recompile Shaders (F5)"))
                     {
-                        FramebufferDebugger.IsShown = !FramebufferDebugger.IsShown;
+                        Pipeline.ReloadShaders();
                     }
                     ImGui.Separator();
 

@@ -35,14 +35,14 @@ static const float3 taps[16] =
                         float3(0.852626, -0.061007, -0.144475)
 };
 
-// sampling radius is in view space
-#define SAMPLING_RADIUS 0.5
-#define NUM_SAMPLING_DIRECTIONS 8
-// sampling step is in texture space
-#define SAMPLING_STEP 0.004
-#define NUM_SAMPLING_STEPS 4
-#define THRESHOLD 0.1
-#define SCALE 1.0
+cbuffer ConfigBuffer : register(b0)
+{
+    float SAMPLING_RADIUS;
+    uint NUM_SAMPLING_DIRECTIONS;
+    float SAMPLING_STEP;
+    uint NUM_SAMPLING_STEPS;
+};
+
 #define TANGENT_BIAS 0.2
 #define M_PI 3.1415926535897932384626433832795
 

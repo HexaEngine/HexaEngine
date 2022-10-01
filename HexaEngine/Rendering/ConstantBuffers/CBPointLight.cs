@@ -12,7 +12,7 @@
         public CBPointLight(PointLight point) : this()
         {
             Color = point.Color * point.Strength;
-            Position = point.Transform.Position;
+            Position = point.Transform.GlobalPosition;
         }
     }
 }

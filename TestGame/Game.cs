@@ -7,6 +7,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Scenes;
     using HexaEngine.Windows;
+    using Silk.NET.SDL;
 
     public class Game : HexaEngine.Game
     {
@@ -15,7 +16,7 @@
         /// </summary>
         public override void Initialize()
         {
-            ShaderCache.DisableCache = true;
+            //ShaderCache.DisableCache = true;
             Settings = new();
             Settings.VSync = true;
             Settings.FPSLimit = false;
@@ -33,28 +34,28 @@
         {
             ImGuiConsole.RegisterCommand("recompile_shaders", _ =>
             {
-                SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());
+                SceneManager.Current.Dispatcher.Invoke(() => { ShaderCache.Clear(); Pipeline.ReloadShaders(); });
             });
             Keyboard.OnKeyUp += (s, e) =>
             {
-                if (e.KeyCode == Keys.Escape)
+                if (e.KeyCode == KeyCode.KEscape)
                 {
                     window.Close();
                 }
-                if (e.KeyCode == Keys.F5)
+                if (e.KeyCode == KeyCode.KF5)
                 {
                     SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());
                 }
-                if (e.KeyCode == Keys.F10)
+                if (e.KeyCode == KeyCode.KF10)
                 {
                     window.LockCursor = !window.LockCursor;
                 }
-                if (e.KeyCode == Keys.F11)
+                if (e.KeyCode == KeyCode.KF11)
                 {
                     // TODO: Reimplement BorderlessFullscreen
                     //window.BorderlessFullscreen = !window.BorderlessFullscreen;
                 }
-                if (e.KeyCode == Keys.F1)
+                if (e.KeyCode == KeyCode.KF1)
                 {
                     Designer.IsShown = !Designer.IsShown;
                     if (Designer.IsShown)

@@ -1,3 +1,0 @@
-﻿namespace ShaderTool.MVVM.Model
-{
-}

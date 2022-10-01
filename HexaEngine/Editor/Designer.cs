@@ -1,15 +1,14 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core.IO;
-    using HexaEngine.Editor.Widgets;
+    using HexaEngine.Core.Input;
     using ImGuiNET;
+    using Silk.NET.SDL;
 
     public static class Designer
     {
         private static bool isShown;
         private static bool inDesignMode = true;
         private static uint dockid;
-        private static readonly float[] data = new float[10];
 
         public static bool IsShown
         {
@@ -23,10 +22,26 @@
 
         public static bool InDesignMode { get => inDesignMode; set => inDesignMode = value; }
 
+        public static History History { get; } = new();
+
         public static uint DockId { get => dockid; set => dockid = value; }
 
         static Designer()
         {
+            Keyboard.OnKeyUp += (s, e) =>
+            {
+                if (Keyboard.IsDown(KeyCode.KLctrl))
+                {
+                    if (e.KeyCode == KeyCode.KZ)
+                    {
+                        History.TryUndo();
+                    }
+                    if (e.KeyCode == KeyCode.KY)
+                    {
+                        History.TryRedo();
+                    }
+                }
+            };
         }
 
         internal static void Draw()
@@ -40,11 +55,11 @@
             ImGui.End();
 
             Inspector.Draw();
-            FramebufferDebugger.Draw();
             SceneLayout.Draw();
             SceneElementProperties.Draw();
             SceneMaterials.Draw();
             AssetExplorer.Draw();
+            ImGui.ShowMetricsWindow();
         }
     }
 }

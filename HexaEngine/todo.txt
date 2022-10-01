@@ -16,7 +16,7 @@ Emission
 
 Work in progress:
 
-Texture sharing between materials
+Script framework
 Reintegrate Physics engine
 Assimp scene import
 Editor
@@ -39,3 +39,4 @@ SSR (Screen Space Reflections)
 
 Dynamic Mesh loading
 Dynamic Texture loading
+Texture sharing between materials

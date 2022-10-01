@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using Silk.NET.Direct3D11;
-    using System;
 
     public unsafe class D3D11DepthStencilState : DeviceChildBase, IDepthStencilState
     {

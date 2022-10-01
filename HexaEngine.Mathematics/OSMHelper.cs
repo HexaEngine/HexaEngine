@@ -6,12 +6,12 @@
     {
         public static Matrix4x4 GetProjectionMatrix()
         {
-            return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 1, 25);
+            return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 0.01f, 25);
         }
 
         public static Matrix4x4[] GetLightSpaceMatrices(Transform light)
         {
-            Vector3 pos = light.Position;
+            Vector3 pos = light.GlobalPosition;
             Matrix4x4 proj = GetProjectionMatrix();
             Matrix4x4[] matrices = new Matrix4x4[6];
             matrices[0] = Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos + Vector3.UnitX, Vector3.UnitY) * proj);

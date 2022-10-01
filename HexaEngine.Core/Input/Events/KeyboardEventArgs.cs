@@ -1,16 +1,17 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
     using HexaEngine.Core.Input;
+    using Silk.NET.SDL;
 
     public class KeyboardEventArgs : EventArgs
     {
-        public KeyboardEventArgs(Keys keyCode, KeyState keyState)
+        public KeyboardEventArgs(KeyCode keyCode, KeyState keyState)
         {
             KeyCode = keyCode;
             KeyState = keyState;
         }
 
-        public Keys KeyCode { get; }
+        public KeyCode KeyCode { get; }
 
         public KeyState KeyState { get; }
     }

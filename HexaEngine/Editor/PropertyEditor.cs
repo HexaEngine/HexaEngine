@@ -13,7 +13,7 @@ namespace HexaEngine.Editor
 
     public class PropertyEditor
     {
-        private readonly KeyValuePair<PropertyInfo, Func<object, (bool, object)>>[] callbacks;
+        private readonly KeyValuePair<PropertyInfo, Func<(object, object), (bool, object)>>[] callbacks;
         private static readonly Dictionary<Type, KeyValuePair<Array, string[]>> enumCache = new();
         private static readonly Dictionary<Type, KeyValuePair<Type[], string[]>> typeCache = new();
         private readonly string name;
@@ -39,7 +39,7 @@ namespace HexaEngine.Editor
             }
 
             var properties = type.GetProperties();
-            List<KeyValuePair<PropertyInfo, Func<object, (bool, object)>>> values = new();
+            List<KeyValuePair<PropertyInfo, Func<(object, object), (bool, object)>>> values = new();
             List<KeyValuePair<PropertyInfo, Array>> cache = new();
             foreach (var property in properties)
             {
@@ -101,7 +101,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanWrite && property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        bool val = (bool)value;
+                        bool val = (bool)value.Item2;
                         if (ImGui.Checkbox(name, ref val))
                         {
                             return (true, val);
@@ -119,7 +119,7 @@ namespace HexaEngine.Editor
                         if (!(property.CanWrite && property.CanRead)) continue;
                         values.Add(new(property, value =>
                         {
-                            float val = (float)value;
+                            float val = (float)value.Item2;
                             if (ImGui.SliderFloat(name, ref val, min, max))
                             {
                                 return (true, val);
@@ -134,7 +134,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanWrite && property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        float val = (float)value;
+                        float val = (float)value.Item2;
                         if (ImGui.InputFloat(name, ref val))
                         {
                             return (true, val);
@@ -149,7 +149,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanWrite && property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        Vector2 val = (Vector2)value;
+                        Vector2 val = (Vector2)value.Item2;
                         if (ImGui.InputFloat2(name, ref val))
                         {
                             return (true, val);
@@ -165,7 +165,7 @@ namespace HexaEngine.Editor
                     {
                         values.Add(new(property, value =>
                         {
-                            Vector3 val = (Vector3)value;
+                            Vector3 val = (Vector3)value.Item2;
                             if (ImGui.ColorEdit3(name, ref val, ImGuiColorEditFlags.Float | ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.InputRGB))
                             {
                                 return (true, val);
@@ -181,7 +181,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanWrite && property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        Vector3 val = (Vector3)value;
+                        Vector3 val = (Vector3)value.Item2;
                         if (ImGui.InputFloat3(name, ref val))
                         {
                             return (true, val);
@@ -198,7 +198,7 @@ namespace HexaEngine.Editor
                     {
                         values.Add(new(property, value =>
                         {
-                            Vector4 val = (Vector4)value;
+                            Vector4 val = (Vector4)value.Item2;
                             if (ImGui.ColorEdit4(name, ref val, ImGuiColorEditFlags.Float | ImGuiColorEditFlags.DisplayRGB | ImGuiColorEditFlags.InputRGB))
                             {
                                 return (true, val);
@@ -214,7 +214,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanWrite && property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        Vector4 val = (Vector4)value;
+                        Vector4 val = (Vector4)value.Item2;
                         if (ImGui.InputFloat4(name, ref val))
                         {
                             return (true, val);
@@ -229,7 +229,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanWrite && property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        string val = (string)value;
+                        string val = (string)value.Item2;
                         if (ImGui.InputText(name, ref val, 256))
                         {
                             return (true, val);
@@ -244,7 +244,7 @@ namespace HexaEngine.Editor
                     if (!(property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        RenderTexture val = (RenderTexture)value;
+                        RenderTexture val = (RenderTexture)value.Item2;
                         if (val != null)
                             ImGui.Image(ImGuiRenderer.TryRegisterTexture(val.ResourceView), new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
                         return (false, null);
@@ -264,10 +264,14 @@ namespace HexaEngine.Editor
             {
                 var callback = callbacks[i];
                 var value = callback.Key.GetValue(instance);
-                var result = callback.Value(value);
+                var oldValue = value;
+                var result = callback.Value((instance, value));
+
                 if (result.Item1)
                 {
-                    callback.Key.SetValue(instance, result.Item2);
+                    Designer.History.Do(
+                        () => callback.Key.SetValue(instance, result.Item2),
+                        () => callback.Key.SetValue(instance, oldValue));
                 }
             }
         }

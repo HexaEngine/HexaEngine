@@ -15,9 +15,15 @@
         public Primitive(IGraphicsDevice device)
         {
             (vertexBuffer, indexBuffer, instanceBuffer) = InitializeMesh(device);
+            if (vertexBuffer.GetVertices() is Vertex[] v)
+            {
+                BoundingBox = BoundingBoxHelper.Compute(v);
+            }
         }
 
         protected abstract (VertexBuffer<T>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device);
+
+        public BoundingBox BoundingBox;
 
         public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
         {

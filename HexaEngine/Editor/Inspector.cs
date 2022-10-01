@@ -44,23 +44,23 @@
                     Light light = scene.Lights[i];
                     if (light.Type == LightType.Directional)
                     {
-                        DebugDraw.DrawRay(light.Transform.Position, light.Transform.Forward, false, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
                     }
                     if (light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawRay(light.Transform.Position, light.Transform.Forward * 10, false, Vector4.One);
-                        DebugDraw.DrawRing(light.Transform.Position + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
+                        DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward * 10, false, Vector4.One);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
                     }
                     if (light.Type == LightType.Point)
                     {
-                        DebugDraw.DrawRing(light.Transform.Position, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.Position, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
                     }
                 }
             }
@@ -70,7 +70,7 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.Draw(new BoundingFrustum(cam.Transform.View * cam.Transform.Projection), Vector4.Zero);
+                    DebugDraw.Draw(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov, cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
                 }
             }
         }

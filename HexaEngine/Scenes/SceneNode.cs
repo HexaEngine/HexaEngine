@@ -44,9 +44,17 @@
             get => isSelected;
             set
             {
-                if (selectedNode != null)
-                    selectedNode.isSelected = false;
-                selectedNode = this;
+                if (value)
+                {
+                    if (selectedNode != null)
+                        selectedNode.isSelected = false;
+                    selectedNode = this;
+                }
+                else if (selectedNode == this)
+                {
+                    selectedNode = null;
+                }
+
                 isSelected = value;
             }
         }
@@ -158,6 +166,7 @@
 
         public virtual void Initialize(IGraphicsDevice device)
         {
+            Transform.Parent = parent?.Transform;
             scene = GetScene();
             scene.RegisterChild(this);
             GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Load, this));

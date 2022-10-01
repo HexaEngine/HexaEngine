@@ -191,5 +191,7 @@
         public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob);
 
         IQuery CreateQuery();
+        IQuery CreateQuery(Query type);
+        IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data);
     }
 }

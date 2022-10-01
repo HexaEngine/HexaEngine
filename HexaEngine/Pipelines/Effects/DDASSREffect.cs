@@ -74,6 +74,7 @@
             if (isDirty)
             {
                 context.Write(cb, new DDASSRCB(targetSize, maxRayStep, depthbias, rayStepScale, maxThickness, maxRayLength));
+                isDirty = false;
             }
 #nullable disable
             DrawAuto(context, Target.Viewport);

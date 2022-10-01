@@ -2,7 +2,8 @@
   "profiles": {
     "IBLBaker": {
       "commandName": "Project",
-      "commandLineArgs": "Panorama .\\texturify_pano-1-13.jpg"
+      "commandLineArgs": "Cube skybox.dds",
+      "nativeDebugging": true
     }
   }
 }

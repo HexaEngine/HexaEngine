@@ -2,19 +2,27 @@
 using HexaEngine.Core.Input;
 using HexaEngine.Windows;
 using ImGuiNET;
-using ImGuizmoNET;
 using Silk.NET.SDL;
-using System;
 using System.Numerics;
 
 namespace HexaEngine.Rendering
 {
     internal class ImGuiInputHandler
     {
-        private readonly GameWindow window;
+        private readonly SdlWindow window;
         private ImGuiMouseCursor lastCursor;
 
         public ImGuiInputHandler(GameWindow window)
+        {
+            this.window = window;
+            window.MouseButtonInput += MouseButtonInput;
+            window.MouseWheelInput += MouseWheelInput;
+            window.KeyboardInput += KeyboardInput;
+            window.KeyboardCharInput += KeyboardCharInput;
+            InitKeyMap();
+        }
+
+        public ImGuiInputHandler(SdlWindow window)
         {
             this.window = window;
             window.MouseButtonInput += MouseButtonInput;
@@ -33,7 +41,7 @@ namespace HexaEngine.Rendering
         private void KeyboardInput(object? sender, Core.Input.Events.KeyboardEventArgs e)
         {
             var io = ImGui.GetIO();
-            io.KeysDown[(int)e.KeyCode] = e.KeyState == KeyState.Pressed;
+            io.AddKeyEvent(KeycodeToImGuiKey(e.KeyCode), e.KeyState == KeyState.Pressed);
         }
 
         private void MouseWheelInput(object? sender, Core.Input.Events.MouseWheelEventArgs e)
@@ -45,77 +53,28 @@ namespace HexaEngine.Rendering
 
         private void MouseButtonInput(object? sender, Core.Input.Events.MouseButtonEventArgs e)
         {
-            window.RenderDispatcher.Invoke(() =>
+            var io = ImGui.GetIO();
+            var index = e.MouseButton switch
             {
-                var io = ImGui.GetIO();
+                MouseButton.None => -1,
+                MouseButton.Left => 0,
+                MouseButton.Right => 1,
+                MouseButton.Middle => 2,
+                MouseButton.X1 => 3,
+                MouseButton.X2 => 4,
+                _ => -1,
+            };
+            io.MouseDown[index] = e.KeyState == KeyState.Pressed;
 
-                int index;
-                switch (e.MouseButton)
-                {
-                    case MouseButton.None:
-                        index = -1;
-                        break;
-
-                    case MouseButton.Left:
-                        index = 0;
-                        break;
-
-                    case MouseButton.Right:
-                        index = 1;
-                        break;
-
-                    case MouseButton.Middle:
-                        index = 2;
-                        break;
-
-                    case MouseButton.X1:
-                        index = 3;
-                        break;
-
-                    case MouseButton.X2:
-                        index = 4;
-                        break;
-
-                    default:
-                        index = -1;
-                        break;
-                }
-
-                io.MouseDown[index] = e.KeyState == KeyState.Pressed;
-
-                if (e.KeyState == KeyState.Pressed)
-                    window.Capture();
-                else
-                    window.ReleaseCapture();
-            });
+            if (e.KeyState == KeyState.Pressed)
+                window.Capture();
+            else
+                window.ReleaseCapture();
         }
 
         private void InitKeyMap()
         {
             var io = ImGui.GetIO();
-
-            io.KeyMap[(int)ImGuiKey.Tab] = (int)Keys.Tab;
-            io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Keys.Left;
-            io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Keys.Right;
-            io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Keys.Up;
-            io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Keys.Down;
-            io.KeyMap[(int)ImGuiKey.PageUp] = (int)Keys.Pageup;
-            io.KeyMap[(int)ImGuiKey.PageDown] = (int)Keys.Pagedown;
-            io.KeyMap[(int)ImGuiKey.Home] = (int)Keys.Home;
-            io.KeyMap[(int)ImGuiKey.End] = (int)Keys.End;
-            io.KeyMap[(int)ImGuiKey.Insert] = (int)Keys.Insert;
-            io.KeyMap[(int)ImGuiKey.Delete] = (int)Keys.Delete;
-            io.KeyMap[(int)ImGuiKey.Backspace] = (int)Keys.Backspace;
-            io.KeyMap[(int)ImGuiKey.Space] = (int)Keys.Space;
-            io.KeyMap[(int)ImGuiKey.Enter] = (int)Keys.Return;
-            io.KeyMap[(int)ImGuiKey.Escape] = (int)Keys.Escape;
-            io.KeyMap[(int)ImGuiKey.KeypadEnter] = (int)Keys.Return2;
-            io.KeyMap[(int)ImGuiKey.A] = (int)Keys.A;
-            io.KeyMap[(int)ImGuiKey.C] = (int)Keys.C;
-            io.KeyMap[(int)ImGuiKey.V] = (int)Keys.V;
-            io.KeyMap[(int)ImGuiKey.X] = (int)Keys.X;
-            io.KeyMap[(int)ImGuiKey.Y] = (int)Keys.Y;
-            io.KeyMap[(int)ImGuiKey.Z] = (int)Keys.Z;
         }
 
         public void Update()
@@ -137,9 +96,9 @@ namespace HexaEngine.Rendering
         private void UpdateKeyModifiers()
         {
             var io = ImGui.GetIO();
-            io.KeyCtrl = Keyboard.IsDown(Keys.Lctrl);
-            io.KeyShift = Keyboard.IsDown(Keys.Lshift);
-            io.KeyAlt = Keyboard.IsDown(Keys.Menu);
+            io.KeyCtrl = Keyboard.IsDown(KeyCode.KLctrl);
+            io.KeyShift = Keyboard.IsDown(KeyCode.KLshift);
+            io.KeyAlt = Keyboard.IsDown(KeyCode.KMenu);
             io.KeySuper = false;
         }
 
@@ -180,6 +139,119 @@ namespace HexaEngine.Rendering
             Vector2 mousePosition = Mouse.PositionVector;
 
             io.MousePos = mousePosition;
+        }
+
+        private static ImGuiKey KeycodeToImGuiKey(KeyCode keycode)
+        {
+            return keycode switch
+            {
+                KeyCode.KTab => ImGuiKey.Tab,
+                KeyCode.KLeft => ImGuiKey.LeftArrow,
+                KeyCode.KRight => ImGuiKey.RightArrow,
+                KeyCode.KUp => ImGuiKey.UpArrow,
+                KeyCode.KDown => ImGuiKey.DownArrow,
+                KeyCode.KPageup => ImGuiKey.PageUp,
+                KeyCode.KPagedown => ImGuiKey.PageDown,
+                KeyCode.KHome => ImGuiKey.Home,
+                KeyCode.KEnd => ImGuiKey.End,
+                KeyCode.KInsert => ImGuiKey.Insert,
+                KeyCode.KDelete => ImGuiKey.Delete,
+                KeyCode.KBackspace => ImGuiKey.Backspace,
+                KeyCode.KSpace => ImGuiKey.Space,
+                KeyCode.KReturn => ImGuiKey.Enter,
+                KeyCode.KEscape => ImGuiKey.Escape,
+                KeyCode.KQuote => ImGuiKey.Apostrophe,
+                KeyCode.KComma => ImGuiKey.Comma,
+                KeyCode.KMinus => ImGuiKey.Minus,
+                KeyCode.KPeriod => ImGuiKey.Period,
+                KeyCode.KSlash => ImGuiKey.Slash,
+                KeyCode.KSemicolon => ImGuiKey.Semicolon,
+                KeyCode.KEquals => ImGuiKey.Equal,
+                KeyCode.KLeftbracket => ImGuiKey.LeftBracket,
+                KeyCode.KBackslash => ImGuiKey.Backslash,
+                KeyCode.KRightbracket => ImGuiKey.RightBracket,
+                KeyCode.KBackquote => ImGuiKey.GraveAccent,
+                KeyCode.KCapslock => ImGuiKey.CapsLock,
+                KeyCode.KScrolllock => ImGuiKey.ScrollLock,
+                KeyCode.KNumlockclear => ImGuiKey.NumLock,
+                KeyCode.KPrintscreen => ImGuiKey.PrintScreen,
+                KeyCode.KPause => ImGuiKey.Pause,
+                KeyCode.KKP0 => ImGuiKey.Keypad0,
+                KeyCode.KKP1 => ImGuiKey.Keypad1,
+                KeyCode.KKP2 => ImGuiKey.Keypad2,
+                KeyCode.KKP3 => ImGuiKey.Keypad3,
+                KeyCode.KKP4 => ImGuiKey.Keypad4,
+                KeyCode.KKP5 => ImGuiKey.Keypad5,
+                KeyCode.KKP6 => ImGuiKey.Keypad6,
+                KeyCode.KKP7 => ImGuiKey.Keypad7,
+                KeyCode.KKP8 => ImGuiKey.Keypad8,
+                KeyCode.KKP9 => ImGuiKey.Keypad9,
+                KeyCode.KKPPeriod => ImGuiKey.KeypadDecimal,
+                KeyCode.KKPDivide => ImGuiKey.KeypadDivide,
+                KeyCode.KKPMultiply => ImGuiKey.KeypadMultiply,
+                KeyCode.KKPMinus => ImGuiKey.KeypadSubtract,
+                KeyCode.KKPPlus => ImGuiKey.KeypadAdd,
+                KeyCode.KKPEnter => ImGuiKey.KeypadEnter,
+                KeyCode.KKPEquals => ImGuiKey.KeypadEqual,
+                KeyCode.KLctrl => ImGuiKey.LeftCtrl,
+                KeyCode.KLshift => ImGuiKey.LeftShift,
+                KeyCode.KLalt => ImGuiKey.LeftAlt,
+                KeyCode.KLgui => ImGuiKey.LeftSuper,
+                KeyCode.KRctrl => ImGuiKey.RightCtrl,
+                KeyCode.KRshift => ImGuiKey.RightShift,
+                KeyCode.KRalt => ImGuiKey.RightAlt,
+                KeyCode.KRgui => ImGuiKey.RightSuper,
+                KeyCode.KApplication => ImGuiKey.Menu,
+                KeyCode.K0 => ImGuiKey._0,
+                KeyCode.K1 => ImGuiKey._1,
+                KeyCode.K2 => ImGuiKey._2,
+                KeyCode.K3 => ImGuiKey._3,
+                KeyCode.K4 => ImGuiKey._4,
+                KeyCode.K5 => ImGuiKey._5,
+                KeyCode.K6 => ImGuiKey._6,
+                KeyCode.K7 => ImGuiKey._7,
+                KeyCode.K8 => ImGuiKey._8,
+                KeyCode.K9 => ImGuiKey._9,
+                KeyCode.KA => ImGuiKey.A,
+                KeyCode.KB => ImGuiKey.B,
+                KeyCode.KC => ImGuiKey.C,
+                KeyCode.KD => ImGuiKey.D,
+                KeyCode.KE => ImGuiKey.E,
+                KeyCode.KF => ImGuiKey.F,
+                KeyCode.KG => ImGuiKey.G,
+                KeyCode.KH => ImGuiKey.H,
+                KeyCode.KI => ImGuiKey.I,
+                KeyCode.KJ => ImGuiKey.J,
+                KeyCode.KK => ImGuiKey.K,
+                KeyCode.KL => ImGuiKey.L,
+                KeyCode.KM => ImGuiKey.M,
+                KeyCode.KN => ImGuiKey.N,
+                KeyCode.KO => ImGuiKey.O,
+                KeyCode.KP => ImGuiKey.P,
+                KeyCode.KQ => ImGuiKey.Q,
+                KeyCode.KR => ImGuiKey.R,
+                KeyCode.KS => ImGuiKey.S,
+                KeyCode.KT => ImGuiKey.T,
+                KeyCode.KU => ImGuiKey.U,
+                KeyCode.KV => ImGuiKey.V,
+                KeyCode.KW => ImGuiKey.W,
+                KeyCode.KX => ImGuiKey.X,
+                KeyCode.KY => ImGuiKey.Y,
+                KeyCode.KZ => ImGuiKey.Z,
+                KeyCode.KF1 => ImGuiKey.F1,
+                KeyCode.KF2 => ImGuiKey.F2,
+                KeyCode.KF3 => ImGuiKey.F3,
+                KeyCode.KF4 => ImGuiKey.F4,
+                KeyCode.KF5 => ImGuiKey.F5,
+                KeyCode.KF6 => ImGuiKey.F6,
+                KeyCode.KF7 => ImGuiKey.F7,
+                KeyCode.KF8 => ImGuiKey.F8,
+                KeyCode.KF9 => ImGuiKey.F9,
+                KeyCode.KF10 => ImGuiKey.F10,
+                KeyCode.KF11 => ImGuiKey.F11,
+                KeyCode.KF12 => ImGuiKey.F12,
+                _ => ImGuiKey.None,
+            };
         }
 
         /*
@@ -236,13 +308,13 @@ namespace HexaEngine.Rendering
                 case WindowMessage.KeyDown:
                 case WindowMessage.SysKeyDown:
                     if ((ulong)wParam < 256)
-                        io.KeysDown[(int)wParam] = true;
+                        io.KeyCodeDown[(int)wParam] = true;
                     return false;
 
                 case WindowMessage.KeyUp:
                 case WindowMessage.SysKeyUp:
                     if ((ulong)wParam < 256)
-                        io.KeysDown[(int)wParam] = false;
+                        io.KeyCodeDown[(int)wParam] = false;
                     return false;
 
                 case WindowMessage.Char:

@@ -45,6 +45,7 @@ namespace HexaEngine.Core.Graphics
         RGBA32UInt,
         RGBA32SInt,
         RGBA32Float,
+        RGB32Float,
         Depth16UNorm,
         Depth32Float,
         Depth24UNormStencil8,

@@ -3,8 +3,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using ImGuiNET;
     using ImGuizmoNET;
+    using Silk.NET.SDL;
     using System;
     using System.Numerics;
 
@@ -37,10 +39,28 @@
 
         internal void Draw()
         {
-            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoMove);
+            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.MenuBar);
+            if (ImGui.BeginMenuBar())
+            {
+                var scene = SceneManager.Current;
+                if (scene is null)
+                {
+                    ImGui.EndMenuBar();
+                    return;
+                }
+                if (ImGui.Button(scene.IsSimulating ? "\xE769" : "\xE768"))
+                    scene.IsSimulating = !scene.IsSimulating;
+
+                int cameraIndex = scene.ActiveCamera;
+                if (ImGui.Combo("Current Camera", ref cameraIndex, scene.Cameras.Select(x => x.Name).ToArray(), scene.Cameras.Count))
+                {
+                    scene.ActiveCamera = cameraIndex;
+                }
+                ImGui.EndMenuBar();
+            }
             position = ImGui.GetWindowPos();
             size = ImGui.GetWindowSize();
-            if (Keyboard.IsDown(Keys.T))
+            if (Keyboard.IsDown(KeyCode.KT))
                 ImGui.SetWindowFocus();
             float ratioX = size.X / SourceViewport.Width;
             float ratioY = size.Y / SourceViewport.Height;

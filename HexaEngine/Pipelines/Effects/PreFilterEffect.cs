@@ -80,7 +80,7 @@
             State = new()
             {
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullNone,
+                Rasterizer = new(CullMode.None, FillMode.Solid) { ScissorEnable = true },
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
             };
@@ -92,14 +92,20 @@
             context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
             for (int i = 0; i < 6; i++)
             {
-                IQuery query = context.Device.CreateQuery();
                 context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
                 Targets.ClearAndSetTarget(context, i);
                 base.DrawAuto(context, Targets.Viewport);
-                context.QueryEnd(query);
-                context.QueryGetData(query);
-                query.Dispose();
             }
+        }
+
+        public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xsize, int ysize)
+        {
+            if (Targets == null) return;
+            context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
+            context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
+            context.SetScissorRect(x, y, xsize + x, ysize + y);
+            Targets.SetTarget(context, i);
+            base.DrawAuto(context, Targets.Viewport);
         }
 
         public override void DrawSettings()

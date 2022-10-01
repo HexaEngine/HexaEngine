@@ -18,7 +18,7 @@
 
         public Texture3DDescription Description { get; }
 
-        public ResourceDimension Dimension => ResourceDimension.Texture1D;
+        public ResourceDimension Dimension => ResourceDimension.Texture3D;
 
         protected override void DisposeCore()
         {

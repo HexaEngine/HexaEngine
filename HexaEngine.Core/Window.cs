@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core
 {
     using HexaEngine.Core.Events;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Mathematics;
@@ -41,7 +42,7 @@
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 
-            window = Sdl.CreateWindow(ptr, x, y, width, height, (uint)(WindowFlags.WindowResizable | WindowFlags.WindowHidden));
+            window = Sdl.CreateWindow(ptr, x, y, width, height, (uint)(WindowFlags.Resizable | WindowFlags.Hidden));
             WindowID = Sdl.GetWindowID(window);
 
             int w;
@@ -351,10 +352,10 @@
             WindowEventID type = (WindowEventID)evnt.Event;
             switch (type)
             {
-                case WindowEventID.WindoweventNone:
+                case WindowEventID.None:
                     return;
 
-                case WindowEventID.WindoweventShown:
+                case WindowEventID.Shown:
                     {
                         ShownEventArgs args = new();
                         OnShown(args);
@@ -363,7 +364,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventHidden:
+                case WindowEventID.Hidden:
                     {
                         WindowState oldState = state;
                         state = WindowState.Hidden;
@@ -374,14 +375,14 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventExposed:
+                case WindowEventID.Exposed:
                     {
                         ExposedEventArgs args = new();
                         OnExposed(args);
                     }
                     break;
 
-                case WindowEventID.WindoweventMoved:
+                case WindowEventID.Moved:
                     {
                         int xold = x;
                         int yold = y;
@@ -394,7 +395,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventResized:
+                case WindowEventID.Resized:
                     {
                         int widthOld = width;
                         int heightOld = height;
@@ -408,14 +409,14 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventSizeChanged:
+                case WindowEventID.SizeChanged:
                     {
                         SizeChangedEventArgs args = new();
                         OnSizeChanged(args);
                     }
                     break;
 
-                case WindowEventID.WindoweventMinimized:
+                case WindowEventID.Minimized:
                     {
                         WindowState oldState = state;
                         state = WindowState.Minimized;
@@ -426,7 +427,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventMaximized:
+                case WindowEventID.Maximized:
                     {
                         WindowState oldState = state;
                         state = WindowState.Maximized;
@@ -437,7 +438,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventRestored:
+                case WindowEventID.Restored:
                     {
                         WindowState oldState = state;
                         state = WindowState.Normal;
@@ -448,7 +449,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventEnter:
+                case WindowEventID.Enter:
                     {
                         hovering = true;
                         EnterEventArgs args = new();
@@ -456,7 +457,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventLeave:
+                case WindowEventID.Leave:
                     {
                         hovering = false;
                         LeaveEventArgs args = new();
@@ -464,7 +465,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventFocusGained:
+                case WindowEventID.FocusGained:
                     {
                         focused = true;
                         FocusGainedEventArgs args = new();
@@ -472,7 +473,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventFocusLost:
+                case WindowEventID.FocusLost:
                     {
                         focused = false;
                         FocusLostEventArgs args = new();
@@ -480,7 +481,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventClose:
+                case WindowEventID.Close:
                     {
                         CloseEventArgs args = new();
                         OnClose(args);
@@ -489,7 +490,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventTakeFocus:
+                case WindowEventID.TakeFocus:
                     {
                         TakeFocusEventArgs args = new();
                         OnTakeFocus(args);
@@ -498,7 +499,7 @@
                     }
                     break;
 
-                case WindowEventID.WindoweventHitTest:
+                case WindowEventID.HitTest:
                     {
                         HitTestEventArgs args = new();
                         OnHitTest(args);
@@ -510,7 +511,7 @@
         internal void ProcessInputKeyboard(KeyboardEvent evnt)
         {
             KeyState state = (KeyState)evnt.State;
-            Keys keyCode = (Keys)evnt.Keysym.Scancode;
+            KeyCode keyCode = (KeyCode)Sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
             KeyboardEventArgs args = new(keyCode, state);
             Keyboard.Update(args);
             OnKeyboardInput(args);

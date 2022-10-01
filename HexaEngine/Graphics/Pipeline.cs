@@ -20,6 +20,7 @@
         private readonly PipelineDesc desc;
         private PipelineState state = PipelineState.Default;
         private readonly IGraphicsDevice device;
+        private readonly InputElementDescription[] inputElements;
         private readonly List<BoundConstant> constants = new();
         private readonly List<BoundResource> resources = new();
         private readonly List<BoundSampler> samplers = new();
@@ -32,10 +33,29 @@
             Reload += OnReload;
         }
 
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.inputElements = inputElements;
+            Compile();
+            Reload += OnReload;
+        }
+
         public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state)
         {
             this.device = device;
             this.desc = desc;
+            this.state = state;
+            Compile();
+            Reload += OnReload;
+        }
+
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements, PipelineState state)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.inputElements = inputElements;
             this.state = state;
             Compile();
             Reload += OnReload;
@@ -98,7 +118,10 @@
                 {
                     vs = device.CreateVertexShader(data);
                     vs.DebugName = GetType().Name + nameof(vs);
-                    layout = device.CreateInputLayout(data);
+                    if (inputElements == null)
+                        layout = device.CreateInputLayout(data);
+                    else
+                        layout = device.CreateInputLayout(inputElements, data.ToArray());
                     layout.DebugName = GetType().Name + nameof(layout);
                 }
                 else
@@ -111,7 +134,10 @@
                     ShaderCache.CacheShader(desc.VertexShader, macros, vBlob);
                     vs = device.CreateVertexShader(vBlob.AsBytes());
                     vs.DebugName = GetType().Name + nameof(vs);
-                    layout = device.CreateInputLayout(vBlob);
+                    if (inputElements == null)
+                        layout = device.CreateInputLayout(vBlob);
+                    else
+                        layout = device.CreateInputLayout(inputElements, vBlob);
                     layout.DebugName = GetType().Name + nameof(layout);
                     vBlob.Dispose();
                 }

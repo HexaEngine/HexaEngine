@@ -11,8 +11,8 @@
 
         public CBWorld(SceneNode mesh)
         {
-            World = Matrix4x4.Transpose(mesh.Transform.Matrix);
-            WorldInv = Matrix4x4.Transpose(mesh.Transform.MatrixInv);
+            World = Matrix4x4.Transpose(mesh.Transform.Global);
+            WorldInv = Matrix4x4.Transpose(mesh.Transform.GlobalInverse);
         }
 
         public CBWorld(Matrix4x4 transform)

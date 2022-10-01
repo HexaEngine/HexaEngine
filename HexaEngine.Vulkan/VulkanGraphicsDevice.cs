@@ -197,7 +197,7 @@
             for (uint i = 0; i < queueFamilyCount; i++)
             {
                 var queueFamily = properties[i];
-                if (queueFamily.QueueFlags.HasFlag(QueueFlags.QueueGraphicsBit))
+                if (queueFamily.QueueFlags.HasFlag(QueueFlags.GraphicsBit))
                 {
                     indices.GraphicsFamily = i;
                 }
@@ -223,7 +223,7 @@
         {
             foreach (var availableFormat in availableFormats)
             {
-                if (availableFormat.Format == Silk.NET.Vulkan.Format.B8G8R8A8Srgb && availableFormat.ColorSpace == ColorSpaceKHR.ColorSpaceSrgbNonlinearKhr)
+                if (availableFormat.Format == Silk.NET.Vulkan.Format.B8G8R8A8Srgb && availableFormat.ColorSpace == ColorSpaceKHR.SpaceSrgbNonlinearKhr)
                 {
                     return availableFormat;
                 }
@@ -236,13 +236,13 @@
         {
             foreach (PresentModeKHR availablePresentMode in availablePresentModes)
             {
-                if (availablePresentMode == PresentModeKHR.PresentModeMailboxKhr)
+                if (availablePresentMode == PresentModeKHR.MailboxKhr)
                 {
                     return availablePresentMode;
                 }
             }
 
-            return PresentModeKHR.PresentModeFifoKhr;
+            return PresentModeKHR.FifoKhr;
         }
 
         internal Extent2D ChooseSwapExtent(SurfaceCapabilitiesKHR capabilities)
@@ -381,7 +381,7 @@
             uint graphicsQueueNodeIndex = uint.MaxValue;
             for (uint i = 0; i < queue_count; i++)
             {
-                if ((queue_props[i].QueueFlags & QueueFlags.QueueGraphicsBit) != 0)
+                if ((queue_props[i].QueueFlags & QueueFlags.GraphicsBit) != 0)
                 {
                     if (graphicsQueueNodeIndex == uint.MaxValue)
                         graphicsQueueNodeIndex = i;
@@ -713,6 +713,16 @@
         }
 
         public void SaveTextureCube(ITexture2D texture, Format format, string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQuery CreateQuery(Query type)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data)
         {
             throw new NotImplementedException();
         }

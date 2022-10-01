@@ -216,6 +216,8 @@ namespace HexaEngine.Graphics
             context.SetVertexBuffer(slot, vertexBuffer, sizeof(T), offset);
         }
 
+        public T[] GetVertices() => vertices.ToArray();
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

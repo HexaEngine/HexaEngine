@@ -87,7 +87,7 @@ float3 F0, float3 N, float3 V, float3 baseColor, float roughness, float ao)
     float3 diffuse = irradiance * baseColor;
     
     float3 R = reflect(-V, N);
-    const float MAX_REFLECTION_LOD = 4.0;
+    const float MAX_REFLECTION_LOD = 8.0;
     
     float3 prefilteredColor = prefilterMap.SampleLevel(samplerState, R, roughness * MAX_REFLECTION_LOD).rgb;  
     float2 brdf = brdfLUT.Sample(samplerState, float2(max(dot(N, V), 0.0), roughness)).rg;

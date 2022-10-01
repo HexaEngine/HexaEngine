@@ -67,7 +67,7 @@
             State = new()
             {
                 DepthStencil = DepthStencilDescription.None,
-                Rasterizer = RasterizerDescription.CullNone,
+                Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Solid) { ScissorEnable = true },
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
             };
@@ -76,13 +76,37 @@
         public override void Draw(IGraphicsContext context)
         {
             if (Targets == null) return;
+            int width = (int)Targets.Viewport.Width;
+            int height = (int)Targets.Viewport.Height;
+            int xTileSize = width / 8;
+            int yTileSize = height / 8;
+
             for (int i = 0; i < 6; i++)
             {
-                context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
-                Targets.ClearAndSetTarget(context, i);
-                base.DrawAuto(context, Targets.Viewport);
-                context.Flush();
+                Targets.ClearTarget(context, i);
+
+                for (int x = 0; x < width; x += xTileSize)
+                {
+                    for (int y = 0; y < height; y += yTileSize)
+                    {
+                        context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
+                        context.SetScissorRect(x, y, x + xTileSize, y + yTileSize);
+                        Targets.SetTarget(context, i);
+                        base.DrawAuto(context, Targets.Viewport);
+                    }
+                    context.Flush();
+                }
             }
+        }
+
+        public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xSize, int ySize)
+        {
+            if (Targets == null) return;
+
+            context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
+            context.SetScissorRect(x, y, x + xSize, y + ySize);
+            Targets.SetTarget(context, i);
+            base.DrawAuto(context, Targets.Viewport);
         }
 
         public override void DrawSettings()

@@ -1,24 +1,25 @@
 ﻿namespace HexaEngine.Core.Input
 {
     using HexaEngine.Core.Input.Events;
+    using Silk.NET.SDL;
     using System;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
     public static class Keyboard
     {
-        private static readonly List<Keys> pushed = new();
+        private static readonly List<KeyCode> pushed = new();
 
         static Keyboard()
         {
-            foreach (Keys button in Enum.GetValues(typeof(Keys)))
+            foreach (KeyCode button in Enum.GetValues(typeof(KeyCode)))
             {
                 if (!States.ContainsKey(button))
                     States.Add(button, KeyState.Released);
             }
         }
 
-        public static Dictionary<Keys, KeyState> States { get; } = new();
+        public static Dictionary<KeyCode, KeyState> States { get; } = new();
 
         public static bool GlobalInput { get; set; }
 
@@ -56,13 +57,13 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsDown(Keys n)
+        public static bool IsDown(KeyCode n)
         {
             return States[n] == KeyState.Pressed;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool WasPushed(Keys key)
+        public static bool WasPushed(KeyCode key)
         {
             return pushed.Contains(key);
         }

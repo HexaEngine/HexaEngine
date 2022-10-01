@@ -23,6 +23,8 @@ namespace HexaEngine.Editor
         private static readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();
         private static OPERATION operation = OPERATION.TRANSLATE;
         private static MODE mode = MODE.LOCAL;
+        private static bool gimbalGrabbed;
+        private static Matrix4x4 gimbalBefore;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -70,23 +72,26 @@ namespace HexaEngine.Editor
             ImGui.Text(nameof(Transform));
             {
                 var val = element.Transform.Position;
+                var oldVal = val;
                 if (ImGui.InputFloat3("Position", ref val))
                 {
-                    element.Transform.Position = val;
+                    Designer.History.Do(() => element.Transform.Position = val, () => element.Transform.Position = oldVal);
                 }
             }
             {
                 var val = element.Transform.Rotation;
+                var oldVal = val;
                 if (ImGui.InputFloat3("Rotation", ref val))
                 {
-                    element.Transform.Rotation = val;
+                    Designer.History.Do(() => element.Transform.Rotation = val, () => element.Transform.Rotation = oldVal);
                 }
             }
             {
                 var val = element.Transform.Scale;
+                var oldVal = val;
                 if (ImGui.InputFloat3("Scale", ref val))
                 {
-                    element.Transform.Scale = val;
+                    Designer.History.Do(() => element.Transform.Scale = val, () => element.Transform.Scale = oldVal);
                 }
             }
 
@@ -208,11 +213,22 @@ namespace HexaEngine.Editor
             ImGuizmo.SetOrthographic(false);
             Matrix4x4 view = camera.Transform.View;
             Matrix4x4 proj = camera.Transform.Projection;
-            Matrix4x4 transform = element.Transform;
+            Matrix4x4 transform = element.Transform.Local;
 
             if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
             {
-                element.Transform.Matrix = transform;
+                gimbalGrabbed = true;
+                element.Transform.Local = transform;
+            }
+            else
+            {
+                if (gimbalGrabbed)
+                {
+                    var oldValue = gimbalBefore;
+                    Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
+                }
+                gimbalGrabbed = false;
+                gimbalBefore = transform;
             }
 
             for (int i = 0; i < element.Meshes.Count; i++)

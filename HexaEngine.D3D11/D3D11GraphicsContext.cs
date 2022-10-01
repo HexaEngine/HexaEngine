@@ -1,7 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using SharpGen.Runtime;
     using Silk.NET.Direct3D11;
+    using Silk.NET.Direct3D12;
     using Silk.NET.Maths;
     using System;
     using System.Numerics;
@@ -149,6 +151,66 @@
                 }
         }
 
+        public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
+        {
+            uint* firstConstantPtr = Utils.AsPointer(firstConstant);
+            uint* constantCountPtr = Utils.AsPointer(constantCount);
+            if (constantBuffer != null)
+                switch (stage)
+                {
+                    case ShaderStage.Vertex:
+                        DeviceContext->VSSetConstantBuffers1((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer), firstConstantPtr, constantCountPtr);
+                        break;
+
+                    case ShaderStage.Hull:
+                        DeviceContext->HSSetConstantBuffers1((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer), firstConstantPtr, constantCountPtr);
+                        break;
+
+                    case ShaderStage.Domain:
+                        DeviceContext->DSSetConstantBuffers1((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer), firstConstantPtr, constantCountPtr);
+                        break;
+
+                    case ShaderStage.Geometry:
+                        DeviceContext->GSSetConstantBuffers1((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer), firstConstantPtr, constantCountPtr);
+                        break;
+
+                    case ShaderStage.Pixel:
+                        DeviceContext->PSSetConstantBuffers1((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer), firstConstantPtr, constantCountPtr);
+                        break;
+
+                    case ShaderStage.Compute:
+                        DeviceContext->CSSetConstantBuffers1((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer), firstConstantPtr, constantCountPtr);
+                        break;
+                }
+            else
+                switch (stage)
+                {
+                    case ShaderStage.Vertex:
+                        DeviceContext->VSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+                        break;
+
+                    case ShaderStage.Hull:
+                        DeviceContext->HSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+                        break;
+
+                    case ShaderStage.Domain:
+                        DeviceContext->DSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+                        break;
+
+                    case ShaderStage.Geometry:
+                        DeviceContext->GSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+                        break;
+
+                    case ShaderStage.Pixel:
+                        DeviceContext->PSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+                        break;
+
+                    case ShaderStage.Compute:
+                        DeviceContext->CSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+                        break;
+                }
+        }
+
         public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot)
         {
             ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
@@ -178,6 +240,41 @@
 
                 case ShaderStage.Compute:
                     DeviceContext->CSSetConstantBuffers((uint)slot, count, ptr);
+                    break;
+            }
+        }
+
+        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint* firstConstantPtr = Utils.AsPointer(firstConstant);
+            uint* constantCountPtr = Utils.AsPointer(constantCount);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            switch (stage)
+            {
+                case ShaderStage.Vertex:
+                    DeviceContext->VSSetConstantBuffers1((uint)slot, count, ptr, firstConstantPtr, constantCountPtr);
+                    break;
+
+                case ShaderStage.Hull:
+                    DeviceContext->HSSetConstantBuffers1((uint)slot, count, ptr, firstConstantPtr, constantCountPtr);
+                    break;
+
+                case ShaderStage.Domain:
+                    DeviceContext->DSSetConstantBuffers1((uint)slot, count, ptr, firstConstantPtr, constantCountPtr);
+                    break;
+
+                case ShaderStage.Geometry:
+                    DeviceContext->GSSetConstantBuffers1((uint)slot, count, ptr, firstConstantPtr, constantCountPtr);
+                    break;
+
+                case ShaderStage.Pixel:
+                    DeviceContext->PSSetConstantBuffers1((uint)slot, count, ptr, firstConstantPtr, constantCountPtr);
+                    break;
+
+                case ShaderStage.Compute:
+                    DeviceContext->CSSetConstantBuffers1((uint)slot, count, ptr, firstConstantPtr, constantCountPtr);
                     break;
             }
         }
@@ -214,7 +311,7 @@
                 DeviceContext->OMSetRenderTargets(1, Utils.AsPointer((ID3D11RenderTargetView*)null), null);
         }
 
-        public void SetRenderTargets(IRenderTargetView[]? views, IDepthStencilView? depthStencilView)
+        public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView? depthStencilView)
         {
             ID3D11RenderTargetView** ptr = Utils.ToPointerArray<IRenderTargetView, ID3D11RenderTargetView>(views);
             if (depthStencilView != null)
@@ -527,7 +624,7 @@
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.MapWriteDiscard, 0, &data);
+            DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data).ThrowHResult();
             var size = Marshal.SizeOf<T>();
             var ptr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(value, ptr, true);
@@ -540,7 +637,7 @@
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
-            DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.MapWriteDiscard, 0, &data);
+            DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data);
             var size = Marshal.SizeOf<T>();
             var basePtr = Marshal.AllocHGlobal(size * values.Length);
             var ptr = basePtr.ToInt64();
@@ -606,6 +703,51 @@
         public void Flush()
         {
             DeviceContext->Flush();
+        }
+
+        public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
+        {
+            DeviceContext->Dispatch((uint)threadGroupCountX, (uint)threadGroupCountY, (uint)threadGroupCountZ);
+        }
+
+        public void CSSetUnorderedAccessViews(int startSlot, int count, IUnorderedAccessView[] views, int uavInitialCounts = -1)
+        {
+            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)count, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+        }
+
+        public void CSSetUnorderedAccessViews(int startSlot, IUnorderedAccessView[] views, int uavInitialCounts = -1)
+        {
+            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+        }
+
+        public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views, int uavInitialCounts = -1)
+        {
+            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+        }
+
+        public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views)
+        {
+            uint pUAVInitialCounts = unchecked((uint)-1);
+            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+        }
+    }
+
+    public unsafe class D3D11UnorderedAccessView : DeviceChildBase, IUnorderedAccessView
+    {
+        private readonly ID3D11UnorderedAccessView* uva;
+
+        public D3D11UnorderedAccessView(ID3D11UnorderedAccessView* uva)
+        {
+            this.uva = uva;
+            nativePointer = (IntPtr)uva;
+        }
+
+        protected override void DisposeCore()
+        {
+            uva->Release();
         }
     }
 }

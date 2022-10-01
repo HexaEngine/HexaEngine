@@ -1,7 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
-public enum Mode
+
+namespace IBLBaker
 {
-    Cube,
-    Panorama,
-    Cross,
+    public enum Mode
+    {
+        Cube,
+        Panorama,
+        Cross,
+    }
 }

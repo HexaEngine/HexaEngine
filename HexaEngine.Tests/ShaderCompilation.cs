@@ -17,7 +17,7 @@
                 Assert.Fail("Only windows is supported");
                 return;
             }
-            device = new D3D11GraphicsDevice(null);
+            device = new D3D11GraphicsDevice(new DXGIAdapter(), null);
         }
 
         [Test]

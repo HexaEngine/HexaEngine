@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Core.IO;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Meshes;
     using System.Numerics;
@@ -83,16 +82,15 @@
         public MeshBone[]? Bones;
         public Skeleton? Skeleton;
         public int MaterialIndex = -1;
-        private string meshPath = string.Empty;
         private string materialName = string.Empty;
+        private string name;
 
-        [EditorProperty("Path")]
-        public string MeshPath
+        public string Name
         {
-            get => meshPath;
+            get => name;
             set
             {
-                meshPath = value;
+                name = value;
             }
         }
 
@@ -104,27 +102,6 @@
             {
                 materialName = value;
             }
-        }
-
-        public static Mesh LoadFromBin(string path)
-        {
-            var result = MeshFactory.Instance.Load(Paths.CurrentModelPath + path);
-            return new()
-            {
-                Vertices = result.Vertices,
-                Indices = result.Groups[0].Indices,
-            };
-        }
-
-        public Mesh Clone()
-        {
-            return new()
-            {
-                Indices = Indices,
-                materialName = materialName,
-                meshPath = meshPath,
-                Vertices = Vertices,
-            };
         }
     }
 }

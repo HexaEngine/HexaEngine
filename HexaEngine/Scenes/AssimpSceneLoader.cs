@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -26,8 +25,8 @@
 
         public static unsafe void Import(string path, Scene sceneTarget)
         {
-            var scene = Assimp.ImportFile(path, (uint)(ImporterFlags.ImporterFlagsSupportBinaryFlavour | ImporterFlags.ImporterFlagsSupportTextFlavour | ImporterFlags.ImporterFlagsSupportCompressedFlavour));
-            var scene1 = Assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate));
+            var scene = Assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
+            var scene1 = Assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs));
 
             if (scene1 != scene)
             {
@@ -38,7 +37,7 @@
             {
                 Material* mat = scene->MMaterials[i];
                 Dictionary<(string, object), object> props = new();
-                AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.TextureTypeUnknown + 1];
+                AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.Unknown + 1];
                 for (int j = 0; j < texs.Length; j++)
                 {
                     texs[j].Type = (TextureType)j;
@@ -258,14 +257,14 @@
                     Roughness = material.RoughnessFactor,
                     Opacity = material.Opacity,
                     Name = material.Name,
-                    AlbedoTextureMap = material.Textures[(int)TextureType.TextureTypeBaseColor].File ?? string.Empty,
-                    AoTextureMap = material.Textures[(int)TextureType.TextureTypeAmbientOcclusion].File ?? string.Empty,
-                    DisplacementTextureMap = material.Textures[(int)TextureType.TextureTypeDisplacement].File ?? string.Empty,
-                    EmissiveTextureMap = material.Textures[(int)TextureType.TextureTypeEmissionColor].File ?? string.Empty,
-                    MetalnessTextureMap = material.Textures[(int)TextureType.TextureTypeMetalness].File ?? string.Empty,
-                    NormalTextureMap = material.Textures[(int)TextureType.TextureTypeNormals].File ?? string.Empty,
-                    RoughnessTextureMap = material.Textures[(int)TextureType.TextureTypeDiffuseRoughness].File ?? string.Empty,
-                    RoughnessMetalnessTextureMap = material.Textures[(int)TextureType.TextureTypeUnknown].File ?? string.Empty,
+                    AlbedoTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
+                    AoTextureMap = material.Textures[(int)TextureType.AmbientOcclusion].File ?? string.Empty,
+                    DisplacementTextureMap = material.Textures[(int)TextureType.Displacement].File ?? string.Empty,
+                    EmissiveTextureMap = material.Textures[(int)TextureType.EmissionColor].File ?? string.Empty,
+                    MetalnessTextureMap = material.Textures[(int)TextureType.Metalness].File ?? string.Empty,
+                    NormalTextureMap = material.Textures[(int)TextureType.Normals].File ?? string.Empty,
+                    RoughnessTextureMap = material.Textures[(int)TextureType.DiffuseRoughness].File ?? string.Empty,
+                    RoughnessMetalnessTextureMap = material.Textures[(int)TextureType.Unknown].File ?? string.Empty,
                 });
             }
 
@@ -289,8 +288,13 @@
                 {
                     Vector3 pos = msh->MVertices[j];
                     Vector3 nor = msh->MNormals[j];
-                    Vector3 tex = msh->MTextureCoords[0][j];
-                    Vector3 tan = msh->MTangents[j];
+                    Vector3 tex = default;
+                    Vector3 tan = default;
+
+                    if (msh->MTextureCoords[0] != null)
+                        tex = msh->MTextureCoords[0][j];
+                    if (msh->MTangents != null)
+                        tan = msh->MTangents[j];
 
                     MeshVertex vertex = new(pos, new(tex.X, tex.Y), nor, tan);
                     vertices[j] = vertex;
@@ -311,7 +315,7 @@
                     skeleton.AddRelation(bone->MName, FindParent(scene, bone->MName));
                     skeleton.AddBone(bones[j]);
                 }
-                meshes[i] = new Objects.Mesh() { Indices = indices, Vertices = vertices, Bones = bones, Skeleton = skeleton, MaterialName = materials[msh->MMaterialIndex].Name };
+                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Bones = bones, Skeleton = skeleton, MaterialName = materials[msh->MMaterialIndex].Name };
                 sceneTarget.AddMesh(meshes[i]);
             }
 
@@ -379,23 +383,23 @@
                     var lig = lights.First(x => x.Name == name);
                     switch (lig.Type)
                     {
-                        case LightSourceType.LightSourceUndefined:
+                        case LightSourceType.Undefined:
                             throw new NotSupportedException();
 
-                        case LightSourceType.LightSourceDirectional:
+                        case LightSourceType.Directional:
                             var dir = new DirectionalLight();
                             dir.Color = new Vector4(lig.Color, 1);
                             sceneNode = dir;
                             break;
 
-                        case LightSourceType.LightSourcePoint:
+                        case LightSourceType.Point:
                             var point = new PointLight();
                             point.Color = new Vector4(lig.Color, 1);
                             point.Strength = 1;
                             sceneNode = point;
                             break;
 
-                        case LightSourceType.LightSourceSpot:
+                        case LightSourceType.Spot:
                             var spot = new Spotlight();
                             spot.Color = new Vector4(lig.Color, 1);
                             spot.Strength = 1;
@@ -404,10 +408,10 @@
                             sceneNode = spot;
                             break;
 
-                        case LightSourceType.LightSourceAmbient:
+                        case LightSourceType.Ambient:
                             throw new NotSupportedException();
 
-                        case LightSourceType.LightSourceArea:
+                        case LightSourceType.Area:
                             throw new NotSupportedException();
                     }
                 }
@@ -454,7 +458,7 @@
         {
             public string Name = string.Empty;
             public bool Twosided = false;
-            public ShadingMode ShadingModel = ShadingMode.ShadingModeGouraud;
+            public ShadingMode ShadingModel = ShadingMode.Gouraud;
             public bool EnableWireframe = false;
             public bool BlendFunc = false;
             public float Opacity = 1;
