@@ -66,7 +66,7 @@
 
         public override void Delete()
         {
-            Parent.Items.Remove(this);
+            Parent?.Items.Remove(this);
             Save();
             Directory.Delete(GetAbsolutePath(), true);
         }
@@ -74,7 +74,8 @@
         public override void Rename(string newName)
         {
             string oldPath = GetAbsolutePath();
-            string newPath = Parent.GetAbsolutePath(newName);
+            string? newPath = Parent?.GetAbsolutePath(newName);
+            if (newPath == null) return;
             Directory.Move(oldPath, newPath);
             Name = newName;
             Save();
@@ -87,12 +88,12 @@
 
         public override string GetAbsolutePath()
         {
-            return Parent.GetAbsolutePath(Name);
+            return Parent?.GetAbsolutePath(Name) ?? string.Empty;
         }
 
         public override void Save()
         {
-            FindRoot<HexaProject>().Save();
+            FindRoot<HexaProject>()?.Save();
         }
 
         internal override void BuildParentTree()
@@ -105,7 +106,7 @@
             }
         }
 
-        public override T FindRoot<T>() where T : class
+        public override T? FindRoot<T>() where T : class
         {
             if (this is T t)
                 return t;

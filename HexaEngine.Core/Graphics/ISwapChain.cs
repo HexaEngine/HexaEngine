@@ -9,9 +9,9 @@
 
         void Resize(int width, int height);
 
-        event EventHandler Resizing;
+        event EventHandler? Resizing;
 
-        event EventHandler<ResizedEventArgs> Resized;
+        event EventHandler<ResizedEventArgs>? Resized;
 
         ITexture2D Backbuffer { get; }
 

@@ -28,23 +28,24 @@
             return project;
         }
 
-        public static HexaProject Load(string path)
+        public static HexaProject? Load(string path)
         {
             if (path is null) return null;
             XmlReader reader = XmlReader.Create(path);
-            var result = (HexaProject)serializer.Deserialize(reader);
+            HexaProject? result = (HexaProject?)serializer.Deserialize(reader);
+            if (result == null) return null;
             result.ProjectFilePath = Path.GetFullPath(path);
             reader.Close();
             reader.Dispose();
-            (result as HexaParent).BuildParentTree();
+            result.BuildParentTree();
             return result;
         }
 
         [XmlIgnore]
-        public string ProjectFilePath { get; private set; }
+        public string ProjectFilePath { get; private set; } = string.Empty;
 
         [XmlIgnore]
-        public string ProjectFileDirectory => Path.GetDirectoryName(ProjectFilePath);
+        public string ProjectFileDirectory => Path.GetDirectoryName(ProjectFilePath) ?? string.Empty;
 
         [XmlIgnore]
         public override IntPtr Icon { get; }
@@ -71,7 +72,7 @@
 
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-        public override T FindRoot<T>() where T : class
+        public override T? FindRoot<T>() where T : class
         {
             if (this is T t)
                 return t;

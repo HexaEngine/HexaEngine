@@ -23,6 +23,7 @@
 
     public class PreviewWidget : Widget
     {
+#nullable disable
         private bool isdrawing;
         private DepthBuffer depth;
         private RenderTexture target;
@@ -31,9 +32,9 @@
         private RenderTextureArray gbuffer;
         private RenderTexture aoBuffer;
         private RenderTexture brdflut;
-        private RenderTexture? env;
-        private RenderTexture? irr;
-        private RenderTexture? pre;
+        private RenderTexture env;
+        private RenderTexture irr;
+        private RenderTexture pre;
 
         private ISamplerState ansioSampler;
         private ISamplerState pointSampler;
@@ -71,7 +72,7 @@
 
         private Camera camera;
 
-        public PreviewWidget(IGraphicsDevice device) : base(device)
+        public override void Init(IGraphicsDevice device)
         {
             camera = new() { Height = 512, Width = 512, AutoSize = false };
             camera.Transform.Position = new(0, 0, -2);
@@ -84,7 +85,9 @@
             aoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.R32Float));
             brdflut = new(device, TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RG32Float));
 
+#nullable disable
             device.Context.ClearRenderTargetView(aoBuffer.RenderTargetView, Vector4.One);
+#nullable enable
 
             brdfFilter = new(device);
             brdfFilter.Target = brdflut.RenderTargetView;
@@ -300,6 +303,7 @@
 
             if (isdrawing)
             {
+#nullable disable
                 context.Write(cameraBuffer, new CBCamera(camera));
                 context.Write(skyboxBuffer, new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
                 context.ClearDepthStencilView(depth.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
@@ -334,6 +338,7 @@
                 context.SetRenderTarget(rtv, depth.DSV);
                 sphere.DrawAuto(context, skyboxShader, target.Viewport);
                 context.ClearState();
+#nullable enable
             }
         }
     }

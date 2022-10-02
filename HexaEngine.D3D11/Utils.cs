@@ -53,6 +53,14 @@
             }
         }
 
+        public static void** AsPointerArray<T>(T*[] value) where T : unmanaged
+        {
+            fixed (T** ptr = value)
+            {
+                return (void**)ptr;
+            }
+        }
+
         public static T* AsPointer<T>(T[] value) where T : unmanaged
         {
             fixed (T* ptr = value)

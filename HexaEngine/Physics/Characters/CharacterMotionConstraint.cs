@@ -99,6 +99,11 @@ namespace HexaEngine.Physics.Characters
             description.Depth = GetFirst(ref source.Depth);
             Vector3Wide.ReadFirst(source.OffsetFromCharacter, out description.OffsetFromCharacterToSupportPoint);
         }
+
+        public TypeProcessor CreateTypeProcessor()
+        {
+            throw new NotImplementedException(); // TODO: FIX
+        }
     }
 
     //Note that all the solver-side data is in terms of 'Wide' data types- the solver never works on just one constraint at a time. Instead,
@@ -376,6 +381,11 @@ namespace HexaEngine.Physics.Characters
             description.Depth = GetFirst(ref source.Depth);
             Vector3Wide.ReadFirst(source.OffsetFromCharacter, out description.OffsetFromCharacterToSupportPoint);
             Vector3Wide.ReadFirst(source.OffsetFromSupport, out description.OffsetFromSupportToSupportPoint);
+        }
+
+        public TypeProcessor CreateTypeProcessor()
+        {
+            throw new NotImplementedException(); // TODO: FIX
         }
     }
 

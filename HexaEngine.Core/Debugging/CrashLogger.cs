@@ -8,7 +8,7 @@
 
     public static class CrashLogger
     {
-        private static StreamWriter writer;
+        private static StreamWriter? writer;
 
         public static void Start()
         {
@@ -19,13 +19,13 @@
 
         private static void CurrentDomain_ProcessExit(object? sender, EventArgs e)
         {
-            writer.Close();
+            writer?.Close();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            writer.WriteLine(e.ExceptionObject.ToString());
-            writer.Close();
+            writer?.WriteLine(e.ExceptionObject.ToString());
+            writer?.Close();
         }
     }
 }

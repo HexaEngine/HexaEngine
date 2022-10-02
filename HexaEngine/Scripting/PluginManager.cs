@@ -17,13 +17,14 @@
 
         public static IReadOnlyList<Assembly> Assemblies => assemblies;
 
-        public static event EventHandler<Assembly> AssemblyLoaded;
+        public static event EventHandler<Assembly>? AssemblyLoaded;
 
-        public static event EventHandler AssembliesUnloaded;
+        public static event EventHandler<EventArgs?>? AssembliesUnloaded;
 
-        public static Assembly Register(string path)
+        public static Assembly? Register(string path)
         {
-            string folder = Path.GetDirectoryName(path);
+            string? folder = Path.GetDirectoryName(path);
+            if (folder == null) return null;
             string filename = Path.GetFileName(path);
             string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
             Assembly assembly;
@@ -75,11 +76,11 @@
             return assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type));
         }
 
-        public static Type GetType(string name)
+        public static Type? GetType(string name)
         {
             foreach (Assembly assembly in Assemblies)
             {
-                Type type = assembly.GetTypes().FirstOrDefault(x => x.AssemblyQualifiedName == name);
+                Type? type = assembly.GetTypes().FirstOrDefault(x => x.AssemblyQualifiedName == name);
                 if (type != null)
                     return type;
             }

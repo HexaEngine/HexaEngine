@@ -1,41 +1,45 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
+    using IBLBaker.Widgets;
     using System.Reflection;
 
     public static class WidgetManager
     {
-        private static readonly List<Type> widgetTypes = new();
+        private static IGraphicsDevice? device;
         private static readonly List<Widget> widgets = new();
 
         static WidgetManager()
         {
-            widgetTypes.AddRange(Assembly.GetExecutingAssembly().GetTypes().FilterFor<Widget>());
+            Register<PreviewWidget>();
+            Register<PrefilterWidget>();
+            Register<IrradianceWidget>();
         }
 
-        private static IEnumerable<Type> FilterFor<T>(this Type[] types)
+        public static bool Register<T>() where T : Widget, new()
         {
-            var type = typeof(T);
-            return types.AsParallel().Where(x => x.IsAssignableTo(type) && !x.IsAbstract);
-        }
-
-        public static void Register(Assembly assembly)
-        {
-            widgetTypes.AddRange(assembly.GetTypes().FilterFor<Widget>());
-        }
-
-        public static void Register()
-        {
-            widgetTypes.AddRange(Assembly.GetCallingAssembly().GetTypes().FilterFor<Widget>());
+            if (device == null)
+            {
+                Widget widget = new T();
+                widgets.Add(widget);
+                return false;
+            }
+            else
+            {
+                Widget widget = new T();
+                widget.Init(device);
+                widgets.Add(widget);
+                return true;
+            }
         }
 
         public static void Init(IGraphicsDevice device)
         {
-            for (int i = 0; i < widgetTypes.Count; i++)
+            WidgetManager.device = device;
+            for (int i = 0; i < widgets.Count; i++)
             {
-                var widget = (Widget?)Activator.CreateInstance(widgetTypes[i], device);
-                if (widget is not null)
-                    widgets.Add(widget);
+                var widget = widgets[i];
+                widget.Init(device);
             }
         }
 

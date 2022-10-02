@@ -10,7 +10,7 @@
     using IBLBaker;
     using ImGuiNET;
 
-    public class IrradianceWidget : Widget
+    public class IrradianceWidget : Widget, IDisposable
     {
         private FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
@@ -39,7 +39,7 @@
         private int step;
         private int steps;
 
-        public IrradianceWidget(IGraphicsDevice device) : base(device)
+        public override void Init(IGraphicsDevice device)
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
             irradianceFilter = new(device);
@@ -69,7 +69,7 @@
             irradianceTex = null;
         }
 
-        public RenderTexture ImportTexture(IGraphicsDevice device, IGraphicsContext context)
+        public RenderTexture? ImportTexture(IGraphicsDevice device, IGraphicsContext context)
         {
             switch (mode)
             {
@@ -158,7 +158,7 @@
                         irrSRV = irradianceTex.CreateSRVArray(device);
                         irradianceFilter.Targets = irrRTV;
                         irradianceFilter.Resources.Clear();
-                        irradianceFilter.Resources.Add(new(environmentTex.ResourceView, ShaderStage.Pixel, 0));
+                        irradianceFilter.Resources.Add(new(environmentTex?.ResourceView, ShaderStage.Pixel, 0));
                         for (int i = 0; i < 6; i++)
                         {
                             irrIds[i] = ImGuiRenderer.RegisterTexture(irrSRV.Views[i]);

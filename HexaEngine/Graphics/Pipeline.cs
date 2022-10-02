@@ -20,7 +20,7 @@
         private readonly PipelineDesc desc;
         private PipelineState state = PipelineState.Default;
         private readonly IGraphicsDevice device;
-        private readonly InputElementDescription[] inputElements;
+        private readonly InputElementDescription[]? inputElements;
         private readonly List<BoundConstant> constants = new();
         private readonly List<BoundResource> resources = new();
         private readonly List<BoundSampler> samplers = new();

@@ -43,7 +43,8 @@
 
         public VulkanGraphicsDevice(SdlWindow? window)
         {
-            this.window = window.GetWindow();
+            if (window != null)
+                this.window = window.GetWindow();
             Sdl = Sdl.GetApi();
             Vk = Vk.GetApi();
             KhrSwapchain = new(Vk.Context);
@@ -51,6 +52,7 @@
             InitializeInstance();
             InitializePhysicalDevice();
             InitializeLogicalDevice();
+            throw new NotImplementedException();
         }
 
         public IGraphicsContext Context { get; }

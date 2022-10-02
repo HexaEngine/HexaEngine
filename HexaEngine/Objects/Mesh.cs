@@ -83,7 +83,7 @@
         public Skeleton? Skeleton;
         public int MaterialIndex = -1;
         private string materialName = string.Empty;
-        private string name;
+        private string name = string.Empty;
 
         public string Name
         {

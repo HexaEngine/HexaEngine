@@ -27,7 +27,9 @@
 
         public ID3D11Device1* Device;
         public ID3D11DeviceContext1* DeviceContext;
+#if DEBUG
         internal ID3D11Debug* Debug;
+#endif
 
         [SupportedOSPlatform("windows")]
         public D3D11GraphicsDevice(DXGIAdapter adapter, SdlWindow? window)

@@ -12,9 +12,9 @@
             psi.CreateNoWindow = true;
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
-            Process p = Process.Start(psi);
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
+            Process? p = Process.Start(psi);
+            string? output = p?.StandardOutput.ReadToEnd();
+            p?.WaitForExit();
             return "dotnet " + parameters + Environment.NewLine + output;
         }
 
@@ -40,7 +40,7 @@
         {
             XmlDocument document = new();
             document.LoadXml(File.ReadAllText(projectPath));
-            XmlNode root = document.DocumentElement;
+            XmlNode? root = document?.DocumentElement;
 
             ItemGroup group = new ItemGroup();
             foreach (string dll in dllsPaths)
@@ -54,14 +54,20 @@
             XmlSerializerNamespaces ns = new();
             XmlDocument xmlDocument = new();
             XmlSerializer serializer = new(typeof(ItemGroup));
-            XmlWriter writer = xmlDocument.CreateNavigator().AppendChild();
+            XmlWriter? writer = xmlDocument?.CreateNavigator()?.AppendChild();
+            if (writer == null) return string.Empty;
             serializer.Serialize(writer, group, ns);
             writer.Flush();
             writer.Close();
-            xmlDocument.DocumentElement.Attributes.RemoveAll();
-            root.AppendChild(root.OwnerDocument.ImportNode(xmlDocument.DocumentElement, true));
+            xmlDocument?.DocumentElement?.Attributes.RemoveAll();
+            if (xmlDocument == null && xmlDocument?.DocumentElement == null) return string.Empty;
+#nullable disable
+            XmlNode importedNode = root?.OwnerDocument?.ImportNode(xmlDocument.DocumentElement, true);
+#nullable enable
+            if (importedNode == null) return string.Empty;
+            root?.AppendChild(importedNode);
 
-            document.Save(projectPath);
+            document?.Save(projectPath);
             return string.Empty;
         }
 

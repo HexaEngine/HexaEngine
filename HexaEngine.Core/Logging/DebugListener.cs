@@ -7,11 +7,13 @@
 
     public class DebugListener : TraceListener
     {
+#if DEBUG
         private readonly BufferedStream stream;
+#endif
 
         public DebugListener(string file)
         {
-#if !RELEASE
+#if DEBUG
             var fileInfo = new FileInfo(file);
             fileInfo.Directory?.Create();
             stream = new(File.Create(file));
@@ -20,7 +22,7 @@
 #endif
         }
 
-#if !RELEASE
+#if DEBUG
 
         private void CurrentDomain_ProcessExit(object? sender, EventArgs e)
         {
@@ -40,7 +42,7 @@
         {
             if (message == null)
                 return;
-#if !RELEASE
+#if DEBUG
             stream.Write(Encoding.UTF8.GetBytes(message));
 #endif
         }
@@ -49,14 +51,14 @@
         {
             if (message == null)
                 return;
-#if !RELEASE
+#if DEBUG
             stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
 #endif
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-#if !RELEASE
+#if DEBUG
             WriteLine(e.ExceptionObject);
             if (e.IsTerminating)
             {

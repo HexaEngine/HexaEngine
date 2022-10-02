@@ -17,18 +17,18 @@
 
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-        public override T FindRoot<T>() where T : class
+        public override T? FindRoot<T>() where T : class
         {
             if (this is T t)
                 return t;
             else if (Parent is not null)
-                return Parent.FindRoot<T>();
+                return Parent?.FindRoot<T>();
             return null;
         }
 
         public override void Save()
         {
-            FindRoot<HexaProject>().Save();
+            FindRoot<HexaProject>()?.Save();
         }
 
         public override string GetAbsolutePath()

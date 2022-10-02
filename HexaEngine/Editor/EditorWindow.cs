@@ -17,25 +17,25 @@
 
     public class EditorWindow : SdlWindow
     {
-        private Thread renderThread;
+        private Thread? renderThread;
         private bool isRunning = true;
         private bool firstFrame;
-        private Dispatcher renderDispatcher;
-        private IGraphicsDevice device;
-        private IGraphicsContext context;
-        private ISwapChain swapChain;
+        private Dispatcher? renderDispatcher;
+        private IGraphicsDevice? device;
+        private IGraphicsContext? context;
+        private ISwapChain? swapChain;
         private bool resize = false;
-        private ImGuiRenderer renderer;
-        private Framebuffer framebuffer;
+        private ImGuiRenderer? renderer;
+        private Framebuffer? framebuffer;
 
         public EditorWindow()
         {
         }
 
-        public Dispatcher RenderDispatcher => renderDispatcher;
+        public Dispatcher RenderDispatcher => renderDispatcher ?? throw new InvalidOperationException();
 
-        public IGraphicsDevice Device => device;
-        public IGraphicsContext Context => context;
+        public IGraphicsDevice Device => device ?? throw new InvalidOperationException();
+        public IGraphicsContext Context => context ?? throw new InvalidOperationException();
 
         protected override void OnShown(ShownEventArgs args)
         {
@@ -52,7 +52,11 @@
             {
                 device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
                 context = device.Context;
-                swapChain = device.SwapChain;
+                swapChain = device.SwapChain ?? throw new PlatformNotSupportedException();
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
             }
 
             DebugDraw.Init(device);
@@ -72,7 +76,7 @@
 
                 if (resize)
                 {
-                    device.SwapChain.Resize(Width, Height);
+                    device?.SwapChain?.Resize(Width, Height);
                     resize = false;
                 }
 
@@ -91,7 +95,7 @@
                     }
 
                 renderer.EndDraw();
-                swapChain.Present(Nucleus.Settings.VSync ? 1u : 0u);
+                swapChain?.Present(Nucleus.Settings.VSync ? 1u : 0u);
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
             }
@@ -137,7 +141,7 @@
         protected override void OnClose(CloseEventArgs args)
         {
             isRunning = false;
-            renderThread.Join();
+            renderThread?.Join();
             base.OnClose(args);
         }
     }

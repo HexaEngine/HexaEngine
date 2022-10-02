@@ -41,7 +41,7 @@
         private int step;
         private int steps;
 
-        public PrefilterWidget(IGraphicsDevice device) : base(device)
+        public override void Init(IGraphicsDevice device)
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
             prefilterFilter = new(device);
@@ -71,7 +71,7 @@
             prefilterTex = null;
         }
 
-        public RenderTexture ImportTexture(IGraphicsDevice device, IGraphicsContext context)
+        public RenderTexture? ImportTexture(IGraphicsDevice device, IGraphicsContext context)
         {
             switch (mode)
             {
@@ -165,7 +165,7 @@
                         pfSRV = prefilterTex.CreateSRVArray(device);
                         prefilterFilter.Targets = pfRTV;
                         prefilterFilter.Resources.Clear();
-                        prefilterFilter.Resources.Add(new(environmentTex.ResourceView, ShaderStage.Pixel, 0));
+                        prefilterFilter.Resources.Add(new(environmentTex?.ResourceView, ShaderStage.Pixel, 0));
                         for (int i = 0; i < 6; i++)
                         {
                             pfIds[i] = ImGuiRenderer.RegisterTexture(pfSRV.Views[i]);
@@ -187,7 +187,7 @@
             {
                 ImGui.SameLine();
 
-                if (ImGui.Button("Export"))
+                if (ImGui.Button("Export") && prefilterTex.ResourceView != null)
                 {
                     ImGuiConsole.Log(ConsoleMessageType.Log, "Exporting prefilter map ...");
                     context.GenerateMips(prefilterTex.ResourceView);

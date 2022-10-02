@@ -97,6 +97,15 @@
             return reader.ReadToEnd().Split(Environment.NewLine);
         }
 
+        public static byte[] ReadAllBytes(string path)
+        {
+            var fs = Open(path);
+            var buffer = new byte[fs.Length];
+            fs.Read(buffer, 0, buffer.Length);
+            fs.Close();
+            return buffer;
+        }
+
         public static bool ReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
         {
             if (TryOpen(path, out var fs))

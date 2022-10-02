@@ -181,7 +181,7 @@
         protected override void OnClose(CloseEventArgs args)
         {
             isRunning = false;
-            renderThread.Join();
+            renderThread?.Join();
             base.OnClose(args);
         }
     }
