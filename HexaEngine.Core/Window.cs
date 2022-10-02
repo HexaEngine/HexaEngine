@@ -59,6 +59,7 @@
         {
             if (!created)
                 PlatformConstruct();
+            Application.RegisterWindow(this);
             Sdl.ShowWindow(window);
         }
 

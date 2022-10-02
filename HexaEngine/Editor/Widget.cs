@@ -1,4 +1,4 @@
-﻿namespace IBLBaker
+﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
 

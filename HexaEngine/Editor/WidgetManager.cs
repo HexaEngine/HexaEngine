@@ -1,12 +1,12 @@
-﻿namespace IBLBaker
+﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
     using System.Reflection;
 
     public static class WidgetManager
     {
-        private static List<Type> widgetTypes = new();
-        private static List<Widget> widgets = new();
+        private static readonly List<Type> widgetTypes = new();
+        private static readonly List<Widget> widgets = new();
 
         static WidgetManager()
         {
@@ -17,6 +17,16 @@
         {
             var type = typeof(T);
             return types.AsParallel().Where(x => x.IsAssignableTo(type) && !x.IsAbstract);
+        }
+
+        public static void Register(Assembly assembly)
+        {
+            widgetTypes.AddRange(assembly.GetTypes().FilterFor<Widget>());
+        }
+
+        public static void Register()
+        {
+            widgetTypes.AddRange(Assembly.GetCallingAssembly().GetTypes().FilterFor<Widget>());
         }
 
         public static void Init(IGraphicsDevice device)

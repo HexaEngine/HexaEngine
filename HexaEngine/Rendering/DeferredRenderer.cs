@@ -763,6 +763,16 @@
 
         public void DrawSettings()
         {
+            if (ImGui.Button("Reload Skybox"))
+            {
+                env.Dispose();
+                envirr.Dispose();
+                envfilter.Dispose();
+                env = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
+                envirr = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "irradiance_o.dds", TextureDimension.TextureCube));
+                envfilter = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "prefilter_o.dds", TextureDimension.TextureCube));
+            }
+
             if (ImGui.Combo("Shading Model", ref currentShadingModelIndex, availableShadingModelStrings, availableShadingModelStrings.Length))
             {
                 currentShadingModel = availableShadingModels[currentShadingModelIndex];

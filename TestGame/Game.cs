@@ -36,6 +36,10 @@
             {
                 SceneManager.Current.Dispatcher.Invoke(() => { ShaderCache.Clear(); Pipeline.ReloadShaders(); });
             });
+            ImGuiConsole.RegisterCommand("gc_force", _ =>
+            {
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
+            });
             Keyboard.OnKeyUp += (s, e) =>
             {
                 if (e.KeyCode == KeyCode.KEscape)

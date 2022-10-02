@@ -64,6 +64,7 @@ namespace HexaEngine.Windows
             game.InitializeWindow(this);
             game.Initialize();
             Time.Initialize();
+            WidgetManager.Init(device);
             while (isRunning)
             {
                 Time.FrameUpdate();
@@ -72,7 +73,7 @@ namespace HexaEngine.Windows
                 framebuffer.Update(context);
                 renderer.BeginDraw();
                 framebuffer.Draw();
-
+                WidgetManager.Draw(context);
                 if (resize)
                 {
                     device.SwapChain.Resize(Width, Height);
@@ -88,9 +89,9 @@ namespace HexaEngine.Windows
                             firstFrame = false;
                         }
                         if (Designer.InDesignMode)
-                            SceneManager.Current?.Render(Context, this, framebuffer.Viewport);
+                            SceneManager.Current?.Render(context, this, framebuffer.Viewport);
                         else
-                            SceneManager.Current?.Render(Context, this, Viewport);
+                            SceneManager.Current?.Render(context, this, Viewport);
                     }
 
                 renderer.EndDraw();
@@ -98,7 +99,7 @@ namespace HexaEngine.Windows
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
             }
-
+            WidgetManager.Dispose();
             renderer.Dispose();
             DebugDraw.Dispose();
             Trace.WriteLine("Perfoming Shutdown");

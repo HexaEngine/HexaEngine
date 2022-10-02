@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "IBLBaker": {
-      "commandName": "Project",
-      "commandLineArgs": "Cube skybox.dds",
-      "nativeDebugging": true
-    }
-  }
-}

@@ -269,7 +269,7 @@
 	<ItemGroup>
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
-	  <Folder Include="Windows\" />
+	  <Folder Include="Windows\Events\" />
 	</ItemGroup>
 
 

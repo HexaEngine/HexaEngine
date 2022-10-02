@@ -50,8 +50,12 @@
             mainWindow.Closing += MainWindow_Closing;
 
             mainWindow.Show();
-            windows.Add(mainWindow.WindowID, mainWindow);
             PlatformRun();
+        }
+
+        internal static void RegisterWindow(SdlWindow window)
+        {
+            windows.Add(window.WindowID, window);
         }
 
         private static void MainWindow_Closing(object? sender, Events.CloseEventArgs e)
@@ -328,6 +332,8 @@
                     exiting = true;
                 }
             }
+
+            sdl.Quit();
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace IBLBaker.Widgets
 {
-    using BepuUtilities.Memory;
     using HexaEngine.Cameras;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
@@ -16,12 +16,10 @@
     using HexaEngine.Pipelines.Forward;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.ConstantBuffers;
-    using HexaEngine.Scenes;
     using ImGuiNET;
     using System;
     using System.Numerics;
     using System.Runtime.InteropServices;
-    using System.Xml.Linq;
 
     public class PreviewWidget : Widget
     {
@@ -61,15 +59,15 @@
 
         private string pathEnvironment = string.Empty;
         private bool searchPathEnvironment;
-        private FilePicker pickerEnv = new();
+        private FilePicker pickerEnv = new() { CurrentFolder = Environment.CurrentDirectory };
 
         private string pathIrradiance = string.Empty;
         private bool searchPathIrradiance;
-        private FilePicker pickerIrr = new();
+        private FilePicker pickerIrr = new() { CurrentFolder = Environment.CurrentDirectory };
 
         private string pathPrefilter = string.Empty;
         private bool searchPathPrefilter;
-        private FilePicker pickerPre = new();
+        private FilePicker pickerPre = new() { CurrentFolder = Environment.CurrentDirectory };
 
         private Camera camera;
 
