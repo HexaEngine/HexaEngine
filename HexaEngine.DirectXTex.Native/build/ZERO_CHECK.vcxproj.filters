@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Juna\source\repos\JunaMeinhold\HexaEngine\HexaEngine.DirectXTex.Native\build\CMakeFiles\729604290ac63c6713a0e24d2ecf8067\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{2BFA0140-EBC6-36FA-AC7B-5F00D8C823C6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
