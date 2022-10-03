@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="..\HexaEngine.DirectXTex.Native\build\Debug\HexaTexture.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<PackageReference Include="Silk.NET.Direct3D11" Version="2.16.0" />
+		<PackageReference Include="Silk.NET.DXGI" Version="2.16.0" />
+	</ItemGroup>
+
+</Project>

@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DirectXTexNet\DirectXTexNet.csproj" />
     <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+    <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
   </ItemGroup>
 
 </Project>

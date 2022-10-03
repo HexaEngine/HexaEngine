@@ -39,8 +39,15 @@
 
     public static class Nucleus
     {
+        public static bool Disable = true;
+
         static Nucleus()
         {
+            if (Disable)
+            {
+                Settings = new();
+                return;
+            }
             if (File.Exists("config.json"))
             {
                 Settings = JsonConvert.DeserializeObject<Settings>(File.ReadAllText("config.json")) ?? new();

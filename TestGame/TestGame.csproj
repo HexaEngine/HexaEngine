@@ -19,6 +19,9 @@
     <None Update="assets\fonts\font1.ff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="assets\fonts\SEGMDL2.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="assets\models\box.mlb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

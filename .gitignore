@@ -363,3 +363,17 @@ MigrationBackup/
 FodyWeavers.xsd
 glTF-Sample-Models-master.zip
 *.dds
+
+# Cmake
+
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps

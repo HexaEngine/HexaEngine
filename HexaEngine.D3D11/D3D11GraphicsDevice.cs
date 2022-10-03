@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using DirectXTexNet;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.DirectXTex;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
@@ -491,25 +491,26 @@
 
         private IResource LoadTextureAuto(string path, TextureDimension dimension)
         {
-            ScratchImage? image = LoadAuto(path);
-            if (image == null)
+            ScratchImage image = LoadAuto(path);
+            if (image.pScratchImage == null)
             {
                 return InitFallback(dimension);
             }
             TexMetadata metadata = image.GetMetadata();
 
             ResourceMiscFlag optionFlags = metadata.IsCubemap() ? ResourceMiscFlag.TextureCube : ResourceMiscFlag.None;
-            var resource = image.CreateTextureEx((IntPtr)Device, D3D11_USAGE.IMMUTABLE, D3D11_BIND_FLAG.SHADER_RESOURCE, 0, (D3D11_RESOURCE_MISC_FLAG)Helper.Convert(optionFlags), false);
-
+            ID3D11Resource* resource;
+            DirectXTex.CreateTextureEx((ID3D11Device*)(IntPtr)Device, &image, Silk.NET.Direct3D11.Usage.Immutable, BindFlag.ShaderResource, 0, 0, false, &resource);
+            image.Release();
             switch (dimension)
             {
                 case TextureDimension.Texture1D:
                     {
                         Texture1DDescription texture = new(
                             Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
-                            metadata.Width,
-                            metadata.ArraySize,
-                            metadata.MipLevels,
+                            (int)metadata.Width,
+                            (int)metadata.ArraySize,
+                            (int)metadata.MipLevels,
                             miscFlags: optionFlags);
                         return new D3D11Texture1D((ID3D11Texture1D*)resource, texture);
                     }
@@ -518,10 +519,10 @@
                     {
                         Texture2DDescription texture = new(
                             Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
-                            metadata.Width,
-                            metadata.Height,
-                            metadata.ArraySize,
-                            metadata.MipLevels,
+                            (int)metadata.Width,
+                            (int)metadata.Height,
+                            (int)metadata.ArraySize,
+                            (int)metadata.MipLevels,
                             miscFlags: optionFlags);
                         return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
                     }
@@ -530,10 +531,10 @@
                     {
                         Texture3DDescription texture = new(
                             Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
-                            metadata.Width,
-                            metadata.Height,
-                            metadata.Depth,
-                            metadata.MipLevels,
+                            (int)metadata.Width,
+                            (int)metadata.Height,
+                            (int)metadata.Depth,
+                            (int)metadata.MipLevels,
                             miscFlags: optionFlags);
                         return new D3D11Texture3D((ID3D11Texture3D*)resource, texture);
                     }
@@ -542,10 +543,10 @@
                     {
                         Texture2DDescription texture = new(
                             Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
-                            metadata.Width,
-                            metadata.Height,
-                            metadata.Depth,
-                            metadata.MipLevels,
+                            (int)metadata.Width,
+                            (int)metadata.Height,
+                            (int)metadata.Depth,
+                            (int)metadata.MipLevels,
                             miscFlags: optionFlags);
                         return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
                     }
@@ -589,20 +590,33 @@
             throw new ArgumentOutOfRangeException(nameof(dimension));
         }
 
-        private static ScratchImage? LoadAuto(string path)
+        private static ScratchImage LoadAuto(string path)
         {
             if (!FileSystem.TryOpen(path, out VirtualStream? fs))
-                return null;
+                return default;
 
-            IntPtr ptr = fs.GetIntPtr(out _);
+            ScratchImage image = new();
+            var data = fs.GetBytes();
             string extension = Path.GetExtension(path);
-            return extension switch
+            switch (extension)
             {
-                ".dds" => TexHelper.Instance.LoadFromDDSMemory(ptr, fs.Length, DDS_FLAGS.NONE),
-                ".tga" => TexHelper.Instance.LoadFromTGAMemory(ptr, fs.Length),
-                ".hdr" => TexHelper.Instance.LoadFromHDRMemory(ptr, fs.Length),
-                _ => TexHelper.Instance.LoadFromWICMemory(ptr, fs.Length, WIC_FLAGS.NONE),
+                case ".dds":
+                    DirectXTex.LoadFromDDSMemory(data, DDSFlags.NONE, &image);
+                    break;
+
+                case ".tga":
+                    DirectXTex.LoadFromTGAMemory(data, TGAFlags.TGA_FLAGS_NONE, &image);
+                    break;
+
+                case ".hdr":
+                    DirectXTex.LoadFromHDRMemory(data, &image);
+                    break;
+
+                default:
+                    DirectXTex.LoadFromWICMemory(data, WICFlags.NONE, &image);
+                    break;
             };
+            return image;
         }
 
         public void SaveTexture1D(ITexture1D texture, string path)
@@ -627,30 +641,27 @@
 
         private void SaveAuto(IResource resource, string path)
         {
-            ScratchImage image = TexHelper.Instance.CaptureTexture(NativePointer, Context.NativePointer, resource.NativePointer);
+            ScratchImage image = new();
+            DirectXTex.CaptureTexture((ID3D11Device*)NativePointer, (ID3D11DeviceContext*)Context.NativePointer, (ID3D11Resource*)resource.NativePointer, &image);
             switch (Path.GetExtension(path))
             {
                 case ".dds":
-                    image.SaveToDDSFile(DDS_FLAGS.NONE, path);
+                    DirectXTex.SaveToDDSFile(&image, DDSFlags.NONE, path);
                     break;
 
                 case ".tga":
-                    image.SaveToTGAFile(0, path);
+                    DirectXTex.SaveToTGAFile(&image, 0, TGAFlags.TGA_FLAGS_NONE, path);
                     break;
 
                 case ".hdr":
-                    image.SaveToHDRFile(0, path);
-                    break;
-
-                case ".jpg":
-                    image.SaveToJPGFile(0, 100, path);
+                    DirectXTex.SaveToHDRFile(&image, 0, path);
                     break;
 
                 default:
-                    image.SaveToWICFile(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG), path);
+                    DirectXTex.SaveToWICFile(&image, 0, WICFlags.NONE, DirectXTex.GetWICCodec(WICCodecs.PNG), path);
                     break;
             }
-            image.Dispose();
+            image.Release();
         }
 
         public void SaveTexture1D(ITexture1D texture, Format format, string path)
@@ -675,45 +686,44 @@
 
         private void SaveAuto(IResource resource, Format format, string path)
         {
-            ScratchImage image = TexHelper.Instance.CaptureTexture(NativePointer, Context.NativePointer, resource.NativePointer);
-            if (TexHelper.Instance.IsCompressed((DXGI_FORMAT)Helper.Convert(format)))
+            ScratchImage image = new();
+            DirectXTex.CaptureTexture((ID3D11Device*)NativePointer, (ID3D11DeviceContext*)Context.NativePointer, (ID3D11Resource*)resource.NativePointer, &image);
+            if (DirectXTex.IsCompressed(Helper.Convert(format)))
             {
-                TEX_COMPRESS_FLAGS flags = TEX_COMPRESS_FLAGS.PARALLEL;
+                TexCompressFlags flags = TexCompressFlags.PARALLEL;
                 if (format == Format.BC7RGBAUNorm)
-                    flags |= TEX_COMPRESS_FLAGS.BC7_QUICK;
-                ScratchImage image1 = image.Compress((DXGI_FORMAT)Helper.Convert(format), flags, 0.5f);
-                image.Dispose();
+                    flags |= TexCompressFlags.BC7_QUICK;
+                ScratchImage image1 = new();
+                DirectXTex.Compress((ID3D11Device*)NativePointer, &image1, Helper.Convert(format), flags, 1f, &image);
+                image.Release();
                 image = image1;
             }
             else
             {
-                ScratchImage image1 = image.Convert((DXGI_FORMAT)Helper.Convert(format), TEX_FILTER_FLAGS.DEFAULT, 0.5f);
-                image.Dispose();
+                ScratchImage image1 = new();
+                DirectXTex.Convert(&image, Helper.Convert(format), TexFilterFlags.DEFAULT, 0.5f, &image1);
+                image.Release();
                 image = image1;
             }
             switch (Path.GetExtension(path))
             {
                 case ".dds":
-                    image.SaveToDDSFile(DDS_FLAGS.NONE, path);
+                    DirectXTex.SaveToDDSFile(&image, DDSFlags.NONE, path);
                     break;
 
                 case ".tga":
-                    image.SaveToTGAFile(0, path);
+                    DirectXTex.SaveToTGAFile(&image, 0, TGAFlags.TGA_FLAGS_NONE, path);
                     break;
 
                 case ".hdr":
-                    image.SaveToHDRFile(0, path);
-                    break;
-
-                case ".jpg":
-                    image.SaveToJPGFile(0, 100, path);
+                    DirectXTex.SaveToHDRFile(&image, 0, path);
                     break;
 
                 default:
-                    image.SaveToWICFile(0, WIC_FLAGS.NONE, TexHelper.Instance.GetWICCodec(WICCodecs.PNG), path);
+                    DirectXTex.SaveToWICFile(&image, 0, WICFlags.NONE, DirectXTex.GetWICCodec(WICCodecs.PNG), path);
                     break;
             }
-            image.Dispose();
+            image.Release();
         }
 
         public IVertexShader CreateVertexShader(byte[] bytecode)

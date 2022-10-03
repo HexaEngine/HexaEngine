@@ -8,6 +8,7 @@ namespace HexaEngine.Editor
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
     using System.Reflection;
 
@@ -19,7 +20,7 @@ namespace HexaEngine.Editor
         private readonly string name;
         private readonly bool isHidden;
 
-        public PropertyEditor(Type type)
+        public PropertyEditor([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
         {
             var componentNameAttr = type.GetCustomAttribute<EditorComponentAttribute>();
             if (componentNameAttr == null)
