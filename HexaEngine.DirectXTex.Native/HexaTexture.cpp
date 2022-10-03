@@ -2,7 +2,7 @@
 
 #pragma region DXGI Format Utilities
 
-constexpr bool IsValid(_In_ DXGI_FORMAT fmt) noexcept
+bool IsValid(_In_ DXGI_FORMAT& fmt) noexcept
 {
 	return DirectX::IsValid(fmt);
 }
@@ -201,7 +201,7 @@ const DirectX::TexMetadata& GetMetadata(DirectX::ScratchImage* img) noexcept
 	return img->GetMetadata();
 }
 
-const DirectX::Image* GetImage(DirectX::ScratchImage* img, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept
+const DirectX::Image* GetImage(DirectX::ScratchImage* img, _In_ size_t& mip, _In_ size_t& item, _In_ size_t& slice) noexcept
 {
 	return img->GetImage(mip, item, slice);
 }

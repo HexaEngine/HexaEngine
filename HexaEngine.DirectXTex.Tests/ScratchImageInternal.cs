@@ -192,5 +192,177 @@ namespace HexaEngine.DirectXTex.Tests
             if (image.pScratchImage != null)
                 Trace.Fail("Mem leak");
         }
+
+        [Fact]
+        public void GetMetadata()
+        {
+            ScratchImage image = new();
+            TexMetadata metadata = new()
+            {
+                ArraySize = 1,
+                Depth = 1,
+                Dimension = TexDimension.TEXTURE2D,
+                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Height = 64,
+                Width = 64,
+                MipLevels = 4,
+                MiscFlags = 0,
+                MiscFlags2 = 0,
+            };
+
+            HResult result = image.Initialize(metadata, CPFlags.NONE);
+            if (!result.IsSuccess)
+                result.Throw();
+
+            var meta = image.GetMetadata();
+            Assert.Equal(metadata, meta);
+
+            image.Release();
+            if (image.pScratchImage != null)
+                Trace.Fail("Mem leak");
+        }
+
+        [Fact]
+        public void GetImage()
+        {
+            ScratchImage image = new();
+            TexMetadata metadata = new()
+            {
+                ArraySize = 1,
+                Depth = 1,
+                Dimension = TexDimension.TEXTURE2D,
+                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Height = 64,
+                Width = 64,
+                MipLevels = 4,
+                MiscFlags = 0,
+                MiscFlags2 = 0,
+            };
+
+            HResult result = image.Initialize(metadata, CPFlags.NONE);
+            if (!result.IsSuccess)
+                result.Throw();
+
+            var img = image.GetImage(0, 0, 0);
+
+            if (img.Width != metadata.Width &&
+                img.Height != metadata.Height &&
+                img.Format != metadata.Format)
+                Trace.Fail("img doesn't match");
+
+            var meta = image.GetMetadata();
+            Assert.Equal(metadata, meta);
+
+            image.Release();
+            if (image.pScratchImage != null)
+                Trace.Fail("Mem leak");
+        }
+
+        [Fact]
+        public void GetImagesAndGetImageCount()
+        {
+            ScratchImage image = new();
+            TexMetadata metadata = new()
+            {
+                ArraySize = 1,
+                Depth = 1,
+                Dimension = TexDimension.TEXTURE2D,
+                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Height = 64,
+                Width = 64,
+                MipLevels = 4,
+                MiscFlags = 0,
+                MiscFlags2 = 0,
+            };
+
+            HResult result = image.Initialize(metadata, CPFlags.NONE);
+            if (!result.IsSuccess)
+                result.Throw();
+
+            var imgs = image.GetImages();
+
+            for (int i = 0; i < (int)image.GetImageCount(); i++)
+            {
+                var img = imgs[i];
+                if (img.Width != metadata.Width &&
+                img.Height != metadata.Height &&
+                img.Format != metadata.Format)
+                    Trace.Fail("img doesn't match");
+            }
+
+            var meta = image.GetMetadata();
+            Assert.Equal(metadata, meta);
+
+            image.Release();
+            if (image.pScratchImage != null)
+                Trace.Fail("Mem leak");
+        }
+
+        [Fact]
+        public void GetPixelsAndGetPixelsSizeAndModify()
+        {
+            ScratchImage image = new();
+            TexMetadata metadata = new()
+            {
+                ArraySize = 1,
+                Depth = 1,
+                Dimension = TexDimension.TEXTURE2D,
+                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Height = 64,
+                Width = 64,
+                MipLevels = 4,
+                MiscFlags = 0,
+                MiscFlags2 = 0,
+            };
+
+            HResult result = image.Initialize(metadata, CPFlags.NONE);
+            if (!result.IsSuccess)
+                result.Throw();
+
+            var pixels = image.GetPixels();
+            var count = image.GetPixelsSize();
+            Span<byte> data = new(pixels, (int)count);
+            data.Fill(1);
+
+            var meta = image.GetMetadata();
+            Assert.Equal(metadata, meta);
+
+            image.Release();
+            if (image.pScratchImage != null)
+                Trace.Fail("Mem leak");
+        }
+
+        [Fact]
+        public void IsAlphaAllOpaque()
+        {
+            ScratchImage image = new();
+            TexMetadata metadata = new()
+            {
+                ArraySize = 1,
+                Depth = 1,
+                Dimension = TexDimension.TEXTURE2D,
+                Format = Silk.NET.DXGI.Format.FormatR16G16Float,
+                Height = 64,
+                Width = 64,
+                MipLevels = 4,
+                MiscFlags = 0,
+                MiscFlags2 = 0,
+            };
+
+            HResult result = image.Initialize(metadata, CPFlags.NONE);
+            if (!result.IsSuccess)
+                result.Throw();
+
+            // Result should be true because the format contains no alpha information.
+            if (!image.IsAlphaAllOpaque())
+                throw new();
+
+            var meta = image.GetMetadata();
+            Assert.Equal(metadata, meta);
+
+            image.Release();
+            if (image.pScratchImage != null)
+                Trace.Fail("Mem leak");
+        }
     }
 }

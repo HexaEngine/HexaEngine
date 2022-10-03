@@ -10,7 +10,7 @@ extern "C"
 
 #pragma region DXGI Format Utilities
 
-	API constexpr bool IsValid(_In_ DXGI_FORMAT& fmt) noexcept;
+	API bool IsValid(_In_ DXGI_FORMAT& fmt) noexcept;
 	API bool IsCompressed(_In_ DXGI_FORMAT& fmt) noexcept;
 	API bool IsPacked(_In_ DXGI_FORMAT& fmt) noexcept;
 	API bool IsVideo(_In_ DXGI_FORMAT& fmt) noexcept;
@@ -77,7 +77,7 @@ extern "C"
 	API bool OverrideFormat(DirectX::ScratchImage* img, _In_ DXGI_FORMAT& f) noexcept;
 
 	API const DirectX::TexMetadata& GetMetadata(DirectX::ScratchImage* img) noexcept;
-	API const DirectX::Image* GetImage(DirectX::ScratchImage* img, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept;
+	API const DirectX::Image* GetImage(DirectX::ScratchImage* img, _In_ size_t& mip, _In_ size_t& item, _In_ size_t& slice) noexcept;
 
 	API const DirectX::Image* GetImages(DirectX::ScratchImage* img) noexcept;
 	API size_t GetImageCount(DirectX::ScratchImage* img) noexcept;

@@ -14,53 +14,43 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsValid(in Format fmt);
+        public static unsafe partial byte IsValid(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.U1)]
         public static unsafe partial byte IsCompressed(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsPacked(in Format fmt);
+        public static unsafe partial byte IsPacked(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsVideo(in Format fmt);
+        public static unsafe partial byte IsVideo(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsPlanar(in Format fmt);
+        public static unsafe partial byte IsPlanar(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsPalettized(in Format fmt);
+        public static unsafe partial byte IsPalettized(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsDepthStencil(in Format fmt);
+        public static unsafe partial byte IsDepthStencil(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsSRGB(in Format fmt);
+        public static unsafe partial byte IsSRGB(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsTypeless(in Format fmt, [MarshalAs(UnmanagedType.Bool)] in bool partialTypeless = true);
+        public static unsafe partial byte IsTypeless(in Format fmt, [MarshalAs(UnmanagedType.Bool)] in bool partialTypeless = true);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool HasAlpha(in Format fmt);
+        public static unsafe partial byte HasAlpha(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
@@ -212,8 +202,7 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsAlphaAllOpaque(void* img);
+        public static unsafe partial byte IsAlphaAllOpaque(void* img);
 
         #endregion ScratchImageInternal
 

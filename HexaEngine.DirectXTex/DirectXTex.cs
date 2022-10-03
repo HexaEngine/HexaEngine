@@ -4,9 +4,109 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
+    using System.Runtime.CompilerServices;
 
     public static unsafe class DirectXTex
     {
+        #region DXGI Format Utilities
+
+        public static bool IsValid(Format format)
+        {
+            return Native.IsValid(format) != 0;
+        }
+
+        public static bool IsCompressed(Format format)
+        {
+            return Native.IsCompressed(format) != 0;
+        }
+
+        public static bool IsPacked(Format format)
+        {
+            return Native.IsPacked(format) != 0;
+        }
+
+        public static bool IsVideo(Format format)
+        {
+            return Native.IsVideo(format) != 0;
+        }
+
+        public static bool IsPlanar(Format format)
+        {
+            return Native.IsPlanar(format) != 0;
+        }
+
+        public static bool IsPalettized(Format format)
+        {
+            return Native.IsPalettized(format) != 0;
+        }
+
+        public static bool IsDepthStencil(Format format)
+        {
+            return Native.IsDepthStencil(format) != 0;
+        }
+
+        public static bool IsSRGB(Format format)
+        {
+            return Native.IsSRGB(format) != 0;
+        }
+
+        public static bool IsTypeless(Format format, bool partialTypeless = true)
+        {
+            return Native.IsTypeless(format, partialTypeless) != 0;
+        }
+
+        public static bool HasAlpha(Format format)
+        {
+            return Native.HasAlpha(format) != 0;
+        }
+
+        public static ulong BitsPerPixel(Format format)
+        {
+            return Native.BitsPerPixel(format);
+        }
+
+        public static ulong BitsPerColor(Format format)
+        {
+            return Native.BitsPerColor(format);
+        }
+
+        public static FormatType FormatDataType(Format format)
+        {
+            return Native.FormatDataType(format);
+        }
+
+        public static HResult ComputePitch(Format format, ulong width, ulong height, ref ulong rowPitch, ref ulong slicePitch, CPFlags flags)
+        {
+            return Native.ComputePitch(format, width, height, (ulong*)Unsafe.AsPointer(ref rowPitch), (ulong*)Unsafe.AsPointer(ref slicePitch), flags);
+        }
+
+        public static ulong ComputeScanlines(Format format, ulong height)
+        {
+            return Native.ComputeScanlines(format, height);
+        }
+
+        public static Format MakeSRGB(Format format)
+        {
+            return Native.MakeSRGB(format);
+        }
+
+        public static Format MakeTypeless(Format format)
+        {
+            return Native.MakeTypeless(format);
+        }
+
+        public static Format MakeTypelessUNORM(Format format)
+        {
+            return Native.MakeTypelessUNORM(format);
+        }
+
+        public static Format MakeTypelessFLOAT(Format format)
+        {
+            return Native.MakeTypelessFLOAT(format);
+        }
+
+        #endregion DXGI Format Utilities
+
         public static void Compress(Image* srcImage, Format fmt, TexCompressFlags flags, float threshold, ScratchImage* image)
         {
             Native.Compress(srcImage, fmt, flags, threshold, image->pScratchImage);
@@ -54,11 +154,6 @@
             ulong nImages = srcImage->GetImageCount();
             Image* srcImages = srcImage->GetImages();
             Native.Convert2(srcImages, nImages, &metadata, fmt, flags, threshold, image->pScratchImage);
-        }
-
-        public static bool IsCompressed(Format format)
-        {
-            return Native.IsCompressed(format) != 0;
         }
 
         public static void LoadFromDDSMemory(byte[] data, DDSFlags flags, ScratchImage* image)

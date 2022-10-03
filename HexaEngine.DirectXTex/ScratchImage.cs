@@ -107,7 +107,7 @@ namespace HexaEngine.DirectXTex
 
         public bool IsAlphaAllOpaque()
         {
-            return Native.IsAlphaAllOpaque(pScratchImage);
+            return Native.IsAlphaAllOpaque(pScratchImage) != 0;
         }
     }
 }
