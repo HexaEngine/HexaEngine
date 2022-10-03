@@ -55,8 +55,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{98D7C019-9EF0-41E3-8B8B-79523F4A98F2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.DirectXTex", "HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj", "{D862056D-850C-45D7-8FB1-2BBDEC6C76CA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{744271E3-0DD8-3220-BAF6-953C27F77532} = {744271E3-0DD8-3220-BAF6-953C27F77532}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexaEngine.DirectXTex.Native", "HexaEngine.DirectXTex.Native\build\HexaEngine.DirectXTex.Native.vcxproj", "{744271E3-0DD8-3220-BAF6-953C27F77532}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.DirectXTex.Tests", "HexaEngine.DirectXTex.Tests\HexaEngine.DirectXTex.Tests.csproj", "{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -596,6 +601,30 @@ Global
 		{744271E3-0DD8-3220-BAF6-953C27F77532}.RelWithDebInfo|x64.Build.0 = RelWithDebInfo|x64
 		{744271E3-0DD8-3220-BAF6-953C27F77532}.RelWithDebInfo|x86.ActiveCfg = RelWithDebInfo|x64
 		{744271E3-0DD8-3220-BAF6-953C27F77532}.RelWithDebInfo|x86.Build.0 = RelWithDebInfo|x64
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Debug|x64.Build.0 = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Debug|x86.Build.0 = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.MinSizeRel|Any CPU.ActiveCfg = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.MinSizeRel|Any CPU.Build.0 = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.MinSizeRel|x64.ActiveCfg = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.MinSizeRel|x64.Build.0 = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.MinSizeRel|x86.ActiveCfg = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.MinSizeRel|x86.Build.0 = Debug|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Release|x64.ActiveCfg = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Release|x64.Build.0 = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Release|x86.ActiveCfg = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.Release|x86.Build.0 = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.RelWithDebInfo|Any CPU.ActiveCfg = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.RelWithDebInfo|Any CPU.Build.0 = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.RelWithDebInfo|x64.ActiveCfg = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.RelWithDebInfo|x64.Build.0 = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.RelWithDebInfo|x86.ActiveCfg = Release|Any CPU
+		{10D5A612-0FEB-49EF-9DD9-18B1D1F1E44F}.RelWithDebInfo|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

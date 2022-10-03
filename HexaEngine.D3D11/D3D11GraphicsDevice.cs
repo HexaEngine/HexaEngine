@@ -694,7 +694,7 @@
                 if (format == Format.BC7RGBAUNorm)
                     flags |= TexCompressFlags.BC7_QUICK;
                 ScratchImage image1 = new();
-                DirectXTex.Compress((ID3D11Device*)NativePointer, &image1, Helper.Convert(format), flags, 1f, &image);
+                DirectXTex.Compress((ID3D11Device*)NativePointer, &image, Helper.Convert(format), flags, 1f, &image1);
                 image.Release();
                 image = image1;
             }

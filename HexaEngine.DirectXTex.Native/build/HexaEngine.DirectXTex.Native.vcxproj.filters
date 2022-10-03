@@ -24,4 +24,7 @@
       <UniqueIdentifier>{DC3D1DE3-342A-32FA-A33A-C6579049F554}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+  </ItemGroup>
 </Project>

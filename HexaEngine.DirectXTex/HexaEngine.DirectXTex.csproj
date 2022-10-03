@@ -9,7 +9,10 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="..\HexaEngine.DirectXTex.Native\build\Debug\HexaTexture.dll">
+		<Content Include="..\HexaEngine.DirectXTex.Native\build\Debug\HexaEngine.DirectXTex.Native.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\HexaEngine.DirectXTex.Native\build\Debug\HexaEngine.DirectXTex.Native.pdb">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<PackageReference Include="Silk.NET.Direct3D11" Version="2.16.0" />

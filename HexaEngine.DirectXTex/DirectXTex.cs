@@ -35,7 +35,7 @@
             TexMetadata metadata = srcImage->GetMetadata();
             ulong nImages = srcImage->GetImageCount();
             Image* srcImages = srcImage->GetImages();
-            Native.Compress4(device, srcImages, nImages, &metadata, fmt, flags, alphaWeight, image->pScratchImage);
+            HResult result = Native.Compress4(device, srcImages, nImages, &metadata, fmt, flags, alphaWeight, image->pScratchImage);
         }
 
         public static void Convert(Image* srcImage, Format fmt, TexFilterFlags flags, float threshold, ScratchImage* image)
@@ -58,7 +58,7 @@
 
         public static bool IsCompressed(Format format)
         {
-            return Native.IsCompressed(format);
+            return Native.IsCompressed(format) != 0;
         }
 
         public static void LoadFromDDSMemory(byte[] data, DDSFlags flags, ScratchImage* image)

@@ -1,4 +1,5 @@
-﻿using Silk.NET.DXGI;
+﻿using Silk.NET.Core.Native;
+using Silk.NET.DXGI;
 
 namespace HexaEngine.DirectXTex
 {
@@ -16,29 +17,29 @@ namespace HexaEngine.DirectXTex
             pScratchImage = Native.NewScratchImage();
         }
 
-        public void Initialize(TexMetadata metadata, CPFlags flags)
+        public HResult Initialize(TexMetadata metadata, CPFlags flags)
         {
-            Native.Initialize(pScratchImage, &metadata, flags);
+            return Native.Initialize(pScratchImage, &metadata, flags);
         }
 
-        public void Initialize1D(Format fmt, ulong length, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.NONE)
+        public HResult Initialize1D(Format fmt, ulong length, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.NONE)
         {
-            Native.Initialize1D(pScratchImage, fmt, length, arraySize, mipLevels, flags);
+            return Native.Initialize1D(pScratchImage, fmt, length, arraySize, mipLevels, flags);
         }
 
-        public void Initialize2D(Format fmt, ulong width, ulong height, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.NONE)
+        public HResult Initialize2D(Format fmt, ulong width, ulong height, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.NONE)
         {
-            Native.Initialize2D(pScratchImage, fmt, width, height, arraySize, mipLevels, flags);
+            return Native.Initialize2D(pScratchImage, fmt, width, height, arraySize, mipLevels, flags);
         }
 
-        public void Initialize3D(Format fmt, ulong width, ulong height, ulong depth, ulong mipLevels, CPFlags flags = CPFlags.NONE)
+        public HResult Initialize3D(Format fmt, ulong width, ulong height, ulong depth, ulong mipLevels, CPFlags flags = CPFlags.NONE)
         {
-            Native.Initialize3D(pScratchImage, fmt, width, height, depth, mipLevels, flags);
+            return Native.Initialize3D(pScratchImage, fmt, width, height, depth, mipLevels, flags);
         }
 
-        public void InitializeCube(Format fmt, ulong width, ulong height, ulong nCubes, ulong mipLevels, CPFlags flags = CPFlags.NONE)
+        public HResult InitializeCube(Format fmt, ulong width, ulong height, ulong nCubes, ulong mipLevels, CPFlags flags = CPFlags.NONE)
         {
-            Native.InitializeCube(pScratchImage, fmt, width, height, nCubes, mipLevels, flags);
+            return Native.InitializeCube(pScratchImage, fmt, width, height, nCubes, mipLevels, flags);
         }
 
         public void InitializeFromImage(Image image, bool allow1D = false, CPFlags flags = CPFlags.NONE)
@@ -69,9 +70,9 @@ namespace HexaEngine.DirectXTex
             }
         }
 
-        public void OverrideFormat(Format f)
+        public bool OverrideFormat(Format f)
         {
-            Native.OverrideFormat(pScratchImage, f);
+            return Native.OverrideFormat(pScratchImage, f) != 0;
         }
 
         public TexMetadata GetMetadata()

@@ -8,7 +8,7 @@ namespace HexaEngine.DirectXTex
 {
     public static partial class Native
     {
-        public const string LibName = "HexaTexture.dll";
+        public const string LibName = "HexaEngine.DirectXTex.Native.dll";
 
         #region DXGI Format Utilities
 
@@ -19,8 +19,8 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool IsCompressed(in Format fmt);
+        [return: MarshalAs(UnmanagedType.U1)]
+        public static unsafe partial byte IsCompressed(in Format fmt);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
@@ -184,8 +184,7 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe partial bool OverrideFormat(void* img, in Format f);
+        public static unsafe partial byte OverrideFormat(void* img, in Format f);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
