@@ -36,7 +36,7 @@ extern "C"
 	API DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT fmt) noexcept;
 	API DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT fmt) noexcept;
 
-#pragma endregion DXGI Format Utilities
+#pragma endregion
 
 #pragma region TexMetadataMethods
 
@@ -54,9 +54,9 @@ extern "C"
 	API bool IsVolumemap(DirectX::TexMetadata* metadata) noexcept;
 	// Helper for dimension
 
-#pragma endregion TexMetadataMethods
+#pragma endregion
 
-#pragma region ScratchImageInternal
+#pragma region ScratchImageMethods
 
 	API DirectX::ScratchImage* NewScratchImage();
 
@@ -87,9 +87,9 @@ extern "C"
 
 	API bool IsAlphaAllOpaque(DirectX::ScratchImage* img);
 
-#pragma endregion ScratchImageInternal
+#pragma endregion
 
-#pragma region BlobInternal
+#pragma region BlobMethods
 
 	API DirectX::Blob* NewBlob();
 
@@ -106,7 +106,7 @@ extern "C"
 	API HRESULT BlobTrim(DirectX::Blob* blob, size_t size) noexcept;
 	// Shorten size without reallocation
 
-#pragma endregion BlobInternal
+#pragma endregion
 
 #pragma region ImageIO
 
@@ -153,7 +153,9 @@ extern "C"
 	API HRESULT SaveToTGAMemory2(_In_ const DirectX::Image& image, _Out_ DirectX::Blob& blob, _In_opt_ const DirectX::TexMetadata* metadata = nullptr) noexcept;
 	API HRESULT SaveToTGAFile2(_In_ const DirectX::Image& image, _In_z_ const wchar_t* szFile, _In_opt_ const DirectX::TexMetadata* metadata = nullptr) noexcept;
 
-#pragma endregion ImageIO
+#pragma endregion
+
+#pragma region Texture conversion, resizing, mipmap generation, and block compression
 
 #ifdef WIN32
 	API HRESULT FlipRotate(_In_ const DirectX::Image& srcImage, _In_ DirectX::TEX_FR_FLAGS flags, _Out_ DirectX::ScratchImage& image) noexcept;
@@ -200,8 +202,16 @@ extern "C"
 	API HRESULT Decompress(_In_ const DirectX::Image& cImage, _In_ DXGI_FORMAT format, _Out_ DirectX::ScratchImage& image) noexcept;
 	API HRESULT Decompress2(_In_reads_(nimages) const DirectX::Image* cImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DXGI_FORMAT format, _Out_ DirectX::ScratchImage& images) noexcept;
 
+#pragma endregion
+
+#pragma region Normal map operations
+
 	API HRESULT ComputeNormalMap(_In_ const DirectX::Image& srcImage, _In_ DirectX::CNMAP_FLAGS flags, _In_ float amplitude, _In_ DXGI_FORMAT format, _Out_ DirectX::ScratchImage& normalMap) noexcept;
 	API HRESULT ComputeNormalMap2(_In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::CNMAP_FLAGS flags, _In_ float amplitude, _In_ DXGI_FORMAT format, _Out_ DirectX::ScratchImage& normalMaps) noexcept;
+
+#pragma endregion
+
+#pragma region Misc image operations
 
 	API HRESULT CopyRectangle(_In_ const DirectX::Image& srcImage, _In_ const DirectX::Rect& srcRect, _In_ const DirectX::Image& dstImage, _In_ DirectX::TEX_FILTER_FLAGS filter, _In_ size_t xOffset, _In_ size_t yOffset) noexcept;
 
@@ -213,6 +223,10 @@ extern "C"
 	API HRESULT TransformImage(_In_ const DirectX::Image& image, _In_ std::function<void(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y)> pixelFunc, DirectX::ScratchImage& result);
 	API HRESULT TransformImage2(_In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ std::function<void(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y)> pixelFunc, DirectX::ScratchImage& result);
 
+#pragma endregion
+
+#pragma region WIC utility code
+
 #ifdef WIN32
 	API REFGUID GetWICCodec(_In_ DirectX::WICCodecs codec) noexcept;
 
@@ -220,12 +234,16 @@ extern "C"
 	API void SetWICFactory(_In_opt_ IWICImagingFactory* pWIC) noexcept;
 #endif
 
-	//---------------------------------------------------------------------------------
-	// DDS helper functions
+#pragma endregion
+
+#pragma region DDS helper functions
+
 	API HRESULT EncodeDDSHeader(_In_ const DirectX::TexMetadata& metadata, DirectX::DDS_FLAGS flags, _Out_writes_bytes_to_opt_(maxsize, required) void* pDestination, _In_ size_t maxsize, _Out_ size_t& required) noexcept;
 
-	//---------------------------------------------------------------------------------
-	// Direct3D 11 functions
+#pragma endregion
+
+#pragma region Direct3D 11 functions
+
 #if defined(__d3d11_h__) || defined(__d3d11_x_h__)
 	API bool IsSupportedTexture(_In_ ID3D11Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept;
 
@@ -242,8 +260,10 @@ extern "C"
 	API HRESULT CaptureTexture(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pContext, _In_ ID3D11Resource* pSource, _Out_ DirectX::ScratchImage& result) noexcept;
 #endif
 
-	//---------------------------------------------------------------------------------
-	// Direct3D 12 functions
+#pragma endregion
+
+#pragma region Direct3D 12 functions
+
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 	API bool IsSupportedTexture(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept;
 
@@ -255,6 +275,8 @@ extern "C"
 
 	API HRESULT CaptureTexture(_In_ ID3D12CommandQueue* pCommandQueue, _In_ ID3D12Resource* pSource, _In_ bool isCubeMap, _Out_ DirectX::ScratchImage& result, _In_ D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET, _In_ D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET) noexcept;
 #endif
+
+#pragma endregion
 
 #ifdef __cplusplus
 }
