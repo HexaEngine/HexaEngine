@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\Juna\source\repos\JunaMeinhold\HexaEngine\HexaEngine.DirectXTex.Native\build\CMakeFiles\729604290ac63c6713a0e24d2ecf8067\generate.stamp.rule">
+    <CustomBuild Include="C:\Users\Tom\source\repos\JunaMeinhold\HexaEngine\HexaEngine.DirectXTex.Native\build\CMakeFiles\2850fedd20df3d6ef4b39a139f881ba7\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{2BFA0140-EBC6-36FA-AC7B-5F00D8C823C6}</UniqueIdentifier>
+      <UniqueIdentifier>{4B99794F-3FFA-3E75-85E6-9164BBA02B38}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

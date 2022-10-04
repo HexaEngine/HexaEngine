@@ -46,5 +46,10 @@
         {
             Native.BlobTrim(pBlob, size);
         }
+
+        public Span<byte> ToBytes()
+        {
+            return new Span<byte>(GetBufferPointer(), (int)GetBufferSize());
+        }
     }
 }

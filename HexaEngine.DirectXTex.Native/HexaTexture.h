@@ -27,20 +27,20 @@ extern "C"
 	API size_t BitsPerColor(_In_ DXGI_FORMAT& fmt) noexcept;
 
 	API DirectX::FORMAT_TYPE FormatDataType(_In_ DXGI_FORMAT& fmt) noexcept;
-	API HRESULT ComputePitch(_In_ DXGI_FORMAT fmt, _In_ size_t width, _In_ size_t height, _Out_ size_t& rowPitch, _Out_ size_t& slicePitch, _In_ DirectX::CP_FLAGS flags = DirectX::CP_FLAGS_NONE) noexcept;
+	API HRESULT ComputePitch(_In_ DXGI_FORMAT& fmt, _In_ size_t& width, _In_ size_t& height, _Out_ size_t& rowPitch, _Out_ size_t& slicePitch, _In_ DirectX::CP_FLAGS& flags) noexcept;
 
-	API size_t ComputeScanlines(_In_ DXGI_FORMAT fmt, _In_ size_t height) noexcept;
+	API size_t ComputeScanlines(_In_ DXGI_FORMAT &fmt, _In_ size_t &height) noexcept;
 
-	API DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT fmt) noexcept;
-	API DXGI_FORMAT MakeTypeless(_In_ DXGI_FORMAT fmt) noexcept;
-	API DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT fmt) noexcept;
-	API DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT fmt) noexcept;
+	API DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT &fmt) noexcept;
+	API DXGI_FORMAT MakeTypeless(_In_ DXGI_FORMAT &fmt) noexcept;
+	API DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT &fmt) noexcept;
+	API DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT &fmt) noexcept;
 
 #pragma endregion
 
 #pragma region TexMetadataMethods
 
-	API size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept;
+	API size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t &mip, _In_ size_t &item, _In_ size_t &slice) noexcept;
 	// Returns size_t(-1) to indicate an out-of-range error
 
 	API bool IsCubemap(DirectX::TexMetadata* metadata) noexcept;
@@ -93,7 +93,7 @@ extern "C"
 
 	API DirectX::Blob* NewBlob();
 
-	API HRESULT BlobInitialize(DirectX::Blob* blob, _In_ size_t size) noexcept;
+	API HRESULT BlobInitialize(DirectX::Blob* blob, _In_ size_t& size) noexcept;
 
 	API void BlobRelease(DirectX::Blob** blob) noexcept;
 
@@ -114,11 +114,11 @@ extern "C"
 	API HRESULT LoadFromDDSMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t& size, _In_ DirectX::DDS_FLAGS& flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;
 	API HRESULT LoadFromDDSFile(_In_z_ const wchar_t* szFile, _In_ DirectX::DDS_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;
 
-	API HRESULT SaveToDDSMemory(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS flags, _Out_ DirectX::Blob& blob) noexcept;
-	API HRESULT SaveToDDSMemory2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::DDS_FLAGS flags, _Out_ DirectX::Blob& blob) noexcept;
+	API HRESULT SaveToDDSMemory(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS& flags, _Out_ DirectX::Blob& blob) noexcept;
+	API HRESULT SaveToDDSMemory2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DirectX::DDS_FLAGS& flags, _Out_ DirectX::Blob& blob) noexcept;
 
 	API HRESULT SaveToDDSFile(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS flags, _In_z_ const wchar_t* szFile) noexcept;
-	API HRESULT SaveToDDSFile2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::DDS_FLAGS flags, _In_z_ const wchar_t* szFile) noexcept;
+	API HRESULT SaveToDDSFile2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DirectX::DDS_FLAGS& flags, _In_z_ const wchar_t* szFile) noexcept;
 
 	// HDR operations
 	API HRESULT LoadFromHDRMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;

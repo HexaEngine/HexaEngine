@@ -1,6 +1,6 @@
 namespace HexaEngine.DirectXTex.Tests
 {
-    public unsafe class ScratchImageInternal
+    public unsafe class ScratchImageMethods
     {
         [Fact]
         public void CreateAndFree()

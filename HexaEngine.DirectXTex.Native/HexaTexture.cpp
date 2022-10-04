@@ -58,29 +58,29 @@ DirectX::FORMAT_TYPE FormatDataType(_In_ DXGI_FORMAT& fmt) noexcept
 {
 	return DirectX::FormatDataType(fmt);
 }
-HRESULT ComputePitch(_In_ DXGI_FORMAT fmt, _In_ size_t width, _In_ size_t height, _Out_ size_t& rowPitch, _Out_ size_t& slicePitch, _In_ DirectX::CP_FLAGS flags) noexcept
+HRESULT ComputePitch(_In_ DXGI_FORMAT& fmt, _In_ size_t &width, _In_ size_t& height, _Out_ size_t& rowPitch, _Out_ size_t& slicePitch, _In_ DirectX::CP_FLAGS& flags) noexcept
 {
 	return DirectX::ComputePitch(fmt, width, height, rowPitch, slicePitch, flags);
 }
 
-size_t ComputeScanlines(_In_ DXGI_FORMAT fmt, _In_ size_t height) noexcept
+size_t ComputeScanlines(_In_ DXGI_FORMAT &fmt, _In_ size_t &height) noexcept
 {
 	return DirectX::ComputeScanlines(fmt, height);
 }
 
-DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT fmt) noexcept
+DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT &fmt) noexcept
 {
 	return DirectX::MakeSRGB(fmt);
 }
-DXGI_FORMAT MakeTypeless(_In_ DXGI_FORMAT fmt) noexcept
+DXGI_FORMAT MakeTypeless(_In_ DXGI_FORMAT &fmt) noexcept
 {
 	return DirectX::MakeTypeless(fmt);
 }
-DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT fmt) noexcept
+DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT &fmt) noexcept
 {
 	return DirectX::MakeTypelessUNORM(fmt);
 }
-DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT fmt) noexcept
+DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT &fmt) noexcept
 {
 	return DirectX::MakeTypelessFLOAT(fmt);
 }
@@ -89,7 +89,7 @@ DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT fmt) noexcept
 
 #pragma region TexMetadataMethods
 
-size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept
+size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t &mip, _In_ size_t& item, _In_ size_t& slice) noexcept
 {
 	return metadata->ComputeIndex(mip, item, slice);
 }
@@ -240,7 +240,7 @@ DirectX::Blob* NewBlob()
 	return new DirectX::Blob();
 }
 
-HRESULT BlobInitialize(DirectX::Blob* blob, _In_ size_t size) noexcept
+HRESULT BlobInitialize(DirectX::Blob* blob, _In_ size_t &size) noexcept
 {
 	return blob->Initialize(size);
 }
@@ -288,14 +288,15 @@ HRESULT LoadFromDDSFile(_In_z_ const wchar_t* szFile, _In_ DirectX::DDS_FLAGS fl
 	return DirectX::LoadFromDDSFile(szFile, flags, metadata, *image);
 }
 
-HRESULT SaveToDDSMemory(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS flags, _Out_ DirectX::Blob& blob) noexcept
+HRESULT SaveToDDSMemory(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS& flags, _Out_ DirectX::Blob& blob) noexcept
 {
 	return DirectX::SaveToDDSMemory(image, flags, blob);
 }
 
-HRESULT SaveToDDSMemory2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::DDS_FLAGS flags, _Out_ DirectX::Blob& blob) noexcept
+HRESULT SaveToDDSMemory2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DirectX::DDS_FLAGS& flags, _Out_ DirectX::Blob& blob) noexcept
 {
-	return DirectX::SaveToDDSMemory(images, nimages, metadata, flags, blob);
+	const DirectX::TexMetadata* meta = *(const DirectX::TexMetadata**)(const void*)metadata;
+	return DirectX::SaveToDDSMemory(images, nimages, *meta, flags, blob);
 }
 
 HRESULT SaveToDDSFile(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS flags, _In_z_ const wchar_t* szFile) noexcept
@@ -303,9 +304,10 @@ HRESULT SaveToDDSFile(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS 
 	return DirectX::SaveToDDSFile(image, flags, szFile);
 }
 
-HRESULT SaveToDDSFile2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::DDS_FLAGS flags, _In_z_ const wchar_t* szFile) noexcept
+HRESULT SaveToDDSFile2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DirectX::DDS_FLAGS& flags, _In_z_ const wchar_t* szFile) noexcept
 {
-	return DirectX::SaveToDDSFile(images, nimages, metadata, flags, szFile);
+	const DirectX::TexMetadata* meta = *(const DirectX::TexMetadata**)(const void*)metadata;
+	return DirectX::SaveToDDSFile(images, nimages, *meta, flags, szFile);
 }
 
 // HDR operations

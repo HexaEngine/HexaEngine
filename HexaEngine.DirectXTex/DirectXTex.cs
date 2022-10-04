@@ -255,6 +255,24 @@
             Native.CaptureTexture(device, context, resource, image->pScratchImage);
         }
 
+        public static void SaveToDDSMemory(Image* image, DDSFlags flags, TexBlob* blob)
+        {
+            Native.SaveToDDSMemory(image, flags, blob);
+        }
+
+        public static void SaveToDDSMemory(Image* images, ulong nImages, TexMetadata* metadata, DDSFlags flags, TexBlob* blob)
+        {
+            Native.SaveToDDSMemory2(images, nImages, metadata, flags, blob);
+        }
+
+        public static void SaveToDDSMemory(ScratchImage* image, DDSFlags flags, TexBlob* blob)
+        {
+            TexMetadata metadata = image->GetMetadata();
+            ulong nImages = image->GetImageCount();
+            Image* images = image->GetImages();
+            Native.SaveToDDSMemory2(images, nImages, &metadata, flags, blob);
+        }
+
         public static void SaveToDDSFile(Image* image, DDSFlags flags, string path)
         {
             Native.SaveToDDSFile(image, flags, path);
