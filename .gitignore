@@ -365,6 +365,7 @@ glTF-Sample-Models-master.zip
 *.dds
 
 # Cmake
+build
 .cmake
 CMakeLists.txt.user
 CMakeCache.txt
