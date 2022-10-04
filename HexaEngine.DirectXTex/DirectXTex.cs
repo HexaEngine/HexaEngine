@@ -4,10 +4,23 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
-    using System.Runtime.CompilerServices;
 
     public static unsafe class DirectXTex
     {
+        private static void ThrowIf(this int hresult)
+        {
+            HResult result = hresult;
+            if (!result.IsSuccess)
+                result.Throw();
+        }
+
+        private static void ThrowIf(this uint hresult)
+        {
+            HResult result = unchecked((int)hresult);
+            if (!result.IsSuccess)
+                result.Throw();
+        }
+
         #region DXGI Format Utilities
 
         public static bool IsValid(Format format)
@@ -75,9 +88,9 @@
             return Native.FormatDataType(format);
         }
 
-        public static HResult ComputePitch(Format format, ulong width, ulong height, ref ulong rowPitch, ref ulong slicePitch, CPFlags flags)
+        public static HResult ComputePitch(Format format, ulong width, ulong height, ulong* rowPitch, ulong* slicePitch, CPFlags flags)
         {
-            return Native.ComputePitch(format, width, height, (ulong*)Unsafe.AsPointer(ref rowPitch), (ulong*)Unsafe.AsPointer(ref slicePitch), flags);
+            return Native.ComputePitch(format, width, height, rowPitch, slicePitch, flags);
         }
 
         public static ulong ComputeScanlines(Format format, ulong height)
@@ -107,60 +120,131 @@
 
         #endregion DXGI Format Utilities
 
-        public static void Compress(Image* srcImage, Format fmt, TexCompressFlags flags, float threshold, ScratchImage* image)
+        #region MetadataIO
+
+        public static unsafe void GetMetadataFromDDSMemory(byte[] data, DDSFlags flags, TexMetadata* metadata)
         {
-            Native.Compress(srcImage, fmt, flags, threshold, image->pScratchImage);
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromDDSMemory(pSource, size, flags, metadata).ThrowIf();
+            }
         }
 
-        public static void Compress(Image* srcImages, ulong nImages, TexMetadata* metadata, Format fmt, TexCompressFlags flags, float threshold, ScratchImage* image)
+        public static unsafe void GetMetadataFromDDSMemory(Span<byte> data, DDSFlags flags, TexMetadata* metadata)
         {
-            Native.Compress2(srcImages, nImages, metadata, fmt, flags, threshold, image->pScratchImage);
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromDDSMemory(pSource, size, flags, metadata).ThrowIf();
+            }
         }
 
-        public static void Compress(ScratchImage* srcImage, Format fmt, TexCompressFlags flags, float alphaWeight, ScratchImage* image)
+        public static unsafe void GetMetadataFromDDSMemory(void* pSource, ulong size, DDSFlags flags, TexMetadata* metadata)
         {
-            TexMetadata metadata = srcImage->GetMetadata();
-            ulong nImages = srcImage->GetImageCount();
-            Image* srcImages = srcImage->GetImages();
-            Native.Compress2(srcImages, nImages, &metadata, fmt, flags, alphaWeight, image->pScratchImage);
+            Native.GetMetadataFromDDSMemory(pSource, size, flags, metadata).ThrowIf();
         }
 
-        public static void Compress(ID3D11Device* device, Image* srcImage, Format fmt, TexCompressFlags flags, float alphaWeight, ScratchImage* image)
+        public static unsafe void GetMetadataFromDDSFile(string szFile, DDSFlags flags, TexMetadata* metadata)
         {
-            Native.Compress3(device, srcImage, fmt, flags, alphaWeight, image->pScratchImage);
+            Native.GetMetadataFromDDSFile(szFile, flags, metadata);
         }
 
-        public static void Compress(ID3D11Device* device, ScratchImage* srcImage, Format fmt, TexCompressFlags flags, float alphaWeight, ScratchImage* image)
+        public static unsafe void GetMetadataFromHDRMemory(byte[] data, TexMetadata* metadata)
         {
-            TexMetadata metadata = srcImage->GetMetadata();
-            ulong nImages = srcImage->GetImageCount();
-            Image* srcImages = srcImage->GetImages();
-            HResult result = Native.Compress4(device, srcImages, nImages, &metadata, fmt, flags, alphaWeight, image->pScratchImage);
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromHDRMemory(pSource, size, metadata).ThrowIf();
+            }
         }
 
-        public static void Convert(Image* srcImage, Format fmt, TexFilterFlags flags, float threshold, ScratchImage* image)
+        public static unsafe void GetMetadataFromHDRMemory(Span<byte> data, TexMetadata* metadata)
         {
-            Native.Convert(srcImage, fmt, flags, threshold, image->pScratchImage);
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromHDRMemory(pSource, size, metadata).ThrowIf();
+            }
         }
 
-        public static void Convert(Image* srcImages, ulong nImages, TexMetadata* metadata, Format fmt, TexFilterFlags flags, float threshold, ScratchImage* image)
+        public static unsafe void GetMetadataFromHDRMemory(void* pSource, ulong size, TexMetadata* metadata)
         {
-            Native.Convert2(srcImages, nImages, metadata, fmt, flags, threshold, image->pScratchImage);
+            Native.GetMetadataFromHDRMemory(pSource, size, metadata).ThrowIf();
         }
 
-        public static void Convert(ScratchImage* srcImage, Format fmt, TexFilterFlags flags, float threshold, ScratchImage* image)
+        public static unsafe void GetMetadataFromHDRFile(string szFile, TexMetadata* metadata)
         {
-            TexMetadata metadata = srcImage->GetMetadata();
-            ulong nImages = srcImage->GetImageCount();
-            Image* srcImages = srcImage->GetImages();
-            Native.Convert2(srcImages, nImages, &metadata, fmt, flags, threshold, image->pScratchImage);
+            Native.GetMetadataFromHDRFile(szFile, metadata).ThrowIf();
         }
+
+        public static unsafe void GetMetadataFromTGAMemory(byte[] data, TGAFlags flags, TexMetadata* metadata)
+        {
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromTGAMemory(pSource, size, flags, metadata).ThrowIf();
+            }
+        }
+
+        public static unsafe void GetMetadataFromTGAMemory(Span<byte> data, TGAFlags flags, TexMetadata* metadata)
+        {
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromTGAMemory(pSource, size, flags, metadata).ThrowIf();
+            }
+        }
+
+        public static unsafe void GetMetadataFromTGAMemory(void* pSource, ulong size, TGAFlags flags, TexMetadata* metadata)
+        {
+            Native.GetMetadataFromTGAMemory(pSource, size, flags, metadata).ThrowIf();
+        }
+
+        public static unsafe void GetMetadataFromTGAFile(string szFile, TGAFlags flags, TexMetadata* metadata)
+        {
+            Native.GetMetadataFromTGAFile(szFile, flags, metadata).ThrowIf();
+        }
+
+        public static unsafe void GetMetadataFromWICMemory(byte[] data, WICFlags flags, TexMetadata* metadata)
+        {
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromWICMemory(pSource, size, flags, metadata).ThrowIf();
+            }
+        }
+
+        public static unsafe void GetMetadataFromWICMemory(Span<byte> data, WICFlags flags, TexMetadata* metadata)
+        {
+            ulong size = (ulong)data.Length;
+            fixed (void* pSource = data)
+            {
+                Native.GetMetadataFromWICMemory(pSource, size, flags, metadata).ThrowIf();
+            }
+        }
+
+        public static unsafe void GetMetadataFromWICMemory(void* pSource, ulong size, WICFlags flags, TexMetadata* metadata)
+        {
+            Native.GetMetadataFromWICMemory(pSource, size, flags, metadata).ThrowIf();
+        }
+
+        public static unsafe void GetMetadataFromWICFile(string szFile, WICFlags flags, TexMetadata* metadata)
+        {
+            Native.GetMetadataFromWICFile(szFile, flags, metadata).ThrowIf();
+        }
+
+        #endregion MetadataIO
+
+        #region ImageIO
+
+        #region DDS operations
 
         public static void LoadFromDDSMemory(byte[] data, DDSFlags flags, ScratchImage* image)
         {
             fixed (byte* ptr = data)
             {
-                Native.LoadFromDDSMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage);
+                Native.LoadFromDDSMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
             }
         }
 
@@ -168,101 +252,23 @@
         {
             fixed (byte* ptr = data)
             {
-                Native.LoadFromDDSMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage);
+                Native.LoadFromDDSMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
             }
         }
 
-        public static void LoadFromDDSMemory(void* pSource, ulong size, DDSFlags flags, ScratchImage* image)
+        public static void LoadFromDDSFile(string path, DDSFlags flags, ScratchImage* image)
         {
-            Native.LoadFromDDSMemory(pSource, size, flags, null, image->pScratchImage);
-        }
-
-        public static void LoadFromTGAMemory(byte[] data, TGAFlags flags, ScratchImage* image)
-        {
-            fixed (byte* ptr = data)
-            {
-                Native.LoadFromTGAMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage);
-            }
-        }
-
-        public static void LoadFromTGAMemory(Span<byte> data, TGAFlags flags, ScratchImage* image)
-        {
-            fixed (byte* ptr = data)
-            {
-                Native.LoadFromTGAMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage);
-            }
-        }
-
-        public static void LoadFromTGAMemory(void* pSource, ulong size, TGAFlags flags, ScratchImage* image)
-        {
-            Native.LoadFromTGAMemory(pSource, size, flags, null, image->pScratchImage);
-        }
-
-        public static void LoadFromHDRMemory(byte[] data, ScratchImage* image)
-        {
-            fixed (byte* ptr = data)
-            {
-                Native.LoadFromHDRMemory(ptr, (ulong)data.Length, null, image->pScratchImage);
-            }
-        }
-
-        public static void LoadFromHDRMemory(Span<byte> data, ScratchImage* image)
-        {
-            fixed (byte* ptr = data)
-            {
-                Native.LoadFromHDRMemory(ptr, (ulong)data.Length, null, image->pScratchImage);
-            }
-        }
-
-        public static void LoadFromHDRMemory(void* pSource, ulong size, ScratchImage* image)
-        {
-            Native.LoadFromHDRMemory(pSource, size, null, image->pScratchImage);
-        }
-
-        public static void LoadFromWICMemory(byte[] data, WICFlags flags, ScratchImage* image)
-        {
-            fixed (byte* ptr = data)
-            {
-                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage);
-            }
-        }
-
-        public static void LoadFromWICMemory(Span<byte> data, WICFlags flags, ScratchImage* image)
-        {
-            fixed (byte* ptr = data)
-            {
-                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage);
-            }
-        }
-
-        public static void LoadFromWICMEMORY(void* pSource, ulong size, WICFlags flags, ScratchImage* image)
-        {
-            Native.LoadFromWICMemory(pSource, size, flags, null, image->pScratchImage);
-        }
-
-        public static void CreateTextureEx(ID3D11Device* device, ScratchImage* image, Usage usage, BindFlag bind, CpuAccessFlag cpu, ResourceMiscFlag misc, bool forceSRGB, ID3D11Resource** resource)
-        {
-            HResult result = Native.CreateTextureEx2(device, image->pScratchImage, (uint)usage, (uint)bind, (uint)cpu, (uint)misc, forceSRGB, resource);
-        }
-
-        public static void CreateTextureEx(ID3D11Device* device, Image* images, ulong nImages, TexMetadata* metadata, Usage usage, BindFlag bind, CpuAccessFlag cpu, ResourceMiscFlag misc, bool forceSRGB, ID3D11Resource** resource)
-        {
-            Native.CreateTextureEx(device, images, nImages, metadata, usage, (uint)bind, (uint)cpu, (uint)misc, forceSRGB, resource);
-        }
-
-        public static void CaptureTexture(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11Resource* resource, ScratchImage* image)
-        {
-            Native.CaptureTexture(device, context, resource, image->pScratchImage);
+            Native.LoadFromDDSFile(path, flags, null, image->pScratchImage).ThrowIf();
         }
 
         public static void SaveToDDSMemory(Image* image, DDSFlags flags, TexBlob* blob)
         {
-            Native.SaveToDDSMemory(image, flags, blob);
+            Native.SaveToDDSMemory(image, flags, blob->pBlob).ThrowIf();
         }
 
         public static void SaveToDDSMemory(Image* images, ulong nImages, TexMetadata* metadata, DDSFlags flags, TexBlob* blob)
         {
-            Native.SaveToDDSMemory2(images, nImages, metadata, flags, blob);
+            Native.SaveToDDSMemory2(images, nImages, metadata, flags, blob->pBlob).ThrowIf();
         }
 
         public static void SaveToDDSMemory(ScratchImage* image, DDSFlags flags, TexBlob* blob)
@@ -270,17 +276,17 @@
             TexMetadata metadata = image->GetMetadata();
             ulong nImages = image->GetImageCount();
             Image* images = image->GetImages();
-            Native.SaveToDDSMemory2(images, nImages, &metadata, flags, blob);
+            Native.SaveToDDSMemory2(images, nImages, &metadata, flags, blob->pBlob).ThrowIf();
         }
 
         public static void SaveToDDSFile(Image* image, DDSFlags flags, string path)
         {
-            Native.SaveToDDSFile(image, flags, path);
+            Native.SaveToDDSFile(image, flags, path).ThrowIf();
         }
 
         public static void SaveToDDSFile(Image* images, ulong nImages, TexMetadata* metadata, DDSFlags flags, string path)
         {
-            Native.SaveToDDSFile2(images, nImages, metadata, flags, path);
+            Native.SaveToDDSFile2(images, nImages, metadata, flags, path).ThrowIf();
         }
 
         public static void SaveToDDSFile(ScratchImage* image, DDSFlags flags, string path)
@@ -288,40 +294,400 @@
             TexMetadata metadata = image->GetMetadata();
             ulong nImages = image->GetImageCount();
             Image* images = image->GetImages();
-            Native.SaveToDDSFile2(images, nImages, &metadata, flags, path);
+            Native.SaveToDDSFile2(images, nImages, &metadata, flags, path).ThrowIf();
         }
 
-        public static void SaveToTGAFile(Image* image, TGAFlags flags, string path)
+        #endregion DDS operations
+
+        #region HDR operations
+
+        public static void LoadFromHDRMemory(byte[] data, ScratchImage* image)
         {
-            Native.SaveToTGAFile(image, flags, path);
+            fixed (byte* ptr = data)
+            {
+                Native.LoadFromHDRMemory(ptr, (ulong)data.Length, null, image->pScratchImage).ThrowIf();
+            }
         }
 
-        public static void SaveToTGAFile(ScratchImage* image, int index, TGAFlags flags, string path)
+        public static void LoadFromHDRMemory(Span<byte> data, ScratchImage* image)
         {
-            Image* images = image->GetImages();
-            Native.SaveToTGAFile(&images[index], flags, path);
+            fixed (byte* ptr = data)
+            {
+                Native.LoadFromHDRMemory(ptr, (ulong)data.Length, null, image->pScratchImage).ThrowIf();
+            }
+        }
+
+        public static void LoadFromHDRMemory(void* pSource, ulong size, ScratchImage* image)
+        {
+            Native.LoadFromHDRMemory(pSource, size, null, image->pScratchImage).ThrowIf();
+        }
+
+        public static void LoadFromHDRFile(string path, ScratchImage* image)
+        {
+            Native.LoadFromHDRFile(path, null, image->pScratchImage).ThrowIf();
+        }
+
+        public static void SaveToHDRMemory(Image* image, TexBlob* blob)
+        {
+            Native.SaveToHDRMemory(image, blob->pBlob).ThrowIf();
+        }
+
+        public static void SaveToHDRMemory(ScratchImage* image, int index, TexBlob* blob)
+        {
+            Native.SaveToHDRMemory(&image->GetImages()[index], blob->pBlob).ThrowIf();
         }
 
         public static void SaveToHDRFile(Image* image, string path)
         {
-            Native.SaveToHDRFile(image, path);
+            Native.SaveToHDRFile(image, path).ThrowIf();
         }
 
         public static void SaveToHDRFile(ScratchImage* image, int index, string path)
         {
-            Image* images = image->GetImages();
-            Native.SaveToHDRFile(&images[index], path);
+            Native.SaveToHDRFile(&image->GetImages()[index], path).ThrowIf();
         }
 
-        public static void SaveToWICFile(Image* image, WICFlags flags, Guid containerGuid, string path)
+        #endregion HDR operations
+
+        #region TGA operations
+
+        public static void LoadFromTGAMemory(byte[] data, TGAFlags flags, ScratchImage* image)
         {
-            Native.SaveToWICFile(image, flags, &containerGuid, path);
+            fixed (byte* ptr = data)
+            {
+                Native.LoadFromTGAMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
+            }
         }
 
-        public static void SaveToWICFile(ScratchImage* image, int index, WICFlags flags, Guid* containerGuid, string path)
+        public static void LoadFromTGAMemory(Span<byte> data, TGAFlags flags, ScratchImage* image)
         {
+            fixed (byte* ptr = data)
+            {
+                Native.LoadFromTGAMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
+            }
+        }
+
+        public static void LoadFromTGAMemory(void* pSource, ulong size, TGAFlags flags, ScratchImage* image)
+        {
+            Native.LoadFromTGAMemory(pSource, size, flags, null, image->pScratchImage).ThrowIf();
+        }
+
+        public static void LoadFromTGAFile(string path, TGAFlags flags, ScratchImage* image)
+        {
+            Native.LoadFromTGAFile(path, flags, null, image->pScratchImage).ThrowIf();
+        }
+
+        public static void SaveToTGAMemory(Image* image, TGAFlags flags, TexBlob* blob)
+        {
+            Native.SaveToTGAMemory(image, flags, blob->pBlob).ThrowIf();
+        }
+
+        public static void SaveToTGAMemory(ScratchImage* image, int index, TGAFlags flags, TexBlob* blob)
+        {
+            Native.SaveToTGAMemory(&image->GetImages()[index], flags, blob->pBlob).ThrowIf();
+        }
+
+        public static void SaveToTGAFile(Image* image, TGAFlags flags, string path)
+        {
+            Native.SaveToTGAFile(image, flags, path).ThrowIf();
+        }
+
+        public static void SaveToTGAFile(ScratchImage* image, int index, TGAFlags flags, string path)
+        {
+            Native.SaveToTGAFile(&image->GetImages()[index], flags, path).ThrowIf();
+        }
+
+        #endregion TGA operations
+
+        #region WIC operations
+
+        public static void LoadFromWICMemory(byte[] data, WICFlags flags, ScratchImage* image)
+        {
+            fixed (byte* ptr = data)
+            {
+                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
+            }
+        }
+
+        public static void LoadFromWICMemory(Span<byte> data, WICFlags flags, ScratchImage* image)
+        {
+            fixed (byte* ptr = data)
+            {
+                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
+            }
+        }
+
+        public static void LoadFromWICMemory(void* pSource, ulong size, WICFlags flags, ScratchImage* image)
+        {
+            Native.LoadFromWICMemory(pSource, size, flags, null, image->pScratchImage).ThrowIf();
+        }
+
+        public static void LoadFromWICFile(string path, WICFlags flags, ScratchImage* image)
+        {
+            Native.LoadFromWICFile(path, flags, null, image->pScratchImage).ThrowIf();
+        }
+
+        public static void SaveToWICMemory(Image* image, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null)
+        {
+            Native.SaveToWICMemory(image, flags, containerGuid, blob->pBlob, targetFormat).ThrowIf();
+        }
+
+        public static void SaveToWICMemory(Image* images, ulong nImages, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null)
+        {
+            Native.SaveToWICMemory2(images, nImages, flags, containerGuid, blob->pBlob, targetFormat).ThrowIf();
+        }
+
+        public static void SaveToWICMemory(ScratchImage* image, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null)
+        {
+            ulong nImages = image->GetImageCount();
             Image* images = image->GetImages();
-            Native.SaveToWICFile(&images[index], flags, containerGuid, path);
+            Native.SaveToWICMemory2(images, nImages, flags, containerGuid, blob->pBlob, targetFormat).ThrowIf();
+        }
+
+        public static void SaveToWICFile(Image* image, WICFlags flags, Guid containerGuid, string path, Guid* targetFormat = null)
+        {
+            Native.SaveToWICFile(image, flags, &containerGuid, path, targetFormat).ThrowIf();
+        }
+
+        public static void SaveToWICFile(ScratchImage* image, int index, WICFlags flags, Guid* containerGuid, string path, Guid* targetFormat = null)
+        {
+            Native.SaveToWICFile(&image->GetImages()[index], flags, containerGuid, path, targetFormat).ThrowIf();
+        }
+
+        public static void SaveToWICFile(ScratchImage* image, WICFlags flags, Guid* containerGuid, string path, Guid* targetFormat = null)
+        {
+            Native.SaveToWICFile2(image->GetImages(), image->GetImageCount(), flags, containerGuid, path, targetFormat).ThrowIf();
+        }
+
+        #endregion WIC operations
+
+        #endregion ImageIO
+
+        #region Texture conversion, resizing, mipmap generation, and block compression
+
+        public static unsafe void FlipRotate(Image* srcImage, TexFrFlags flags, ScratchImage* image)
+        {
+            Native.FlipRotate(srcImage, flags, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void FlipRotate(ScratchImage* srcImage, TexFrFlags flags, ScratchImage* result)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.FlipRotate2(srcImages, nimages, &metadata, flags, result->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void FlipRotate(Image* srcImages, ulong nimages, TexMetadata* metadata, TexFrFlags flags, ScratchImage* result)
+        {
+            Native.FlipRotate2(srcImages, nimages, metadata, flags, result->pScratchImage).ThrowIf();
+        }
+
+        // Flip and/or rotate image
+
+        public static unsafe void Resize(Image* srcImage, ulong width, ulong height, TexFilterFlags filter, ScratchImage* image)
+        {
+            Native.Resize(srcImage, width, height, filter, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Resize(ScratchImage* srcImage, ulong width, ulong height, TexFilterFlags filter, ScratchImage* result)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.Resize2(srcImages, nimages, &metadata, width, height, filter, result->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Resize(Image* srcImages, ulong nimages, TexMetadata* metadata, ulong width, ulong height, TexFilterFlags filter, ScratchImage* result)
+        {
+            Native.Resize2(srcImages, nimages, metadata, width, height, filter, result->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Convert(Image* srcImage, Format format, TexFilterFlags filter, float threshold, ScratchImage* image)
+        {
+            Native.Convert(srcImage, format, filter, threshold, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Convert(ScratchImage* srcImage, Format format, TexFilterFlags filter, float threshold, ScratchImage* result)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.Convert2(srcImages, nimages, &metadata, format, filter, threshold, result->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Convert(Image* srcImages, ulong nimages, TexMetadata* metadata, Format format, TexFilterFlags filter, float threshold, ScratchImage* result)
+        {
+            Native.Convert2(srcImages, nimages, metadata, format, filter, threshold, result->pScratchImage).ThrowIf();
+        }
+
+        // Convert the image to a new format
+
+        public static unsafe void ConvertToSinglePlane(Image* srcImage, ScratchImage* image)
+        {
+            Native.ConvertToSinglePlane(srcImage, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void ConvertToSinglePlane(ScratchImage* srcImage, ScratchImage* image)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.ConvertToSinglePlane2(srcImages, nimages, &metadata, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void ConvertToSinglePlane(Image* srcImages, ulong nimages, TexMetadata* metadata, ScratchImage* image)
+        {
+            Native.ConvertToSinglePlane2(srcImages, nimages, metadata, image->pScratchImage).ThrowIf();
+        }
+
+        // Converts the image from a planar format to an equivalent non-planar format
+
+        public static unsafe void GenerateMipMaps(Image* baseImage, TexFilterFlags filter, ulong levels, ScratchImage* mipChain, bool allow1D = false)
+        {
+            Native.GenerateMipMaps(baseImage, filter, levels, mipChain->pScratchImage, allow1D).ThrowIf();
+        }
+
+        public static unsafe void GenerateMipMaps(ScratchImage* srcImage, TexFilterFlags filter, ulong levels, ScratchImage* mipChain)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.GenerateMipMaps2(srcImages, nimages, &metadata, filter, levels, mipChain->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void GenerateMipMaps(Image* srcImages, ulong nimages, TexMetadata* metadata, TexFilterFlags filter, ulong levels, ScratchImage* mipChain)
+        {
+            Native.GenerateMipMaps2(srcImages, nimages, metadata, filter, levels, mipChain->pScratchImage).ThrowIf();
+        }
+
+        // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
+        // Defaults to Fant filtering which is equivalent to a box filter
+
+        public static unsafe void GenerateMipMaps3D(Image* baseImages, ulong depth, TexFilterFlags filter, ulong levels, ScratchImage* mipChain)
+        {
+            Native.GenerateMipMaps3D(baseImages, depth, filter, levels, mipChain->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void GenerateMipMaps3D(ScratchImage* srcImage, TexFilterFlags filter, ulong levels, ScratchImage* mipChain)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.GenerateMipMaps3D2(srcImages, nimages, &metadata, filter, levels, mipChain->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void GenerateMipMaps3D(Image* srcImages, ulong nimages, TexMetadata* metadata, TexFilterFlags filter, ulong levels, ScratchImage* mipChain)
+        {
+            Native.GenerateMipMaps3D2(srcImages, nimages, metadata, filter, levels, mipChain->pScratchImage).ThrowIf();
+        }
+
+        // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
+        // Defaults to Fant filtering which is equivalent to a box filter
+        public static unsafe void ScaleMipMapsAlphaForCoverage(ScratchImage* srcImage, ulong item, float alphaReference, ScratchImage* mipChain)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.ScaleMipMapsAlphaForCoverage(srcImages, nimages, &metadata, item, alphaReference, mipChain->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void ScaleMipMapsAlphaForCoverage(Image* srcImages, ulong nimages, TexMetadata* metadata, ulong item, float alphaReference, ScratchImage* mipChain)
+        {
+            Native.ScaleMipMapsAlphaForCoverage(srcImages, nimages, metadata, item, alphaReference, mipChain->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void PremultiplyAlpha(Image* srcImage, TexPmAlphaFlags flags, ScratchImage* image)
+        {
+            Native.PremultiplyAlpha(srcImage, flags, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void PremultiplyAlpha(ScratchImage* srcImage, TexPmAlphaFlags flags, ScratchImage* result)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.PremultiplyAlpha2(srcImages, nimages, &metadata, flags, result->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void PremultiplyAlpha(Image* srcImages, ulong nimages, TexMetadata* metadata, TexPmAlphaFlags flags, ScratchImage* result)
+        {
+            Native.PremultiplyAlpha2(srcImages, nimages, metadata, flags, result->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Compress(Image* srcImage, Format format, TexCompressFlags compress, float threshold, ScratchImage* cImage)
+        {
+            Native.Compress(srcImage, format, compress, threshold, cImage->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Compress(ScratchImage* srcImage, Format format, TexCompressFlags compress, float threshold, ScratchImage* cImages)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.Compress2(srcImages, nimages, &metadata, format, compress, threshold, cImages->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Compress(Image* srcImages, ulong nimages, TexMetadata* metadata, Format format, TexCompressFlags compress, float threshold, ScratchImage* cImages)
+        {
+            Native.Compress2(srcImages, nimages, metadata, format, compress, threshold, cImages->pScratchImage).ThrowIf();
+        }
+
+        // Note that threshold is only used by BC1. TEX_THRESHOLD_DEFAULT is a typical value to use
+
+        public static unsafe void Compress(ID3D11Device* pDevice, Image* srcImage, Format format, TexCompressFlags compress, float alphaWeight, ScratchImage* image)
+        {
+            Native.Compress3(pDevice, srcImage, format, compress, alphaWeight, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Compress(ID3D11Device* pDevice, ScratchImage* srcImage, Format format, TexCompressFlags compress, float alphaWeight, ScratchImage* cImages)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.Compress4(pDevice, srcImages, nimages, &metadata, format, compress, alphaWeight, cImages->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Compress(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Format format, TexCompressFlags compress, float alphaWeight, ScratchImage* cImages)
+        {
+            Native.Compress4(pDevice, srcImages, nimages, metadata, format, compress, alphaWeight, cImages->pScratchImage).ThrowIf();
+        }
+
+        // DirectCompute-based compression (alphaWeight is only used by BC7. 1.0 is the typical value to use)
+
+        public static unsafe void Decompress(Image* cImage, Format format, ScratchImage* image)
+        {
+            Native.Decompress(cImage, format, image->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Decompress(ScratchImage* srcImage, Format format, ScratchImage* images)
+        {
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.Decompress2(srcImages, nimages, &metadata, format, images->pScratchImage).ThrowIf();
+        }
+
+        public static unsafe void Decompress(Image* cImages, ulong nimages, TexMetadata* metadata, Format format, ScratchImage* images)
+        {
+            Native.Decompress2(cImages, nimages, metadata, format, images->pScratchImage).ThrowIf();
+        }
+
+        #endregion Texture conversion, resizing, mipmap generation, and block compression
+
+        public static void CreateTextureEx(ID3D11Device* device, ScratchImage* image, Usage usage, BindFlag bind, CpuAccessFlag cpu, ResourceMiscFlag misc, bool forceSRGB, ID3D11Resource** resource)
+        {
+            Native.CreateTextureEx2(device, image->pScratchImage, (uint)usage, (uint)bind, (uint)cpu, (uint)misc, forceSRGB, resource).ThrowIf();
+        }
+
+        public static void CreateTextureEx(ID3D11Device* device, Image* images, ulong nImages, TexMetadata* metadata, Usage usage, BindFlag bind, CpuAccessFlag cpu, ResourceMiscFlag misc, bool forceSRGB, ID3D11Resource** resource)
+        {
+            Native.CreateTextureEx(device, images, nImages, metadata, usage, (uint)bind, (uint)cpu, (uint)misc, forceSRGB, resource).ThrowIf();
+        }
+
+        public static void CaptureTexture(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11Resource* resource, ScratchImage* image)
+        {
+            Native.CaptureTexture(device, context, resource, image->pScratchImage).ThrowIf();
         }
 
         public static Guid* GetWICCodec(WICCodecs codecs)

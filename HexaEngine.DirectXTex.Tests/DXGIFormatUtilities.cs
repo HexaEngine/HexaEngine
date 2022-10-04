@@ -101,7 +101,6 @@
                 Trace.Fail("Shouldn't have alpha");
         }
 
-
         [Fact]
         public void BitsPerPixel()
         {
@@ -136,7 +135,7 @@
             uint height = 64;
             ulong rowPitch = 0;
             ulong slicePitch = 0;
-            HResult result = DirectXTex.ComputePitch(Format.FormatR8G8B8A8Uint, width, height, ref rowPitch, ref slicePitch, CPFlags.NONE);
+            HResult result = DirectXTex.ComputePitch(Format.FormatR8G8B8A8Uint, width, height, &rowPitch, &slicePitch, CPFlags.NONE);
             if (!result.IsSuccess)
                 result.Throw();
 

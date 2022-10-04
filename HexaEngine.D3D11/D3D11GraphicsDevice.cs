@@ -688,7 +688,7 @@
         {
             ScratchImage image = new();
             DirectXTex.CaptureTexture((ID3D11Device*)NativePointer, (ID3D11DeviceContext*)Context.NativePointer, (ID3D11Resource*)resource.NativePointer, &image);
-            if (DirectXTex.IsCompressed(Helper.Convert(format)))
+            /*if (DirectXTex.IsCompressed(Helper.Convert(format)))
             {
                 TexCompressFlags flags = TexCompressFlags.PARALLEL;
                 if (format == Format.BC7RGBAUNorm)
@@ -704,7 +704,7 @@
                 DirectXTex.Convert(&image, Helper.Convert(format), TexFilterFlags.DEFAULT, 0.5f, &image1);
                 image.Release();
                 image = image1;
-            }
+            }*/
             switch (Path.GetExtension(path))
             {
                 case ".dds":

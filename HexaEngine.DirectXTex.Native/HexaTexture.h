@@ -10,37 +10,86 @@ extern "C"
 
 #pragma region DXGI Format Utilities
 
-	API bool IsValid(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsCompressed(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsPacked(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsVideo(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsPlanar(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsPalettized(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsDepthStencil(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsSRGB(_In_ DXGI_FORMAT& fmt) noexcept;
-	API bool IsTypeless(_In_ DXGI_FORMAT& fmt, _In_ bool& partialTypeless) noexcept;
+	API bool IsValid(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsCompressed(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsPacked(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsVideo(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsPlanar(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsPalettized(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsDepthStencil(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsSRGB(_In_ DXGI_FORMAT fmt) noexcept;
+	API bool IsTypeless(_In_ DXGI_FORMAT fmt, _In_ bool partialTypeless) noexcept;
 
-	API bool HasAlpha(_In_ DXGI_FORMAT& fmt) noexcept;
+	API bool HasAlpha(_In_ DXGI_FORMAT fmt) noexcept;
 
-	API size_t BitsPerPixel(_In_ DXGI_FORMAT& fmt) noexcept;
+	API size_t BitsPerPixel(_In_ DXGI_FORMAT fmt) noexcept;
 
-	API size_t BitsPerColor(_In_ DXGI_FORMAT& fmt) noexcept;
+	API size_t BitsPerColor(_In_ DXGI_FORMAT fmt) noexcept;
 
-	API DirectX::FORMAT_TYPE FormatDataType(_In_ DXGI_FORMAT& fmt) noexcept;
-	API HRESULT ComputePitch(_In_ DXGI_FORMAT& fmt, _In_ size_t& width, _In_ size_t& height, _Out_ size_t& rowPitch, _Out_ size_t& slicePitch, _In_ DirectX::CP_FLAGS& flags) noexcept;
+	API DirectX::FORMAT_TYPE FormatDataType(_In_ DXGI_FORMAT fmt) noexcept;
+	API HRESULT ComputePitch(_In_ DXGI_FORMAT fmt, _In_ size_t width, _In_ size_t height, _Out_ size_t& rowPitch, _Out_ size_t& slicePitch, _In_ DirectX::CP_FLAGS flags) noexcept;
 
-	API size_t ComputeScanlines(_In_ DXGI_FORMAT &fmt, _In_ size_t &height) noexcept;
+	API size_t ComputeScanlines(_In_ DXGI_FORMAT fmt, _In_ size_t height) noexcept;
 
-	API DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT &fmt) noexcept;
-	API DXGI_FORMAT MakeTypeless(_In_ DXGI_FORMAT &fmt) noexcept;
-	API DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT &fmt) noexcept;
-	API DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT &fmt) noexcept;
+	API DXGI_FORMAT MakeSRGB(_In_ DXGI_FORMAT fmt) noexcept;
+	API DXGI_FORMAT MakeTypeless(_In_ DXGI_FORMAT fmt) noexcept;
+	API DXGI_FORMAT MakeTypelessUNORM(_In_ DXGI_FORMAT fmt) noexcept;
+	API DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT fmt) noexcept;
+
+#pragma endregion
+
+#pragma region MetadataIO
+
+	API	HRESULT GetMetadataFromDDSMemory(
+		_In_reads_bytes_(size) const void* pSource, _In_ size_t size,
+		_In_ DirectX::DDS_FLAGS flags,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+	API	HRESULT GetMetadataFromDDSFile(
+		_In_z_ const wchar_t* szFile,
+		_In_ DirectX::DDS_FLAGS flags,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+
+	API	HRESULT GetMetadataFromHDRMemory(
+		_In_reads_bytes_(size) const void* pSource, _In_ size_t size,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+	API	HRESULT GetMetadataFromHDRFile(
+		_In_z_ const wchar_t* szFile,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+
+	API	HRESULT GetMetadataFromTGAMemory(
+		_In_reads_bytes_(size) const void* pSource, _In_ size_t size,
+		_In_ DirectX::TGA_FLAGS flags,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+	API	HRESULT GetMetadataFromTGAFile(
+		_In_z_ const wchar_t* szFile,
+		_In_ DirectX::TGA_FLAGS flags,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+
+#ifdef WIN32
+	API	HRESULT GetMetadataFromWICMemory(
+		_In_reads_bytes_(size) const void* pSource, _In_ size_t size,
+		_In_ DirectX::WIC_FLAGS flags,
+		_Out_ DirectX::TexMetadata& metadata);
+
+	API	HRESULT GetMetadataFromWICFile(
+		_In_z_ const wchar_t* szFile,
+		_In_ DirectX::WIC_FLAGS flags,
+		_Out_ DirectX::TexMetadata& metadata);
+#endif
+
+	// Compatability helpers
+	API	HRESULT GetMetadataFromTGAMemory2(
+		_In_reads_bytes_(size) const void* pSource, _In_ size_t size,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
+	API	HRESULT GetMetadataFromTGAFile2(
+		_In_z_ const wchar_t* szFile,
+		_Out_ DirectX::TexMetadata& metadata) noexcept;
 
 #pragma endregion
 
 #pragma region TexMetadataMethods
 
-	API size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t &mip, _In_ size_t &item, _In_ size_t &slice) noexcept;
+	API size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept;
 	// Returns size_t(-1) to indicate an out-of-range error
 
 	API bool IsCubemap(DirectX::TexMetadata* metadata) noexcept;
@@ -60,24 +109,24 @@ extern "C"
 
 	API DirectX::ScratchImage* NewScratchImage();
 
-	API HRESULT Initialize(DirectX::ScratchImage* img, _In_ const DirectX::TexMetadata* mdata, _In_ DirectX::CP_FLAGS& flags) noexcept;
+	API HRESULT Initialize(DirectX::ScratchImage* img, _In_ const DirectX::TexMetadata& mdata, _In_ DirectX::CP_FLAGS flags) noexcept;
 
-	API HRESULT Initialize1D(DirectX::ScratchImage* img, _In_ DXGI_FORMAT& fmt, _In_ size_t& length, _In_ size_t& arraySize, _In_ size_t& mipLevels, _In_ DirectX::CP_FLAGS& flags) noexcept;
-	API HRESULT Initialize2D(DirectX::ScratchImage* img, _In_ DXGI_FORMAT& fmt, _In_ size_t& width, _In_ size_t& height, _In_ size_t& arraySize, _In_ size_t& mipLevels, _In_ DirectX::CP_FLAGS& flags) noexcept;
-	API HRESULT Initialize3D(DirectX::ScratchImage* img, _In_ DXGI_FORMAT& fmt, _In_ size_t& width, _In_ size_t& height, _In_ size_t& depth, _In_ size_t& mipLevels, _In_ DirectX::CP_FLAGS& flags) noexcept;
-	API HRESULT InitializeCube(DirectX::ScratchImage* img, _In_ DXGI_FORMAT& fmt, _In_ size_t& width, _In_ size_t& height, _In_ size_t& nCubes, _In_ size_t& mipLevels, _In_ DirectX::CP_FLAGS& flags) noexcept;
+	API HRESULT Initialize1D(DirectX::ScratchImage* img, _In_ DXGI_FORMAT fmt, _In_ size_t length, _In_ size_t arraySize, _In_ size_t mipLevels, _In_ DirectX::CP_FLAGS flags) noexcept;
+	API HRESULT Initialize2D(DirectX::ScratchImage* img, _In_ DXGI_FORMAT fmt, _In_ size_t width, _In_ size_t height, _In_ size_t arraySize, _In_ size_t mipLevels, _In_ DirectX::CP_FLAGS flags) noexcept;
+	API HRESULT Initialize3D(DirectX::ScratchImage* img, _In_ DXGI_FORMAT fmt, _In_ size_t width, _In_ size_t height, _In_ size_t depth, _In_ size_t mipLevels, _In_ DirectX::CP_FLAGS flags) noexcept;
+	API HRESULT InitializeCube(DirectX::ScratchImage* img, _In_ DXGI_FORMAT fmt, _In_ size_t width, _In_ size_t height, _In_ size_t nCubes, _In_ size_t mipLevels, _In_ DirectX::CP_FLAGS flags) noexcept;
 
-	API HRESULT InitializeFromImage(DirectX::ScratchImage* img, _In_ const DirectX::Image& srcImage, _In_ bool allow1D = false, _In_ DirectX::CP_FLAGS flags = DirectX::CP_FLAGS_NONE) noexcept;
+	API HRESULT InitializeFromImage(DirectX::ScratchImage* img, _In_ const DirectX::Image srcImage, _In_ bool allow1D = false, _In_ DirectX::CP_FLAGS flags = DirectX::CP_FLAGS_NONE) noexcept;
 	API HRESULT InitializeArrayFromImages(DirectX::ScratchImage* img, _In_reads_(nImages) const DirectX::Image* images, _In_ size_t nImages, _In_ bool allow1D = false, _In_ DirectX::CP_FLAGS flags = DirectX::CP_FLAGS_NONE) noexcept;
 	API HRESULT InitializeCubeFromImages(DirectX::ScratchImage* img, _In_reads_(nImages) const DirectX::Image* images, _In_ size_t nImages, _In_ DirectX::CP_FLAGS flags = DirectX::CP_FLAGS_NONE) noexcept;
 	API HRESULT Initialize3DFromImages(DirectX::ScratchImage* img, _In_reads_(depth) const DirectX::Image* images, _In_ size_t depth, _In_ DirectX::CP_FLAGS flags = DirectX::CP_FLAGS_NONE) noexcept;
 
 	API void ScratchImageRelease(DirectX::ScratchImage** img) noexcept;
 
-	API bool OverrideFormat(DirectX::ScratchImage* img, _In_ DXGI_FORMAT& f) noexcept;
+	API bool OverrideFormat(DirectX::ScratchImage* img, _In_ DXGI_FORMAT f) noexcept;
 
 	API const DirectX::TexMetadata& GetMetadata(DirectX::ScratchImage* img) noexcept;
-	API const DirectX::Image* GetImage(DirectX::ScratchImage* img, _In_ size_t& mip, _In_ size_t& item, _In_ size_t& slice) noexcept;
+	API const DirectX::Image* GetImage(DirectX::ScratchImage* img, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept;
 
 	API const DirectX::Image* GetImages(DirectX::ScratchImage* img) noexcept;
 	API size_t GetImageCount(DirectX::ScratchImage* img) noexcept;
@@ -93,7 +142,7 @@ extern "C"
 
 	API DirectX::Blob* NewBlob();
 
-	API HRESULT BlobInitialize(DirectX::Blob* blob, _In_ size_t& size) noexcept;
+	API HRESULT BlobInitialize(DirectX::Blob* blob, _In_ size_t size) noexcept;
 
 	API void BlobRelease(DirectX::Blob** blob) noexcept;
 
@@ -111,14 +160,14 @@ extern "C"
 #pragma region ImageIO
 
 	// DDS operations
-	API HRESULT LoadFromDDSMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t& size, _In_ DirectX::DDS_FLAGS& flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;
+	API HRESULT LoadFromDDSMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _In_ DirectX::DDS_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;
 	API HRESULT LoadFromDDSFile(_In_z_ const wchar_t* szFile, _In_ DirectX::DDS_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;
 
-	API HRESULT SaveToDDSMemory(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS& flags, _Out_ DirectX::Blob& blob) noexcept;
-	API HRESULT SaveToDDSMemory2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DirectX::DDS_FLAGS& flags, _Out_ DirectX::Blob& blob) noexcept;
+	API HRESULT SaveToDDSMemory(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS flags, _Out_ DirectX::Blob& blob) noexcept;
+	API HRESULT SaveToDDSMemory2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::DDS_FLAGS flags, _Out_ DirectX::Blob& blob) noexcept;
 
 	API HRESULT SaveToDDSFile(_In_ const DirectX::Image& image, _In_ DirectX::DDS_FLAGS flags, _In_z_ const wchar_t* szFile) noexcept;
-	API HRESULT SaveToDDSFile2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DirectX::DDS_FLAGS& flags, _In_z_ const wchar_t* szFile) noexcept;
+	API HRESULT SaveToDDSFile2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DirectX::DDS_FLAGS flags, _In_z_ const wchar_t* szFile) noexcept;
 
 	// HDR operations
 	API HRESULT LoadFromHDRMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image) noexcept;
@@ -136,14 +185,14 @@ extern "C"
 
 	// WIC operations
 #ifdef WIN32
-	API HRESULT LoadFromWICMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t& size, _In_ DirectX::WIC_FLAGS& flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image, _In_opt_ std::function<void __cdecl(IWICMetadataQueryReader*)> getMQR = nullptr);
-	API HRESULT LoadFromWICFile(_In_z_ const wchar_t* szFile, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image, _In_opt_ std::function<void __cdecl(IWICMetadataQueryReader*)> getMQR = nullptr);
+	API HRESULT LoadFromWICMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image);
+	API HRESULT LoadFromWICFile(_In_z_ const wchar_t* szFile, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image);
 
-	API HRESULT SaveToWICMemory(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr, _In_opt_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr);
-	API HRESULT SaveToWICMemory2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr, _In_opt_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr);
+	API HRESULT SaveToWICMemory(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr);
+	API HRESULT SaveToWICMemory2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr);
 
-	API HRESULT SaveToWICFile(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr, _In_opt_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr);
-	API HRESULT SaveToWICFile2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr, _In_opt_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr);
+	API HRESULT SaveToWICFile(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr);
+	API HRESULT SaveToWICFile2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr);
 #endif // WIN32
 
 	// Compatability helpers
@@ -195,7 +244,7 @@ extern "C"
 
 #if defined(__d3d11_h__) || defined(__d3d11_x_h__)
 	API HRESULT Compress3(_In_ ID3D11Device* pDevice, _In_ const DirectX::Image& srcImage, _In_ DXGI_FORMAT format, _In_ DirectX::TEX_COMPRESS_FLAGS compress, _In_ float alphaWeight, _Out_ DirectX::ScratchImage& image) noexcept;
-	API HRESULT Compress4(_In_ ID3D11Device* pDevice, _In_ const DirectX::Image* srcImages, _In_ size_t& nimages, _In_ const DirectX::TexMetadata* metadata, _In_ DXGI_FORMAT& format, _In_ DirectX::TEX_COMPRESS_FLAGS& compress, _In_ float& alphaWeight, _Out_ DirectX::ScratchImage& cImages) noexcept;
+	API HRESULT Compress4(_In_ ID3D11Device* pDevice, _In_ const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ DXGI_FORMAT format, _In_ DirectX::TEX_COMPRESS_FLAGS compress, _In_ float alphaWeight, _Out_ DirectX::ScratchImage& cImages) noexcept;
 	// DirectCompute-based compression (alphaWeight is only used by BC7. 1.0 is the typical value to use)
 #endif
 
@@ -253,7 +302,7 @@ extern "C"
 
 	API HRESULT CreateTextureEx(_In_ ID3D11Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ D3D11_USAGE usage, _In_ unsigned int bindFlags, _In_ unsigned int cpuAccessFlags, _In_ unsigned int miscFlags, _In_ bool forceSRGB, _Outptr_ ID3D11Resource** ppResource) noexcept;
 
-	API HRESULT CreateTextureEx2(_In_ ID3D11Device* pDevice, _In_ DirectX::ScratchImage* img, _In_ uint32_t& usage, _In_ uint32_t& bindFlags, _In_ uint32_t& cpuAccessFlags, _In_ uint32_t& miscFlags, _In_ bool& forceSRGB, _Outptr_ ID3D11Resource** ppResource) noexcept;
+	API HRESULT CreateTextureEx2(_In_ ID3D11Device* pDevice, _In_ DirectX::ScratchImage* img, _In_ uint32_t usage, _In_ uint32_t bindFlags, _In_ uint32_t cpuAccessFlags, _In_ uint32_t miscFlags, _In_ bool forceSRGB, _Outptr_ ID3D11Resource** ppResource) noexcept;
 
 	API HRESULT CreateShaderResourceViewEx(_In_ ID3D11Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ D3D11_USAGE usage, _In_ unsigned int bindFlags, _In_ unsigned int cpuAccessFlags, _In_ unsigned int miscFlags, _In_ bool forceSRGB, _Outptr_ ID3D11ShaderResourceView** ppSRV) noexcept;
 
