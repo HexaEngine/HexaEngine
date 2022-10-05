@@ -17,7 +17,7 @@
             State = new()
             {
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
+                Rasterizer = RasterizerDescription.CullNone,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
             };

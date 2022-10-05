@@ -69,7 +69,7 @@
 
                     ImGui.EndMenu();
                 }
-                if (ImGui.BeginMenu("Window"))
+                if (ImGui.BeginMenu("View"))
                 {
                     if (ImGui.MenuItem("Layout"))
                     {
@@ -82,6 +82,12 @@
                     if (ImGui.MenuItem("Properties"))
                     {
                         SceneElementProperties.IsShown = !SceneElementProperties.IsShown;
+                    }
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Fullframe"))
+                    {
+                        Framebuffer.Fullframe = !Framebuffer.Fullframe;
                     }
 
                     ImGui.EndMenu();

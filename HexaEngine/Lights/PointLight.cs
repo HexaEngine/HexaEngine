@@ -2,9 +2,14 @@
 {
     using HexaEngine.Editor.Attributes;
 
-    [EditorNode("Point Light")]
+    [EditorNode<PointLight>("Point Light")]
     public class PointLight : Light
     {
+        public PointLight()
+        {
+            CreatePropertyEditor<PointLight>();
+        }
+
         [EditorProperty("Strength")]
         public float Strength { get; set; } = 1000;
 

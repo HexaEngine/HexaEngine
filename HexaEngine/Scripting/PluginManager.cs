@@ -4,7 +4,7 @@
     using System.Reflection;
     using System.Runtime.Loader;
 
-    public static class PluginManager
+    /*public static class PluginManager
     {
         private static AssemblyLoadContext assemblyLoadContext;
         private static readonly List<Assembly> assemblies = new();
@@ -95,5 +95,5 @@
             assemblyLoadContext = new(nameof(PluginManager), true);
             AssembliesUnloaded?.Invoke(null, null);
         }
-    }
+    }*/
 }

@@ -10,7 +10,7 @@
     using System;
     using System.Numerics;
 
-    internal class Framebuffer
+    public class Framebuffer
     {
         private readonly IGraphicsDevice device;
 
@@ -27,6 +27,8 @@
         public Viewport Viewport;
         public Viewport SourceViewport;
 
+        public static bool Fullframe;
+
         public Framebuffer(IGraphicsDevice device)
         {
             this.device = device;
@@ -34,7 +36,14 @@
 
         internal void Update(IGraphicsContext context)
         {
-            ImGuizmo.SetRect(position.X, position.Y, size.X, size.Y);
+            if (Framebuffer.Fullframe)
+            {
+                ImGuizmo.SetRect(SourceViewport.X, SourceViewport.Y, SourceViewport.Width, SourceViewport.Height);
+            }
+            else
+            {
+                ImGuizmo.SetRect(position.X, position.Y, size.X, size.Y);
+            }
         }
 
         internal void Draw()

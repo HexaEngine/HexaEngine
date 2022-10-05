@@ -9,14 +9,14 @@
     {
         #region Internal Utils
 
-        private static void ThrowIf(this int hresult)
+        internal static void ThrowIf(this int hresult)
         {
             HResult result = hresult;
             if (!result.IsSuccess)
                 result.Throw();
         }
 
-        private static void ThrowIf(this uint hresult)
+        internal static void ThrowIf(this uint hresult)
         {
             HResult result = unchecked((int)hresult);
             if (!result.IsSuccess)

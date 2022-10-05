@@ -10,29 +10,30 @@
     using IBLBaker;
     using ImGuiNET;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     public class PrefilterWidget : Widget
     {
-        private FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
+        private readonly FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
         private string pathEnvironment = string.Empty;
 
-        private Mode[] modes = Enum.GetValues<Mode>();
-        private string[] modesStrings = Enum.GetValues<Mode>().Select(x => x.ToString()).ToArray();
+        private readonly Mode[] modes = Enum.GetValues<Mode>();
+        private readonly string[] modesStrings = Enum.GetValues<Mode>().Select(x => x.ToString()).ToArray();
         private int modeIndex;
         private Mode mode;
 
         private int pfSize = 4096;
-        private int pfTileSize = 4096 / 4;
+        private readonly int pfTileSize = 4096 / 4;
 
-        private ISamplerState samplerState;
+        private ISamplerState? samplerState;
         private RenderTexture? environmentTex;
         private RenderTexture? prefilterTex;
         private RenderTargetViewArray? pfRTV;
         private ShaderResourceViewArray? pfSRV;
-        private IntPtr[] pfIds = new IntPtr[6];
-        private PreFilterEffect prefilterFilter;
+        private readonly IntPtr[] pfIds = new IntPtr[6];
+        private PreFilterEffect? prefilterFilter;
 
         private bool compute;
         private int side;
@@ -51,8 +52,8 @@
         public override void Dispose()
         {
             DiscardIrradiance();
-            samplerState.Dispose();
-            prefilterFilter.Dispose();
+            samplerState?.Dispose();
+            prefilterFilter?.Dispose();
             environmentTex?.Dispose();
         }
 
@@ -114,6 +115,7 @@
 
         public override void Draw(IGraphicsContext context)
         {
+            if (prefilterFilter == null) return;
             ImGuiWindowFlags flags = ImGuiWindowFlags.None;
             if (prefilterTex != null)
                 flags |= ImGuiWindowFlags.UnsavedDocument;

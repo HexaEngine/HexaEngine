@@ -93,6 +93,18 @@
             return result;
         }
 
+        public static void GetCascades(CameraTransform camera, float[] result)
+        {
+            float far = camera.Far;
+
+            result[0] = far * 0.1f;
+            result[1] = far * 0.2f;
+            result[2] = far * 0.4f;
+            result[3] = far * 0.7f;
+            //result[4] = far * 0.8f;
+            //result[5] = far * 1.0f;
+        }
+
         public static Matrix4x4[] GetLightSpaceMatrices(CameraTransform camera, Transform light, int cascadesCount = 3)
         {
             float fov = camera.Fov;
@@ -101,7 +113,7 @@
             float near = camera.Near;
             float[] cascades = GetCascades(camera);
             Matrix4x4[] ret = new Matrix4x4[16];
-            for (int i = 0; i < cascadesCount; ++i)
+            for (int i = 0; i < cascadesCount; i++)
             {
                 if (i == 0)
                 {
@@ -114,6 +126,31 @@
                 else
                 {
                     ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov.ToRad(), aspect, cascades[i - 1], far), light);
+                }
+            }
+            return ret;
+        }
+
+        public static Matrix4x4[] GetLightSpaceMatrices(CameraTransform camera, Transform light, Matrix4x4[] ret, float[] cascades, int cascadesCount = 3)
+        {
+            float fov = camera.Fov.ToRad();
+            float aspect = camera.AspectRatio;
+            float far = camera.Far;
+            float near = camera.Near;
+            GetCascades(camera, cascades);
+            for (int i = 0; i < cascadesCount; i++)
+            {
+                if (i == 0)
+                {
+                    ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov, aspect, near, cascades[i]), light);
+                }
+                else if (i < cascadesCount)
+                {
+                    ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], cascades[i]), light);
+                }
+                else
+                {
+                    ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], far), light);
                 }
             }
             return ret;

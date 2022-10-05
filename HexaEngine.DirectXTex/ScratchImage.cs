@@ -17,49 +17,49 @@ namespace HexaEngine.DirectXTex
             pScratchImage = Native.NewScratchImage();
         }
 
-        public HResult Initialize(TexMetadata metadata, CPFlags flags)
+        public void Initialize(TexMetadata metadata, CPFlags flags)
         {
-            return Native.Initialize(pScratchImage, &metadata, flags);
+            Native.Initialize(pScratchImage, &metadata, flags).ThrowIf();
         }
 
-        public HResult Initialize1D(Format fmt, ulong length, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.None)
+        public void Initialize1D(Format fmt, ulong length, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.None)
         {
-            return Native.Initialize1D(pScratchImage, fmt, length, arraySize, mipLevels, flags);
+            Native.Initialize1D(pScratchImage, fmt, length, arraySize, mipLevels, flags).ThrowIf();
         }
 
-        public HResult Initialize2D(Format fmt, ulong width, ulong height, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.None)
+        public void Initialize2D(Format fmt, ulong width, ulong height, ulong arraySize, ulong mipLevels, CPFlags flags = CPFlags.None)
         {
-            return Native.Initialize2D(pScratchImage, fmt, width, height, arraySize, mipLevels, flags);
+            Native.Initialize2D(pScratchImage, fmt, width, height, arraySize, mipLevels, flags).ThrowIf();
         }
 
-        public HResult Initialize3D(Format fmt, ulong width, ulong height, ulong depth, ulong mipLevels, CPFlags flags = CPFlags.None)
+        public void Initialize3D(Format fmt, ulong width, ulong height, ulong depth, ulong mipLevels, CPFlags flags = CPFlags.None)
         {
-            return Native.Initialize3D(pScratchImage, fmt, width, height, depth, mipLevels, flags);
+            Native.Initialize3D(pScratchImage, fmt, width, height, depth, mipLevels, flags).ThrowIf();
         }
 
-        public HResult InitializeCube(Format fmt, ulong width, ulong height, ulong nCubes, ulong mipLevels, CPFlags flags = CPFlags.None)
+        public void InitializeCube(Format fmt, ulong width, ulong height, ulong nCubes, ulong mipLevels, CPFlags flags = CPFlags.None)
         {
-            return Native.InitializeCube(pScratchImage, fmt, width, height, nCubes, mipLevels, flags);
+            Native.InitializeCube(pScratchImage, fmt, width, height, nCubes, mipLevels, flags).ThrowIf();
         }
 
         public void InitializeFromImage(Image image, bool allow1D = false, CPFlags flags = CPFlags.None)
         {
-            Native.InitializeFromImage(pScratchImage, &image, allow1D, flags);
+            Native.InitializeFromImage(pScratchImage, &image, allow1D, flags).ThrowIf();
         }
 
         public void InitializeArrayFromImages(Image* images, ulong nImages, bool allow1D = false, CPFlags flags = CPFlags.None)
         {
-            Native.InitializeArrayFromImages(pScratchImage, images, nImages, allow1D, flags);
+            Native.InitializeArrayFromImages(pScratchImage, images, nImages, allow1D, flags).ThrowIf();
         }
 
         public void InitializeCubeFromImages(Image* images, ulong nImages, CPFlags flags = CPFlags.None)
         {
-            Native.InitializeCubeFromImages(pScratchImage, images, nImages, flags);
+            Native.InitializeCubeFromImages(pScratchImage, images, nImages, flags).ThrowIf();
         }
 
         public void Initialize3DFromImages(Image* images, ulong depth, CPFlags flags = CPFlags.None)
         {
-            Native.Initialize3DFromImages(pScratchImage, images, depth, flags);
+            Native.Initialize3DFromImages(pScratchImage, images, depth, flags).ThrowIf();
         }
 
         public void Release()

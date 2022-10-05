@@ -88,7 +88,7 @@ namespace HexaEngine.Windows
                             Time.Initialize();
                             firstFrame = false;
                         }
-                        if (Designer.InDesignMode)
+                        if (Designer.InDesignMode && !Framebuffer.Fullframe)
                             SceneManager.Current?.Render(context, this, framebuffer.Viewport);
                         else
                             SceneManager.Current?.Render(context, this, Viewport);

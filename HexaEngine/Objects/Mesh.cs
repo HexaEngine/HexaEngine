@@ -74,7 +74,7 @@
         public Relation? Parent;
     }
 
-    [EditorNode("Mesh")]
+    //[EditorNode<Mesh>("Mesh")]
     public unsafe class Mesh
     {
         public MeshVertex[]? Vertices;

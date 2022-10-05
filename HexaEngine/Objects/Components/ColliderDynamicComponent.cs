@@ -2,6 +2,7 @@
 {
     using BepuPhysics;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
 
@@ -11,6 +12,12 @@
         private SceneNode node;
         private Scene scene;
 #nullable enable
+
+        public ColliderDynamicComponent()
+        {
+            Editor = new PropertyEditor<ColliderDynamicComponent>(this);
+        }
+
         public BodyDescription BodyDescription { get; set; }
 
         public BodyHandle Handle { get; private set; }
@@ -18,6 +25,7 @@
         public BodyReference Body { get; private set; }
 
         public bool IsVisible { get; set; }
+        public IPropertyEditor? Editor { get; }
 
         public virtual void Initialize(IGraphicsDevice device, SceneNode node)
         {

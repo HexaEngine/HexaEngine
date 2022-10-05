@@ -1,10 +1,13 @@
 ﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Reflection;
 
     public class SceneNode
     {
@@ -250,6 +253,26 @@
                 if (components[i] is T t)
                     yield return t;
             }
+        }
+
+        private IPropertyEditor? editor;
+
+        public virtual IPropertyEditor Editor
+        {
+            get
+            {
+                editor ??= new PropertyEditor<SceneNode>(this);
+                return editor;
+            }
+            protected set
+            {
+                editor = value;
+            }
+        }
+
+        protected void CreatePropertyEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>() where T : SceneNode
+        {
+            editor = new PropertyEditor<T>((T)this);
         }
     }
 }

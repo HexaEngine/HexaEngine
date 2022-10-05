@@ -3,11 +3,12 @@
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    [EditorNode("Camera")]
+    [EditorNode<Camera>("Camera")]
     public class Camera : SceneNode, IView
     {
         public new CameraTransform Transform;
@@ -19,6 +20,7 @@
         public Camera()
         {
             base.Transform = Transform = new();
+            // CreatePropertyEditor<Camera>();
         }
 
         [EditorProperty("Type")]

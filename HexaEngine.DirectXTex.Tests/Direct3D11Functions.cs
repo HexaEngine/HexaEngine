@@ -6,9 +6,9 @@
 
     public unsafe class Direct3D11Functions : IDisposable
     {
-        private D3D11GraphicsDevice graphicsDevice;
-        private ID3D11Device* device;
-        private ID3D11DeviceContext* context;
+        private readonly D3D11GraphicsDevice graphicsDevice;
+        private readonly ID3D11Device* device;
+        private readonly ID3D11DeviceContext* context;
 
         public Direct3D11Functions()
         {

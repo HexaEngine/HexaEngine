@@ -11,15 +11,14 @@ namespace HexaEngine.Editor
     using ImGuizmoNET;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
-    using System.Runtime.InteropServices;
 
     public static class SceneElementProperties
     {
         private static bool isShown;
-        private static readonly Dictionary<Type, PropertyEditor> propertyCache = new();
         private static readonly List<EditorComponentAttribute> componentCache = new();
         private static readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();
         private static OPERATION operation = OPERATION.TRANSLATE;
@@ -29,11 +28,7 @@ namespace HexaEngine.Editor
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
-        public static void ClearCache()
-        {
-            propertyCache.Clear();
-        }
-
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         static SceneElementProperties()
         {
             componentCache.AddRange(Assembly.GetExecutingAssembly()
@@ -126,15 +121,8 @@ namespace HexaEngine.Editor
 
             ImGui.Separator();
 
-            Type type = element.GetType();
-            if (propertyCache.TryGetValue(type, out var typeEditor))
-            {
-                typeEditor.Draw(element);
-            }
-            else
-            {
-                propertyCache.Add(type, new(type));
-            }
+            Type type = element.Editor.Type;
+            element.Editor?.Draw();
 
             ImGui.Separator();
 
@@ -147,7 +135,7 @@ namespace HexaEngine.Editor
                         EditorComponentAttribute editorComponent = editorComponents[i];
                         if (ImGui.MenuItem(editorComponent.Name))
                         {
-                            IComponent component = (IComponent)Activator.CreateInstance(editorComponent.Type);
+                            IComponent component = editorComponent.Constructor();
                             element.AddComponent(component);
                         }
                     }
@@ -196,16 +184,7 @@ namespace HexaEngine.Editor
 
             for (int i = 0; i < element.Components.Count; i++)
             {
-                IComponent component = element.Components[i];
-                Type componentType = component.GetType();
-                if (propertyCache.TryGetValue(componentType, out var componentEditor))
-                {
-                    componentEditor.Draw(component);
-                }
-                else
-                {
-                    propertyCache.Add(componentType, new(componentType));
-                }
+                element.Components[i].Editor?.Draw();
             }
 
             ImGui.End();

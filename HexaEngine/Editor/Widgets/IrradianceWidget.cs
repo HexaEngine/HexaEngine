@@ -24,13 +24,13 @@
         private int irradianceSize = 1024;
         private int irrTileSize = 1024 / 4;
 
-        private ISamplerState samplerState;
+        private ISamplerState? samplerState;
         private RenderTexture? environmentTex;
         private RenderTexture? irradianceTex;
         private RenderTargetViewArray? irrRTV;
         private ShaderResourceViewArray? irrSRV;
         private IntPtr[] irrIds = new IntPtr[6];
-        private IrradianceFilterEffect irradianceFilter;
+        private IrradianceFilterEffect? irradianceFilter;
 
         private bool compute;
         private int side;
@@ -49,8 +49,8 @@
         public override void Dispose()
         {
             DiscardIrradiance();
-            samplerState.Dispose();
-            irradianceFilter.Dispose();
+            samplerState?.Dispose();
+            irradianceFilter?.Dispose();
             environmentTex?.Dispose();
         }
 
@@ -112,6 +112,7 @@
 
         public override void Draw(IGraphicsContext context)
         {
+            if (irradianceFilter == null) return;
             ImGuiWindowFlags flags = ImGuiWindowFlags.None;
             if (irradianceTex != null)
                 flags |= ImGuiWindowFlags.UnsavedDocument;

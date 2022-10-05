@@ -11,7 +11,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -19,9 +19,7 @@
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
             DirectXTex.FlipRotate(&image, TexFrFlags.ROTATE90, &image1);
@@ -42,7 +40,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -55,7 +53,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 1024,
                 Width = 1024,
                 MipLevels = 1,
@@ -63,9 +61,7 @@
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
             DirectXTex.Resize(&image, 1024, 1024, TexFilterFlags.DEFAULT, &image1);
@@ -87,7 +83,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -100,7 +96,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR16G16B16A16Unorm,
+                Format = Format.FormatR16G16B16A16Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -108,12 +104,10 @@
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
-            DirectXTex.Convert(&image, Silk.NET.DXGI.Format.FormatR16G16B16A16Unorm, TexFilterFlags.DEFAULT, 0.5f, &image1);
+            DirectXTex.Convert(&image, Format.FormatR16G16B16A16Unorm, TexFilterFlags.DEFAULT, 0.5f, &image1);
 
             Assert.Equal(metadata, image.GetMetadata());
             var metadata2 = image1.GetMetadata();
@@ -132,7 +126,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatP010,
+                Format = Format.FormatP010,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -145,7 +139,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatY210,
+                Format = Format.FormatY210,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -153,9 +147,7 @@
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
             DirectXTex.ConvertToSinglePlane(&image, &image1);
@@ -177,7 +169,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 1,
@@ -190,7 +182,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -198,9 +190,7 @@
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
             DirectXTex.GenerateMipMaps(&image, TexFilterFlags.DEFAULT, 4, &image1);
@@ -222,7 +212,7 @@
                 ArraySize = 1,
                 Depth = 6,
                 Dimension = TexDimension.Texture3D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 1,
@@ -235,7 +225,7 @@
                 ArraySize = 1,
                 Depth = 6,
                 Dimension = TexDimension.Texture3D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -243,9 +233,7 @@
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
             DirectXTex.GenerateMipMaps3D(&image, TexFilterFlags.DEFAULT, 4, &image1);
@@ -266,7 +254,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 2048,
                 Width = 2048,
                 MipLevels = 1,
@@ -300,7 +288,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 2048,
                 Width = 2048,
                 MipLevels = 1,
@@ -327,7 +315,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 1,
@@ -340,7 +328,7 @@
 
             ScratchImage destImage = new();
 
-            DirectXTex.Compress(&srcImage, Silk.NET.DXGI.Format.FormatBC7Unorm, TexCompressFlags.BC7Quick | TexCompressFlags.Parallel, 0.5f, &destImage);
+            DirectXTex.Compress(&srcImage, Format.FormatBC7Unorm, TexCompressFlags.BC7Quick | TexCompressFlags.Parallel, 0.5f, &destImage);
 
             srcImage.Release();
             destImage.Release();
@@ -354,7 +342,7 @@
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatBC7Unorm,
+                Format = Format.FormatBC7Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 1,
@@ -367,7 +355,7 @@
 
             ScratchImage destImage = new();
 
-            DirectXTex.Decompress(&srcImage, Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm, &destImage);
+            DirectXTex.Decompress(&srcImage, Format.FormatR8G8B8A8Unorm, &destImage);
 
             srcImage.Release();
             destImage.Release();

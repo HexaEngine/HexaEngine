@@ -20,7 +20,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -28,9 +28,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             Assert.Equal(metadata, image.GetMetadata());
 
@@ -48,7 +46,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture1D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 1,
                 Width = 64,
                 MipLevels = 4,
@@ -56,9 +54,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize1D(Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm, 64, 1, 4, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize1D(Format.FormatR8G8B8A8Unorm, 64, 1, 4, CPFlags.None);
 
             var meta = image.GetMetadata();
             Assert.Equal(metadata, meta);
@@ -75,7 +71,7 @@ namespace HexaEngine.DirectXTex.Tests
             TexMetadata metadata = new()
             {
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Width = 64,
                 Height = 32,
                 Depth = 1,
@@ -85,9 +81,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize2D(Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm, 64, 32, 4, 2, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize2D(Format.FormatR8G8B8A8Unorm, 64, 32, 4, 2, CPFlags.None);
 
             var meta = image.GetMetadata();
             Assert.Equal(metadata, meta);
@@ -104,7 +98,7 @@ namespace HexaEngine.DirectXTex.Tests
             TexMetadata metadata = new()
             {
                 Dimension = TexDimension.Texture3D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Width = 64,
                 Height = 32,
                 Depth = 4,
@@ -114,9 +108,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize3D(Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm, 64, 32, 4, 2, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize3D(Format.FormatR8G8B8A8Unorm, 64, 32, 4, 2, CPFlags.None);
 
             var meta = image.GetMetadata();
             Assert.Equal(metadata, meta);
@@ -133,7 +125,7 @@ namespace HexaEngine.DirectXTex.Tests
             TexMetadata metadata = new()
             {
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Width = 64,
                 Height = 32,
                 Depth = 1,
@@ -143,9 +135,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.InitializeCube(Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm, 64, 32, 1, 2, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.InitializeCube(Format.FormatR8G8B8A8Unorm, 64, 32, 1, 2, CPFlags.None);
 
             var meta = image.GetMetadata();
             Assert.Equal(metadata, meta);
@@ -164,7 +154,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -173,18 +163,16 @@ namespace HexaEngine.DirectXTex.Tests
             };
 
             {
-                HResult result = image.Initialize(metadata, CPFlags.None);
-                if (!result.IsSuccess)
-                    result.Throw();
+                image.Initialize(metadata, CPFlags.None);
             }
 
             {
-                bool result = image.OverrideFormat(Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm);
+                bool result = image.OverrideFormat(Format.FormatB8G8R8A8Unorm);
                 if (!result)
                     throw new Exception();
             }
 
-            metadata.Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm;
+            metadata.Format = Format.FormatB8G8R8A8Unorm;
             var meta = image.GetMetadata();
             Assert.Equal(metadata, meta);
 
@@ -202,7 +190,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -210,9 +198,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             var meta = image.GetMetadata();
             Assert.Equal(metadata, meta);
@@ -231,7 +217,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -239,9 +225,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             var img = image.GetImage(0, 0, 0);
 
@@ -267,7 +251,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -275,9 +259,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             var imgs = image.GetImages();
 
@@ -307,7 +289,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
+                Format = Format.FormatR8G8B8A8Unorm,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -315,9 +297,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             var pixels = image.GetPixels();
             var count = image.GetPixelsSize();
@@ -341,7 +321,7 @@ namespace HexaEngine.DirectXTex.Tests
                 ArraySize = 1,
                 Depth = 1,
                 Dimension = TexDimension.Texture2D,
-                Format = Silk.NET.DXGI.Format.FormatR16G16Float,
+                Format = Format.FormatR16G16Float,
                 Height = 64,
                 Width = 64,
                 MipLevels = 4,
@@ -349,9 +329,7 @@ namespace HexaEngine.DirectXTex.Tests
                 MiscFlags2 = 0,
             };
 
-            HResult result = image.Initialize(metadata, CPFlags.None);
-            if (!result.IsSuccess)
-                result.Throw();
+            image.Initialize(metadata, CPFlags.None);
 
             // Result should be true because the format contains no alpha information.
             if (!image.IsAlphaAllOpaque())

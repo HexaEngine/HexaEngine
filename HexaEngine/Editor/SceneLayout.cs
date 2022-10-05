@@ -9,17 +9,19 @@ namespace HexaEngine.Editor
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
 
     public static class SceneLayout
     {
         private static bool isShown = true;
-        private static Dictionary<string, Type> cache = new();
+        private static Dictionary<string, EditorNodeAttribute> cache = new();
         private static Dictionary<string, int> newInstances = new();
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         internal static void Draw()
         {
             if (cache.Count == 0)
@@ -32,7 +34,8 @@ namespace HexaEngine.Editor
                     x.GetCustomAttribute<EditorNodeAttribute>() != null &&
                     !x.IsAbstract))
                 {
-                    cache.Add(type.GetCustomAttribute<EditorNodeAttribute>().Name, type);
+                    var attr = type.GetCustomAttribute<EditorNodeAttribute>();
+                    cache.Add(attr.Name, attr);
                 }
                 cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
             }
@@ -58,7 +61,7 @@ namespace HexaEngine.Editor
                 {
                     if (ImGui.MenuItem(item.Key))
                     {
-                        var node = (SceneNode)Activator.CreateInstance(item.Value);
+                        var node = item.Value.Constructor();
                         if (newInstances.TryGetValue(item.Key, out int instance))
                         {
                             node.Name = $"{item.Key} {newInstances[item.Key]++}";

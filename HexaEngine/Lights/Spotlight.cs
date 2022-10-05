@@ -5,7 +5,7 @@
     using System;
     using System.Numerics;
 
-    [EditorNode("Spotlight")]
+    [EditorNode<Spotlight>("Spotlight")]
     public class Spotlight : Light
     {
         public new CameraTransform Transform;
@@ -17,6 +17,7 @@
         public Spotlight()
         {
             base.Transform = Transform = new();
+            CreatePropertyEditor<Spotlight>();
         }
 
         [EditorProperty("Strength")]

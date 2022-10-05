@@ -16,7 +16,7 @@
 
         public void Initialize(ulong size)
         {
-            Native.BlobInitialize(pBlob, size);
+            Native.BlobInitialize(pBlob, size).ThrowIf();
         }
 
         public void Release()
@@ -39,12 +39,12 @@
 
         public void Resize(ulong size)
         {
-            Native.BlobResize(pBlob, size);
+            Native.BlobResize(pBlob, size).ThrowIf();
         }
 
         public void Trim(ulong size)
         {
-            Native.BlobTrim(pBlob, size);
+            Native.BlobTrim(pBlob, size).ThrowIf();
         }
 
         public Span<byte> ToBytes()

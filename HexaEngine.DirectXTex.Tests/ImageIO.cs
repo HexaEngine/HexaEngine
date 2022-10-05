@@ -126,7 +126,6 @@
         }
 
         [Fact]
-        
         public void LoadAndSaveFromWICMemory()
         {
             ScratchImage image = new();
@@ -146,7 +145,6 @@
         }
 
         [Fact]
-        
         public void LoadAndSaveFromWICFile()
         {
             var path = Path.Combine("results", nameof(LoadAndSaveFromTGAFile), "test.png");
@@ -169,6 +167,7 @@
         {
             if (Directory.Exists("results"))
                 Directory.Delete("results", true);
+            GC.SuppressFinalize(this);
         }
     }
 }
