@@ -6,7 +6,7 @@
         {
             ArraySize = 1,
             Depth = 6,
-            Dimension = TexDimension.TEXTURE3D,
+            Dimension = TexDimension.Texture3D,
             Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
             Height = 64,
             Width = 64,
@@ -19,7 +19,7 @@
         {
             ArraySize = 6,
             Depth = 1,
-            Dimension = TexDimension.TEXTURE2D,
+            Dimension = TexDimension.Texture2D,
             Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
             Height = 64,
             Width = 64,
@@ -32,7 +32,7 @@
         {
             ArraySize = 6,
             Depth = 1,
-            Dimension = TexDimension.TEXTURE2D,
+            Dimension = TexDimension.Texture2D,
             Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
             Height = 64,
             Width = 64,
@@ -45,7 +45,7 @@
         {
             ArraySize = 1,
             Depth = 1,
-            Dimension = TexDimension.TEXTURE2D,
+            Dimension = TexDimension.Texture2D,
             Format = Silk.NET.DXGI.Format.FormatR8G8B8A8Unorm,
             Height = 64,
             Width = 64,
@@ -58,7 +58,7 @@
         {
             ArraySize = 1,
             Depth = 1,
-            Dimension = TexDimension.TEXTURE2D,
+            Dimension = TexDimension.Texture2D,
             Format = Silk.NET.DXGI.Format.FormatBC7Unorm,
             Height = 64,
             Width = 64,
@@ -100,7 +100,7 @@
             {
                 ArraySize = 1,
                 Depth = 1,
-                Dimension = TexDimension.TEXTURE2D,
+                Dimension = TexDimension.Texture2D,
                 Format = Silk.NET.DXGI.Format.FormatBC7Unorm,
                 Height = 64,
                 Width = 64,
@@ -109,8 +109,8 @@
                 MiscFlags2 = 0,
             };
 
-            meta.SetAlphaMode(TexAlphaMode.PREMULTIPLIED);
-            Assert.Equal(TexAlphaMode.PREMULTIPLIED, meta.GetAlphaMode());
+            meta.SetAlphaMode(TexAlphaMode.Premultiplied);
+            Assert.Equal(TexAlphaMode.Premultiplied, meta.GetAlphaMode());
         }
 
         [Fact]

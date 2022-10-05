@@ -7,6 +7,8 @@
 
     public static unsafe class DirectXTex
     {
+        #region Internal Utils
+
         private static void ThrowIf(this int hresult)
         {
             HResult result = hresult;
@@ -20,6 +22,8 @@
             if (!result.IsSuccess)
                 result.Throw();
         }
+
+        #endregion Internal Utils
 
         #region DXGI Format Utilities
 
@@ -401,62 +405,62 @@
 
         #region WIC operations
 
-        public static void LoadFromWICMemory(byte[] data, WICFlags flags, ScratchImage* image)
+        public static void LoadFromWICMemory(byte[] data, WICFlags flags, ScratchImage* image, GetMQR? getMQR = null)
         {
             fixed (byte* ptr = data)
             {
-                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
+                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage, getMQR).ThrowIf();
             }
         }
 
-        public static void LoadFromWICMemory(Span<byte> data, WICFlags flags, ScratchImage* image)
+        public static void LoadFromWICMemory(Span<byte> data, WICFlags flags, ScratchImage* image, GetMQR? getMQR = null)
         {
             fixed (byte* ptr = data)
             {
-                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage).ThrowIf();
+                Native.LoadFromWICMemory(ptr, (ulong)data.Length, flags, null, image->pScratchImage, getMQR).ThrowIf();
             }
         }
 
-        public static void LoadFromWICMemory(void* pSource, ulong size, WICFlags flags, ScratchImage* image)
+        public static void LoadFromWICMemory(void* pSource, ulong size, WICFlags flags, ScratchImage* image, GetMQR? getMQR = null)
         {
-            Native.LoadFromWICMemory(pSource, size, flags, null, image->pScratchImage).ThrowIf();
+            Native.LoadFromWICMemory(pSource, size, flags, null, image->pScratchImage, getMQR).ThrowIf();
         }
 
-        public static void LoadFromWICFile(string path, WICFlags flags, ScratchImage* image)
+        public static void LoadFromWICFile(string path, WICFlags flags, ScratchImage* image, GetMQR? getMQR = null)
         {
-            Native.LoadFromWICFile(path, flags, null, image->pScratchImage).ThrowIf();
+            Native.LoadFromWICFile(path, flags, null, image->pScratchImage, getMQR).ThrowIf();
         }
 
-        public static void SaveToWICMemory(Image* image, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null)
+        public static void SaveToWICMemory(Image* image, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null, SetCustomProps? setCustomProps = null)
         {
-            Native.SaveToWICMemory(image, flags, containerGuid, blob->pBlob, targetFormat).ThrowIf();
+            Native.SaveToWICMemory(image, flags, containerGuid, blob->pBlob, targetFormat, setCustomProps).ThrowIf();
         }
 
-        public static void SaveToWICMemory(Image* images, ulong nImages, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null)
+        public static void SaveToWICMemory(Image* images, ulong nImages, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null, SetCustomProps? setCustomProps = null)
         {
-            Native.SaveToWICMemory2(images, nImages, flags, containerGuid, blob->pBlob, targetFormat).ThrowIf();
+            Native.SaveToWICMemory2(images, nImages, flags, containerGuid, blob->pBlob, targetFormat, setCustomProps).ThrowIf();
         }
 
-        public static void SaveToWICMemory(ScratchImage* image, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null)
+        public static void SaveToWICMemory(ScratchImage* image, WICFlags flags, Guid* containerGuid, TexBlob* blob, Guid* targetFormat = null, SetCustomProps? setCustomProps = null)
         {
             ulong nImages = image->GetImageCount();
             Image* images = image->GetImages();
-            Native.SaveToWICMemory2(images, nImages, flags, containerGuid, blob->pBlob, targetFormat).ThrowIf();
+            Native.SaveToWICMemory2(images, nImages, flags, containerGuid, blob->pBlob, targetFormat, setCustomProps).ThrowIf();
         }
 
-        public static void SaveToWICFile(Image* image, WICFlags flags, Guid containerGuid, string path, Guid* targetFormat = null)
+        public static void SaveToWICFile(Image* image, WICFlags flags, Guid containerGuid, string path, Guid* targetFormat = null, SetCustomProps? setCustomProps = null)
         {
-            Native.SaveToWICFile(image, flags, &containerGuid, path, targetFormat).ThrowIf();
+            Native.SaveToWICFile(image, flags, &containerGuid, path, targetFormat, setCustomProps).ThrowIf();
         }
 
-        public static void SaveToWICFile(ScratchImage* image, int index, WICFlags flags, Guid* containerGuid, string path, Guid* targetFormat = null)
+        public static void SaveToWICFile(ScratchImage* image, int index, WICFlags flags, Guid* containerGuid, string path, Guid* targetFormat = null, SetCustomProps? setCustomProps = null)
         {
-            Native.SaveToWICFile(&image->GetImages()[index], flags, containerGuid, path, targetFormat).ThrowIf();
+            Native.SaveToWICFile(&image->GetImages()[index], flags, containerGuid, path, targetFormat, setCustomProps).ThrowIf();
         }
 
-        public static void SaveToWICFile(ScratchImage* image, WICFlags flags, Guid* containerGuid, string path, Guid* targetFormat = null)
+        public static void SaveToWICFile(ScratchImage* image, WICFlags flags, Guid* containerGuid, string path, Guid* targetFormat = null, SetCustomProps? setCustomProps = null)
         {
-            Native.SaveToWICFile2(image->GetImages(), image->GetImageCount(), flags, containerGuid, path, targetFormat).ThrowIf();
+            Native.SaveToWICFile2(image->GetImages(), image->GetImageCount(), flags, containerGuid, path, targetFormat, setCustomProps).ThrowIf();
         }
 
         #endregion WIC operations
@@ -584,13 +588,6 @@
 
         // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
         // Defaults to Fant filtering which is equivalent to a box filter
-        public static unsafe void ScaleMipMapsAlphaForCoverage(ScratchImage* srcImage, ulong item, float alphaReference, ScratchImage* mipChain)
-        {
-            Image* srcImages = srcImage->GetImages();
-            ulong nimages = srcImage->GetImageCount();
-            TexMetadata metadata = srcImage->GetMetadata();
-            Native.ScaleMipMapsAlphaForCoverage(srcImages, nimages, &metadata, item, alphaReference, mipChain->pScratchImage).ThrowIf();
-        }
 
         public static unsafe void ScaleMipMapsAlphaForCoverage(Image* srcImages, ulong nimages, TexMetadata* metadata, ulong item, float alphaReference, ScratchImage* mipChain)
         {
@@ -675,24 +672,127 @@
 
         #endregion Texture conversion, resizing, mipmap generation, and block compression
 
-        public static void CreateTextureEx(ID3D11Device* device, ScratchImage* image, Usage usage, BindFlag bind, CpuAccessFlag cpu, ResourceMiscFlag misc, bool forceSRGB, ID3D11Resource** resource)
+        #region Normal map operations
+
+        public static void ComputeNormalMap(Image* srcImage, CNMAPFlags flags, float amplitude, Format format, ScratchImage* normalMap)
         {
-            Native.CreateTextureEx2(device, image->pScratchImage, (uint)usage, (uint)bind, (uint)cpu, (uint)misc, forceSRGB, resource).ThrowIf();
+            Native.ComputeNormalMap(srcImage, flags, amplitude, format, normalMap->pScratchImage).ThrowIf();
         }
 
-        public static void CreateTextureEx(ID3D11Device* device, Image* images, ulong nImages, TexMetadata* metadata, Usage usage, BindFlag bind, CpuAccessFlag cpu, ResourceMiscFlag misc, bool forceSRGB, ID3D11Resource** resource)
+        public static void ComputeNormalMap(ScratchImage* srcImage, CNMAPFlags flags, float amplitude, Format format, ScratchImage* normalMaps)
         {
-            Native.CreateTextureEx(device, images, nImages, metadata, usage, (uint)bind, (uint)cpu, (uint)misc, forceSRGB, resource).ThrowIf();
+            Image* srcImages = srcImage->GetImages();
+            ulong nimages = srcImage->GetImageCount();
+            TexMetadata metadata = srcImage->GetMetadata();
+            Native.ComputeNormalMap2(srcImages, nimages, &metadata, flags, amplitude, format, normalMaps->pScratchImage).ThrowIf();
         }
 
-        public static void CaptureTexture(ID3D11Device* device, ID3D11DeviceContext* context, ID3D11Resource* resource, ScratchImage* image)
+        public static void ComputeNormalMap(Image* srcImages, ulong nimages, TexMetadata* metadata, CNMAPFlags flags, float amplitude, Format format, ScratchImage* normalMaps)
         {
-            Native.CaptureTexture(device, context, resource, image->pScratchImage).ThrowIf();
+            Native.ComputeNormalMap2(srcImages, nimages, metadata, flags, amplitude, format, normalMaps->pScratchImage).ThrowIf();
         }
 
-        public static Guid* GetWICCodec(WICCodecs codecs)
+        #endregion Normal map operations
+
+        #region Misc image operations
+
+        public static void CopyRectangle(Image* srcImage, Rect* srcRect, Image* dstImage, TexFilterFlags filter, ulong xOffset, ulong yOffset)
         {
-            return Native.GetWICCodec(codecs);
+            Native.CopyRectangle(srcImage, srcRect, dstImage, filter, xOffset, yOffset).ThrowIf();
         }
+
+        public static void ComputeMSE(Image* image1, Image* image2, float* mse, float* mseV, CMSEFlags flags = CMSEFlags.Default)
+        {
+            Native.ComputeMSE(image1, image2, mse, mseV, flags).ThrowIf();
+        }
+
+        public static void EvaluateImage(Image* image, EvaluateFunc pixelFunc)
+        {
+            Native.EvaluateImage(image, pixelFunc).ThrowIf();
+        }
+
+        public static void EvaluateImage(Image* images, ulong nimages, TexMetadata* metadata, EvaluateFunc pixelFunc)
+        {
+            Native.EvaluateImage2(images, nimages, metadata, pixelFunc).ThrowIf();
+        }
+
+        public static void TransformImage(Image* image, TransformFunc pixelFunc, ScratchImage* result)
+        {
+            Native.TransformImage(image, pixelFunc, result->pScratchImage).ThrowIf();
+        }
+
+        public static void TransformImage(Image* srcImages, ulong nimages, TexMetadata* metadata, TransformFunc pixelFunc, ScratchImage* result)
+        {
+            Native.TransformImage2(srcImages, nimages, metadata, pixelFunc, result->pScratchImage).ThrowIf();
+        }
+
+        #endregion Misc image operations
+
+        #region WIC utility code
+
+        public static Guid* GetWICCodec(WICCodecs codec)
+        {
+            return Native.GetWICCodec(codec);
+        }
+
+        public static IWICImagingFactory* GetWICFactory(bool* iswic2)
+        {
+            return Native.GetWICFactory(iswic2);
+        }
+
+        public static void SetWICFactory(IWICImagingFactory* pWIC)
+        {
+            Native.SetWICFactory(pWIC);
+        }
+
+        #endregion WIC utility code
+
+        #region DDS helper functions
+
+        public static void EncodeDDSHeader(TexMetadata* metadata, DDSFlags flags, void* pDestination, ulong maxsize, ulong* required)
+        {
+            Native.EncodeDDSHeader(metadata, flags, pDestination, maxsize, required).ThrowIf();
+        }
+
+        #endregion DDS helper functions
+
+        #region Direct3D 11 functions
+
+        public static bool IsSupportedTexture(ID3D11Device* pDevice, TexMetadata* metadata)
+        {
+            return Native.IsSupportedTexture(pDevice, metadata);
+        }
+
+        public static void CreateTexture(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, ID3D11Resource** ppResource)
+        {
+            Native.CreateTexture(pDevice, srcImages, nimages, metadata, ppResource).ThrowIf();
+        }
+
+        public static void CreateShaderResourceView(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, ID3D11ShaderResourceView** ppSRV)
+        {
+            Native.CreateShaderResourceView(pDevice, srcImages, nimages, metadata, ppSRV).ThrowIf();
+        }
+
+        public static void CreateTextureEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, bool forceSRGB, ID3D11Resource** ppResource)
+        {
+            Native.CreateTextureEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppResource).ThrowIf();
+        }
+
+        public static void CreateTextureEx(ID3D11Device* pDevice, ScratchImage* img, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, bool forceSRGB, ID3D11Resource** ppResource)
+        {
+            Native.CreateTextureEx2(pDevice, img->pScratchImage, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppResource).ThrowIf();
+        }
+
+        public static void CreateShaderResourceViewEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, bool forceSRGB, ID3D11ShaderResourceView** ppSRV)
+        {
+            Native.CreateShaderResourceViewEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppSRV).ThrowIf();
+        }
+
+        public static void CaptureTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ID3D11Resource* pSource, ScratchImage* result)
+        {
+            Native.CaptureTexture(pDevice, pContext, pSource, result->pScratchImage).ThrowIf();
+        }
+
+        #endregion Direct3D 11 functions
     }
 }

@@ -22,8 +22,8 @@
             TexMetadata metadata2;
 
             Span<byte> bytes = LoadTexture(DDSFilename);
-            DirectXTex.GetMetadataFromDDSMemory(bytes, DDSFlags.NONE, &metadata1);
-            DirectXTex.GetMetadataFromDDSFile(DDSFilename, DDSFlags.NONE, &metadata2);
+            DirectXTex.GetMetadataFromDDSMemory(bytes, DDSFlags.None, &metadata1);
+            DirectXTex.GetMetadataFromDDSFile(DDSFilename, DDSFlags.None, &metadata2);
 
             Assert.Equal(metadata1, metadata2);
         }

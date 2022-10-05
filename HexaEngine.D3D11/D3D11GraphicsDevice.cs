@@ -601,7 +601,7 @@
             switch (extension)
             {
                 case ".dds":
-                    DirectXTex.LoadFromDDSMemory(data, DDSFlags.NONE, &image);
+                    DirectXTex.LoadFromDDSMemory(data, DDSFlags.None, &image);
                     break;
 
                 case ".tga":
@@ -613,7 +613,7 @@
                     break;
 
                 default:
-                    DirectXTex.LoadFromWICMemory(data, WICFlags.NONE, &image);
+                    DirectXTex.LoadFromWICMemory(data, WICFlags.NONE, &image, null);
                     break;
             };
             return image;
@@ -646,7 +646,7 @@
             switch (Path.GetExtension(path))
             {
                 case ".dds":
-                    DirectXTex.SaveToDDSFile(&image, DDSFlags.NONE, path);
+                    DirectXTex.SaveToDDSFile(&image, DDSFlags.None, path);
                     break;
 
                 case ".tga":
@@ -708,7 +708,7 @@
             switch (Path.GetExtension(path))
             {
                 case ".dds":
-                    DirectXTex.SaveToDDSFile(&image, DDSFlags.NONE, path);
+                    DirectXTex.SaveToDDSFile(&image, DDSFlags.None, path);
                     break;
 
                 case ".tga":

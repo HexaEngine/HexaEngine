@@ -6,17 +6,17 @@
         /// <summary>
         /// Normal operation
         /// </summary>
-        NONE = 0x0,
+        None = 0x0,
 
         /// <summary>
         /// Assume pitch is DWORD aligned instead of BYTE aligned
         /// </summary>
-        LEGACY_DWORD = 0x1,
+        LegacyDWORD = 0x1,
 
         /// <summary>
         /// Assume pitch is 16-byte aligned instead of BYTE aligned
         /// </summary>
-        PARAGRAPH = 0x2,
+        Paragraph = 0x2,
 
         /// <summary>
         /// Assume pitch is 32-byte aligned instead of BYTE aligned
@@ -31,12 +31,12 @@
         /// <summary>
         /// Assume pitch is 4096-byte aligned instead of BYTE aligned
         /// </summary>
-        PAGE4K = 0x200,
+        Page4K = 0x200,
 
         /// <summary>
         /// BC formats with malformed mipchain blocks smaller than 4x4
         /// </summary>
-        BAD_DXTN_TAILS = 0x1000,
+        BadDXTNTails = 0x1000,
 
         /// <summary>
         /// Override with a legacy 24 bits-per-pixel format size

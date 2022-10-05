@@ -36,7 +36,7 @@
             void* pointer = blob.GetBufferPointer();
             Span<byte> bytes = new(pointer, (int)size);
             bytes.Fill(1);
-            
+
             blob.Release();
             if (blob.pBlob != null)
             {

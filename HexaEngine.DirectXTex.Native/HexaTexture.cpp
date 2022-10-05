@@ -1,6 +1,59 @@
 #include "HexaTexture.h"
 #include <wincodec.h>
 
+#pragma region IPropertyBag2 methods
+
+HRESULT Read(IPropertyBag2* p, _In_ ULONG cProperties, __RPC__in_ecount_full(cProperties) PROPBAG2* pPropBag, __RPC__in_opt IErrorLog* pErrLog, __RPC__out_ecount_full(cProperties) VARIANT* pvarValue, __RPC__inout_ecount_full_opt(cProperties) HRESULT* phrError)
+{
+	return p->Read(cProperties, pPropBag, pErrLog, pvarValue, phrError);
+}
+
+HRESULT Write(IPropertyBag2* p, _In_ ULONG cProperties, __RPC__in_ecount_full(cProperties) PROPBAG2* pPropBag, __RPC__in_ecount_full(cProperties) VARIANT* pvarValue)
+{
+	return p->Write(cProperties, pPropBag, pvarValue);
+}
+
+HRESULT CountProperties(IPropertyBag2* p, __RPC__out ULONG* pcProperties)
+{
+	return p->CountProperties(pcProperties);
+}
+
+HRESULT GetPropertyInfo(IPropertyBag2* p, _In_ ULONG iProperty, _In_ ULONG cProperties, __RPC__out_ecount_full(cProperties) PROPBAG2* pPropBag, __RPC__out ULONG* pcProperties)
+{
+	return p->GetPropertyInfo(iProperty, cProperties, pPropBag, pcProperties);
+}
+
+HRESULT LoadObject(IPropertyBag2* p, __RPC__in LPCOLESTR pstrName, _In_ DWORD dwHint, __RPC__in_opt IUnknown* pUnkObject, __RPC__in_opt IErrorLog* pErrLog)
+{
+	return p->LoadObject(pstrName, dwHint, pUnkObject, pErrLog);
+}
+
+#pragma endregion
+
+#pragma region IWICMetadataQueryReader methods
+
+HRESULT GetContainerFormat(IWICMetadataQueryReader* p, __RPC__out GUID* pguidContainerFormat)
+{
+	return p->GetContainerFormat(pguidContainerFormat);
+}
+
+HRESULT GetLocation(IWICMetadataQueryReader* p, _In_ UINT cchMaxLength, __RPC__inout_ecount_full_opt(cchMaxLength) WCHAR* wzNamespace, __RPC__out UINT* pcchActualLength)
+{
+	return p->GetLocation(cchMaxLength, wzNamespace, pcchActualLength);
+}
+
+HRESULT GetMetadataByName(IWICMetadataQueryReader* p, __RPC__in LPCWSTR wzName, __RPC__inout_opt PROPVARIANT* pvarValue)
+{
+	return p->GetMetadataByName(wzName, pvarValue);
+}
+
+HRESULT GetEnumerator(IWICMetadataQueryReader* p, __RPC__deref_out_opt IEnumString** ppIEnumString)
+{
+	return p->GetEnumerator(ppIEnumString);
+}
+
+#pragma endregion
+
 #pragma region DXGI Format Utilities
 
 bool IsValid(_In_ DXGI_FORMAT fmt) noexcept
@@ -86,7 +139,7 @@ DXGI_FORMAT MakeTypelessFLOAT(_In_ DXGI_FORMAT fmt) noexcept
 	return DirectX::MakeTypelessFLOAT(fmt);
 }
 
-#pragma endregion DXGI Format Utilities
+#pragma endregion
 
 #pragma region MetadataIO
 
@@ -142,7 +195,7 @@ HRESULT GetMetadataFromTGAFile2(_In_z_ const wchar_t* szFile, _Out_ DirectX::Tex
 
 #pragma endregion
 
-#pragma region TexMetadataMethods
+#pragma region TexMetadata Methods
 
 size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept
 {
@@ -176,9 +229,9 @@ bool IsVolumemap(DirectX::TexMetadata* metadata) noexcept
 }
 // Helper for dimension
 
-#pragma endregion TexMetadataMethods
+#pragma endregion
 
-#pragma region ScratchImageInternal
+#pragma region ScratchImage Methods
 
 DirectX::ScratchImage* NewScratchImage()
 {
@@ -285,9 +338,9 @@ bool IsAlphaAllOpaque(DirectX::ScratchImage* img)
 	return img->IsAlphaAllOpaque();
 }
 
-#pragma endregion ScratchImageInternal
+#pragma endregion
 
-#pragma region BlobInternal
+#pragma region Blob Methods
 
 DirectX::Blob* NewBlob()
 {
@@ -327,7 +380,7 @@ HRESULT BlobTrim(DirectX::Blob* blob, size_t size) noexcept
 }
 // Shorten size without reallocation
 
-#pragma endregion BlobInternal
+#pragma endregion
 
 #pragma region ImageIO
 
@@ -406,31 +459,31 @@ HRESULT SaveToTGAFile(_In_ const DirectX::Image& image, _In_ DirectX::TGA_FLAGS 
 
 // WIC operations
 #ifdef WIN32
-HRESULT LoadFromWICMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image)
+HRESULT LoadFromWICMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image, GetMQR getMQR)
 {
-	return DirectX::LoadFromWICMemory(pSource, size, flags, metadata, *image);
+	return DirectX::LoadFromWICMemory(pSource, size, flags, metadata, *image, getMQR);
 }
-HRESULT LoadFromWICFile(_In_z_ const wchar_t* szFile, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image)
+HRESULT LoadFromWICFile(_In_z_ const wchar_t* szFile, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image, GetMQR getMQR)
 {
-	return DirectX::LoadFromWICFile(szFile, flags, metadata, *image);
-}
-
-HRESULT SaveToWICMemory(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat)
-{
-	return DirectX::SaveToWICMemory(image, flags, guidContainerFormat, blob, targetFormat);
-}
-HRESULT SaveToWICMemory2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat)
-{
-	return DirectX::SaveToWICMemory(images, nimages, flags, guidContainerFormat, blob, targetFormat);
+	return DirectX::LoadFromWICFile(szFile, flags, metadata, *image, getMQR);
 }
 
-HRESULT SaveToWICFile(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat)
+HRESULT SaveToWICMemory(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat, SetCustomProps customProps)
 {
-	return DirectX::SaveToWICFile(image, flags, guidContainerFormat, szFile, targetFormat);
+	return DirectX::SaveToWICMemory(image, flags, guidContainerFormat, blob, targetFormat, customProps);
 }
-HRESULT SaveToWICFile2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat)
+HRESULT SaveToWICMemory2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat, SetCustomProps customProps)
 {
-	return DirectX::SaveToWICFile(images, nimages, flags, guidContainerFormat, szFile, targetFormat);
+	return DirectX::SaveToWICMemory(images, nimages, flags, guidContainerFormat, blob, targetFormat, customProps);
+}
+
+HRESULT SaveToWICFile(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat, SetCustomProps customProps)
+{
+	return DirectX::SaveToWICFile(image, flags, guidContainerFormat, szFile, targetFormat, customProps);
+}
+HRESULT SaveToWICFile2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat, SetCustomProps customProps)
+{
+	return DirectX::SaveToWICFile(images, nimages, flags, guidContainerFormat, szFile, targetFormat, customProps);
 }
 
 #endif // WIN32
@@ -454,7 +507,9 @@ HRESULT SaveToTGAFile2(_In_ const DirectX::Image& image, _In_z_ const wchar_t* s
 	return DirectX::SaveToTGAFile(image, szFile, metadata);
 }
 
-#pragma endregion ImageIO
+#pragma endregion
+
+#pragma region Texture conversion, resizing, mipmap generation, and block compression
 
 #ifdef WIN32
 HRESULT FlipRotate(_In_ const DirectX::Image& srcImage, _In_ DirectX::TEX_FR_FLAGS flags, _Out_ DirectX::ScratchImage& image) noexcept
@@ -565,6 +620,10 @@ HRESULT Decompress2(_In_reads_(nimages) const DirectX::Image* cImages, _In_ size
 	return DirectX::Decompress(cImages, nimages, metadata, format, images);
 }
 
+#pragma endregion
+
+#pragma region Normal map operations
+
 HRESULT ComputeNormalMap(_In_ const DirectX::Image& srcImage, _In_ DirectX::CNMAP_FLAGS flags, _In_ float amplitude, _In_ DXGI_FORMAT format, _Out_ DirectX::ScratchImage& normalMap) noexcept
 {
 	return DirectX::ComputeNormalMap(srcImage, flags, amplitude, format, normalMap);
@@ -573,6 +632,10 @@ HRESULT ComputeNormalMap2(_In_reads_(nimages) const DirectX::Image* srcImages, _
 {
 	return DirectX::ComputeNormalMap(srcImages, nimages, metadata, flags, amplitude, format, normalMaps);
 }
+
+#pragma endregion
+
+#pragma region Misc image operations
 
 HRESULT CopyRectangle(_In_ const DirectX::Image& srcImage, _In_ const DirectX::Rect& srcRect, _In_ const DirectX::Image& dstImage, _In_ DirectX::TEX_FILTER_FLAGS filter, _In_ size_t xOffset, _In_ size_t yOffset) noexcept
 {
@@ -584,23 +647,27 @@ HRESULT ComputeMSE(_In_ const DirectX::Image& image1, _In_ const DirectX::Image&
 	return DirectX::ComputeMSE(image1, image2, mse, mseV, flags);
 }
 
-HRESULT EvaluateImage(_In_ const DirectX::Image& image, _In_ std::function<void(_In_reads_(width) const DirectX::XMVECTOR* pixels, size_t width, size_t y)> pixelFunc)
+HRESULT EvaluateImage(_In_ const DirectX::Image& image, _In_ EvaluateImageFunc pixelFunc)
 {
 	return DirectX::EvaluateImage(image, pixelFunc);
 }
-HRESULT EvaluateImage2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ std::function<void(_In_reads_(width) const DirectX::XMVECTOR* pixels, size_t width, size_t y)> pixelFunc)
+HRESULT EvaluateImage2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ EvaluateImageFunc pixelFunc)
 {
 	return DirectX::EvaluateImage(images, nimages, metadata, pixelFunc);
 }
 
-HRESULT TransformImage(_In_ const DirectX::Image& image, _In_ std::function<void(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y)> pixelFunc, DirectX::ScratchImage& result)
+HRESULT TransformImage(_In_ const DirectX::Image& image, _In_ TransformImageFunc pixelFunc, DirectX::ScratchImage& result)
 {
 	return DirectX::TransformImage(image, pixelFunc, result);
 }
-HRESULT TransformImage2(_In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ std::function<void(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y)> pixelFunc, DirectX::ScratchImage& result)
+HRESULT TransformImage2(_In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ TransformImageFunc pixelFunc, DirectX::ScratchImage& result)
 {
 	return DirectX::TransformImage(srcImages, nimages, metadata, pixelFunc, result);
 }
+
+#pragma endregion
+
+#pragma region WIC utility code
 
 #ifdef WIN32
 REFGUID GetWICCodec(_In_ DirectX::WICCodecs codec) noexcept
@@ -618,15 +685,19 @@ void SetWICFactory(_In_opt_ IWICImagingFactory* pWIC) noexcept
 }
 #endif
 
-//---------------------------------------------------------------------------------
-// DDS helper functions
+#pragma endregion
+
+#pragma region DDS helper functions
+
 HRESULT EncodeDDSHeader(_In_ const DirectX::TexMetadata& metadata, DirectX::DDS_FLAGS flags, _Out_writes_bytes_to_opt_(maxsize, required) void* pDestination, _In_ size_t maxsize, _Out_ size_t& required) noexcept
 {
 	return DirectX::EncodeDDSHeader(metadata, flags, pDestination, maxsize, required);
 }
 
-//---------------------------------------------------------------------------------
-// Direct3D 11 functions
+#pragma endregion
+
+#pragma region Direct3D 11 functions
+
 #if defined(__d3d11_h__) || defined(__d3d11_x_h__)
 bool IsSupportedTexture(_In_ ID3D11Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept
 {
@@ -653,7 +724,7 @@ HRESULT CreateTextureEx2(_In_ ID3D11Device* pDevice, _In_ DirectX::ScratchImage*
 	return DirectX::CreateTextureEx(pDevice, img->GetImages(), img->GetImageCount(), img->GetMetadata(), (D3D11_USAGE)usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppResource);
 }
 
-HRESULT CreateShaderResourceViewEx(_In_ ID3D11Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ int64_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ D3D11_USAGE usage, _In_ unsigned int bindFlags, _In_ unsigned int cpuAccessFlags, _In_ unsigned int miscFlags, _In_ bool forceSRGB, _Outptr_ ID3D11ShaderResourceView** ppSRV) noexcept
+HRESULT CreateShaderResourceViewEx(_In_ ID3D11Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ D3D11_USAGE usage, _In_ unsigned int bindFlags, _In_ unsigned int cpuAccessFlags, _In_ unsigned int miscFlags, _In_ bool forceSRGB, _Outptr_ ID3D11ShaderResourceView** ppSRV) noexcept
 {
 	return DirectX::CreateShaderResourceViewEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppSRV);
 }
@@ -664,8 +735,10 @@ HRESULT CaptureTexture(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pCo
 }
 #endif
 
-//---------------------------------------------------------------------------------
-// Direct3D 12 functions
+#pragma endregion
+
+#pragma region Direct3D 12 functions
+
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 bool IsSupportedTexture(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept
 {
@@ -692,3 +765,5 @@ HRESULT CaptureTexture(_In_ ID3D12CommandQueue* pCommandQueue, _In_ ID3D12Resour
 	return DirectX::CaptureTexture(pCommandQueue, pSource, isCubeMap, result, beforeState, afterState);
 }
 #endif
+
+#pragma endregion

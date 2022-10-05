@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
+    using System.Runtime.Versioning;
+
     public unsafe class ImageIO : IDisposable
     {
         private const string DDSFilename = "assets\\textures\\test.dds";
@@ -16,8 +18,8 @@
             Span<byte> src = LoadTexture(DDSFilename);
             TexBlob blob = new();
 
-            DirectXTex.LoadFromDDSMemory(src, DDSFlags.NONE, &image);
-            DirectXTex.SaveToDDSMemory(&image, DDSFlags.NONE, &blob);
+            DirectXTex.LoadFromDDSMemory(src, DDSFlags.None, &image);
+            DirectXTex.SaveToDDSMemory(&image, DDSFlags.None, &blob);
 
             Span<byte> dest = blob.ToBytes();
             Assert.True(src.SequenceEqual(dest));
@@ -35,8 +37,8 @@
             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? string.Empty);
             ScratchImage image = new();
 
-            DirectXTex.LoadFromDDSFile(DDSFilename, DDSFlags.NONE, &image);
-            DirectXTex.SaveToDDSFile(&image, DDSFlags.NONE, path);
+            DirectXTex.LoadFromDDSFile(DDSFilename, DDSFlags.None, &image);
+            DirectXTex.SaveToDDSFile(&image, DDSFlags.None, path);
 
             Span<byte> src = LoadTexture(DDSFilename);
             Span<byte> dest = LoadTexture(path);
@@ -124,13 +126,14 @@
         }
 
         [Fact]
+        
         public void LoadAndSaveFromWICMemory()
         {
             ScratchImage image = new();
             Span<byte> src = LoadTexture(WICFilename);
             TexBlob blob = new();
 
-            DirectXTex.LoadFromWICMemory(src, WICFlags.NONE, &image);
+            DirectXTex.LoadFromWICMemory(src, WICFlags.NONE, &image, null);
             DirectXTex.SaveToWICMemory(&image, WICFlags.NONE, DirectXTex.GetWICCodec(WICCodecs.PNG), &blob);
 
             Span<byte> dest = blob.ToBytes();
@@ -143,6 +146,7 @@
         }
 
         [Fact]
+        
         public void LoadAndSaveFromWICFile()
         {
             var path = Path.Combine("results", nameof(LoadAndSaveFromTGAFile), "test.png");

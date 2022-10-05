@@ -6,7 +6,7 @@ public class Program
     {
         byte[] data = File.ReadAllBytes("env_o.dds");
         ScratchImage image = new();
-        DirectXTex.LoadFromDDSMemory(data, DDSFlags.NONE, &image);
+        DirectXTex.LoadFromDDSMemory(data, DDSFlags.None, &image);
         var me = image.GetMetadata();
         image.Release();
     }

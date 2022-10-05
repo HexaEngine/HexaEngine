@@ -8,6 +8,37 @@ extern "C"
 {
 #endif
 
+	typedef void(__cdecl* SetCustomProps)(IPropertyBag2* pBag);
+	typedef void(__cdecl* GetMQR)(IWICMetadataQueryReader* qMqr);
+	typedef void(__cdecl* EvaluateImageFunc)(_In_reads_(width) const DirectX::XMVECTOR* pixels, size_t width, size_t y);
+	typedef void(__cdecl* TransformImageFunc)(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y);
+
+#pragma region IPropertyBag2 methods
+
+	API HRESULT Read(IPropertyBag2* p, _In_ ULONG cProperties, __RPC__in_ecount_full(cProperties) PROPBAG2* pPropBag, __RPC__in_opt IErrorLog* pErrLog, __RPC__out_ecount_full(cProperties) VARIANT* pvarValue, __RPC__inout_ecount_full_opt(cProperties) HRESULT* phrError);
+
+	API HRESULT Write(IPropertyBag2* p, _In_ ULONG cProperties, __RPC__in_ecount_full(cProperties) PROPBAG2* pPropBag, __RPC__in_ecount_full(cProperties) VARIANT* pvarValue);
+
+	API HRESULT CountProperties(IPropertyBag2* p, __RPC__out ULONG* pcProperties);
+
+	API HRESULT GetPropertyInfo(IPropertyBag2* p, _In_ ULONG iProperty, _In_ ULONG cProperties, __RPC__out_ecount_full(cProperties) PROPBAG2* pPropBag, __RPC__out ULONG* pcProperties);
+
+	API HRESULT LoadObject(IPropertyBag2* p, __RPC__in LPCOLESTR pstrName, _In_ DWORD dwHint, __RPC__in_opt IUnknown* pUnkObject, __RPC__in_opt IErrorLog* pErrLog);
+
+#pragma endregion
+
+#pragma region IWICMetadataQueryReader methods
+
+	API HRESULT GetContainerFormat(IWICMetadataQueryReader* p, __RPC__out GUID* pguidContainerFormat);
+
+	API HRESULT GetLocation(IWICMetadataQueryReader* p, _In_ UINT cchMaxLength, __RPC__inout_ecount_full_opt(cchMaxLength) WCHAR* wzNamespace, __RPC__out UINT* pcchActualLength);
+
+	API HRESULT GetMetadataByName(IWICMetadataQueryReader* p, __RPC__in LPCWSTR wzName, __RPC__inout_opt PROPVARIANT* pvarValue);
+
+	API HRESULT GetEnumerator(IWICMetadataQueryReader* p, __RPC__deref_out_opt IEnumString** ppIEnumString);
+
+#pragma endregion
+
 #pragma region DXGI Format Utilities
 
 	API bool IsValid(_In_ DXGI_FORMAT fmt) noexcept;
@@ -87,7 +118,7 @@ extern "C"
 
 #pragma endregion
 
-#pragma region TexMetadataMethods
+#pragma region TexMetadata Methods
 
 	API size_t ComputeIndex(DirectX::TexMetadata* metadata, _In_ size_t mip, _In_ size_t item, _In_ size_t slice) noexcept;
 	// Returns size_t(-1) to indicate an out-of-range error
@@ -105,7 +136,7 @@ extern "C"
 
 #pragma endregion
 
-#pragma region ScratchImageMethods
+#pragma region ScratchImage Methods
 
 	API DirectX::ScratchImage* NewScratchImage();
 
@@ -185,14 +216,15 @@ extern "C"
 
 	// WIC operations
 #ifdef WIN32
-	API HRESULT LoadFromWICMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image);
-	API HRESULT LoadFromWICFile(_In_z_ const wchar_t* szFile, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image);
 
-	API HRESULT SaveToWICMemory(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr);
-	API HRESULT SaveToWICMemory2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr);
+	API HRESULT LoadFromWICMemory(_In_reads_bytes_(size) const void* pSource, _In_ size_t size, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image, GetMQR getMQR = nullptr);
+	API HRESULT LoadFromWICFile(_In_z_ const wchar_t* szFile, _In_ DirectX::WIC_FLAGS flags, _Out_opt_ DirectX::TexMetadata* metadata, DirectX::ScratchImage* image, GetMQR getMQR = nullptr);
 
-	API HRESULT SaveToWICFile(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr);
-	API HRESULT SaveToWICFile2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr);
+	API HRESULT SaveToWICMemory(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr, SetCustomProps customProps = nullptr);
+	API HRESULT SaveToWICMemory2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _Out_ DirectX::Blob& blob, _In_opt_ const GUID* targetFormat = nullptr, SetCustomProps customProps = nullptr);
+
+	API HRESULT SaveToWICFile(_In_ const DirectX::Image& image, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr, SetCustomProps customProps = nullptr);
+	API HRESULT SaveToWICFile2(_In_count_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ DirectX::WIC_FLAGS flags, _In_ REFGUID guidContainerFormat, _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr, SetCustomProps customProps = nullptr);
 #endif // WIN32
 
 	// Compatability helpers
@@ -266,11 +298,11 @@ extern "C"
 
 	API HRESULT ComputeMSE(_In_ const DirectX::Image& image1, _In_ const DirectX::Image& image2, _Out_ float& mse, _Out_writes_opt_(4) float* mseV, _In_ DirectX::CMSE_FLAGS flags = DirectX::CMSE_DEFAULT) noexcept;
 
-	API HRESULT EvaluateImage(_In_ const DirectX::Image& image, _In_ std::function<void(_In_reads_(width) const DirectX::XMVECTOR* pixels, size_t width, size_t y)> pixelFunc);
-	API HRESULT EvaluateImage2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ std::function<void(_In_reads_(width) const DirectX::XMVECTOR* pixels, size_t width, size_t y)> pixelFunc);
+	API HRESULT EvaluateImage(_In_ const DirectX::Image& image, _In_ EvaluateImageFunc pixelFunc);
+	API HRESULT EvaluateImage2(_In_reads_(nimages) const DirectX::Image* images, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ EvaluateImageFunc pixelFunc);
 
-	API HRESULT TransformImage(_In_ const DirectX::Image& image, _In_ std::function<void(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y)> pixelFunc, DirectX::ScratchImage& result);
-	API HRESULT TransformImage2(_In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ std::function<void(_Out_writes_(width) DirectX::XMVECTOR* outPixels, _In_reads_(width) const DirectX::XMVECTOR* inPixels, size_t width, size_t y)> pixelFunc, DirectX::ScratchImage& result);
+	API HRESULT TransformImage(_In_ const DirectX::Image& image, _In_ TransformImageFunc pixelFunc, DirectX::ScratchImage& result);
+	API HRESULT TransformImage2(_In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, _In_ TransformImageFunc pixelFunc, DirectX::ScratchImage& result);
 
 #pragma endregion
 

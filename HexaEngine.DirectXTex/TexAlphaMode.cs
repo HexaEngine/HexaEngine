@@ -5,10 +5,10 @@
     /// </summary>
     public enum TexAlphaMode
     {
-        UNKNOWN = 0,
-        STRAIGHT = 1,
-        PREMULTIPLIED = 2,
-        OPAQUE = 3,
-        CUSTOM = 4,
+        Unknown = 0,
+        Straight = 1,
+        Premultiplied = 2,
+        Opaque = 3,
+        Custom = 4,
     }
 }

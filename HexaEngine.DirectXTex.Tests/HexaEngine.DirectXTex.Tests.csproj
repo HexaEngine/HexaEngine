@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
     <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
   </ItemGroup>
 

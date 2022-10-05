@@ -122,9 +122,9 @@
         [Fact]
         public void FormatDataType()
         {
-            if (DirectXTex.FormatDataType(Format.FormatA8Unorm) != FormatType.FORMAT_TYPE_UNORM)
+            if (DirectXTex.FormatDataType(Format.FormatA8Unorm) != FormatType.UNorm)
                 Trace.Fail("Should be unorm");
-            if (DirectXTex.FormatDataType(Format.FormatR32G32B32A32Uint) == FormatType.FORMAT_TYPE_FLOAT)
+            if (DirectXTex.FormatDataType(Format.FormatR32G32B32A32Uint) == FormatType.Float)
                 Trace.Fail("Shouldn't be float");
         }
 
@@ -135,7 +135,7 @@
             uint height = 64;
             ulong rowPitch = 0;
             ulong slicePitch = 0;
-            HResult result = DirectXTex.ComputePitch(Format.FormatR8G8B8A8Uint, width, height, &rowPitch, &slicePitch, CPFlags.NONE);
+            HResult result = DirectXTex.ComputePitch(Format.FormatR8G8B8A8Uint, width, height, &rowPitch, &slicePitch, CPFlags.None);
             if (!result.IsSuccess)
                 result.Throw();
 
