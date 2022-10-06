@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Scenes
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
-    using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 
     public class SceneNode
     {
@@ -23,7 +24,6 @@
         private bool isSelected;
         private static SceneNode? selectedNode;
 
-        [JsonIgnore]
         public virtual SceneNode? Parent
         {
             get => parent;
@@ -38,7 +38,6 @@
             get => selectedNode;
         }
 
-        [JsonIgnore]
         public bool IsSelected
         {
             get => isSelected;
@@ -67,7 +66,6 @@
 
         public virtual IReadOnlyList<Mesh> Meshes => meshes;
 
-        [JsonIgnore]
         public bool Initialized => initialized;
 
         public void Merge(SceneNode node)
@@ -250,6 +248,26 @@
                 if (components[i] is T t)
                     yield return t;
             }
+        }
+
+        private IPropertyEditor? editor;
+
+        public virtual IPropertyEditor Editor
+        {
+            get
+            {
+                editor ??= new PropertyEditor<SceneNode>(this);
+                return editor;
+            }
+            protected set
+            {
+                editor = value;
+            }
+        }
+
+        protected void CreatePropertyEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>() where T : SceneNode
+        {
+            editor = new PropertyEditor<T>((T)this);
         }
     }
 }

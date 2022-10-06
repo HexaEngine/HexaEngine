@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Mathematics
 {
-    using Newtonsoft.Json;
     using System;
     using System.Numerics;
 
@@ -101,7 +100,7 @@
         /// <summary>
         /// Gets or sets the local orienataion.
         /// </summary>
-        [JsonIgnore]
+
         public Quaternion Orientation
         {
             get => orientation;
@@ -116,7 +115,7 @@
         /// <summary>
         /// Gets or sets the global (world space) position.
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 GlobalPosition
         {
             get => globalPosition;
@@ -135,7 +134,7 @@
         /// <summary>
         /// Gets or sets the global (world space) orientation.
         /// </summary>
-        [JsonIgnore]
+
         public Quaternion GlobalOrientation
         {
             get => globalOrientation;
@@ -154,7 +153,7 @@
         /// <summary>
         /// Gets or sets the global (world space) scale.
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 GlobalScale
         {
             get => globalScale;
@@ -173,7 +172,7 @@
         /// <summary>
         /// Gets or sets the position and orientation.
         /// </summary>
-        [JsonIgnore]
+
         public (Vector3, Quaternion) PositionRotation
         {
             get => (position, orientation);
@@ -189,7 +188,7 @@
         /// <summary>
         /// Gets or sets the local the position orientation and scale.
         /// </summary>
-        [JsonIgnore]
+
         public (Vector3, Quaternion, Vector3) PositionRotationScale
         {
             get => (position, orientation, scale);
@@ -205,79 +204,79 @@
         /// <summary>
         /// The forward vector in global orientation space
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Forward => forward;
 
         /// <summary>
         /// The backward vector in global orientation space
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Backward => backward;
 
         /// <summary>
         /// The left vector in global orientation space
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Left => left;
 
         /// <summary>
         /// The right vector in global orientation space
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Right => right;
 
         /// <summary>
         /// The up vector in global orientation space
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Up => up;
 
         /// <summary>
         /// The down vector in global orientation space
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Down => down;
 
         /// <summary>
         /// The global transformation matrix
         /// </summary>
-        [JsonIgnore]
+
         public Matrix4x4 Global { get => global; }
 
         /// <summary>
         /// The inverse global transformation matrix
         /// </summary>
-        [JsonIgnore]
+
         public Matrix4x4 GlobalInverse => globalInverse;
 
         /// <summary>
         /// The local transformation matrix
         /// </summary>
-        [JsonIgnore]
+
         public Matrix4x4 Local { get => local; set => SetMatrix(value); }
 
         /// <summary>
         /// The local inverse transformation matrix
         /// </summary>
-        [JsonIgnore]
+
         public Matrix4x4 LocalInverse => localInverse;
 
         /// <summary>
         /// The view matrix in world space
         /// </summary>
-        [JsonIgnore]
+
         public Matrix4x4 View => view;
 
         /// <summary>
         /// The inverse view matrix in world space
         /// </summary>
-        [JsonIgnore]
+
         public Matrix4x4 ViewInv => viewInv;
 
         /// <summary>
         /// The velocity of the object only useful for 3d sound.
         /// </summary>
-        [JsonIgnore]
+
         public Vector3 Velocity => velocity;
 
         /// <summary>

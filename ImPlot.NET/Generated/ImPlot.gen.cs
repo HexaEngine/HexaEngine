@@ -332,7 +332,7 @@ namespace ImPlotNET
             else { native_title_id = null; }
             byte* native_x_label = null;
             byte* native_y_label = null;
-            Vector2 size = new Vector2(-1, 0);
+            Vector2 size = new(-1, 0);
             ImPlotFlags flags = ImPlotFlags.None;
             ImPlotAxisFlags x_flags = ImPlotAxisFlags.None;
             ImPlotAxisFlags y_flags = ImPlotAxisFlags.None;
@@ -386,7 +386,7 @@ namespace ImPlotNET
             }
             else { native_x_label = null; }
             byte* native_y_label = null;
-            Vector2 size = new Vector2(-1, 0);
+            Vector2 size = new(-1, 0);
             ImPlotFlags flags = ImPlotFlags.None;
             ImPlotAxisFlags x_flags = ImPlotAxisFlags.None;
             ImPlotAxisFlags y_flags = ImPlotAxisFlags.None;
@@ -461,7 +461,7 @@ namespace ImPlotNET
                 native_y_label[native_y_label_offset] = 0;
             }
             else { native_y_label = null; }
-            Vector2 size = new Vector2(-1, 0);
+            Vector2 size = new(-1, 0);
             ImPlotFlags flags = ImPlotFlags.None;
             ImPlotAxisFlags x_flags = ImPlotAxisFlags.None;
             ImPlotAxisFlags y_flags = ImPlotAxisFlags.None;
@@ -1181,7 +1181,7 @@ namespace ImPlotNET
             }
             else { native_id = null; }
             byte show_label = 1;
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float thickness = 1;
             fixed (double* native_x_value = &x_value)
             {
@@ -1214,7 +1214,7 @@ namespace ImPlotNET
             }
             else { native_id = null; }
             byte native_show_label = show_label ? (byte)1 : (byte)0;
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float thickness = 1;
             fixed (double* native_x_value = &x_value)
             {
@@ -1310,7 +1310,7 @@ namespace ImPlotNET
             }
             else { native_id = null; }
             byte show_label = 1;
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float thickness = 1;
             fixed (double* native_y_value = &y_value)
             {
@@ -1343,7 +1343,7 @@ namespace ImPlotNET
             }
             else { native_id = null; }
             byte native_show_label = show_label ? (byte)1 : (byte)0;
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float thickness = 1;
             fixed (double* native_y_value = &y_value)
             {
@@ -1439,7 +1439,7 @@ namespace ImPlotNET
             }
             else { native_id = null; }
             byte show_label = 1;
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float radius = 4;
             fixed (double* native_x = &x)
             {
@@ -1475,7 +1475,7 @@ namespace ImPlotNET
             }
             else { native_id = null; }
             byte native_show_label = show_label ? (byte)1 : (byte)0;
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float radius = 4;
             fixed (double* native_x = &x)
             {
@@ -1774,7 +1774,7 @@ namespace ImPlotNET
         }
         public static bool IsPlotYAxisHovered()
         {
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             byte ret = ImPlotNative.ImPlot_IsPlotYAxisHovered(y_axis);
             return ret != 0;
         }
@@ -12579,8 +12579,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (float* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapFloatPtr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -12632,8 +12632,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (float* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapFloatPtr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -12685,7 +12685,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (float* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapFloatPtr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -12784,8 +12784,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (double* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapdoublePtr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -12837,8 +12837,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (double* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapdoublePtr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -12890,7 +12890,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (double* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapdoublePtr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -12989,8 +12989,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (sbyte* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS8Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13042,8 +13042,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (sbyte* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS8Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13095,7 +13095,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (sbyte* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS8Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13194,8 +13194,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (byte* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU8Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13247,8 +13247,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (byte* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU8Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13300,7 +13300,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (byte* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU8Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13399,8 +13399,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (short* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS16Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13452,8 +13452,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (short* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS16Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13505,7 +13505,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (short* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS16Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13604,8 +13604,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (ushort* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU16Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13657,8 +13657,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (ushort* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU16Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13710,7 +13710,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (ushort* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU16Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13809,8 +13809,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (int* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS32Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13862,8 +13862,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (int* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS32Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -13915,7 +13915,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (int* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS32Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14014,8 +14014,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (uint* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU32Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14067,8 +14067,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (uint* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU32Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14120,7 +14120,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (uint* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU32Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14219,8 +14219,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (long* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS64Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14272,8 +14272,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (long* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS64Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14325,7 +14325,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (long* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapS64Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14424,8 +14424,8 @@ namespace ImPlotNET
                 }
                 int native_label_fmt_offset = Util.GetUtf8("%.1f", native_label_fmt, label_fmt_byteCount);
                 native_label_fmt[native_label_fmt_offset] = 0;
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (ulong* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU64Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14477,8 +14477,8 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_min = new ImPlotPoint { x = 0, y = 0 };
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_min = new() { x = 0, y = 0 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (ulong* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU64Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -14530,7 +14530,7 @@ namespace ImPlotNET
                 native_label_fmt[native_label_fmt_offset] = 0;
             }
             else { native_label_fmt = null; }
-            ImPlotPoint bounds_max = new ImPlotPoint { x = 1, y = 1 };
+            ImPlotPoint bounds_max = new() { x = 1, y = 1 };
             fixed (ulong* native_values = &values)
             {
                 ImPlotNative.ImPlot_PlotHeatmapU64Ptr(native_label_id, native_values, rows, cols, scale_min, scale_max, native_label_fmt, bounds_min, bounds_max);
@@ -15515,9 +15515,9 @@ namespace ImPlotNET
                 native_label_id[native_label_id_offset] = 0;
             }
             else { native_label_id = null; }
-            Vector2 uv0 = new Vector2();
-            Vector2 uv1 = new Vector2(1, 1);
-            Vector4 tint_col = new Vector4(1, 1, 1, 1);
+            Vector2 uv0 = new();
+            Vector2 uv1 = new(1, 1);
+            Vector4 tint_col = new(1, 1, 1, 1);
             ImPlotNative.ImPlot_PlotImage(native_label_id, user_texture_id, bounds_min, bounds_max, uv0, uv1, tint_col);
             if (label_id_byteCount > Util.StackAllocationSizeLimit)
             {
@@ -15544,8 +15544,8 @@ namespace ImPlotNET
                 native_label_id[native_label_id_offset] = 0;
             }
             else { native_label_id = null; }
-            Vector2 uv1 = new Vector2(1, 1);
-            Vector4 tint_col = new Vector4(1, 1, 1, 1);
+            Vector2 uv1 = new(1, 1);
+            Vector4 tint_col = new(1, 1, 1, 1);
             ImPlotNative.ImPlot_PlotImage(native_label_id, user_texture_id, bounds_min, bounds_max, uv0, uv1, tint_col);
             if (label_id_byteCount > Util.StackAllocationSizeLimit)
             {
@@ -15572,7 +15572,7 @@ namespace ImPlotNET
                 native_label_id[native_label_id_offset] = 0;
             }
             else { native_label_id = null; }
-            Vector4 tint_col = new Vector4(1, 1, 1, 1);
+            Vector4 tint_col = new(1, 1, 1, 1);
             ImPlotNative.ImPlot_PlotImage(native_label_id, user_texture_id, bounds_min, bounds_max, uv0, uv1, tint_col);
             if (label_id_byteCount > Util.StackAllocationSizeLimit)
             {
@@ -33016,7 +33016,7 @@ namespace ImPlotNET
             }
             else { native_text = null; }
             byte vertical = 0;
-            Vector2 pix_offset = new Vector2();
+            Vector2 pix_offset = new();
             ImPlotNative.ImPlot_PlotText(native_text, x, y, vertical, pix_offset);
             if (text_byteCount > Util.StackAllocationSizeLimit)
             {
@@ -33044,7 +33044,7 @@ namespace ImPlotNET
             }
             else { native_text = null; }
             byte native_vertical = vertical ? (byte)1 : (byte)0;
-            Vector2 pix_offset = new Vector2();
+            Vector2 pix_offset = new();
             ImPlotNative.ImPlot_PlotText(native_text, x, y, native_vertical, pix_offset);
             if (text_byteCount > Util.StackAllocationSizeLimit)
             {
@@ -34116,7 +34116,7 @@ namespace ImPlotNET
         }
         public static void SetNextErrorBarStyle()
         {
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float size = -1;
             float weight = -1;
             ImPlotNative.ImPlot_SetNextErrorBarStyle(col, size, weight);
@@ -34138,7 +34138,7 @@ namespace ImPlotNET
         }
         public static void SetNextFillStyle()
         {
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float alpha_mod = -1;
             ImPlotNative.ImPlot_SetNextFillStyle(col, alpha_mod);
         }
@@ -34153,7 +34153,7 @@ namespace ImPlotNET
         }
         public static void SetNextLineStyle()
         {
-            Vector4 col = new Vector4(0, 0, 0, -1);
+            Vector4 col = new(0, 0, 0, -1);
             float weight = -1;
             ImPlotNative.ImPlot_SetNextLineStyle(col, weight);
         }
@@ -34170,35 +34170,35 @@ namespace ImPlotNET
         {
             ImPlotMarker marker = (ImPlotMarker)(-1);
             float size = -1;
-            Vector4 fill = new Vector4(0, 0, 0, -1);
+            Vector4 fill = new(0, 0, 0, -1);
             float weight = -1;
-            Vector4 outline = new Vector4(0, 0, 0, -1);
+            Vector4 outline = new(0, 0, 0, -1);
             ImPlotNative.ImPlot_SetNextMarkerStyle(marker, size, fill, weight, outline);
         }
         public static void SetNextMarkerStyle(ImPlotMarker marker)
         {
             float size = -1;
-            Vector4 fill = new Vector4(0, 0, 0, -1);
+            Vector4 fill = new(0, 0, 0, -1);
             float weight = -1;
-            Vector4 outline = new Vector4(0, 0, 0, -1);
+            Vector4 outline = new(0, 0, 0, -1);
             ImPlotNative.ImPlot_SetNextMarkerStyle(marker, size, fill, weight, outline);
         }
         public static void SetNextMarkerStyle(ImPlotMarker marker, float size)
         {
-            Vector4 fill = new Vector4(0, 0, 0, -1);
+            Vector4 fill = new(0, 0, 0, -1);
             float weight = -1;
-            Vector4 outline = new Vector4(0, 0, 0, -1);
+            Vector4 outline = new(0, 0, 0, -1);
             ImPlotNative.ImPlot_SetNextMarkerStyle(marker, size, fill, weight, outline);
         }
         public static void SetNextMarkerStyle(ImPlotMarker marker, float size, Vector4 fill)
         {
             float weight = -1;
-            Vector4 outline = new Vector4(0, 0, 0, -1);
+            Vector4 outline = new(0, 0, 0, -1);
             ImPlotNative.ImPlot_SetNextMarkerStyle(marker, size, fill, weight, outline);
         }
         public static void SetNextMarkerStyle(ImPlotMarker marker, float size, Vector4 fill, float weight)
         {
-            Vector4 outline = new Vector4(0, 0, 0, -1);
+            Vector4 outline = new(0, 0, 0, -1);
             ImPlotNative.ImPlot_SetNextMarkerStyle(marker, size, fill, weight, outline);
         }
         public static void SetNextMarkerStyle(ImPlotMarker marker, float size, Vector4 fill, float weight, Vector4 outline)
@@ -34226,12 +34226,12 @@ namespace ImPlotNET
         public static void SetNextPlotLimitsY(double ymin, double ymax)
         {
             ImGuiCond cond = ImGuiCond.Once;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             ImPlotNative.ImPlot_SetNextPlotLimitsY(ymin, ymax, cond, y_axis);
         }
         public static void SetNextPlotLimitsY(double ymin, double ymax, ImGuiCond cond)
         {
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             ImPlotNative.ImPlot_SetNextPlotLimitsY(ymin, ymax, cond, y_axis);
         }
         public static void SetNextPlotLimitsY(double ymin, double ymax, ImGuiCond cond, ImPlotYAxis y_axis)
@@ -34391,7 +34391,7 @@ namespace ImPlotNET
         {
             byte** labels = null;
             byte show_default = 0;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             fixed (double* native_values = &values)
             {
                 ImPlotNative.ImPlot_SetNextPlotTicksYdoublePtr(native_values, n_ticks, labels, show_default, y_axis);
@@ -34427,7 +34427,7 @@ namespace ImPlotNET
                 offset += labels_byteCounts[i] + 1;
             }
             byte show_default = 0;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             fixed (double* native_values = &values)
             {
                 ImPlotNative.ImPlot_SetNextPlotTicksYdoublePtr(native_values, n_ticks, native_labels, show_default, y_axis);
@@ -34463,7 +34463,7 @@ namespace ImPlotNET
                 offset += labels_byteCounts[i] + 1;
             }
             byte native_show_default = show_default ? (byte)1 : (byte)0;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             fixed (double* native_values = &values)
             {
                 ImPlotNative.ImPlot_SetNextPlotTicksYdoublePtr(native_values, n_ticks, native_labels, native_show_default, y_axis);
@@ -34508,7 +34508,7 @@ namespace ImPlotNET
         {
             byte** labels = null;
             byte show_default = 0;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             ImPlotNative.ImPlot_SetNextPlotTicksYdouble(y_min, y_max, n_ticks, labels, show_default, y_axis);
         }
         public static void SetNextPlotTicksY(double y_min, double y_max, int n_ticks, string[] labels)
@@ -34541,7 +34541,7 @@ namespace ImPlotNET
                 offset += labels_byteCounts[i] + 1;
             }
             byte show_default = 0;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             ImPlotNative.ImPlot_SetNextPlotTicksYdouble(y_min, y_max, n_ticks, native_labels, show_default, y_axis);
         }
         public static void SetNextPlotTicksY(double y_min, double y_max, int n_ticks, string[] labels, bool show_default)
@@ -34574,7 +34574,7 @@ namespace ImPlotNET
                 offset += labels_byteCounts[i] + 1;
             }
             byte native_show_default = show_default ? (byte)1 : (byte)0;
-            ImPlotYAxis y_axis = (ImPlotYAxis)0;
+            ImPlotYAxis y_axis = 0;
             ImPlotNative.ImPlot_SetNextPlotTicksYdouble(y_min, y_max, n_ticks, native_labels, native_show_default, y_axis);
         }
         public static void SetNextPlotTicksY(double y_min, double y_max, int n_ticks, string[] labels, bool show_default, ImPlotYAxis y_axis)
@@ -34615,7 +34615,7 @@ namespace ImPlotNET
         }
         public static void ShowColormapScale(double scale_min, double scale_max)
         {
-            Vector2 size = new Vector2();
+            Vector2 size = new();
             ImPlotNative.ImPlot_ShowColormapScale(scale_min, scale_max, size);
         }
         public static void ShowColormapScale(double scale_min, double scale_max, Vector2 size)

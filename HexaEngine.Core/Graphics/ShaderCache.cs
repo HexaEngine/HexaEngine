@@ -100,9 +100,9 @@
     {
         public string Name;
         public ShaderMacro[] Macros;
-        public byte[] Bytecode;
+        public byte[]? Bytecode;
 
-        public ShaderCacheEntry(string name, ShaderMacro[] macros, byte[] bytecode)
+        public ShaderCacheEntry(string name, ShaderMacro[] macros, byte[]? bytecode)
         {
             Name = name;
             Macros = macros;
@@ -121,10 +121,10 @@
                 idx += WriteString(dest[idx..], macro.Name, encoder);
                 idx += WriteString(dest[idx..], macro.Definition, encoder);
             }
-            BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], Bytecode.Length);
+            BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], Bytecode?.Length ?? 0);
             idx += 4;
-            Bytecode.CopyTo(dest[idx..]);
-            idx += Bytecode.Length;
+            Bytecode?.CopyTo(dest[idx..]);
+            idx += Bytecode?.Length ?? 0;
             return idx;
         }
 
@@ -172,7 +172,7 @@
 
         public int SizeOf(Encoder encoder)
         {
-            return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) + Bytecode.Length;
+            return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) + Bytecode?.Length ?? 0;
         }
 
         public bool Equals(ShaderCacheEntry other)

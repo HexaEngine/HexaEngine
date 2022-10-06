@@ -2,9 +2,9 @@
 {
     public enum Usage
     {
-        Default = unchecked((int)0),
-        Immutable = unchecked((int)1),
-        Dynamic = unchecked((int)2),
-        Staging = unchecked((int)3)
+        Default = unchecked(0),
+        Immutable = unchecked(1),
+        Dynamic = unchecked(2),
+        Staging = unchecked(3)
     }
 }

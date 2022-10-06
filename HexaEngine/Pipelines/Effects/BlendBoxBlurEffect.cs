@@ -33,7 +33,7 @@
             Mesh = new Quad(device);
             State = new()
             {
-                Blend = BlendDescription.NonPremultiplied,
+                Blend = BlendDescription.AlphaBlend,
                 DepthStencil = DepthStencilDescription.None,
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleList,

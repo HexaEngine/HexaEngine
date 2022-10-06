@@ -12,7 +12,7 @@
         public HexaParent? Parent { get; set; }
 
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [XmlIgnore]
         public virtual IntPtr Icon { get; }
@@ -25,7 +25,11 @@
             {
                 isSelected = value;
                 if (value)
-                    FindRoot<HexaProject>().SelectedItem = this;
+                {
+                    var root = FindRoot<HexaProject>();
+                    if (root != null)
+                        root.SelectedItem = this;
+                }
             }
         }
 
@@ -36,7 +40,7 @@
 
         public abstract string GetAbsolutePath();
 
-        public abstract T FindRoot<T>() where T : HexaItem;
+        public abstract T? FindRoot<T>() where T : HexaItem;
 
         public abstract void Save();
 

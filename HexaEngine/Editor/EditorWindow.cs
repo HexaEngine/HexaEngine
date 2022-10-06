@@ -1,41 +1,41 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine;
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.D3D11;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes;
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public class EditorWindow : SdlWindow
     {
-        private Thread renderThread;
+        private Thread? renderThread;
         private bool isRunning = true;
         private bool firstFrame;
-        private Dispatcher renderDispatcher;
-        private IGraphicsDevice device;
-        private IGraphicsContext context;
-        private ISwapChain swapChain;
+        private Dispatcher? renderDispatcher;
+        private IGraphicsDevice? device;
+        private IGraphicsContext? context;
+        private ISwapChain? swapChain;
         private bool resize = false;
-        private ImGuiRenderer renderer;
-        private Framebuffer framebuffer;
+        private ImGuiRenderer? renderer;
+        private Framebuffer? framebuffer;
 
         public EditorWindow()
         {
         }
 
-        public Dispatcher RenderDispatcher => renderDispatcher;
+        public Dispatcher RenderDispatcher => renderDispatcher ?? throw new InvalidOperationException();
 
-        public IGraphicsDevice Device => device;
-        public IGraphicsContext Context => context;
+        public IGraphicsDevice Device => device ?? throw new InvalidOperationException();
+        public IGraphicsContext Context => context ?? throw new InvalidOperationException();
+
+        public bool VSync;
+
+        public bool LimitFPS;
+
+        public int TargetFPS = 120;
 
         protected override void OnShown(ShownEventArgs args)
         {
@@ -52,7 +52,11 @@
             {
                 device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
                 context = device.Context;
-                swapChain = device.SwapChain;
+                swapChain = device.SwapChain ?? throw new PlatformNotSupportedException();
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
             }
 
             DebugDraw.Init(device);
@@ -72,7 +76,7 @@
 
                 if (resize)
                 {
-                    device.SwapChain.Resize(Width, Height);
+                    device?.SwapChain?.Resize(Width, Height);
                     resize = false;
                 }
 
@@ -91,7 +95,7 @@
                     }
 
                 renderer.EndDraw();
-                swapChain.Present(Nucleus.Settings.VSync ? 1u : 0u);
+                swapChain?.Present(VSync ? 1u : 0u);
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
             }
@@ -109,9 +113,9 @@
 
         private void LimitFrameRate()
         {
-            if (Nucleus.Settings.LimitFPS & !Nucleus.Settings.VSync)
+            if (LimitFPS & !VSync)
             {
-                int fps = Nucleus.Settings.TargetFPS;
+                int fps = TargetFPS;
                 long freq = Stopwatch.Frequency;
                 long frame = Stopwatch.GetTimestamp();
                 while ((frame - fpsStartTime) * fps < freq * fpsFrameCount)
@@ -137,7 +141,7 @@
         protected override void OnClose(CloseEventArgs args)
         {
             isRunning = false;
-            renderThread.Join();
+            renderThread?.Join();
             base.OnClose(args);
         }
     }

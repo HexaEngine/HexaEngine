@@ -646,9 +646,7 @@
                 switch (light.Type)
                 {
                     case LightType.Directional:
-                        var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, light.Transform);
-                        lights.DirectionalLightSDs[0].Views = mtxs;
-                        lights.DirectionalLightSDs[0].Cascades = CSMHelper.GetCascades(camera);
+                        var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, light.Transform, lights.DirectionalLightSDs[0].Views, lights.DirectionalLightSDs[0].Cascades);
                         context.Write(csmMvpBuffer, mtxs);
                         csmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
                         for (int j = 0; j < scene.Meshes.Count; j++)

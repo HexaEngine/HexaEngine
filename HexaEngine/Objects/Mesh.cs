@@ -59,12 +59,26 @@
                 relation = relation.Parent;
             }
             relations.Pop();
+            relations.Reverse();
             Matrix4x4 result = Matrix4x4.Identity;
             while (relations.TryPop(out relation))
             {
                 result *= BonesDictionary[RelationshipsDictionary[relation]].Offset;
             }
             return result;
+        }
+
+        public string FindRoot()
+        {
+            Relation relation = Relationships[Bones[0].Name];
+            string name = Bones[0].Name;
+            while (true)
+            {
+                if (relation.Parent == null)
+                    return name;
+                name = relation.ParentName ?? throw new();
+                relation = relation.Parent;
+            }
         }
     }
 
@@ -74,7 +88,7 @@
         public Relation? Parent;
     }
 
-    [EditorNode("Mesh")]
+    //[EditorNode<Mesh>("Mesh")]
     public unsafe class Mesh
     {
         public MeshVertex[]? Vertices;
@@ -83,7 +97,7 @@
         public Skeleton? Skeleton;
         public int MaterialIndex = -1;
         private string materialName = string.Empty;
-        private string name;
+        private string name = string.Empty;
 
         public string Name
         {

@@ -3,16 +3,16 @@
     [Flags]
     public enum BindFlags : int
     {
-        VertexBuffer = unchecked((int)1),
-        IndexBuffer = unchecked((int)2),
-        ConstantBuffer = unchecked((int)4),
-        ShaderResource = unchecked((int)8),
-        StreamOutput = unchecked((int)16),
-        RenderTarget = unchecked((int)32),
-        DepthStencil = unchecked((int)64),
-        UnorderedAccess = unchecked((int)128),
-        Decoder = unchecked((int)512),
-        VideoEncoder = unchecked((int)1024),
-        None = unchecked((int)0)
+        VertexBuffer = unchecked(1),
+        IndexBuffer = unchecked(2),
+        ConstantBuffer = unchecked(4),
+        ShaderResource = unchecked(8),
+        StreamOutput = unchecked(16),
+        RenderTarget = unchecked(32),
+        DepthStencil = unchecked(64),
+        UnorderedAccess = unchecked(128),
+        Decoder = unchecked(512),
+        VideoEncoder = unchecked(1024),
+        None = unchecked(0)
     }
 }

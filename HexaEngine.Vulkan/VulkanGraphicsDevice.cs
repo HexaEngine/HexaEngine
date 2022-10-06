@@ -43,7 +43,8 @@
 
         public VulkanGraphicsDevice(SdlWindow? window)
         {
-            this.window = window.GetWindow();
+            if (window != null)
+                this.window = window.GetWindow();
             Sdl = Sdl.GetApi();
             Vk = Vk.GetApi();
             KhrSwapchain = new(Vk.Context);
@@ -51,6 +52,7 @@
             InitializeInstance();
             InitializePhysicalDevice();
             InitializeLogicalDevice();
+            throw new NotImplementedException();
         }
 
         public IGraphicsContext Context { get; }
@@ -250,8 +252,8 @@
             return new()
             {
                 // TODO: Window size instead of 0
-                Width = (uint)Math.Clamp(0, capabilities.MinImageExtent.Width, capabilities.MaxImageExtent.Width),
-                Height = (uint)Math.Clamp(0, capabilities.MinImageExtent.Height, capabilities.MaxImageExtent.Height)
+                Width = Math.Clamp(0, capabilities.MinImageExtent.Width, capabilities.MaxImageExtent.Width),
+                Height = Math.Clamp(0, capabilities.MinImageExtent.Height, capabilities.MaxImageExtent.Height)
             };
         }
 

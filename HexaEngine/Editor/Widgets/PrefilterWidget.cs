@@ -10,29 +10,30 @@
     using IBLBaker;
     using ImGuiNET;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     public class PrefilterWidget : Widget
     {
-        private FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
+        private readonly FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
         private string pathEnvironment = string.Empty;
 
-        private Mode[] modes = Enum.GetValues<Mode>();
-        private string[] modesStrings = Enum.GetValues<Mode>().Select(x => x.ToString()).ToArray();
+        private readonly Mode[] modes = Enum.GetValues<Mode>();
+        private readonly string[] modesStrings = Enum.GetValues<Mode>().Select(x => x.ToString()).ToArray();
         private int modeIndex;
         private Mode mode;
 
         private int pfSize = 4096;
-        private int pfTileSize = 4096 / 4;
+        private readonly int pfTileSize = 4096 / 4;
 
-        private ISamplerState samplerState;
+        private ISamplerState? samplerState;
         private RenderTexture? environmentTex;
         private RenderTexture? prefilterTex;
         private RenderTargetViewArray? pfRTV;
         private ShaderResourceViewArray? pfSRV;
-        private IntPtr[] pfIds = new IntPtr[6];
-        private PreFilterEffect prefilterFilter;
+        private readonly IntPtr[] pfIds = new IntPtr[6];
+        private PreFilterEffect? prefilterFilter;
 
         private bool compute;
         private int side;
@@ -41,7 +42,7 @@
         private int step;
         private int steps;
 
-        public PrefilterWidget(IGraphicsDevice device) : base(device)
+        public override void Init(IGraphicsDevice device)
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
             prefilterFilter = new(device);
@@ -51,8 +52,8 @@
         public override void Dispose()
         {
             DiscardIrradiance();
-            samplerState.Dispose();
-            prefilterFilter.Dispose();
+            samplerState?.Dispose();
+            prefilterFilter?.Dispose();
             environmentTex?.Dispose();
         }
 
@@ -71,7 +72,7 @@
             prefilterTex = null;
         }
 
-        public RenderTexture ImportTexture(IGraphicsDevice device, IGraphicsContext context)
+        public RenderTexture? ImportTexture(IGraphicsDevice device, IGraphicsContext context)
         {
             switch (mode)
             {
@@ -114,6 +115,7 @@
 
         public override void Draw(IGraphicsContext context)
         {
+            if (prefilterFilter == null) return;
             ImGuiWindowFlags flags = ImGuiWindowFlags.None;
             if (prefilterTex != null)
                 flags |= ImGuiWindowFlags.UnsavedDocument;
@@ -165,7 +167,7 @@
                         pfSRV = prefilterTex.CreateSRVArray(device);
                         prefilterFilter.Targets = pfRTV;
                         prefilterFilter.Resources.Clear();
-                        prefilterFilter.Resources.Add(new(environmentTex.ResourceView, ShaderStage.Pixel, 0));
+                        prefilterFilter.Resources.Add(new(environmentTex?.ResourceView, ShaderStage.Pixel, 0));
                         for (int i = 0; i < 6; i++)
                         {
                             pfIds[i] = ImGuiRenderer.RegisterTexture(pfSRV.Views[i]);
@@ -187,7 +189,7 @@
             {
                 ImGui.SameLine();
 
-                if (ImGui.Button("Export"))
+                if (ImGui.Button("Export") && prefilterTex.ResourceView != null)
                 {
                     ImGuiConsole.Log(ConsoleMessageType.Log, "Exporting prefilter map ...");
                     context.GenerateMips(prefilterTex.ResourceView);

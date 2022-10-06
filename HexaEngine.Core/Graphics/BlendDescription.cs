@@ -10,7 +10,7 @@
 
         public static readonly BlendDescription NonPremultiplied = new(Blend.SourceAlpha, Blend.InverseSourceAlpha);
 
-        public const int SimultaneousRenderTargetCount = unchecked((int)8);
+        public const int SimultaneousRenderTargetCount = unchecked(8);
         public bool AlphaToCoverageEnable = false;
         public bool IndependentBlendEnable = false;
         public RenderTargetBlendDescription[] RenderTarget = new RenderTargetBlendDescription[SimultaneousRenderTargetCount];

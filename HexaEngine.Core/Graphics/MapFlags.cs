@@ -3,7 +3,7 @@
     [Flags]
     public enum MapFlags : int
     {
-        DoNotWait = unchecked((int)1048576),
-        None = unchecked((int)0)
+        DoNotWait = unchecked(1048576),
+        None = unchecked(0)
     }
 }

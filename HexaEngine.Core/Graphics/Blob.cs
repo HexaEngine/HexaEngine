@@ -5,20 +5,25 @@
 
     public unsafe class Blob : IDisposable
     {
+        private bool _native;
+
         public Blob(IntPtr bufferPointer, PointerSize pointerSize)
         {
+            _native = true;
             BufferPointer = bufferPointer;
             PointerSize = pointerSize;
         }
 
         public Blob(void* bufferPointer, nuint pointerSize)
         {
+            _native = false;
             BufferPointer = new(bufferPointer);
             PointerSize = (int)pointerSize;
         }
 
         public Blob(byte[] data)
         {
+            _native = false;
             fixed (byte* ptr = data)
             {
                 BufferPointer = new(ptr);
@@ -37,29 +42,18 @@
 
         public byte[] AsBytes()
         {
-            byte[] result = new byte[PointerSize];
-            fixed (byte* pResult = result)
-            {
-                Unsafe.CopyBlockUnaligned(pResult, (void*)BufferPointer, (uint)result.Length);
-            }
-
-            return result;
+            return new Span<byte>((void*)BufferPointer, PointerSize).ToArray();
         }
 
         public Span<byte> AsSpan()
         {
-            Span<byte> result = new byte[PointerSize];
-            fixed (byte* pResult = result)
-            {
-                Unsafe.CopyBlockUnaligned(pResult, (void*)BufferPointer, (uint)result.Length);
-            }
-
-            return result;
+            return new Span<byte>((void*)BufferPointer, PointerSize);
         }
 
         public void Dispose()
         {
-            Marshal.FreeHGlobal(BufferPointer);
+            if (_native)
+                Marshal.FreeHGlobal(BufferPointer);
         }
     }
 }

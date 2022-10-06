@@ -272,7 +272,7 @@
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Mesh* msh = scene->MMeshes[i];
-                AssimpMesh mesh = new();
+                //AssimpMesh mesh = new();
                 MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
                 int[] indices = new int[msh->MNumFaces * 3];
                 for (int j = 0; j < msh->MNumFaces; j++)
@@ -361,7 +361,7 @@
                 };
             }
 
-            SceneNode WalkNode(Node* node, SceneNode parent)
+            SceneNode WalkNode(Node* node, SceneNode? parent)
             {
                 string name = node->MName;
                 SceneNode sceneNode = new();
@@ -438,6 +438,8 @@
                 sceneTarget.Root.Merge(root);
             else
                 sceneTarget.Root.AddChild(root);
+
+            Assimp.ReleaseImport(scene);
         }
 
         public static unsafe void Open(string path)

@@ -12,11 +12,9 @@
     using HexaEngine.Objects;
     using HexaEngine.Physics;
     using HexaEngine.Rendering;
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
 
@@ -35,13 +33,10 @@
 
         public readonly ConcurrentQueue<SceneCommand> CommandQueue = new();
 
-        [JsonIgnore]
         public readonly Simulation Simulation;
 
-        [JsonIgnore]
         public readonly BufferPool BufferPool;
 
-        [JsonIgnore]
         public readonly ThreadDispatcher ThreadDispatcher;
 
         private readonly SceneNode root;
@@ -64,25 +59,18 @@
 
         public string Name { get; }
 
-        [JsonIgnore]
         public ISceneRenderer Renderer { get => renderer; set => renderer = value; }
 
-        [JsonIgnore]
         public SceneDispatcher Dispatcher { get; } = new();
 
-        [JsonIgnore]
         public IReadOnlyList<Camera> Cameras => cameras;
 
-        [JsonIgnore]
         public IReadOnlyList<Light> Lights => lights;
 
-        [JsonIgnore]
         public IReadOnlyList<Mesh> Meshes => meshes;
 
-        [JsonIgnore]
         public IReadOnlyList<Material> Materials => materials;
 
-        [JsonIgnore]
         public Camera CurrentCamera => cameras[ActiveCamera];
 
         public SceneNode Root => root;
@@ -152,6 +140,11 @@
         public SceneNode Find(Guid guid)
         {
             return nodes[guid];
+        }
+
+        public SceneNode Find(string name)
+        {
+            return nodes.FirstOrDefault(x => x.Value.Name == name).Value;
         }
 
         internal void RegisterChild(SceneNode node)

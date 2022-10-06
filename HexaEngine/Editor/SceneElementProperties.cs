@@ -11,15 +11,14 @@ namespace HexaEngine.Editor
     using ImGuizmoNET;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
-    using System.Runtime.InteropServices;
 
     public static class SceneElementProperties
     {
         private static bool isShown;
-        private static readonly Dictionary<Type, PropertyEditor> propertyCache = new();
         private static readonly List<EditorComponentAttribute> componentCache = new();
         private static readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();
         private static OPERATION operation = OPERATION.TRANSLATE;
@@ -29,11 +28,7 @@ namespace HexaEngine.Editor
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
-        public static void ClearCache()
-        {
-            propertyCache.Clear();
-        }
-
+        [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         static SceneElementProperties()
         {
             componentCache.AddRange(Assembly.GetExecutingAssembly()
@@ -98,6 +93,12 @@ namespace HexaEngine.Editor
 
             ImGui.Separator();
 
+            ImGui.Text($"Global Position: {element.Transform.GlobalPosition}");
+            ImGui.Text($"Global Rotation: {element.Transform.GlobalOrientation.GetRotation().ToDeg()}");
+            ImGui.Text($"Global Scale: {element.Transform.GlobalScale}");
+
+            ImGui.Separator();
+
             if (ImGui.RadioButton("Translate", operation == OPERATION.TRANSLATE))
             {
                 operation = OPERATION.TRANSLATE;
@@ -126,15 +127,8 @@ namespace HexaEngine.Editor
 
             ImGui.Separator();
 
-            Type type = element.GetType();
-            if (propertyCache.TryGetValue(type, out var typeEditor))
-            {
-                typeEditor.Draw(element);
-            }
-            else
-            {
-                propertyCache.Add(type, new(type));
-            }
+            Type type = element.Editor.Type;
+            element.Editor?.Draw();
 
             ImGui.Separator();
 
@@ -147,7 +141,7 @@ namespace HexaEngine.Editor
                         EditorComponentAttribute editorComponent = editorComponents[i];
                         if (ImGui.MenuItem(editorComponent.Name))
                         {
-                            IComponent component = (IComponent)Activator.CreateInstance(editorComponent.Type);
+                            IComponent component = editorComponent.Constructor();
                             element.AddComponent(component);
                         }
                     }
@@ -196,16 +190,7 @@ namespace HexaEngine.Editor
 
             for (int i = 0; i < element.Components.Count; i++)
             {
-                IComponent component = element.Components[i];
-                Type componentType = component.GetType();
-                if (propertyCache.TryGetValue(componentType, out var componentEditor))
-                {
-                    componentEditor.Draw(component);
-                }
-                else
-                {
-                    propertyCache.Add(componentType, new(componentType));
-                }
+                element.Components[i].Editor?.Draw();
             }
 
             ImGui.End();
@@ -214,14 +199,17 @@ namespace HexaEngine.Editor
             ImGuizmo.SetOrthographic(false);
             Matrix4x4 view = camera.Transform.View;
             Matrix4x4 proj = camera.Transform.Projection;
-            Matrix4x4 transform = element.Transform.Local;
+            Matrix4x4 transform = element.Transform.Global;
 
             if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
             {
                 gimbalGrabbed = true;
-                element.Transform.Local = transform;
+                if (element.Transform.Parent == null)
+                    element.Transform.Local = transform;
+                else
+                    element.Transform.Local = transform * element.Transform.Parent.GlobalInverse;
             }
-            else
+            else if (!ImGuizmo.IsUsing())
             {
                 if (gimbalGrabbed)
                 {
@@ -229,19 +217,26 @@ namespace HexaEngine.Editor
                     Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
                 }
                 gimbalGrabbed = false;
-                gimbalBefore = transform;
+                gimbalBefore = element.Transform.Local;
             }
 
-            for (int i = 0; i < element.Meshes.Count; i++)
+            for (int i = 0; i < scene.Meshes.Count; i++)
             {
-                var mesh = element.Meshes[i];
+                var mesh = scene.Meshes[i];
+                if (mesh.Bones.Length == 0)
+                    continue;
+                var root = mesh.Skeleton.FindRoot();
+                var ele = scene.Find(root);
+                var trans = ele.Transform.Global;
                 for (int j = 0; j < mesh.Bones.Length; j++)
                 {
                     var skele = mesh.Skeleton;
                     var bone = mesh.Bones[j];
-                    var origin = Vector3.Transform(Vector3.Zero, skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName));
-                    var dest = Vector3.Transform(origin, skele.GetGlobalTransform(bone.Name));
-                    DebugDraw.DrawLine(origin, dest, false, Vector4.One);
+                    var originMtx = skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName);
+                    var destMtx = skele.GetGlobalTransform(bone.Name);
+                    var origin = Vector4.UnitW.ApplyMatrix(trans * originMtx);
+                    var dest = Vector4.UnitW.ApplyMatrix(trans * destMtx);
+                    DebugDraw.DrawLine(new(origin.X, origin.Y, origin.Z), new(dest.X, dest.Y, dest.Z), false, Vector4.One);
                 }
             }
         }

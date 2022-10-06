@@ -10,7 +10,7 @@
     using IBLBaker;
     using ImGuiNET;
 
-    public class IrradianceWidget : Widget
+    public class IrradianceWidget : Widget, IDisposable
     {
         private FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
@@ -24,13 +24,13 @@
         private int irradianceSize = 1024;
         private int irrTileSize = 1024 / 4;
 
-        private ISamplerState samplerState;
+        private ISamplerState? samplerState;
         private RenderTexture? environmentTex;
         private RenderTexture? irradianceTex;
         private RenderTargetViewArray? irrRTV;
         private ShaderResourceViewArray? irrSRV;
         private IntPtr[] irrIds = new IntPtr[6];
-        private IrradianceFilterEffect irradianceFilter;
+        private IrradianceFilterEffect? irradianceFilter;
 
         private bool compute;
         private int side;
@@ -39,7 +39,7 @@
         private int step;
         private int steps;
 
-        public IrradianceWidget(IGraphicsDevice device) : base(device)
+        public override void Init(IGraphicsDevice device)
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
             irradianceFilter = new(device);
@@ -49,8 +49,8 @@
         public override void Dispose()
         {
             DiscardIrradiance();
-            samplerState.Dispose();
-            irradianceFilter.Dispose();
+            samplerState?.Dispose();
+            irradianceFilter?.Dispose();
             environmentTex?.Dispose();
         }
 
@@ -69,7 +69,7 @@
             irradianceTex = null;
         }
 
-        public RenderTexture ImportTexture(IGraphicsDevice device, IGraphicsContext context)
+        public RenderTexture? ImportTexture(IGraphicsDevice device, IGraphicsContext context)
         {
             switch (mode)
             {
@@ -112,6 +112,7 @@
 
         public override void Draw(IGraphicsContext context)
         {
+            if (irradianceFilter == null) return;
             ImGuiWindowFlags flags = ImGuiWindowFlags.None;
             if (irradianceTex != null)
                 flags |= ImGuiWindowFlags.UnsavedDocument;
@@ -158,7 +159,7 @@
                         irrSRV = irradianceTex.CreateSRVArray(device);
                         irradianceFilter.Targets = irrRTV;
                         irradianceFilter.Resources.Clear();
-                        irradianceFilter.Resources.Add(new(environmentTex.ResourceView, ShaderStage.Pixel, 0));
+                        irradianceFilter.Resources.Add(new(environmentTex?.ResourceView, ShaderStage.Pixel, 0));
                         for (int i = 0; i < 6; i++)
                         {
                             irrIds[i] = ImGuiRenderer.RegisterTexture(irrSRV.Views[i]);

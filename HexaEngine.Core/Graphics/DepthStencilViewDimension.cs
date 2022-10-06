@@ -2,12 +2,12 @@
 {
     public enum DepthStencilViewDimension : int
     {
-        Unknown = unchecked((int)0),
-        Texture1D = unchecked((int)1),
-        Texture1DArray = unchecked((int)2),
-        Texture2D = unchecked((int)3),
-        Texture2DArray = unchecked((int)4),
-        Texture2DMultisampled = unchecked((int)5),
-        Texture2DMultisampledArray = unchecked((int)6)
+        Unknown = unchecked(0),
+        Texture1D = unchecked(1),
+        Texture1DArray = unchecked(2),
+        Texture2D = unchecked(3),
+        Texture2DArray = unchecked(4),
+        Texture2DMultisampled = unchecked(5),
+        Texture2DMultisampledArray = unchecked(6)
     }
 }

@@ -3,12 +3,13 @@
     using BepuPhysics;
     using BepuPhysics.Collidables;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    [EditorComponent(typeof(ColliderStaticComponent), "Static Collider")]
+    [EditorComponent<ColliderStaticComponent>("Static Collider")]
     public class ColliderStaticComponent : IComponent
     {
         private bool canUpdate;
@@ -21,7 +22,12 @@
         private Type shapeType;
 #nullable enable
 
-        [EditorProperty("Type", typeof(IShape))]
+        public ColliderStaticComponent()
+        {
+            Editor = new PropertyEditor<ColliderStaticComponent>(this);
+        }
+
+        [EditorPropertyTypeSelector<IShape>("Type")]
         public Type? ShapeType
         {
             get => shapeType;
@@ -39,6 +45,8 @@
                 staticDescription = value;
             }
         }
+
+        public IPropertyEditor? Editor { get; }
 
         private void InitializeCollider()
         {/*

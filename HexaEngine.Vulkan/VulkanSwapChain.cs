@@ -9,6 +9,7 @@
     {
         public VulkanSwapChain()
         {
+            throw new NotImplementedException();
         }
 
         public ITexture2D Backbuffer { get; }
@@ -18,8 +19,9 @@
         public int Height { get; }
         public Viewport Viewport { get; }
 
-        public event EventHandler Resizing;
-        public event EventHandler<ResizedEventArgs> Resized;
+        public event EventHandler? Resizing;
+
+        public event EventHandler<ResizedEventArgs>? Resized;
 
         public void Dispose()
         {

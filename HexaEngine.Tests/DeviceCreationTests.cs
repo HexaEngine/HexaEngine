@@ -15,7 +15,6 @@ namespace HexaEngine.Tests
         }
 
         [Test]
-        [Platform(Include = "Win")]
         public void DeviceCreationWithoutWindow()
         {
             if (!OperatingSystem.IsWindows())

@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<DebugType>embedded</DebugType>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<DebugType>embedded</DebugType>
+	<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,10 +18,9 @@
     <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.16.0" />
-		<PackageReference Include="BepuPhysics" Version="2.4.0" />
-		<PackageReference Include="BepuUtilities" Version="2.4.0" />
+		<PackageReference Include="BepuPhysics" Version="2.5.0-beta.8" />
+		<PackageReference Include="BepuUtilities" Version="2.5.0-beta.8" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />

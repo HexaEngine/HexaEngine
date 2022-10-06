@@ -59,7 +59,7 @@ namespace HexaEngine.Rendering
             var range = new char[] { (char)0xE700, (char)0xF800, (char)0 };
             fixed (char* buffer = range)
             {
-                io.Fonts.AddFontFromFileTTF("C:\\windows\\fonts\\SegoeIcons.ttf", 14, config, (IntPtr)buffer);
+                io.Fonts.AddFontFromFileTTF("./assets/fonts/SEGMDL2.TTF", 14, config, (IntPtr)buffer);
             }
 
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
@@ -106,8 +106,10 @@ namespace HexaEngine.Rendering
             ImGui.NewFrame();
 
             ImGuizmo.BeginFrame();
-            if (!NoInternal)
+
+            if (!NoInternal && Designer.InDesignMode && Designer.IsShown)
             {
+                WidgetManager.Draw(context);
                 ImGuiConsole.Draw();
                 Designer.Draw();
             }

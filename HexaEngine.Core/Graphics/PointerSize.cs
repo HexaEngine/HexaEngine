@@ -6,7 +6,7 @@
     {
         private readonly IntPtr _size;
 
-        public static readonly PointerSize Zero = new PointerSize(0);
+        public static readonly PointerSize Zero = new(0);
 
         public PointerSize(IntPtr size)
         {

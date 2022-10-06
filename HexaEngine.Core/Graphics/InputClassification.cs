@@ -2,7 +2,7 @@
 {
     public enum InputClassification : int
     {
-        PerVertexData = unchecked((int)0),
-        PerInstanceData = unchecked((int)1)
+        PerVertexData = unchecked(0),
+        PerInstanceData = unchecked(1)
     }
 }

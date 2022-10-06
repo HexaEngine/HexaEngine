@@ -69,9 +69,9 @@ namespace ImPlotNET
         public ImPlotStyle* NativePtr { get; }
         public ImPlotStylePtr(ImPlotStyle* nativePtr) => NativePtr = nativePtr;
         public ImPlotStylePtr(IntPtr nativePtr) => NativePtr = (ImPlotStyle*)nativePtr;
-        public static implicit operator ImPlotStylePtr(ImPlotStyle* nativePtr) => new ImPlotStylePtr(nativePtr);
+        public static implicit operator ImPlotStylePtr(ImPlotStyle* nativePtr) => new(nativePtr);
         public static implicit operator ImPlotStyle* (ImPlotStylePtr wrappedPtr) => wrappedPtr.NativePtr;
-        public static implicit operator ImPlotStylePtr(IntPtr nativePtr) => new ImPlotStylePtr(nativePtr);
+        public static implicit operator ImPlotStylePtr(IntPtr nativePtr) => new(nativePtr);
         public ref float LineWeight => ref Unsafe.AsRef<float>(&NativePtr->LineWeight);
         public ref int Marker => ref Unsafe.AsRef<int>(&NativePtr->Marker);
         public ref float MarkerSize => ref Unsafe.AsRef<float>(&NativePtr->MarkerSize);
@@ -99,14 +99,14 @@ namespace ImPlotNET
         public ref Vector2 FitPadding => ref Unsafe.AsRef<Vector2>(&NativePtr->FitPadding);
         public ref Vector2 PlotDefaultSize => ref Unsafe.AsRef<Vector2>(&NativePtr->PlotDefaultSize);
         public ref Vector2 PlotMinSize => ref Unsafe.AsRef<Vector2>(&NativePtr->PlotMinSize);
-        public RangeAccessor<Vector4> Colors => new RangeAccessor<Vector4>(&NativePtr->Colors_0, 24);
+        public RangeAccessor<Vector4> Colors => new(&NativePtr->Colors_0, 24);
         public ref bool AntiAliasedLines => ref Unsafe.AsRef<bool>(&NativePtr->AntiAliasedLines);
         public ref bool UseLocalTime => ref Unsafe.AsRef<bool>(&NativePtr->UseLocalTime);
         public ref bool UseISO8601 => ref Unsafe.AsRef<bool>(&NativePtr->UseISO8601);
         public ref bool Use24HourClock => ref Unsafe.AsRef<bool>(&NativePtr->Use24HourClock);
         public void Destroy()
         {
-            ImPlotNative.ImPlotStyle_destroy((ImPlotStyle*)(NativePtr));
+            ImPlotNative.ImPlotStyle_destroy(NativePtr);
         }
     }
 }

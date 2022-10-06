@@ -8,19 +8,27 @@ namespace HexaEngine.Editor
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
     using System.Reflection;
 
-    public class PropertyEditor
+    public class PropertyEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : IPropertyEditor
     {
         private readonly KeyValuePair<PropertyInfo, Func<(object, object), (bool, object)>>[] callbacks;
         private static readonly Dictionary<Type, KeyValuePair<Array, string[]>> enumCache = new();
         private static readonly Dictionary<Type, KeyValuePair<Type[], string[]>> typeCache = new();
         private readonly string name;
         private readonly bool isHidden;
+        private readonly T instance;
 
-        public PropertyEditor(Type type)
+        public Type Type { get; }
+
+        public PropertyInfo[] Properties { get; }
+
+        public PropertyEditor(T instance)
         {
+            Type type = Type = typeof(T);
+            PropertyInfo[] properties = type.GetProperties();
             var componentNameAttr = type.GetCustomAttribute<EditorComponentAttribute>();
             if (componentNameAttr == null)
             {
@@ -38,7 +46,6 @@ namespace HexaEngine.Editor
                 name = nodeNameAttr.Name;
             }
 
-            var properties = type.GetProperties();
             List<KeyValuePair<PropertyInfo, Func<(object, object), (bool, object)>>> values = new();
             List<KeyValuePair<PropertyInfo, Array>> cache = new();
             foreach (var property in properties)
@@ -56,16 +63,14 @@ namespace HexaEngine.Editor
                 if (propType == typeof(Type) && nameAttr.Mode == EditorPropertyMode.TypeSelector)
                 {
                     if (!(property.CanWrite && property.CanRead)) continue;
-                    if (!typeCache.ContainsKey(nameAttr.Type))
+                    if (!typeCache.ContainsKey(nameAttr.TargetType))
                     {
-                        var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).AsParallel().Where(x => x.IsAssignableTo(nameAttr.Type) && !x.IsInterface && !x.IsAbstract).ToArray();
-                        var names = types.Select(x => x.Name).ToArray();
-                        typeCache.Add(nameAttr.Type, new(types, names));
+                        typeCache.Add(nameAttr.TargetType, new(nameAttr.Types, nameAttr.TypeNames));
                     }
 
                     values.Add(new(property, value =>
                     {
-                        var types = typeCache[nameAttr.Type];
+                        var types = typeCache[nameAttr.TargetType];
                         int index = Array.IndexOf(types.Key, value);
                         if (ImGui.Combo(name, ref index, types.Value, types.Value.Length))
                         {
@@ -75,12 +80,12 @@ namespace HexaEngine.Editor
                     }));
                 }
 
-                if (propType.IsEnum)
+                if (propType.IsEnum && nameAttr.Mode == EditorPropertyMode.Enum)
                 {
                     if (!(property.CanWrite && property.CanRead)) continue;
                     if (!enumCache.ContainsKey(propType))
                     {
-                        enumCache.Add(propType, new(Enum.GetValues(propType), Enum.GetNames(propType)));
+                        enumCache.Add(propType, new(nameAttr.EnumValues, nameAttr.EnumNames));
                     }
 
                     values.Add(new(property, value =>
@@ -254,9 +259,11 @@ namespace HexaEngine.Editor
             }
 
             callbacks = values.ToArray();
+            Properties = properties;
+            this.instance = instance;
         }
 
-        public void Draw(object instance)
+        public void Draw()
         {
             if (isHidden) return;
             ImGui.Text(name);

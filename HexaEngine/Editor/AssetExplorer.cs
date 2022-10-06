@@ -14,14 +14,15 @@
     {
         private static string CurrentFolder = Paths.CurrentAssetsPath;
         private static bool isShown;
-        private static Task task;
+        private static Task? task;
 
         public static readonly Stack<string> backHistory = new();
 
         private static readonly Stack<string> forwardHistory = new();
 
         public static bool IsShown { get => isShown; set => isShown = value; }
-        public static string SelectedFile { get; private set; }
+
+        public static string? SelectedFile { get; private set; }
 
         public static void Draw()
         {
@@ -63,7 +64,7 @@
 
                         if (ImGui.IsMouseDoubleClicked(0))
                         {
-                            if (task == null || task.IsCompleted)
+                            if ((task == null || task.IsCompleted) && SelectedFile != null)
                             {
                                 var extension = Path.GetExtension(SelectedFile);
                                 if (extension == ".glb")

@@ -1,13 +1,10 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Scenes;
     using ImGuiNET;
-    using Newtonsoft.Json;
-    using System.IO;
 
     public static class MainMenuBar
     {
@@ -36,10 +33,6 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("Save scene"))
-                    {
-                        File.WriteAllText("scene.json", JsonConvert.SerializeObject(SceneManager.Current, Formatting.Indented));
-                    }
                     if (ImGui.MenuItem("Import"))
                     {
                         filePickerIsOpen = true;
@@ -69,7 +62,7 @@
 
                     ImGui.EndMenu();
                 }
-                if (ImGui.BeginMenu("Window"))
+                if (ImGui.BeginMenu("View"))
                 {
                     if (ImGui.MenuItem("Layout"))
                     {
@@ -82,6 +75,12 @@
                     if (ImGui.MenuItem("Properties"))
                     {
                         SceneElementProperties.IsShown = !SceneElementProperties.IsShown;
+                    }
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Fullframe"))
+                    {
+                        Framebuffer.Fullframe = !Framebuffer.Fullframe;
                     }
 
                     ImGui.EndMenu();

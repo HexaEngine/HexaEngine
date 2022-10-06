@@ -1,9 +1,9 @@
 ﻿namespace App
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Logging;
-    using HexaEngine.Scenes;
     using HexaEngine.Windows;
     using System.Diagnostics;
     using TestGame;
@@ -15,7 +15,8 @@
         /// </summary>
         private static void Main()
         {
-            ShaderCache.DisableCache = true;
+            CrashLogger.Start();
+            ShaderCache.DisableCache = false;
             Trace.Listeners.Add(new DebugListener("output.log"));
             Game game = new();
             game.Initialize();

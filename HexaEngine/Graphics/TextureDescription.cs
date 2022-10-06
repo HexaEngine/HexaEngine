@@ -315,7 +315,6 @@
         public SampleDescription SampleDescription;
 
         public static DepthStencilDesc Default => new(Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
-        public static DepthStencilDesc DefaultMS => new(Format.Depth32FloatStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, new(Nucleus.Settings.MSAASampleCount, Nucleus.Settings.MSAASampleQuality));
 
         public DepthStencilDesc(Format format, BindFlags bindFlags, Usage usage, CpuAccessFlags cPUAccessFlags, DepthStencilViewFlags viewFlags, SampleDescription sampleDescription)
         {

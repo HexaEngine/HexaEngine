@@ -12,6 +12,11 @@
         public string? DebugName { get; set; }
         public bool IsDisposed { get; }
 
+        public VulkanGraphicsContext()
+        {
+            throw new NotImplementedException();
+        }
+
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
         {
             throw new NotImplementedException();

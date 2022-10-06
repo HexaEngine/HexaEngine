@@ -38,6 +38,12 @@ namespace HexaEngine.Windows
         public IGraphicsDevice Device => device;
         public IGraphicsContext Context => context;
 
+        public bool VSync;
+
+        public bool LimitFPS;
+
+        public int TargetFPS = 120;
+
         protected override void OnShown(ShownEventArgs args)
         {
             renderThread = new(RenderVoid);
@@ -72,8 +78,11 @@ namespace HexaEngine.Windows
                 framebuffer.SourceViewport = Viewport;
                 framebuffer.Update(context);
                 renderer.BeginDraw();
-                framebuffer.Draw();
-                WidgetManager.Draw(context);
+                if (Designer.InDesignMode && Designer.IsShown)
+                {
+                    framebuffer.Draw();
+                }
+
                 if (resize)
                 {
                     device.SwapChain.Resize(Width, Height);
@@ -88,14 +97,14 @@ namespace HexaEngine.Windows
                             Time.Initialize();
                             firstFrame = false;
                         }
-                        if (Designer.InDesignMode)
+                        if (Designer.InDesignMode && !Framebuffer.Fullframe && Designer.IsShown)
                             SceneManager.Current?.Render(context, this, framebuffer.Viewport);
                         else
                             SceneManager.Current?.Render(context, this, Viewport);
                     }
 
                 renderer.EndDraw();
-                swapChain.Present(Nucleus.Settings.VSync ? 1u : 0u);
+                swapChain.Present(VSync ? 1u : 0u);
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
             }
@@ -113,9 +122,9 @@ namespace HexaEngine.Windows
 
         private void LimitFrameRate()
         {
-            if (Nucleus.Settings.LimitFPS & !Nucleus.Settings.VSync)
+            if (LimitFPS & !VSync)
             {
-                int fps = Nucleus.Settings.TargetFPS;
+                int fps = TargetFPS;
                 long freq = Stopwatch.Frequency;
                 long frame = Stopwatch.GetTimestamp();
                 while ((frame - fpsStartTime) * fps < freq * fpsFrameCount)
