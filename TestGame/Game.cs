@@ -59,6 +59,10 @@
                     // TODO: Reimplement BorderlessFullscreen
                     //window.BorderlessFullscreen = !window.BorderlessFullscreen;
                 }
+                if (e.KeyCode == KeyCode.KF9)
+                {
+                    SceneManager.Current.Dispatcher.Invoke(() => Designer.IsShown = !Designer.IsShown);
+                }
                 if (e.KeyCode == KeyCode.KF1)
                 {
                     Designer.IsShown = !Designer.IsShown;

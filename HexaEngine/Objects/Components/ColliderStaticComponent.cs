@@ -27,7 +27,7 @@
             Editor = new PropertyEditor<ColliderStaticComponent>(this);
         }
 
-        [EditorProperty("Type", typeof(IShape))]
+        [EditorPropertyTypeSelector<IShape>("Type")]
         public Type? ShapeType
         {
             get => shapeType;

@@ -1,13 +1,16 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using ImGuizmoNET;
     using Silk.NET.SDL;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
 
     public class Framebuffer
@@ -29,6 +32,9 @@
 
         public static bool Fullframe;
 
+        private static readonly Profiler fpsProfiler = new("latency", () => Time.Delta, x => $"{x * 1000:n4}ms\n({1000 / Time.Delta:n0}fps)", 100);
+        private static readonly Profiler memProfiler = new("memory", () => Process.GetCurrentProcess().PrivateMemorySize64 / 1000f / 1000f, x => $"{x}MB", 200);
+
         public Framebuffer(IGraphicsDevice device)
         {
             this.device = device;
@@ -36,7 +42,7 @@
 
         internal void Update(IGraphicsContext context)
         {
-            if (Framebuffer.Fullframe)
+            if (Fullframe)
             {
                 ImGuizmo.SetRect(SourceViewport.X, SourceViewport.Y, SourceViewport.Width, SourceViewport.Height);
             }
@@ -79,6 +85,10 @@
             var x = (size.X - w) / 2;
             var y = (size.Y - h) / 2;
             Viewport = new(position.X + x, position.Y + y, w, h);
+
+            fpsProfiler.Draw();
+            memProfiler.Draw();
+
             ImGui.End();
         }
     }

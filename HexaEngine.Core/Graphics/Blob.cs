@@ -42,24 +42,12 @@
 
         public byte[] AsBytes()
         {
-            byte[] result = new byte[PointerSize];
-            fixed (byte* pResult = result)
-            {
-                Unsafe.CopyBlockUnaligned(pResult, (void*)BufferPointer, (uint)result.Length);
-            }
-
-            return result;
+            return new Span<byte>((void*)BufferPointer, PointerSize).ToArray();
         }
 
         public Span<byte> AsSpan()
         {
-            Span<byte> result = new byte[PointerSize];
-            fixed (byte* pResult = result)
-            {
-                Unsafe.CopyBlockUnaligned(pResult, (void*)BufferPointer, (uint)result.Length);
-            }
-
-            return result;
+            return new Span<byte>((void*)BufferPointer, PointerSize);
         }
 
         public void Dispose()

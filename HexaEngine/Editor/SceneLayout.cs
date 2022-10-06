@@ -8,9 +8,9 @@ namespace HexaEngine.Editor
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
 
     public static class SceneLayout
@@ -95,10 +95,34 @@ namespace HexaEngine.Editor
                     if (element.Children.Count == 0)
                         flags |= ImGuiTreeNodeFlags.Leaf;
                     bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
-
+                    if (element.IsSelected && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center != element.Transform.GlobalPosition)
+                    {
+                        CameraManager.Center = element.Transform.GlobalPosition;
+                    }
+                    else if (element.IsSelected && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center == element.Transform.GlobalPosition)
+                    {
+                        CameraManager.Center = Vector3.Zero;
+                    }
+                    if (element.IsSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
+                    {
+                        element.Parent.RemoveChild(element);
+                        element.IsSelected = false;
+                    }
+                    if (element.IsSelected && ImGui.IsKeyReleased(ImGuiKey.U))
+                    {
+                        SceneNode.SelectedNode.IsSelected = false;
+                    }
                     ImGui.PushID(element.Name);
                     if (ImGui.BeginPopupContextItem(element.Name))
                     {
+                        if (ImGui.MenuItem("Focus (F)"))
+                        {
+                            CameraManager.Center = element.Transform.GlobalPosition;
+                        }
+                        if (ImGui.MenuItem("Unfocus (F)"))
+                        {
+                            CameraManager.Center = Vector3.Zero;
+                        }
                         if (ImGui.MenuItem("Unselect"))
                         {
                             SceneNode.SelectedNode.IsSelected = false;
@@ -120,7 +144,6 @@ namespace HexaEngine.Editor
                             {
                                 Guid id = ((Guid*)payload.Data)[0];
                                 element.AddChild(scene.Find(id));
-                                Trace.WriteLine($"{payload.Preview} {payload.Delivery}");
                             }
                         }
                         ImGui.EndDragDropTarget();

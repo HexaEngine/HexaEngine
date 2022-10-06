@@ -22,7 +22,7 @@ namespace SPIRVCross
 
         public static implicit operator uint(SpvId from) => from.Value;
 
-        public static implicit operator SpvId(uint from) => new SpvId(from);
+        public static implicit operator SpvId(uint from) => new(from);
 
         public static bool operator ==(SpvId left, SpvId right) => left.Equals(right);
 

@@ -6,6 +6,7 @@
 	  <DebugType>embedded</DebugType>
 	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
   </PropertyGroup>
 
   <ItemGroup>

@@ -33,6 +33,12 @@
 
         public RendererFlags Flags;
 
+        public bool VSync;
+
+        public bool LimitFPS;
+
+        public int TargetFPS = 120;
+
         protected override void OnShown(ShownEventArgs args)
         {
             renderThread = new(RenderVoid);
@@ -119,7 +125,7 @@
                 if (renderer is not null)
                     renderer.EndDraw();
 
-                swapChain.Present(Nucleus.Settings.VSync ? 1u : 0u);
+                swapChain.Present(VSync ? 1u : 0u);
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
             }
@@ -141,9 +147,9 @@
 
         private void LimitFrameRate()
         {
-            if (Nucleus.Settings.LimitFPS & !Nucleus.Settings.VSync)
+            if (LimitFPS & !VSync)
             {
-                int fps = Nucleus.Settings.TargetFPS;
+                int fps = TargetFPS;
                 long freq = Stopwatch.Frequency;
                 long frame = Stopwatch.GetTimestamp();
                 while ((frame - fpsStartTime) * fps < freq * fpsFrameCount)

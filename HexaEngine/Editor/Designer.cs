@@ -59,7 +59,6 @@
             SceneElementProperties.Draw();
             SceneMaterials.Draw();
             AssetExplorer.Draw();
-            ImGui.ShowMetricsWindow();
         }
     }
 }

@@ -136,8 +136,8 @@
 
         public static BoundingBox CreateFromPoints(Span<Vector3> points)
         {
-            Vector3 min = new Vector3(float.MaxValue);
-            Vector3 max = new Vector3(float.MinValue);
+            Vector3 min = new(float.MaxValue);
+            Vector3 max = new(float.MinValue);
 
             for (int i = 0; i < points.Length; ++i)
             {

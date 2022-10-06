@@ -16,14 +16,14 @@ namespace imnodesNET
         public EmulateThreeButtonMouse* NativePtr { get; }
         public EmulateThreeButtonMousePtr(EmulateThreeButtonMouse* nativePtr) => NativePtr = nativePtr;
         public EmulateThreeButtonMousePtr(IntPtr nativePtr) => NativePtr = (EmulateThreeButtonMouse*)nativePtr;
-        public static implicit operator EmulateThreeButtonMousePtr(EmulateThreeButtonMouse* nativePtr) => new EmulateThreeButtonMousePtr(nativePtr);
+        public static implicit operator EmulateThreeButtonMousePtr(EmulateThreeButtonMouse* nativePtr) => new(nativePtr);
         public static implicit operator EmulateThreeButtonMouse* (EmulateThreeButtonMousePtr wrappedPtr) => wrappedPtr.NativePtr;
-        public static implicit operator EmulateThreeButtonMousePtr(IntPtr nativePtr) => new EmulateThreeButtonMousePtr(nativePtr);
+        public static implicit operator EmulateThreeButtonMousePtr(IntPtr nativePtr) => new(nativePtr);
         public ref bool enabled => ref Unsafe.AsRef<bool>(&NativePtr->enabled);
         public IntPtr modifier { get => (IntPtr)NativePtr->modifier; set => NativePtr->modifier = (byte*)value; }
         public void Destroy()
         {
-            imnodesNative.EmulateThreeButtonMouse_destroy((EmulateThreeButtonMouse*)(NativePtr));
+            imnodesNative.EmulateThreeButtonMouse_destroy(NativePtr);
         }
     }
 }

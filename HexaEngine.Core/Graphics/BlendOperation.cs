@@ -2,10 +2,10 @@
 {
     public enum BlendOperation : int
     {
-        Add = unchecked((int)1),
-        Subtract = unchecked((int)2),
-        ReverseSubtract = unchecked((int)3),
-        Min = unchecked((int)4),
-        Max = unchecked((int)5)
+        Add = unchecked(1),
+        Subtract = unchecked(2),
+        ReverseSubtract = unchecked(3),
+        Min = unchecked(4),
+        Max = unchecked(5)
     }
 }

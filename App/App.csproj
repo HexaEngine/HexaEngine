@@ -8,7 +8,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>embedded</DebugType>
 	  <PublishAot>true</PublishAot>
+	  <StripSymbols>true</StripSymbols>
 	  <AnalysisLevel>latest-all</AnalysisLevel>
+	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
   </PropertyGroup>
 
 

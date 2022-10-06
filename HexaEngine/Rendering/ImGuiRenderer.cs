@@ -106,8 +106,10 @@ namespace HexaEngine.Rendering
             ImGui.NewFrame();
 
             ImGuizmo.BeginFrame();
-            if (!NoInternal)
+
+            if (!NoInternal && Designer.InDesignMode && Designer.IsShown)
             {
+                WidgetManager.Draw(context);
                 ImGuiConsole.Draw();
                 Designer.Draw();
             }

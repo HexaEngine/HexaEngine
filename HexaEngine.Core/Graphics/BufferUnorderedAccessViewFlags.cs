@@ -3,9 +3,9 @@
     [Flags]
     public enum BufferUnorderedAccessViewFlags : int
     {
-        Raw = unchecked((int)1),
-        Append = unchecked((int)2),
-        Counter = unchecked((int)4),
-        None = unchecked((int)0)
+        Raw = unchecked(1),
+        Append = unchecked(2),
+        Counter = unchecked(4),
+        None = unchecked(0)
     }
 }

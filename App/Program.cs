@@ -4,7 +4,6 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Logging;
-    using HexaEngine.Scenes;
     using HexaEngine.Windows;
     using System.Diagnostics;
     using TestGame;

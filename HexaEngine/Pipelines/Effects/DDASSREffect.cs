@@ -9,9 +9,9 @@
     public class DDASSREffect : Effect
     {
         private IBuffer cb;
-        private Vector2 targetSize = new(200, 200);
+        private Vector2 targetSize = new(500, 500);
         private int maxRayStep = 70;
-        private float depthbias = 0.0001f;
+        private float depthbias = 0.01f;
         private float rayStepScale = 1.05f;
         private float maxThickness = 1.8f;
         private float maxRayLength = 200.0f;
@@ -94,7 +94,7 @@
             }
             {
                 var value = MaxRayStep;
-                if (ImGui.SliderInt("Max ray steps", ref value, 1, 128))
+                if (ImGui.SliderInt("Max ray steps", ref value, 1, 256))
                 {
                     MaxRayStep = value;
                 }

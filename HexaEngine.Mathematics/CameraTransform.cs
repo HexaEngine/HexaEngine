@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Mathematics
 {
-    using Newtonsoft.Json;
     using System.Numerics;
 
     public class CameraTransform : Transform
@@ -21,10 +20,8 @@
             Recalculate();
         }
 
-        [JsonIgnore]
         public Matrix4x4 Projection { get => projection; }
 
-        [JsonIgnore]
         public Matrix4x4 ProjectionInv => projectionInv;
 
         public ProjectionType ProjectionType
@@ -60,7 +57,6 @@
             }
         }
 
-        [JsonIgnore]
         public float AspectRatio => aspectRatio;
 
         public float Fov
@@ -97,7 +93,6 @@
             }
         }
 
-        [JsonIgnore]
         public BoundingFrustum Frustum => frustum;
 
         protected override void Recalculate()

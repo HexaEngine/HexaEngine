@@ -1,13 +1,10 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Scenes;
     using ImGuiNET;
-    using Newtonsoft.Json;
-    using System.IO;
 
     public static class MainMenuBar
     {
@@ -36,10 +33,6 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("Save scene"))
-                    {
-                        File.WriteAllText("scene.json", JsonConvert.SerializeObject(SceneManager.Current, Formatting.Indented));
-                    }
                     if (ImGui.MenuItem("Import"))
                     {
                         filePickerIsOpen = true;

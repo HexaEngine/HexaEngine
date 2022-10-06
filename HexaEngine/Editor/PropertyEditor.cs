@@ -63,16 +63,14 @@ namespace HexaEngine.Editor
                 if (propType == typeof(Type) && nameAttr.Mode == EditorPropertyMode.TypeSelector)
                 {
                     if (!(property.CanWrite && property.CanRead)) continue;
-                    if (!typeCache.ContainsKey(nameAttr.Type))
+                    if (!typeCache.ContainsKey(nameAttr.TargetType))
                     {
-                        var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes()).AsParallel().Where(x => x.IsAssignableTo(nameAttr.Type) && !x.IsInterface && !x.IsAbstract).ToArray();
-                        var names = types.Select(x => x.Name).ToArray();
-                        typeCache.Add(nameAttr.Type, new(types, names));
+                        typeCache.Add(nameAttr.TargetType, new(nameAttr.Types, nameAttr.TypeNames));
                     }
 
                     values.Add(new(property, value =>
                     {
-                        var types = typeCache[nameAttr.Type];
+                        var types = typeCache[nameAttr.TargetType];
                         int index = Array.IndexOf(types.Key, value);
                         if (ImGui.Combo(name, ref index, types.Value, types.Value.Length))
                         {
@@ -82,12 +80,12 @@ namespace HexaEngine.Editor
                     }));
                 }
 
-                if (propType.IsEnum)
+                if (propType.IsEnum && nameAttr.Mode == EditorPropertyMode.Enum)
                 {
                     if (!(property.CanWrite && property.CanRead)) continue;
                     if (!enumCache.ContainsKey(propType))
                     {
-                        enumCache.Add(propType, new(Enum.GetValues(propType), Enum.GetNames(propType)));
+                        enumCache.Add(propType, new(nameAttr.EnumValues, nameAttr.EnumNames));
                     }
 
                     values.Add(new(property, value =>

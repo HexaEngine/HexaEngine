@@ -2,22 +2,22 @@
 {
     public enum Blend : int
     {
-        Zero = unchecked((int)1),
-        One = unchecked((int)2),
-        SourceColor = unchecked((int)3),
-        InverseSourceColor = unchecked((int)4),
-        SourceAlpha = unchecked((int)5),
-        InverseSourceAlpha = unchecked((int)6),
-        DestinationAlpha = unchecked((int)7),
-        InverseDestinationAlpha = unchecked((int)8),
-        DestinationColor = unchecked((int)9),
-        InverseDestinationColor = unchecked((int)10),
-        SourceAlphaSaturate = unchecked((int)11),
-        BlendFactor = unchecked((int)14),
-        InverseBlendFactor = unchecked((int)15),
-        Source1Color = unchecked((int)16),
-        InverseSource1Color = unchecked((int)17),
-        Source1Alpha = unchecked((int)18),
-        InverseSource1Alpha = unchecked((int)19)
+        Zero = unchecked(1),
+        One = unchecked(2),
+        SourceColor = unchecked(3),
+        InverseSourceColor = unchecked(4),
+        SourceAlpha = unchecked(5),
+        InverseSourceAlpha = unchecked(6),
+        DestinationAlpha = unchecked(7),
+        InverseDestinationAlpha = unchecked(8),
+        DestinationColor = unchecked(9),
+        InverseDestinationColor = unchecked(10),
+        SourceAlphaSaturate = unchecked(11),
+        BlendFactor = unchecked(14),
+        InverseBlendFactor = unchecked(15),
+        Source1Color = unchecked(16),
+        InverseSource1Color = unchecked(17),
+        Source1Alpha = unchecked(18),
+        InverseSource1Alpha = unchecked(19)
     }
 }

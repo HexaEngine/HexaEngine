@@ -3,7 +3,6 @@
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System.Numerics;
@@ -20,10 +19,10 @@
         public Camera()
         {
             base.Transform = Transform = new();
-            // CreatePropertyEditor<Camera>();
+            CreatePropertyEditor<Camera>();
         }
 
-        [EditorProperty("Type")]
+        [EditorProperty<ProjectionType>("Type")]
         public ProjectionType ProjectionType { get => Transform.ProjectionType; set => Transform.ProjectionType = value; }
 
         [EditorProperty(nameof(Fov))]

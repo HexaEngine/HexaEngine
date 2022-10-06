@@ -438,6 +438,8 @@
                 sceneTarget.Root.Merge(root);
             else
                 sceneTarget.Root.AddChild(root);
+
+            Assimp.ReleaseImport(scene);
         }
 
         public static unsafe void Open(string path)

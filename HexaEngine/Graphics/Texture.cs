@@ -196,9 +196,9 @@
 
             resource = description.Dimension switch
             {
-                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
+                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, description.MiscFlags),
                 TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube),
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
@@ -225,7 +225,7 @@
             switch (description.Dimension)
             {
                 case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
+                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags);
                     {
                         Texture1DDescription depthStencilDesc = new(
                             desc.Format,
@@ -241,7 +241,7 @@
                     break;
 
                 case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
+                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags);
                     {
                         Texture2DDescription depthStencilDesc = new(
                             desc.Format,
@@ -260,7 +260,7 @@
                     break;
 
                 case TextureDimension.Texture3D:
-                    resource = device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None);
+                    resource = device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, description.MiscFlags);
                     {
                         Texture2DDescription depthStencilDesc = new(
                             desc.Format,
@@ -343,9 +343,9 @@
 
             resource = description.Dimension switch
             {
-                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.None),
+                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
+                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
+                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, description.MiscFlags),
                 TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };

@@ -2,6 +2,7 @@
 {
     using HexaEngine.Scenes;
     using System;
+    using System.Xml.Linq;
 
     [AttributeUsage(AttributeTargets.Property)]
     public class EditorPropertyAttribute : Attribute
@@ -9,6 +10,14 @@
         public EditorPropertyAttribute(string name, EditorPropertyMode mode = EditorPropertyMode.Default)
         {
             Name = name;
+            Mode = mode;
+        }
+
+        public EditorPropertyAttribute(string name, object[] enumValues, string[] enumNames, EditorPropertyMode mode = EditorPropertyMode.Enum)
+        {
+            Name = name;
+            EnumValues = enumValues;
+            EnumNames = enumNames;
             Mode = mode;
         }
 
@@ -20,10 +29,12 @@
             Max = max;
         }
 
-        public EditorPropertyAttribute(string name, Type type, EditorPropertyMode mode = EditorPropertyMode.TypeSelector)
+        public EditorPropertyAttribute(string name, Type target, Type[] types, string[] typeNames, EditorPropertyMode mode = EditorPropertyMode.TypeSelector)
         {
             Name = name;
-            Type = type;
+            TargetType = target;
+            Types = types;
+            TypeNames = typeNames;
             Mode = mode;
         }
 
@@ -35,12 +46,44 @@
 
         public object? Max { get; }
 
-        public Type? Type { get; }
+        public Type? TargetType { get; }
+
+        public Type[]? Types { get; }
+
+        public string[]? TypeNames { get; }
+
+        public object[]? EnumValues { get; }
+
+        public string[]? EnumNames { get; }
+    }
+
+    public class EditorPropertyAttribute<T> : EditorPropertyAttribute where T : struct, Enum
+    {
+        public EditorPropertyAttribute(string name) :
+            base(name,
+                Enum.GetValues<T>().Cast<object>().ToArray(),
+                Enum.GetNames<T>(),
+                EditorPropertyMode.Enum)
+        {
+        }
+    }
+
+    public class EditorPropertyTypeSelectorAttribute<T> : EditorPropertyAttribute
+    {
+        public EditorPropertyTypeSelectorAttribute(string name, params Type[] types)
+            : base(name,
+                  typeof(T),
+                  types,
+                  types.Select(x => x.Name).ToArray(),
+                  EditorPropertyMode.TypeSelector)
+        {
+        }
     }
 
     public enum EditorPropertyMode
     {
         Default,
+        Enum,
         Colorpicker,
         Slider,
         SliderAngle,

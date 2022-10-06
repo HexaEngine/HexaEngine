@@ -3,8 +3,8 @@
     [Flags]
     public enum DepthStencilViewFlags : int
     {
-        ReadOnlyDepth = unchecked((int)1),
-        ReadOnlyStencil = unchecked((int)2),
-        None = unchecked((int)0)
+        ReadOnlyDepth = unchecked(1),
+        ReadOnlyStencil = unchecked(2),
+        None = unchecked(0)
     }
 }

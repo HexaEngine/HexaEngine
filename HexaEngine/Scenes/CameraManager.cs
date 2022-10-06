@@ -4,6 +4,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
+    using HexaEngine.Mathematics;
     using Silk.NET.SDL;
     using System;
     using System.Numerics;
@@ -20,7 +21,7 @@
 
         public const float DegToRadFactor = 0.0174532925f;
         public const float Speed = 10F;
-        public const float AngluarSpeed = 20F;
+        public const float AngluarSpeed = 50F;
         public const float AngluarGrain = 0.004f;
 
         public static Vector3 Center { get => center; set => center = value; }
@@ -41,32 +42,6 @@
                     Mode = mode == CameraEditorMode.Orbit ? CameraEditorMode.Free : CameraEditorMode.Orbit;
                 }
             };
-        }
-
-        private static Vector3 GetSphericalCoordinates(Vector3 cartesian)
-        {
-            float r = MathF.Sqrt(
-                MathF.Pow(cartesian.X, 2) +
-                MathF.Pow(cartesian.Y, 2) +
-                MathF.Pow(cartesian.Z, 2)
-            );
-
-            // use atan2 for built-in checks
-            float phi = MathF.Atan2(cartesian.Z / cartesian.X, cartesian.X);
-            float theta = MathF.Acos(cartesian.Y / r);
-
-            return new Vector3(r, phi, theta);
-        }
-
-        private static Vector3 GetCartesianCoordinates(Vector3 spherical)
-        {
-            Vector3 ret = new();
-
-            ret.Z = -(spherical.X * MathF.Cos(spherical.Z) * MathF.Cos(spherical.Y));
-            ret.Y = spherical.X * MathF.Sin(spherical.Z);
-            ret.X = spherical.X * MathF.Cos(spherical.Z) * MathF.Sin(spherical.Y);
-
-            return ret;
         }
 
         public static void Update()
@@ -95,12 +70,13 @@
                     // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
                     sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta, -1.5f, 1.5f);
 
-                    // Calculate the cartesian coordinates for unity
-                    Vector3 pos = GetCartesianCoordinates(sc) + center;
-                    var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
-                    camera.Transform.PositionRotation = (pos, orientation);
                     first = false;
                 }
+
+                // Calculate the cartesian coordinates
+                Vector3 pos = SphereHelper.GetCartesianCoordinates(sc) + center;
+                var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
+                camera.Transform.PositionRotation = (pos, orientation);
             }
             if (mode == CameraEditorMode.Free)
             {
@@ -110,7 +86,7 @@
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
-                    var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngluarSpeed;
+                    var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta;
                     camera.Transform.Rotation += re;
                     if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
                     {

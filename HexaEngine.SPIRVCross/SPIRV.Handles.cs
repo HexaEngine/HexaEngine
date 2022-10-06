@@ -14,9 +14,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcContext Null => new SpvcContext(0);
+        public static SpvcContext Null => new(0);
 
-        public static implicit operator SpvcContext(nint handle) => new SpvcContext(handle);
+        public static implicit operator SpvcContext(nint handle) => new(handle);
 
         public static bool operator ==(SpvcContext left, SpvcContext right) => left.Handle == right.Handle;
 
@@ -48,9 +48,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcParsedIr Null => new SpvcParsedIr(0);
+        public static SpvcParsedIr Null => new(0);
 
-        public static implicit operator SpvcParsedIr(nint handle) => new SpvcParsedIr(handle);
+        public static implicit operator SpvcParsedIr(nint handle) => new(handle);
 
         public static bool operator ==(SpvcParsedIr left, SpvcParsedIr right) => left.Handle == right.Handle;
 
@@ -84,7 +84,7 @@ namespace SPIRVCross
         public bool IsNull => Handle == 0;
         public static SpvcCompiler Null => new(0);
 
-        public static implicit operator SpvcCompiler(nint handle) => new SpvcCompiler(handle);
+        public static implicit operator SpvcCompiler(nint handle) => new(handle);
 
         public static bool operator ==(SpvcCompiler left, SpvcCompiler right) => left.Handle == right.Handle;
 
@@ -116,9 +116,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcCompilerOptions Null => new SpvcCompilerOptions(0);
+        public static SpvcCompilerOptions Null => new(0);
 
-        public static implicit operator SpvcCompilerOptions(nint handle) => new SpvcCompilerOptions(handle);
+        public static implicit operator SpvcCompilerOptions(nint handle) => new(handle);
 
         public static bool operator ==(SpvcCompilerOptions left, SpvcCompilerOptions right) => left.Handle == right.Handle;
 
@@ -150,9 +150,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcResources Null => new SpvcResources(0);
+        public static SpvcResources Null => new(0);
 
-        public static implicit operator SpvcResources(nint handle) => new SpvcResources(handle);
+        public static implicit operator SpvcResources(nint handle) => new(handle);
 
         public static bool operator ==(SpvcResources left, SpvcResources right) => left.Handle == right.Handle;
 
@@ -184,9 +184,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcType Null => new SpvcType(0);
+        public static SpvcType Null => new(0);
 
-        public static implicit operator SpvcType(nint handle) => new SpvcType(handle);
+        public static implicit operator SpvcType(nint handle) => new(handle);
 
         public static bool operator ==(SpvcType left, SpvcType right) => left.Handle == right.Handle;
 
@@ -218,9 +218,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcConstant Null => new SpvcConstant(0);
+        public static SpvcConstant Null => new(0);
 
-        public static implicit operator SpvcConstant(nint handle) => new SpvcConstant(handle);
+        public static implicit operator SpvcConstant(nint handle) => new(handle);
 
         public static bool operator ==(SpvcConstant left, SpvcConstant right) => left.Handle == right.Handle;
 
@@ -252,9 +252,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcSet Null => new SpvcSet(0);
+        public static SpvcSet Null => new(0);
 
-        public static implicit operator SpvcSet(nint handle) => new SpvcSet(handle);
+        public static implicit operator SpvcSet(nint handle) => new(handle);
 
         public static bool operator ==(SpvcSet left, SpvcSet right) => left.Handle == right.Handle;
 
@@ -286,9 +286,9 @@ namespace SPIRVCross
 
         public nint Handle { get; }
         public bool IsNull => Handle == 0;
-        public static SpvcErrorCallback Null => new SpvcErrorCallback(0);
+        public static SpvcErrorCallback Null => new(0);
 
-        public static implicit operator SpvcErrorCallback(nint handle) => new SpvcErrorCallback(handle);
+        public static implicit operator SpvcErrorCallback(nint handle) => new(handle);
 
         public static bool operator ==(SpvcErrorCallback left, SpvcErrorCallback right) => left.Handle == right.Handle;
 

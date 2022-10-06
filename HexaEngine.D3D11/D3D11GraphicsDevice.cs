@@ -507,7 +507,7 @@
                 case TextureDimension.Texture1D:
                     {
                         Texture1DDescription texture = new(
-                            Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
+                            Helper.ConvertBack(metadata.Format),
                             (int)metadata.Width,
                             (int)metadata.ArraySize,
                             (int)metadata.MipLevels,
@@ -518,7 +518,7 @@
                 case TextureDimension.Texture2D:
                     {
                         Texture2DDescription texture = new(
-                            Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
+                            Helper.ConvertBack(metadata.Format),
                             (int)metadata.Width,
                             (int)metadata.Height,
                             (int)metadata.ArraySize,
@@ -530,7 +530,7 @@
                 case TextureDimension.Texture3D:
                     {
                         Texture3DDescription texture = new(
-                            Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
+                            Helper.ConvertBack(metadata.Format),
                             (int)metadata.Width,
                             (int)metadata.Height,
                             (int)metadata.Depth,
@@ -542,7 +542,7 @@
                 case TextureDimension.TextureCube:
                     {
                         Texture2DDescription texture = new(
-                            Helper.ConvertBack((Silk.NET.DXGI.Format)metadata.Format),
+                            Helper.ConvertBack(metadata.Format),
                             (int)metadata.Width,
                             (int)metadata.Height,
                             (int)metadata.Depth,

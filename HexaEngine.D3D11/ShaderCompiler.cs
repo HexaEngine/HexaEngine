@@ -5,16 +5,19 @@
     using HexaEngine.Core.Unsafes;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D.Compilers;
+    using System.Collections.Concurrent;
     using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class ShaderCompiler
     {
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
-        private static readonly Dictionary<Pointer<ID3DInclude>, string> paths = new();
+        private static readonly ConcurrentDictionary<Pointer<ID3DInclude>, string> paths = new();
 
         public static bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
+            shaderBlob = null;
+            errorBlob = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
 #if DEBUG && !RELEASE && !SHADER_FORCE_OPTIMIZE
             flags |= ShaderFlags.Debug | ShaderFlags.SkipOptimization | ShaderFlags.DebugNameForSource;
@@ -46,29 +49,23 @@
 
             ID3DInclude* pInclude = &include;
 
-            paths.Add(pInclude, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
+            paths.TryAdd(pInclude, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
             D3DCompiler.Compile(pSource, (nuint)source.Length, sourceName.ToBytes(), pMacros, pInclude, entryPoint.ToBytes(), profile.ToBytes(), (uint)flags, 0, &vBlob, &vError);
-            paths.Remove(pInclude);
+            paths.Remove(pInclude, out _);
 
             if (vError != null)
             {
                 errorBlob = new(vError->Buffer.ToArray());
                 vError->Release();
-                if (vBlob == null)
-                {
-                    shaderBlob = null;
-                    return false;
-                }
+            }
 
-                shaderBlob = new(vBlob->Buffer.ToArray());
-                vBlob->Release();
-            }
-            else
+            if (vBlob == null)
             {
-                errorBlob = null;
-                shaderBlob = new(vBlob->Buffer.ToArray());
-                vBlob->Release();
+                return false;
             }
+
+            shaderBlob = new(vBlob->Buffer.ToArray());
+            vBlob->Release();
 
             return true;
         }

@@ -93,6 +93,12 @@ namespace HexaEngine.Editor
 
             ImGui.Separator();
 
+            ImGui.Text($"Global Position: {element.Transform.GlobalPosition}");
+            ImGui.Text($"Global Rotation: {element.Transform.GlobalOrientation.GetRotation().ToDeg()}");
+            ImGui.Text($"Global Scale: {element.Transform.GlobalScale}");
+
+            ImGui.Separator();
+
             if (ImGui.RadioButton("Translate", operation == OPERATION.TRANSLATE))
             {
                 operation = OPERATION.TRANSLATE;
@@ -193,14 +199,17 @@ namespace HexaEngine.Editor
             ImGuizmo.SetOrthographic(false);
             Matrix4x4 view = camera.Transform.View;
             Matrix4x4 proj = camera.Transform.Projection;
-            Matrix4x4 transform = element.Transform.Local;
+            Matrix4x4 transform = element.Transform.Global;
 
             if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
             {
                 gimbalGrabbed = true;
-                element.Transform.Local = transform;
+                if (element.Transform.Parent == null)
+                    element.Transform.Local = transform;
+                else
+                    element.Transform.Local = transform * element.Transform.Parent.GlobalInverse;
             }
-            else
+            else if (!ImGuizmo.IsUsing())
             {
                 if (gimbalGrabbed)
                 {
@@ -208,19 +217,26 @@ namespace HexaEngine.Editor
                     Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
                 }
                 gimbalGrabbed = false;
-                gimbalBefore = transform;
+                gimbalBefore = element.Transform.Local;
             }
 
-            for (int i = 0; i < element.Meshes.Count; i++)
+            for (int i = 0; i < scene.Meshes.Count; i++)
             {
-                var mesh = element.Meshes[i];
+                var mesh = scene.Meshes[i];
+                if (mesh.Bones.Length == 0)
+                    continue;
+                var root = mesh.Skeleton.FindRoot();
+                var ele = scene.Find(root);
+                var trans = ele.Transform.Global;
                 for (int j = 0; j < mesh.Bones.Length; j++)
                 {
                     var skele = mesh.Skeleton;
                     var bone = mesh.Bones[j];
-                    var origin = Vector3.Transform(Vector3.Zero, skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName));
-                    var dest = Vector3.Transform(origin, skele.GetGlobalTransform(bone.Name));
-                    DebugDraw.DrawLine(origin, dest, false, Vector4.One);
+                    var originMtx = skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName);
+                    var destMtx = skele.GetGlobalTransform(bone.Name);
+                    var origin = Vector4.UnitW.ApplyMatrix(trans * originMtx);
+                    var dest = Vector4.UnitW.ApplyMatrix(trans * destMtx);
+                    DebugDraw.DrawLine(new(origin.X, origin.Y, origin.Z), new(dest.X, dest.Y, dest.Z), false, Vector4.One);
                 }
             }
         }

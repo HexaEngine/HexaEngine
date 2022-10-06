@@ -3,8 +3,8 @@
     [Flags]
     public enum CpuAccessFlags : int
     {
-        Write = unchecked((int)65536),
-        Read = unchecked((int)131072),
-        None = unchecked((int)0)
+        Write = unchecked(65536),
+        Read = unchecked(131072),
+        None = unchecked(0)
     }
 }
