@@ -68,6 +68,24 @@
 
         public bool Initialized => initialized;
 
+        public void SaveState()
+        {
+            Transform.SaveState();
+            for (int i = 0; i < children.Count; i++)
+            {
+                children[i].SaveState();
+            }
+        }
+
+        public void RestoreState()
+        {
+            Transform.RestoreState();
+            for (int i = 0; i < children.Count; i++)
+            {
+                children[i].RestoreState();
+            }
+        }
+
         public void Merge(SceneNode node)
         {
             if (Initialized)

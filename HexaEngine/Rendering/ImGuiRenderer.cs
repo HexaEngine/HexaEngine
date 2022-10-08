@@ -2,14 +2,11 @@
 #nullable disable
 
 using HexaEngine.Core;
-using HexaEngine.Core.Debugging;
 using HexaEngine.Core.Graphics;
 using HexaEngine.Editor;
 using HexaEngine.Mathematics;
-using HexaEngine.Windows;
 using ImGuiNET;
 using ImGuizmoNET;
-using ImPlotNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImDrawIdx = System.UInt16;
@@ -94,6 +91,8 @@ namespace HexaEngine.Rendering
             colors[(int)ImGuiCol.DockingPreview] = new Vector4(0.92f, 0.26f, 0.98f, 0.70f);
             colors[(int)ImGuiCol.TextSelectedBg] = new Vector4(0.92f, 0.26f, 0.98f, 0.35f);
             colors[(int)ImGuiCol.NavHighlight] = new Vector4(0.92f, 0.26f, 0.98f, 1.00f);
+            colors[(int)ImGuiCol.PlotHistogram] = new Vector4(0.98f, 0.56f, 0.95f, 0.40f);
+            colors[(int)ImGuiCol.PlotHistogramHovered] = new Vector4(0.96f, 0.46f, 0.98f, 1.00f);
 
             inputHandler = new(window);
         }
@@ -104,13 +103,12 @@ namespace HexaEngine.Rendering
         {
             inputHandler.Update();
             ImGui.NewFrame();
-
             ImGuizmo.BeginFrame();
-
-            if (!NoInternal && Designer.InDesignMode && Designer.IsShown)
+            ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
+            ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode);
+            ImGui.PopStyleColor();
+            if (!NoInternal && Designer.InDesignMode)
             {
-                WidgetManager.Draw(context);
-                ImGuiConsole.Draw();
                 Designer.Draw();
             }
         }

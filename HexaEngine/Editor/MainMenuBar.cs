@@ -64,18 +64,8 @@
                 }
                 if (ImGui.BeginMenu("View"))
                 {
-                    if (ImGui.MenuItem("Layout"))
-                    {
-                        SceneLayout.IsShown = !SceneLayout.IsShown;
-                    }
-                    if (ImGui.MenuItem("Materials"))
-                    {
-                        SceneMaterials.IsShown = !SceneMaterials.IsShown;
-                    }
-                    if (ImGui.MenuItem("Properties"))
-                    {
-                        SceneElementProperties.IsShown = !SceneElementProperties.IsShown;
-                    }
+                    WidgetManager.DrawMenu();
+
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Fullframe"))

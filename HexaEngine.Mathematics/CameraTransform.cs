@@ -106,7 +106,7 @@
                     break;
 
                 case ProjectionType.Perspective:
-                    projection = MathUtil.PerspectiveFovLH(fov, aspectRatio, near, far);
+                    projection = MathUtil.PerspectiveFovLH(fov.ToRad(), aspectRatio, near, far);
                     break;
             }
             Matrix4x4.Invert(projection, out projectionInv);

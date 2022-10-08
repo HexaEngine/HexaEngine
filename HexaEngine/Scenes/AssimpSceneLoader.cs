@@ -435,9 +435,9 @@
 
             var root = WalkNode(scene->MRootNode, null);
             if (root.Name == "ROOT")
-                sceneTarget.Root.Merge(root);
+                sceneTarget.Merge(root);
             else
-                sceneTarget.Root.AddChild(root);
+                sceneTarget.AddChild(root);
 
             Assimp.ReleaseImport(scene);
         }

@@ -74,18 +74,18 @@
             switch (mode)
             {
                 case Mode.Cube:
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loading environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loading environment ...");
                     RenderTexture tex = new(device, new TextureFileDescription(pathEnvironment, TextureDimension.TextureCube));
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loaded environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
                     return tex;
 
                 case Mode.Panorama:
 
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loading environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loading environment ...");
                     RenderTexture source = new(device, new TextureFileDescription(pathEnvironment));
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loaded environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
 
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Converting environment to cubemap ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeEffect filter = new(device);
                     filter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
                     filter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
@@ -95,10 +95,10 @@
                     filter.Draw(context);
                     context.ClearState();
                     context.GenerateMips(cube1.ResourceView ?? throw new Exception("Cannot convert texture!"));
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Converted environment to cubemap ...");
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exporting environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Converted environment to cubemap ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exporting environment ...");
                     device.SaveTexture2D((ITexture2D)cube1.Resource, "env_o.dds");
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exported environment ... ./env_o.dds");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exported environment ... ./env_o.dds");
                     cu.Dispose();
                     source.Dispose();
                     filter.Samplers.Clear();
@@ -110,19 +110,33 @@
             }
         }
 
+        public override void DrawMenu()
+        {
+            if (ImGui.MenuItem("Bake Irradiance"))
+            {
+                IsShown = true;
+            }
+        }
+
         public override void Draw(IGraphicsContext context)
         {
+            if (!IsShown) return;
             if (irradianceFilter == null) return;
             ImGuiWindowFlags flags = ImGuiWindowFlags.None;
+            if (IsDocked)
+                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
             if (irradianceTex != null)
                 flags |= ImGuiWindowFlags.UnsavedDocument;
             if (searchPathEnvironment)
                 flags |= ImGuiWindowFlags.NoInputs;
-            if (!ImGui.Begin("Irradiance", flags))
+
+            if (!ImGui.Begin("Irradiance", ref IsShown, flags))
             {
                 ImGui.End();
                 return;
             }
+
+            IsDocked = ImGui.IsWindowDocked();
 
             if (compute)
                 ImGui.BeginDisabled(true);
@@ -166,7 +180,7 @@
                         }
                         steps = 6 * (irradianceSize / irrTileSize) * (irradianceSize / irrTileSize);
 
-                        ImGuiConsole.Log(ConsoleMessageType.Log, "Computing irradiance ...");
+                        ImGuiConsole.Log(LogSeverity.Log, "Computing irradiance ...");
                         compute = true;
                         ImGui.BeginDisabled(true);
                     }
@@ -183,9 +197,9 @@
 
                 if (ImGui.Button("Export"))
                 {
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exporting irradiance ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exporting irradiance ...");
                     context.Device.SaveTextureCube((ITexture2D)irradianceTex.Resource, "irr_o.dds");
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exported irradiance ... ./irr_o.dds");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exported irradiance ... ./irr_o.dds");
                 }
 
                 ImGui.SameLine();
@@ -208,7 +222,7 @@
                         step = 0;
                         environmentTex?.Dispose();
                         environmentTex = null;
-                        ImGuiConsole.Log(ConsoleMessageType.Error, "Computing irradiance ... aborted!");
+                        ImGuiConsole.Log(LogSeverity.Error, "Computing irradiance ... aborted!");
                     }
 
                     ImGui.SameLine();
@@ -266,7 +280,7 @@
                     step = 0;
                     environmentTex?.Dispose();
                     environmentTex = null;
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Computing irradiance ... done!");
+                    ImGuiConsole.Log(LogSeverity.Log, "Computing irradiance ... done!");
                 }
             }
         }

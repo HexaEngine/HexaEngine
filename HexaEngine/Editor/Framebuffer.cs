@@ -54,7 +54,8 @@
 
         internal void Draw()
         {
-            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.MenuBar);
+            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar);
+
             if (ImGui.BeginMenuBar())
             {
                 var scene = SceneManager.Current;
@@ -75,8 +76,7 @@
             }
             position = ImGui.GetWindowPos();
             size = ImGui.GetWindowSize();
-            if (Keyboard.IsDown(KeyCode.KT))
-                ImGui.SetWindowFocus();
+
             float ratioX = size.X / SourceViewport.Width;
             float ratioY = size.Y / SourceViewport.Height;
             var s = Math.Min(ratioX, ratioY);

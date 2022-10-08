@@ -18,6 +18,10 @@
 
         public static string CurrentSoundPath { get; set; } = "assets/sounds/";
 
+        public static string CurrentScriptFolder { get; set; } = "assets/scripts/";
+
+        public static string CurrentConsoleScriptFolder { get; set; } = "assets/console/";
+
         public static string GetRoot()
         {
             return Path.GetFullPath("assets");

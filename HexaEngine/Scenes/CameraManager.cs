@@ -17,8 +17,6 @@
         private static Vector3 sc = new(10, 0, 0);
         private static bool first = true;
 
-        private static bool inEditMode;
-
         public const float DegToRadFactor = 0.0174532925f;
         public const float Speed = 10F;
         public const float AngluarSpeed = 50F;
@@ -29,9 +27,7 @@
         public static CameraEditorMode Mode
         { get => mode; set { mode = value; first = true; } }
 
-        public static bool InEditMode { get => inEditMode; set => inEditMode = value; }
-
-        public static Camera Current => Designer.InDesignMode ? inEditMode ? SceneManager.Current.CurrentCamera : camera : SceneManager.Current.CurrentCamera;
+        public static Camera? Current => Designer.InDesignMode ? camera : SceneManager.Current.CurrentCamera;
 
         static CameraManager()
         {
@@ -47,7 +43,7 @@
         public static void Update()
         {
             if (!Designer.InDesignMode) return;
-            Camera camera = Current;
+
             if (mode == CameraEditorMode.Orbit)
             {
                 Vector2 delta = Vector2.Zero;
@@ -86,7 +82,7 @@
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
-                    var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta;
+                    var re = new Vector3(delta.X, delta.Y, 0) * AngluarSpeed * Time.Delta;
                     camera.Transform.Rotation += re;
                     if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
                     {

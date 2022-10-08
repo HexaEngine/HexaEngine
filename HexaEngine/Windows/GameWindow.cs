@@ -6,7 +6,6 @@ namespace HexaEngine.Windows
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.D3D11;
     using HexaEngine.Editor;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes;
@@ -14,23 +13,23 @@ namespace HexaEngine.Windows
     using System.Diagnostics;
     using System.Threading;
 
+    [Obsolete]
     public class GameWindow : SdlWindow
     {
         private Thread renderThread;
         private bool isRunning = true;
         private bool firstFrame;
         private Dispatcher renderDispatcher;
-        private readonly Game game;
         private IGraphicsDevice device;
         private IGraphicsContext context;
         private ISwapChain swapChain;
         private bool resize = false;
         private ImGuiRenderer renderer;
         private Framebuffer framebuffer;
+        private DeferredRenderer deferredRenderer;
 
-        public GameWindow(Game game)
+        public GameWindow()
         {
-            this.game = game;
         }
 
         public Dispatcher RenderDispatcher => renderDispatcher;
@@ -67,10 +66,11 @@ namespace HexaEngine.Windows
             framebuffer = new(device);
             renderDispatcher = Dispatcher.CurrentDispatcher;
             SceneManager.SceneChanged += (_, _) => { firstFrame = true; };
-            game.InitializeWindow(this);
-            game.Initialize();
             Time.Initialize();
             WidgetManager.Init(device);
+
+            SceneManager.Load(new());
+            deferredRenderer = new();
             while (isRunning)
             {
                 Time.FrameUpdate();
@@ -78,7 +78,7 @@ namespace HexaEngine.Windows
                 framebuffer.SourceViewport = Viewport;
                 framebuffer.Update(context);
                 renderer.BeginDraw();
-                if (Designer.InDesignMode && Designer.IsShown)
+                if (Designer.InDesignMode)
                 {
                     framebuffer.Draw();
                 }
@@ -97,10 +97,10 @@ namespace HexaEngine.Windows
                             Time.Initialize();
                             firstFrame = false;
                         }
-                        if (Designer.InDesignMode && !Framebuffer.Fullframe && Designer.IsShown)
-                            SceneManager.Current?.Render(context, this, framebuffer.Viewport);
-                        else
-                            SceneManager.Current?.Render(context, this, Viewport);
+                        //  if (Designer.InDesignMode && !Framebuffer.Fullframe && Designer.IsShown)
+                        // SceneManager.Current?.Render(context, this, framebuffer.Viewport);
+                        //  else
+                        //  SceneManager.Current?.Render(context, this, Viewport);
                     }
 
                 renderer.EndDraw();

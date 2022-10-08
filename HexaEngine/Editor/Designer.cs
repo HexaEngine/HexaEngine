@@ -1,26 +1,24 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Input;
+    using HexaEngine.Editor.Widgets;
     using ImGuiNET;
     using Silk.NET.SDL;
 
     public static class Designer
     {
-        private static bool isShown;
         private static bool inDesignMode = true;
         private static uint dockid;
 
-        public static bool IsShown
+        public static bool InDesignMode
         {
-            get => isShown;
+            get => inDesignMode;
             set
             {
-                isShown = value;
+                inDesignMode = value;
                 MainMenuBar.IsShown = value;
             }
         }
-
-        public static bool InDesignMode { get => inDesignMode; set => inDesignMode = value; }
 
         public static History History { get; } = new();
 
@@ -46,7 +44,7 @@
 
         internal static void Draw()
         {
-            if (!isShown || !inDesignMode) return;
+            if (!inDesignMode) return;
             MainMenuBar.Draw();
             ImGui.Begin("Editor", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.DockNodeHost);
             dockid = ImGui.GetWindowDockID();
@@ -55,9 +53,7 @@
             ImGui.End();
 
             Inspector.Draw();
-            SceneLayout.Draw();
-            SceneElementProperties.Draw();
-            SceneMaterials.Draw();
+
             AssetExplorer.Draw();
         }
     }

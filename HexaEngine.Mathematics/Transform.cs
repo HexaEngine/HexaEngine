@@ -3,12 +3,38 @@
     using System;
     using System.Numerics;
 
+    public struct TransformSnapshot
+    {
+        public Transform? Parent;
+        public Vector3 Position;
+        public Vector3 Rotation;
+        public Vector3 Scale;
+        public Quaternion Orientation;
+        public Vector3 GlobalPosition;
+        public Quaternion GlobalOrientation;
+        public Vector3 GobalScale;
+        public Vector3 Forward;
+        public Vector3 Backward;
+        public Vector3 Left;
+        public Vector3 Right;
+        public Vector3 Up;
+        public Vector3 Down;
+        public Matrix4x4 Global;
+        public Matrix4x4 GlobalInverse;
+        public Matrix4x4 Local;
+        public Matrix4x4 LocalInverse;
+        public Matrix4x4 View;
+        public Matrix4x4 ViewInv;
+        public Vector3 Velocity;
+        public Vector3 OldPos;
+    }
+
     /// <summary>
     /// <see cref="Transform"/> is used for hierachical matrix calculation.
     /// </summary>
     public class Transform
     {
-        protected Transform? initial;
+        protected TransformSnapshot initial;
         protected Transform? parent;
         protected Vector3 position;
         protected Vector3 rotation;
@@ -35,6 +61,7 @@
         public Transform()
         {
             Recalculate();
+            SaveState();
         }
 
         public Transform? Parent
@@ -69,6 +96,42 @@
             }
         }
 
+        public float PositionX
+        {
+            get => position.X;
+            set
+            {
+                oldpos = position;
+                position.X = value;
+                velocity = position - oldpos;
+                Recalculate();
+            }
+        }
+
+        public float PositionY
+        {
+            get => position.Y;
+            set
+            {
+                oldpos = position;
+                position.Y = value;
+                velocity = position - oldpos;
+                Recalculate();
+            }
+        }
+
+        public float PositionZ
+        {
+            get => position.Z;
+            set
+            {
+                oldpos = position;
+                position.Z = value;
+                velocity = position - oldpos;
+                Recalculate();
+            }
+        }
+
         /// <summary>
         /// Gets or sets the local rotation.
         /// </summary>
@@ -84,6 +147,39 @@
             }
         }
 
+        public float RotationX
+        {
+            get => rotation.X;
+            set
+            {
+                rotation.X = value;
+                orientation = rotation.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
+                Recalculate();
+            }
+        }
+
+        public float RotationY
+        {
+            get => rotation.Y;
+            set
+            {
+                rotation.Y = value;
+                orientation = rotation.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
+                Recalculate();
+            }
+        }
+
+        public float RotationZ
+        {
+            get => rotation.Z;
+            set
+            {
+                rotation.Z = value;
+                orientation = rotation.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
+                Recalculate();
+            }
+        }
+
         /// <summary>
         /// Gets or sets the local scale.
         /// </summary>
@@ -93,6 +189,36 @@
             set
             {
                 scale = value;
+                Recalculate();
+            }
+        }
+
+        public float ScaleX
+        {
+            get => scale.X;
+            set
+            {
+                scale.X = value;
+                Recalculate();
+            }
+        }
+
+        public float ScaleY
+        {
+            get => scale.Y;
+            set
+            {
+                scale.Y = value;
+                Recalculate();
+            }
+        }
+
+        public float ScaleZ
+        {
+            get => scale.Z;
+            set
+            {
+                scale.Z = value;
                 Recalculate();
             }
         }
@@ -350,34 +476,38 @@
         /// <summary>
         /// Stores the current state. Used internally for the editor.
         /// </summary>
-        public void StoreInitial()
+        public void SaveState()
         {
-            initial = Clone();
+            initial = CreateSnapshot();
         }
 
         /// <summary>
         /// Stores the current state. Used internally for the editor.
         /// </summary>
-        public void RestoreInitial()
+        public void RestoreState()
         {
-            if (initial == null) return;
-            backward = initial.backward;
-            down = initial.down;
-            forward = initial.forward;
-            left = initial.left;
-            global = initial.global;
-            globalInverse = initial.globalInverse;
-            oldpos = initial.oldpos;
-            orientation = initial.orientation;
-            parent = initial.parent;
-            position = initial.position;
-            right = initial.right;
-            rotation = initial.rotation;
-            scale = initial.scale;
-            up = initial.up;
-            velocity = initial.velocity;
-            view = initial.view;
-            viewInv = initial.viewInv;
+            backward = initial.Backward;
+            down = initial.Down;
+            forward = initial.Forward;
+            left = initial.Left;
+            global = initial.Global;
+            globalInverse = initial.GlobalInverse;
+            oldpos = initial.OldPos;
+            orientation = initial.Orientation;
+            parent = initial.Parent;
+            position = initial.Position;
+            right = initial.Right;
+            rotation = initial.Rotation;
+            scale = initial.Scale;
+            up = initial.Up;
+            velocity = initial.Velocity;
+            view = initial.View;
+            viewInv = initial.ViewInv;
+        }
+
+        public TransformSnapshot CreateSnapshot()
+        {
+            return new TransformSnapshot() { Backward = backward, Down = down, Forward = forward, Left = left, Global = global, GlobalInverse = globalInverse, OldPos = oldpos, Orientation = orientation, Parent = parent, Position = position, Right = right, Rotation = rotation, Scale = scale, Up = up, Velocity = velocity, View = view, ViewInv = viewInv };
         }
 
         /// <summary>
@@ -386,7 +516,7 @@
         /// <returns>Returns a new instance of <see cref="Transform"/> with the values of this <see cref="Transform"/></returns>
         public Transform Clone()
         {
-            return new Transform() { backward = backward, down = down, forward = forward, initial = initial, left = left, global = global, globalInverse = globalInverse, oldpos = oldpos, orientation = orientation, parent = parent, position = position, right = right, rotation = rotation, scale = scale, up = up, velocity = velocity, view = view, viewInv = viewInv };
+            return new Transform() { backward = backward, down = down, forward = forward, left = left, global = global, globalInverse = globalInverse, oldpos = oldpos, orientation = orientation, parent = parent, position = position, right = right, rotation = rotation, scale = scale, up = up, velocity = velocity, view = view, viewInv = viewInv };
         }
 
         public static implicit operator Matrix4x4(Transform transform) => transform.global;

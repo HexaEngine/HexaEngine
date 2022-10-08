@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Scripting
 {
-    public interface IScript
+    using HexaEngine.Objects;
+
+    public interface IScript : IComponent
     {
         public void Awake()
         {

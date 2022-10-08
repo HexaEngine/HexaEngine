@@ -41,7 +41,7 @@ namespace HexaEngine.Editor
             desc.AntialiasedLineEnable = true;
             desc.MultisampleEnable = false;
             rs = device.CreateRasterizerState(desc);
-            ds = device.CreateDepthStencilState(DepthStencilDescription.Default);
+            ds = device.CreateDepthStencilState(DepthStencilDescription.None);
             string vsCode = @"
 struct VertexInputType
 {
@@ -103,6 +103,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
 
         public static void Render(Camera camera, Viewport viewport)
         {
+            if (camera == null) return;
             if (lineVertices.Count > vbCapacity)
             {
                 vb.Dispose();

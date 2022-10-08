@@ -8,6 +8,7 @@
 		<IsPackable>false</IsPackable>
 		<EnablePreviewFeatures>True</EnablePreviewFeatures>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>

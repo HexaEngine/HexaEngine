@@ -70,7 +70,26 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.Draw(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov, cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
+                    DebugDraw.Draw(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov.ToRad(), cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
+                }
+            }
+
+            for (int i = 0; i < scene.Meshes.Count; i++)
+            {
+                var mesh = scene.Meshes[i];
+                if (mesh.Bones.Length == 0)
+                    continue;
+                for (int j = 0; j < mesh.Bones.Length; j++)
+                {
+                    var skele = mesh.Skeleton;
+                    var bone = mesh.Bones[j];
+                    var noriginMtx = scene.Find(skele.Relationships[bone.Name].ParentName).Transform.Local;
+                    var ndestMtx = scene.Find(bone.Name).Transform.Local;
+                    var originMtx = noriginMtx * skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName);
+                    var destMtx = ndestMtx * skele.GetGlobalTransform(bone.Name);
+                    var origin = Vector3.Zero.ApplyMatrix(originMtx);
+                    var dest = Vector3.Zero.ApplyMatrix(destMtx);
+                    DebugDraw.DrawLine(origin, dest - origin, false, Vector4.One);
                 }
             }
         }

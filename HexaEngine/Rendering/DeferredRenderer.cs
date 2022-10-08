@@ -606,8 +606,9 @@
             texture = LoadTexture(name);
         }
 
-        public void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera camera)
+        public void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera? camera)
         {
+            if (camera == null) return;
             context.Write(cameraBuffer, new CBCamera(camera));
             context.Write(skyboxBuffer, new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
             context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);

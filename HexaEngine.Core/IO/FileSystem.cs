@@ -19,9 +19,9 @@
             }
         }
 
-        public static bool Exists(string path)
+        public static bool Exists(string? path)
         {
-            if (path == null) return false;
+            if (string.IsNullOrWhiteSpace(path)) return false;
             if (File.Exists(path))
             {
                 return true;
@@ -48,7 +48,7 @@
 
                 if (asset == null)
                 {
-                    ImGuiConsole.Log(ConsoleMessageType.Warning, $"Warning asset {path} is missing!");
+                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {path} is missing!");
                     throw new FileNotFoundException(path);
                 }
 
@@ -73,7 +73,7 @@
 
                 if (asset == null)
                 {
-                    ImGuiConsole.Log(ConsoleMessageType.Warning, $"Warning asset {path} is missing!");
+                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {path} is missing!");
                     stream = default;
                     return false;
                 }
@@ -123,7 +123,10 @@
         {
             var fs = Open(path);
             var reader = new StreamReader(fs);
-            return reader.ReadToEnd();
+            var result = reader.ReadToEnd();
+            reader.Close();
+            fs.Close();
+            return result;
         }
 
         public static bool TryReadAllText(string path, [NotNullWhen(true)] out string? text)

@@ -92,9 +92,9 @@
 
         public static void ReloadShaders()
         {
-            ImGuiConsole.Log(ConsoleMessageType.Info, "recompiling shaders ...");
+            ImGuiConsole.Log(LogSeverity.Info, "recompiling shaders ...");
             Reload?.Invoke(null, EventArgs.Empty);
-            ImGuiConsole.Log(ConsoleMessageType.Info, "recompiling shaders ... done!");
+            ImGuiConsole.Log(LogSeverity.Info, "recompiling shaders ... done!");
         }
 
         protected virtual void OnReload(object? sender, EventArgs args)

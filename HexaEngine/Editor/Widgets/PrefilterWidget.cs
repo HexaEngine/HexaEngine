@@ -13,7 +13,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
-    public class PrefilterWidget : Widget
+    public class PrefilterWidget : Widget, IDisposable
     {
         private readonly FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
@@ -77,18 +77,18 @@
             switch (mode)
             {
                 case Mode.Cube:
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loading environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loading environment ...");
                     RenderTexture tex = new(device, new TextureFileDescription(pathEnvironment, TextureDimension.TextureCube));
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loaded environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
                     return tex;
 
                 case Mode.Panorama:
 
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loading environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loading environment ...");
                     RenderTexture source = new(device, new TextureFileDescription(pathEnvironment));
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Loaded environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
 
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Converting environment to cubemap ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeEffect filter = new(device);
                     filter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
                     filter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
@@ -98,10 +98,10 @@
                     filter.Draw(context);
                     context.ClearState();
                     context.GenerateMips(cube1.ResourceView ?? throw new Exception("Cannot convert texture!"));
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Converted environment to cubemap ...");
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exporting environment ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Converted environment to cubemap ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exporting environment ...");
                     device.SaveTexture2D((ITexture2D)cube1.Resource, "env_o.dds");
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exported environment ... ./env_o.dds");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exported environment ... ./env_o.dds");
                     cu.Dispose();
                     source.Dispose();
                     filter.Samplers.Clear();
@@ -113,19 +113,33 @@
             }
         }
 
+        public override void DrawMenu()
+        {
+            if (ImGui.MenuItem("IBL Prefilter"))
+            {
+                IsShown = true;
+            }
+        }
+
         public override void Draw(IGraphicsContext context)
         {
+            if (!IsShown) return;
             if (prefilterFilter == null) return;
             ImGuiWindowFlags flags = ImGuiWindowFlags.None;
+            if (IsDocked)
+                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
             if (prefilterTex != null)
                 flags |= ImGuiWindowFlags.UnsavedDocument;
             if (searchPathEnvironment)
                 flags |= ImGuiWindowFlags.NoInputs;
-            if (!ImGui.Begin("Pre-Filter", flags))
+
+            if (!ImGui.Begin("Pre-Filter", ref IsShown, flags))
             {
                 ImGui.End();
                 return;
             }
+
+            IsDocked = ImGui.IsWindowDocked();
 
             if (compute)
                 ImGui.BeginDisabled(true);
@@ -174,7 +188,7 @@
                         }
                         steps = 6 * (pfSize / pfTileSize) * (pfSize / pfTileSize);
 
-                        ImGuiConsole.Log(ConsoleMessageType.Log, "Pre-Filtering environment ...");
+                        ImGuiConsole.Log(LogSeverity.Log, "Pre-Filtering environment ...");
                         compute = true;
                         ImGui.BeginDisabled(true);
                     }
@@ -191,10 +205,10 @@
 
                 if (ImGui.Button("Export") && prefilterTex.ResourceView != null)
                 {
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exporting prefilter map ...");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exporting prefilter map ...");
                     context.GenerateMips(prefilterTex.ResourceView);
                     context.Device.SaveTextureCube((ITexture2D)prefilterTex.Resource, Format.RGBA8UNorm, "prefilter_o.dds");
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Exported prefilter map ... ./prefilter_o.dds");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exported prefilter map ... ./prefilter_o.dds");
                 }
 
                 ImGui.SameLine();
@@ -217,7 +231,7 @@
                         step = 0;
                         environmentTex?.Dispose();
                         environmentTex = null;
-                        ImGuiConsole.Log(ConsoleMessageType.Error, "Computing irradiance ... aborted!");
+                        ImGuiConsole.Log(LogSeverity.Error, "Computing irradiance ... aborted!");
                     }
 
                     ImGui.SameLine();
@@ -275,7 +289,7 @@
                     step = 0;
                     environmentTex?.Dispose();
                     environmentTex = null;
-                    ImGuiConsole.Log(ConsoleMessageType.Log, "Pre-Filtering ... done!");
+                    ImGuiConsole.Log(LogSeverity.Log, "Pre-Filtering ... done!");
                 }
             }
         }

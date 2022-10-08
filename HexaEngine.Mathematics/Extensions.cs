@@ -78,6 +78,16 @@
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ApplyMatrix(this Vector3 self, Matrix4x4 matrix)
+        {
+            return new Vector3(
+                matrix.M11 * self.X + matrix.M12 * self.Y + matrix.M13 * self.Z + matrix.M14,
+                matrix.M21 * self.X + matrix.M22 * self.Y + matrix.M23 * self.Z + matrix.M24,
+                matrix.M31 * self.X + matrix.M32 * self.Y + matrix.M33 * self.Z + matrix.M34
+            );
+        }
+
         public static Vector3 ToDeg(this Vector3 v)
         {
             return new Vector3((float)(v.X * RadToDefFactor), (float)(v.Y * RadToDefFactor), (float)(v.Z * RadToDefFactor));

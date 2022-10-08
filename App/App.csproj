@@ -11,12 +11,46 @@
 	  <StripSymbols>true</StripSymbols>
 	  <AnalysisLevel>latest-all</AnalysisLevel>
 	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
+	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="assets\fonts\font0.ff" />
+    <None Remove="assets\fonts\font1.ff" />
+    <None Remove="assets\fonts\SEGMDL2.TTF" />
+    <None Remove="assets\scripts\test.lua" />
+    <None Remove="assets\textures\env_o.dds" />
+    <None Remove="assets\textures\irradiance_o.dds" />
+    <None Remove="assets\textures\prefilter_o.dds" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="assets\fonts\font0.ff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\fonts\font1.ff">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\fonts\SEGMDL2.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\scripts\test.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\textures\env_o.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\textures\irradiance_o.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\textures\prefilter_o.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 
 	<ItemGroup>
 	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
-	  <ProjectReference Include="..\TestGame\TestGame.csproj" />
 	</ItemGroup>
 	<!--
 	<Target Name="BuildPackAssets" AfterTargets="AfterBuild">

@@ -13,12 +13,8 @@
     <PackageTags>imnodes ImGui ImGui.NET Immediate Mode GUI</PackageTags>
     <PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
     <RootNamespace>imnodesNET</RootNamespace>
+	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
   </ItemGroup>

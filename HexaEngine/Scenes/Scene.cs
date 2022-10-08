@@ -7,11 +7,11 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Editor;
     using HexaEngine.Lights;
-    using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using HexaEngine.Physics;
-    using HexaEngine.Rendering;
+    using HexaEngine.Scripting;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -22,14 +22,14 @@
     {
 #nullable disable
         private IGraphicsDevice device;
-        private ISceneRenderer renderer;
 #nullable enable
         private readonly Dictionary<Guid, SceneNode> nodes = new();
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
         private readonly List<Mesh> meshes = new();
         private readonly List<Material> materials = new();
-        private Task? rendererUpdateTask;
+        private readonly List<IScript> scripts = new();
+        private readonly SemaphoreSlim semaphore = new(1);
 
         public readonly ConcurrentQueue<SceneCommand> CommandQueue = new();
 
@@ -45,7 +45,6 @@
         public Scene()
         {
             Name = "Scene";
-            Renderer = new DeferredRenderer();
             root = new SceneRootNode(this);
             BufferPool = new BufferPool();
             var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
@@ -59,8 +58,6 @@
 
         public string Name { get; }
 
-        public ISceneRenderer Renderer { get => renderer; set => renderer = value; }
-
         public SceneDispatcher Dispatcher { get; } = new();
 
         public IReadOnlyList<Camera> Cameras => cameras;
@@ -71,7 +68,9 @@
 
         public IReadOnlyList<Material> Materials => materials;
 
-        public Camera CurrentCamera => cameras[ActiveCamera];
+        public IReadOnlyList<IScript> Scripts => scripts;
+
+        public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
 
         public SceneNode Root => root;
 
@@ -79,48 +78,66 @@
 
         public void Initialize(IGraphicsDevice device, SdlWindow window)
         {
+            semaphore.Wait();
             this.device = device;
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
-            Time.FrameUpdate();
-            renderer.Initialize(device, window);
             materials.ForEach(x => { x.Initialize(this); CommandQueue.Enqueue(new() { Sender = x, Type = CommandType.Load }); });
             meshes.ForEach(x => CommandQueue.Enqueue(new(CommandType.Load, x)));
             root.Initialize(device);
+            semaphore.Release();
+        }
+
+        public void SaveState()
+        {
+            root.SaveState();
+        }
+
+        public void RestoreState()
+        {
+            root.RestoreState();
         }
 
         public void AddMaterial(Material material)
         {
+            semaphore.Wait();
             if (root.Initialized)
             {
                 CommandQueue.Enqueue(new(CommandType.Load, material));
                 material.Initialize(this);
             }
             materials.Add(material);
+            semaphore.Release();
         }
 
         public void RemoveMaterial(Material material)
         {
+            semaphore.Wait();
             if (root.Initialized)
                 CommandQueue.Enqueue(new(CommandType.Unload, material));
             materials.Remove(material);
+            semaphore.Release();
         }
 
         private void FixedUpdate(object? sender, EventArgs e)
         {
-            root.Children.ForEach(x => x.FixedUpdate());
+            if (Designer.InDesignMode) return;
+            semaphore.Wait();
+            for (int i = 0; i < root.Children.Count; i++)
+            {
+                root.Children[i].FixedUpdate();
+            }
+            semaphore.Release();
         }
 
-        internal void Render(IGraphicsContext context, SdlWindow window, Viewport viewport)
+        internal void Tick()
         {
+            semaphore.Wait();
             CameraManager.Update();
             Simulate(Time.Delta);
             Dispatcher.ExecuteInvokes();
-            root.Children.ForEach(x => x.Update());
-            if (rendererUpdateTask?.IsCompleted ?? true)
-                rendererUpdateTask = renderer.Update(this);
-            renderer.Render(context, window, viewport, this, CameraManager.Current);
             Mouse.Clear();
+            semaphore.Release();
         }
 
         private const float stepsize = 0.016f;
@@ -128,23 +145,41 @@
 
         public void Simulate(float delta)
         {
+            if (Designer.InDesignMode) return;
             if (!IsSimulating) return;
+
             interpol += delta;
             while (interpol > stepsize)
             {
                 interpol -= stepsize;
                 Simulation.Timestep(stepsize, ThreadDispatcher);
             }
+
+            for (int i = 0; i < root.Children.Count; i++)
+            {
+                root.Children[i].Update();
+            }
+
+            for (int i = 0; i < scripts.Count; i++)
+            {
+                scripts[i].Update();
+            }
         }
 
         public SceneNode Find(Guid guid)
         {
-            return nodes[guid];
+            semaphore.Wait();
+            var result = nodes[guid];
+            semaphore.Release();
+            return result;
         }
 
         public SceneNode Find(string name)
         {
-            return nodes.FirstOrDefault(x => x.Value.Name == name).Value;
+            semaphore.Wait();
+            var result = nodes.FirstOrDefault(x => x.Value.Name == name).Value;
+            semaphore.Release();
+            return result;
         }
 
         internal void RegisterChild(SceneNode node)
@@ -152,6 +187,7 @@
             nodes.Add(node.ID, node);
             cameras.AddIfIs(node);
             lights.AddIfIs(node);
+            scripts.AddComponentIfIs(node);
         }
 
         internal void UnregisterChild(SceneNode node)
@@ -159,6 +195,7 @@
             nodes.Remove(node.ID);
             cameras.RemoveIfIs(node);
             lights.RemoveIfIs(node);
+            scripts.RemoveComponentIfIs(node);
         }
 
         private class SceneRootNode : SceneNode
@@ -178,25 +215,39 @@
 
         public void AddMesh(Mesh mesh)
         {
+            semaphore.Wait();
             if (root.Initialized)
                 CommandQueue.Enqueue(new(CommandType.Load, mesh));
             meshes.Add(mesh);
+            semaphore.Release();
         }
 
         public void AddChild(SceneNode node)
         {
+            semaphore.Wait();
             root.AddChild(node);
+            semaphore.Release();
         }
 
         public void RemoveChild(SceneNode node)
         {
+            semaphore.Wait();
             root.RemoveChild(node);
+            semaphore.Release();
+        }
+
+        public void Merge(SceneNode node)
+        {
+            semaphore.Wait();
+            root.Merge(node);
+            semaphore.Release();
         }
 
         public void Uninitialize()
         {
+            semaphore.Wait();
             root.Uninitialize();
-            renderer.Dispose();
+            semaphore.Release();
         }
     }
 }
