@@ -7,8 +7,8 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
-    [EditorComponent<BoxCollider>("Box Collider")]
-    public class BoxCollider : IComponent
+    [EditorComponent<SphereCollider>("Sphere Collider")]
+    public class SphereCollider : IComponent
     {
         private bool init = false;
         private bool update = true;
@@ -19,15 +19,13 @@
         private BodyHandle bodyHandle;
         private BodyReference bodyReference;
         private ColliderType type;
-        private float height = 1;
-        private float depth = 1;
         private float mass = 1;
-        private float width = 1;
+        private float radius = 1;
         private float sleepThreshold = 0.01f;
 
-        public BoxCollider()
+        public SphereCollider()
         {
-            Editor = new PropertyEditor<BoxCollider>(this);
+            Editor = new PropertyEditor<SphereCollider>(this);
         }
 
         public IPropertyEditor? Editor { get; }
@@ -36,17 +34,9 @@
         public ColliderType Type
         { get => type; set { type = value; update = true; } }
 
-        [EditorProperty("Width")]
-        public float Width
-        { get => width; set { width = value; update = true; } }
-
-        [EditorProperty("Height")]
-        public float Height
-        { get => height; set { height = value; update = true; } }
-
-        [EditorProperty("Depth")]
-        public float Depth
-        { get => depth; set { depth = value; update = true; } }
+        [EditorProperty("Radius")]
+        public float Radius
+        { get => radius; set { radius = value; update = true; } }
 
         [EditorProperty("Mass")]
         public float Mass
@@ -68,16 +58,16 @@
             Uninit();
             update = false;
             init = true;
-            Box box = new(width * 2, height * 2, depth * 2);
+            Sphere sphere = new(radius);
             RigidPose pose = new(node.Transform.GlobalPosition, node.Transform.GlobalOrientation);
-            index = scene.Simulation.Shapes.Add(box);
+            index = scene.Simulation.Shapes.Add(sphere);
             if (Type == ColliderType.Static)
             {
                 staticHandle = scene.Simulation.Statics.Add(new(pose, index));
             }
             if (Type == ColliderType.Dynamic)
             {
-                var inertia = box.ComputeInertia(mass);
+                var inertia = sphere.ComputeInertia(mass);
                 bodyHandle = scene.Simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, new BodyVelocity(), inertia, new CollidableDescription(index), new(sleepThreshold)));
                 bodyReference = scene.Simulation.Bodies.GetBodyReference(bodyHandle);
             }

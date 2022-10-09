@@ -74,7 +74,7 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.DrawFrustum(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov.ToRad(), cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
+                    DebugDraw.DrawFrustum(new BoundingFrustum(cam.Transform.View * cam.Transform.Projection), Vector4.Zero);
                 }
             }
 
@@ -115,6 +115,18 @@
                         if (component is SphereCollider sphere)
                         {
                             DebugDraw.DrawSphere(transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                        }
+                        if (component is CapsuleCollider capsule)
+                        {
+                            DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
+                        }
+                        if (component is CylinderCollider cylinder)
+                        {
+                            DebugDraw.DrawCylinder(transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
+                        }
+                        if (component is TriangleCollider triangle)
+                        {
+                            DebugDraw.DrawTriangle(transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
                         }
                     }
                 }
