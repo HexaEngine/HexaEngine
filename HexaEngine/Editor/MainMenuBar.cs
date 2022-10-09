@@ -89,6 +89,14 @@
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
                         Inspector.DrawLights = drawLights;
 
+                    var drawSkeletons = Inspector.DrawSkeletons;
+                    if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
+                        Inspector.DrawSkeletons = drawSkeletons;
+
+                    var drawColliders = Inspector.DrawColliders;
+                    if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
+                        Inspector.DrawColliders = drawColliders;
+
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu("Debug"))

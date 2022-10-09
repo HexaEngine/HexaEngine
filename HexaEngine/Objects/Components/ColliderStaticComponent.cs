@@ -7,7 +7,6 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
-    using System.Numerics;
 
     [EditorComponent<ColliderStaticComponent>("Static Collider")]
     public class ColliderStaticComponent : IComponent

@@ -754,14 +754,20 @@
             }
             */
 
-            fxaaBuffer.SetTarget(context);
-            DebugDraw.Render(camera, fxaaBuffer.Viewport);
             fxaaEffect.Draw(context, viewport);
             context.ClearState();
+
+            context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
+            DebugDraw.Render(camera, viewport);
         }
 
         public void DrawSettings()
         {
+            if (!ImGui.Begin("Renderer"))
+            {
+                ImGui.End();
+                return;
+            }
             if (ImGui.Button("Reload Skybox"))
             {
                 env.Dispose();
@@ -794,6 +800,7 @@
 
             ssrEffect.DrawSettings();
             ssaoEffect.DrawSettings();
+            ImGui.End();
         }
 
         protected virtual void Dispose(bool disposing)

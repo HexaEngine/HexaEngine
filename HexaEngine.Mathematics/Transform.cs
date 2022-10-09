@@ -233,7 +233,7 @@
             set
             {
                 orientation = value;
-                rotation = value.GetRotation().ToDeg();
+                rotation = value.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
                 Recalculate();
             }
         }
@@ -260,7 +260,6 @@
         /// <summary>
         /// Gets or sets the global (world space) orientation.
         /// </summary>
-
         public Quaternion GlobalOrientation
         {
             get => globalOrientation;
@@ -307,6 +306,7 @@
                 oldpos = position;
                 (position, orientation) = value;
                 velocity = position - oldpos;
+                rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
                 Recalculate();
             }
         }
@@ -323,6 +323,7 @@
                 oldpos = position;
                 (position, orientation, scale) = value;
                 velocity = position - oldpos;
+                rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
                 Recalculate();
             }
         }

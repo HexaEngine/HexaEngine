@@ -47,20 +47,15 @@
             if (IsDocked)
                 flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
 
-            if (!ImGui.Begin("Layout", ref IsShown, flags))
+            var scene = SceneManager.Current;
+
+            if ((!ImGui.Begin("Layout", ref IsShown, flags)) || scene == null)
             {
                 ImGui.End();
                 return;
             }
 
             IsDocked = ImGui.IsWindowDocked();
-
-            var scene = SceneManager.Current;
-            if (scene is null)
-            {
-                ImGui.End();
-                return;
-            }
 
             ImGui.Separator();
 

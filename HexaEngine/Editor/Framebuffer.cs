@@ -42,28 +42,15 @@
 
         internal void Update(IGraphicsContext context)
         {
-            if (Fullframe)
-            {
-                ImGuizmo.SetRect(SourceViewport.X, SourceViewport.Y, SourceViewport.Width, SourceViewport.Height);
-            }
-            else
-            {
-                ImGuizmo.SetRect(position.X, position.Y, size.X, size.Y);
-            }
+            ImGuizmo.SetRect(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height);
         }
 
         internal void Draw()
         {
             ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar);
-
-            if (ImGui.BeginMenuBar())
+            var scene = SceneManager.Current;
+            if (scene != null && ImGui.BeginMenuBar())
             {
-                var scene = SceneManager.Current;
-                if (scene is null)
-                {
-                    ImGui.EndMenuBar();
-                    return;
-                }
                 if (ImGui.Button(scene.IsSimulating ? "\xE769" : "\xE768"))
                     scene.IsSimulating = !scene.IsSimulating;
 
@@ -77,14 +64,21 @@
             position = ImGui.GetWindowPos();
             size = ImGui.GetWindowSize();
 
-            float ratioX = size.X / SourceViewport.Width;
-            float ratioY = size.Y / SourceViewport.Height;
-            var s = Math.Min(ratioX, ratioY);
-            var w = SourceViewport.Width * s;
-            var h = SourceViewport.Height * s;
-            var x = (size.X - w) / 2;
-            var y = (size.Y - h) / 2;
-            Viewport = new(position.X + x, position.Y + y, w, h);
+            if (Fullframe)
+            {
+                Viewport = SourceViewport;
+            }
+            else
+            {
+                float ratioX = size.X / SourceViewport.Width;
+                float ratioY = size.Y / SourceViewport.Height;
+                var s = Math.Min(ratioX, ratioY);
+                var w = SourceViewport.Width * s;
+                var h = SourceViewport.Height * s;
+                var x = (size.X - w) / 2;
+                var y = (size.Y - h) / 2;
+                Viewport = new(position.X + x, position.Y + y, w, h);
+            }
 
             fpsProfiler.Draw();
             memProfiler.Draw();

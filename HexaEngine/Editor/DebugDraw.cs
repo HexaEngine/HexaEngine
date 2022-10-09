@@ -37,7 +37,7 @@ namespace HexaEngine.Editor
         {
             DebugDraw.device = device;
             context = device.Context;
-            var desc = RasterizerDescription.CullBack;
+            var desc = RasterizerDescription.CullNone;
             desc.AntialiasedLineEnable = true;
             desc.MultisampleEnable = false;
             rs = device.CreateRasterizerState(desc);
@@ -48,7 +48,7 @@ struct VertexInputType
 	float3 position : POSITION;
     float4 color : COLOR;
 };
-struct PixelInputType
+struct GeometryInput
 {
 	float4 position : SV_POSITION;
     float4 color : COLOR;
@@ -58,15 +58,16 @@ cbuffer MVPBuffer
     matrix view;
     matrix proj;
 };
-PixelInputType main(VertexInputType input)
+GeometryInput main(VertexInputType input)
 {
-	PixelInputType output;
+	GeometryInput output;
     output.position = mul(float4(input.position, 1), view);
     output.position = mul(output.position, proj);
     output.color = input.color;
 	return output;
 }
 ";
+
             string psCode = @"
 struct PixelInputType
 {
@@ -146,7 +147,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             lineVertices.AddRange(vertices);
         }
 
-        public static void Draw(BoundingFrustum frustum, Vector4 color)
+        public static void DrawFrustum(BoundingFrustum frustum, Vector4 color)
         {
             var corners = frustum.GetCorners();
             VertexPositionColor[] verts = new VertexPositionColor[24];
@@ -267,6 +268,64 @@ float4 main(PixelInputType pixel) : SV_TARGET
             BatchDraw(verts, PrimitiveTopology.LineStrip);
         }
 
+        public static int GenerateRing(Span<VertexPositionColor> verts, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
+        {
+            const int c_ringSegments = 32;
+
+            float fAngleDelta = MathUtil.PI2 / c_ringSegments;
+            // Instead of calling cos/sin for each segment we calculate
+            // the sign of the angle delta and then incrementally calculate sin
+            // and cosine from then on.
+            Vector3 cosDelta = new(MathF.Cos(fAngleDelta));
+            Vector3 sinDelta = new(MathF.Sin(fAngleDelta));
+            Vector3 incrementalSin = Vector3.Zero;
+            Vector3 incrementalCos = new(1.0f, 1.0f, 1.0f);
+            for (int i = 0; i < c_ringSegments; i++)
+            {
+                Vector3 pos = majorAxis * incrementalCos;
+                pos = minorAxis * incrementalSin + pos;
+                verts[i].Position = pos;
+                verts[i].Color = color;
+                // Standard formula to rotate a vector.
+                Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
+                Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
+                incrementalCos = newCos;
+                incrementalSin = newSin;
+            }
+            verts[c_ringSegments] = verts[0];
+            return c_ringSegments + 1;
+        }
+
+        public static void DrawRing(Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
+        {
+            const int c_ringSegments = 32;
+
+            VertexPositionColor[] verts = new VertexPositionColor[c_ringSegments + 1];
+
+            float fAngleDelta = MathUtil.PI2 / c_ringSegments;
+            // Instead of calling cos/sin for each segment we calculate
+            // the sign of the angle delta and then incrementally calculate sin
+            // and cosine from then on.
+            Vector3 cosDelta = new(MathF.Cos(fAngleDelta));
+            Vector3 sinDelta = new(MathF.Sin(fAngleDelta));
+            Vector3 incrementalSin = Vector3.Zero;
+            Vector3 incrementalCos = new(1.0f, 1.0f, 1.0f);
+            for (int i = 0; i < c_ringSegments; i++)
+            {
+                Vector3 pos = majorAxis * incrementalCos;
+                pos = minorAxis * incrementalSin + pos;
+                verts[i].Position = Vector3.Transform(pos, orientation) + origin;
+                verts[i].Color = color;
+                // Standard formula to rotate a vector.
+                Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
+                Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
+                incrementalCos = newCos;
+                incrementalSin = newSin;
+            }
+            verts[c_ringSegments] = verts[0];
+            BatchDraw(verts, PrimitiveTopology.LineStrip);
+        }
+
         public static void DrawRing(Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
         {
             const int c_ringSegments = 32;
@@ -326,6 +385,50 @@ float4 main(PixelInputType pixel) : SV_TARGET
             }
             verts[c_ringSegments] = verts[0];
             BatchDraw(verts, PrimitiveTopology.LineStrip);
+        }
+
+        public static void DrawBox(Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 color)
+        {
+            float cx = origin.X;
+            float cy = origin.Y;
+            float cz = origin.Z;
+            float w = width * 1f;
+            float h = height * 1f;
+            float d = depth * 1f;
+
+            Vector3[] pos = new Vector3[8];
+            pos[0] = new(cx - w, cy + h, cz - d);
+            pos[1] = new(cx - w, cy - h, cz - d);
+            pos[2] = new(cx + w, cy - h, cz - d);
+            pos[3] = new(cx + w, cy + h, cz - d);
+
+            pos[4] = new(cx - w, cy + h, cz + d);
+            pos[5] = new(cx - w, cy - h, cz + d);
+            pos[6] = new(cx + w, cy - h, cz + d);
+            pos[7] = new(cx + w, cy + h, cz + d);
+
+            int[] indices = new int[]
+            {
+                0,1,1,2,2,3,3,0,
+                0,4,1,5,2,6,3,7,
+                4,5,5,6,6,7,7,4
+            };
+
+            VertexPositionColor[] verts = new VertexPositionColor[24];
+
+            for (int i = 0; i < 24; i++)
+            {
+                verts[i].Color = color;
+                verts[i].Position = Vector3.Transform(pos[indices[i]] - origin, orientation) + origin;
+            }
+            BatchDraw(verts, PrimitiveTopology.LineList);
+        }
+
+        public static void DrawSphere(Vector3 origin, Quaternion orientation, float radius, Vector4 color)
+        {
+            DrawRing(origin, orientation, Vector3.UnitX * radius, Vector3.UnitY * radius, color);
+            DrawRing(origin, orientation, Vector3.UnitY * radius, Vector3.UnitZ * radius, color);
+            DrawRing(origin, orientation, Vector3.UnitZ * radius, Vector3.UnitX * radius, color);
         }
     }
 }

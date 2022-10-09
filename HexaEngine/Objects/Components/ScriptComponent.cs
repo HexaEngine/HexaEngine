@@ -10,7 +10,6 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scripting;
     using NLua;
-    using System.Numerics;
 
     [EditorComponent<ScriptComponent>("Script")]
     public class ScriptComponent : IComponent, IScript
@@ -23,6 +22,7 @@
         private LuaFunction? DestroyFunc;
         private string? file = string.Empty;
         private bool update = true;
+        private bool error = false;
 
         public ScriptComponent()
         {
@@ -42,22 +42,31 @@
 
         public IPropertyEditor? Editor { get; }
 
+        public Lua Context => context;
+
         private void Load()
         {
             if (file != null && FileSystem.Exists(Paths.CurrentScriptFolder + file) && update)
             {
-                update = false;
+                try
+                {
+                    update = false;
 
-                context.DoString(FileSystem.ReadAllText(Paths.CurrentScriptFolder + file), Paths.CurrentScriptFolder + file);
-                context["component"] = this;
-                context["node"] = node;
-                context["scene"] = node.GetScene();
-                UpdateFunc = context["Update"] as LuaFunction;
-                FixedUpdateFunc = context["FixedUpdate"] as LuaFunction;
-                AwakeFunc = context["Awake"] as LuaFunction;
-                DestroyFunc = context["Destroy"] as LuaFunction;
-                if (Designer.InDesignMode) return;
-                AwakeFunc?.Call();
+                    context.DoString(FileSystem.ReadAllText(Paths.CurrentScriptFolder + file), Paths.CurrentScriptFolder + file);
+                    context["component"] = this;
+                    context["node"] = node;
+                    context["scene"] = node.GetScene();
+                    UpdateFunc = context["Update"] as LuaFunction;
+                    FixedUpdateFunc = context["FixedUpdate"] as LuaFunction;
+                    AwakeFunc = context["Awake"] as LuaFunction;
+                    DestroyFunc = context["Destroy"] as LuaFunction;
+                    if (Designer.InDesignMode) return;
+                    AwakeFunc?.Call();
+                }
+                catch (Exception e)
+                {
+                    ImGuiConsole.Log(e);
+                }
             }
         }
 

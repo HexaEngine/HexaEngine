@@ -45,7 +45,7 @@
                 {
                     window.Close();
                 }
-                if (e.KeyCode == KeyCode.KF5)
+                if (e.KeyCode == KeyCode.KF8)
                 {
                     SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());
                 }
@@ -58,27 +58,29 @@
                     // TODO: Reimplement BorderlessFullscreen
                     //window.BorderlessFullscreen = !window.BorderlessFullscreen;
                 }
-                if (e.KeyCode == KeyCode.KF9)
+                if (e.KeyCode == KeyCode.KF5)
                 {
-                    SceneManager.Current.Dispatcher.Invoke(() => Designer.InDesignMode = !Designer.InDesignMode);
-                }
-                if (e.KeyCode == KeyCode.KF1)
-                {
-                    SceneManager.Current.IsSimulating = false;
-                    if (Designer.InDesignMode)
+                    if (SceneManager.Current == null) return;
+
+                    window.RenderDispatcher.Invoke(() =>
                     {
-                        SceneManager.Current?.SaveState();
-                        window.LockCursor = true;
-                        Designer.InDesignMode = false;
-                    }
-                    else
-                    {
-                        SceneManager.Current?.RestoreState();
-                        window.LockCursor = false;
-                        Designer.InDesignMode = true;
-                    }
-                    SceneManager.Current.IsSimulating = true;
-                    SceneManager.Reload();
+                        SceneManager.Current.IsSimulating = false;
+                        SceneManager.BeginReload();
+                        if (Designer.InDesignMode)
+                        {
+                            SceneManager.Current?.SaveState();
+                            window.LockCursor = true;
+                            Designer.InDesignMode = false;
+                        }
+                        else
+                        {
+                            SceneManager.Current?.RestoreState();
+                            window.LockCursor = false;
+                            Designer.InDesignMode = true;
+                        }
+                        SceneManager.Current.IsSimulating = true;
+                        SceneManager.EndReload();
+                    });
                 }
             };
 

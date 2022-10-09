@@ -81,8 +81,6 @@
             if (Flags.HasFlag(RendererFlags.ImGui))
             {
                 renderer = new(this, device);
-                renderer.NoInternal = !Flags.HasFlag(RendererFlags.SceneGraph);
-
                 DebugDraw.Init(device);
             }
 
@@ -95,9 +93,6 @@
             Time.Initialize();
 
             OnRendererInitialize(device);
-
-            if (Flags.HasFlag(RendererFlags.SceneGraph))
-                SceneManager.Load(new());
 
             deferredRenderer = new();
             deferredRenderer.Initialize(device, this);
@@ -126,11 +121,13 @@
 
                 if (Flags.HasFlag(RendererFlags.ImGuiWidgets) && Designer.InDesignMode)
                 {
+                    Designer.Draw();
                     WidgetManager.Draw(context);
                     ImGuiConsole.Draw();
                     framebuffer.SourceViewport = Viewport;
                     framebuffer.Update(context);
                     framebuffer.Draw();
+                    deferredRenderer.DrawSettings();
                 }
 
                 if (Flags.HasFlag(RendererFlags.SceneGraph) && SceneManager.Current is not null)

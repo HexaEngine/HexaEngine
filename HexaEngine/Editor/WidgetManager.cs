@@ -11,12 +11,13 @@
 
         static WidgetManager()
         {
-            Register<PreviewWidget>();
-            Register<PrefilterWidget>();
-            Register<IrradianceWidget>();
+            Register<AssetExplorer>();
             Register<LayoutWidget>();
             Register<PropertiesWidget>();
             Register<MaterialsWidget>();
+            Register<PreviewWidget>();
+            Register<PrefilterWidget>();
+            Register<IrradianceWidget>();
         }
 
         public static bool Register<T>() where T : Widget, new()

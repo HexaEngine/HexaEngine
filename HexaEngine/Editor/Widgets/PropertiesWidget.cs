@@ -69,7 +69,7 @@ namespace HexaEngine.Editor.Widgets
             Camera camera = CameraManager.Current;
 
             string name = element.Name;
-            if (ImGui.InputText("Name", ref name, 256))
+            if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 element.Name = name;
             }
@@ -201,7 +201,16 @@ namespace HexaEngine.Editor.Widgets
 
             for (int i = 0; i < element.Components.Count; i++)
             {
-                element.Components[i].Editor?.Draw();
+                var component = element.Components[i];
+                if (ImGui.BeginChild(component.Editor.Name))
+                {
+                    if (ImGui.Button("Delete"))
+                    {
+                        scene.Dispatcher.Invoke(() => element.RemoveComponent(component));
+                    }
+                    component.Editor?.Draw();
+                }
+                ImGui.EndChild();
             }
 
             ImGui.End();

@@ -20,9 +20,21 @@
         private bool initialized;
 
         public Transform Transform = new();
-        public string Name = string.Empty;
+        private string name = string.Empty;
         private bool isSelected;
         private static SceneNode? selectedNode;
+
+        public virtual string Name
+        {
+            get => name;
+            set
+            {
+                if (initialized)
+                    name = GetScene().GetAvailableName(this, value);
+                else
+                    name = value;
+            }
+        }
 
         public virtual SceneNode? Parent
         {

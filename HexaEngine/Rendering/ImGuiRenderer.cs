@@ -97,8 +97,6 @@ namespace HexaEngine.Rendering
             inputHandler = new(window);
         }
 
-        public bool NoInternal;
-
         public void BeginDraw()
         {
             inputHandler.Update();
@@ -107,10 +105,6 @@ namespace HexaEngine.Rendering
             ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
             ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode);
             ImGui.PopStyleColor();
-            if (!NoInternal && Designer.InDesignMode)
-            {
-                Designer.Draw();
-            }
         }
 
         public void EndDraw()

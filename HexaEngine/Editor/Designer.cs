@@ -53,8 +53,6 @@
             ImGui.End();
 
             Inspector.Draw();
-
-            AssetExplorer.Draw();
         }
     }
 }

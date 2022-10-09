@@ -15,6 +15,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Numerics;
 
@@ -23,7 +24,8 @@
 #nullable disable
         private IGraphicsDevice device;
 #nullable enable
-        private readonly Dictionary<Guid, SceneNode> nodes = new();
+        private readonly Dictionary<Guid, SceneNode> nodesToGuid = new();
+        private readonly List<SceneNode> nodes = new List<SceneNode>();
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
         private readonly List<Mesh> meshes = new();
@@ -33,11 +35,11 @@
 
         public readonly ConcurrentQueue<SceneCommand> CommandQueue = new();
 
-        public readonly Simulation Simulation;
+        public Simulation Simulation;
 
-        public readonly BufferPool BufferPool;
+        public BufferPool BufferPool;
 
-        public readonly ThreadDispatcher ThreadDispatcher;
+        public ThreadDispatcher ThreadDispatcher;
 
         private readonly SceneNode root;
         public int ActiveCamera;
@@ -46,14 +48,6 @@
         {
             Name = "Scene";
             root = new SceneRootNode(this);
-            BufferPool = new BufferPool();
-            var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
-            ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
-
-            NarrowphaseCallbacks callbacks = new();
-            callbacks.Characters = new(BufferPool);
-            callbacks.Events = new(ThreadDispatcher, BufferPool);
-            Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -10, 0)), new SolveDescription(8, 1));
         }
 
         public string Name { get; }
@@ -70,6 +64,8 @@
 
         public IReadOnlyList<IScript> Scripts => scripts;
 
+        public IReadOnlyList<SceneNode> Nodes => nodes;
+
         public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
 
         public SceneNode Root => root;
@@ -79,13 +75,34 @@
         public void Initialize(IGraphicsDevice device, SdlWindow window)
         {
             semaphore.Wait();
+
+            BufferPool = new BufferPool();
+            var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
+            ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
+
+            NarrowphaseCallbacks callbacks = new();
+            callbacks.Characters = new(BufferPool);
+            callbacks.Events = new(ThreadDispatcher, BufferPool);
+            Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -10, 0)), new SolveDescription(8, 1));
+
             this.device = device;
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
             materials.ForEach(x => { x.Initialize(this); CommandQueue.Enqueue(new() { Sender = x, Type = CommandType.Load }); });
             meshes.ForEach(x => CommandQueue.Enqueue(new(CommandType.Load, x)));
             root.Initialize(device);
+            Validate();
             semaphore.Release();
+        }
+
+        public bool Validate()
+        {
+            foreach (var node in nodesToGuid)
+            {
+                if (nodesToGuid.Any(x => node.Value != node.Value && x.Value.Name == x.Value.Name))
+                    return false;
+            }
+            return true;
         }
 
         public void SaveState()
@@ -169,22 +186,31 @@
         public SceneNode Find(Guid guid)
         {
             semaphore.Wait();
-            var result = nodes[guid];
+            var result = nodesToGuid[guid];
             semaphore.Release();
             return result;
         }
 
-        public SceneNode Find(string name)
+        public SceneNode? Find(string? name)
         {
+            if (string.IsNullOrEmpty(name)) return null;
             semaphore.Wait();
-            var result = nodes.FirstOrDefault(x => x.Value.Name == name).Value;
+            var result = nodesToGuid.FirstOrDefault(x => x.Value.Name == name).Value;
             semaphore.Release();
             return result;
+        }
+
+        public string GetAvailableName(SceneNode node, string name)
+        {
+            if (!string.IsNullOrEmpty(name)) return node.Name;
+            if (Find(name) != null) return node.Name;
+            return name;
         }
 
         internal void RegisterChild(SceneNode node)
         {
-            nodes.Add(node.ID, node);
+            nodes.Add(node);
+            nodesToGuid.Add(node.ID, node);
             cameras.AddIfIs(node);
             lights.AddIfIs(node);
             scripts.AddComponentIfIs(node);
@@ -192,7 +218,8 @@
 
         internal void UnregisterChild(SceneNode node)
         {
-            nodes.Remove(node.ID);
+            nodes.Remove(node);
+            nodesToGuid.Remove(node.ID);
             cameras.RemoveIfIs(node);
             lights.RemoveIfIs(node);
             scripts.RemoveComponentIfIs(node);
@@ -247,6 +274,8 @@
         {
             semaphore.Wait();
             root.Uninitialize();
+            Simulation.Dispose();
+            ThreadDispatcher.Dispose();
             semaphore.Release();
         }
     }

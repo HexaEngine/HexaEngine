@@ -2,12 +2,9 @@
 {
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
+    using HexaEngine.Objects;
+    using HexaEngine.Objects.Components;
     using HexaEngine.Scenes;
-    using ImGuiNET;
-    using ImGuizmoNET;
-    using imnodesNET;
-    using ImPlotNET;
-    using System;
     using System.Numerics;
 
     public static class Inspector
@@ -15,6 +12,8 @@
         private static bool drawGrid = true;
         private static bool drawLights = true;
         private static bool drawCameras = true;
+        private static bool drawSkeletons = true;
+        private static bool drawColliders = true;
         private static bool enabled = true;
 
         public static bool Enabled { get => enabled; set => enabled = value; }
@@ -25,12 +24,17 @@
 
         public static bool DrawCameras { get => drawCameras; set => drawCameras = value; }
 
+        public static bool DrawSkeletons { get => drawSkeletons; set => drawSkeletons = value; }
+
+        public static bool DrawColliders { get => drawColliders; set => drawColliders = value; }
+
         public static void Draw()
         {
             if (!enabled)
                 return;
 
             var scene = SceneManager.Current;
+            if (scene == null) return;
 
             if (drawGrid)
             {
@@ -70,26 +74,49 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.Draw(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov.ToRad(), cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
+                    DebugDraw.DrawFrustum(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov.ToRad(), cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
                 }
             }
 
-            for (int i = 0; i < scene.Meshes.Count; i++)
+            if (drawSkeletons)
             {
-                var mesh = scene.Meshes[i];
-                if (mesh.Bones.Length == 0)
-                    continue;
-                for (int j = 0; j < mesh.Bones.Length; j++)
+                for (int i = 0; i < scene.Meshes.Count; i++)
                 {
-                    var skele = mesh.Skeleton;
-                    var bone = mesh.Bones[j];
-                    var noriginMtx = scene.Find(skele.Relationships[bone.Name].ParentName).Transform.Local;
-                    var ndestMtx = scene.Find(bone.Name).Transform.Local;
-                    var originMtx = noriginMtx * skele.GetGlobalTransform(skele.Relationships[bone.Name].ParentName);
-                    var destMtx = ndestMtx * skele.GetGlobalTransform(bone.Name);
-                    var origin = Vector3.Zero.ApplyMatrix(originMtx);
-                    var dest = Vector3.Zero.ApplyMatrix(destMtx);
-                    DebugDraw.DrawLine(origin, dest - origin, false, Vector4.One);
+                    var mesh = scene.Meshes[i];
+                    if (mesh.Bones == null || mesh.Bones.Length == 0)
+                        continue;
+                    for (int j = 0; j < mesh.Bones.Length; j++)
+                    {
+                        var skele = mesh.Skeleton;
+                        var bone = mesh.Bones[j];
+                        var noriginMtx = scene.Find(skele?.Relationships[bone.Name].ParentName)?.Transform.Local ?? Matrix4x4.Identity;
+                        var ndestMtx = scene.Find(bone.Name)?.Transform.Local ?? Matrix4x4.Identity;
+                        var originMtx = noriginMtx * skele?.GetGlobalTransform(skele?.Relationships[bone.Name].ParentName) ?? Matrix4x4.Identity;
+                        var destMtx = ndestMtx * skele?.GetGlobalTransform(bone.Name) ?? Matrix4x4.Identity;
+                        var origin = Vector3.Zero.ApplyMatrix(originMtx);
+                        var dest = Vector3.Zero.ApplyMatrix(destMtx);
+                        DebugDraw.DrawLine(origin, dest - origin, false, Vector4.One);
+                    }
+                }
+            }
+
+            if (drawColliders)
+            {
+                for (int i = 0; i < scene.Nodes.Count; i++)
+                {
+                    Transform transform = scene.Nodes[i].Transform;
+                    for (int j = 0; j < scene.Nodes[i].Components.Count; j++)
+                    {
+                        IComponent component = scene.Nodes[i].Components[j];
+                        if (component is BoxCollider box)
+                        {
+                            DebugDraw.DrawBox(transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                        }
+                        if (component is SphereCollider sphere)
+                        {
+                            DebugDraw.DrawSphere(transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                        }
+                    }
                 }
             }
         }

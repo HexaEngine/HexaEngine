@@ -59,14 +59,6 @@ namespace HexaEngine.Scenes
             });
         }
 
-        /// <summary>
-        /// Loads the specified scene and disposes the old Scene automatically.<br/>
-        /// Calls <see cref="Scene.Initialize"/> from <paramref name="scene"/><br/>
-        /// Calls <see cref="Scene.Dispose"/> if <see cref="Current"/> != <see langword="null"/><br/>
-        /// Notifies <see cref="SceneChanged"/><br/>
-        /// Forces the GC to Collect.<br/>
-        /// </summary>
-        /// <param name="scene">The scene.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Reload()
         {
@@ -77,6 +69,39 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     Current?.Uninitialize();
+                    Current.Initialize(window.Device, window);
+                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                }
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void BeginReload()
+        {
+            var window = Application.MainWindow as Window;
+
+            window.RenderDispatcher.InvokeBlocking(() =>
+            {
+                lock (Current)
+                {
+                    Current?.Uninitialize();
+                }
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void EndReload()
+        {
+            var window = Application.MainWindow as Window;
+
+            window.RenderDispatcher.InvokeBlocking(() =>
+            {
+                lock (Current)
+                {
                     Current.Initialize(window.Device, window);
                     SceneChanged?.Invoke(null, EventArgs.Empty);
                 }

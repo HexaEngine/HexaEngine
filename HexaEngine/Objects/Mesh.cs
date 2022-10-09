@@ -49,8 +49,9 @@
             }
         }
 
-        public Matrix4x4 GetGlobalTransform(string name)
+        public Matrix4x4 GetGlobalTransform(string? name)
         {
+            if (name == null) return Matrix4x4.Identity;
             Stack<Relation> relations = new();
             Relation? relation = Relationships[name];
             while (relation != null)

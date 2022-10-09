@@ -908,8 +908,11 @@ namespace HexaEngine.Physics.Characters
             if (!disposed)
             {
                 disposed = true;
-                Simulation.Timestepper.BeforeCollisionDetection -= PrepareForContacts;
-                Simulation.Timestepper.CollisionsDetected -= AnalyzeContacts;
+                if (Simulation != null)
+                {
+                    Simulation.Timestepper.BeforeCollisionDetection -= PrepareForContacts;
+                    Simulation.Timestepper.CollisionsDetected -= AnalyzeContacts;
+                }
                 characters.Dispose(pool);
                 pool.Return(ref bodyHandleToCharacterIndex);
             }
