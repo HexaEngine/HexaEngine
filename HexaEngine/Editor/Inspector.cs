@@ -49,22 +49,19 @@
                     if (light.Type == LightType.Directional)
                     {
                         DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }
                     if (light is Spotlight spotlight)
                     {
                         DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward * 10, false, Vector4.One);
+
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
                     }
                     if (light.Type == LightType.Point)
                     {
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }
                 }
             }
