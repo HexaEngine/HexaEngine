@@ -2,22 +2,23 @@
 {
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
+    using System.Text.Json.Serialization;
     using System.Xml.Serialization;
 
     public abstract class HexaItem : INotifyCollectionChanged
     {
         private bool isSelected;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public HexaParent? Parent { get; set; }
 
-        [XmlAttribute]
+        [JsonInclude]
         public string Name { get; set; } = string.Empty;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public virtual IntPtr Icon { get; }
 
-        [XmlIgnore]
+        [JsonIgnore]
         public bool IsSelected
         {
             get => isSelected;
@@ -33,7 +34,7 @@
             }
         }
 
-        [XmlIgnore]
+        [JsonIgnore]
         public bool IsExpanded { get; set; }
 
         public abstract event NotifyCollectionChangedEventHandler? CollectionChanged;
@@ -50,13 +51,8 @@
     }
 
     [Serializable]
-    [XmlInclude(typeof(HexaDirectory))]
-    [XmlInclude(typeof(HexaFile))]
     public abstract class HexaParent : HexaItem
     {
-        [XmlArrayItem(ElementName = "File", IsNullable = true, Type = typeof(HexaFile))]
-        [XmlArrayItem(ElementName = "Folder", IsNullable = true, Type = typeof(HexaDirectory))]
-        [XmlArray("Items")]
         public ObservableCollection<HexaItem> Items { get; } = new();
 
         public abstract void Import(string path);

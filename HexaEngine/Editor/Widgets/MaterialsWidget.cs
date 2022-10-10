@@ -52,8 +52,13 @@
                 var material = scene.Materials[current];
 
                 var name = material.Name;
-                if (ImGui.InputText("Name", ref name, 256))
-                    material.Name = name;
+                if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+                {
+                    if (scene.Materials.Any(x => x.Name != name))
+                    {
+                        material.Name = name;
+                    }
+                }
 
                 var color = material.Albedo;
                 if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))

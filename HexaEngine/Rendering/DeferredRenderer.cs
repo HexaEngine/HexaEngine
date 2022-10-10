@@ -491,7 +491,7 @@
                                     model.IB = ib;
                                     model.IndexCount = mesh.Indices.Length;
                                 }
-                                if (string.IsNullOrEmpty(mesh.MaterialName))
+                                if (!string.IsNullOrEmpty(mesh.MaterialName))
                                 {
                                     model.Material = materials.GetValueOrDefault(mesh.MaterialName);
                                 }

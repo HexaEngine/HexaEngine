@@ -2,12 +2,31 @@
 {
     using System.Collections.Specialized;
     using System.IO;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
     using System.Xml;
     using System.Xml.Serialization;
 
+    [JsonSourceGenerationOptions(
+        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
+        GenerationMode = JsonSourceGenerationMode.Default,
+        IgnoreReadOnlyFields = true,
+        IgnoreReadOnlyProperties = true,
+        IncludeFields = false,
+        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+        WriteIndented = true)]
+    [JsonSerializable(typeof(HexaProject), GenerationMode = JsonSourceGenerationMode.Default)]
+    [JsonSerializable(typeof(HexaFile), GenerationMode = JsonSourceGenerationMode.Default)]
+    [JsonSerializable(typeof(HexaDirectory), GenerationMode = JsonSourceGenerationMode.Default)]
+    [JsonSerializable(typeof(HexaItem), GenerationMode = JsonSourceGenerationMode.Default)]
+    [JsonSerializable(typeof(HexaParent), GenerationMode = JsonSourceGenerationMode.Default)]
+    internal partial class SourceGenerationContext : JsonSerializerContext
+    {
+    }
+
+    [XmlRoot]
     public class HexaProject : HexaParent
     {
-        private static readonly XmlSerializer serializer = new(typeof(HexaProject));
         private HexaItem? selectedItem;
         private bool isSelected;
 
@@ -31,8 +50,8 @@
         public static HexaProject? Load(string path)
         {
             if (path is null) return null;
-            XmlReader reader = XmlReader.Create(path);
-            HexaProject? result = (HexaProject?)serializer.Deserialize(reader);
+            var reader = File.OpenRead(path);
+            HexaProject? result = (HexaProject?)JsonSerializer.Deserialize(reader, typeof(HexaProject), SourceGenerationContext.Default);
             if (result == null) return null;
             result.ProjectFilePath = Path.GetFullPath(path);
             reader.Close();
@@ -41,13 +60,13 @@
             return result;
         }
 
-        [XmlIgnore]
+        [JsonIgnore]
         public string ProjectFilePath { get; private set; } = string.Empty;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public string ProjectFileDirectory => Path.GetDirectoryName(ProjectFilePath) ?? string.Empty;
 
-        [XmlIgnore]
+        [JsonIgnore]
         public override IntPtr Icon { get; }
 
         public static XmlWriterSettings WriterSettings => new()
@@ -58,7 +77,7 @@
             NewLineHandling = NewLineHandling.Replace
         };
 
-        [XmlIgnore]
+        [JsonIgnore]
         public HexaItem? SelectedItem
         {
             get => selectedItem;
@@ -89,8 +108,8 @@
 
         public override void Save()
         {
-            var writer = XmlWriter.Create(ProjectFilePath, WriterSettings);
-            serializer.Serialize(writer, this);
+            var writer = File.Create(ProjectFilePath);
+            JsonSerializer.Serialize(writer, this, typeof(HexaProject), SourceGenerationContext.Default);
             writer.Close();
             writer.Dispose();
         }

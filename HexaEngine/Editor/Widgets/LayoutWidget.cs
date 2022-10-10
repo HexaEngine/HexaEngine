@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
     using ImGuiNET;
@@ -146,7 +147,7 @@
                             var payload = ImGui.AcceptDragDropPayload(nameof(SceneNode));
                             if (payload.NativePtr != null)
                             {
-                                Guid id = ((Guid*)payload.Data)[0];
+                                string id = *(UnsafeString*)payload.Data;
                                 element.AddChild(scene.Find(id));
                             }
                         }
@@ -156,7 +157,8 @@
                     {
                         unsafe
                         {
-                            ImGui.SetDragDropPayload(nameof(SceneNode), (IntPtr)Utilities.AsPointer(element.ID), (uint)sizeof(Guid));
+                            var str = new UnsafeString(element.Name);
+                            ImGui.SetDragDropPayload(nameof(SceneNode), (nint)(&str), (uint)sizeof(Guid));
                         }
                         ImGui.Text(element.Name);
                         ImGui.EndDragDropSource();

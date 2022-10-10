@@ -27,6 +27,7 @@ namespace HexaEngine.Editor.Widgets
         private MODE mode = MODE.LOCAL;
         private bool gimbalGrabbed;
         private Matrix4x4 gimbalBefore;
+        private int currentMesh;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public PropertiesWidget()
@@ -134,6 +135,31 @@ namespace HexaEngine.Editor.Widgets
             if (ImGui.RadioButton("World", mode == MODE.WORLD))
             {
                 mode = MODE.WORLD;
+            }
+
+            ImGui.Separator();
+
+            if (ImGui.Button("Add mesh"))
+            {
+                if (currentMesh > -1 && currentMesh < scene.Meshes.Count)
+                {
+                    element.AddMesh(scene.Meshes[currentMesh]);
+                }
+            }
+
+            ImGui.SameLine();
+
+            ImGui.Combo("Mesh", ref currentMesh, scene.Meshes.Select(x => x.Name).ToArray(), scene.Meshes.Count);
+
+            for (int i = 0; i < element.Meshes.Count; i++)
+            {
+                var mesh = element.Meshes[i];
+                ImGui.Text(mesh.Name);
+                ImGui.SameLine();
+                if (ImGui.Button("Remove Mesh"))
+                {
+                    element.RemoveMesh(mesh);
+                }
             }
 
             ImGui.Separator();

@@ -89,7 +89,6 @@
         public Relation? Parent;
     }
 
-    //[EditorNode<Mesh>("Mesh")]
     public unsafe class Mesh
     {
         public MeshVertex[]? Vertices;
@@ -109,7 +108,6 @@
             }
         }
 
-        [EditorProperty("Material name")]
         public string MaterialName
         {
             get => materialName;

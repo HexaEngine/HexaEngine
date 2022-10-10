@@ -41,10 +41,6 @@
             });
             Keyboard.OnKeyUp += (s, e) =>
             {
-                if (e.KeyCode == KeyCode.KEscape)
-                {
-                    window.Close();
-                }
                 if (e.KeyCode == KeyCode.KF8)
                 {
                     SceneManager.Current.Dispatcher.Invoke(() => Pipeline.ReloadShaders());

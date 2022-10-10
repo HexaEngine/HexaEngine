@@ -54,7 +54,7 @@
             device = new D3D11GraphicsDevice(new DXGIAdapter(), window);
             context = device.Context;
             swapChain = device.SwapChain ?? throw new Exception();
-            renderer = new(window, device) { NoInternal = true };
+            renderer = new(window, device);
         }
 
         [Test]

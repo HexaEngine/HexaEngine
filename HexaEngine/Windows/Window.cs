@@ -119,7 +119,7 @@
                 if (renderer is not null)
                     renderer.BeginDraw();
 
-                if (Flags.HasFlag(RendererFlags.ImGuiWidgets) && Designer.InDesignMode)
+                if (Flags.HasFlag(RendererFlags.ImGuiWidgets) && Designer.IsShown)
                 {
                     Designer.Draw();
                     WidgetManager.Draw(context);
@@ -141,7 +141,7 @@
                             Time.Initialize();
                             firstFrame = false;
                         }
-                        if (Designer.InDesignMode)
+                        if (Designer.IsShown)
                             deferredRenderer.Render(context, this, framebuffer.Viewport, SceneManager.Current, CameraManager.Current);
                         else
                             deferredRenderer.Render(context, this, Viewport, SceneManager.Current, CameraManager.Current);

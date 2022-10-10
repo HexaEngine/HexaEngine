@@ -15,17 +15,20 @@
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Numerics;
+
+    public struct NodePtr
+    {
+        public int Index;
+    }
 
     public class Scene
     {
 #nullable disable
         private IGraphicsDevice device;
 #nullable enable
-        private readonly Dictionary<Guid, SceneNode> nodesToGuid = new();
-        private readonly List<SceneNode> nodes = new List<SceneNode>();
+        private readonly List<SceneNode> nodes = new();
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
         private readonly List<Mesh> meshes = new();
@@ -97,9 +100,9 @@
 
         public bool Validate()
         {
-            foreach (var node in nodesToGuid)
+            foreach (var node in nodes)
             {
-                if (nodesToGuid.Any(x => node.Value != node.Value && x.Value.Name == x.Value.Name))
+                if (nodes.Any(x => node != x && x.Name == x.Name))
                     return false;
             }
             return true;
@@ -183,19 +186,11 @@
             }
         }
 
-        public SceneNode Find(Guid guid)
-        {
-            semaphore.Wait();
-            var result = nodesToGuid[guid];
-            semaphore.Release();
-            return result;
-        }
-
         public SceneNode? Find(string? name)
         {
             if (string.IsNullOrEmpty(name)) return null;
             semaphore.Wait();
-            var result = nodesToGuid.FirstOrDefault(x => x.Value.Name == name).Value;
+            var result = nodes.FirstOrDefault(x => x.Name == name);
             semaphore.Release();
             return result;
         }
@@ -210,7 +205,6 @@
         internal void RegisterChild(SceneNode node)
         {
             nodes.Add(node);
-            nodesToGuid.Add(node.ID, node);
             cameras.AddIfIs(node);
             lights.AddIfIs(node);
             scripts.AddComponentIfIs(node);
@@ -219,7 +213,6 @@
         internal void UnregisterChild(SceneNode node)
         {
             nodes.Remove(node);
-            nodesToGuid.Remove(node.ID);
             cameras.RemoveIfIs(node);
             lights.RemoveIfIs(node);
             scripts.RemoveComponentIfIs(node);

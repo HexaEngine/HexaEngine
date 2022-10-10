@@ -9,7 +9,7 @@
     public static class MainMenuBar
     {
         private static float height;
-        private static bool isShown;
+        private static bool isShown = true;
         private static FilePicker filePicker = new();
         private static bool filePickerIsOpen = false;
         private static Action<FilePickerResult, string>? filePickerCallback;

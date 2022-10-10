@@ -78,7 +78,7 @@ namespace HexaEngine.Windows
                 framebuffer.SourceViewport = Viewport;
                 framebuffer.Update(context);
                 renderer.BeginDraw();
-                if (Designer.InDesignMode)
+                if (Designer.IsShown)
                 {
                     framebuffer.Draw();
                 }

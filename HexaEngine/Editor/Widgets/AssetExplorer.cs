@@ -1,16 +1,13 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Numerics;
-    using System.Runtime.InteropServices;
-    using System.Runtime.Intrinsics.X86;
     using System.Threading.Tasks;
-    using System.Xml.Linq;
 
     public class AssetExplorer : Widget
     {
@@ -25,26 +22,6 @@
         }
 
         public string? SelectedFile { get; private set; }
-
-        private unsafe struct StringPtr
-        {
-            public StringPtr(string str)
-            {
-                fixed (char* strPtr = str)
-                {
-                    Ptr = strPtr;
-                }
-                Length = str.Length;
-            }
-
-            public char* Ptr;
-            public int Length;
-
-            public static implicit operator string(StringPtr ptr)
-            {
-                return new(new Span<char>(ptr.Ptr, ptr.Length));
-            }
-        }
 
         private static List<string> GetFileSystemEntries(string fullName)
         {
@@ -153,7 +130,7 @@
                             var payload = ImGui.AcceptDragDropPayload(nameof(String));
                             if (payload.NativePtr != null)
                             {
-                                string ft = *(StringPtr*)payload.Data;
+                                string ft = *(UnsafeString*)payload.Data;
                                 if (Directory.Exists(ft))
                                 {
                                     var fname = Path.GetFileName(ft);
@@ -205,7 +182,7 @@
                                 var payload = ImGui.AcceptDragDropPayload(nameof(String));
                                 if (payload.NativePtr != null)
                                 {
-                                    string ft = *(StringPtr*)payload.Data;
+                                    string ft = *(UnsafeString*)payload.Data;
                                     if (Directory.Exists(ft))
                                     {
                                         var fname = Path.GetFileName(ft);
@@ -228,8 +205,8 @@
                         {
                             unsafe
                             {
-                                var str = new StringPtr(fse);
-                                ImGui.SetDragDropPayload(nameof(String), (nint)(&str), (uint)sizeof(StringPtr));
+                                var str = new UnsafeString(fse);
+                                ImGui.SetDragDropPayload(nameof(String), (nint)(&str), (uint)sizeof(UnsafeString));
                             }
                             ImGui.Text(name);
                             ImGui.EndDragDropSource();
@@ -268,8 +245,8 @@
                         {
                             unsafe
                             {
-                                var str = new StringPtr(fse);
-                                ImGui.SetDragDropPayload(nameof(String), (nint)(&str), (uint)sizeof(StringPtr));
+                                var str = new UnsafeString(fse);
+                                ImGui.SetDragDropPayload(nameof(String), (nint)(&str), (uint)sizeof(UnsafeString));
                             }
                             ImGui.Text(name);
                             ImGui.EndDragDropSource();

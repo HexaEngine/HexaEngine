@@ -6,6 +6,7 @@
     using HexaEngine.Objects;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.InteropServices;
 
     public class SceneNode
     {
@@ -23,6 +24,19 @@
         private string name = string.Empty;
         private bool isSelected;
         private static SceneNode? selectedNode;
+        private GCHandle gcHandle;
+        public readonly IntPtr Pointer;
+
+        public SceneNode()
+        {
+            gcHandle = GCHandle.Alloc(this, GCHandleType.WeakTrackResurrection);
+            Pointer = GCHandle.ToIntPtr(gcHandle);
+        }
+
+        ~SceneNode()
+        {
+            gcHandle.Free();
+        }
 
         public virtual string Name
         {
@@ -69,8 +83,6 @@
                 isSelected = value;
             }
         }
-
-        public Guid ID { get; } = Guid.NewGuid();
 
         public virtual IReadOnlyList<SceneNode> Children => children;
 

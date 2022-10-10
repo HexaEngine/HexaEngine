@@ -6,6 +6,7 @@
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
+    using HexaEngine.Windows;
     using ImGuiNET;
     using ImGuizmoNET;
     using Silk.NET.SDL;
@@ -51,8 +52,69 @@
             var scene = SceneManager.Current;
             if (scene != null && ImGui.BeginMenuBar())
             {
-                if (ImGui.Button(scene.IsSimulating ? "\xE769" : "\xE768"))
-                    scene.IsSimulating = !scene.IsSimulating;
+                // Play "\xE769"
+                // Pause "\xE768"
+                // Stop "xE71A"
+                {
+                    bool modeSwitched = false;
+                    if (!Designer.InDesignMode && scene.IsSimulating)
+                        ImGui.BeginDisabled(true);
+
+                    if (ImGui.Button("\xE768"))
+                    {
+                        if (Designer.InDesignMode)
+                        {
+                            scene.IsSimulating = false;
+                            SceneManager.BeginReload();
+                            scene.SaveState();
+                            Designer.InDesignMode = false;
+                            scene.IsSimulating = true;
+                            SceneManager.EndReload();
+                        }
+                        else
+                        {
+                            scene.IsSimulating = true;
+                        }
+                        modeSwitched = true;
+                    }
+
+                    if (!Designer.InDesignMode && scene.IsSimulating && !modeSwitched)
+                        ImGui.EndDisabled();
+                }
+
+                {
+                    bool modeSwitched = false;
+                    if (Designer.InDesignMode || !scene.IsSimulating)
+                        ImGui.BeginDisabled(true);
+
+                    if (ImGui.Button("\xE769"))
+                    {
+                        scene.IsSimulating = false;
+                        modeSwitched = true;
+                    }
+
+                    if ((Designer.InDesignMode || !scene.IsSimulating) && !modeSwitched)
+                        ImGui.EndDisabled();
+                }
+
+                {
+                    bool modeSwitched = false;
+                    if (Designer.InDesignMode)
+                        ImGui.BeginDisabled(true);
+
+                    if (ImGui.Button("\xE71A"))
+                    {
+                        scene.IsSimulating = false;
+                        SceneManager.BeginReload();
+                        scene.RestoreState();
+                        Designer.InDesignMode = true;
+                        SceneManager.EndReload();
+                        modeSwitched = true;
+                    }
+
+                    if (Designer.InDesignMode && !modeSwitched)
+                        ImGui.EndDisabled();
+                }
 
                 int cameraIndex = scene.ActiveCamera;
                 if (ImGui.Combo("Current Camera", ref cameraIndex, scene.Cameras.Select(x => x.Name).ToArray(), scene.Cameras.Count))
