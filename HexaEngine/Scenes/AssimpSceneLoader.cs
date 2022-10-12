@@ -315,7 +315,7 @@
                     skeleton.AddRelation(bone->MName, FindParent(scene, bone->MName));
                     skeleton.AddBone(bones[j]);
                 }
-                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Bones = bones, Skeleton = skeleton, MaterialName = materials[msh->MMaterialIndex].Name };
+                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Bones = bones, Skeleton = skeleton, Material = sceneTarget.Materials[(int)msh->MMaterialIndex] };
                 sceneTarget.AddMesh(meshes[i]);
             }
 

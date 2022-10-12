@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Editor.Attributes;
     using HexaEngine.Meshes;
     using System.Numerics;
 
@@ -95,6 +94,7 @@
         public int[]? Indices;
         public MeshBone[]? Bones;
         public Skeleton? Skeleton;
+        public Material? Material;
         public int MaterialIndex = -1;
         private string materialName = string.Empty;
         private string name = string.Empty;

@@ -288,9 +288,13 @@
         [Test]
         public void DrawSphereInstanced()
         {
+            ImGuiConsole.Redirect = true;
+            ShaderCache.DisableCache = true;
             Pipeline pipeline = new(device, new()
             {
                 VertexShader = "forward/instanced/vs.hlsl",
+                HullShader = "forward/instanced/hs.hlsl",
+                DomainShader = "forward/instanced/ds.hlsl",
                 PixelShader = "forward/instanced/ps.hlsl",
             }, new InputElementDescription[]
             {
@@ -307,7 +311,7 @@
                 Blend = BlendDescription.Opaque,
                 DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleList
+                Topology = PrimitiveTopology.PatchListWith3ControlPoints
             });
             UVSphere.CreateSphere(out Vertex[] vertices, out int[] indices);
             IBuffer vb = device.CreateBuffer(vertices, BindFlags.VertexBuffer);
@@ -344,6 +348,7 @@
                 context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.All, 1, 0);
                 context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
                 context.SetConstantBuffer(cbCam, ShaderStage.Vertex, 1);
+                context.SetConstantBuffer(cbCam, ShaderStage.Domain, 1);
                 context.SetConstantBuffer(cbCam, ShaderStage.Pixel, 1);
                 context.SetVertexBuffer(0, vb, Marshal.SizeOf<Vertex>());
                 context.SetVertexBuffer(1, isb, Marshal.SizeOf<Matrix4x4>());

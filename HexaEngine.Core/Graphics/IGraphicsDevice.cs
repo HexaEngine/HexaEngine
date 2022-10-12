@@ -64,6 +64,10 @@
 
         public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct;
 
+        public IBuffer CreateBuffer<T>(Span<T> values, BufferDescription description) where T : struct;
+
+        public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct;
+
         public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description);
 
         public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description);
@@ -191,7 +195,9 @@
         public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob);
 
         IQuery CreateQuery();
+
         IQuery CreateQuery(Query type);
+
         IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data);
     }
 }

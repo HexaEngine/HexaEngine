@@ -19,7 +19,7 @@
             T2*[] ptrs = new T2*[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
-                ptrs[i] = (T2*)values[i].NativePointer;
+                ptrs[i] = (T2*)values[i]?.NativePointer;
             }
             return AsPointer(ptrs);
         }

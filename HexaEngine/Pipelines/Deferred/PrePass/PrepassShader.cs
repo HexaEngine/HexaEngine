@@ -1,17 +1,16 @@
-﻿namespace HexaEngine.Pipelines.Forward
+﻿namespace HexaEngine.Pipelines.Deferred.PrePass
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
 
-    public class CSMPipeline : Pipeline
+    public class PrepassShader : Pipeline
     {
-        public CSMPipeline(IGraphicsDevice device) : base(device, new()
+        public PrepassShader(IGraphicsDevice device) : base(device, new()
         {
-            VertexShader = "forward/csm/vs.hlsl",
-            HullShader = "forward/csm/hs.hlsl",
-            DomainShader = "forward/csm/ds.hlsl",
-            GeometryShader = "forward/csm/gs.hlsl",
-            PixelShader = "forward/csm/ps.hlsl",
+            VertexShader = "deferred/prepass/vs.hlsl",
+            HullShader = "deferred/prepass/hs.hlsl",
+            DomainShader = "deferred/prepass/ds.hlsl",
+            PixelShader = "deferred/prepass/ps.hlsl"
         },
         new InputElementDescription[]
         {
@@ -28,7 +27,7 @@
             State = new()
             {
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullNone,
+                Rasterizer = RasterizerDescription.CullBack,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
             };

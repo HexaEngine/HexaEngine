@@ -109,6 +109,7 @@
         }
 
         public static bool IsDisplayed { get => m_consoleOpen; set => m_consoleOpen = value; }
+        public static bool Redirect { get; set; }
 
         public static void DefaultSettings()
         {
@@ -137,6 +138,7 @@
 
         public static void Log(LogSeverity type, string msg)
         {
+            if (Redirect) Debug.WriteLine(msg);
             messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
             if (messages.Count > max_messages)
             {
@@ -146,6 +148,7 @@
 
         public static void Log(Exception e)
         {
+            if (Redirect) Debug.WriteLine(e);
             messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e.ToString(), Timestamp = DateTime.Now });
             if (messages.Count > max_messages)
             {
@@ -156,6 +159,7 @@
         public static async Task LogAsync(LogSeverity type, string msg)
         {
             await semaphore.WaitAsync();
+            if (Redirect) Debug.WriteLine(msg);
             messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
             if (messages.Count > max_messages)
             {
@@ -166,6 +170,7 @@
 
         public static void Log(string msg)
         {
+            if (Redirect) Debug.WriteLine(msg);
             LogSeverity type = LogSeverity.Log;
             if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
                 type = LogSeverity.Error;
@@ -182,6 +187,7 @@
 
         public static async Task LogAsync(string msg)
         {
+            if (Redirect) Debug.WriteLine(msg);
             await semaphore.WaitAsync();
             LogSeverity type = LogSeverity.Log;
             if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))

@@ -42,7 +42,7 @@
         private UVSphere sphere;
         private Quad quad;
 
-        private MTLShader prepass;
+        private PrepassShader prepass;
         private BRDFPipeline pbrlightShader;
         private BRDFEffect brdfFilter;
         private SkyboxPipeline skyboxShader;
