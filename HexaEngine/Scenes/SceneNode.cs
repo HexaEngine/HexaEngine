@@ -15,7 +15,7 @@
 #nullable enable
         private readonly List<SceneNode> children = new();
         private readonly List<IComponent> components = new();
-        private readonly List<Mesh> meshes = new();
+        private readonly List<int> meshes = new();
         private Scene? scene;
         private SceneNode? parent;
         private bool initialized;
@@ -88,7 +88,7 @@
 
         public virtual IReadOnlyList<IComponent> Components => components;
 
-        public virtual IReadOnlyList<Mesh> Meshes => meshes;
+        public virtual IReadOnlyList<int> Meshes => meshes;
 
         public bool Initialized => initialized;
 
@@ -245,14 +245,14 @@
             return parent?.GetScene() ?? throw new("Node tree invalid");
         }
 
-        public virtual void AddMesh(Mesh index)
+        public virtual void AddMesh(int index)
         {
             meshes.Add(index);
             if (Initialized)
                 GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, this, ChildCommandType.Added, index));
         }
 
-        public virtual void RemoveMesh(Mesh index)
+        public virtual void RemoveMesh(int index)
         {
             meshes.Remove(index);
             if (Initialized)

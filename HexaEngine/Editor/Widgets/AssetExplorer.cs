@@ -15,6 +15,7 @@
         private readonly Stack<string> forwardHistory = new();
         private string CurrentFolder = Paths.CurrentAssetsPath;
         private Task? task;
+        private AssimpSceneLoader loader = new();
 
         public AssetExplorer()
         {
@@ -88,15 +89,15 @@
                 var extension = Path.GetExtension(SelectedFile);
                 if (extension == ".glb")
                 {
-                    task = AssimpSceneLoader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile);
                 }
                 if (extension == ".gltf")
                 {
-                    task = AssimpSceneLoader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile);
                 }
                 if (extension == ".dae")
                 {
-                    task = AssimpSceneLoader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile);
                 }
             }
         }

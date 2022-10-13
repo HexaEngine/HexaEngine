@@ -50,6 +50,7 @@
 
         private RenderTexture ssaoBuffer;
         private RenderTexture lightMap;
+        private RenderTexture tonemapBuffer;
         private RenderTexture fxaaBuffer;
         private RenderTexture ssrBuffer;
         private RenderTexture depthbuffer;
@@ -77,6 +78,7 @@
         private DDASSREffect ssrEffect;
         private BlendBoxBlurEffect ssrBlurEffect;
         private BlendEffect blendEffect;
+        private TonemapEffect tonemapEffect;
         private FXAAEffect fxaaEffect;
 
         private BRDFEffect brdfFilter;
@@ -102,6 +104,7 @@
 
         public unsafe void Initialize(IGraphicsDevice device, SdlWindow window)
         {
+            SceneManager.SceneChanged += SceneManager_SceneChanged;
             resourceManager = new ResourceManager(device);
             availableShadingModels = new ShadingModel[] { ShadingModel.Flat, ShadingModel.PbrBrdf };
             availableShadingModelStrings = availableShadingModels.Select(x => x.ToString()).ToArray();
@@ -192,11 +195,17 @@
             ssaoEffect.Target = ssaoBuffer.RenderTargetView;
             ssaoEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
 
-            fxaaBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
+            fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
             fxaaEffect = new(device);
             fxaaEffect.Target = swapChain.BackbufferRTV;
             fxaaEffect.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
-            fxaaEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
+            fxaaEffect.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
+
+            tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
+            tonemapEffect = new(device);
+            tonemapEffect.Target = fxaaBuffer.RenderTargetView;
+            tonemapEffect.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+            tonemapEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
 
             ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
             ssrEffect = new(device);
@@ -204,12 +213,12 @@
             ssrEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
 
             ssrBlurEffect = new(device);
-            ssrBlurEffect.Target = fxaaBuffer.RenderTargetView;
+            ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;
             ssrBlurEffect.Samplers.Add(new(linearSampler, ShaderStage.Pixel, 0));
             ssrBlurEffect.Resources.Add(new(ssrBuffer.ResourceView, ShaderStage.Pixel, 0));
 
             blendEffect = new(device);
-            blendEffect.Target = fxaaBuffer.RenderTargetView;
+            blendEffect.Target = tonemapBuffer.RenderTargetView;
             blendEffect.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
             env = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
@@ -227,12 +236,21 @@
             context.ClearState();
         }
 
+        private void SceneManager_SceneChanged(object? sender, SceneChangedEventArgs e)
+        {
+            if (e.Old != null && e.Old != e.New)
+            {
+                Update(e.Old).Wait();
+            }
+        }
+
         private void OnResizeBegin(object? sender, EventArgs e)
         {
             gbuffers.Dispose();
             lightMap.Dispose();
             ssaoBuffer.Dispose();
             fxaaBuffer.Dispose();
+            tonemapBuffer.Dispose();
             ssrBuffer.Dispose();
             depthbuffer.Dispose();
         }
@@ -247,19 +265,24 @@
             ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth / 2, e.NewHeight / 2, 1, Format.R32Float));
             ssaoEffect.Target = ssaoBuffer.RenderTargetView;
 
-            fxaaBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
+            fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
             fxaaEffect.Target = swapChain.BackbufferRTV;
             fxaaEffect.Resources.Clear();
             fxaaEffect.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
 
+            tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
+            tonemapEffect.Target = fxaaBuffer.RenderTargetView;
+            tonemapEffect.Resources.Clear();
+            tonemapEffect.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+
             ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
             ssrEffect.Target = ssrBuffer.RenderTargetView;
 
-            ssrBlurEffect.Target = fxaaBuffer.RenderTargetView;
+            ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;
             ssrBlurEffect.Resources.Clear();
             ssrBlurEffect.Resources.Add(new(ssrBuffer.ResourceView, ShaderStage.Pixel, 0));
 
-            blendEffect.Target = fxaaBuffer.RenderTargetView;
+            blendEffect.Target = tonemapBuffer.RenderTargetView;
 
             gbuffers.SRVs[0].DebugName = "Albedo";
             gbuffers.SRVs[1].DebugName = "Position Depth";
@@ -288,28 +311,28 @@
                         case CommandType.Load:
                             for (int i = 0; i < node.Meshes.Count; i++)
                             {
-                                await resourceManager.AsyncCreateInstance(node.Meshes[i], node);
+                                await resourceManager.AsyncCreateInstance(scene.Meshes[node.Meshes[i]], node);
                             }
                             break;
 
                         case CommandType.Unload:
                             for (int i = 0; i < node.Meshes.Count; i++)
                             {
-                                await resourceManager.AsyncDestroyInstance(node.Meshes[i], node);
+                                await resourceManager.AsyncDestroyInstance(scene.Meshes[node.Meshes[i]], node);
                             }
                             break;
 
                         case CommandType.Update:
-                            if (cmd.Child is Mesh child)
+                            if (cmd.Child is int child)
                             {
                                 switch (cmd.ChildCommand)
                                 {
                                     case ChildCommandType.Added:
-                                        await resourceManager.AsyncCreateInstance(child, node);
+                                        await resourceManager.AsyncCreateInstance(scene.Meshes[child], node);
                                         break;
 
                                     case ChildCommandType.Removed:
-                                        await resourceManager.AsyncDestroyInstance(child, node);
+                                        await resourceManager.AsyncDestroyInstance(scene.Meshes[child], node);
                                         break;
                                 }
                             }
@@ -473,10 +496,10 @@
             }
 
             {
-                fxaaBuffer.SetTarget(context);
+                tonemapBuffer.SetTarget(context);
                 context.SetShaderResource(env.ResourceView, ShaderStage.Pixel, 0);
                 context.SetSampler(ansioSampler, ShaderStage.Pixel, 0);
-                skycube.DrawAuto(context, skyboxShader, fxaaBuffer.Viewport);
+                skycube.DrawAuto(context, skyboxShader, tonemapBuffer.Viewport);
                 context.ClearState();
             }
 
@@ -487,6 +510,9 @@
                 item.Render(context, viewport, camera);
             }
             */
+
+            tonemapEffect.Draw(context);
+            context.ClearState();
 
             fxaaEffect.Draw(context, viewport);
             context.ClearState();
@@ -572,6 +598,7 @@
                 ssaoBuffer.Dispose();
                 lightMap.Dispose();
                 fxaaBuffer.Dispose();
+                tonemapBuffer.Dispose();
                 ssrBuffer.Dispose();
                 depthbuffer.Dispose();
 
@@ -582,6 +609,7 @@
                 ssrBlurEffect.Dispose();
                 blendEffect.Dispose();
                 fxaaEffect.Dispose();
+                tonemapEffect.Dispose();
 
                 brdfFilter.Dispose();
 

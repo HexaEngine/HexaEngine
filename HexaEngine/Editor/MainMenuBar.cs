@@ -13,6 +13,7 @@
         private static FilePicker filePicker = new();
         private static bool filePickerIsOpen = false;
         private static Action<FilePickerResult, string>? filePickerCallback;
+        private static AssimpSceneLoader loader = new();
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -40,7 +41,7 @@
                         {
                             if (r == FilePickerResult.Ok)
                             {
-                                AssimpSceneLoader.ImportAsync(filePicker.SelectedFile);
+                                loader.ImportAsync(filePicker.SelectedFile);
                             }
                             filePickerIsOpen = false;
                         };

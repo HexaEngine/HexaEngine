@@ -84,12 +84,12 @@
                         continue;
                     for (int j = 0; j < mesh.Bones.Length; j++)
                     {
-                        var skele = mesh.Skeleton;
+                        var skele = mesh.Animature;
                         var bone = mesh.Bones[j];
                         var noriginMtx = scene.Find(skele?.Relationships[bone.Name].ParentName)?.Transform.Local ?? Matrix4x4.Identity;
                         var ndestMtx = scene.Find(bone.Name)?.Transform.Local ?? Matrix4x4.Identity;
-                        var originMtx = noriginMtx * skele?.GetGlobalTransform(skele?.Relationships[bone.Name].ParentName) ?? Matrix4x4.Identity;
-                        var destMtx = ndestMtx * skele?.GetGlobalTransform(bone.Name) ?? Matrix4x4.Identity;
+                        var originMtx = noriginMtx * skele?.GetTransform(skele?.Relationships[bone.Name].ParentName) ?? Matrix4x4.Identity;
+                        var destMtx = ndestMtx * skele?.GetTransform(bone.Name) ?? Matrix4x4.Identity;
                         var origin = Vector3.Zero.ApplyMatrix(originMtx);
                         var dest = Vector3.Zero.ApplyMatrix(destMtx);
                         DebugDraw.DrawLine(origin, dest - origin, false, Vector4.One);

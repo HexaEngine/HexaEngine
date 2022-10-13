@@ -138,6 +138,7 @@
                             rendererUpdateTask = deferredRenderer.Update(SceneManager.Current);
                         if (firstFrame)
                         {
+                            rendererUpdateTask.Wait();
                             Time.Initialize();
                             firstFrame = false;
                         }

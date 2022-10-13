@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Scenes;
     using System;
     using System.Numerics;
 
@@ -8,6 +9,7 @@
         public string Name;
         public MeshWeight[] Weights;
         public Matrix4x4 Offset;
+        public SceneNode Node;
 
         public MeshBone(string name, MeshWeight[] weights, Matrix4x4 offset)
         {

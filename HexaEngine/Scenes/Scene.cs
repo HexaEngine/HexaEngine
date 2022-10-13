@@ -266,6 +266,7 @@
         public void Uninitialize()
         {
             semaphore.Wait();
+            Time.FixedUpdate -= FixedUpdate;
             root.Uninitialize();
             Simulation.Dispose();
             ThreadDispatcher.Dispose();

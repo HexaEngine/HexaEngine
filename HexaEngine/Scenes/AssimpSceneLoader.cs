@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -8,31 +9,52 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
+    using AssimpScene = Silk.NET.Assimp.Scene;
 
     public class AssimpSceneLoader
     {
         public static Assimp Assimp = Assimp.GetApi();
 
-        public static Task ImportAsync(string path, Scene scene)
+        private readonly Dictionary<Pointer<Node>, SceneNode> nodesT = new();
+        private readonly Dictionary<Pointer<Mesh>, Objects.Mesh> meshesT = new();
+        private readonly Dictionary<string, Cameras.Camera> camerasT = new();
+        private readonly Dictionary<string, Lights.Light> lightsT = new();
+        private SceneNode[] nodes;
+        private Objects.Mesh[] meshes;
+        private Objects.Material[] materials;
+        private Cameras.Camera[] cameras;
+        private Lights.Light[] lights;
+        private SceneNode root;
+
+        public Task ImportAsync(string path, Scene scene)
         {
             return Task.Run(() => Import(path, scene));
         }
 
-        public static Task ImportAsync(string path)
+        public Task ImportAsync(string path)
         {
             return Task.Run(() => Import(path, SceneManager.Current));
         }
 
-        public static unsafe void Import(string path, Scene sceneTarget)
+        private unsafe void LoadTextures(AssimpScene* scene)
         {
-            var scene = Assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
-            var scene1 = Assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs));
-
-            if (scene1 != scene)
+            AssimpTexture[] textures = new AssimpTexture[scene->MNumTextures];
+            for (int i = 0; i < scene->MNumTextures; i++)
             {
-                Trace.Fail("");
+                var tex = scene->MTextures[i];
+                textures[i] = new()
+                {
+                    Data = tex->PcData,
+                    Format = new Span<int>(tex->AchFormatHint, 1)[0],
+                    Height = (int)tex->MHeight,
+                    Width = (int)tex->MWidth
+                };
             }
-            AssimpMaterial[] materials = new AssimpMaterial[scene->MNumMaterials];
+        }
+
+        private unsafe void LoadMaterials(AssimpScene* scene)
+        {
+            materials = new Objects.Material[scene->MNumMaterials];
             for (int i = 0; i < scene->MNumMaterials; i++)
             {
                 Material* mat = scene->MMaterials[i];
@@ -247,8 +269,7 @@
                 if (material.Name == string.Empty)
                     material.Name = i.ToString();
                 material.Textures = texs;
-                materials[i] = material;
-                sceneTarget.AddMaterial(new Objects.Material()
+                materials[i] = new Objects.Material()
                 {
                     Albedo = material.BaseColor,
                     Ao = 1,
@@ -265,10 +286,13 @@
                     NormalTextureMap = material.Textures[(int)TextureType.Normals].File ?? string.Empty,
                     RoughnessTextureMap = material.Textures[(int)TextureType.DiffuseRoughness].File ?? string.Empty,
                     RoughnessMetalnessTextureMap = material.Textures[(int)TextureType.Unknown].File ?? string.Empty,
-                });
+                };
             }
+        }
 
-            Objects.Mesh[] meshes = new Objects.Mesh[scene->MNumMeshes];
+        private unsafe void LoadMeshes(AssimpScene* scene)
+        {
+            meshes = new Objects.Mesh[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Mesh* msh = scene->MMeshes[i];
@@ -300,156 +324,173 @@
                     vertices[j] = vertex;
                 }
 
-                MeshBone[] bones = new MeshBone[msh->MNumBones];
-                Objects.Skeleton skeleton = new();
-                for (int j = 0; j < msh->MNumBones; j++)
-                {
-                    var bone = msh->MBones[j];
-                    MeshWeight[] weights = new MeshWeight[bone->MNumWeights];
-                    for (int x = 0; x < bone->MNumWeights; x++)
-                    {
-                        var weight = bone->MWeights[x];
-                        weights[x] = new MeshWeight() { VertexId = weight.MVertexId, Weight = weight.MWeight };
-                    }
-                    bones[j] = new(bone->MName, weights, bone->MOffsetMatrix);
-                    skeleton.AddRelation(bone->MName, FindParent(scene, bone->MName));
-                    skeleton.AddBone(bones[j]);
-                }
-                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Bones = bones, Skeleton = skeleton, Material = sceneTarget.Materials[(int)msh->MMaterialIndex] };
-                sceneTarget.AddMesh(meshes[i]);
+                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Material = materials[(int)msh->MMaterialIndex] };
+                meshesT.Add(msh, meshes[i]);
             }
+        }
 
-            AssimpTexture[] textures = new AssimpTexture[scene->MNumTextures];
-            for (int i = 0; i < scene->MNumTextures; i++)
-            {
-                var tex = scene->MTextures[i];
-                textures[i] = new()
-                {
-                    Data = tex->PcData,
-                    Format = new Span<int>(tex->AchFormatHint, 1)[0],
-                    Height = (int)tex->MHeight,
-                    Width = (int)tex->MWidth
-                };
-            }
+        private unsafe void LoadCameras(AssimpScene* scene)
+        {
+            cameras = new Cameras.Camera[scene->MNumCameras];
 
-            AssimpCamera[] cameras = new AssimpCamera[scene->MNumCameras];
             for (int i = 0; i < scene->MNumCameras; i++)
             {
                 var cam = scene->MCameras[i];
-                cameras[i] = new()
+                var camera = cameras[i] = new()
                 {
                     Name = cam->MName,
-                    Aspect = cam->MAspect,
-                    Far = cam->MClipPlaneFar,
-                    Near = cam->MClipPlaneNear,
-                    Fov = cam->MHorizontalFOV,
-                    Width = cam->MOrthographicWidth,
                 };
+                camera.Transform.Fov = cam->MHorizontalFOV.ToDeg();
+                camera.Transform.Width = cam->MOrthographicWidth;
+                camera.Transform.Height = 1f / cam->MOrthographicWidth * cam->MAspect;
+                camera.Transform.Far = cam->MClipPlaneFar;
+                camera.Transform.Near = cam->MClipPlaneNear;
+                camerasT.Add(camera.Name, camera);
             }
+        }
 
-            AssimpLight[] lights = new AssimpLight[scene->MNumLights];
+        private unsafe void LoadLights(AssimpScene* scene)
+        {
+            lights = new Lights.Light[scene->MNumLights];
             for (int i = 0; i < scene->MNumLights; i++)
             {
                 var lig = scene->MLights[i];
-                lights[i] = new()
+                Lights.Light light;
+                switch (lig->MType)
                 {
-                    Name = lig->MName,
-                    Type = lig->MType,
-                    AngleInner = lig->MAngleInnerCone,
-                    AngleOuter = lig->MAngleOuterCone,
-                    Color = lig->MColorDiffuse
-                };
-            }
+                    case LightSourceType.Undefined:
+                        throw new NotSupportedException();
 
-            SceneNode WalkNode(Node* node, SceneNode? parent)
+                    case LightSourceType.Directional:
+                        var dir = new DirectionalLight();
+                        dir.Color = new Vector4(lig->MColorDiffuse, 1);
+                        light = dir;
+                        break;
+
+                    case LightSourceType.Point:
+                        var point = new PointLight();
+                        point.Color = new Vector4(Vector3.Normalize(lig->MColorDiffuse), 1);
+                        point.Strength = lig->MColorDiffuse.Length();
+                        light = point;
+                        break;
+
+                    case LightSourceType.Spot:
+                        var spot = new Spotlight();
+                        spot.Color = new Vector4(lig->MColorDiffuse, 1);
+                        spot.Strength = 1;
+                        spot.ConeAngle = lig->MAngleOuterCone.ToDeg();
+                        spot.Blend = lig->MAngleInnerCone.ToDeg() / spot.ConeAngle;
+                        light = spot;
+                        break;
+
+                    case LightSourceType.Ambient:
+                        throw new NotSupportedException();
+
+                    case LightSourceType.Area:
+                        throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                light.Name = lig->MName;
+                lights[i] = light;
+                lightsT.Add(light.Name, light);
+            }
+        }
+
+        private unsafe void LoadSceneGraph(AssimpScene* scene)
+        {
+            root = WalkNode(scene->MRootNode, null);
+        }
+
+        private unsafe SceneNode WalkNode(Node* node, SceneNode? parent)
+        {
+            string name = node->MName;
+            SceneNode sceneNode = new();
+
+            if (camerasT.TryGetValue(name, out var camera))
             {
-                string name = node->MName;
-                SceneNode sceneNode = new();
-
-                if (cameras.Any(x => x.Name == name))
-                {
-                    var camera = new Cameras.Camera();
-                    var cam = cameras.First(x => x.Name == name);
-                    camera.Transform.Fov = cam.Fov.ToDeg();
-                    camera.Transform.Width = cam.Width;
-                    camera.Transform.Height = 1f / cam.Width * cam.Aspect;
-                    camera.Transform.Far = cam.Far;
-                    camera.Transform.Near = cam.Near;
-                    sceneNode = camera;
-                }
-
-                if (lights.Any(x => x.Name == name))
-                {
-                    var lig = lights.First(x => x.Name == name);
-                    switch (lig.Type)
-                    {
-                        case LightSourceType.Undefined:
-                            throw new NotSupportedException();
-
-                        case LightSourceType.Directional:
-                            var dir = new DirectionalLight();
-                            dir.Color = new Vector4(lig.Color, 1);
-                            sceneNode = dir;
-                            break;
-
-                        case LightSourceType.Point:
-                            var point = new PointLight();
-                            point.Color = new Vector4(lig.Color, 1);
-                            point.Strength = 1;
-                            sceneNode = point;
-                            break;
-
-                        case LightSourceType.Spot:
-                            var spot = new Spotlight();
-                            spot.Color = new Vector4(lig.Color, 1);
-                            spot.Strength = 1;
-                            spot.ConeAngle = lig.AngleOuter.ToDeg();
-                            spot.Blend = lig.AngleInner.ToDeg() / spot.ConeAngle;
-                            sceneNode = spot;
-                            break;
-
-                        case LightSourceType.Ambient:
-                            throw new NotSupportedException();
-
-                        case LightSourceType.Area:
-                            throw new NotSupportedException();
-                    }
-                }
-
-                sceneNode.Name = name;
-                Matrix4x4.Decompose(Matrix4x4.Transpose(node->MTransformation), out var scale, out var orientation, out var position);
-                sceneNode.Transform.PositionRotationScale = (position, orientation, scale);
-                for (int i = 0; i < node->MNumMeshes; i++)
-                {
-                    sceneNode.AddMesh(meshes[node->MMeshes[i]]);
-                }
-
-                for (int i = 0; i < node->MNumChildren; i++)
-                {
-                    var child = WalkNode(node->MChildren[i], sceneNode);
-                    sceneNode.AddChild(child);
-                }
-
-                return sceneNode;
+                sceneNode = camera;
             }
 
-            var root = WalkNode(scene->MRootNode, null);
+            if (lightsT.TryGetValue(name, out var light))
+            {
+                sceneNode = light;
+            }
+
+            sceneNode.Name = name;
+            Matrix4x4.Decompose(Matrix4x4.Transpose(node->MTransformation), out var scale, out var orientation, out var position);
+            sceneNode.Transform.PositionRotationScale = (position, orientation, scale);
+            for (int i = 0; i < node->MNumMeshes; i++)
+            {
+                sceneNode.AddMesh((int)node->MMeshes[i]);
+            }
+
+            for (int i = 0; i < node->MNumChildren; i++)
+            {
+                var child = WalkNode(node->MChildren[i], sceneNode);
+                sceneNode.AddChild(child);
+            }
+
+            return sceneNode;
+        }
+
+        private unsafe void InjectResources(Scene scene)
+        {
+            for (int i = 0; i < materials.Length; i++)
+            {
+                scene.AddMaterial(materials[i]);
+            }
+
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                scene.AddMesh(meshes[i]);
+            }
+        }
+
+        public unsafe void Import(string path, Scene sceneTarget)
+        {
+            var scene = Assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
+            var scene1 = Assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs));
+
+            if (scene1 != scene)
+            {
+                Trace.Fail("");
+            }
+
+            LoadMaterials(scene);
+
+            LoadMeshes(scene);
+
+            LoadCameras(scene);
+
+            LoadLights(scene);
+
+            LoadSceneGraph(scene);
+
+            InjectResources(sceneTarget);
+
             if (root.Name == "ROOT")
                 sceneTarget.Merge(root);
             else
                 sceneTarget.AddChild(root);
 
+            nodesT.Clear();
+            meshesT.Clear();
+            camerasT.Clear();
+            lightsT.Clear();
+
             Assimp.ReleaseImport(scene);
         }
 
-        public static unsafe void Open(string path)
+        public unsafe void Open(string path)
         {
             Scene scene = new();
             Import(path, scene);
             SceneManager.Load(scene);
         }
 
-        public static async Task OpenAsync(string path)
+        public async Task OpenAsync(string path)
         {
             Scene scene = new();
             await SceneManager.AsyncLoad(scene);
@@ -525,15 +566,6 @@
             public void* Data;
         }
 
-        public struct AssimpMesh
-        {
-            public string Name;
-            public MeshVertex[] Vertices;
-            public int[] Indices;
-            public uint Material;
-            public AssimpBone[] Bones;
-        }
-
         public unsafe struct AssimpBone
         {
             public string Name;
@@ -548,43 +580,6 @@
                 Offset = offset;
                 Node = node;
             }
-        }
-
-        public struct AssimpCamera
-        {
-            public string Name;
-            public float Aspect;
-            public float Far;
-            public float Near;
-            public float Fov;
-            public float Width;
-        }
-
-        public struct AssimpLight
-        {
-            public string Name;
-            public LightSourceType Type;
-            public Vector3 Color;
-            public float AngleInner;
-            public float AngleOuter;
-            public float Strength;
-        }
-
-        public static unsafe string FindParent(Silk.NET.Assimp.Scene* scene, string name)
-        {
-            static (bool, string?) Find(Node* node, string name)
-            {
-                if (node->MName == name)
-                    return (true, node->MParent->MName);
-                for (int i = 0; i < node->MNumChildren; i++)
-                {
-                    var result = Find(node->MChildren[i], name);
-                    if (result.Item1)
-                        return result;
-                }
-                return (false, default);
-            }
-            return Find(scene->MRootNode, name).Item2 ?? string.Empty;
         }
     }
 }

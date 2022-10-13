@@ -4,8 +4,10 @@ namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
     using HexaEngine.Windows;
+    using Silk.NET.Assimp;
     using System;
     using System.Runtime.CompilerServices;
+    using System.Security.Cryptography;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -24,7 +26,7 @@ namespace HexaEngine.Scenes
         /// <summary>
         /// Occurs when [scene changed].
         /// </summary>
-        public static event EventHandler SceneChanged;
+        public static event EventHandler<SceneChangedEventArgs> SceneChanged;
 
         /// <summary>
         /// Loads the specified scene and disposes the old Scene automatically.<br/>
@@ -45,14 +47,15 @@ namespace HexaEngine.Scenes
                 if (Current == null)
                 {
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(null, scene));
                     return;
                 }
                 lock (Current)
                 {
+                    var old = Current;
                     Current?.Uninitialize();
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(old, scene));
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -70,7 +73,7 @@ namespace HexaEngine.Scenes
                 {
                     Current?.Uninitialize();
                     Current.Initialize(window.Device, window);
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -103,7 +106,7 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     Current.Initialize(window.Device, window);
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -126,14 +129,15 @@ namespace HexaEngine.Scenes
                 if (Current == null)
                 {
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(null, scene));
                     return;
                 }
                 lock (Current)
                 {
+                    var old = Current;
                     Current?.Uninitialize();
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(old, scene));
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);

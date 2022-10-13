@@ -143,7 +143,7 @@ namespace HexaEngine.Editor.Widgets
             {
                 if (currentMesh > -1 && currentMesh < scene.Meshes.Count)
                 {
-                    element.AddMesh(scene.Meshes[currentMesh]);
+                    element.AddMesh(currentMesh);
                 }
             }
 
@@ -154,7 +154,7 @@ namespace HexaEngine.Editor.Widgets
             for (int i = 0; i < element.Meshes.Count; i++)
             {
                 var mesh = element.Meshes[i];
-                ImGui.Text(mesh.Name);
+                ImGui.Text(scene.Meshes[mesh].Name);
                 ImGui.SameLine();
                 if (ImGui.Button("Remove Mesh"))
                 {

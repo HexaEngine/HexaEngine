@@ -13,12 +13,23 @@
         private readonly ConcurrentDictionary<Mesh, ModelMesh> meshes = new();
         private readonly ConcurrentDictionary<Material, ModelMaterial> materials = new();
         private readonly ConcurrentDictionary<string, ModelTexture> textures = new();
+        private bool suppressCleanup;
         private readonly IGraphicsDevice device;
         private bool disposedValue;
 
         public ResourceManager(IGraphicsDevice device)
         {
             this.device = device;
+        }
+
+        public void KeepAlive()
+        {
+            suppressCleanup = true;
+        }
+
+        public void ClearKeepAlive()
+        {
+            suppressCleanup = false;
         }
 
         public bool GetMesh(Mesh mesh, [NotNullWhen(true)] out ModelMesh? model)
@@ -71,22 +82,7 @@
 
         public Task AsyncDestroyInstance(Mesh mesh, SceneNode node)
         {
-            return Task.Factory.StartNew(() =>
-            {
-                var instance = instances[node];
-                if (!meshes.TryGetValue(mesh, out var modelMesh))
-                {
-                    return;
-                }
-
-                modelMesh.DestroyInstance(device, instance);
-                instances.TryRemove(new KeyValuePair<SceneNode, ModelInstance>(node, instance));
-
-                if (modelMesh.InstanceCount == 0)
-                {
-                    UnloadMesh(mesh);
-                }
-            });
+            return Task.Factory.StartNew(() => DestroyInstance(mesh, node));
         }
 
         public ModelMesh LoadMesh(Mesh mesh)
@@ -181,6 +177,7 @@
 
         public void UnloadMesh(Mesh mesh)
         {
+            if (suppressCleanup) return;
             if (meshes.TryGetValue(mesh, out var model))
             {
                 meshes.Remove(mesh, out _);
@@ -265,6 +262,7 @@
 
         public void UnloadMaterial(ModelMaterial material)
         {
+            if (suppressCleanup) return;
             materials.Remove(material.Material, out _);
             material.Dispose();
             UnloadTexture(material.AlbedoTexture);
@@ -295,21 +293,7 @@
 
         public Task<ModelTexture?> AsyncLoadTexture(string? name)
         {
-            return Task.Run(() =>
-            {
-                string fullname = Paths.CurrentTexturePath + name;
-                if (string.IsNullOrEmpty(name)) return null;
-                if (textures.TryGetValue(fullname, out var texture))
-                {
-                    texture.InstanceCount++;
-                    return texture;
-                }
-                var tex = device.LoadTexture2D(fullname);
-                texture = new(fullname, device.CreateShaderResourceView(tex), 1);
-                tex.Dispose();
-                textures.TryAdd(fullname, texture);
-                return texture;
-            });
+            return Task.Factory.StartNew(() => LoadTexture(name));
         }
 
         public void UnloadTexture(ModelTexture? texture)

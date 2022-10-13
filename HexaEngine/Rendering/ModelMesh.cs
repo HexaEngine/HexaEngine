@@ -72,6 +72,7 @@
 
         public void EnsureCapacity(IGraphicsDevice device, int capacity)
         {
+            if (capacity == 0) return;
             if (instanceCapacity < capacity)
             {
                 var newCapacity = instanceCapacity;
