@@ -6,6 +6,7 @@
     using HexaEngine.Objects;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.InteropServices;
 
     public class SceneNode
     {
@@ -14,15 +15,40 @@
 #nullable enable
         private readonly List<SceneNode> children = new();
         private readonly List<IComponent> components = new();
-        private readonly List<Mesh> meshes = new();
+        private readonly List<int> meshes = new();
         private Scene? scene;
         private SceneNode? parent;
         private bool initialized;
 
         public Transform Transform = new();
-        public string Name = string.Empty;
+        private string name = string.Empty;
         private bool isSelected;
         private static SceneNode? selectedNode;
+        private GCHandle gcHandle;
+        public readonly IntPtr Pointer;
+
+        public SceneNode()
+        {
+            gcHandle = GCHandle.Alloc(this, GCHandleType.WeakTrackResurrection);
+            Pointer = GCHandle.ToIntPtr(gcHandle);
+        }
+
+        ~SceneNode()
+        {
+            gcHandle.Free();
+        }
+
+        public virtual string Name
+        {
+            get => name;
+            set
+            {
+                if (initialized)
+                    name = GetScene().GetAvailableName(this, value);
+                else
+                    name = value;
+            }
+        }
 
         public virtual SceneNode? Parent
         {
@@ -58,15 +84,31 @@
             }
         }
 
-        public Guid ID { get; } = Guid.NewGuid();
-
         public virtual IReadOnlyList<SceneNode> Children => children;
 
         public virtual IReadOnlyList<IComponent> Components => components;
 
-        public virtual IReadOnlyList<Mesh> Meshes => meshes;
+        public virtual IReadOnlyList<int> Meshes => meshes;
 
         public bool Initialized => initialized;
+
+        public void SaveState()
+        {
+            Transform.SaveState();
+            for (int i = 0; i < children.Count; i++)
+            {
+                children[i].SaveState();
+            }
+        }
+
+        public void RestoreState()
+        {
+            Transform.RestoreState();
+            for (int i = 0; i < children.Count; i++)
+            {
+                children[i].RestoreState();
+            }
+        }
 
         public void Merge(SceneNode node)
         {
@@ -203,14 +245,14 @@
             return parent?.GetScene() ?? throw new("Node tree invalid");
         }
 
-        public virtual void AddMesh(Mesh index)
+        public virtual void AddMesh(int index)
         {
             meshes.Add(index);
             if (Initialized)
                 GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, this, ChildCommandType.Added, index));
         }
 
-        public virtual void RemoveMesh(Mesh index)
+        public virtual void RemoveMesh(int index)
         {
             meshes.Remove(index);
             if (Initialized)

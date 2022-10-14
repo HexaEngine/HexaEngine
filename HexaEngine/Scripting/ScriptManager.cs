@@ -4,26 +4,16 @@
 
     public static class ScriptManager
     {
-        public static readonly Lua Lua = new();
-
-        public static LuaFunction Load(string path)
-        {
-            return Lua.LoadFile(path);
-        }
     }
 
     public class LuaScript
     {
-        private readonly LuaFunction function;
+        private readonly Lua context = new();
+        private LuaFunction? UpdateFunc;
+        private LuaFunction? FixedUpdateFunc;
+        private LuaFunction? AwakeFunc;
+        private LuaFunction? DestroyFunc;
 
-        public LuaScript(LuaFunction function)
-        {
-            this.function = function;
-        }
-
-        public void Execute()
-        {
-            function.Call();
-        }
+        public Lua Context => context;
     }
 }

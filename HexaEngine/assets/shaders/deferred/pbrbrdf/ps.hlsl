@@ -293,17 +293,6 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	return float4(color, attrs.opacity);
 }
 
-float3 ACESFilm(float3 x)
-{
-	return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
-}
-
-float3 OECF_sRGBFast(float3 color)
-{
-	float gamma = 2.2;
-	return pow(color.rgb, float3(1.0 / gamma, 1.0 / gamma, 1.0 / gamma));
-}
-
 float4 main(VSOut pixel) : SV_TARGET
 {
 	GeometryAttributes attrs;
@@ -319,8 +308,5 @@ float4 main(VSOut pixel) : SV_TARGET
 	misc2Texture,
 	SampleTypePoint,
 	attrs);
-	float4 color = ComputeLightingPBR(pixel, attrs);
-	color.rgb = OECF_sRGBFast(color.rgb);
-	color.rgb = ACESFilm(color.rgb);
-	return color;
+	return ComputeLightingPBR(pixel, attrs);
 }

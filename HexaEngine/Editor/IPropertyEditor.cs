@@ -7,6 +7,7 @@
     {
         PropertyInfo[] Properties { get; }
         Type Type { get; }
+        string Name { get; }
 
         void Draw();
     }

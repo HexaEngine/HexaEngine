@@ -162,6 +162,39 @@
             return CreateBuffer(values, description);
         }
 
+        public IBuffer CreateBuffer<T>(Span<T> values, BufferDescription description) where T : struct
+        {
+            int size = Marshal.SizeOf<T>();
+            if (description.ByteWidth == 0)
+            {
+                description.ByteWidth = size * values.Length;
+            }
+            SubresourceData data;
+
+            var basePtr = Marshal.AllocHGlobal(description.ByteWidth);
+            data = new(basePtr, description.ByteWidth);
+            long ptr = basePtr.ToInt64();
+            for (int i = 0; i < values.Length; i++)
+            {
+                Marshal.StructureToPtr(values[i], (IntPtr)ptr, true);
+                ptr += size;
+            }
+
+            ID3D11Buffer* buffer;
+            BufferDesc desc = Helper.Convert(description);
+            Device->CreateBuffer(&desc, Utils.AsPointer(Helper.Convert(new SubresourceData[] { data })), &buffer).ThrowHResult();
+
+            Marshal.FreeHGlobal(basePtr);
+
+            return new D3D11Buffer(buffer, description);
+        }
+
+        public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        {
+            BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
+            return CreateBuffer(values, description);
+        }
+
         public IBlendState CreateBlendState(BlendDescription description)
         {
             ID3D11BlendState* blend;

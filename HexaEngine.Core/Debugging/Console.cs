@@ -2,6 +2,8 @@
 {
     using HexaEngine.Core.Debugging.Collections;
     using ImGuiNET;
+    using KeraLua;
+    using Kitty.Core.Scripting;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -10,23 +12,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-
-    public struct ConsoleMessage
-    {
-        public ConsoleMessageType Type;
-        public string Text;
-        public DateTime Timestamp;
-    }
-
-    public enum ConsoleMessageType
-    {
-        Command,
-        Log,
-        Warning,
-        Error,
-        Info,
-        Timestamp
-    }
+    using System.Threading.Tasks;
 
     public class ConsoleColorPalette
     {
@@ -34,24 +20,25 @@
 
         public ConsoleColorPalette()
         {
-            values = new Vector4[Enum.GetValues<ConsoleMessageType>().Length];
-            this[ConsoleMessageType.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
-            this[ConsoleMessageType.Log] = new(1.0f, 1.0f, 1.0f, 0.5f);
-            this[ConsoleMessageType.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
-            this[ConsoleMessageType.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
-            this[ConsoleMessageType.Info] = new(0.46f, 0.96f, 0.46f, 1.0f);
-            this[ConsoleMessageType.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
+            values = new Vector4[Enum.GetValues<LogSeverity>().Length];
+            this[LogSeverity.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
+            this[LogSeverity.Log] = new(1.0f, 1.0f, 1.0f, 0.5f);
+            this[LogSeverity.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
+            this[LogSeverity.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
+            this[LogSeverity.Info] = new(0.46f, 0.96f, 0.46f, 1.0f);
+            this[LogSeverity.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
         }
 
-        public ref Vector4 this[ConsoleMessageType index]
+        public ref Vector4 this[LogSeverity index]
         {
             get { return ref values[(int)index]; }
         }
     }
 
-    public static unsafe class ImGuiConsole
+    public static class ImGuiConsole
     {
-        private static readonly List<ConsoleMessage> messages = new();
+        private static readonly Dictionary<IScript, Task> tasks = new();
+        private static readonly List<LogMessage> messages = new();
         private static readonly List<string> history = new();
         private static readonly ConsoleTraceListener traceListener;
         private static readonly Dictionary<string, Action<string[]>> commands = new();
@@ -73,6 +60,8 @@
         private static readonly ConsoleColorPalette consoleColorPalette = new();
         private static readonly string m_ConsoleName = "Console";
         private static bool m_consoleOpen;
+        private static readonly SemaphoreSlim semaphore = new(1);
+        private const int max_messages = 4096;
 
         static ImGuiConsole()
         {
@@ -94,32 +83,33 @@
                     return;
                 if (messages.Count > 0)
                 {
-                    if (messages[^1].Text.EndsWith(Environment.NewLine))
+                    if (messages[^1].Message.EndsWith(Environment.NewLine))
                     {
-                        messages.Add(new() { Type = ConsoleMessageType.Log, Text = message, Timestamp = DateTime.Now });
+                        messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now });
                         m_ScrollToBottom = true;
                     }
                     else
                     {
                         var msg = messages[^1];
-                        msg.Text += message;
+                        msg.Message += message;
                         messages[^1] = msg;
                     }
                 }
                 else
-                    messages.Add(new() { Type = ConsoleMessageType.Log, Text = message, Timestamp = DateTime.Now });
+                    messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now });
             }
 
             public override void WriteLine(string? message)
             {
                 if (message == null)
                     return;
-                messages.Add(new() { Type = ConsoleMessageType.Log, Text = message, Timestamp = DateTime.Now });
+                messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now });
                 m_ScrollToBottom = true;
             }
         }
 
         public static bool IsDisplayed { get => m_consoleOpen; set => m_consoleOpen = value; }
+        public static bool Redirect { get; set; }
 
         public static void DefaultSettings()
         {
@@ -132,12 +122,12 @@
 
             // Style
             m_WindowAlpha = 1;
-            consoleColorPalette[ConsoleMessageType.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
-            consoleColorPalette[ConsoleMessageType.Log] = new(1.0f, 1.0f, 1.0f, 0.5f);
-            consoleColorPalette[ConsoleMessageType.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
-            consoleColorPalette[ConsoleMessageType.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
-            consoleColorPalette[ConsoleMessageType.Info] = new(0.46f, 0.96f, 0.46f, 1.0f);
-            consoleColorPalette[ConsoleMessageType.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
+            consoleColorPalette[LogSeverity.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
+            consoleColorPalette[LogSeverity.Log] = new(1.0f, 1.0f, 1.0f, 0.5f);
+            consoleColorPalette[LogSeverity.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
+            consoleColorPalette[LogSeverity.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
+            consoleColorPalette[LogSeverity.Info] = new(0.46f, 0.96f, 0.46f, 1.0f);
+            consoleColorPalette[LogSeverity.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
         }
 
         public static void RegisterCommand(string command, Action<string[]> callback)
@@ -146,30 +136,77 @@
             cmdAutocomplete.Add(command, callback);
         }
 
-        public static void Log(ConsoleMessageType type, string msg)
+        public static void Log(LogSeverity type, string msg)
         {
-            messages.Add(new ConsoleMessage() { Type = type, Text = msg, Timestamp = DateTime.Now });
+            if (Redirect) Debug.WriteLine(msg);
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
         }
 
         public static void Log(Exception e)
         {
-            messages.Add(new ConsoleMessage() { Type = ConsoleMessageType.Error, Text = e.ToString(), Timestamp = DateTime.Now });
+            if (Redirect) Debug.WriteLine(e);
+            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e.ToString(), Timestamp = DateTime.Now });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+        }
+
+        public static async Task LogAsync(LogSeverity type, string msg)
+        {
+            await semaphore.WaitAsync();
+            if (Redirect) Debug.WriteLine(msg);
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            semaphore.Release();
         }
 
         public static void Log(string msg)
         {
-            ConsoleMessageType type = ConsoleMessageType.Log;
+            if (Redirect) Debug.WriteLine(msg);
+            LogSeverity type = LogSeverity.Log;
             if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
-                type = ConsoleMessageType.Error;
+                type = LogSeverity.Error;
             if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
-                type = ConsoleMessageType.Warning;
+                type = LogSeverity.Warning;
             if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
-                type = ConsoleMessageType.Warning;
-            messages.Add(new ConsoleMessage() { Type = type, Text = msg, Timestamp = DateTime.Now });
+                type = LogSeverity.Warning;
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+        }
+
+        public static async Task LogAsync(string msg)
+        {
+            if (Redirect) Debug.WriteLine(msg);
+            await semaphore.WaitAsync();
+            LogSeverity type = LogSeverity.Log;
+            if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+                type = LogSeverity.Error;
+            if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+                type = LogSeverity.Warning;
+            if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+                type = LogSeverity.Warning;
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            semaphore.Release();
         }
 
         public static void Draw()
         {
+            //semaphore.Wait();
             ///////////////////////////////////////////////////////////////////////////
             // Window and Settings ////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////
@@ -182,7 +219,6 @@
                 ImGui.End();
                 return;
             }
-
             ImGui.PopStyleVar();
 
             ///////////////
@@ -211,6 +247,7 @@
             InputBar();
 
             ImGui.End();
+            //semaphore.Release();
         }
 
         private static void FilterBar()
@@ -236,14 +273,14 @@
                     var item = messages[i];
 
                     // Exit if word is filtered.
-                    if (m_TextFilter.Length != 0 && !m_TextFilter.Contains(item.Text))
+                    if (m_TextFilter.Length != 0 && !m_TextFilter.Contains(item.Message))
                         continue;
 
                     if (m_TimeStamps)
                         ImGui.PushTextWrapPos(ImGui.GetColumnWidth() - timestamp_width);
 
                     // Spacing between commands.
-                    if (item.Type == ConsoleMessageType.Command)
+                    if (item.Severity == LogSeverity.Command)
                     {
                         // Wrap before timestamps start.
                         if (count++ != 0) ImGui.Dummy(new(-1, ImGui.GetFontSize()));                            // No space for the first command.
@@ -252,13 +289,13 @@
                     // Items.
                     if (m_ColoredOutput)
                     {
-                        ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[item.Type]);
-                        ImGui.TextUnformatted(item.Text);
+                        ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[item.Severity]);
+                        ImGui.TextUnformatted(item.Message);
                         ImGui.PopStyleColor();
                     }
                     else
                     {
-                        ImGui.TextUnformatted(item.Text);
+                        ImGui.TextUnformatted(item.Message);
                     }
 
                     // Time stamp.
@@ -271,7 +308,7 @@
                         ImGui.SameLine(ImGui.GetColumnWidth(-1) - timestamp_width);
 
                         // Draw time stamp.
-                        ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[ConsoleMessageType.Timestamp]);
+                        ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[LogSeverity.Timestamp]);
                         ImGui.Text(item.Timestamp.ToShortTimeString());
                         ImGui.PopStyleColor();
                     }
@@ -291,7 +328,7 @@
             ImGui.EndChild();
         }
 
-        private static void InputBar()
+        private static unsafe void InputBar()
         {
             // Variables.
             ImGuiInputTextFlags inputTextFlags =
@@ -316,7 +353,7 @@
                     }
                     else
                     {
-                        Log(ConsoleMessageType.Error, "command not found");
+                        Log(LogSeverity.Error, "command not found");
                     }
 
                     // Scroll to bottom after its ran.
@@ -419,12 +456,12 @@
 
                     ImGui.TextUnformatted("Color Palette");
                     ImGui.Indent();
-                    ImGui.ColorEdit4("Command##", ref consoleColorPalette[ConsoleMessageType.Command], flags);
-                    ImGui.ColorEdit4("Log##", ref consoleColorPalette[ConsoleMessageType.Log], flags);
-                    ImGui.ColorEdit4("Warning##", ref consoleColorPalette[ConsoleMessageType.Warning], flags);
-                    ImGui.ColorEdit4("Error##", ref consoleColorPalette[ConsoleMessageType.Error], flags);
-                    ImGui.ColorEdit4("Info##", ref consoleColorPalette[ConsoleMessageType.Info], flags);
-                    ImGui.ColorEdit4("Time Stamp##", ref consoleColorPalette[ConsoleMessageType.Timestamp], flags);
+                    ImGui.ColorEdit4("Command##", ref consoleColorPalette[LogSeverity.Command], flags);
+                    ImGui.ColorEdit4("Log##", ref consoleColorPalette[LogSeverity.Log], flags);
+                    ImGui.ColorEdit4("Warning##", ref consoleColorPalette[LogSeverity.Warning], flags);
+                    ImGui.ColorEdit4("Error##", ref consoleColorPalette[LogSeverity.Error], flags);
+                    ImGui.ColorEdit4("Info##", ref consoleColorPalette[LogSeverity.Info], flags);
+                    ImGui.ColorEdit4("Time Stamp##", ref consoleColorPalette[LogSeverity.Timestamp], flags);
                     ImGui.Unindent();
 
                     ImGui.Separator();
@@ -438,30 +475,38 @@
 
                 // TODO: Reimplement console scripts.
                 // All scripts.
-                /*
+
                 if (ImGui.BeginMenu("Scripts"))
                 {
                     // Show registered scripts.
-                    for (const auto &scr_pair : m_ConsoleSystem.Scripts())
-            {
-                        if (ImGui.MenuItem(scr_pair.first.c_str()))
+                    foreach (var script in ScriptManager.Scripts)
+                    {
+                        if (!tasks.ContainsKey(script))
                         {
-                            m_ConsoleSystem.RunScript(scr_pair.first);
-                            m_ScrollToBottom = true;
+                            if (ImGui.MenuItem(script.Name))
+                            {
+                                tasks.Add(script, script.RunAsync().ContinueWith(x => tasks.Remove(script)));
+                            }
+                        }
+                        else
+                        {
+                            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.98f, 0.26f, 0.95f, 0.40f));
+                            if (ImGui.MenuItem($"> {script.Name}"))
+                            {
+                                //tasks[script].St
+                            }
+                            ImGui.PopStyleColor();
                         }
                     }
 
                     // Reload scripts.
                     ImGui.Separator();
-                    if (ImGui.Button("Reload Scripts", ImVec2(ImGui.GetColumnWidth(), 0)))
+                    if (ImGui.Button("Reload Scripts", new(ImGui.GetColumnWidth(), 0)))
                     {
-                        for (const auto &scr_pair : m_ConsoleSystem.Scripts())
-                {
-                            scr_pair.second->Reload();
-                        }
+                        ScriptManager.Reload();
                     }
                     ImGui.EndMenu();
-                }*/
+                }
 
                 ImGui.EndMenuBar();
             }
@@ -498,9 +543,9 @@
                             // Display suggestions on console.
                             if (!(m_CmdSuggestions.Count == 0))
                             {
-                                Log(ConsoleMessageType.Command, "Suggestions: ");
+                                Log(LogSeverity.Command, "Suggestions: ");
                                 foreach (var suggestion in m_CmdSuggestions)
-                                    Log(ConsoleMessageType.Log, suggestion);
+                                    Log(LogSeverity.Log, suggestion);
 
                                 m_CmdSuggestions.Clear();
                             }

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Nodes;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using System.Numerics;
@@ -11,6 +12,8 @@
         public bool AutoClear;
         public bool AutoClearDepth;
         public bool AutoSetTarget = true;
+        public PinType TargetType;
+        public readonly List<(int, string, PinType)> ResourceSlots = new();
 
         public Effect(IGraphicsDevice device, PipelineDesc desc) : base(device, desc)
         {
@@ -51,10 +54,5 @@
         }
 
         public abstract void DrawSettings();
-
-        void IEffect.Reload()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

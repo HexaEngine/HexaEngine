@@ -55,9 +55,9 @@
 
         public static void Clear()
         {
-            ImGuiConsole.Log(ConsoleMessageType.Info, "Clearing shader cache ...");
+            ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ...");
             entries.Clear();
-            ImGuiConsole.Log(ConsoleMessageType.Info, "Clearing shader cache ... done");
+            ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ... done");
         }
 
         private static void Load()

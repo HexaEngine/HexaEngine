@@ -26,6 +26,7 @@
         public static void Initialize()
         {
             lastTicks = Stopwatch.GetTimestamp();
+            fixedTime = 0;
             cumulativeFrameTime = 0;
         }
 
@@ -39,6 +40,10 @@
             Delta = deltaTime;
             cumulativeFrameTime += Delta;
             fixedTime += Delta;
+            if (deltaTime == 0 || deltaTime < 0)
+            {
+                throw new InvalidOperationException();
+            }
             //Trace.WriteLine(Delta);
             while (fixedTime > FixedUpdatePerSecond)
             {

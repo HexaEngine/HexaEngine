@@ -9,10 +9,11 @@
     public static class MainMenuBar
     {
         private static float height;
-        private static bool isShown;
+        private static bool isShown = true;
         private static FilePicker filePicker = new();
         private static bool filePickerIsOpen = false;
         private static Action<FilePickerResult, string>? filePickerCallback;
+        private static AssimpSceneLoader loader = new();
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -40,7 +41,7 @@
                         {
                             if (r == FilePickerResult.Ok)
                             {
-                                AssimpSceneLoader.ImportAsync(filePicker.SelectedFile);
+                                loader.ImportAsync(filePicker.SelectedFile);
                             }
                             filePickerIsOpen = false;
                         };
@@ -64,18 +65,8 @@
                 }
                 if (ImGui.BeginMenu("View"))
                 {
-                    if (ImGui.MenuItem("Layout"))
-                    {
-                        SceneLayout.IsShown = !SceneLayout.IsShown;
-                    }
-                    if (ImGui.MenuItem("Materials"))
-                    {
-                        SceneMaterials.IsShown = !SceneMaterials.IsShown;
-                    }
-                    if (ImGui.MenuItem("Properties"))
-                    {
-                        SceneElementProperties.IsShown = !SceneElementProperties.IsShown;
-                    }
+                    WidgetManager.DrawMenu();
+
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Fullframe"))
@@ -98,6 +89,14 @@
                     var drawLights = Inspector.DrawLights;
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
                         Inspector.DrawLights = drawLights;
+
+                    var drawSkeletons = Inspector.DrawSkeletons;
+                    if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
+                        Inspector.DrawSkeletons = drawSkeletons;
+
+                    var drawColliders = Inspector.DrawColliders;
+                    if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
+                        Inspector.DrawColliders = drawColliders;
 
                     ImGui.EndMenu();
                 }

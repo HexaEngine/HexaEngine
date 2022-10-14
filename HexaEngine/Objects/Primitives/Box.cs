@@ -21,8 +21,7 @@
                 new Vector3(-1.0f, -1.0f, 1.0f),
                 new Vector3(-1.0f, 1.0f, 1.0f),
                 new Vector3(1.0f, -1.0f, 1.0f),
-                new Vector3(1.0f, 1.0f, 1.0f),
-                new Vector3(1.0f, -1.0f, 1.0f)
+                new Vector3(1.0f, 1.0f, 1.0f)
             });
 
             IndexBuffer indexBuffer = new(device, new int[]

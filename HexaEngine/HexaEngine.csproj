@@ -10,6 +10,7 @@
     <AnalysisLevel>latest-all</AnalysisLevel>
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
+	  <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,9 +18,6 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BepuPhysics" Version="2.5.0-beta.8" />
-		<PackageReference Include="BepuUtilities" Version="2.5.0-beta.8" />
-		<PackageReference Include="NLua" Version="1.6.0" />
 		<PackageReference Include="Silk.NET.Assimp" Version="2.16.0" />
 	</ItemGroup>
 
@@ -31,6 +29,18 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\deferred\flat\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\mix\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\mix\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\tonemap\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\tonemap\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\forward\psm\defs.hlsl">
@@ -78,16 +88,16 @@
 	  <None Update="assets\shaders\deferred\solid\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\effects\downsample\ps.hlsl">
+	  <None Update="assets\shaders\effects\bloom\downsample\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\effects\downsample\vs.hlsl">
+	  <None Update="assets\shaders\effects\bloom\downsample\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\effects\upsample\ps.hlsl">
+	  <None Update="assets\shaders\effects\bloom\upsample\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shaders\effects\upsample\vs.hlsl">
+	  <None Update="assets\shaders\effects\bloom\upsample\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\forward\csm\defs.hlsl">
@@ -266,11 +276,13 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	  <ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
+	  <ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
 	</ItemGroup>
 
 
 
 	<ItemGroup>
+	  <Folder Include="assets\shaders\deferred\toon\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
 	  <Folder Include="Windows\Events\" />

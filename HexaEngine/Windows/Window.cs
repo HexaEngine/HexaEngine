@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Windows
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
@@ -24,9 +25,16 @@
 
     public class Window : SdlWindow
     {
+        private Dispatcher renderDispatcher;
         private Thread? renderThread;
         private bool isRunning = true;
         private bool firstFrame;
+        private IGraphicsDevice device;
+        private IGraphicsContext context;
+        private ISwapChain swapChain;
+        private Framebuffer framebuffer;
+        private DeferredRenderer deferredRenderer;
+        private Task? rendererUpdateTask;
 
         private bool resize = false;
         private ImGuiRenderer? renderer;
@@ -35,9 +43,15 @@
 
         public bool VSync;
 
-        public bool LimitFPS;
+        public bool LimitFPS = false;
 
         public int TargetFPS = 120;
+
+        public Dispatcher RenderDispatcher => renderDispatcher;
+
+        public IGraphicsDevice Device => device;
+
+        public IGraphicsContext Context => context;
 
         protected override void OnShown(ShownEventArgs args)
         {
@@ -50,9 +64,7 @@
         [STAThread]
         private void RenderVoid()
         {
-            IGraphicsDevice device;
-            IGraphicsContext context;
-            ISwapChain swapChain;
+            renderDispatcher = Dispatcher.CurrentDispatcher;
             if (OperatingSystem.IsWindows())
             {
                 device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
@@ -64,10 +76,12 @@
                 throw new PlatformNotSupportedException();
             }
 
+            framebuffer = new(device);
+
             if (Flags.HasFlag(RendererFlags.ImGui))
             {
                 renderer = new(this, device);
-                renderer.NoInternal = Flags.HasFlag(RendererFlags.SceneGraph);
+                DebugDraw.Init(device);
             }
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
@@ -79,6 +93,9 @@
             Time.Initialize();
 
             OnRendererInitialize(device);
+
+            deferredRenderer = new();
+            deferredRenderer.Initialize(device, this);
 
             while (isRunning)
             {
@@ -97,37 +114,49 @@
                 context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
                 context.ClearRenderTargetView(swapChain.BackbufferRTV, Vector4.Zero);
 
-                Time.FrameUpdate();
                 Dispatcher.ExecuteQueue();
 
                 if (renderer is not null)
                     renderer.BeginDraw();
 
-                if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
+                if (Flags.HasFlag(RendererFlags.ImGuiWidgets) && Designer.IsShown)
+                {
+                    Designer.Draw();
                     WidgetManager.Draw(context);
+                    ImGuiConsole.Draw();
+                    framebuffer.SourceViewport = Viewport;
+                    framebuffer.Update(context);
+                    framebuffer.Draw();
+                    deferredRenderer.DrawSettings();
+                }
 
                 if (Flags.HasFlag(RendererFlags.SceneGraph) && SceneManager.Current is not null)
                     lock (SceneManager.Current)
                     {
+                        SceneManager.Current.Tick();
+                        if (rendererUpdateTask?.IsCompleted ?? true)
+                            rendererUpdateTask = deferredRenderer.Update(SceneManager.Current);
                         if (firstFrame)
                         {
+                            rendererUpdateTask.Wait();
                             Time.Initialize();
                             firstFrame = false;
                         }
-                        if (Designer.InDesignMode)
-                            SceneManager.Current?.Render(context, this, swapChain.Viewport);
+                        if (Designer.IsShown)
+                            deferredRenderer.Render(context, this, framebuffer.Viewport, SceneManager.Current, CameraManager.Current);
                         else
-                            SceneManager.Current?.Render(context, this, Viewport);
+                            deferredRenderer.Render(context, this, Viewport, SceneManager.Current, CameraManager.Current);
                     }
 
                 OnRender(context);
 
                 if (renderer is not null)
                     renderer.EndDraw();
-
+                DebugDraw.Render(CameraManager.Current, Viewport);
                 swapChain.Present(VSync ? 1u : 0u);
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
+                Time.FrameUpdate();
             }
 
             OnRendererDispose();
@@ -137,6 +166,14 @@
 
             if (renderer is not null)
                 renderer.Dispose();
+
+            if (renderer is not null)
+                DebugDraw.Dispose();
+
+            if (Flags.HasFlag(RendererFlags.SceneGraph))
+                SceneManager.Unload();
+
+            deferredRenderer.Dispose();
 
             context.Dispose();
             device.Dispose();

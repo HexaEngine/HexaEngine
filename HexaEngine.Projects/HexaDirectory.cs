@@ -2,6 +2,7 @@
 {
     using System.Collections.Specialized;
     using System.IO;
+    using System.Text.Json.Serialization;
     using System.Xml.Serialization;
 
     public class HexaDirectory : HexaParent
@@ -19,7 +20,7 @@
             Directory.CreateDirectory(GetAbsolutePath());
         }
 
-        [XmlIgnore]
+        [JsonIgnore]
         public override IntPtr Icon => IntPtr.Zero;
 
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;

@@ -21,7 +21,7 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
 
-    public class PreviewWidget : Widget
+    public class PreviewWidget : Widget, IDisposable
     {
 #nullable disable
         private bool isdrawing;
@@ -42,7 +42,7 @@
         private UVSphere sphere;
         private Quad quad;
 
-        private MTLShader prepass;
+        private PrepassShader prepass;
         private BRDFPipeline pbrlightShader;
         private BRDFEffect brdfFilter;
         private SkyboxPipeline skyboxShader;
@@ -207,13 +207,27 @@
             }
         }
 
+        public override void DrawMenu()
+        {
+            if (ImGui.MenuItem("PBR Preview"))
+            {
+                IsShown = true;
+            }
+        }
+
         public override void Draw(IGraphicsContext context)
         {
-            if (!ImGui.Begin("Preview"))
+            if (!IsShown) return;
+            ImGuiWindowFlags flags = ImGuiWindowFlags.None;
+            if (IsDocked)
+                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
+            if (!ImGui.Begin("Preview", ref IsShown, flags))
             {
                 ImGui.End();
                 return;
             }
+
+            IsDocked = ImGui.IsWindowDocked();
 
             if (ImGui.Button("Env"))
             {

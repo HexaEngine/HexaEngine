@@ -6,6 +6,7 @@
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
+    using HexaEngine.Windows;
     using ImGuiNET;
     using ImGuizmoNET;
     using Silk.NET.SDL;
@@ -42,29 +43,78 @@
 
         internal void Update(IGraphicsContext context)
         {
-            if (Fullframe)
-            {
-                ImGuizmo.SetRect(SourceViewport.X, SourceViewport.Y, SourceViewport.Width, SourceViewport.Height);
-            }
-            else
-            {
-                ImGuizmo.SetRect(position.X, position.Y, size.X, size.Y);
-            }
+            ImGuizmo.SetRect(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height);
         }
 
         internal void Draw()
         {
-            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.MenuBar);
-            if (ImGui.BeginMenuBar())
+            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar);
+            var scene = SceneManager.Current;
+            if (scene != null && ImGui.BeginMenuBar())
             {
-                var scene = SceneManager.Current;
-                if (scene is null)
+                // Play "\xE769"
+                // Pause "\xE768"
+                // Stop "xE71A"
                 {
-                    ImGui.EndMenuBar();
-                    return;
+                    bool modeSwitched = false;
+                    if (!Designer.InDesignMode && scene.IsSimulating)
+                        ImGui.BeginDisabled(true);
+
+                    if (ImGui.Button("\xE768"))
+                    {
+                        if (Designer.InDesignMode)
+                        {
+                            scene.IsSimulating = false;
+                            SceneManager.BeginReload();
+                            scene.SaveState();
+                            Designer.InDesignMode = false;
+                            scene.IsSimulating = true;
+                            SceneManager.EndReload();
+                        }
+                        else
+                        {
+                            scene.IsSimulating = true;
+                        }
+                        modeSwitched = true;
+                    }
+
+                    if (!Designer.InDesignMode && scene.IsSimulating && !modeSwitched)
+                        ImGui.EndDisabled();
                 }
-                if (ImGui.Button(scene.IsSimulating ? "\xE769" : "\xE768"))
-                    scene.IsSimulating = !scene.IsSimulating;
+
+                {
+                    bool modeSwitched = false;
+                    if (Designer.InDesignMode || !scene.IsSimulating)
+                        ImGui.BeginDisabled(true);
+
+                    if (ImGui.Button("\xE769"))
+                    {
+                        scene.IsSimulating = false;
+                        modeSwitched = true;
+                    }
+
+                    if ((Designer.InDesignMode || !scene.IsSimulating) && !modeSwitched)
+                        ImGui.EndDisabled();
+                }
+
+                {
+                    bool modeSwitched = false;
+                    if (Designer.InDesignMode)
+                        ImGui.BeginDisabled(true);
+
+                    if (ImGui.Button("\xE71A"))
+                    {
+                        scene.IsSimulating = false;
+                        SceneManager.BeginReload();
+                        scene.RestoreState();
+                        Designer.InDesignMode = true;
+                        SceneManager.EndReload();
+                        modeSwitched = true;
+                    }
+
+                    if (Designer.InDesignMode && !modeSwitched)
+                        ImGui.EndDisabled();
+                }
 
                 int cameraIndex = scene.ActiveCamera;
                 if (ImGui.Combo("Current Camera", ref cameraIndex, scene.Cameras.Select(x => x.Name).ToArray(), scene.Cameras.Count))
@@ -75,16 +125,22 @@
             }
             position = ImGui.GetWindowPos();
             size = ImGui.GetWindowSize();
-            if (Keyboard.IsDown(KeyCode.KT))
-                ImGui.SetWindowFocus();
-            float ratioX = size.X / SourceViewport.Width;
-            float ratioY = size.Y / SourceViewport.Height;
-            var s = Math.Min(ratioX, ratioY);
-            var w = SourceViewport.Width * s;
-            var h = SourceViewport.Height * s;
-            var x = (size.X - w) / 2;
-            var y = (size.Y - h) / 2;
-            Viewport = new(position.X + x, position.Y + y, w, h);
+
+            if (Fullframe)
+            {
+                Viewport = SourceViewport;
+            }
+            else
+            {
+                float ratioX = size.X / SourceViewport.Width;
+                float ratioY = size.Y / SourceViewport.Height;
+                var s = Math.Min(ratioX, ratioY);
+                var w = SourceViewport.Width * s;
+                var h = SourceViewport.Height * s;
+                var x = (size.X - w) / 2;
+                var y = (size.Y - h) / 2;
+                Viewport = new(position.X + x, position.Y + y, w, h);
+            }
 
             fpsProfiler.Draw();
             memProfiler.Draw();

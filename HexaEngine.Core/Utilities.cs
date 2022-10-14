@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using System;
+    using System.Runtime.InteropServices;
 
     public static unsafe class Utilities
     {
@@ -35,6 +36,11 @@
             {
                 return ptr;
             }
+        }
+
+        public static char* UTF16(string str)
+        {
+            return (char*)Marshal.StringToHGlobalUni(str);
         }
 
         public static T** AsPointer<T>(T*[] value) where T : unmanaged

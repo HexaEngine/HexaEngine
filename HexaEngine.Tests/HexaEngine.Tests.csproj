@@ -8,7 +8,26 @@
 		<IsPackable>false</IsPackable>
 		<EnablePreviewFeatures>True</EnablePreviewFeatures>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="assets\fonts\font0.ff" />
+	  <None Remove="assets\fonts\font1.ff" />
+	  <None Remove="assets\fonts\SEGMDL2.TTF" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="assets\fonts\font0.ff">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="assets\fonts\font1.ff">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="assets\fonts\SEGMDL2.TTF">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
@@ -165,6 +184,12 @@
 		<None Update="assets\shaders\effects\upsample\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shaders\forward\instanced\ds.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shaders\forward\instanced\hs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shaders\forward\instanced\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -206,6 +231,9 @@
 		</None>
 		<None Update="assets\shaders\world.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shaders\worldInstanced.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\textures\10381718147657362067.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

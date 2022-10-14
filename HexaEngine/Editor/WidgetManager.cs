@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Widgets;
     using IBLBaker.Widgets;
-    using System.Reflection;
 
     public static class WidgetManager
     {
@@ -11,9 +11,15 @@
 
         static WidgetManager()
         {
+            Register<AssetExplorer>();
+            Register<LayoutWidget>();
+            Register<PropertiesWidget>();
+            Register<MaterialsWidget>();
+            Register<MeshesWidget>();
             Register<PreviewWidget>();
             Register<PrefilterWidget>();
             Register<IrradianceWidget>();
+            Register<PipelineEditor>();
         }
 
         public static bool Register<T>() where T : Widget, new()
@@ -48,6 +54,14 @@
             for (int i = 0; i < widgets.Count; i++)
             {
                 widgets[i].Draw(context);
+            }
+        }
+
+        public static void DrawMenu()
+        {
+            for (int i = 0; i < widgets.Count; i++)
+            {
+                widgets[i].DrawMenu();
             }
         }
 

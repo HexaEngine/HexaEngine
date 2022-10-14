@@ -728,5 +728,15 @@
         {
             throw new NotImplementedException();
         }
+
+        public IBuffer CreateBuffer<T>(Span<T> values, BufferDescription description) where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        {
+            throw new NotImplementedException();
+        }
     }
 }

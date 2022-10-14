@@ -4,8 +4,10 @@ namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
     using HexaEngine.Windows;
+    using Silk.NET.Assimp;
     using System;
     using System.Runtime.CompilerServices;
+    using System.Security.Cryptography;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -24,7 +26,7 @@ namespace HexaEngine.Scenes
         /// <summary>
         /// Occurs when [scene changed].
         /// </summary>
-        public static event EventHandler SceneChanged;
+        public static event EventHandler<SceneChangedEventArgs> SceneChanged;
 
         /// <summary>
         /// Loads the specified scene and disposes the old Scene automatically.<br/>
@@ -37,7 +39,7 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Load(Scene scene)
         {
-            var window = Application.MainWindow as GameWindow;
+            var window = Application.MainWindow as Window;
 
             window.RenderDispatcher.InvokeBlocking(() =>
             {
@@ -45,14 +47,66 @@ namespace HexaEngine.Scenes
                 if (Current == null)
                 {
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(null, scene));
                     return;
                 }
                 lock (Current)
                 {
+                    var old = Current;
                     Current?.Uninitialize();
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(old, scene));
+                }
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Reload()
+        {
+            var window = Application.MainWindow as Window;
+
+            window.RenderDispatcher.InvokeBlocking(() =>
+            {
+                lock (Current)
+                {
+                    Current?.Uninitialize();
+                    Current.Initialize(window.Device, window);
+                    SceneChanged?.Invoke(null, new(Current, Current));
+                }
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void BeginReload()
+        {
+            var window = Application.MainWindow as Window;
+
+            window.RenderDispatcher.InvokeBlocking(() =>
+            {
+                lock (Current)
+                {
+                    Current?.Uninitialize();
+                }
+                GC.WaitForPendingFinalizers();
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void EndReload()
+        {
+            var window = Application.MainWindow as Window;
+
+            window.RenderDispatcher.InvokeBlocking(() =>
+            {
+                lock (Current)
+                {
+                    Current.Initialize(window.Device, window);
+                    SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -67,7 +121,7 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task AsyncLoad(Scene scene)
         {
-            var window = Application.MainWindow as GameWindow;
+            var window = Application.MainWindow as Window;
 
             await window.RenderDispatcher.InvokeAsync(() =>
             {
@@ -75,14 +129,15 @@ namespace HexaEngine.Scenes
                 if (Current == null)
                 {
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(null, scene));
                     return;
                 }
                 lock (Current)
                 {
+                    var old = Current;
                     Current?.Uninitialize();
                     Current = scene;
-                    SceneChanged?.Invoke(null, EventArgs.Empty);
+                    SceneChanged?.Invoke(null, new(old, scene));
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);

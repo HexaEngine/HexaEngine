@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using System;
     using System.Collections;
-    using System.Runtime.CompilerServices;
 
     public unsafe struct Vector<T> : IEnumerable<T> where T : IDeviceChild
     {

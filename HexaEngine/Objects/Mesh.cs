@@ -1,11 +1,18 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Editor.Attributes;
     using HexaEngine.Meshes;
+    using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class Skeleton
+    public class Animature
     {
+        public Animature(string name)
+        {
+            Name = name;
+        }
+
+        public string Name;
+        public SceneNode Node;
         public List<MeshBone> Bones = new();
         public Dictionary<string, MeshBone> BonesDictionary = new();
         public Dictionary<string, Relation> Relationships = new();
@@ -49,8 +56,15 @@
             }
         }
 
-        public Matrix4x4 GetGlobalTransform(string name)
+        public Matrix4x4 GetTransform(string? name)
         {
+            if (name == null) return Matrix4x4.Identity;
+            return BonesDictionary[RelationshipsDictionary[Relationships[name]]].Offset;
+        }
+
+        public Matrix4x4 GetGlobalTransform(string? name)
+        {
+            if (name == null) return Matrix4x4.Identity;
             Stack<Relation> relations = new();
             Relation? relation = Relationships[name];
             while (relation != null)
@@ -88,13 +102,13 @@
         public Relation? Parent;
     }
 
-    //[EditorNode<Mesh>("Mesh")]
     public unsafe class Mesh
     {
         public MeshVertex[]? Vertices;
         public int[]? Indices;
         public MeshBone[]? Bones;
-        public Skeleton? Skeleton;
+        public Animature? Animature;
+        public Material? Material;
         public int MaterialIndex = -1;
         private string materialName = string.Empty;
         private string name = string.Empty;
@@ -108,7 +122,6 @@
             }
         }
 
-        [EditorProperty("Material name")]
         public string MaterialName
         {
             get => materialName;

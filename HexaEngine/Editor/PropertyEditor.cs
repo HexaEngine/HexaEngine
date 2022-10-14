@@ -21,6 +21,8 @@ namespace HexaEngine.Editor
         private readonly bool isHidden;
         private readonly T instance;
 
+        public string Name => name;
+
         public Type Type { get; }
 
         public PropertyInfo[] Properties { get; }
@@ -91,7 +93,7 @@ namespace HexaEngine.Editor
                     values.Add(new(property, value =>
                     {
                         var enums = enumCache[propType];
-                        int index = Array.IndexOf(enums.Key, value);
+                        int index = Array.IndexOf(enums.Key, value.Item2);
                         if (ImGui.Combo(name, ref index, enums.Value, enums.Value.Length))
                         {
                             return (true, enums.Key.GetValue(index));
@@ -266,7 +268,6 @@ namespace HexaEngine.Editor
         public void Draw()
         {
             if (isHidden) return;
-            ImGui.Text(name);
             for (int i = 0; i < callbacks.Length; i++)
             {
                 var callback = callbacks[i];

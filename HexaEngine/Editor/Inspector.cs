@@ -2,12 +2,9 @@
 {
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
+    using HexaEngine.Objects;
+    using HexaEngine.Objects.Components;
     using HexaEngine.Scenes;
-    using ImGuiNET;
-    using ImGuizmoNET;
-    using imnodesNET;
-    using ImPlotNET;
-    using System;
     using System.Numerics;
 
     public static class Inspector
@@ -15,6 +12,8 @@
         private static bool drawGrid = true;
         private static bool drawLights = true;
         private static bool drawCameras = true;
+        private static bool drawSkeletons = true;
+        private static bool drawColliders = true;
         private static bool enabled = true;
 
         public static bool Enabled { get => enabled; set => enabled = value; }
@@ -25,12 +24,17 @@
 
         public static bool DrawCameras { get => drawCameras; set => drawCameras = value; }
 
+        public static bool DrawSkeletons { get => drawSkeletons; set => drawSkeletons = value; }
+
+        public static bool DrawColliders { get => drawColliders; set => drawColliders = value; }
+
         public static void Draw()
         {
             if (!enabled)
                 return;
 
             var scene = SceneManager.Current;
+            if (scene == null) return;
 
             if (drawGrid)
             {
@@ -45,22 +49,19 @@
                     if (light.Type == LightType.Directional)
                     {
                         DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }
                     if (light is Spotlight spotlight)
                     {
                         DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward * 10, false, Vector4.One);
+
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
                         DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
                     }
                     if (light.Type == LightType.Point)
                     {
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitX * 0.1f, Vector3.UnitY * 0.1f, Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition, Vector3.UnitY * 0.1f, Vector3.UnitZ * 0.1f, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }
                 }
             }
@@ -70,7 +71,61 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.Draw(new BoundingFrustum(cam.Transform.View * MathUtil.PerspectiveFovLH(cam.Transform.Fov, cam.Transform.AspectRatio, 0.1f, 10)), Vector4.Zero);
+                    DebugDraw.DrawFrustum(new BoundingFrustum(cam.Transform.View * cam.Transform.Projection), Vector4.Zero);
+                }
+            }
+
+            if (drawSkeletons)
+            {
+                for (int i = 0; i < scene.Meshes.Count; i++)
+                {
+                    var mesh = scene.Meshes[i];
+                    if (mesh.Bones == null || mesh.Bones.Length == 0)
+                        continue;
+                    for (int j = 0; j < mesh.Bones.Length; j++)
+                    {
+                        var skele = mesh.Animature;
+                        var bone = mesh.Bones[j];
+                        var noriginMtx = scene.Find(skele?.Relationships[bone.Name].ParentName)?.Transform.Local ?? Matrix4x4.Identity;
+                        var ndestMtx = scene.Find(bone.Name)?.Transform.Local ?? Matrix4x4.Identity;
+                        var originMtx = noriginMtx * skele?.GetTransform(skele?.Relationships[bone.Name].ParentName) ?? Matrix4x4.Identity;
+                        var destMtx = ndestMtx * skele?.GetTransform(bone.Name) ?? Matrix4x4.Identity;
+                        var origin = Vector3.Zero.ApplyMatrix(originMtx);
+                        var dest = Vector3.Zero.ApplyMatrix(destMtx);
+                        DebugDraw.DrawLine(origin, dest - origin, false, Vector4.One);
+                    }
+                }
+            }
+
+            if (drawColliders)
+            {
+                for (int i = 0; i < scene.Nodes.Count; i++)
+                {
+                    Transform transform = scene.Nodes[i].Transform;
+                    for (int j = 0; j < scene.Nodes[i].Components.Count; j++)
+                    {
+                        IComponent component = scene.Nodes[i].Components[j];
+                        if (component is BoxCollider box)
+                        {
+                            DebugDraw.DrawBox(transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                        }
+                        if (component is SphereCollider sphere)
+                        {
+                            DebugDraw.DrawSphere(transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                        }
+                        if (component is CapsuleCollider capsule)
+                        {
+                            DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
+                        }
+                        if (component is CylinderCollider cylinder)
+                        {
+                            DebugDraw.DrawCylinder(transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
+                        }
+                        if (component is TriangleCollider triangle)
+                        {
+                            DebugDraw.DrawTriangle(transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
+                        }
+                    }
                 }
             }
         }
