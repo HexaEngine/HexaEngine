@@ -1,6 +1,9 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Input;
+    using ImGuiNET;
+    using ImGuizmoNET;
+    using imnodesNET;
     using Silk.NET.SDL;
 
     public static class Designer

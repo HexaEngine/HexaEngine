@@ -4,8 +4,6 @@
 
     public interface IEffect : IDisposable
     {
-        void Reload();
-
         void Draw(IGraphicsContext context);
 
         void DrawSettings();

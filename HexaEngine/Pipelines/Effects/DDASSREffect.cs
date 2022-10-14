@@ -83,48 +83,49 @@
 
         public override void DrawSettings()
         {
-            ImGui.Separator();
-            ImGui.Text("DDA SSR Settings");
+            if (ImGui.CollapsingHeader("DDA SSR settings"))
             {
-                var value = TargetSize;
-                if (ImGui.InputFloat2("Target size", ref value))
                 {
-                    TargetSize = value;
+                    var value = TargetSize;
+                    if (ImGui.InputFloat2("Target size", ref value))
+                    {
+                        TargetSize = value;
+                    }
                 }
-            }
-            {
-                var value = MaxRayStep;
-                if (ImGui.SliderInt("Max ray steps", ref value, 1, 256))
                 {
-                    MaxRayStep = value;
+                    var value = MaxRayStep;
+                    if (ImGui.SliderInt("Max ray steps", ref value, 1, 256))
+                    {
+                        MaxRayStep = value;
+                    }
                 }
-            }
-            {
-                var value = Depthbias;
-                if (ImGui.InputFloat("Depthbias", ref value))
                 {
-                    Depthbias = value;
+                    var value = Depthbias;
+                    if (ImGui.InputFloat("Depthbias", ref value))
+                    {
+                        Depthbias = value;
+                    }
                 }
-            }
-            {
-                var value = RayStepScale;
-                if (ImGui.InputFloat("Ray step scale", ref value))
                 {
-                    RayStepScale = value;
+                    var value = RayStepScale;
+                    if (ImGui.InputFloat("Ray step scale", ref value))
+                    {
+                        RayStepScale = value;
+                    }
                 }
-            }
-            {
-                var value = MaxThickness;
-                if (ImGui.InputFloat("Max thickness", ref value))
                 {
-                    MaxThickness = value;
+                    var value = MaxThickness;
+                    if (ImGui.InputFloat("Max thickness", ref value))
+                    {
+                        MaxThickness = value;
+                    }
                 }
-            }
-            {
-                var value = MaxRayLength;
-                if (ImGui.InputFloat("Max ray length", ref value))
                 {
-                    MaxRayLength = value;
+                    var value = MaxRayLength;
+                    if (ImGui.InputFloat("Max ray length", ref value))
+                    {
+                        MaxRayLength = value;
+                    }
                 }
             }
         }

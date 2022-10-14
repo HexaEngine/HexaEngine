@@ -18,4 +18,11 @@
   <ItemGroup>
     <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
   </ItemGroup>
+	<ItemGroup>
+		<Content Include="..\deps\cimgui\win-x64\cimnodes.dll">
+			<PackagePath>runtimes/win-x64/native</PackagePath>
+			<Pack>true</Pack>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 </Project>

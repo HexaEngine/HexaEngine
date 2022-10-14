@@ -19,6 +19,7 @@
             Register<PreviewWidget>();
             Register<PrefilterWidget>();
             Register<IrradianceWidget>();
+            Register<PipelineEditor>();
         }
 
         public static bool Register<T>() where T : Widget, new()

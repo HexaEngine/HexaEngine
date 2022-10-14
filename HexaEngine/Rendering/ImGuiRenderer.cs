@@ -7,6 +7,7 @@ using HexaEngine.Editor;
 using HexaEngine.Mathematics;
 using ImGuiNET;
 using ImGuizmoNET;
+using imnodesNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImDrawIdx = System.UInt16;
@@ -21,6 +22,7 @@ namespace HexaEngine.Rendering
         private IGraphicsContext context;
         private ISwapChain swapChain;
         private ImGuiInputHandler inputHandler;
+        private nint test;
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
         private IVertexShader vertexShader;
@@ -41,6 +43,9 @@ namespace HexaEngine.Rendering
             IntPtr igContext = ImGui.CreateContext();
             ImGui.SetCurrentContext(igContext);
             ImGuizmo.SetImGuiContext(igContext);
+
+            imnodes.SetImGuiContext(igContext);
+            imnodes.Initialize();
 
             this.device = device;
             context = device.Context;

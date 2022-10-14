@@ -18,6 +18,7 @@
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
     using HexaEngine.Rendering.ConstantBuffers;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System;
@@ -74,12 +75,13 @@
         private ISamplerState ansioSampler;
         private ISamplerState linearSampler;
 
-        private HBAOEffect ssaoEffect;
-        private DDASSREffect ssrEffect;
+        private HBAO ssao;
+        private DDASSREffect ssr;
         private BlendBoxBlurEffect ssrBlurEffect;
         private BlendEffect blendEffect;
-        private TonemapEffect tonemapEffect;
-        private FXAAEffect fxaaEffect;
+        private Tonemap tonemap;
+        private FXAA fxaaEffect;
+        private Bloom bloom;
 
         private BRDFEffect brdfFilter;
 
@@ -96,6 +98,7 @@
         private int currentShadingModelIndex;
         private bool enableSSR;
         private bool enableAO;
+        private bool enableBloom;
 #nullable enable
 
         public DeferredRenderer()
@@ -191,9 +194,9 @@
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
 
             ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width / 2, window.Height / 2, 1, Format.R32Float));
-            ssaoEffect = new(device);
-            ssaoEffect.Target = ssaoBuffer.RenderTargetView;
-            ssaoEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
+            ssao = new(device);
+            ssao.Target = ssaoBuffer.RenderTargetView;
+            ssao.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
 
             fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
             fxaaEffect = new(device);
@@ -202,15 +205,20 @@
             fxaaEffect.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
             tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
-            tonemapEffect = new(device);
-            tonemapEffect.Target = fxaaBuffer.RenderTargetView;
-            tonemapEffect.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
-            tonemapEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
+            tonemap = new(device);
+            tonemap.Target = fxaaBuffer.RenderTargetView;
+            tonemap.Samplers.Add(new(linearSampler, ShaderStage.Pixel, 0));
+            tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+
+            bloom = new(device);
+            bloom.Source = tonemapBuffer.ResourceView;
+            bloom.Resize(device, window.Width, window.Height);
+            tonemap.Resources.Add(new(bloom.Output, ShaderStage.Pixel, 1));
 
             ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
-            ssrEffect = new(device);
-            ssrEffect.Target = ssrBuffer.RenderTargetView;
-            ssrEffect.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
+            ssr = new(device);
+            ssr.Target = ssrBuffer.RenderTargetView;
+            ssr.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
             ssrBlurEffect = new(device);
             ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;
@@ -263,7 +271,7 @@
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
 
             ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth / 2, e.NewHeight / 2, 1, Format.R32Float));
-            ssaoEffect.Target = ssaoBuffer.RenderTargetView;
+            ssao.Target = ssaoBuffer.RenderTargetView;
 
             fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
             fxaaEffect.Target = swapChain.BackbufferRTV;
@@ -271,33 +279,22 @@
             fxaaEffect.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
 
             tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
-            tonemapEffect.Target = fxaaBuffer.RenderTargetView;
-            tonemapEffect.Resources.Clear();
-            tonemapEffect.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+            tonemap.Target = fxaaBuffer.RenderTargetView;
+            tonemap.Resources.Clear();
+            tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+
+            bloom.Source = tonemapBuffer.ResourceView;
+            bloom.Resize(device, e.NewWidth, e.NewHeight);
+            tonemap.Resources.Add(new(bloom.Output, ShaderStage.Pixel, 1));
 
             ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
-            ssrEffect.Target = ssrBuffer.RenderTargetView;
+            ssr.Target = ssrBuffer.RenderTargetView;
 
             ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;
             ssrBlurEffect.Resources.Clear();
             ssrBlurEffect.Resources.Add(new(ssrBuffer.ResourceView, ShaderStage.Pixel, 0));
 
             blendEffect.Target = tonemapBuffer.RenderTargetView;
-
-            gbuffers.SRVs[0].DebugName = "Albedo";
-            gbuffers.SRVs[1].DebugName = "Position Depth";
-            gbuffers.SRVs[2].DebugName = "Normal Roughness";
-            gbuffers.SRVs[3].DebugName = "Clearcoat Metallness";
-            gbuffers.SRVs[4].DebugName = "Emission";
-            gbuffers.SRVs[5].DebugName = "Misc 0";
-            gbuffers.SRVs[6].DebugName = "Misc 1";
-            gbuffers.SRVs[7].DebugName = "Misc 2";
-#nullable disable
-            lightMap.ResourceView.DebugName = "Light Buffer";
-            ssaoBuffer.ResourceView.DebugName = "SSAO/HBAO Buffer";
-            ssrBuffer.ResourceView.DebugName = "SSR/DDASSR Buffer";
-            fxaaBuffer.ResourceView.DebugName = "FXAA Buffer";
-#nullable enable
         }
 
         public async Task Update(Scene scene)
@@ -457,7 +454,7 @@
             {
                 context.SetShaderResources(gbuffers.SRVs, ShaderStage.Pixel, 0);
                 context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
-                ssaoEffect.Draw(context);
+                ssao.Draw(context);
                 context.ClearState();
             }
 
@@ -487,7 +484,7 @@
                 context.SetShaderResource(lightMap.ResourceView, ShaderStage.Pixel, 0);
                 context.SetShaderResource(depthbuffer.ResourceView, ShaderStage.Pixel, 3);
                 context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
-                ssrEffect.Draw(context);
+                ssr.Draw(context);
                 context.ClearState();
 
                 context.SetShaderResource(ssrBuffer.ResourceView, ShaderStage.Pixel, 0);
@@ -510,8 +507,13 @@
                 item.Render(context, viewport, camera);
             }
             */
+            if (enableBloom)
+            {
+                bloom.Draw(context);
+                context.ClearState();
+            }
 
-            tonemapEffect.Draw(context);
+            tonemap.Draw(context);
             context.ClearState();
 
             fxaaEffect.Draw(context, viewport);
@@ -557,9 +559,12 @@
 
             ImGui.Checkbox("Enable SSAO", ref enableAO);
             ImGui.Checkbox("Enable SSR", ref enableSSR);
+            ImGui.Checkbox("Enable Bloom", ref enableBloom);
 
-            ssrEffect.DrawSettings();
-            ssaoEffect.DrawSettings();
+            ssr.DrawSettings();
+            ssao.DrawSettings();
+            bloom.DrawSettings();
+            tonemap.DrawSettings();
             ImGui.End();
         }
 
@@ -604,12 +609,13 @@
 
                 pointSampler.Dispose();
 
-                ssaoEffect.Dispose();
-                ssrEffect.Dispose();
+                ssao.Dispose();
+                ssr.Dispose();
                 ssrBlurEffect.Dispose();
                 blendEffect.Dispose();
                 fxaaEffect.Dispose();
-                tonemapEffect.Dispose();
+                tonemap.Dispose();
+                bloom.Dispose();
 
                 brdfFilter.Dispose();
 

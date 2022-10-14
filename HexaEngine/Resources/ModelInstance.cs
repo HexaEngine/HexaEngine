@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Rendering
+﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;

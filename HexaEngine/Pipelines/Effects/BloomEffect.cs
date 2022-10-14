@@ -2,20 +2,25 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using ImGuiNET;
+    using Silk.NET.Direct3D.Compilers;
     using System.Numerics;
 
-    public class BloomEffect : IEffect
+    public class Bloom : IEffect
     {
         private RenderTexture[] mipChain;
-        private IVertexShader? vs;
-        private IPixelShader? psDownsample;
-        private IPixelShader? psUpsample;
-        private IInputLayout? layout;
-        private IRasterizerState rasterizerState;
-        private IDepthStencilState depthStencilState;
-        private IBlendState blendState;
+        private BloomDownsample downsample;
+        private BloomUpsample upsample;
         private IBuffer downsampleCB;
         private IBuffer upsampleCB;
+        private ISamplerState sampler;
+        private float radius = 0.003f;
+        private bool dirty;
+
+        public IShaderResourceView Source;
+        private bool disposedValue;
+
+        public IShaderResourceView Output => mipChain[0].ResourceView;
 
         private struct ParamsDownsample
         {
@@ -41,57 +46,111 @@
             }
         }
 
-        public BloomEffect(IGraphicsDevice device)
+        public Bloom(IGraphicsDevice device)
         {
             mipChain = new RenderTexture[8];
-            device.CompileFromFile("", "", "", out var bvs);
-            if (bvs != null)
-                vs = device.CreateVertexShader(bvs);
-            if (bvs != null)
-                layout = device.CreateInputLayout(bvs);
-            device.CompileFromFile("", "", "", out var bps1);
-            if (bps1 != null)
-                psDownsample = device.CreatePixelShader(bps1);
-            device.CompileFromFile("", "", "", out var bps2);
-            if (bps2 != null)
-                psUpsample = device.CreatePixelShader(bps2);
-            rasterizerState = device.CreateRasterizerState(RasterizerDescription.CullBack);
-            depthStencilState = device.CreateDepthStencilState(DepthStencilDescription.None);
-            blendState = device.CreateBlendState(BlendDescription.Opaque);
+
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+
+            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+
+            downsample = new(device);
+            downsample.Samplers.Add(new(sampler, ShaderStage.Pixel, 0));
+            downsample.Constants.Add(new(downsampleCB, ShaderStage.Pixel, 0));
+
+            upsample = new(device);
+            upsample.Samplers.Add(new(sampler, ShaderStage.Pixel, 0));
+            upsample.Constants.Add(new(upsampleCB, ShaderStage.Pixel, 0));
         }
 
-        public void Reload()
-        {
-            throw new NotImplementedException();
-        }
+        public float Radius
+        { get => radius; set { radius = value; dirty = true; } }
 
-        public void Dispose()
+        public void Resize(IGraphicsDevice device, int width, int height)
         {
-            throw new NotImplementedException();
+            int currentWidth = width / 2;
+            int currentHeight = height / 2;
+            for (int i = 0; i < mipChain.Length; i++)
+            {
+                mipChain[i]?.Dispose();
+                mipChain[i] = new(device, TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1, Format.RGBA32Float));
+                currentWidth /= 2;
+                currentHeight /= 2;
+            }
+            device.Context.Write(downsampleCB, new ParamsDownsample(new(width, height), default));
         }
 
         public void Draw(IGraphicsContext context)
         {
-            context.VSSetShader(vs);
+            if (dirty)
+            {
+                context.Write(upsampleCB, new ParamsUpsample(radius, default));
+                dirty = false;
+            }
 
-            context.SetInputLayout(layout);
+            for (int i = 0; i < mipChain.Length; i++)
+            {
+                if (i > 0)
+                {
+                    context.SetShaderResource(mipChain[i - 1].ResourceView, ShaderStage.Pixel, 0);
+                }
+                else
+                {
+                    context.SetShaderResource(Source, ShaderStage.Pixel, 0);
+                }
 
-            context.SetBlendState(blendState);
-            context.SetRasterizerState(rasterizerState);
-            context.SetDepthStencilState(depthStencilState);
+                context.SetRenderTarget(mipChain[i].RenderTargetView, null);
+                downsample.Draw(context, mipChain[i].Viewport);
+                context.ClearState();
+            }
 
-            context.PSSetShader(psUpsample);
-            context.SetConstantBuffer(upsampleCB, ShaderStage.Pixel, 0);
-
-            context.PSSetShader(psDownsample);
-            context.SetConstantBuffer(downsampleCB, ShaderStage.Pixel, 0);
+            for (int i = mipChain.Length - 1; i > 0; i--)
+            {
+                context.SetRenderTarget(mipChain[i - 1].RenderTargetView, null);
+                context.SetShaderResource(mipChain[i].ResourceView, ShaderStage.Pixel, 0);
+                upsample.Draw(context, mipChain[i - 1].Viewport);
+            }
         }
 
         public void DrawSettings()
         {
-            throw new NotImplementedException();
+            if (ImGui.CollapsingHeader("Bloom settings"))
+            {
+                if (ImGui.InputFloat("Radius", ref radius))
+                {
+                    dirty = true;
+                }
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                for (int i = 0; i < mipChain.Length; i++)
+                {
+                    mipChain[i]?.Dispose();
+                }
+                downsample.Dispose();
+                upsample.Dispose();
+                downsampleCB.Dispose();
+                upsampleCB.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~Bloom()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,24 +1,20 @@
 ﻿namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Nodes;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects.Primitives;
-    using System.Collections.Generic;
 
-    public class FXAA : Effect
+    public class BloomDownsample : Effect
     {
-        public FXAA(IGraphicsDevice device) : base(device, new()
+        public BloomDownsample(IGraphicsDevice device) : base(device, new()
         {
-            VertexShader = "effects/fxaa/vs.hlsl",
-            PixelShader = "effects/fxaa/ps.hlsl"
+            VertexShader = "effects/bloom/downsample/vs.hlsl",
+            PixelShader = "effects/bloom/downsample/ps.hlsl",
         })
         {
-            AutoClear = true;
             Mesh = new Quad(device);
-            TargetType = PinType.Texture2D;
-            ResourceSlots.Add((0, "Image", PinType.Texture2D));
+            AutoSetTarget = false;
         }
 
         public override void Draw(IGraphicsContext context)
@@ -30,12 +26,13 @@
 
         public void Draw(IGraphicsContext context, Viewport viewport)
         {
+#nullable disable
             DrawAuto(context, viewport);
+#nullable enable
         }
 
         public override void DrawSettings()
         {
-            throw new NotImplementedException();
         }
     }
 }

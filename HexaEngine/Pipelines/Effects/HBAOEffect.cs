@@ -1,11 +1,14 @@
 ﻿namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Nodes;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using ImGuiNET;
+    using Silk.NET.Core.Native;
+    using System.Collections.Generic;
 
-    public class HBAOEffect : Effect
+    public class HBAO : Effect
     {
         private readonly IBuffer cb;
         private bool isDirty;
@@ -42,7 +45,7 @@
             }
         }
 
-        public unsafe HBAOEffect(IGraphicsDevice device) : base(device, new()
+        public unsafe HBAO(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "effects/hbao/vs.hlsl",
             PixelShader = "effects/hbao/ps.hlsl",
@@ -51,6 +54,10 @@
             Mesh = new Quad(device);
             cb = CreateConstantBuffer<HBAOCB>(ShaderStage.Pixel, 0);
             device.Context.Write(cb, new HBAOCB(samplingRadius, numSamplingDirections, samplingStep, numSamplingSteps));
+
+            TargetType = PinType.Texture2D;
+            ResourceSlots.Add((1, "Position", PinType.Texture2D));
+            ResourceSlots.Add((2, "Normal", PinType.Texture2D));
         }
 
         public override void Draw(IGraphicsContext context)
@@ -67,34 +74,35 @@
 
         public override void DrawSettings()
         {
-            ImGui.Separator();
-            ImGui.Text("HBAO Settings");
+            if (ImGui.CollapsingHeader("HBAO settings"))
             {
-                var value = SamplingRadius;
-                if (ImGui.InputFloat("SamplingRadius", ref value))
                 {
-                    SamplingRadius = value;
+                    var value = SamplingRadius;
+                    if (ImGui.InputFloat("SamplingRadius", ref value))
+                    {
+                        SamplingRadius = value;
+                    }
                 }
-            }
-            {
-                var value = (int)NumSamplingDirections;
-                if (ImGui.InputInt("NumSamplingDirections", ref value))
                 {
-                    NumSamplingDirections = (uint)value;
+                    var value = (int)NumSamplingDirections;
+                    if (ImGui.InputInt("NumSamplingDirections", ref value))
+                    {
+                        NumSamplingDirections = (uint)value;
+                    }
                 }
-            }
-            {
-                var value = SamplingStep;
-                if (ImGui.InputFloat("SamplingStep", ref value))
                 {
-                    SamplingStep = value;
+                    var value = SamplingStep;
+                    if (ImGui.InputFloat("SamplingStep", ref value))
+                    {
+                        SamplingStep = value;
+                    }
                 }
-            }
-            {
-                var value = (int)NumSamplingSteps;
-                if (ImGui.InputInt("NumSamplingSteps", ref value))
                 {
-                    NumSamplingSteps = (uint)value;
+                    var value = (int)NumSamplingSteps;
+                    if (ImGui.InputInt("NumSamplingSteps", ref value))
+                    {
+                        NumSamplingSteps = (uint)value;
+                    }
                 }
             }
         }
