@@ -45,6 +45,7 @@
                 D3DFeatureLevel.Level121,
                 D3DFeatureLevel.Level120,
                 D3DFeatureLevel.Level111,
+                D3DFeatureLevel.Level110
             };
 
             CreateDeviceFlag flags = CreateDeviceFlag.BgraSupport;
@@ -58,7 +59,7 @@
             D3DFeatureLevel level = 0;
             D3DFeatureLevel* levels = (D3DFeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
 
-            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 3, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
+            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 4, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
 
             ID3D11Device1* device;
             ID3D11DeviceContext1* context;

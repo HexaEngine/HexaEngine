@@ -109,6 +109,9 @@
         private bool enableSSR;
         private bool enableAO;
         private bool enableBloom;
+        private float renderResolutionFactor = 0.2f;
+        private int width;
+        private int height;
 
         private IBuffer gridVB;
         private IBuffer gridIB;
@@ -132,6 +135,8 @@
 
         public unsafe void Initialize(IGraphicsDevice device, SdlWindow window)
         {
+            width = (int)(window.Width * renderResolutionFactor);
+            height = (int)(window.Height * renderResolutionFactor);
             SceneManager.SceneChanged += SceneManager_SceneChanged;
             resourceManager = new ResourceManager(device);
             availableShadingModels = new ShadingModel[] { ShadingModel.Flat, ShadingModel.PbrBrdf };
@@ -219,24 +224,24 @@
             skyboxShader.Constants.Add(new(skyboxBuffer, ShaderStage.Vertex, 0));
             skyboxShader.Constants.Add(new(cameraBuffer, ShaderStage.Vertex, 1));
 
-            gbuffers = new RenderTextureArray(device, window.Width, window.Height, 8, Format.RGBA32Float);
+            gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA32Float);
 
-            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1, Format.R32Float), DepthStencilDesc.Default);
+            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float), DepthStencilDesc.Default);
 
-            lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
+            lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
-            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width / 2, window.Height / 2, 1, Format.R32Float));
+            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
             ssao = new(device);
             ssao.Target = ssaoBuffer.RenderTargetView;
             ssao.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
 
-            fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
+            fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             fxaa = new(device);
             fxaa.Target = swapChain.BackbufferRTV;
             fxaa.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
             fxaa.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
-            tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
+            tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             tonemap = new(device);
             tonemap.Target = fxaaBuffer.RenderTargetView;
             tonemap.Samplers.Add(new(linearSampler, ShaderStage.Pixel, 0));
@@ -244,10 +249,10 @@
 
             bloom = new(device);
             bloom.Source = tonemapBuffer.ResourceView;
-            bloom.Resize(device, window.Width, window.Height);
+            bloom.Resize(device, width, height);
             tonemap.Resources.Add(new(bloom.Output, ShaderStage.Pixel, 1));
 
-            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(window.Width, window.Height, 1));
+            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             ssr = new(device);
             ssr.Target = ssrBuffer.RenderTargetView;
             ssr.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
@@ -293,7 +298,7 @@
             graph.AddNode(new ImageCubeNode(graph, "Irradiance", false, true) { Image = envirr.ResourceView });
             graph.AddNode(new ImageCubeNode(graph, "Prefilter", false, true) { Image = envfilter.ResourceView });
 
-            passes.Initialize(device, window.Width, window.Height);
+            passes.Initialize(device, width, height);
 
             {
                 var res = Grid.GenerateGrid();
@@ -316,7 +321,7 @@
             }
 
             {
-                Terrain map = new(256, 256, 1);
+                DynamicTerrain map = new(256, 256, 1);
 
                 terrVB = device.CreateBuffer(map.Vertices, BindFlags.VertexBuffer, Usage.Immutable);
                 terrIB = device.CreateBuffer(map.Indices, BindFlags.IndexBuffer, Usage.Immutable);
@@ -366,30 +371,32 @@
 
         private void OnResizeEnd(object? sender, ResizedEventArgs e)
         {
+            width = (int)(e.NewWidth * renderResolutionFactor);
+            height = (int)(e.NewHeight * renderResolutionFactor);
             dirty = true;
-            gbuffers = new RenderTextureArray(device, e.NewWidth, e.NewHeight, 8, Format.RGBA32Float);
-            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1), DepthStencilDesc.Default);
+            gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA32Float);
+            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1), DepthStencilDesc.Default);
 
-            lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
+            lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
-            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth / 2, e.NewHeight / 2, 1, Format.R32Float));
+            ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
             ssao.Target = ssaoBuffer.RenderTargetView;
 
-            fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
+            fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             fxaa.Target = swapChain.BackbufferRTV;
             fxaa.Resources.Clear();
             fxaa.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
 
-            tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
+            tonemapBuffer = new(device, swapChain.BackbufferDSV, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             tonemap.Target = fxaaBuffer.RenderTargetView;
             tonemap.Resources.Clear();
             tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
 
             bloom.Source = tonemapBuffer.ResourceView;
-            bloom.Resize(device, e.NewWidth, e.NewHeight);
+            bloom.Resize(device, width, height);
             tonemap.Resources.Add(new(bloom.Output, ShaderStage.Pixel, 1));
 
-            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(e.NewWidth, e.NewHeight, 1));
+            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             ssr.Target = ssrBuffer.RenderTargetView;
 
             ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;

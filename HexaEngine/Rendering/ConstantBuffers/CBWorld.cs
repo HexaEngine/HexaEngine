@@ -33,7 +33,7 @@
         public CBTessellation()
         {
             MinFactor = 1.0f;
-            MaxFactor = 8.0f;
+            MaxFactor = 2.0f;
             MinDistance = 4.0f;
             MaxDistance = 50.0f;
         }

@@ -47,7 +47,7 @@
 
         public Bloom(IGraphicsDevice device)
         {
-            mipChain = new RenderTexture[8];
+            mipChain = new RenderTexture[2];
 
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
