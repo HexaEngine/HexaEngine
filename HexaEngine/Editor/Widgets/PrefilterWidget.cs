@@ -1,13 +1,11 @@
-﻿namespace IBLBaker.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Rendering;
-    using IBLBaker;
     using ImGuiNET;
     using System;
     using System.Diagnostics.CodeAnalysis;

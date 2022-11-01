@@ -10,6 +10,9 @@
         public Matrix4x4 Proj;
         public Matrix4x4 ViewInv;
         public Matrix4x4 ProjInv;
+        public float Far;
+        public float Near;
+        public Vector2 Padd;
 
         public CBCamera(Camera camera)
         {
@@ -17,6 +20,9 @@
             View = Matrix4x4.Transpose(camera.Transform.View);
             ProjInv = Matrix4x4.Transpose(camera.Transform.ProjectionInv);
             ViewInv = Matrix4x4.Transpose(camera.Transform.ViewInv);
+            Far = camera.Far;
+            Near = camera.Near;
+            Padd = default;
         }
 
         public CBCamera(CameraTransform camera)
@@ -25,6 +31,9 @@
             View = Matrix4x4.Transpose(camera.View);
             ProjInv = Matrix4x4.Transpose(camera.ProjectionInv);
             ViewInv = Matrix4x4.Transpose(camera.ViewInv);
+            Far = camera.Far;
+            Near = camera.Near;
+            Padd = default;
         }
     }
 }

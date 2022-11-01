@@ -7,5 +7,7 @@
         string? DebugName { get; set; }
 
         bool IsDisposed { get; }
+
+        event EventHandler? OnDisposed;
     }
 }

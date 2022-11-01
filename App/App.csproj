@@ -17,7 +17,6 @@
   <ItemGroup>
     <None Remove="assets\fonts\font0.ff" />
     <None Remove="assets\fonts\font1.ff" />
-    <None Remove="assets\fonts\SEGMDL2.TTF" />
     <None Remove="assets\scripts\test.lua" />
     <None Remove="assets\textures\env_o.dds" />
     <None Remove="assets\textures\irradiance_o.dds" />
@@ -29,9 +28,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\fonts\font1.ff">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\fonts\SEGMDL2.TTF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\scripts\test.lua">
@@ -51,6 +47,19 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <None Update="assets\textures\layer0.dds">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\textures\layer1.dds">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\textures\layer2.dds">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 	<!--
 	<Target Name="BuildPackAssets" AfterTargets="AfterBuild">

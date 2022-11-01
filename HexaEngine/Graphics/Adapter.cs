@@ -1,4 +1,7 @@
-﻿namespace HexaEngine.Core.Graphics
+﻿using HexaEngine.Core;
+using HexaEngine.Core.Graphics;
+
+namespace HexaEngine.Graphics
 {
     using HexaEngine.D3D11;
     using System;

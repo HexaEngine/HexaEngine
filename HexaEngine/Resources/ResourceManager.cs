@@ -65,7 +65,11 @@
 
         public void DestroyInstance(Mesh mesh, SceneNode node)
         {
-            var instance = instances[node];
+            if (!instances.TryGetValue(node, out var instance))
+            {
+                return;
+            }
+
             if (!meshes.TryGetValue(mesh, out var modelMesh))
             {
                 return;
@@ -87,7 +91,7 @@
 
         public ModelMesh LoadMesh(Mesh mesh)
         {
-            ModelMesh model = new(device, mesh.Vertices, mesh.Indices);
+            ModelMesh model = new(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
             if (mesh.Material != null)
             {
@@ -105,7 +109,7 @@
 
         public async Task<ModelMesh> AsyncLoadMesh(Mesh mesh)
         {
-            ModelMesh model = new(device, mesh.Vertices, mesh.Indices);
+            ModelMesh model = new(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
             if (mesh.Material != null)
             {
@@ -125,7 +129,7 @@
         {
             if (meshes.TryGetValue(mesh, out var model))
             {
-                model.Update(device, mesh.Vertices, mesh.Indices);
+                model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
                 if (mesh.Material != null)
                 {
@@ -152,7 +156,7 @@
         {
             if (meshes.TryGetValue(mesh, out var model))
             {
-                model.Update(device, mesh.Vertices, mesh.Indices);
+                model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
                 if (mesh.Material != null)
                 {

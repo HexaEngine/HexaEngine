@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using Silk.NET.Direct3D.Compilers;
     using Silk.NET.SDL;
     using System;
     using System.Collections.Generic;
@@ -188,6 +189,18 @@
                 ResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+        }
+
+        public RenderTexture(IResource resource, IShaderResourceView srv, IRenderTargetView rtv)
+        {
+            Description = new(resource);
+
+            this.resource = resource;
+
+            if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
+                ResourceView = srv;
+            if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
+                renderTargetView = rtv;
         }
 
         public RenderTexture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
@@ -692,5 +705,38 @@
         }
 
         #endregion IDisposable
+
+        public static RenderTexture Combine2D(IGraphicsDevice device, params string[] textures)
+        {
+            var texs = new ITexture2D[textures.Length];
+            for (int i = 0; i < textures.Length; i++)
+            {
+                texs[i] = device.LoadTexture2D(textures[i], Usage.Staging, BindFlags.None, CpuAccessFlags.Read, ResourceMiscFlag.None);
+            }
+            var context = device.Context;
+            var desc = texs[0].Description;
+            desc.ArraySize = textures.Length;
+
+            var tex = device.CreateTexture2D(desc);
+            var texArray = new RenderTexture(device, tex);
+
+            for (int texElement = 0; texElement < textures.Length; texElement++)
+            {
+                for (int mipLevel = 0; mipLevel < desc.MipLevels; mipLevel++)
+                {
+                    var mappedTex2D = context.Map(texs[texElement], mipLevel, MapMode.Read, MapFlags.None);
+                    var index = IResource.CalculateSubresourceIndex(mipLevel, texElement, desc.MipLevels);
+                    context.UpdateSubresource(tex, index, mappedTex2D);
+                    context.Unmap(texs[texElement], mipLevel);
+                }
+            }
+
+            for (int i = 0; i < textures.Length; i++)
+            {
+                texs[i].Dispose();
+            }
+
+            return texArray;
+        }
     }
 }

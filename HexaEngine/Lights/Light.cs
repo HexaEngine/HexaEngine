@@ -6,6 +6,7 @@
 
     public abstract class Light : SceneNode
     {
+        public bool Updated;
         protected const float DegToRadFactor = 0.0174532925f;
         protected Vector4 color = Vector4.One;
 

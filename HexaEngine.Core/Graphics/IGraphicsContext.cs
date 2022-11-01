@@ -100,10 +100,18 @@
         void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount);
 
         void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ);
+
         void GenerateMips(IShaderResourceView resourceView);
+        void ExecuteCommandList(ICommandList commandList, int restoreState);
+        ICommandList FinishCommandList(int restoreState);
+        void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
     }
 
     public interface IQuery : IDeviceChild
+    {
+    }
+
+    public interface ICommandList : IDeviceChild
     {
     }
 }

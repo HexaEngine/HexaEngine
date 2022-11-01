@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using ImGuiNET;
 
-namespace imnodesNET
+namespace ImNodesNET
 {
     public unsafe partial struct IO
     {
@@ -23,7 +23,7 @@ namespace imnodesNET
         public ref LinkDetachWithModifierClick link_detach_with_modifier_click => ref Unsafe.AsRef<LinkDetachWithModifierClick>(&NativePtr->link_detach_with_modifier_click);
         public void Destroy()
         {
-            imnodesNative.IO_destroy(NativePtr);
+            ImNodesNative.IO_destroy(NativePtr);
         }
     }
 }

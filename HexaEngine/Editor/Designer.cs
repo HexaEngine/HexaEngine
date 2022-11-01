@@ -3,7 +3,7 @@
     using HexaEngine.Core.Input;
     using ImGuiNET;
     using ImGuizmoNET;
-    using imnodesNET;
+    using ImNodesNET;
     using Silk.NET.SDL;
 
     public static class Designer

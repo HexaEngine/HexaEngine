@@ -20,7 +20,7 @@
         private static void Main()
         {
             CrashLogger.Start();
-            ShaderCache.DisableCache = false;
+            ShaderCache.DisableCache = true;
 
             Config config = new();
             config.Save();

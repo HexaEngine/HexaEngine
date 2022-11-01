@@ -323,8 +323,10 @@
                     MeshVertex vertex = new(pos, new(tex.X, tex.Y), nor, tan);
                     vertices[j] = vertex;
                 }
-
-                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Material = materials[(int)msh->MMaterialIndex] };
+                Vector3 min = new(msh->MAABB.Min.X, msh->MAABB.Min.Y, msh->MAABB.Min.Z);
+                Vector3 max = new(msh->MAABB.Max.X, msh->MAABB.Max.Y, msh->MAABB.Max.Z);
+                BoundingBox box = new(min, max);
+                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Material = materials[(int)msh->MMaterialIndex], AABB = box };
                 meshesT.Add(msh, meshes[i]);
             }
         }

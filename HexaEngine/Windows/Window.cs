@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
+    using HexaEngine.Graphics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes;
     using System;
@@ -40,12 +41,6 @@
         private ImGuiRenderer? renderer;
 
         public RendererFlags Flags;
-
-        public bool VSync;
-
-        public bool LimitFPS = false;
-
-        public int TargetFPS = 120;
 
         public Dispatcher RenderDispatcher => renderDispatcher;
 
@@ -150,11 +145,9 @@
 
                 OnRender(context);
 
-                if (renderer is not null)
-                    renderer.EndDraw();
+                renderer?.EndDraw();
                 DebugDraw.Render(CameraManager.Current, Viewport);
-                swapChain.Present(VSync ? 1u : 0u);
-                LimitFrameRate();
+                swapChain.Present();
                 Keyboard.FrameUpdate();
                 Time.FrameUpdate();
             }
@@ -164,8 +157,7 @@
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
                 WidgetManager.Dispose();
 
-            if (renderer is not null)
-                renderer.Dispose();
+            renderer?.Dispose();
 
             if (renderer is not null)
                 DebugDraw.Dispose();
@@ -177,30 +169,6 @@
 
             context.Dispose();
             device.Dispose();
-        }
-
-        private long fpsFrameCount;
-        private long fpsStartTime;
-
-        private void LimitFrameRate()
-        {
-            if (LimitFPS & !VSync)
-            {
-                int fps = TargetFPS;
-                long freq = Stopwatch.Frequency;
-                long frame = Stopwatch.GetTimestamp();
-                while ((frame - fpsStartTime) * fps < freq * fpsFrameCount)
-                {
-                    int sleepTime = (int)((fpsStartTime * fps + freq * fpsFrameCount - frame * fps) * 1000 / (freq * fps));
-                    if (sleepTime > 0) Thread.Sleep(sleepTime);
-                    frame = Stopwatch.GetTimestamp();
-                }
-                if (++fpsFrameCount > fps)
-                {
-                    fpsFrameCount = 0;
-                    fpsStartTime = frame;
-                }
-            }
         }
 
         protected virtual void OnRendererInitialize(IGraphicsDevice device)

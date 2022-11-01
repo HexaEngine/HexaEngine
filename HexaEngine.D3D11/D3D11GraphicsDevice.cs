@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO;
     using HexaEngine.DirectXTex;
     using Silk.NET.Core.Native;
@@ -90,6 +91,8 @@
         public string? DebugName { get; set; } = string.Empty;
 
         public bool IsDisposed => disposedValue;
+
+        public event EventHandler? OnDisposed;
 
         public ISwapChain? SwapChain { get; }
 
@@ -507,9 +510,19 @@
             return (ITexture1D)LoadTextureAuto(path, TextureDimension.Texture1D);
         }
 
+        public ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            return (ITexture1D)LoadTextureAuto(path, TextureDimension.Texture1D, usage, bind, cpuAccess, misc);
+        }
+
         public ITexture2D LoadTexture2D(string path)
         {
             return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D);
+        }
+
+        public ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D, usage, bind, cpuAccess, misc);
         }
 
         public ITexture3D LoadTexture3D(string path)
@@ -517,9 +530,19 @@
             return (ITexture3D)LoadTextureAuto(path, TextureDimension.Texture3D);
         }
 
+        public ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            return (ITexture3D)LoadTextureAuto(path, TextureDimension.Texture3D, usage, bind, cpuAccess, misc);
+        }
+
         public ITexture2D LoadTextureCube(string path)
         {
             return (ITexture2D)LoadTextureAuto(path, TextureDimension.TextureCube);
+        }
+
+        public ITexture2D LoadTextureCube(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            return (ITexture2D)LoadTextureAuto(path, TextureDimension.TextureCube, usage, bind, cpuAccess, misc);
         }
 
         private IResource LoadTextureAuto(string path, TextureDimension dimension)
@@ -581,6 +604,72 @@
                             (int)metadata.Depth,
                             (int)metadata.MipLevels,
                             miscFlags: optionFlags);
+                        return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dimension));
+            }
+        }
+
+        private IResource LoadTextureAuto(string path, TextureDimension dimension, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            ScratchImage image = LoadAuto(path);
+            if (image.pScratchImage == null)
+            {
+                return InitFallback(dimension);
+            }
+            TexMetadata metadata = image.GetMetadata();
+
+            ID3D11Resource* resource;
+            DirectXTex.CreateTextureEx((ID3D11Device*)(IntPtr)Device, &image, Helper.Convert(usage), Helper.Convert(bind), Helper.Convert(cpuAccess), Helper.Convert(misc), false, &resource);
+            image.Release();
+            switch (dimension)
+            {
+                case TextureDimension.Texture1D:
+                    {
+                        Texture1DDescription texture = new(
+                            Helper.ConvertBack(metadata.Format),
+                            (int)metadata.Width,
+                            (int)metadata.ArraySize,
+                            (int)metadata.MipLevels,
+                            miscFlags: misc);
+                        return new D3D11Texture1D((ID3D11Texture1D*)resource, texture);
+                    }
+
+                case TextureDimension.Texture2D:
+                    {
+                        Texture2DDescription texture = new(
+                            Helper.ConvertBack(metadata.Format),
+                            (int)metadata.Width,
+                            (int)metadata.Height,
+                            (int)metadata.ArraySize,
+                            (int)metadata.MipLevels,
+                            miscFlags: misc);
+                        return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
+                    }
+
+                case TextureDimension.Texture3D:
+                    {
+                        Texture3DDescription texture = new(
+                            Helper.ConvertBack(metadata.Format),
+                            (int)metadata.Width,
+                            (int)metadata.Height,
+                            (int)metadata.Depth,
+                            (int)metadata.MipLevels,
+                            miscFlags: misc);
+                        return new D3D11Texture3D((ID3D11Texture3D*)resource, texture);
+                    }
+
+                case TextureDimension.TextureCube:
+                    {
+                        Texture2DDescription texture = new(
+                            Helper.ConvertBack(metadata.Format),
+                            (int)metadata.Width,
+                            (int)metadata.Height,
+                            (int)metadata.Depth,
+                            (int)metadata.MipLevels,
+                            miscFlags: misc);
                         return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
                     }
 
@@ -881,6 +970,43 @@
             All
         }
 
+        public ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader)
+        {
+            ID3D11ShaderReflection* reflection;
+            ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
+            ShaderDesc desc;
+            reflection->GetDesc(&desc);
+
+            ShaderInputBindDescription[] descs = new ShaderInputBindDescription[desc.BoundResources];
+            for (uint i = 0; i < desc.BoundResources; i++)
+            {
+                ShaderInputBindDesc shaderInputDesc;
+                reflection->GetResourceBindingDesc(i, &shaderInputDesc);
+                descs[i] = Helper.Convert(shaderInputDesc);
+            }
+            reflection->Release();
+            return descs;
+        }
+
+        public SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader)
+        {
+            ID3D11ShaderReflection* reflection;
+            ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
+            ShaderDesc desc;
+            reflection->GetDesc(&desc);
+
+            SignatureParameterDescription[] descs = new SignatureParameterDescription[desc.BoundResources];
+            for (uint i = 0; i < desc.BoundResources; i++)
+            {
+                SignatureParameterDesc shaderInputDesc;
+                reflection->GetOutputParameterDesc(i, &shaderInputDesc);
+
+                descs[i] = Helper.Convert(shaderInputDesc);
+            }
+            reflection->Release();
+            return descs;
+        }
+
         private void CreateInputLayoutFromSignature(Blob shader, Blob signature, ID3D11InputLayout** layout)
         {
             ID3D11ShaderReflection* reflection;
@@ -952,7 +1078,7 @@
             }
 
             InputElementDesc* ptr = Utils.AsPointer(inputElements);
-
+            reflection->Release();
             Device->CreateInputLayout(ptr, (uint)inputElements.Length, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout);
         }
 
@@ -1005,6 +1131,13 @@
             return new D3D11Query(query);
         }
 
+        public IGraphicsContext CreateDeferredContext()
+        {
+            ID3D11DeviceContext1* context;
+            Device->CreateDeferredContext1(0, &context);
+            return new D3D11GraphicsContext(this, context);
+        }
+
         /*
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDesc)
         {
@@ -1025,6 +1158,22 @@
         protected override void DisposeCore()
         {
             query->Release();
+        }
+    }
+
+    public unsafe class D3D11CommandList : DeviceChildBase, ICommandList
+    {
+        private ID3D11CommandList* commandList;
+
+        public D3D11CommandList(ID3D11CommandList* commandList)
+        {
+            this.commandList = commandList;
+            nativePointer = new(commandList);
+        }
+
+        protected override void DisposeCore()
+        {
+            commandList->Release();
         }
     }
 }

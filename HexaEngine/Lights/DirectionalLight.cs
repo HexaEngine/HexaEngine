@@ -12,6 +12,7 @@
         {
             base.Transform = Transform;
             CreatePropertyEditor<DirectionalLight>();
+            Transform.Updated += (s, e) => { Updated = true; };
         }
 
         public override LightType Type => LightType.Directional;

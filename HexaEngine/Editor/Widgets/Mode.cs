@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-namespace IBLBaker
+namespace HexaEngine.Editor.Widgets
 {
     public enum Mode
     {

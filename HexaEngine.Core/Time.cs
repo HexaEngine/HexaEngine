@@ -5,6 +5,7 @@
 
     public static class Time
     {
+        private static Stopwatch stopwatch = new();
         private static long lastTicks;
         private static float fixedTime;
         private static float cumulativeFrameTime;
@@ -25,6 +26,7 @@
         // Public Methods
         public static void Initialize()
         {
+            stopwatch.Start();
             lastTicks = Stopwatch.GetTimestamp();
             fixedTime = 0;
             cumulativeFrameTime = 0;
@@ -32,10 +34,8 @@
 
         public static void FrameUpdate()
         {
-            var ticks = Stopwatch.GetTimestamp();
-            var deltaTime = (float)(ticks - lastTicks);
-            deltaTime /= Stopwatch.Frequency;
-            lastTicks = ticks;
+            float deltaTime = (float)stopwatch.Elapsed.TotalSeconds;
+            stopwatch.Restart();
             // Calculate the frame time by the time difference over the timer speed resolution.
             Delta = deltaTime;
             cumulativeFrameTime += Delta;

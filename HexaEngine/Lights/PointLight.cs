@@ -8,6 +8,7 @@
         public PointLight()
         {
             CreatePropertyEditor<PointLight>();
+            Transform.Updated += (s, e) => { Updated = true; };
         }
 
         [EditorProperty("Strength")]

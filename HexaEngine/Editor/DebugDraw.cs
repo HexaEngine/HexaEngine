@@ -15,9 +15,7 @@ namespace HexaEngine.Editor
         private static IGraphicsContext context;
         private static IRasterizerState rs;
         private static IDepthStencilState ds;
-        private static Blob vsBlob;
         private static IVertexShader vs;
-        private static Blob psBlob;
         private static IPixelShader ps;
         private static IInputLayout il;
         private static IBuffer vb;
@@ -82,11 +80,26 @@ float4 main(PixelInputType pixel) : SV_TARGET
     return pixel.color;
 }
 ";
-            device.Compile(vsCode, "main", "VS", "vs_4_0", out vsBlob);
-            vs = device.CreateVertexShader(vsBlob);
-            il = device.CreateInputLayout(vsBlob);
-            device.Compile(psCode, "main", "PS", "ps_4_0", out psBlob);
-            ps = device.CreatePixelShader(psBlob);
+            if (!ShaderCache.GetShader("DEBUGDRAW-INTERNAL-VS", Array.Empty<ShaderMacro>(), out var vsBytes))
+            {
+                device.Compile(vsCode, "main", "VS", "vs_5_0", out var vsBlob);
+                vsBytes = vsBlob.AsSpan();
+
+                ShaderCache.CacheShader("DEBUGDRAW-INTERNAL-VS", Array.Empty<ShaderMacro>(), vsBlob);
+            }
+
+            vs = device.CreateVertexShader(vsBytes);
+            il = device.CreateInputLayout(vsBytes);
+
+            if (!ShaderCache.GetShader("DEBUGDRAW-INTERNAL-PS", Array.Empty<ShaderMacro>(), out var psBytes))
+            {
+                device.Compile(psCode, "main", "PS", "ps_5_0", out var psBlob);
+                psBytes = psBlob.AsSpan();
+
+                ShaderCache.CacheShader("DEBUGDRAW-INTERNAL-PS", Array.Empty<ShaderMacro>(), psBlob);
+            }
+
+            ps = device.CreatePixelShader(psBytes);
 
             vb = device.CreateBuffer(new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             ib = device.CreateBuffer(new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
@@ -97,9 +110,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
         {
             rs.Dispose();
             ds.Dispose();
-            vsBlob.Dispose();
             vs.Dispose();
-            psBlob.Dispose();
             ps.Dispose();
             il.Dispose();
             vb.Dispose();

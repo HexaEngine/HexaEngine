@@ -341,9 +341,7 @@
 
                 if (t1 > t2)
                 {
-                    float temp = t1;
-                    t1 = t2;
-                    t2 = temp;
+                    (t2, t1) = (t1, t2);
                 }
 
                 distance = Math.Max(t1, distance);
@@ -370,9 +368,7 @@
 
                 if (t1 > t2)
                 {
-                    float temp = t1;
-                    t1 = t2;
-                    t2 = temp;
+                    (t2, t1) = (t1, t2);
                 }
 
                 distance = Math.Max(t1, distance);
@@ -399,9 +395,7 @@
 
                 if (t1 > t2)
                 {
-                    float temp = t1;
-                    t1 = t2;
-                    t2 = temp;
+                    (t2, t1) = (t1, t2);
                 }
 
                 distance = Math.Max(t1, distance);

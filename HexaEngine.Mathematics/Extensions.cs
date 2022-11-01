@@ -293,5 +293,15 @@
         {
             return x * (1 - s) + y * s;
         }
+
+        public static uint Pack(this Vector4 color)
+        {
+            return Pack((uint)(color.W * 255), (uint)(color.X * 255), (uint)(color.Y * 255), (uint)(color.Z * 255));
+        }
+
+        public static uint Pack(uint a, uint r, uint g, uint b)
+        {
+            return (a << 24) + (r << 16) + (g << 8) + b;
+        }
     }
 }

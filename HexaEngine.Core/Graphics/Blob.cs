@@ -31,6 +31,16 @@
             PointerSize = data.Length;
         }
 
+        public Blob(Span<byte> data)
+        {
+            _native = false;
+            fixed (byte* ptr = data)
+            {
+                BufferPointer = new(ptr);
+            }
+            PointerSize = data.Length;
+        }
+
         public IntPtr BufferPointer { get; }
 
         public PointerSize PointerSize { get; }

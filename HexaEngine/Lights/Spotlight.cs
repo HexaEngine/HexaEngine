@@ -18,6 +18,7 @@
         {
             base.Transform = Transform = new();
             CreatePropertyEditor<Spotlight>();
+            Transform.Updated += (s, e) => { Updated = true; };
         }
 
         [EditorProperty("Strength")]

@@ -1,7 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Mathematics;
+    using Silk.NET.Core.Native;
     using System.Numerics;
 
     public unsafe class Helper
@@ -1221,6 +1223,159 @@
                 Silk.NET.DXGI.Format.FormatR32Typeless => Format.R32Typeless,
                 Silk.NET.DXGI.Format.FormatR32G32B32Float => Format.RGB32Float,
                 _ => Format.Unknown,
+            };
+        }
+
+        internal static ShaderInputBindDescription Convert(Silk.NET.Direct3D11.ShaderInputBindDesc shaderInputDesc)
+        {
+            return new()
+            {
+                BindCount = shaderInputDesc.BindCount,
+                BindPoint = shaderInputDesc.BindPoint,
+                Dimension = Convert(shaderInputDesc.Dimension),
+                Name = Utils.ToStr(shaderInputDesc.Name),
+                NumSamples = shaderInputDesc.NumSamples,
+                ReturnType = Convert(shaderInputDesc.ReturnType),
+                Type = Convert(shaderInputDesc.Type),
+                UFlags = shaderInputDesc.UFlags
+            };
+        }
+
+        private static ShaderInputType Convert(D3DShaderInputType type)
+        {
+            return type switch
+            {
+                D3DShaderInputType.D3DSitCbuffer => ShaderInputType.SitCbuffer,
+                D3DShaderInputType.D3DSitTbuffer => ShaderInputType.SitTbuffer,
+                D3DShaderInputType.D3DSitTexture => ShaderInputType.SitTexture,
+                D3DShaderInputType.D3DSitSampler => ShaderInputType.SitSampler,
+                D3DShaderInputType.D3DSitUavRwtyped => ShaderInputType.SitUavRwtyped,
+                D3DShaderInputType.D3DSitStructured => ShaderInputType.SitStructured,
+                D3DShaderInputType.D3DSitUavRwstructured => ShaderInputType.SitUavRwstructured,
+                D3DShaderInputType.D3DSitByteaddress => ShaderInputType.SitByteaddress,
+                D3DShaderInputType.D3DSitUavRwbyteaddress => ShaderInputType.SitUavRwbyteaddress,
+                D3DShaderInputType.D3DSitUavAppendStructured => ShaderInputType.SitUavAppendStructured,
+                D3DShaderInputType.D3DSitUavConsumeStructured => ShaderInputType.SitUavConsumeStructured,
+                D3DShaderInputType.D3DSitUavRwstructuredWithCounter => ShaderInputType.SitUavRwstructuredWithCounter,
+                D3DShaderInputType.D3DSitRtaccelerationstructure => ShaderInputType.SitRtaccelerationstructure,
+                D3DShaderInputType.D3DSitUavFeedbacktexture => ShaderInputType.SitUavFeedbacktexture,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private static ResourceReturnType Convert(D3DResourceReturnType returnType)
+        {
+            return returnType switch
+            {
+                D3DResourceReturnType.None => ResourceReturnType.None,
+                D3DResourceReturnType.D3DReturnTypeUnorm => ResourceReturnType.Unorm,
+                D3DResourceReturnType.D3DReturnTypeSNorm => ResourceReturnType.SNorm,
+                D3DResourceReturnType.D3DReturnTypeSint => ResourceReturnType.Sint,
+                D3DResourceReturnType.D3DReturnTypeUint => ResourceReturnType.Uint,
+                D3DResourceReturnType.D3DReturnTypeFloat => ResourceReturnType.Float,
+                D3DResourceReturnType.D3DReturnTypeMixed => ResourceReturnType.Mixed,
+                D3DResourceReturnType.D3DReturnTypeDouble => ResourceReturnType.Double,
+                D3DResourceReturnType.D3DReturnTypeContinued => ResourceReturnType.Continued,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private static SrvDimension Convert(D3DSrvDimension dimension)
+        {
+            return dimension switch
+            {
+                D3DSrvDimension.D3DSrvDimensionUnknown => SrvDimension.Unknown,
+                D3DSrvDimension.D3DSrvDimensionBuffer => SrvDimension.Buffer,
+                D3DSrvDimension.D3DSrvDimensionTexture1D => SrvDimension.Texture1D,
+                D3DSrvDimension.D3DSrvDimensionTexture1Darray => SrvDimension.Texture1Darray,
+                D3DSrvDimension.D3DSrvDimensionTexture2D => SrvDimension.Texture2D,
+                D3DSrvDimension.D3DSrvDimensionTexture2Darray => SrvDimension.Texture2Darray,
+                D3DSrvDimension.D3DSrvDimensionTexture2Dms => SrvDimension.Texture2Dms,
+                D3DSrvDimension.D3DSrvDimensionTexture2Dmsarray => SrvDimension.Texture2Dmsarray,
+                D3DSrvDimension.D3DSrvDimensionTexture3D => SrvDimension.Texture3D,
+                D3DSrvDimension.D3DSrvDimensionTexturecube => SrvDimension.Texturecube,
+                D3DSrvDimension.D3DSrvDimensionTexturecubearray => SrvDimension.Texturecubearray,
+                D3DSrvDimension.D3DSrvDimensionBufferex => SrvDimension.Bufferex,
+                _ => throw new NotSupportedException()
+            };
+        }
+
+        internal static SignatureParameterDescription Convert(Silk.NET.Direct3D11.SignatureParameterDesc shaderInputDesc)
+        {
+            return new()
+            {
+                Mask = shaderInputDesc.Mask,
+                ComponentType = Convert(shaderInputDesc.ComponentType),
+                MinPrecision = Convert(shaderInputDesc.MinPrecision),
+                ReadWriteMask = shaderInputDesc.ReadWriteMask,
+                Register = shaderInputDesc.Register,
+                SemanticIndex = shaderInputDesc.SemanticIndex,
+                SemanticName = Utils.ToStr(shaderInputDesc.SemanticName),
+                Stream = shaderInputDesc.Stream,
+                SystemValueType = Convert(shaderInputDesc.SystemValueType)
+            };
+        }
+
+        private static Name Convert(D3DName systemValueType)
+        {
+            return systemValueType switch
+            {
+                D3DName.D3DNameUndefined => Name.Undefined,
+                D3DName.D3DNamePosition => Name.Position,
+                D3DName.D3DNameClipDistance => Name.ClipDistance,
+                D3DName.D3DNameCullDistance => Name.CullDistance,
+                D3DName.D3DNameRenderTargetArrayIndex => Name.RenderTargetArrayIndex,
+                D3DName.D3DNameViewportArrayIndex => Name.ViewportArrayIndex,
+                D3DName.D3DNameVertexID => Name.VertexID,
+                D3DName.D3DNamePrimitiveID => Name.PrimitiveID,
+                D3DName.D3DNameInstanceID => Name.InstanceID,
+                D3DName.D3DNameIsFrontFace => Name.IsFrontFace,
+                D3DName.D3DNameSampleIndex => Name.SampleIndex,
+                D3DName.D3DNameFinalQuadEdgeTessfactor => Name.FinalQuadEdgeTessfactor,
+                D3DName.D3DNameFinalQuadInsideTessfactor => Name.FinalQuadInsideTessfactor,
+                D3DName.D3DNameFinalTriEdgeTessfactor => Name.FinalTriEdgeTessfactor,
+                D3DName.D3DNameFinalTriInsideTessfactor => Name.FinalTriInsideTessfactor,
+                D3DName.D3DNameFinalLineDetailTessfactor => Name.FinalLineDetailTessfactor,
+                D3DName.D3DNameFinalLineDensityTessfactor => Name.FinalLineDensityTessfactor,
+                D3DName.D3DNameBarycentrics => Name.Barycentrics,
+                D3DName.D3DNameShadingrate => Name.Shadingrate,
+                D3DName.D3DNameCullprimitive => Name.Cullprimitive,
+                D3DName.D3DNameTarget => Name.Target,
+                D3DName.D3DNameDepth => Name.Depth,
+                D3DName.D3DNameCoverage => Name.Coverage,
+                D3DName.D3DNameDepthGreaterEqual => Name.DepthGreaterEqual,
+                D3DName.D3DNameDepthLessEqual => Name.DepthLessEqual,
+                D3DName.D3DNameStencilRef => Name.StencilRef,
+                D3DName.D3DNameInnerCoverage => Name.InnerCoverage,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private static MinPrecision Convert(D3DMinPrecision minPrecision)
+        {
+            return minPrecision switch
+            {
+                D3DMinPrecision.Default => MinPrecision.Default,
+                D3DMinPrecision.Float16 => MinPrecision.Float16,
+                D3DMinPrecision.Float28 => MinPrecision.Float28,
+                D3DMinPrecision.Reserved => MinPrecision.Reserved,
+                D3DMinPrecision.Sint16 => MinPrecision.Sint16,
+                D3DMinPrecision.Uint16 => MinPrecision.Uint16,
+                D3DMinPrecision.Any16 => MinPrecision.Any16,
+                D3DMinPrecision.Any10 => MinPrecision.Any10,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private static RegisterComponentType Convert(D3DRegisterComponentType componentType)
+        {
+            return componentType switch
+            {
+                D3DRegisterComponentType.None => RegisterComponentType.Unknown,
+                D3DRegisterComponentType.D3DRegisterComponentUint32 => RegisterComponentType.Uint32,
+                D3DRegisterComponentType.D3DRegisterComponentSint32 => RegisterComponentType.Sint32,
+                D3DRegisterComponentType.D3DRegisterComponentFloat32 => RegisterComponentType.Float32,
+                _ => throw new NotImplementedException(),
             };
         }
     }

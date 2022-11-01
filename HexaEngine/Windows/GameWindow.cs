@@ -7,6 +7,7 @@ namespace HexaEngine.Windows
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
+    using HexaEngine.Graphics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes;
     using System;
@@ -104,7 +105,7 @@ namespace HexaEngine.Windows
                     }
 
                 renderer.EndDraw();
-                swapChain.Present(VSync ? 1u : 0u);
+                swapChain.Present(VSync);
                 LimitFrameRate();
                 Keyboard.FrameUpdate();
             }

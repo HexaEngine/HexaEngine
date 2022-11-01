@@ -9,13 +9,15 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
-    public static unsafe class ShaderCompiler
+    public static class ShaderCompiler
     {
+        private static readonly SemaphoreSlim semaphore = new(1);
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
         private static readonly ConcurrentDictionary<Pointer<ID3DInclude>, string> paths = new();
 
-        public static bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
+            semaphore.Wait();
             shaderBlob = null;
             errorBlob = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
@@ -61,12 +63,13 @@
 
             if (vBlob == null)
             {
+                semaphore.Release();
                 return false;
             }
 
             shaderBlob = new(vBlob->Buffer.ToArray());
             vBlob->Release();
-
+            semaphore.Release();
             return true;
         }
 
@@ -86,7 +89,7 @@
             return 0;
         }
 
-        public static Blob GetInputSignature(Blob shader)
+        public static unsafe Blob GetInputSignature(Blob shader)
         {
             ID3D10Blob* signature;
             D3DCompiler.GetInputSignatureBlob((void*)shader.BufferPointer, (nuint)(int)shader.PointerSize, &signature);
@@ -95,7 +98,7 @@
             return output;
         }
 
-        public static void Reflect(Blob blob, Guid guid, void** reflector)
+        public static unsafe void Reflect(Blob blob, Guid guid, void** reflector)
         {
             D3DCompiler.Reflect((void*)blob.BufferPointer, (nuint)(int)blob.PointerSize, Utils.Guid(guid), reflector);
         }

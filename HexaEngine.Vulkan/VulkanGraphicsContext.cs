@@ -12,6 +12,8 @@
         public string? DebugName { get; set; }
         public bool IsDisposed { get; }
 
+        public event EventHandler? OnDisposed;
+
         public VulkanGraphicsContext()
         {
             throw new NotImplementedException();
@@ -258,6 +260,16 @@
         }
 
         public void Write<T>(IBuffer buffer, T[] values) where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExecuteCommandList(ICommandList commandList, int restoreState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICommandList FinishCommandList(int restoreState)
         {
             throw new NotImplementedException();
         }

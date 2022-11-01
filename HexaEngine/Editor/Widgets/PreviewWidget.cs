@@ -1,16 +1,16 @@
-﻿namespace IBLBaker.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Deferred;
+    using HexaEngine.Pipelines.Deferred.Lighting;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
@@ -44,7 +44,7 @@
 
         private PrepassShader prepass;
         private BRDFPipeline pbrlightShader;
-        private BRDFEffect brdfFilter;
+        private BRDFLUT brdfFilter;
         private SkyboxPipeline skyboxShader;
 
         private Material material = new() { Albedo = new(1, 0, 0), Ao = 1 };

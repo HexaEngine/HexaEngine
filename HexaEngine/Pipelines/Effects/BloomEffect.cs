@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using ImGuiNET;
-    using Silk.NET.Direct3D.Compilers;
     using System.Numerics;
 
     public class Bloom : IEffect

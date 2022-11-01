@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Nodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using System.Numerics;

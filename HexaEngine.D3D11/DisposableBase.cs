@@ -52,11 +52,14 @@
 
         public bool IsDisposed => disposedValue;
 
+        public event EventHandler? OnDisposed;
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 DisposeCore();
+                OnDisposed?.Invoke(this, EventArgs.Empty);
                 LeakTracer.Release(this);
                 disposedValue = true;
             }

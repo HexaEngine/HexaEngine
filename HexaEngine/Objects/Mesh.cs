@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Objects
 {
+    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System.Numerics;
@@ -110,6 +111,7 @@
         public Animature? Animature;
         public Material? Material;
         public int MaterialIndex = -1;
+        public BoundingBox AABB;
         private string materialName = string.Empty;
         private string name = string.Empty;
 

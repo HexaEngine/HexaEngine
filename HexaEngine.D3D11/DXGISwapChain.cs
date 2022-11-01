@@ -5,6 +5,8 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
+    using System.Diagnostics;
+    using System.Runtime.CompilerServices;
 
     public unsafe class DXGISwapChain : DeviceChildBase, ISwapChain
     {
@@ -12,6 +14,11 @@
         private SwapChainFlag flags;
         private ID3D11Texture2D* backbuffer;
         private ITexture2D depthStencil;
+        private long fpsStartTime;
+        private long fpsFrameCount;
+        private bool vSync;
+        private bool limitFPS;
+        private int targetFPS = 120;
 
         internal DXGISwapChain(D3D11GraphicsDevice device, IDXGISwapChain1* swapChain, SwapChainFlag flags)
         {
@@ -53,9 +60,58 @@
 
         public event EventHandler<ResizedEventArgs>? Resized;
 
-        public void Present(uint syncInt)
+        public bool VSync { get => vSync; set => vSync = value; }
+
+        public bool LimitFPS { get => limitFPS; set => limitFPS = value; }
+
+        public int TargetFPS { get => targetFPS; set => targetFPS = value; }
+
+        public void Present(bool sync)
         {
-            swapChain->Present(syncInt, 0);
+            if (sync)
+            {
+                swapChain->Present(1, 0);
+            }
+            else
+            {
+                swapChain->Present(0, DXGI.PresentAllowTearing);
+            }
+        }
+
+        public void Present()
+        {
+            if (vSync)
+            {
+                swapChain->Present(1, 0);
+            }
+            else if (limitFPS)
+            {
+                swapChain->Present(0, DXGI.PresentAllowTearing);
+                LimitFrameRate();
+            }
+            else
+            {
+                swapChain->Present(0, DXGI.PresentAllowTearing);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void LimitFrameRate()
+        {
+            int fps = targetFPS;
+            long freq = Stopwatch.Frequency;
+            long frame = Stopwatch.GetTimestamp();
+            while ((frame - fpsStartTime) * fps < freq * fpsFrameCount)
+            {
+                int sleepTime = (int)((fpsStartTime * fps + freq * fpsFrameCount - frame * fps) * 1000 / (freq * fps));
+                if (sleepTime > 0) Thread.Sleep(sleepTime);
+                frame = Stopwatch.GetTimestamp();
+            }
+            if (++fpsFrameCount > fps)
+            {
+                fpsFrameCount = 0;
+                fpsStartTime = frame;
+            }
         }
 
         public void Resize(int width, int height)

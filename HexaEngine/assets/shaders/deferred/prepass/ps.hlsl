@@ -18,8 +18,6 @@ cbuffer MaterialBuffer : register(b2)
 	Material material;
 };
 
-
-
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {
 	// Uncompress each component from [0,1] to [-1,1].
@@ -44,80 +42,78 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 
 float4 main(PixelInput input) : SV_Target
 {
-    return float4(input.depth, input.depth, input.depth, 1.0f);
+	return float4(input.depth, input.depth, input.depth, 1.0f);
 }
 
 #else
 
 GeometryData main(PixelInput input)
 {
-    float3 albedo;
-    float3 pos = (float3)input.pos;
-    float3 normal;
-    float3 emissive;
-    float opacity = 1;
-    float metalness;
-    float roughness;
-    float ao;
+	float3 albedo;
+	float3 pos = (float3)input.pos;
+	float3 normal;
+	float3 emissive;
+	float opacity = 1;
+	float metalness;
+	float roughness;
+	float ao;
 
+	if (material.DANR.y)
+	{
+		albedo = albedoTexture.Sample(materialSamplerState, (float2) input.tex).rgb;
+	}
+	else
+	{
+		albedo = material.Color.rgb;
+	}
+	if (material.DANR.z)
+	{
+		normal = NormalSampleToWorldSpace(normalTexture.Sample(materialSamplerState, (float2) input.tex).rgb, input.normal, input.tangent);
+	}
+	else
+	{
+		normal = input.normal;
+	}
+	if (material.DANR.w)
+	{
+		roughness = roughnessTexture.Sample(materialSamplerState, (float2) input.tex).r;
+	}
+	else
+	{
+		roughness = material.RoughnessMetalnessAo.x;
+	}
+	if (material.MEAoRM.x)
+	{
+		metalness = metalnessTexture.Sample(materialSamplerState, (float2) input.tex).r;
+	}
+	else
+	{
+		metalness = material.RoughnessMetalnessAo.y;
+	}
+	if (material.MEAoRM.y)
+	{
+		emissive = emissiveTexture.Sample(materialSamplerState, (float2) input.tex).rgb;
+	}
+	else
+	{
+		emissive = material.Emissive.xyz;
+	}
+	if (material.MEAoRM.z)
+	{
+		ao = aoTexture.Sample(materialSamplerState, (float2) input.tex).r;
+	}
+	else
+	{
+		ao = material.RoughnessMetalnessAo.z;
+	}
 
-    if (material.DANR.y)
-    {
-        albedo = albedoTexture.Sample(materialSamplerState, (float2) input.tex).rgb;
-    }
-    else
-    {
-        albedo = material.Color.rgb;
-    }
-    if (material.DANR.z)
-    {      
-        normal = NormalSampleToWorldSpace(normalTexture.Sample(materialSamplerState, (float2) input.tex).rgb, input.normal, input.tangent);
-    }
-    else
-    {
-        normal = input.normal;
-    }
-    if (material.DANR.w)
-    {
-        roughness = roughnessTexture.Sample(materialSamplerState, (float2) input.tex).r;
-    }
-    else
-    {
-        roughness = material.RoughnessMetalnessAo.x;
-    }
-    if (material.MEAoRM.x)
-    {
-        metalness = metalnessTexture.Sample(materialSamplerState, (float2) input.tex).r;
-    }
-    else
-    {
-        metalness = material.RoughnessMetalnessAo.y;
-    }
-    if (material.MEAoRM.y)
-    {
-        emissive = emissiveTexture.Sample(materialSamplerState, (float2) input.tex).rgb;
-    }
-    else
-    {
-        emissive = material.Emissive.xyz;
-    }
-    if (material.MEAoRM.z)
-    {
-        ao = aoTexture.Sample(materialSamplerState, (float2) input.tex).r;
-    }
-    else
-    {
-        ao = material.RoughnessMetalnessAo.z;
-    }
-    
-    if (material.MEAoRM.w)
-    {
-        roughness = rmTexture.Sample(materialSamplerState, (float2) input.tex).g;
-        metalness = rmTexture.Sample(materialSamplerState, (float2) input.tex).b;
-    }
+	if (material.MEAoRM.w)
+	{
+		roughness = rmTexture.Sample(materialSamplerState, (float2) input.tex).g;
+		metalness = rmTexture.Sample(materialSamplerState, (float2) input.tex).b;
+	}
 
-	
-    return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, float3(0, 0, 0), float3(0,0,0),0, 1, 0.5f,ao,1,0,0,0,0,0,0,0,0);
+	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, float3(0, 0, 0), float3(0, 0, 0), 0, 1, 0.5f, ao, 1, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 #endif

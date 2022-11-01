@@ -4,6 +4,7 @@
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class Utils
@@ -103,6 +104,12 @@
             ResultCode resultCode = (ResultCode)code;
             if (resultCode != ResultCode.S_OK)
                 throw new D3D11Exception(resultCode);
+        }
+
+        internal static string ToStr(byte* name)
+        {
+            var bytes = MemoryMarshal.CreateReadOnlySpanFromNullTerminated(name);
+            return Encoding.UTF8.GetString(bytes);
         }
     }
 }

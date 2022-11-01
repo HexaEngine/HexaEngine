@@ -14,6 +14,11 @@
         public const int MaximumTexture2DSize = unchecked(16384);
         public const int MaximumTexture3DSize = unchecked(2048);
         public const int MaximumTextureCubeSize = unchecked(16384);
+
+        public static int CalculateSubresourceIndex(int mipSlice, int arraySlice, int mipLevels)
+        {
+            return mipSlice + (arraySlice * mipLevels);
+        }
     }
 
     public enum ResourceDimension : int

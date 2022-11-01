@@ -14,7 +14,7 @@
         {
             Trace.Listeners.Add(new DebugListener("output.log"));
 
-            Application.Run(new EditorWindow());
+            Application.Run(new Window());
         }
     }
 }

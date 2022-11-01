@@ -1,6 +1,5 @@
 ﻿using HexaEngine.Core;
 using HexaEngine.Core.Input;
-using HexaEngine.Windows;
 using ImGuiNET;
 using Silk.NET.SDL;
 using System.Numerics;
@@ -11,16 +10,6 @@ namespace HexaEngine.Rendering
     {
         private readonly SdlWindow window;
         private ImGuiMouseCursor lastCursor;
-
-        public ImGuiInputHandler(GameWindow window)
-        {
-            this.window = window;
-            window.MouseButtonInput += MouseButtonInput;
-            window.MouseWheelInput += MouseWheelInput;
-            window.KeyboardInput += KeyboardInput;
-            window.KeyboardCharInput += KeyboardCharInput;
-            InitKeyMap();
-        }
 
         public ImGuiInputHandler(SdlWindow window)
         {

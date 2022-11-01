@@ -14,14 +14,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="assets\fonts\SEGMDL2.TTF" />
     <None Remove="assets\shaders\material.hlsl" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="assets\fonts\SEGMDL2.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.2.22472.3" />
 		<PackageReference Include="Silk.NET.Assimp" Version="2.16.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="assets\shaders\tessellation.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\compute\irradiance\shader.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -29,6 +40,35 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\deferred\flat\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\terrain\defs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\terrain\ds.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\terrain\hs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\terrain\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\terrain\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\pbrbrdf\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    <ShaderProfile>hs_5_0</ShaderProfile>
+	    <EntryPointName>main</EntryPointName>
+	  </None>
+	  <None Update="assets\shaders\deferred\grid\defs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\grid\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\deferred\grid\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\effects\mix\ps.hlsl">
@@ -137,9 +177,6 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\light.hlsl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\shaders\deferred\pbrbrdf\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shaders\deferred\pbrbrdf\vs.hlsl">
@@ -282,6 +319,7 @@
 
 
 	<ItemGroup>
+	  <Folder Include="assets\shaders\deferred\phong\" />
 	  <Folder Include="assets\shaders\deferred\toon\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />

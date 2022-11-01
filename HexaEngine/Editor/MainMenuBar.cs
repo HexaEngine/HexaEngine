@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Scenes;
@@ -105,6 +106,7 @@
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders (F5)"))
                     {
+                        ShaderCache.Clear();
                         Pipeline.ReloadShaders();
                     }
                     ImGui.Separator();

@@ -4,8 +4,6 @@
 
     public class Class1
     {
-        private AL AL = AL.GetApi();
-
         public Class1()
         {
         }

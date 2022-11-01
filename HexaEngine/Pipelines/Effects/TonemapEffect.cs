@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Nodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using ImGuiNET;

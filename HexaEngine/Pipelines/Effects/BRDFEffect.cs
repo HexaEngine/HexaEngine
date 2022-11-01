@@ -4,9 +4,9 @@
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
 
-    public class BRDFEffect : Effect
+    public class BRDFLUT : Effect
     {
-        public BRDFEffect(IGraphicsDevice device) : base(device, new()
+        public BRDFLUT(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "effects/brdf/vs.hlsl",
             PixelShader = "effects/brdf/ps.hlsl"

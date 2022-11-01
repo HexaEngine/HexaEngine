@@ -23,6 +23,13 @@
             Device = device;
         }
 
+        internal D3D11GraphicsContext(D3D11GraphicsDevice device, ID3D11DeviceContext1* context)
+        {
+            DeviceContext = context;
+            NativePointer = (nint)context;
+            Device = device;
+        }
+
         public IGraphicsDevice Device { get; }
 
         public IntPtr NativePointer { get; }
@@ -30,6 +37,8 @@
         public bool IsDisposed => disposedValue;
 
         public string? DebugName { get; set; } = string.Empty;
+
+        public event EventHandler? OnDisposed;
 
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
         {
@@ -79,6 +88,11 @@
             Silk.NET.Direct3D11.MappedSubresource data;
             DeviceContext->Map((ID3D11Resource*)resource.NativePointer, (uint)subresourceIndex, Helper.Convert(mode), (uint)Helper.Convert(flags), &data);
             return new(data.PData, data.RowPitch, data.DepthPitch);
+        }
+
+        public void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource)
+        {
+            DeviceContext->UpdateSubresource((ID3D11Resource*)resource.NativePointer, (uint)destSubresource, null, subresource.PData, subresource.RowPitch, subresource.DepthPitch);
         }
 
         public void Unmap(IResource resource, int subresourceIndex)
@@ -730,6 +744,18 @@
         {
             uint pUAVInitialCounts = unchecked((uint)-1);
             DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+        }
+
+        public ICommandList FinishCommandList(int restoreState)
+        {
+            ID3D11CommandList* commandList;
+            DeviceContext->FinishCommandList(restoreState, &commandList);
+            return new D3D11CommandList(commandList);
+        }
+
+        public void ExecuteCommandList(ICommandList commandList, int restoreState)
+        {
+            DeviceContext->ExecuteCommandList((ID3D11CommandList*)commandList.NativePointer, restoreState);
         }
     }
 
