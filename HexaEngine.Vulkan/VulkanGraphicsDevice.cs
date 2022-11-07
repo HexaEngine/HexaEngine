@@ -756,5 +756,20 @@
         {
             throw new NotImplementedException();
         }
+
+        public ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

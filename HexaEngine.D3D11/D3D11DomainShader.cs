@@ -6,7 +6,7 @@
 
     public unsafe class D3D11DomainShader : DeviceChildBase, IDomainShader
     {
-        private readonly ID3D11DomainShader* ds;
+        internal readonly ID3D11DomainShader* ds;
 
         internal D3D11DomainShader(ID3D11DomainShader* ds)
         {

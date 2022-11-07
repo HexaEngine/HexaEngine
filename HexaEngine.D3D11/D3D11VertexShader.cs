@@ -5,7 +5,7 @@
 
     public unsafe class D3D11VertexShader : DeviceChildBase, IVertexShader
     {
-        private readonly ID3D11VertexShader* vs;
+        internal readonly ID3D11VertexShader* vs;
 
         internal D3D11VertexShader(ID3D11VertexShader* vs)
         {

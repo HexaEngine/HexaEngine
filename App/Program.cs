@@ -20,10 +20,7 @@
         private static void Main()
         {
             CrashLogger.Start();
-            ShaderCache.DisableCache = true;
-
-            Config config = new();
-            config.Save();
+            ShaderCache.DisableCache = false;
 
             Trace.Listeners.Add(new DebugListener("output.log"));
 

@@ -7,7 +7,7 @@
 
     public unsafe class D3D11Buffer : DeviceChildBase, IBuffer
     {
-        private readonly ID3D11Buffer* buffer;
+        internal readonly ID3D11Buffer* buffer;
 
         internal D3D11Buffer(ID3D11Buffer* buffer, BufferDescription desc)
         {

@@ -17,6 +17,7 @@
             get
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
+                if (child == null) return null;
                 uint len;
                 child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, null);
                 byte[] buffer = new byte[len];
@@ -26,6 +27,7 @@
             set
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
+                if (child == null) return;
                 if (value != null)
                 {
                     byte[] buffer = Encoding.UTF8.GetBytes(value);

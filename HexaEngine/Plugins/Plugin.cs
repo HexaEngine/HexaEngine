@@ -2,8 +2,7 @@
 {
     public unsafe struct Plugin
     {
-        public PluginHeader Header;
-        public Record* Records;
-        public int RecordCount;
+        public PluginHeader* Header;
+        public Record** Records;
     }
 }

@@ -5,7 +5,7 @@
 
     public unsafe class D3D11DepthStencilState : DeviceChildBase, IDepthStencilState
     {
-        private readonly ID3D11DepthStencilState* state;
+        internal readonly ID3D11DepthStencilState* state;
 
         internal D3D11DepthStencilState(ID3D11DepthStencilState* state, DepthStencilDescription description)
         {

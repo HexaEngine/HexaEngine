@@ -7,19 +7,25 @@
 
     public class Bloom : IEffect
     {
-        private RenderTexture[] mipChain;
-        private BloomDownsample downsample;
-        private BloomUpsample upsample;
-        private IBuffer downsampleCB;
-        private IBuffer upsampleCB;
-        private ISamplerState sampler;
+        private ITexture2D[] mipChainTex;
+        private IRenderTargetView[] mipChainRTVs;
+        private IShaderResourceView[] mipChainSRVs;
+        private readonly BloomDownsample downsample;
+        private readonly BloomUpsample upsample;
+        private readonly IBuffer downsampleCB;
+        private readonly IBuffer upsampleCB;
+        private readonly ISamplerState sampler;
+        private bool enabled;
         private float radius = 0.003f;
         private bool dirty;
+
+        private int width;
+        private int height;
 
         public IShaderResourceView Source;
         private bool disposedValue;
 
-        public IShaderResourceView Output => mipChain[0].ResourceView;
+        public IShaderResourceView Output => mipChainSRVs[0];
 
         private struct ParamsDownsample
         {
@@ -47,8 +53,9 @@
 
         public Bloom(IGraphicsDevice device)
         {
-            mipChain = new RenderTexture[2];
-
+            mipChainTex = Array.Empty<ITexture2D>();
+            mipChainRTVs = Array.Empty<IRenderTargetView>();
+            mipChainSRVs = Array.Empty<IShaderResourceView>();
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
@@ -61,55 +68,88 @@
             upsample = new(device);
             upsample.Samplers.Add(new(sampler, ShaderStage.Pixel, 0));
             upsample.Constants.Add(new(upsampleCB, ShaderStage.Pixel, 0));
+            dirty = true;
         }
+
+        public bool Enabled
+        { get => enabled; set { enabled = value; dirty = true; } }
 
         public float Radius
         { get => radius; set { radius = value; dirty = true; } }
+
+        private static int ComputeMipLevels(int width, int height)
+        {
+            return (int)MathF.Log2(MathF.Max(width, height));
+        }
 
         public void Resize(IGraphicsDevice device, int width, int height)
         {
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            for (int i = 0; i < mipChain.Length; i++)
+            int levels = ComputeMipLevels(currentWidth, currentHeight);
+
+            for (int i = 0; i < mipChainTex?.Length; i++)
             {
-                mipChain[i]?.Dispose();
-                mipChain[i] = new(device, TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1, Format.RGBA32Float));
+                mipChainTex[i]?.Dispose();
+                mipChainRTVs[i]?.Dispose();
+                mipChainSRVs[i]?.Dispose();
+            }
+
+            mipChainTex = new ITexture2D[levels];
+            mipChainRTVs = new IRenderTargetView[levels];
+            mipChainSRVs = new IShaderResourceView[levels];
+
+            for (int i = 0; i < levels; i++)
+            {
+                mipChainTex[i] = device.CreateTexture2D(Format.RGBA32Float, currentWidth, currentHeight, 1, 1, null, BindFlags.RenderTarget | BindFlags.ShaderResource);
+                mipChainRTVs[i] = device.CreateRenderTargetView(mipChainTex[i], new(0, 0, currentWidth, currentHeight));
+                mipChainSRVs[i] = device.CreateShaderResourceView(mipChainTex[i]);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
-            device.Context.Write(downsampleCB, new ParamsDownsample(new(width, height), default));
+            this.width = width;
+            this.height = height;
+            dirty = true;
         }
 
         public void Draw(IGraphicsContext context)
         {
             if (dirty)
             {
+                context.ClearRenderTargetView(mipChainRTVs[0], default);
+                context.Write(downsampleCB, new ParamsDownsample(new(width, height), default));
                 context.Write(upsampleCB, new ParamsUpsample(radius, default));
                 dirty = false;
             }
 
-            for (int i = 0; i < mipChain.Length; i++)
+            if (!enabled)
+            {
+                return;
+            }
+
+            for (int i = 0; i < mipChainRTVs.Length; i++)
             {
                 if (i > 0)
                 {
-                    context.SetShaderResource(mipChain[i - 1].ResourceView, ShaderStage.Pixel, 0);
+                    context.SetShaderResource(mipChainSRVs[i - 1], ShaderStage.Pixel, 0);
                 }
                 else
                 {
                     context.SetShaderResource(Source, ShaderStage.Pixel, 0);
                 }
 
-                context.SetRenderTarget(mipChain[i].RenderTargetView, null);
-                downsample.Draw(context, mipChain[i].Viewport);
+                context.SetRenderTarget(mipChainRTVs[i], null);
+                downsample.Draw(context, mipChainRTVs[i].Viewport);
                 context.ClearState();
             }
 
-            for (int i = mipChain.Length - 1; i > 0; i--)
+            for (int i = mipChainRTVs.Length - 1; i > 0; i--)
             {
-                context.SetRenderTarget(mipChain[i - 1].RenderTargetView, null);
-                context.SetShaderResource(mipChain[i].ResourceView, ShaderStage.Pixel, 0);
-                upsample.Draw(context, mipChain[i - 1].Viewport);
+                context.SetRenderTarget(mipChainRTVs[i - 1], null);
+                context.SetShaderResource(mipChainSRVs[i], ShaderStage.Pixel, 0);
+                upsample.Draw(context, mipChainRTVs[i - 1].Viewport);
             }
+            context.ClearState();
         }
 
         public void DrawSettings()
@@ -127,9 +167,11 @@
         {
             if (!disposedValue)
             {
-                for (int i = 0; i < mipChain.Length; i++)
+                for (int i = 0; i < mipChainTex?.Length; i++)
                 {
-                    mipChain[i]?.Dispose();
+                    mipChainTex[i]?.Dispose();
+                    mipChainRTVs[i]?.Dispose();
+                    mipChainSRVs[i]?.Dispose();
                 }
                 downsample.Dispose();
                 upsample.Dispose();

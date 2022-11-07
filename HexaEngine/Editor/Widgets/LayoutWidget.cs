@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Attributes;
@@ -13,7 +12,7 @@
     using System.Numerics;
     using System.Reflection;
 
-    public class LayoutWidget : Widget
+    public class LayoutWidget : ImGuiWindow
     {
         private readonly Dictionary<string, EditorNodeAttribute> cache = new();
         private readonly Dictionary<string, int> newInstances = new();
@@ -21,6 +20,7 @@
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public LayoutWidget()
         {
+            Flags = ImGuiWindowFlags.MenuBar;
             IsShown = true;
             foreach (var type in Assembly.GetExecutingAssembly()
                     .GetTypes()
@@ -37,22 +37,15 @@
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        public override void Dispose()
-        {
-        }
+        protected override string Name => "Layout";
 
-        public override void Draw(IGraphicsContext context)
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (!IsShown) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.MenuBar;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-
             var scene = SceneManager.Current;
 
-            if ((!ImGui.Begin("Layout", ref IsShown, flags)) || scene == null)
+            if (scene == null)
             {
-                ImGui.End();
+                EndWindow();
                 return;
             }
 
@@ -178,20 +171,6 @@
                     }
                 }
             }
-
-            ImGui.End();
-        }
-
-        public override void DrawMenu()
-        {
-            if (ImGui.MenuItem("Layout"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Init(IGraphicsDevice device)
-        {
         }
     }
 }

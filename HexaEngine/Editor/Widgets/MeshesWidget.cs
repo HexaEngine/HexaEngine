@@ -5,27 +5,18 @@
     using HexaEngine.Scenes;
     using ImGuiNET;
 
-    public class MeshesWidget : Widget
+    public class MeshesWidget : ImGuiWindow
     {
         private int current = -1;
 
-        public override void Dispose()
-        {
-        }
+        protected override string Name => "Meshes";
 
-        public override void Draw(IGraphicsContext context)
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (!IsShown) return;
-            if (!ImGui.Begin("Meshes", ref IsShown, ImGuiWindowFlags.MenuBar))
-            {
-                ImGui.End();
-                return;
-            }
-
             var scene = SceneManager.Current;
             if (scene is null)
             {
-                ImGui.End();
+                EndWindow();
                 return;
             }
 
@@ -52,20 +43,6 @@
                     }
                 }
             }
-
-            ImGui.End();
-        }
-
-        public override void DrawMenu()
-        {
-            if (ImGui.MenuItem("Meshes"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Init(IGraphicsDevice device)
-        {
         }
     }
 }

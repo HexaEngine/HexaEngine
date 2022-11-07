@@ -6,7 +6,7 @@
 
     public unsafe class D3D11SamplerState : DeviceChildBase, ISamplerState
     {
-        private readonly ID3D11SamplerState* sampler;
+        internal readonly ID3D11SamplerState* sampler;
 
         public D3D11SamplerState(ID3D11SamplerState* sampler, SamplerDescription description)
         {

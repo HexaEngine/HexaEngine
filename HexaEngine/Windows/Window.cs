@@ -26,7 +26,7 @@
 
     public class Window : SdlWindow
     {
-        private Dispatcher renderDispatcher;
+        private RenderDispatcher renderDispatcher;
         private Thread? renderThread;
         private bool isRunning = true;
         private bool firstFrame;
@@ -42,7 +42,7 @@
 
         public RendererFlags Flags;
 
-        public Dispatcher RenderDispatcher => renderDispatcher;
+        public RenderDispatcher RenderDispatcher => renderDispatcher;
 
         public IGraphicsDevice Device => device;
 
@@ -59,7 +59,6 @@
         [STAThread]
         private void RenderVoid()
         {
-            renderDispatcher = Dispatcher.CurrentDispatcher;
             if (OperatingSystem.IsWindows())
             {
                 device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
@@ -71,6 +70,7 @@
                 throw new PlatformNotSupportedException();
             }
 
+            renderDispatcher = new(device);
             framebuffer = new(device);
 
             if (Flags.HasFlag(RendererFlags.ImGui))
@@ -90,8 +90,19 @@
             OnRendererInitialize(device);
 
             deferredRenderer = new();
-            deferredRenderer.Initialize(device, this);
-
+            Task initTask = deferredRenderer.Initialize(device, this);
+            initTask.ContinueWith(x =>
+            {
+                if (x.IsCompletedSuccessfully)
+                {
+                    ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
+                }
+                if (x.IsFaulted)
+                {
+                    ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
+                    ImGuiConsole.Log(x.Exception);
+                }
+            });
             while (isRunning)
             {
                 if (resize)
@@ -109,7 +120,7 @@
                 context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
                 context.ClearRenderTargetView(swapChain.BackbufferRTV, Vector4.Zero);
 
-                Dispatcher.ExecuteQueue();
+                renderDispatcher.ExecuteQueue(context);
 
                 if (renderer is not null)
                     renderer.BeginDraw();
@@ -122,10 +133,9 @@
                     framebuffer.SourceViewport = Viewport;
                     framebuffer.Update(context);
                     framebuffer.Draw();
-                    deferredRenderer.DrawSettings();
                 }
 
-                if (Flags.HasFlag(RendererFlags.SceneGraph) && SceneManager.Current is not null)
+                if (initTask.IsCompleted && Flags.HasFlag(RendererFlags.SceneGraph) && SceneManager.Current is not null)
                     lock (SceneManager.Current)
                     {
                         SceneManager.Current.Tick();
@@ -164,7 +174,8 @@
 
             if (Flags.HasFlag(RendererFlags.SceneGraph))
                 SceneManager.Unload();
-
+            if (!initTask.IsCompleted)
+                initTask.Wait();
             deferredRenderer.Dispose();
 
             context.Dispose();

@@ -1,17 +1,16 @@
 ﻿namespace HexaEngine.Pipelines.Effects
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using ImGuiNET;
-    using Silk.NET.Core.Native;
-    using System.Collections.Generic;
 
     public class HBAO : Effect
     {
         private readonly IBuffer cb;
-        private bool isDirty;
+        private bool isDirty = true;
         private float samplingRadius = 0.5f;
         private uint numSamplingDirections = 8;
         private float samplingStep = 0.004f;
@@ -53,7 +52,6 @@
         {
             Mesh = new Quad(device);
             cb = CreateConstantBuffer<HBAOCB>(ShaderStage.Pixel, 0);
-            device.Context.Write(cb, new HBAOCB(samplingRadius, numSamplingDirections, samplingStep, numSamplingSteps));
 
             TargetType = PinType.Texture2D;
             ResourceSlots.Add((1, "Position", PinType.Texture2D));

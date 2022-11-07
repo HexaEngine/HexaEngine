@@ -6,7 +6,7 @@
 
     public unsafe class D3D11PixelShader : DeviceChildBase, IPixelShader
     {
-        private readonly ID3D11PixelShader* ps;
+        internal readonly ID3D11PixelShader* ps;
 
         internal D3D11PixelShader(ID3D11PixelShader* ps)
         {

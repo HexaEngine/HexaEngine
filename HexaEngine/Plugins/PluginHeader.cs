@@ -7,9 +7,10 @@
     public unsafe struct PluginHeader
     {
         public Endianness Endianness;
-        public UnsafeString Name;
-        public UnsafeString Description;
-        public Version Version;
-        public Version FormatVersion;
+        public PluginVersion FormatVersion;
+        public PluginVersion Version;
+        public ulong RecordCount;
+        public UnsafeString* Name;
+        public UnsafeString* Description;
     }
 }

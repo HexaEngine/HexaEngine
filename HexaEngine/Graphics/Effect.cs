@@ -25,6 +25,10 @@
 
         public RenderTargetViewArray? Targets { get; set; }
 
+        public IShaderResourceView[]? Inputs { get; set; }
+
+        public IShaderResourceView[]? Outputs { get; set; }
+
         public IPrimitive? Mesh { get; set; }
 
         public abstract void Draw(IGraphicsContext context);

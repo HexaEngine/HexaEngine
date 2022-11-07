@@ -1,85 +1,137 @@
-﻿using HexaEngine.Core.Unsafes;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
+﻿using HexaEngine.Core;
+using HexaEngine.Core.Unsafes;
+using HexaEngine.Plugins;
+using HexaEngine.Plugins.Records;
 
-public class Program
+namespace TestApp
 {
-    public static unsafe void Main()
+    public class Program
     {
-        /*
-        List<string> strings = new List<string>();
-
-        while (true)
+        public static unsafe void Main()
         {
-            string? input = Console.ReadLine();
-            if (input == null) continue;
-            if (input == "e") break;
-            strings.Add(input);
+            /*
+            List<string> strings = new List<string>();
+
+            while (true)
+            {
+                string? input = Console.ReadLine();
+                if (input == null) continue;
+                if (input == "e") break;
+                strings.Add(input);
+            }
+            string inp = string.Join(string.Empty, strings.ToArray());
+            string[] nums = inp.Replace(Environment.NewLine, "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            int[] ints = nums.Select(int.Parse).ToArray();
+            StringBuilder sb = new();
+            for (int i = 0; i < ints.Length; i += 2)
+            {
+                sb.AppendLine($"{ints[i] - 1},{ints[i + 1] - 1},");
+            }
+
+            Console.WriteLine(sb.ToString());*/
+
+            Plugin plugin = new();
+
+            PluginHeader pluginHeader = new();
+            pluginHeader.Name = Utilities.AsPointer(new UnsafeString("Test"));
+            pluginHeader.Version = new(1, 0, 0, 0);
+            pluginHeader.Description = Utilities.AsPointer(new UnsafeString(string.Empty));
+            pluginHeader.Endianness = BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
+            pluginHeader.FormatVersion = PluginVersion.LatestFormatVersion;
+
+            plugin.Header = &pluginHeader;
+
+            Plugin* pPlugin = &plugin;
+
+            SceneRecord record = new();
+            RecordHeader recordHeader = new();
+            recordHeader.Id = 1;
+            recordHeader.Parent = null;
+            recordHeader.Type = RecordType.Scene;
+            record.Header = &recordHeader;
+            record.Name = Utilities.AsPointer(new UnsafeString("MainScene"));
+
+            Record*[] records = new Record*[1];
+            records[0] = (Record*)(void*)&record;
+
+            fixed (Record** pRecords = records)
+            {
+                pPlugin->Records = pRecords;
+            }
+            pPlugin->Header->RecordCount = (ulong)records.LongLength;
+
+            // Test for casting
+            for (ulong i = 0; i < pPlugin->Header->RecordCount; i++)
+            {
+                Record* pRecord = pPlugin->Records[i];
+                switch (pRecord->Header->Type)
+                {
+                    case RecordType.None:
+                        break;
+
+                    case RecordType.Scene:
+                        SceneRecord* sceneRecord = (SceneRecord*)(void*)pRecord;
+                        break;
+
+                    case RecordType.Node:
+                        break;
+
+                    case RecordType.Camera:
+                        break;
+
+                    case RecordType.Terrain:
+                        break;
+
+                    case RecordType.Light:
+                        break;
+
+                    case RecordType.Mesh:
+                        break;
+
+                    case RecordType.Material:
+                        break;
+                }
+            }
+
+            int size = PluginEncoder.ComputePluginSize(pPlugin);
+            byte[] bytes = new byte[size];
+            PluginEncoder.EncodePlugin(bytes, Endianness.BigEndian, pPlugin);
+
+            Plugin* pPlugin2;
+            PluginDecoder.DecodePlugin(bytes, &pPlugin2);
+
+            // Test for casting
+            for (ulong i = 0; i < pPlugin2->Header->RecordCount; i++)
+            {
+                Record* pRecord = pPlugin2->Records[i];
+                switch (pRecord->Header->Type)
+                {
+                    case RecordType.None:
+                        break;
+
+                    case RecordType.Scene:
+                        SceneRecord* sceneRecord = (SceneRecord*)(void*)pRecord;
+                        break;
+
+                    case RecordType.Node:
+                        break;
+
+                    case RecordType.Camera:
+                        break;
+
+                    case RecordType.Terrain:
+                        break;
+
+                    case RecordType.Light:
+                        break;
+
+                    case RecordType.Mesh:
+                        break;
+
+                    case RecordType.Material:
+                        break;
+                }
+            }
         }
-        string inp = string.Join(string.Empty, strings.ToArray());
-        string[] nums = inp.Replace(Environment.NewLine, "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        int[] ints = nums.Select(int.Parse).ToArray();
-        StringBuilder sb = new();
-        for (int i = 0; i < ints.Length; i += 2)
-        {
-            sb.AppendLine($"{ints[i] - 1},{ints[i + 1] - 1},");
-        }
-
-        Console.WriteLine(sb.ToString());*/
-
-        byte[] union = new byte[sizeof(RecordHeader)];
-
-        RecordHeader* t;
-        fixed (byte* ptr = union)
-            t = (RecordHeader*)ptr;
-
-        RecordHeader header = *t;
-
-        UnsafeString str = new("Test");
-
-        byte* bytes = stackalloc byte[12];
-
-        UnsafeString.Write(&str, new Span<byte>(bytes, 12));
-    }
-
-    public unsafe struct RecordHeader
-    {
-        public ulong Id;
-        public ulong ParentId;
-        public int Type;
-        public int Length;
-    }
-
-    public enum Type
-    {
-        T1,
-        T2
-    }
-
-    [StructLayout(LayoutKind.Explicit)]
-    public unsafe struct Union
-    {
-        [FieldOffset(0)]
-        public Type Type;
-
-        [FieldOffset(4)]
-        public Type1 Type1;
-
-        [FieldOffset(4)]
-        public Type2 Type2;
-    }
-
-    public unsafe struct Type1
-    {
-        public uint Reserved;
-    }
-
-    public unsafe struct Type2
-    {
-        public uint Reserved0;
-        public uint Reserved1;
-        public uint Reserved2;
-        public uint Reserved3;
     }
 }

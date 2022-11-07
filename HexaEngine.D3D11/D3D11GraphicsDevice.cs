@@ -1145,36 +1145,4 @@
             Device->CreateUnorderedAccessView()
         }*/
     }
-
-    public unsafe class D3D11Query : DeviceChildBase, IQuery
-    {
-        private ID3D11Query* query;
-
-        public D3D11Query(ID3D11Query* query)
-        {
-            this.query = query;
-            nativePointer = new(query);
-        }
-
-        protected override void DisposeCore()
-        {
-            query->Release();
-        }
-    }
-
-    public unsafe class D3D11CommandList : DeviceChildBase, ICommandList
-    {
-        private ID3D11CommandList* commandList;
-
-        public D3D11CommandList(ID3D11CommandList* commandList)
-        {
-            this.commandList = commandList;
-            nativePointer = new(commandList);
-        }
-
-        protected override void DisposeCore()
-        {
-            commandList->Release();
-        }
-    }
 }

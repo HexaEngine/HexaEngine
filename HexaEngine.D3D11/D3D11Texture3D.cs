@@ -2,12 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using Silk.NET.Direct3D11;
-    using System;
     using ResourceDimension = Core.Graphics.ResourceDimension;
 
     public unsafe class D3D11Texture3D : DeviceChildBase, ITexture3D
     {
-        private readonly ID3D11Texture3D* texture;
+        internal readonly ID3D11Texture3D* texture;
 
         public D3D11Texture3D(ID3D11Texture3D* texture, Texture3DDescription description)
         {

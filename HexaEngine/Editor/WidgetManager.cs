@@ -6,10 +6,11 @@
     public static class WidgetManager
     {
         private static IGraphicsDevice? device;
-        private static readonly List<Widget> widgets = new();
+        private static readonly List<ImGuiWindow> widgets = new();
 
         static WidgetManager()
         {
+            Register<PreferencesWidget>();
             Register<AssetExplorer>();
             Register<LayoutWidget>();
             Register<PropertiesWidget>();
@@ -20,17 +21,32 @@
             Register<IrradianceWidget>();
         }
 
-        public static bool Register<T>() where T : Widget, new()
+        public static bool Register<T>() where T : ImGuiWindow, new()
         {
             if (device == null)
             {
-                Widget widget = new T();
+                ImGuiWindow widget = new T();
                 widgets.Add(widget);
                 return false;
             }
             else
             {
-                Widget widget = new T();
+                ImGuiWindow widget = new T();
+                widget.Init(device);
+                widgets.Add(widget);
+                return true;
+            }
+        }
+
+        public static bool Register(ImGuiWindow widget)
+        {
+            if (device == null)
+            {
+                widgets.Add(widget);
+                return false;
+            }
+            else
+            {
                 widget.Init(device);
                 widgets.Add(widget);
                 return true;
@@ -51,7 +67,7 @@
         {
             for (int i = 0; i < widgets.Count; i++)
             {
-                widgets[i].Draw(context);
+                widgets[i].DrawWindow(context);
             }
         }
 

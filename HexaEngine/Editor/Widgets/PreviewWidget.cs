@@ -21,7 +21,7 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
 
-    public class PreviewWidget : Widget, IDisposable
+    public class PreviewWidget : ImGuiWindow, IDisposable
     {
 #nullable disable
         private bool isdrawing;
@@ -71,6 +71,8 @@
         private FilePicker pickerPre = new() { CurrentFolder = Environment.CurrentDirectory };
 
         private Camera camera;
+
+        protected override string Name => "PBR Preview";
 
         public override void Init(IGraphicsDevice device)
         {
@@ -207,25 +209,9 @@
             }
         }
 
-        public override void DrawMenu()
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (ImGui.MenuItem("PBR Preview"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.None;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-            if (!ImGui.Begin("Preview", ref IsShown, flags))
-            {
-                ImGui.End();
-                return;
-            }
+            Flags = ImGuiWindowFlags.None;
 
             IsDocked = ImGui.IsWindowDocked();
 
@@ -283,7 +269,7 @@
 
             ImGui.EndChild();
 
-            ImGui.End();
+            EndWindow();
 
             if (searchPathEnvironment)
             {

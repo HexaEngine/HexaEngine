@@ -758,20 +758,4 @@
             DeviceContext->ExecuteCommandList((ID3D11CommandList*)commandList.NativePointer, restoreState);
         }
     }
-
-    public unsafe class D3D11UnorderedAccessView : DeviceChildBase, IUnorderedAccessView
-    {
-        private readonly ID3D11UnorderedAccessView* uva;
-
-        public D3D11UnorderedAccessView(ID3D11UnorderedAccessView* uva)
-        {
-            this.uva = uva;
-            nativePointer = (IntPtr)uva;
-        }
-
-        protected override void DisposeCore()
-        {
-            uva->Release();
-        }
-    }
 }

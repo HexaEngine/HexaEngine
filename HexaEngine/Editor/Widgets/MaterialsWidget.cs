@@ -5,7 +5,7 @@
     using ImGuiNET;
     using System.Linq;
 
-    public unsafe class MaterialsWidget : Widget
+    public unsafe class MaterialsWidget : ImGuiWindow
     {
         private int current = -1;
 
@@ -14,27 +14,15 @@
             IsShown = true;
         }
 
-        public override void Dispose()
+        protected override string Name => "Materials";
+
+        public override void DrawContent(IGraphicsContext context)
         {
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.MenuBar;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-
-            if (!ImGui.Begin("Materials", ref IsShown, flags))
-            {
-                ImGui.End();
-                return;
-            }
-
             var scene = SceneManager.Current;
             if (scene is null)
             {
-                ImGui.End();
+                EndWindow();
+
                 return;
             }
 
@@ -116,20 +104,6 @@
                 if (ImGui.InputText("RM Tex", ref texRM, 256))
                     material.RoughnessMetalnessTextureMap = texRM;
             }
-
-            ImGui.End();
-        }
-
-        public override void DrawMenu()
-        {
-            if (ImGui.MenuItem("Material"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Init(IGraphicsDevice device)
-        {
         }
     }
 }

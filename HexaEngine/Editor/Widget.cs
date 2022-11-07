@@ -3,20 +3,66 @@
     using HexaEngine.Core.Graphics;
     using ImGuiNET;
 
-    public abstract class Widget
+    public interface IPopupWindow
+    {
+        public event EventHandler<EventArgs> Closed;
+
+        void Show();
+
+        void Draw();
+
+        void Close();
+    }
+
+    public abstract class ImGuiWindow
     {
         protected bool IsShown;
         protected bool IsDocked;
+        private bool windowEnded;
 
-        //protected abstract string Name { get; }
+        protected abstract string Name { get; }
         protected ImGuiWindowFlags Flags;
 
-        public abstract void Init(IGraphicsDevice device);
+        public virtual void Init(IGraphicsDevice device)
+        {
+        }
 
-        public abstract void Draw(IGraphicsContext context);
+        public virtual void DrawWindow(IGraphicsContext context)
+        {
+            if (!IsShown) return;
+            if (!ImGui.Begin(Name, ref IsShown, Flags))
+            {
+                ImGui.End();
+                return;
+            }
 
-        public abstract void DrawMenu();
+            windowEnded = false;
 
-        public abstract void Dispose();
+            DrawContent(context);
+
+            if (!windowEnded)
+                ImGui.End();
+        }
+
+        public abstract void DrawContent(IGraphicsContext context);
+
+        protected void EndWindow()
+        {
+            if (!IsShown) return;
+            ImGui.End();
+            windowEnded = true;
+        }
+
+        public virtual void DrawMenu()
+        {
+            if (ImGui.MenuItem(Name))
+            {
+                IsShown = true;
+            }
+        }
+
+        public virtual void Dispose()
+        {
+        }
     }
 }

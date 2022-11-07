@@ -713,6 +713,7 @@
             {
                 texs[i] = device.LoadTexture2D(textures[i], Usage.Staging, BindFlags.None, CpuAccessFlags.Read, ResourceMiscFlag.None);
             }
+
             var context = device.Context;
             var desc = texs[0].Description;
             desc.ArraySize = textures.Length;

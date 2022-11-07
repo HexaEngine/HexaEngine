@@ -2,7 +2,7 @@
 {
     public class ReferenceBuilder
     {
-        public Plugin Build(Plugin[] plugins)
+        public static Plugin Build(Plugin[] plugins)
         {
             return default;
         }

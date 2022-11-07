@@ -6,11 +6,12 @@ namespace HexaEngine.Objects
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
+    using HexaEngine.Windows;
     using System;
 
     public interface ISceneRenderer : IDisposable
     {
-        void Initialize(IGraphicsDevice device, SdlWindow window);
+        Task Initialize(IGraphicsDevice device, Window window);
 
         void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera camera);
 
