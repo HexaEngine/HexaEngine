@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Mathematics;
     using ImGuiNET;
     using System.Numerics;
 
@@ -72,21 +73,23 @@
         }
 
         public bool Enabled
-        { get => enabled; set { enabled = value; dirty = true; } }
+        { 
+            get => enabled;
+            set 
+            { 
+                enabled = value; 
+                dirty = true; 
+            } 
+        }
 
         public float Radius
         { get => radius; set { radius = value; dirty = true; } }
-
-        private static int ComputeMipLevels(int width, int height)
-        {
-            return (int)MathF.Log2(MathF.Max(width, height));
-        }
 
         public void Resize(IGraphicsDevice device, int width, int height)
         {
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            int levels = ComputeMipLevels(currentWidth, currentHeight);
+            int levels = MathUtil.ComputeMipLevels(currentWidth, currentHeight);
 
             for (int i = 0; i < mipChainTex?.Length; i++)
             {

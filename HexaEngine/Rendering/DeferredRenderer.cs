@@ -67,6 +67,7 @@
 
         private RenderTexture ssaoBuffer;
         private RenderTexture lightMap;
+        private RenderTexture dofBuffer;
         private RenderTexture tonemapBuffer;
         private RenderTexture fxaaBuffer;
         private RenderTexture ssrBuffer;
@@ -91,6 +92,7 @@
         private ISamplerState ansioSampler;
         private ISamplerState linearSampler;
 
+        private DOFEffect dof;
         private HBAO ssao;
         private DDASSREffect ssr;
         private BlendBoxBlurEffect ssrBlurEffect;
@@ -121,21 +123,6 @@
         private int height;
         private int windowWidth;
         private int windowHeight;
-
-        private IBuffer gridVB;
-        private IBuffer gridIB;
-        private IBuffer gridISB;
-        private int gridIndexCount;
-        private GridShader gridShader;
-
-        private IBuffer terrVB;
-        private IBuffer terrIB;
-        private IBuffer terrISB;
-        private int terrIndexCount;
-        private TerrainShader terrShader;
-        private RenderTexture terrTexture;
-        private RenderTexture terrHeightTexture;
-        private RenderTexture terrMaskTexture;
 
 #nullable enable
 
@@ -305,6 +292,14 @@
                 tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
                 configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
 
+                dofBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+                dof = new(device, width, height);
+                dof.Target = tonemapBuffer.RenderTargetView;
+                dof.Color = dofBuffer.ResourceView;
+                dof.Position = gbuffers.SRVs[1];
+                dof.Camera = cameraBuffer;
+                configKey.GenerateSubKeyAuto(dof, "Dof");
+
                 bloom = new(device);
                 bloom.Source = tonemapBuffer.ResourceView;
                 bloom.Resize(device, width, height);
@@ -318,12 +313,12 @@
                 configKey.GenerateSubKeyAuto(ssr, "SSR");
 
                 ssrBlurEffect = new(device);
-                ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;
+                ssrBlurEffect.Target = dofBuffer.RenderTargetView;
                 ssrBlurEffect.Samplers.Add(new(linearSampler, ShaderStage.Pixel, 0));
                 ssrBlurEffect.Resources.Add(new(ssrBuffer.ResourceView, ShaderStage.Pixel, 0));
 
                 blendEffect = new(device);
-                blendEffect.Target = tonemapBuffer.RenderTargetView;
+                blendEffect.Target = dofBuffer.RenderTargetView;
                 blendEffect.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
                 env = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
@@ -362,57 +357,6 @@
 
                 passes.Initialize(device, width, height);
 
-                {
-                    var res = Grid.GenerateGrid();
-                    gridVB = device.CreateBuffer(res.Item1, BindFlags.VertexBuffer, Usage.Immutable);
-                    gridIB = device.CreateBuffer(res.Item2, BindFlags.IndexBuffer, Usage.Immutable);
-
-                    gridShader = new(device);
-                    var inst = new Matrix4x4[4];
-                    int a = 0;
-                    for (int i = -1; i < 1; i++)
-                    {
-                        for (int j = -1; j < 1; j++)
-                        {
-                            Matrix4x4 translation = Matrix4x4.CreateTranslation(i * 255, 0, j * 255);
-                            inst[a++] = translation;
-                        }
-                    }
-                    gridIndexCount = res.Item2.Length;
-                    gridISB = device.CreateBuffer(inst, BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                }
-
-                {
-                    DynamicTerrain map = new(256, 256, 1);
-
-                    terrVB = device.CreateBuffer(map.Vertices, BindFlags.VertexBuffer, Usage.Immutable);
-                    terrIB = device.CreateBuffer(map.Indices, BindFlags.IndexBuffer, Usage.Immutable);
-
-                    terrShader = new(device);
-                    window.RenderDispatcher.InvokeBlocking(() =>
-                    {
-                        terrTexture = RenderTexture.Combine2D(device, Paths.CurrentTexturePath + "layer0.dds", Paths.CurrentTexturePath + "layer1.dds", Paths.CurrentTexturePath + "layer2.dds");
-                    });
-                    terrHeightTexture = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "terrain-height.png"));
-                    terrMaskTexture = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "terrain-mask.png"));
-                    terrShader.Resources.Add(new(terrHeightTexture.ResourceView, ShaderStage.Domain, 0));
-                    terrShader.Resources.Add(new(terrTexture.ResourceView, ShaderStage.Pixel, 0));
-                    terrShader.Resources.Add(new(terrMaskTexture.ResourceView, ShaderStage.Pixel, 1));
-                    terrShader.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
-                    terrShader.Samplers.Add(new(linearSampler, ShaderStage.Domain, 0));
-                    var inst = new Matrix4x4[4];
-                    int a = 0;
-                    for (int i = 0; i < 2; i++)
-                    {
-                        for (int j = 0; j < 2; j++)
-                        {
-                            Matrix4x4 translation = Matrix4x4.CreateTranslation(i * 255, 0, j * 255);
-                            inst[a++] = translation;
-                        }
-                    }
-                    terrIndexCount = map.Indices.Length;
-                    terrISB = device.CreateBuffer(inst, BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                }
                 initialized = true;
                 window.RenderDispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
             });
@@ -435,6 +379,7 @@
             lightMap.Dispose();
             ssaoBuffer.Dispose();
             fxaaBuffer.Dispose();
+            dofBuffer.Dispose();
             tonemapBuffer.Dispose();
             ssrBuffer.Dispose();
             depthbuffer.Dispose();
@@ -469,6 +414,12 @@
             tonemap.Resources.Clear();
             tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
 
+            dofBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+            dof.Target = tonemapBuffer.RenderTargetView;
+            dof.Color = dofBuffer.ResourceView;
+            dof.Position = gbuffers.SRVs[1];
+            dof.Resize(device, width, height);
+
             bloom.Source = tonemapBuffer.ResourceView;
             bloom.Resize(device, width, height);
             tonemap.Resources.Add(new(bloom.Output, ShaderStage.Pixel, 1));
@@ -476,11 +427,11 @@
             ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             ssr.Target = ssrBuffer.RenderTargetView;
 
-            ssrBlurEffect.Target = tonemapBuffer.RenderTargetView;
+            ssrBlurEffect.Target = dofBuffer.RenderTargetView;
             ssrBlurEffect.Resources.Clear();
             ssrBlurEffect.Resources.Add(new(ssrBuffer.ResourceView, ShaderStage.Pixel, 0));
 
-            blendEffect.Target = tonemapBuffer.RenderTargetView;
+            blendEffect.Target = dofBuffer.RenderTargetView;
         }
 
         public async Task Update(Scene scene)
@@ -552,18 +503,6 @@
             }
         }
 
-        private unsafe void RenderTerrain(Pipeline pipeline, Viewport viewport)
-        {
-            context.SetConstantBuffer(tesselationBuffer, ShaderStage.Vertex, 2);
-            context.SetConstantBuffer(cameraBuffer, ShaderStage.Vertex, 1);
-            context.SetConstantBuffer(cameraBuffer, ShaderStage.Domain, 1);
-            context.SetVertexBuffer(terrVB, sizeof(TerrainVertex));
-            context.SetIndexBuffer(terrIB, Format.R32UInt, 0);
-            context.SetVertexBuffer(1, terrISB, sizeof(Matrix4x4));
-            pipeline.DrawIndexedInstanced(context, viewport, terrIndexCount, 1, 0, 0, 0);
-            context.ClearState();
-        }
-
         public unsafe void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera? camera)
         {
             if (!initialized) return;
@@ -587,9 +526,6 @@
 
             // Fill Geometry Buffer
             //context.ClearRenderTargetViews(gbuffers.RTVs, Vector4.Zero);
-
-            context.SetRenderTargets(gbuffers.RTVs, dsv);
-            RenderTerrain(terrShader, gbuffers.Viewport);
 
             for (int i = 0; i < scene.Meshes.Count; i++)
             {
@@ -726,20 +662,14 @@
             }
 
             {
-                tonemapBuffer.SetTarget(context);
+                context.SetRenderTarget(dofBuffer.RenderTargetView, dsv);
                 context.SetShaderResource(env.ResourceView, ShaderStage.Pixel, 0);
                 context.SetSampler(ansioSampler, ShaderStage.Pixel, 0);
-                skycube.DrawAuto(context, skyboxShader, tonemapBuffer.Viewport);
+                skycube.DrawAuto(context, skyboxShader, dofBuffer.Viewport);
                 context.ClearState();
             }
 
-            /*
-            foreach (var item in scene.ForwardRenderers)
-            {
-                fxaaBuffer.SetTarget(deferredContext);
-                item.Render(deferredContext, viewport, camera);
-            }
-            */
+            dof.Draw(context);
 
             bloom.Draw(context);
 
@@ -751,14 +681,6 @@
 
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             DebugDraw.Render(camera, viewport);
-            /*
-            context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
-            context.SetConstantBuffer(cameraBuffer, ShaderStage.Vertex, 1);
-
-            context.SetVertexBuffer(gridVB, sizeof(VertexPositionColor));
-            context.SetIndexBuffer(gridIB, Format.R32UInt, 0);
-            context.SetVertexBuffer(1, gridISB, sizeof(Matrix4x4));
-            gridShader.DrawIndexedInstanced(context, fxaaBuffer.Viewport, gridIndexCount, 4, 0, 0, 0);*/
         }
 
         public void DrawSettings()
@@ -839,6 +761,7 @@
             if (ImGui.Checkbox("Enable Bloom", ref enableBloom))
                 dirty = true;
 
+            dof.DrawSettings();
             ssr.DrawSettings();
             ssao.DrawSettings();
             bloom.DrawSettings();
@@ -885,6 +808,7 @@
                 lightMap.Dispose();
                 fxaaBuffer.Dispose();
                 tonemapBuffer.Dispose();
+                dofBuffer.Dispose();
                 ssrBuffer.Dispose();
                 depthbuffer.Dispose();
 
@@ -896,6 +820,7 @@
                 blendEffect.Dispose();
                 fxaa.Dispose();
                 tonemap.Dispose();
+                dof.Dispose();
                 bloom.Dispose();
 
                 brdfLUT.Dispose();

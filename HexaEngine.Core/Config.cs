@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core
 {
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Numerics;
     using System.Reflection;
     using System.Text.Json;
@@ -164,8 +165,8 @@
             if (Value == null)
                 return default;
             string trimed = Value.Trim('<', '>');
-            string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            return new(float.Parse(components[0]), float.Parse(components[1]));
+            string[] components = trimed.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
 
         public Vector3 GetVector3()
@@ -174,7 +175,7 @@
                 return default;
             string trimed = Value.Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            return new(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]));
+            return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[2], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
 
         public Vector4 GetVector4()
@@ -327,10 +328,12 @@
 
         public void GenerateSubKeyAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, string name)
         {
-            if (Keys.Any(x => x.Name == name)) return;
-            ConfigKey key = new(name);
-            key.GenerateAuto(t);
-            Keys.Add(key);
+            ConfigKey? key = Keys.Find(x => x.Name == name);
+            bool isNew = key == null;
+            key ??= new(name);
+            key.InitAuto(t);
+            if (isNew)
+                Keys.Add(key);
         }
 
         public void GenerateAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t)
@@ -520,6 +523,200 @@
 
                 if (val == null) continue;
                 Values.Add(val);
+            }
+        }
+
+        public void InitAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t)
+        {
+            Type type = typeof(T);
+            PropertyInfo[] properties = type.GetProperties();
+            for (int i = 0; i < properties.Length; i++)
+            {
+                PropertyInfo property = properties[i];
+                TryGetKeyValue(property.Name, out ConfigValue? val);
+                bool isNew = val == null;
+                if (property.PropertyType == typeof(string))
+                {
+                    val ??= new(property.Name, DataType.String, property.GetValue(t) as string);
+                    val.ValueChanged += (s, e) =>
+                    {
+                        property.SetValue(t, e);
+                    };
+                }
+
+                if (property.PropertyType == typeof(bool))
+                {
+                    val ??= new(property.Name, DataType.Bool, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, bool.Parse(e));
+                        else
+                            property.SetValue(t, default(bool));
+                    };
+                }
+
+                if (property.PropertyType == typeof(byte))
+                {
+                    val ??= new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, byte.Parse(e));
+                        else
+                            property.SetValue(t, default(byte));
+                    };
+                }
+
+                if (property.PropertyType == typeof(sbyte))
+                {
+                    val ??= new(property.Name, DataType.Int8, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, sbyte.Parse(e));
+                        else
+                            property.SetValue(t, default(sbyte));
+                    };
+                }
+
+                if (property.PropertyType == typeof(ushort))
+                {
+                    val ??= new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, ushort.Parse(e));
+                        else
+                            property.SetValue(t, default(ushort));
+                    };
+                }
+
+                if (property.PropertyType == typeof(short))
+                {
+                    val ??= new(property.Name, DataType.Int16, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, short.Parse(e));
+                        else
+                            property.SetValue(t, default(short));
+                    };
+                }
+
+                if (property.PropertyType == typeof(uint))
+                {
+                    val ??= new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, uint.Parse(e));
+                        else
+                            property.SetValue(t, default(uint));
+                    };
+                }
+
+                if (property.PropertyType == typeof(int))
+                {
+                    val ??= new(property.Name, DataType.Int32, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, int.Parse(e));
+                        else
+                            property.SetValue(t, default(int));
+                    };
+                }
+
+                if (property.PropertyType == typeof(ulong))
+                {
+                    val ??= new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, ulong.Parse(e));
+                        else
+                            property.SetValue(t, default(ulong));
+                    };
+                }
+
+                if (property.PropertyType == typeof(long))
+                {
+                    val ??= new(property.Name, DataType.Int64, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, long.Parse(e));
+                        else
+                            property.SetValue(t, default(long));
+                    };
+                }
+
+                if (property.PropertyType == typeof(float))
+                {
+                    val ??= new(property.Name, DataType.Float, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, float.Parse(e));
+                        else
+                            property.SetValue(t, default(float));
+                    };
+                }
+
+                if (property.PropertyType == typeof(double))
+                {
+                    val ??= new(property.Name, DataType.Double, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, double.Parse(e));
+                        else
+                            property.SetValue(t, default(double));
+                    };
+                }
+
+                if (property.PropertyType == typeof(Vector2))
+                {
+                    val ??= new(property.Name, DataType.Float2, ((Vector2)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture));
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, s.GetVector2());
+                        else
+                            property.SetValue(t, default(Vector2));
+                    };
+                }
+
+                if (property.PropertyType == typeof(Vector3))
+                {
+                    val ??= new(property.Name, DataType.Float3, ((Vector3)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture));
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, s.GetVector3());
+                        else
+                            property.SetValue(t, default(Vector3));
+                    };
+                }
+
+                if (property.PropertyType == typeof(Vector4))
+                {
+                    val ??= new(property.Name, DataType.Float4, property.GetValue(t)?.ToString());
+                    val.ValueChanged += (s, e) =>
+                    {
+                        if (e != null)
+                            property.SetValue(t, s.GetVector4());
+                        else
+                            property.SetValue(t, default(Vector4));
+                    };
+                }
+
+                if (val == null) continue;
+
+                val.Value = val.Value;
+                if (isNew)
+                    Values.Add(val);
             }
         }
     }

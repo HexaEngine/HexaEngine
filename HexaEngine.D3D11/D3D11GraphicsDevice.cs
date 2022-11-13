@@ -97,6 +97,7 @@
 
         public ISwapChain? SwapChain { get; }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer(BufferDescription description)
         {
             ID3D11Buffer* buffer;
@@ -105,6 +106,7 @@
             return new D3D11Buffer(buffer, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct
         {
             if (description.ByteWidth == 0)
@@ -127,12 +129,14 @@
             return new D3D11Buffer(buffer, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(value, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : struct
         {
             int size = Marshal.SizeOf<T>();
@@ -160,12 +164,14 @@
             return new D3D11Buffer(buffer, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(values, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(Span<T> values, BufferDescription description) where T : struct
         {
             int size = Marshal.SizeOf<T>();
@@ -193,12 +199,14 @@
             return new D3D11Buffer(buffer, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(values, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBlendState CreateBlendState(BlendDescription description)
         {
             ID3D11BlendState* blend;
@@ -207,6 +215,7 @@
             return new D3D11BlendState(blend, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description)
         {
             ID3D11DepthStencilState* state;
@@ -215,6 +224,7 @@
             return new D3D11DepthStencilState(state, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDepthStencilView CreateDepthStencilView(IResource resource)
         {
             DepthStencilViewDescription description;
@@ -244,6 +254,7 @@
             return CreateDepthStencilView(resource, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description)
         {
             ID3D11DepthStencilView* view;
@@ -252,6 +263,7 @@
             return new D3D11DepthStencilView(view, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IRasterizerState CreateRasterizerState(RasterizerDescription description)
         {
             ID3D11RasterizerState* state;
@@ -260,6 +272,7 @@
             return new D3D11RasterizerState(state, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport)
         {
             RenderTargetViewDescription description;
@@ -297,6 +310,7 @@
             return CreateRenderTargetView(resource, description, viewport);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport)
         {
             ID3D11RenderTargetView* rtv;
@@ -305,6 +319,7 @@
             return new D3D11RenderTargetView(rtv, description, viewport);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ISamplerState CreateSamplerState(SamplerDescription description)
         {
             ID3D11SamplerState* sampler;
@@ -313,6 +328,7 @@
             return new D3D11SamplerState(sampler, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IShaderResourceView CreateShaderResourceView(IResource resource)
         {
             ShaderResourceViewDescription description;
@@ -354,6 +370,7 @@
             return CreateShaderResourceView(resource, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IShaderResourceView CreateShaderResourceView(IResource resource, ShaderResourceViewDescription description)
         {
             ID3D11ShaderResourceView* srv;
@@ -362,6 +379,7 @@
             return new D3D11ShaderResourceView(srv, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Texture1DDescription description)
         {
             ID3D11Texture1D* texture;
@@ -370,6 +388,7 @@
             return new D3D11Texture1D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[]? subresources)
         {
             ID3D11Texture1D* texture;
@@ -386,11 +405,13 @@
             return new D3D11Texture1D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag misc)
         {
             return CreateTexture1D(format, width, arraySize, mipLevels, subresources, bindFlags, Usage.Default, CpuAccessFlags.None, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture1DDescription description = new(format, width, arraySize, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
@@ -410,6 +431,7 @@
             return new D3D11Texture1D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D CreateTexture2D(Texture2DDescription description)
         {
             ID3D11Texture2D* texture;
@@ -418,6 +440,7 @@
             return new D3D11Texture2D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[]? subresources)
         {
             ID3D11Texture2D* texture;
@@ -434,11 +457,13 @@
             return new D3D11Texture2D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag misc)
         {
             return CreateTexture2D(format, width, height, arraySize, mipLevels, subresources, bindFlags, Usage.Default, CpuAccessFlags.None, 1, 0, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture2DDescription description = new(format, width, height, arraySize, mipLevels, bindFlags, usage, cpuAccessFlags, sampleCount, sampleQuality, misc);
@@ -458,6 +483,7 @@
             return new D3D11Texture2D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D CreateTexture3D(Texture3DDescription description)
         {
             ID3D11Texture3D* texture;
@@ -466,6 +492,7 @@
             return new D3D11Texture3D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[]? subresources)
         {
             ID3D11Texture3D* texture;
@@ -482,11 +509,13 @@
             return new D3D11Texture3D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag misc)
         {
             return CreateTexture3D(format, width, height, depth, mipLevels, subresources, bindFlags, Usage.Default, CpuAccessFlags.None, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture3DDescription description = new(format, width, height, depth, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
@@ -506,46 +535,55 @@
             return new D3D11Texture3D(texture, description);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D LoadTexture1D(string path)
         {
             return (ITexture1D)LoadTextureAuto(path, TextureDimension.Texture1D);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
         {
             return (ITexture1D)LoadTextureAuto(path, TextureDimension.Texture1D, usage, bind, cpuAccess, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D LoadTexture2D(string path)
         {
             return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
         {
             return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D, usage, bind, cpuAccess, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D LoadTexture3D(string path)
         {
             return (ITexture3D)LoadTextureAuto(path, TextureDimension.Texture3D);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
         {
             return (ITexture3D)LoadTextureAuto(path, TextureDimension.Texture3D, usage, bind, cpuAccess, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D LoadTextureCube(string path)
         {
             return (ITexture2D)LoadTextureAuto(path, TextureDimension.TextureCube);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D LoadTextureCube(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
         {
             return (ITexture2D)LoadTextureAuto(path, TextureDimension.TextureCube, usage, bind, cpuAccess, misc);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IResource LoadTextureAuto(string path, TextureDimension dimension)
         {
             ScratchImage image = LoadAuto(path);
@@ -613,6 +651,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IResource LoadTextureAuto(string path, TextureDimension dimension, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
         {
             ScratchImage image = LoadAuto(path);
@@ -679,6 +718,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe IResource InitFallback(TextureDimension dimension)
         {
             SubresourceData fallback;
@@ -713,6 +753,7 @@
             throw new ArgumentOutOfRangeException(nameof(dimension));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ScratchImage LoadAuto(string path)
         {
             if (!FileSystem.TryOpen(path, out VirtualStream? fs))
@@ -742,26 +783,31 @@
             return image;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTexture1D(ITexture1D texture, string path)
         {
             SaveAuto(texture, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTexture2D(ITexture2D texture, string path)
         {
             SaveAuto(texture, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTexture3D(ITexture3D texture, string path)
         {
             SaveAuto(texture, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTextureCube(ITexture2D texture, string path)
         {
             SaveAuto(texture, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SaveAuto(IResource resource, string path)
         {
             ScratchImage image = new();
@@ -787,26 +833,31 @@
             image.Release();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTexture1D(ITexture1D texture, Format format, string path)
         {
             SaveAuto(texture, format, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTexture2D(ITexture2D texture, Format format, string path)
         {
             SaveAuto(texture, format, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTexture3D(ITexture3D texture, Format format, string path)
         {
             SaveAuto(texture, format, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SaveTextureCube(ITexture2D texture, Format format, string path)
         {
             SaveAuto(texture, format, path);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SaveAuto(IResource resource, Format format, string path)
         {
             ScratchImage image = new();
@@ -849,6 +900,7 @@
             image.Release();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IVertexShader CreateVertexShader(byte[] bytecode)
         {
             ID3D11VertexShader* vs;
@@ -856,6 +908,7 @@
             return new D3D11VertexShader(vs);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IHullShader CreateHullShader(byte[] bytecode)
         {
             ID3D11HullShader* hs;
@@ -863,6 +916,7 @@
             return new D3D11HullShader(hs);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDomainShader CreateDomainShader(byte[] bytecode)
         {
             ID3D11DomainShader* ds;
@@ -870,6 +924,7 @@
             return new D3D11DomainShader(ds);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IGeometryShader CreateGeometryShader(byte[] bytecode)
         {
             ID3D11GeometryShader* gs;
@@ -877,6 +932,7 @@
             return new D3D11GeometryShader(gs);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IPixelShader CreatePixelShader(byte[] bytecode)
         {
             ID3D11PixelShader* ps;
@@ -884,11 +940,13 @@
             return new D3D11PixelShader(ps);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IComputeShader CreateComputeShader(byte[] bytecode)
         {
             throw new NotImplementedException();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Blob vertexShaderBlob)
         {
             ID3D11InputLayout* layout;
@@ -897,6 +955,7 @@
             return new D3D11InputLayout(layout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data)
         {
             Blob blob = new(data);
@@ -906,6 +965,7 @@
             return new D3D11InputLayout(layout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IInputLayout CreateInputLayout(byte[] data)
         {
             Blob blob = new(data);
@@ -914,6 +974,7 @@
             return new D3D11InputLayout(layout);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             ShaderCompiler.Compile(code, macros, entry, sourceName, profile, out shaderBlob, out errorBlob);
@@ -921,21 +982,25 @@
                 ImGuiConsole.Log(errorBlob.AsString());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, out shaderBlob, out errorBlob);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob)
         {
             Compile(code, macros, entry, sourceName, profile, out shaderBlob, out _);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob)
         {
             Compile(code, entry, sourceName, profile, out shaderBlob, out _);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             ShaderCompiler.Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out shaderBlob, out errorBlob);
@@ -943,21 +1008,25 @@
                 ImGuiConsole.Log(errorBlob.AsString());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, out shaderBlob, out errorBlob);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob)
         {
             CompileFromFile(path, macros, entry, profile, out shaderBlob, out _);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob)
         {
             CompileFromFile(path, entry, profile, out shaderBlob, out _);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CreateInputLayoutFromSignature(Blob shader, ID3D11InputLayout** layout) => CreateInputLayoutFromSignature(shader, ShaderCompiler.GetInputSignature(shader), layout);
 
         [Flags]
@@ -971,6 +1040,7 @@
             All
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader)
         {
             ID3D11ShaderReflection* reflection;
@@ -989,6 +1059,7 @@
             return descs;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader)
         {
             ID3D11ShaderReflection* reflection;
@@ -1008,6 +1079,7 @@
             return descs;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void CreateInputLayoutFromSignature(Blob shader, Blob signature, ID3D11InputLayout** layout)
         {
             ID3D11ShaderReflection* reflection;
@@ -1119,11 +1191,13 @@
             GC.SuppressFinalize(this);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IQuery CreateQuery()
         {
             return CreateQuery(Query.Event);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IQuery CreateQuery(Query type)
         {
             ID3D11Query* query;
@@ -1132,6 +1206,7 @@
             return new D3D11Query(query);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IGraphicsContext CreateDeferredContext()
         {
             ID3D11DeviceContext1* context;
