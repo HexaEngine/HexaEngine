@@ -11,7 +11,7 @@
 
     public static class CameraManager
     {
-        internal static readonly Camera camera = new() { Far = 500 };
+        internal static readonly Camera camera = new() { Far = 100 };
         private static Vector3 center = default;
         private static CameraEditorMode mode = CameraEditorMode.Orbit;
         private static Vector3 sc = new(10, 0, 0);

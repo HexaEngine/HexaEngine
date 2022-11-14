@@ -88,12 +88,20 @@
             public float MinDistance;
             public float MaxDistance;
             public Vector2 FocusPoint;
+            public int Enabled;
+            public int AutoFocusEnabled;
+            public int AutoFocusSamples;
+            public float AutoFocusRadius;
 
             public DofParams()
             {
                 MinDistance = 5.0f;
                 MaxDistance = 12.0f;
                 FocusPoint = new(0.5f, 0.5f);
+                Enabled = 0;
+                AutoFocusEnabled = 1;
+                AutoFocusSamples = 1;
+                AutoFocusRadius = 30;
             }
 
             public DofParams(float minDistance, float maxDistance, Vector2 focusPoint)
@@ -143,10 +151,41 @@
 
         public bool Enabled
         {
-            get => enabled;
+            get => dofParams.Enabled == 1;
             set
             {
+                dofParams.Enabled = value ? 1 : 0;
                 enabled = value;
+                dirty = true;
+            }
+        }
+
+        public bool AutoFocusEnabled
+        {
+            get => dofParams.AutoFocusEnabled == 1;
+            set
+            {
+                dofParams.AutoFocusEnabled = value ? 1 : 0;
+                dirty = true;
+            }
+        }
+
+        public int AutoFocusSamples
+        {
+            get => dofParams.AutoFocusSamples;
+            set
+            {
+                dofParams.AutoFocusSamples = value;
+                dirty = true;
+            }
+        }
+
+        public float AutoFocusRadius
+        {
+            get => dofParams.AutoFocusRadius;
+            set
+            {
+                dofParams.AutoFocusRadius = value;
                 dirty = true;
             }
         }
@@ -287,35 +326,36 @@
             if (enabled && bokehEnabled)
             {
                 context.SetRenderTarget(bokehRTV, null);
-                context.SetShaderResource(Color, ShaderStage.Pixel, 0);
-                context.SetConstantBuffer(cbBlur, ShaderStage.Pixel, 0);
-                context.SetSampler(pointSampler, ShaderStage.Pixel, 0);
+                context.PSSetShaderResource(Color, 0);
+                context.PSSetConstantBuffer(cbBlur, 0);
+                context.PSSetSampler(pointSampler, 0);
                 quad.DrawAuto(context, pipelineBlur, bokehRTV.Viewport);
                 context.ClearState();
 
                 context.SetRenderTarget(outOfFocusRTV, null);
-                context.SetShaderResource(bokehSRV, ShaderStage.Pixel, 0);
-                context.SetConstantBuffer(cbBokeh, ShaderStage.Pixel, 0);
-                context.SetSampler(pointSampler, ShaderStage.Pixel, 0);
+                context.PSSetShaderResource(bokehSRV, 0);
+                context.PSSetConstantBuffer(cbBokeh, 0);
+                context.PSSetSampler(pointSampler, 0);
                 quad.DrawAuto(context, pipelineBokeh, outOfFocusRTV.Viewport);
                 context.ClearState();
             }
             else if (enabled)
             {
                 context.SetRenderTarget(outOfFocusRTV, null);
-                context.SetShaderResource(Color, ShaderStage.Pixel, 0);
-                context.SetConstantBuffer(cbBlur, ShaderStage.Pixel, 0);
-                context.SetSampler(pointSampler, ShaderStage.Pixel, 0);
+                context.PSSetShaderResource(Color, 0);
+                context.PSSetConstantBuffer(cbBlur, 0);
+                context.PSSetSampler(pointSampler, 0);
                 quad.DrawAuto(context, pipelineBlur, outOfFocusRTV.Viewport);
                 context.ClearState();
             }
 
             context.SetRenderTarget(Target, null);
-            context.SetShaderResource(Position, ShaderStage.Pixel, 0);
-            context.SetShaderResource(Color, ShaderStage.Pixel, 2);
-            context.SetShaderResource(outOfFocusSRV, ShaderStage.Pixel, 3);
-            context.SetSampler(pointSampler, ShaderStage.Pixel, 0);
-            context.SetConstantBuffer(Camera, ShaderStage.Pixel, 1);
+            context.PSSetShaderResource(Position, 0);
+            context.PSSetShaderResource(Color, 2);
+            context.PSSetShaderResource(outOfFocusSRV, 3);
+            context.PSSetSampler(pointSampler, 0);
+            context.PSSetConstantBuffer(cbDof, 0);
+            context.PSSetConstantBuffer(Camera, 1);
 #nullable disable
             quad.DrawAuto(context, pipelineDof, Target.Viewport);
 #nullable enable

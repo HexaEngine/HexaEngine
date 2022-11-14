@@ -16,6 +16,7 @@
     using HexaEngine.Meshes;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Pipelines.Compute;
     using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Deferred.Lighting;
     using HexaEngine.Pipelines.Deferred.PrePass;
@@ -103,6 +104,9 @@
 
         private BRDFLUT brdfLUT;
 
+        private LumaPipeline luma;
+        private LumaAveragePipeline lumaAverage;
+
         private ISamplerState envsmp;
         private RenderTexture env;
         private RenderTexture envirr;
@@ -116,8 +120,6 @@
         private ConfigKey configKey;
         private int currentShadingModelIndex;
         private bool enableSSR;
-        private bool enableAO;
-        private bool enableBloom;
         private float renderResolution;
         private int width;
         private int height;
@@ -154,6 +156,10 @@
                 swapChain = device.SwapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
                 swapChain.Resizing += OnResizeBegin;
                 swapChain.Resized += OnResizeEnd;
+
+                luma = new(device, width, height);
+                lumaAverage = new(device, width, height);
+                lumaAverage.Histogram = luma.HistogramUAV;
 
                 #region Settings
 
@@ -220,7 +226,7 @@
                 osmSRVs = new IShaderResourceView[8];
                 for (int i = 0; i < 8; i++)
                 {
-                    osmDepthBuffers[i] = new(device, TextureDescription.CreateTextureCubeWithRTV(4096, 1, Format.R32Float), DepthStencilDesc.Default);
+                    osmDepthBuffers[i] = new(device, TextureDescription.CreateTextureCubeWithRTV(1024, 1, Format.R32Float), DepthStencilDesc.Default);
                     osmSRVs[i] = osmDepthBuffers[i].ResourceView;
                 }
 
@@ -290,6 +296,7 @@
                 tonemap.Target = fxaaBuffer.RenderTargetView;
                 tonemap.Samplers.Add(new(linearSampler, ShaderStage.Pixel, 0));
                 tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+                tonemap.Resources.Add(new(lumaAverage.Output, ShaderStage.Pixel, 2));
                 configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
 
                 dofBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
@@ -397,6 +404,9 @@
             depthStencil = new DepthBuffer(device, new(width, height, 1, Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
             dsv = depthStencil.DSV;
 
+            luma.Resize(width, height);
+            lumaAverage.Resize(width, height);
+
             depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1), DepthStencilDesc.Default);
 
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
@@ -413,6 +423,7 @@
             tonemap.Target = fxaaBuffer.RenderTargetView;
             tonemap.Resources.Clear();
             tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
+            tonemap.Resources.Add(new(lumaAverage.Output, ShaderStage.Pixel, 2));
 
             dofBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             dof.Target = tonemapBuffer.RenderTargetView;
@@ -552,7 +563,6 @@
             }
 
             var lights = new CBLight(scene.Lights);
-            context.Write(lightBuffer, lights);
 
             uint pointsd = 0;
             uint spotsd = 0;
@@ -561,11 +571,11 @@
             for (int i = 0; i < scene.Lights.Count; i++)
             {
                 Light light = scene.Lights[i];
-                if (!light.CastShadows || !light.Updated) continue;
-                light.Updated = false;
+
                 switch (light.Type)
                 {
                     case LightType.Directional:
+                        if (!light.CastShadows) continue;
                         var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, light.Transform, lights.DirectionalLightSDs[0].Views, lights.DirectionalLightSDs[0].Cascades);
                         context.Write(csmMvpBuffer, mtxs);
                         csmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
@@ -582,6 +592,8 @@
                         break;
 
                     case LightType.Point:
+                        if (!light.CastShadows || !light.Updated) continue;
+                        light.Updated = false;
                         var mt = OSMHelper.GetLightSpaceMatrices(light.Transform);
                         context.Write(osmBuffer, mt);
                         context.Write(osmParamBuffer, new Vector4(light.Transform.GlobalPosition, 25));
@@ -600,6 +612,8 @@
                         break;
 
                     case LightType.Spot:
+                        if (!light.CastShadows || !light.Updated) continue;
+                        light.Updated = false;
                         var mts = PSMHelper.GetLightSpaceMatrices(light.Transform, ((Spotlight)light).ConeAngle.ToRad());
                         lights.SpotlightSDs[spotsd].View = mts[0];
                         context.Write(psmBuffer, mts);
@@ -619,15 +633,13 @@
                 }
             }
 
+            context.Write(lightBuffer, lights);
+
             // SSAO Pass
-            ssaoBuffer.ClearTarget(context, Vector4.One);
-            if (enableAO)
-            {
-                context.SetShaderResources(gbuffers.SRVs, ShaderStage.Pixel, 0);
-                context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
-                ssao.Draw(context);
-                context.ClearState();
-            }
+            context.SetShaderResources(gbuffers.SRVs, ShaderStage.Pixel, 0);
+            context.SetConstantBuffer(cameraBuffer, ShaderStage.Pixel, 1);
+            ssao.Draw(context);
+            context.ClearState();
 
             // Light Pass
             lightMap.ClearTarget(context, Vector4.Zero);
@@ -672,6 +684,11 @@
             dof.Draw(context);
 
             bloom.Draw(context);
+
+            context.CSSetShaderResource(tonemapBuffer.ResourceView, 0);
+            luma.Dispatch(context, width / 16, height / 16, 1);
+
+            lumaAverage.Dispatch(context, 1, 1, 1);
 
             tonemap.Draw(context);
             context.ClearState();
@@ -754,11 +771,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.Checkbox("Enable SSAO", ref enableAO))
-                dirty = true;
             if (ImGui.Checkbox("Enable SSR", ref enableSSR))
-                dirty = true;
-            if (ImGui.Checkbox("Enable Bloom", ref enableBloom))
                 dirty = true;
 
             dof.DrawSettings();

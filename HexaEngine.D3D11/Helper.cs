@@ -1378,5 +1378,129 @@
                 _ => throw new NotImplementedException(),
             };
         }
+
+        internal static Silk.NET.Direct3D11.UnorderedAccessViewDesc Convert(UnorderedAccessViewDescription description)
+        {
+            Silk.NET.Direct3D11.UnorderedAccessViewDesc result = new()
+            {
+                Format = Convert(description.Format),
+                ViewDimension = Convert(description.ViewDimension),
+                Anonymous = new(),
+            };
+
+            switch (description.ViewDimension)
+            {
+                case UnorderedAccessViewDimension.Unknown:
+                    break;
+
+                case UnorderedAccessViewDimension.Buffer:
+                    result.Anonymous.Buffer = Convert(description.Buffer);
+                    break;
+
+                case UnorderedAccessViewDimension.Texture1D:
+                    result.Anonymous.Texture1D = Convert(description.Texture1D);
+                    break;
+
+                case UnorderedAccessViewDimension.Texture1DArray:
+                    result.Anonymous.Texture1DArray = Convert(description.Texture1DArray);
+                    break;
+
+                case UnorderedAccessViewDimension.Texture2D:
+                    result.Anonymous.Texture2D = Convert(description.Texture2D);
+                    break;
+
+                case UnorderedAccessViewDimension.Texture2DArray:
+                    result.Anonymous.Texture2DArray = Convert(description.Texture2DArray);
+                    break;
+
+                case UnorderedAccessViewDimension.Texture3D:
+                    result.Anonymous.Texture3D = Convert(description.Texture3D);
+                    break;
+            }
+            return result;
+        }
+
+        private static Silk.NET.Direct3D11.Tex3DUav Convert(Texture3DUnorderedAccessView texture3D)
+        {
+            return new()
+            {
+                FirstWSlice = (uint)texture3D.FirstWSlice,
+                MipSlice = (uint)texture3D.MipSlice,
+                WSize = (uint)texture3D.WSize,
+            };
+        }
+
+        private static Silk.NET.Direct3D11.Tex2DArrayUav Convert(Texture2DArrayUnorderedAccessView texture2DArray)
+        {
+            return new()
+            {
+                ArraySize = (uint)texture2DArray.ArraySize,
+                FirstArraySlice = (uint)texture2DArray.FirstArraySlice,
+                MipSlice = (uint)texture2DArray.MipSlice,
+            };
+        }
+
+        private static Silk.NET.Direct3D11.Tex2DUav Convert(Texture2DUnorderedAccessView texture2D)
+        {
+            return new()
+            {
+                MipSlice = (uint)texture2D.MipSlice
+            };
+        }
+
+        private static Silk.NET.Direct3D11.Tex1DArrayUav Convert(Texture1DArrayUnorderedAccessView texture1DArray)
+        {
+            return new()
+            {
+                ArraySize = (uint)texture1DArray.ArraySize,
+                FirstArraySlice = (uint)texture1DArray.FirstArraySlice,
+                MipSlice = (uint)texture1DArray.MipSlice
+            };
+        }
+
+        private static Silk.NET.Direct3D11.Tex1DUav Convert(Texture1DUnorderedAccessView texture1D)
+        {
+            return new()
+            {
+                MipSlice = (uint)texture1D.MipSlice
+            };
+        }
+
+        private static Silk.NET.Direct3D11.BufferUav Convert(BufferUnorderedAccessView buffer)
+        {
+            return new()
+            {
+                FirstElement = (uint)buffer.FirstElement,
+                Flags = (uint)Convert(buffer.Flags),
+                NumElements = (uint)buffer.NumElements,
+            };
+        }
+
+        private static Silk.NET.Direct3D11.BufferUavFlag Convert(BufferUnorderedAccessViewFlags flags)
+        {
+            return flags switch
+            {
+                BufferUnorderedAccessViewFlags.Raw => Silk.NET.Direct3D11.BufferUavFlag.Raw,
+                BufferUnorderedAccessViewFlags.Append => Silk.NET.Direct3D11.BufferUavFlag.Append,
+                BufferUnorderedAccessViewFlags.Counter => Silk.NET.Direct3D11.BufferUavFlag.Counter,
+                BufferUnorderedAccessViewFlags.None => Silk.NET.Direct3D11.BufferUavFlag.None,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private static Silk.NET.Direct3D11.UavDimension Convert(UnorderedAccessViewDimension viewDimension)
+        {
+            return viewDimension switch
+            {
+                UnorderedAccessViewDimension.Unknown => Silk.NET.Direct3D11.UavDimension.Unknown,
+                UnorderedAccessViewDimension.Buffer => Silk.NET.Direct3D11.UavDimension.Buffer,
+                UnorderedAccessViewDimension.Texture1D => Silk.NET.Direct3D11.UavDimension.Texture1D,
+                UnorderedAccessViewDimension.Texture1DArray => Silk.NET.Direct3D11.UavDimension.Texture1Darray,
+                UnorderedAccessViewDimension.Texture2D => Silk.NET.Direct3D11.UavDimension.Texture2D,
+                UnorderedAccessViewDimension.Texture2DArray => Silk.NET.Direct3D11.UavDimension.Texture2Darray,
+                UnorderedAccessViewDimension.Texture3D => Silk.NET.Direct3D11.UavDimension.Texture3D,
+                _ => throw new NotImplementedException(),
+            };
+        }
     }
 }

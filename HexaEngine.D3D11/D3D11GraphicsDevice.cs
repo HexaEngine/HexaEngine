@@ -943,6 +943,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IComputeShader CreateComputeShader(byte[] bytecode)
         {
+            ID3D11ComputeShader* cs;
+            Device->CreateComputeShader(Utils.AsPointer(bytecode), (nuint)bytecode.Length, null, &cs).ThrowHResult();
+            return new D3D11ComputeShader(cs);
             throw new NotImplementedException();
         }
 
@@ -1214,10 +1217,13 @@
             return new D3D11GraphicsContext(this, context);
         }
 
-        /*
-        public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDesc)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
         {
-            Device->CreateUnorderedAccessView()
-        }*/
+            ID3D11UnorderedAccessView* view;
+            UnorderedAccessViewDesc desc = Helper.Convert(description);
+            Device->CreateUnorderedAccessView((ID3D11Resource*)resource.NativePointer, &desc, &view);
+            return new D3D11UnorderedAccessView(view, description);
+        }
     }
 }

@@ -121,7 +121,7 @@ float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCub
 float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, float3 normal, Texture2DArray depthTex, SamplerState state)
 {
 	float cascadePlaneDistances[16] = (float[16]) light.cascades;
-	float farPlane = 100;
+	float farPlane = cam_far;
 
 	float w;
 	float h;

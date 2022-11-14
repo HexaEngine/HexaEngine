@@ -30,6 +30,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="assets\shaders\compute\lumaAvg\shader.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\compute\luma\shader.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\deferred\prepass2\defs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -348,6 +354,7 @@
 	<ItemGroup>
 	  <Folder Include="assets\shaders\deferred\phong\" />
 	  <Folder Include="assets\shaders\deferred\toon\" />
+	  <Folder Include="assets\shaders\effects\gamma\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
 	  <Folder Include="Windows\Events\" />

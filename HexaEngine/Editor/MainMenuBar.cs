@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
+    using HexaEngine.Pipelines.Compute;
     using HexaEngine.Scenes;
     using ImGuiNET;
 
@@ -108,6 +109,11 @@
                     {
                         ShaderCache.Clear();
                         Pipeline.ReloadShaders();
+                    }
+                    if (ImGui.MenuItem("Recompile Compute Shaders (F5)"))
+                    {
+                        ShaderCache.Clear();
+                        ComputePipeline.ReloadShaders();
                     }
                     ImGui.Separator();
 
