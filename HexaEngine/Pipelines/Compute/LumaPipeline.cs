@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.Pipelines.Compute
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using System.Numerics;
 
     public class LumaPipeline : ComputePipeline
     {

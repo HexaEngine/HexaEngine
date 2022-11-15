@@ -63,6 +63,12 @@
 	  <None Update="assets\shaders\effects\dof\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shaders\effects\exposure\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\exposure\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\tessellation.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -354,7 +360,6 @@
 	<ItemGroup>
 	  <Folder Include="assets\shaders\deferred\phong\" />
 	  <Folder Include="assets\shaders\deferred\toon\" />
-	  <Folder Include="assets\shaders\effects\gamma\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
 	  <Folder Include="Windows\Events\" />

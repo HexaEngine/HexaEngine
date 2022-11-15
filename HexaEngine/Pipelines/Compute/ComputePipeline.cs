@@ -79,12 +79,12 @@
                 }
         }
 
-        protected IBuffer CreateRawBuffer<T>(IGraphicsDevice device, T[] values) where T : struct
+        public static IBuffer CreateRawBuffer<T>(IGraphicsDevice device, T[] values) where T : struct
         {
             return device.CreateBuffer(values, BindFlags.UnorderedAccess | BindFlags.ShaderResource | BindFlags.IndexBuffer | BindFlags.VertexBuffer, miscFlags: ResourceMiscFlag.BufferAllowRawViews);
         }
 
-        protected IBuffer CreateRawBuffer(IGraphicsDevice device, int size)
+        public static IBuffer CreateRawBuffer(IGraphicsDevice device, int size)
         {
             BufferDescription description = new()
             {

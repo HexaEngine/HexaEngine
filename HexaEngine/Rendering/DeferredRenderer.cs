@@ -4,7 +4,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Specialized;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor;
     using HexaEngine.Editor.NodeEditor;
@@ -13,11 +12,9 @@
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Compute;
-    using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Deferred.Lighting;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Pipelines.Effects;
@@ -69,6 +66,7 @@
         private RenderTexture ssaoBuffer;
         private RenderTexture lightMap;
         private RenderTexture dofBuffer;
+        private RenderTexture autoExposureBuffer;
         private RenderTexture tonemapBuffer;
         private RenderTexture fxaaBuffer;
         private RenderTexture ssrBuffer;
@@ -100,12 +98,10 @@
         private BlendEffect blendEffect;
         private Tonemap tonemap;
         private FXAA fxaa;
+        private AutoExposure autoExposure;
         private Bloom bloom;
 
         private BRDFLUT brdfLUT;
-
-        private LumaPipeline luma;
-        private LumaAveragePipeline lumaAverage;
 
         private ISamplerState envsmp;
         private RenderTexture env;
@@ -156,10 +152,6 @@
                 swapChain = device.SwapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
                 swapChain.Resizing += OnResizeBegin;
                 swapChain.Resized += OnResizeEnd;
-
-                luma = new(device, width, height);
-                lumaAverage = new(device, width, height);
-                lumaAverage.Histogram = luma.HistogramUAV;
 
                 #region Settings
 
@@ -291,17 +283,22 @@
                 fxaa.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
                 fxaa.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
-                tonemapBuffer = new(device, dsv, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+                tonemapBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
                 tonemap = new(device);
                 tonemap.Target = fxaaBuffer.RenderTargetView;
                 tonemap.Samplers.Add(new(linearSampler, ShaderStage.Pixel, 0));
                 tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
-                tonemap.Resources.Add(new(lumaAverage.Output, ShaderStage.Pixel, 2));
                 configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
 
-                dofBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+                autoExposureBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+                autoExposure = new(device, width, height);
+                autoExposure.Output = tonemapBuffer.RenderTargetView;
+                autoExposure.Color = autoExposureBuffer.ResourceView;
+                configKey.GenerateSubKeyAuto(autoExposure, "AutoExposure");
+
+                dofBuffer = new(device, dsv, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
                 dof = new(device, width, height);
-                dof.Target = tonemapBuffer.RenderTargetView;
+                dof.Target = autoExposureBuffer.RenderTargetView;
                 dof.Color = dofBuffer.ResourceView;
                 dof.Position = gbuffers.SRVs[1];
                 dof.Camera = cameraBuffer;
@@ -387,6 +384,7 @@
             ssaoBuffer.Dispose();
             fxaaBuffer.Dispose();
             dofBuffer.Dispose();
+            autoExposureBuffer.Dispose();
             tonemapBuffer.Dispose();
             ssrBuffer.Dispose();
             depthbuffer.Dispose();
@@ -404,9 +402,6 @@
             depthStencil = new DepthBuffer(device, new(width, height, 1, Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
             dsv = depthStencil.DSV;
 
-            luma.Resize(width, height);
-            lumaAverage.Resize(width, height);
-
             depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1), DepthStencilDesc.Default);
 
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
@@ -423,10 +418,14 @@
             tonemap.Target = fxaaBuffer.RenderTargetView;
             tonemap.Resources.Clear();
             tonemap.Resources.Add(new(tonemapBuffer.ResourceView, ShaderStage.Pixel, 0));
-            tonemap.Resources.Add(new(lumaAverage.Output, ShaderStage.Pixel, 2));
+
+            autoExposureBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+            autoExposure.Output = tonemapBuffer.RenderTargetView;
+            autoExposure.Color = autoExposureBuffer.ResourceView;
+            autoExposure.Resize(width, height);
 
             dofBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            dof.Target = tonemapBuffer.RenderTargetView;
+            dof.Target = autoExposureBuffer.RenderTargetView;
             dof.Color = dofBuffer.ResourceView;
             dof.Position = gbuffers.SRVs[1];
             dof.Resize(device, width, height);
@@ -592,7 +591,11 @@
                         break;
 
                     case LightType.Point:
-                        if (!light.CastShadows || !light.Updated) continue;
+                        if (!light.CastShadows || !light.Updated)
+                        {
+                            pointsd++;
+                            continue;
+                        }
                         light.Updated = false;
                         var mt = OSMHelper.GetLightSpaceMatrices(light.Transform);
                         context.Write(osmBuffer, mt);
@@ -612,7 +615,11 @@
                         break;
 
                     case LightType.Spot:
-                        if (!light.CastShadows || !light.Updated) continue;
+                        if (!light.CastShadows || !light.Updated)
+                        {
+                            spotsd++;
+                            continue;
+                        }
                         light.Updated = false;
                         var mts = PSMHelper.GetLightSpaceMatrices(light.Transform, ((Spotlight)light).ConeAngle.ToRad());
                         lights.SpotlightSDs[spotsd].View = mts[0];
@@ -683,12 +690,10 @@
 
             dof.Draw(context);
 
+            autoExposure.Draw(context);
+
             bloom.Draw(context);
-
-            context.CSSetShaderResource(tonemapBuffer.ResourceView, 0);
-            luma.Dispatch(context, width / 16, height / 16, 1);
-
-            lumaAverage.Dispatch(context, 1, 1, 1);
+            context.ClearState();
 
             tonemap.Draw(context);
             context.ClearState();
@@ -822,6 +827,7 @@
                 fxaaBuffer.Dispose();
                 tonemapBuffer.Dispose();
                 dofBuffer.Dispose();
+                autoExposureBuffer.Dispose();
                 ssrBuffer.Dispose();
                 depthbuffer.Dispose();
 
@@ -834,6 +840,7 @@
                 fxaa.Dispose();
                 tonemap.Dispose();
                 dof.Dispose();
+                autoExposure.Dispose();
                 bloom.Dispose();
 
                 brdfLUT.Dispose();

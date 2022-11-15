@@ -60,9 +60,11 @@ float4 main(VSOut input) : SV_TARGET
 
 		float4 result = 0.0;
 		float count = 0.0;
+#if DEBUG
 		bool isFocus;
 		float maxZ = 0;
 		float currentZ = 0;
+#endif
 		[unroll(8)]
 		for (int x = -autoFocusSamples; x <= autoFocusSamples; ++x)
 		{
@@ -71,26 +73,30 @@ float4 main(VSOut input) : SV_TARGET
 			{
 				float2 offset = float2(float(x), float(y)) * autoFocusRadius * texelSize;
 				float4 pos = positionTex.Sample(samplerState, focusCenter + offset);
-				if (pos.w > maxZ)
-					maxZ = pos.w;
 				result += pos;
 				count++;
+#if DEBUG
+				if (pos.w > maxZ)
+					maxZ = pos.w;
 				float2 diff = input.Tex - (focusCenter + offset);
 				if (diff.x < 2.5f * texelSize.x && diff.y < 2.5f * texelSize.y && diff.x > -2.5f * texelSize.x && diff.y > -2.5f * texelSize.y)
 				{
 					isFocus = true;
 					currentZ = pos.w;
 				}
+#endif
 			}
 		}
 
 		result /= count;
 		focusPoint = mul(float4(result.xyz, 1), view).xyz;
 
+#if DEBUG
 		if (isFocus)
 		{
 			return float4(0,currentZ / maxZ,0,1);
 		}
+#endif
 	}
 	else
 	{
