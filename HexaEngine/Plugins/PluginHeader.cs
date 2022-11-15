@@ -10,7 +10,10 @@
         public PluginVersion FormatVersion;
         public PluginVersion Version;
         public ulong RecordCount;
-        public UnsafeString* Name;
-        public UnsafeString* Description;
+        public char* Name;
+        public char* Description;
+        public char** Dependencies;
+        public uint DependencyCount;
+        
     }
 }

@@ -1,27 +1,28 @@
 ﻿namespace HexaEngine.Plugins.Records
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Plugins;
 
     public unsafe struct SceneRecord : IRecord
     {
         public RecordHeader* Header;
-        public UnsafeString* Name;
+        public char* Name;
 
         public int Decode(Span<byte> src, Endianness endianness)
         {
-            fixed (SceneRecord* @this = &this)
+            fixed (char** @this = &Name)
             {
-                return UnsafeString.Read(&@this->Name, endianness, src);
+                return Utilities.ReadString(src, endianness, @this);
+               
             }
         }
 
         public int Encode(Span<byte> dest, Endianness endianness)
         {
-            fixed (SceneRecord* @this = &this)
-            {
-                return UnsafeString.Write(@this->Name, endianness, dest);
-            }
+            
+                return Utilities.WriteString(dest, endianness, Name);
+            
         }
 
         public void Overwrite(void* pRecord)
@@ -31,7 +32,7 @@
 
         public int Size()
         {
-            return Name->Sizeof();
+            return Utilities.StringSizeNullTerminated(Name);
         }
     }
 }

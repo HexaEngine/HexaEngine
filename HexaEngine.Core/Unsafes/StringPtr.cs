@@ -58,6 +58,8 @@
             return length + 4;
         }
 
+
+
         public int Sizeof()
         {
             return (Length + 1) * sizeof(char) + 4;
