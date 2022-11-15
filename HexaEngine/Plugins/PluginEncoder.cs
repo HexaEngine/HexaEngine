@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Plugins
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Plugins.Records;
     using System;
@@ -49,8 +50,8 @@
                 throw new InvalidOperationException(nameof(endianness));
             }
             int idx = 41;
-            idx += UnsafeString.Write(pHeader->Name, endianness, dest[idx..]);
-            idx += UnsafeString.Write(pHeader->Description, endianness, dest[idx..]);
+            idx += Utilities.WriteString(dest[idx..], endianness, pHeader->Name);
+            idx += Utilities.WriteString(dest[idx..], endianness, pHeader->Description);
             return idx;
         }
 
@@ -134,8 +135,8 @@
         public static unsafe int ComputePluginHeaderSize(PluginHeader* pHeader)
         {
             int idx = 41;
-            idx += pHeader->Name->Sizeof();
-            idx += pHeader->Description->Sizeof();
+            idx += Utilities.StringSizeNullTerminated(pHeader->Name);
+            idx += Utilities.StringSizeNullTerminated(pHeader->Description);
             return idx;
         }
 

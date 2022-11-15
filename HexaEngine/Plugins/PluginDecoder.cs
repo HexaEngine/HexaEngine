@@ -21,8 +21,8 @@
         public static unsafe int ComputePluginHeaderSize(PluginHeader* pHeader)
         {
             int idx = 41;
-            idx += pHeader->Name->Sizeof();
-            idx += pHeader->Description->Sizeof();
+            idx += Utilities.StringSizeNullTerminated(pHeader->Name);
+            idx += Utilities.StringSizeNullTerminated(pHeader->Description);
             return idx;
         }
 
@@ -101,8 +101,8 @@
             }
             int idx = 41;
 
-            idx += UnsafeString.Read(&pHeader->Name, endianness, src[idx..]);
-            idx += UnsafeString.Read(&pHeader->Description, endianness, src[idx..]);
+            idx += Utilities.ReadString(src[idx..], endianness, &pHeader->Name);
+            idx += Utilities.ReadString(src[idx..], endianness, &pHeader->Description);
             return idx;
         }
 

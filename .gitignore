@@ -379,3 +379,4 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 /HexaEngine/ClassDiagram1.cd
+/HexaEngine/Rendering/TerrainRenderer.cs

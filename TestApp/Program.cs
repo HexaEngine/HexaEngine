@@ -33,12 +33,12 @@ namespace TestApp
             Plugin plugin = new();
 
             PluginHeader pluginHeader = new();
-            pluginHeader.Name = Utilities.AsPointer(new UnsafeString("Test"));
+            pluginHeader.Name = Utilities.UTF16("Test Plugin");
             pluginHeader.Version = new(1, 0, 0, 0);
-            pluginHeader.Description = Utilities.AsPointer(new UnsafeString(string.Empty));
+            pluginHeader.Description = Utilities.UTF16(string.Empty);
             pluginHeader.Endianness = BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
             pluginHeader.FormatVersion = PluginVersion.LatestFormatVersion;
-
+           
             plugin.Header = &pluginHeader;
 
             Plugin* pPlugin = &plugin;
@@ -49,7 +49,7 @@ namespace TestApp
             recordHeader.Parent = null;
             recordHeader.Type = RecordType.Scene;
             record.Header = &recordHeader;
-            record.Name = Utilities.AsPointer(new UnsafeString("MainScene"));
+            record.Name = Utilities.UTF16("MainScene");
 
             Record*[] records = new Record*[1];
             records[0] = (Record*)(void*)&record;
@@ -95,7 +95,7 @@ namespace TestApp
 
             int size = PluginEncoder.ComputePluginSize(pPlugin);
             byte[] bytes = new byte[size];
-            PluginEncoder.EncodePlugin(bytes, Endianness.BigEndian, pPlugin);
+            PluginEncoder.EncodePlugin(bytes, Endianness.LittleEndian, pPlugin);
 
             Plugin* pPlugin2;
             PluginDecoder.DecodePlugin(bytes, &pPlugin2);
@@ -111,6 +111,7 @@ namespace TestApp
 
                     case RecordType.Scene:
                         SceneRecord* sceneRecord = (SceneRecord*)(void*)pRecord;
+                        string name = new(sceneRecord->Name);
                         break;
 
                     case RecordType.Node:
@@ -132,6 +133,30 @@ namespace TestApp
                         break;
                 }
             }
+
+            Plugin plugin1 = new();
+
+            PluginHeader pluginHeader1 = new();
+            pluginHeader1.Name = Utilities.UTF16("Test Plugin 1");
+            pluginHeader1.Version = new(1, 0, 0, 0);
+            pluginHeader1.Description = Utilities.UTF16(string.Empty);
+            pluginHeader1.Endianness = BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
+            pluginHeader1.FormatVersion = PluginVersion.LatestFormatVersion;
+            pluginHeader1.Dependencies = Utilities.Alloc<char>(1);
+            pluginHeader1.Dependencies[0] = Utilities.UTF16("Test Plugin");
+            pluginHeader1.DependencyCount = 1;
+
+            plugin1.Header = &pluginHeader1;
+
+            Plugin* pPlugin1 = &plugin1;
+
+            Plugin** plugins = Utilities.Alloc<Plugin>(2);
+            plugins[0] = pPlugin;
+            plugins[1] = pPlugin1;
+
+            Plugin** sorted;
+            ReferenceBuilder.Sort(plugins, 2, &sorted);
+
         }
     }
 }
