@@ -14,7 +14,6 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
-    using HexaEngine.Pipelines.Compute;
     using HexaEngine.Pipelines.Deferred.Lighting;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Pipelines.Effects;
