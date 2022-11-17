@@ -42,7 +42,7 @@ float4 main(VSOut input) : SV_TARGET
 
 	if (wPosition.a <= 0)
 	{
-		return float4(1, 1, 1, 1);
+		return focusColor;
 	}
 
 	float3 position = mul(float4(wPosition.xyz,1), view).xyz;

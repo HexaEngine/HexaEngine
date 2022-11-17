@@ -5,7 +5,7 @@
     using HexaEngine.Objects.Primitives;
     using System.Numerics;
 
-    public class DOFEffect : IEffect
+    public class DepthOfField : IEffect
     {
         private bool enabled;
         private bool bokehEnabled;
@@ -34,6 +34,8 @@
         public IShaderResourceView? Color;
         public IShaderResourceView? Position;
         public IBuffer? Camera;
+
+        #region Structs
 
         private struct BlurParams
         {
@@ -112,7 +114,9 @@
             }
         }
 
-        public DOFEffect(IGraphicsDevice device, int width, int height)
+        #endregion Structs
+
+        public DepthOfField(IGraphicsDevice device, int width, int height)
         {
             quad = new(device);
             blurParams = new BlurParams();
@@ -148,6 +152,8 @@
 
             pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
         }
+
+        #region Properties
 
         public bool Enabled
         {
@@ -280,6 +286,8 @@
             }
         }
 
+        #endregion Properties
+
         public void Resize(IGraphicsDevice device, int width, int height)
         {
             outOfFocusTex.Dispose();
@@ -299,6 +307,10 @@
         public void Dispose()
         {
             quad.Dispose();
+            pipelineBlur.Dispose();
+            pipelineBokeh.Dispose();
+            pipelineDof.Dispose();
+            pointSampler.Dispose();
             pipelineBokeh.Dispose();
             pipelineDof.Dispose();
             outOfFocusTex.Dispose();
@@ -325,6 +337,7 @@
 
             if (enabled && bokehEnabled)
             {
+                context.ClearRenderTargetView(bokehRTV, default);
                 context.SetRenderTarget(bokehRTV, null);
                 context.PSSetShaderResource(Color, 0);
                 context.PSSetConstantBuffer(cbBlur, 0);
@@ -332,6 +345,7 @@
                 quad.DrawAuto(context, pipelineBlur, bokehRTV.Viewport);
                 context.ClearState();
 
+                context.ClearRenderTargetView(outOfFocusRTV, default);
                 context.SetRenderTarget(outOfFocusRTV, null);
                 context.PSSetShaderResource(bokehSRV, 0);
                 context.PSSetConstantBuffer(cbBokeh, 0);
@@ -341,6 +355,7 @@
             }
             else if (enabled)
             {
+                context.ClearRenderTargetView(outOfFocusRTV, default);
                 context.SetRenderTarget(outOfFocusRTV, null);
                 context.PSSetShaderResource(Color, 0);
                 context.PSSetConstantBuffer(cbBlur, 0);

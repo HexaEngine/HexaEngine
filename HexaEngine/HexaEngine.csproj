@@ -51,6 +51,15 @@
 	  <None Update="assets\shaders\deferred\prepass2\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shaders\effects\assao\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\assao\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shaders\effects\blur\hbao.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shaders\effects\bokeh\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

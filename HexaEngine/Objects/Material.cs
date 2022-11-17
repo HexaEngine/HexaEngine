@@ -15,12 +15,20 @@
         private string roughnessmetalnessTextureMap = string.Empty;
         private string emissiveTextureMap = string.Empty;
         private string aoTextureMap = string.Empty;
-        private Vector3 emissivness;
+        private Vector3 albedo;
+        private float opacity;
+        private float specular;
+        private float specularTint;
         private float ao;
         private float metalness;
         private float roughness;
-        private float opacity;
-        private Vector3 albedo;
+        private float cleancoat;
+        private float cleancoatGloss;
+        private float sheen;
+        private float sheenTint;
+        private float anisotropic;
+        private float subsurface;
+        private Vector3 emissivness;
 
         public string Name { get; set; } = string.Empty;
 
@@ -65,6 +73,15 @@
             get => ao; set
             {
                 ao = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public float Anisotropic
+        {
+            get => anisotropic; set
+            {
+                anisotropic = value; if (scene == null) return;
                 scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
@@ -178,60 +195,12 @@
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct CBMaterialOld
-    {
-        public Vector3 Color;
-        public float reserved1;
-        public float Roughness;
-        public Vector3 reserved2;
-        public float Metalness;
-        public Vector3 reserved3;
-        public Vector3 Emissive;
-        public float reserved4;
-        public float Ao;
-        public Vector3 reserved5;
-
-        public int HasDisplacementMap;
-        public int HasAlbedoMap;
-        public int HasNormalMap;
-        public int HasRoughnessMap;
-        public int HasMetalnessMap;
-        public int HasEmissiveMap;
-        public int HasAoMap;
-        public float reserved;
-
-        public CBMaterialOld(Material material)
-        {
-            Color = material.Albedo;
-            Emissive = material.Emissivness;
-            Metalness = material.Metalness;
-            Roughness = material.Roughness;
-            Ao = material.Ao;
-
-            HasAlbedoMap = string.IsNullOrEmpty(material.AlbedoTextureMap) ? 0 : 1;
-            HasNormalMap = string.IsNullOrEmpty(material.NormalTextureMap) ? 0 : 1;
-            HasDisplacementMap = string.IsNullOrEmpty(material.DisplacementTextureMap) ? 0 : 1;
-
-            HasMetalnessMap = string.IsNullOrEmpty(material.MetalnessTextureMap) ? 0 : 1;
-            HasRoughnessMap = string.IsNullOrEmpty(material.RoughnessTextureMap) ? 0 : 1;
-            HasEmissiveMap = string.IsNullOrEmpty(material.EmissiveTextureMap) ? 0 : 1;
-            HasAoMap = string.IsNullOrEmpty(material.AoTextureMap) ? 0 : 1;
-
-            reserved = default;
-            reserved1 = default;
-            reserved2 = default;
-            reserved3 = default;
-            reserved4 = default;
-            reserved5 = default;
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
     public struct CBMaterial
     {
         public Vector4 Color;
         public Vector4 RMAo;
         public Vector4 Emissive;
+        public Vector4 Anisotropic;
 
         public int HasDisplacementMap;
         public int HasAlbedoMap;
@@ -247,6 +216,7 @@
             Color = new(material.Albedo, 1);
             Emissive = new(material.Emissivness, 1);
             RMAo = new(material.Roughness, material.Metalness, material.Ao, 1);
+            Anisotropic = new(material.Anisotropic, 0, 0, 0);
 
             HasAlbedoMap = string.IsNullOrEmpty(material.AlbedoTextureMap) ? 0 : 1;
             HasNormalMap = string.IsNullOrEmpty(material.NormalTextureMap) ? 0 : 1;

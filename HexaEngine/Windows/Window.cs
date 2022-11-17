@@ -177,7 +177,7 @@
             if (!initTask.IsCompleted)
                 initTask.Wait();
             deferredRenderer.Dispose();
-
+            renderDispatcher.Dispose();
             context.Dispose();
             device.Dispose();
         }

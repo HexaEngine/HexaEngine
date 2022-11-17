@@ -139,6 +139,7 @@
 
             exposurePipeline.Dispose();
             cbExposureParams.Dispose();
+            samplerPoint.Dispose();
             quad.Dispose();
             GC.SuppressFinalize(this);
         }

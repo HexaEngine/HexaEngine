@@ -68,6 +68,10 @@
                 if (ImGui.SliderFloat("Ao", ref Ao, 0, 1))
                     material.Ao = Ao;
 
+                var Anisotropic = material.Anisotropic;
+                if (ImGui.SliderFloat("Anisotropic", ref Anisotropic, 0, 1))
+                    material.Anisotropic = Anisotropic;
+
                 var Emissivness = material.Emissivness;
                 if (ImGui.ColorEdit3("Emissivness", ref Emissivness, ImGuiColorEditFlags.Float))
                     material.Emissivness = Emissivness;

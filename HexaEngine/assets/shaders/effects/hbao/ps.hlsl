@@ -5,8 +5,8 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
-Texture2D positionTexture : register(t1);
-Texture2D normalTexture : register(t2);
+Texture2D positionTexture : register(t0);
+Texture2D normalTexture : register(t1);
 
 SamplerState samplerState;
 
@@ -38,10 +38,17 @@ cbuffer ConfigBuffer : register(b0)
 	float SAMPLING_STEP;
 	uint NUM_SAMPLING_STEPS;
 	float3 padd;
+	float2 Res;
+	float2 ResInv;
 };
 
 #define TANGENT_BIAS 0.2
 #define M_PI 3.1415926535897932384626433832795
+
+float3 hash3(float2 p) {
+	float3 q = float3(dot(p, float2(127.1, 311.7)), dot(p, float2(269.5, 183.3)), dot(p, float2(419.2, 371.9)));
+	return frac(sin(q) * 43758.5453);
+}
 
 float4 main(VSOut input) : SV_Target
 {
@@ -51,11 +58,12 @@ float4 main(VSOut input) : SV_Target
 	}
 
 // reconstruct the view space position from the depth map
+float3 random = hash3(input.Tex * float2(1920 / 4, 1080 / 4));
 float start_Z = positionTexture.Sample(samplerState, input.Tex).w;
 float start_Y = 1.0 - input.Tex.y; // texture coordinates for D3D have origin in top left, but in camera space origin is in bottom left
-float3 start_Pos = float3(input.Tex.x, start_Y, start_Z);
-float3 ndc_Pos = (2.0 * start_Pos) - 1.0;
-float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, ndc_Pos.z, 1.0), projInv);
+float2 start_Pos = float2(input.Tex.x, start_Y);
+float2 ndc_Pos = (2.0 * start_Pos) - 1.0;
+float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, start_Z, 1.0), projInv);
 float3 viewPos = unproject.xyz / unproject.w;
 float3 viewNorm = normalTexture.Sample(samplerState, input.Tex).xyz;
 
@@ -81,9 +89,9 @@ for (uint i = 0; i < NUM_SAMPLING_DIRECTIONS; i++)
 		float2 offTex = input.Tex + float2(sampleOffset.x, -sampleOffset.y);
 
 		float off_start_Z = positionTexture.Sample(samplerState, offTex).w;
-		float3 off_start_Pos = float3(offTex.x, start_Y + sampleOffset.y, off_start_Z);
-		float3 off_ndc_Pos = (2.0 * off_start_Pos) - 1.0;
-		float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_ndc_Pos.z, 1.0), projInv);
+		float2 off_start_Pos = float2(offTex.x, start_Y + sampleOffset.y);
+		float2 off_ndc_Pos = (2.0 * off_start_Pos) - 1.0;
+		float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_start_Z, 1.0), projInv);
 		float3 off_viewPos = off_unproject.xyz / off_unproject.w;
 		// we now have the view space position of the offset point
 		float3 diff = off_viewPos.xyz - viewPos.xyz;

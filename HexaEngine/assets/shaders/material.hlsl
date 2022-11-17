@@ -10,6 +10,7 @@ struct Material
 	float4 Color;
 	float4 RoughnessMetalnessAo;
 	float4 Emissive;
+	float4 Anisotropic;
 	// Displacement Albedo Normal Roughness
 	bool4 DANR;
 	// Metalness Emissive Ao

@@ -55,7 +55,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 	output.pos = output.position;
 #endif
 	output.position = mul(output.position, view);
-	output.depth = output.position.z / 100;
+	output.depth = output.position.z / cam_far;
 	output.position = mul(output.position, proj);
 
 #if (DEPTH != 1)

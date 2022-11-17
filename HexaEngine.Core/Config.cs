@@ -165,7 +165,8 @@
             if (Value == null)
                 return default;
             string trimed = Value.Trim('<', '>');
-            string[] components = trimed.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < components.Length; i++) components[i] = components[i].Trim(',', '.');
             return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
 

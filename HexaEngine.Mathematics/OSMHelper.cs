@@ -6,7 +6,7 @@
     {
         public static Matrix4x4 GetProjectionMatrix()
         {
-            return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 0.01f, 25);
+            return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 0.001f, 25);
         }
 
         public static Matrix4x4[] GetLightSpaceMatrices(Transform light)

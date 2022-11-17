@@ -57,6 +57,7 @@ GeometryData main(PixelInput input)
 	float metalness;
 	float roughness;
 	float ao;
+	float anisotropic = material.Anisotropic.x;
 
 	if (material.DANR.y)
 	{
@@ -113,7 +114,7 @@ GeometryData main(PixelInput input)
 		metalness = rmTexture.Sample(materialSamplerState, (float2) input.tex).b;
 	}
 
-	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, float3(0, 0, 0), float3(0, 0, 0), 0, 1, 0.5f, ao, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, float3(0, 0, 0), emissive, 0, 1, 0.5f, ao, 1, anisotropic, 0, 0, 0, 0, 0, 0, 0);
 }
 
 #endif

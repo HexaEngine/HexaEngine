@@ -18,8 +18,8 @@
 
         public CBSpotlightSD(Spotlight spotlight)
         {
-            View = Matrix4x4.Transpose(spotlight.Transform.View);
-            Proj = Matrix4x4.Transpose(spotlight.Transform.Projection);
+            View = PSMHelper.GetLightSpaceMatrix(spotlight.Transform, spotlight.ConeAngle.ToRad());
+            Proj = default;
             Color = spotlight.Color * spotlight.Strength;
             Position = spotlight.Transform.GlobalPosition;
             CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());

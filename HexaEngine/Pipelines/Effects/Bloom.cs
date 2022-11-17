@@ -23,7 +23,7 @@
         private int width;
         private int height;
 
-        public IShaderResourceView Source;
+        public IShaderResourceView? Source;
         private bool disposedValue;
 
         public IShaderResourceView Output => mipChainSRVs[0];
@@ -73,13 +73,13 @@
         }
 
         public bool Enabled
-        { 
+        {
             get => enabled;
-            set 
-            { 
-                enabled = value; 
-                dirty = true; 
-            } 
+            set
+            {
+                enabled = value;
+                dirty = true;
+            }
         }
 
         public float Radius
