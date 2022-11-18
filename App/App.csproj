@@ -12,6 +12,7 @@
 	  <AnalysisLevel>latest-all</AnalysisLevel>
 	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
 	  <Platforms>AnyCPU;x64</Platforms>
+	  <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,7 +4,6 @@
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using System.Numerics;
-    using static HexaEngine.Pipelines.Effects.DDASSR;
 
     public class DDASSR : IEffect
     {
@@ -31,8 +30,8 @@
         private readonly IBuffer cbMix;
         private MixParams mixParams = new();
 
-        private ISamplerState samplerPoint;
-        private ISamplerState samplerAnsio;
+        private readonly ISamplerState samplerPoint;
+        private readonly ISamplerState samplerAnsio;
 
         public IShaderResourceView? Color;
         public IShaderResourceView? Position;
@@ -229,31 +228,35 @@
             quad.DrawAuto(context, mixPipeline, Output.Viewport);
         }
 
-        public void DrawSettings()
-        {
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
+                quad.Dispose();
+                ssrPipeline.Dispose();
+                cbSSR.Dispose();
+                ssrBuffer.Dispose();
+                ssrRTV.Dispose();
+                ssrSRV.Dispose();
+                blurPipeline.Dispose();
+                cbBlur.Dispose();
+                blurBuffer.Dispose();
+                blurRTV.Dispose();
+                blurSRV.Dispose();
+                mixPipeline.Dispose();
+                cbMix.Dispose();
+                samplerPoint.Dispose();
+                samplerAnsio.Dispose();
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~DDASSR()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
+        ~DDASSR()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
 
         public void Dispose()
         {

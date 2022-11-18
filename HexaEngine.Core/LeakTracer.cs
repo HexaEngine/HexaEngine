@@ -31,7 +31,7 @@
 #if TRACELEAK
             foreach (var pair in Instances)
             {
-                Debug.WriteLine($"******LIVE INSTANCE: \n{pair}");
+                Trace.WriteLine($"******LIVE INSTANCE: \n{pair}");
             }
             if (Instances.Count != 0)
                 throw new Exception("memory leak detected!");

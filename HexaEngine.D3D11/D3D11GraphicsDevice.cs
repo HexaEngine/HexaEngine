@@ -1155,7 +1155,7 @@
 
             InputElementDesc* ptr = Utils.AsPointer(inputElements);
             reflection->Release();
-            Device->CreateInputLayout(ptr, (uint)inputElements.Length, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout);
+            Device->CreateInputLayout(ptr, (uint)inputElements.Length, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
         }
 
         protected virtual void Dispose(bool disposing)

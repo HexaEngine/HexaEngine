@@ -20,6 +20,7 @@
         private IBlendState? blendState;
         private readonly PipelineDesc desc;
         private PipelineState state = PipelineState.Default;
+        private bool initialized;
         private readonly IGraphicsDevice device;
         private readonly InputElementDescription[]? inputElements;
         private readonly List<BoundConstant> constants = new();
@@ -34,6 +35,7 @@
             this.desc = desc;
             Compile();
             Reload += OnReload;
+            initialized = true;
         }
 
         public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements)
@@ -43,6 +45,7 @@
             this.inputElements = inputElements;
             Compile();
             Reload += OnReload;
+            initialized = true;
         }
 
         public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state)
@@ -52,6 +55,7 @@
             this.state = state;
             Compile();
             Reload += OnReload;
+            initialized = true;
         }
 
         public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements, PipelineState state)
@@ -62,6 +66,7 @@
             this.state = state;
             Compile();
             Reload += OnReload;
+            initialized = true;
         }
 
         public List<BoundConstant> Constants => constants;
@@ -100,8 +105,16 @@
             ImGuiConsole.Log(LogSeverity.Info, "recompiling shaders ... done!");
         }
 
+        public void ReloadShader()
+        {
+            ImGuiConsole.Log(LogSeverity.Info, "recompiling shader ...");
+            OnReload(this, EventArgs.Empty);
+            ImGuiConsole.Log(LogSeverity.Info, "recompiling shader ... done!");
+        }
+
         protected virtual void OnReload(object? sender, EventArgs args)
         {
+            initialized = false;
             vs?.Dispose();
             hs?.Dispose();
             ds?.Dispose();
@@ -109,6 +122,7 @@
             ps?.Dispose();
             layout?.Dispose();
             Compile();
+            initialized = true;
         }
 
         #endregion Hotreload
@@ -271,6 +285,7 @@
 
         public void Draw(IGraphicsContext context, Viewport viewport, int vertexCount, int offset)
         {
+            if (!initialized) return;
             BeginDraw(context, viewport);
             context.Draw(vertexCount, offset);
             EndDraw(context);
@@ -278,6 +293,7 @@
 
         public void DrawIndexed(IGraphicsContext context, Viewport viewport, int indexCount, int indexOffset, int vertexOffset)
         {
+            if (!initialized) return;
             BeginDraw(context, viewport);
             context.DrawIndexed(indexCount, indexOffset, vertexOffset);
             EndDraw(context);
@@ -285,6 +301,7 @@
 
         public void DrawInstanced(IGraphicsContext context, Viewport viewport, int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
         {
+            if (!initialized) return;
             BeginDraw(context, viewport);
             context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
             EndDraw(context);
@@ -292,6 +309,7 @@
 
         public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset)
         {
+            if (!initialized) return;
             BeginDraw(context, viewport);
             context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
             EndDraw(context);

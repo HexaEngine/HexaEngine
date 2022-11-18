@@ -88,7 +88,7 @@ namespace HexaEngine.Rendering
             io.KeyCtrl = Keyboard.IsDown(KeyCode.KLctrl);
             io.KeyShift = Keyboard.IsDown(KeyCode.KLshift);
             io.KeyAlt = Keyboard.IsDown(KeyCode.KMenu);
-            io.KeySuper = false;
+            io.KeySuper = Keyboard.IsDown(KeyCode.KApplication);
         }
 
         public bool UpdateMouseCursor()

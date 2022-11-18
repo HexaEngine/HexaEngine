@@ -106,7 +106,6 @@
         private string[] availableShadingModelStrings;
         private ConfigKey configKey;
         private int currentShadingModelIndex;
-        private bool enableSSR;
         private float renderResolution;
         private int width;
         private int height;
@@ -322,6 +321,7 @@
                     brdfLUT.Target = brdflut.RenderTargetView;
                     brdfLUT.Draw(context);
                     context.ClearState();
+                    brdfLUT.Dispose();
                 });
                 deferredContext = device.CreateDeferredContext();
 
@@ -727,17 +727,6 @@
                 }
                 dirty = true;
             }
-
-            ImGui.Separator();
-
-            if (ImGui.Checkbox("Enable SSR", ref enableSSR))
-                dirty = true;
-
-            dof.DrawSettings();
-            ssr.DrawSettings();
-            ssao.DrawSettings();
-            bloom.DrawSettings();
-            tonemap.DrawSettings();
         }
 
         protected virtual void Dispose(bool disposing)

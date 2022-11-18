@@ -6,6 +6,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D.Compilers;
     using System.Collections.Concurrent;
+    using System.Diagnostics;
     using System.Runtime.InteropServices;
     using System.Text;
 
@@ -17,6 +18,7 @@
 
         public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
+            Trace.WriteLine($"[{Thread.CurrentThread.Name}] Compiling {sourceName}");
             semaphore.Wait();
             shaderBlob = null;
             errorBlob = null;
@@ -26,15 +28,24 @@
 #else
             flags |= ShaderFlags.OptimizationLevel3;
 #endif
+            byte* pSource = (byte*)Marshal.StringToCoTaskMemUTF8(source);
 
-#nullable disable
-            var vmacros = macros.Select(x => new D3DShaderMacro(x.Name.ToBytes(), x.Definition.ToBytes())).Union(new D3DShaderMacro[] { new(null, null) }).ToArray();
+            var vmacros = new D3DShaderMacro[macros.Length];
+            for (int i = 0; i < vmacros.Length; i++)
+            {
+                var macro = macros[i];
+                var pName = Marshal.StringToCoTaskMemUTF8(macro.Name);
+                var pDef = Marshal.StringToCoTaskMemUTF8(macro.Definition);
+                vmacros[i] = new((byte*)pName, (byte*)pDef);
+            }
             var pMacros = Utils.AsPointer(vmacros);
-#nullable enable
+
+            byte* pEntryPoint = (byte*)Marshal.StringToCoTaskMemUTF8(entryPoint);
+            byte* pSourceName = (byte*)Marshal.StringToCoTaskMemUTF8(sourceName);
+            byte* pProfile = (byte*)Marshal.StringToCoTaskMemUTF8(profile);
 
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;
-            byte* pSource = Utils.ToBytes(source);
 
             // For more about that black magic visit https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/function-pointers
             delegate*<ID3DInclude*, D3DIncludeType, byte*, void*, void**, uint*, int> pOpen = &Open;
@@ -52,8 +63,20 @@
             ID3DInclude* pInclude = &include;
 
             paths.TryAdd(pInclude, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
-            D3DCompiler.Compile(pSource, (nuint)source.Length, sourceName.ToBytes(), pMacros, pInclude, entryPoint.ToBytes(), profile.ToBytes(), (uint)flags, 0, &vBlob, &vError);
+            D3DCompiler.Compile(pSource, (nuint)source.Length, pSourceName, pMacros, pInclude, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
             paths.Remove(pInclude, out _);
+
+            Marshal.FreeCoTaskMem((nint)pSource);
+            Marshal.FreeCoTaskMem((nint)pEntryPoint);
+            Marshal.FreeCoTaskMem((nint)pSourceName);
+            Marshal.FreeCoTaskMem((nint)pProfile);
+
+            for (int i = 0; i < vmacros.Length; i++)
+            {
+                var macro = vmacros[i];
+                Marshal.FreeCoTaskMem((nint)macro.Name);
+                Marshal.FreeCoTaskMem((nint)macro.Definition);
+            }
 
             if (vError != null)
             {

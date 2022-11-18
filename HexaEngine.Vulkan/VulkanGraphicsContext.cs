@@ -278,5 +278,205 @@
         {
             throw new NotImplementedException();
         }
+
+        public void VSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VSSetSampler(ISamplerState? sampler, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void VSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HSSetSampler(ISamplerState? sampler, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DSSetSampler(ISamplerState? sampler, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GSSetSampler(ISamplerState? sampler, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PSSetSampler(ISamplerState? sampler, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetSampler(ISamplerState? sampler, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetUnorderedAccessViews(int startSlot, int count, IUnorderedAccessView[] views, int uavInitialCounts = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetUnorderedAccessViews(int startSlot, IUnorderedAccessView[] views, int uavInitialCounts = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views, int uavInitialCounts = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

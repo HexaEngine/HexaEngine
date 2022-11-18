@@ -10,6 +10,7 @@
 	  <AnalysisLevel>latest-all</AnalysisLevel>
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
+	  <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

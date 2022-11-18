@@ -15,7 +15,9 @@
         private static FilePicker filePicker = new();
         private static bool filePickerIsOpen = false;
         private static Action<FilePickerResult, string>? filePickerCallback;
-        private static AssimpSceneLoader loader = new();
+        private static readonly AssimpSceneLoader loader = new();
+        private static Task recompileShadersTask;
+        private static bool recompileShadersTaskIsComplete = true;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -105,16 +107,17 @@
                 if (ImGui.BeginMenu("Debug"))
                 {
                     ImGui.TextDisabled("Shaders");
-                    if (ImGui.MenuItem("Recompile Shaders (F5)"))
+                    if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))
                     {
-                        ShaderCache.Clear();
-                        Pipeline.ReloadShaders();
+                        recompileShadersTaskIsComplete = false;
+                        recompileShadersTask = Task.Run(() =>
+                        {
+                            ShaderCache.Clear();
+                            Pipeline.ReloadShaders();
+                            ComputePipeline.ReloadShaders();
+                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
                     }
-                    if (ImGui.MenuItem("Recompile Compute Shaders (F5)"))
-                    {
-                        ShaderCache.Clear();
-                        ComputePipeline.ReloadShaders();
-                    }
+
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Console"))

@@ -46,6 +46,7 @@
         public static void Run(SdlWindow mainWindow)
         {
             sdl.Init(Sdl.InitEverything);
+            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
             Application.mainWindow = mainWindow;
             mainWindow.Closing += MainWindow_Closing;
 
