@@ -7,7 +7,10 @@
     using HexaEngine.Scenes;
     using System.Numerics;
 
+#if GenericAttributes
     [EditorNode<Camera>("Camera")]
+#endif
+
     public class Camera : SceneNode, IView
     {
         public new CameraTransform Transform;
@@ -22,7 +25,9 @@
             CreatePropertyEditor<Camera>();
         }
 
+#if GenericAttributes
         [EditorProperty<ProjectionType>("Type")]
+#endif
         public ProjectionType ProjectionType { get => Transform.ProjectionType; set => Transform.ProjectionType = value; }
 
         [EditorProperty(nameof(Fov))]

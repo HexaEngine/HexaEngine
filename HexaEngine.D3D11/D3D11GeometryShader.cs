@@ -6,7 +6,7 @@
 
     public unsafe class D3D11GeometryShader : DeviceChildBase, IGeometryShader
     {
-        private readonly ID3D11GeometryShader* gs;
+        internal readonly ID3D11GeometryShader* gs;
 
         internal D3D11GeometryShader(ID3D11GeometryShader* gs)
         {

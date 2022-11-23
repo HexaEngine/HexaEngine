@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Plugins
+﻿namespace HexaEngine.Scripting
 {
     using System.Collections.Generic;
     using System.Reflection;

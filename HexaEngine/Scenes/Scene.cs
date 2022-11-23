@@ -156,7 +156,6 @@
             CameraManager.Update();
             Simulate(Time.Delta);
             Dispatcher.ExecuteInvokes();
-            Mouse.Clear();
             semaphore.Release();
         }
 

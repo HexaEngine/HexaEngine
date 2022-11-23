@@ -3,8 +3,7 @@
     using HexaEngine.Core.Input;
     using ImGuiNET;
     using ImGuizmoNET;
-    using imnodesNET;
-    using Silk.NET.SDL;
+    using ImNodesNET;
 
     public static class Designer
     {
@@ -30,15 +29,15 @@
 
         static Designer()
         {
-            Keyboard.OnKeyUp += (s, e) =>
+            Keyboard.Released += (s, e) =>
             {
-                if (Keyboard.IsDown(KeyCode.KLctrl))
+                if (Keyboard.IsDown(KeyCode.LCtrl))
                 {
-                    if (e.KeyCode == KeyCode.KZ)
+                    if (e.KeyCode == KeyCode.Z)
                     {
                         History.TryUndo();
                     }
-                    if (e.KeyCode == KeyCode.KY)
+                    if (e.KeyCode == KeyCode.Y)
                     {
                         History.TryRedo();
                     }

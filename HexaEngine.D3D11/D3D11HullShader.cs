@@ -6,7 +6,7 @@
 
     public unsafe class D3D11HullShader : DeviceChildBase, IHullShader
     {
-        private readonly ID3D11HullShader* gs;
+        internal readonly ID3D11HullShader* gs;
 
         internal D3D11HullShader(ID3D11HullShader* gs)
         {

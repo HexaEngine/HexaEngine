@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Graphics
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Nodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using System.Numerics;
@@ -24,6 +24,10 @@
         public IDepthStencilView? DepthStencilView { get; set; }
 
         public RenderTargetViewArray? Targets { get; set; }
+
+        public IShaderResourceView[]? Inputs { get; set; }
+
+        public IShaderResourceView[]? Outputs { get; set; }
 
         public IPrimitive? Mesh { get; set; }
 

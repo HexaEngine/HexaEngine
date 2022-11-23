@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
+    using HexaEngine.IO;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
     using System.Collections.Concurrent;
@@ -65,7 +65,11 @@
 
         public void DestroyInstance(Mesh mesh, SceneNode node)
         {
-            var instance = instances[node];
+            if (!instances.TryGetValue(node, out var instance))
+            {
+                return;
+            }
+
             if (!meshes.TryGetValue(mesh, out var modelMesh))
             {
                 return;
@@ -87,7 +91,7 @@
 
         public ModelMesh LoadMesh(Mesh mesh)
         {
-            ModelMesh model = new(device, mesh.Vertices, mesh.Indices);
+            ModelMesh model = new(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
             if (mesh.Material != null)
             {
@@ -105,7 +109,7 @@
 
         public async Task<ModelMesh> AsyncLoadMesh(Mesh mesh)
         {
-            ModelMesh model = new(device, mesh.Vertices, mesh.Indices);
+            ModelMesh model = new(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
             if (mesh.Material != null)
             {
@@ -125,7 +129,7 @@
         {
             if (meshes.TryGetValue(mesh, out var model))
             {
-                model.Update(device, mesh.Vertices, mesh.Indices);
+                model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
                 if (mesh.Material != null)
                 {
@@ -152,7 +156,7 @@
         {
             if (meshes.TryGetValue(mesh, out var model))
             {
-                model.Update(device, mesh.Vertices, mesh.Indices);
+                model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
 
                 if (mesh.Material != null)
                 {
@@ -197,7 +201,7 @@
             ModelMaterial modelMaterial = new(material,
                 device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
                 device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
-            modelMaterial.AlbedoTexture = LoadTexture(material.AlbedoTextureMap);
+            modelMaterial.AlbedoTexture = LoadTexture(material.BaseColorTextureMap);
             modelMaterial.NormalTexture = LoadTexture(material.NormalTextureMap);
             modelMaterial.DisplacementTexture = LoadTexture(material.DisplacementTextureMap);
             modelMaterial.RoughnessTexture = LoadTexture(material.RoughnessTextureMap);
@@ -215,7 +219,7 @@
             ModelMaterial modelMaterial = new(material,
                 device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
                 device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
-            modelMaterial.AlbedoTexture = await AsyncLoadTexture(material.AlbedoTextureMap);
+            modelMaterial.AlbedoTexture = await AsyncLoadTexture(material.BaseColorTextureMap);
             modelMaterial.NormalTexture = await AsyncLoadTexture(material.NormalTextureMap);
             modelMaterial.DisplacementTexture = await AsyncLoadTexture(material.DisplacementTextureMap);
             modelMaterial.RoughnessTexture = await AsyncLoadTexture(material.RoughnessTextureMap);
@@ -232,7 +236,7 @@
         {
             if (materials.TryGetValue(material, out var modelMaterial))
             {
-                UpdateTexture(ref modelMaterial.AlbedoTexture, material.AlbedoTextureMap);
+                UpdateTexture(ref modelMaterial.AlbedoTexture, material.BaseColorTextureMap);
                 UpdateTexture(ref modelMaterial.NormalTexture, material.NormalTextureMap);
                 UpdateTexture(ref modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
                 UpdateTexture(ref modelMaterial.RoughnessTexture, material.RoughnessTextureMap);
@@ -248,7 +252,7 @@
         {
             if (materials.TryGetValue(material, out var modelMaterial))
             {
-                modelMaterial.AlbedoTexture = await AsyncUpdateTexture(modelMaterial.AlbedoTexture, material.AlbedoTextureMap);
+                modelMaterial.AlbedoTexture = await AsyncUpdateTexture(modelMaterial.AlbedoTexture, material.BaseColorTextureMap);
                 modelMaterial.NormalTexture = await AsyncUpdateTexture(modelMaterial.NormalTexture, material.NormalTextureMap);
                 modelMaterial.DisplacementTexture = await AsyncUpdateTexture(modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
                 modelMaterial.RoughnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessTexture, material.RoughnessTextureMap);

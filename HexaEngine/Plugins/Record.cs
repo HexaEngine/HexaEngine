@@ -2,7 +2,6 @@
 {
     public unsafe struct Record
     {
-        public RecordHeader Header;
-        public void* Data;
+        public RecordHeader* Header;
     }
 }

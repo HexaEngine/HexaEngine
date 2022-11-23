@@ -5,7 +5,9 @@
 
     public interface ISwapChain : IDisposable
     {
-        void Present(uint syncInt);
+        void Present(bool sync);
+
+        void Present();
 
         void Resize(int width, int height);
 
@@ -21,5 +23,8 @@
         int Width { get; }
         int Height { get; }
         Viewport Viewport { get; }
+        bool VSync { get; set; }
+        int TargetFPS { get; set; }
+        bool LimitFPS { get; set; }
     }
 }

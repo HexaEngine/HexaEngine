@@ -7,16 +7,24 @@
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DebugType>embedded</DebugType>
 	<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
 	  <Platforms>AnyCPU;x64</Platforms>
+	  <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
+    <DefineConstants>$(DefineConstants)TRACE;Debug</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

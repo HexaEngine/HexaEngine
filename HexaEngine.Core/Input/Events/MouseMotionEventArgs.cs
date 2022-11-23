@@ -2,7 +2,11 @@
 {
     public class MouseMotionEventArgs : EventArgs
     {
-        public MouseMotionEventArgs(int x, int y, int relX, int relY)
+        public MouseMotionEventArgs()
+        {
+        }
+
+        public MouseMotionEventArgs(float x, float y, float relX, float relY)
         {
             X = x;
             Y = y;
@@ -10,9 +14,9 @@
             RelY = relY;
         }
 
-        public int X;
-        public int Y;
-        public int RelX;
-        public int RelY;
+        public float X;
+        public float Y;
+        public float RelX;
+        public float RelY;
     }
 }

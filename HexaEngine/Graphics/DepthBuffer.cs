@@ -1,14 +1,16 @@
 ﻿namespace HexaEngine.Graphics
 {
+    using BepuPhysics.Trees;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
 
-    public class DepthBuffer
+    public class DepthBuffer : IDisposable
     {
         public readonly IResource Resource;
         public readonly IDepthStencilView DSV;
         public readonly IShaderResourceView? SRV;
         public readonly Viewport Viewport;
+        private bool disposedValue;
 
         public DepthBuffer(IGraphicsDevice device, DepthStencilBufferDesc desc)
         {
@@ -41,6 +43,30 @@
                 srvdesc.Format = Format.R32Float;
                 SRV = device.CreateShaderResourceView(Resource, srvdesc);
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                Resource.Dispose();
+                DSV.Dispose();
+                SRV?.Dispose();
+
+                disposedValue = true;
+            }
+        }
+
+        ~DepthBuffer()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

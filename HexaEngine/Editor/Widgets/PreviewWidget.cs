@@ -1,16 +1,16 @@
-﻿namespace IBLBaker.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Deferred;
+    using HexaEngine.Pipelines.Deferred.Lighting;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
@@ -21,7 +21,7 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
 
-    public class PreviewWidget : Widget, IDisposable
+    public class PreviewWidget : ImGuiWindow, IDisposable
     {
 #nullable disable
         private bool isdrawing;
@@ -44,10 +44,10 @@
 
         private PrepassShader prepass;
         private BRDFPipeline pbrlightShader;
-        private BRDFEffect brdfFilter;
+        private BRDFLUT brdfFilter;
         private SkyboxPipeline skyboxShader;
 
-        private Material material = new() { Albedo = new(1, 0, 0), Ao = 1 };
+        private Material material = new() { BaseColor = new(1, 0, 0), Ao = 1 };
 
         private IBuffer vb;
         private IBuffer ib;
@@ -71,6 +71,8 @@
         private FilePicker pickerPre = new() { CurrentFolder = Environment.CurrentDirectory };
 
         private Camera camera;
+
+        protected override string Name => "PBR Preview";
 
         public override void Init(IGraphicsDevice device)
         {
@@ -207,25 +209,9 @@
             }
         }
 
-        public override void DrawMenu()
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (ImGui.MenuItem("PBR Preview"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.None;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-            if (!ImGui.Begin("Preview", ref IsShown, flags))
-            {
-                ImGui.End();
-                return;
-            }
+            Flags = ImGuiWindowFlags.None;
 
             IsDocked = ImGui.IsWindowDocked();
 
@@ -265,9 +251,9 @@
 
             ImGui.BeginChild("Settings");
 
-            var color = material.Albedo;
+            var color = material.BaseColor;
             if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))
-                material.Albedo = color;
+                material.BaseColor = color;
 
             var roughness = material.Roughness;
             if (ImGui.SliderFloat("Roughness", ref roughness, 0, 1))
@@ -283,7 +269,7 @@
 
             ImGui.EndChild();
 
-            ImGui.End();
+            EndWindow();
 
             if (searchPathEnvironment)
             {

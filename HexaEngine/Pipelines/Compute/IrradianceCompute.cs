@@ -1,3 +1,0 @@
-﻿namespace HexaEngine.Pipelines.Compute
-{
-}

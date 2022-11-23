@@ -7,7 +7,7 @@
 
     public unsafe class D3D11Texture2D : DeviceChildBase, ITexture2D
     {
-        private readonly ID3D11Texture2D* texture;
+        internal readonly ID3D11Texture2D* texture;
 
         public D3D11Texture2D(ID3D11Texture2D* texture, Texture2DDescription description)
         {

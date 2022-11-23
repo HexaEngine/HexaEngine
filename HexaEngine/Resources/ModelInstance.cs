@@ -13,7 +13,7 @@
 
         public void GetBoundingBox(out BoundingBox box)
         {
-            box = BoundingBox.Transform(Mesh.Box, Node.Transform.Global);
+            box = BoundingBox.Transform(Mesh.AABB, Node.Transform.Global);
         }
 
         public ModelInstance(ModelMesh mesh, SceneNode node)

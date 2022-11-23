@@ -65,7 +65,7 @@
                 context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.All, 1, 0);
                 context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
                 sphere.DrawAuto(context, pipeline, swapChain.Viewport);
-                swapChain.Present(1);
+                swapChain.Present(true);
             }
         }
     }

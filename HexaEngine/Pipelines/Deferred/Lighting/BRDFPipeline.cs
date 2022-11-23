@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Pipelines.Deferred
+﻿namespace HexaEngine.Pipelines.Deferred.Lighting
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;

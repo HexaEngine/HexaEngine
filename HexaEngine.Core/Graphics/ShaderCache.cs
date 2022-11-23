@@ -4,17 +4,14 @@
     using System;
     using System.Buffers.Binary;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using System.Text;
 
     public static class ShaderCache
     {
         private const string file = "cache/shadercache.bin";
         private static readonly List<ShaderCacheEntry> entries = new();
-        private static readonly Dictionary<string, KeyValuePair<DateTime, byte[]>> cache = new();
 
         static ShaderCache()
         {
@@ -34,7 +31,7 @@
         {
             if (DisableCache) return;
             var entry = new ShaderCacheEntry(path, macros, blob.AsBytes());
-            entries.RemoveAll(x => x.Name == path);
+            entries.RemoveAll(x => x.Equals(entry));
             entries.Add(entry);
         }
 
@@ -178,8 +175,18 @@
         public bool Equals(ShaderCacheEntry other)
         {
             if (Name != other.Name) return false;
-            if (Macros == other.Macros) return true;
-            return Macros.SequenceEqual(other.Macros);
+            if (Macros == other.Macros && Macros == null && other.Macros == null) return true;
+            if (Macros != other.Macros && (Macros == null || other.Macros == null)) return false;
+            if (Macros.Length != (other.Macros?.Length ?? 0)) return false;
+            for (int i = 0; i < Macros.Length; i++)
+            {
+                if (Macros[i].Name != other.Macros[i].Name ||
+                    Macros[i].Definition != other.Macros[i].Definition)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public override bool Equals(object? obj)
@@ -200,6 +207,11 @@
         public override int GetHashCode()
         {
             return HashCode.Combine(Name, Macros);
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

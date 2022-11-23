@@ -33,9 +33,57 @@
 
         public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot);
 
+        public void VSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+
+        public void VSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
+
+        public void HSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+
+        public void HSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
+
+        public void DSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+
+        public void DSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
+
+        public void GSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+
+        public void GSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
+
+        public void PSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+
+        public void PSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
+
+        public void CSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+
+        public void CSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
+
         public void SetShaderResource(IShaderResourceView? shaderResourceView, ShaderStage stage, int slot);
 
         public void SetShaderResources(IShaderResourceView[] shaderResourceViews, ShaderStage stage, int slot);
+
+        public void VSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+
+        public void VSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+
+        public void HSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+
+        public void HSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+
+        public void DSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+
+        public void DSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+
+        public void GSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+
+        public void GSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+
+        public void PSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+
+        public void PSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+
+        public void CSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+
+        public void CSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
 
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
 
@@ -62,6 +110,30 @@
         void SetSampler(ISamplerState? sampler, ShaderStage stage, int slot);
 
         void SetSamplers(ISamplerState[] samplers, ShaderStage stage, int slot);
+
+        void VSSetSampler(ISamplerState? sampler, int slot);
+
+        void VSSetSamplers(ISamplerState[] samplers, int slot);
+
+        void HSSetSampler(ISamplerState? sampler, int slot);
+
+        void HSSetSamplers(ISamplerState[] samplers, int slot);
+
+        void DSSetSampler(ISamplerState? sampler, int slot);
+
+        void DSSetSamplers(ISamplerState[] samplers, int slot);
+
+        void GSSetSampler(ISamplerState? sampler, int slot);
+
+        void GSSetSamplers(ISamplerState[] samplers, int slot);
+
+        void PSSetSampler(ISamplerState? sampler, int slot);
+
+        void PSSetSamplers(ISamplerState[] samplers, int slot);
+
+        void CSSetSampler(ISamplerState? sampler, int slot);
+
+        void CSSetSamplers(ISamplerState[] samplers, int slot);
 
         void SetPrimitiveTopology(PrimitiveTopology topology);
 
@@ -100,10 +172,29 @@
         void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount);
 
         void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ);
+
         void GenerateMips(IShaderResourceView resourceView);
+
+        void ExecuteCommandList(ICommandList commandList, int restoreState);
+
+        ICommandList FinishCommandList(int restoreState);
+
+        void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
+
+        void CSSetUnorderedAccessViews(int startSlot, int count, IUnorderedAccessView[] views, int uavInitialCounts = -1);
+
+        void CSSetUnorderedAccessViews(int startSlot, IUnorderedAccessView[] views, int uavInitialCounts = -1);
+
+        void CSSetUnorderedAccessViews(IUnorderedAccessView[] views, int uavInitialCounts = -1);
+
+        void CSSetUnorderedAccessViews(IUnorderedAccessView[] views);
     }
 
     public interface IQuery : IDeviceChild
+    {
+    }
+
+    public interface ICommandList : IDeviceChild
     {
     }
 }

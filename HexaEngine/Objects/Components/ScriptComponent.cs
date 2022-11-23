@@ -3,15 +3,18 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.IO;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
     using HexaEngine.Scripting;
     using NLua;
 
+#if GenericAttributes
     [EditorComponent<ScriptComponent>("Script")]
+#endif
+
     public class ScriptComponent : IComponent, IScript
     {
         private SceneNode node;

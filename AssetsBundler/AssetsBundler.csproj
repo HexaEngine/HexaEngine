@@ -4,10 +4,15 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <Platforms>AnyCPU;x64</Platforms>
+    <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
   </ItemGroup>
 
 </Project>

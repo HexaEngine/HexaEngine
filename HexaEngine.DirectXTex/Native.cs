@@ -17,7 +17,7 @@ namespace HexaEngine.DirectXTex
 
     internal static partial class Native
     {
-        internal const string LibName = "HexaEngine.DirectXTex.Native.dll";
+        internal const string LibName = "DirectXTex.dll";
 
         #region ScratchImage Methods
 

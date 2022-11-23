@@ -1,19 +1,16 @@
-﻿namespace IBLBaker.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Rendering;
-    using IBLBaker;
     using ImGuiNET;
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
-    public class PrefilterWidget : Widget, IDisposable
+    public class PrefilterWidget : ImGuiWindow, IDisposable
     {
         private readonly FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
@@ -41,6 +38,8 @@
         private int y;
         private int step;
         private int steps;
+
+        protected override string Name => "IBL Prefilter";
 
         public override void Init(IGraphicsDevice device)
         {
@@ -113,27 +112,22 @@
             }
         }
 
-        public override void DrawMenu()
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (ImGui.MenuItem("IBL Prefilter"))
+            if (prefilterFilter == null)
             {
-                IsShown = true;
+                EndWindow();
+                return;
             }
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
-            if (prefilterFilter == null) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.None;
+            Flags = ImGuiWindowFlags.None;
             if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
+                Flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
             if (prefilterTex != null)
-                flags |= ImGuiWindowFlags.UnsavedDocument;
+                Flags |= ImGuiWindowFlags.UnsavedDocument;
             if (searchPathEnvironment)
-                flags |= ImGuiWindowFlags.NoInputs;
+                Flags |= ImGuiWindowFlags.NoInputs;
 
-            if (!ImGui.Begin("Pre-Filter", ref IsShown, flags))
+            if (!ImGui.Begin("Pre-Filter", ref IsShown, Flags))
             {
                 ImGui.End();
                 return;

@@ -34,7 +34,6 @@
         public static bool Fullframe;
 
         private static readonly Profiler fpsProfiler = new("latency", () => Time.Delta, x => $"{x * 1000:n4}ms\n({1000 / Time.Delta:n0}fps)", 100);
-        private static readonly Profiler memProfiler = new("memory", () => Process.GetCurrentProcess().PrivateMemorySize64 / 1000f / 1000f, x => $"{x}MB", 200);
 
         public Framebuffer(IGraphicsDevice device)
         {
@@ -143,7 +142,6 @@
             }
 
             fpsProfiler.Draw();
-            memProfiler.Draw();
 
             ImGui.End();
         }

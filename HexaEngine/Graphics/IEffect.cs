@@ -5,7 +5,5 @@
     public interface IEffect : IDisposable
     {
         void Draw(IGraphicsContext context);
-
-        void DrawSettings();
     }
 }

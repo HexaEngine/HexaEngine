@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Mathematics;
     using System;
 
@@ -199,5 +200,12 @@
         IQuery CreateQuery(Query type);
 
         IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data);
+        ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader);
+        SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader);
+        IGraphicsContext CreateDeferredContext();
+        ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+        ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+        ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+        IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description);
     }
 }

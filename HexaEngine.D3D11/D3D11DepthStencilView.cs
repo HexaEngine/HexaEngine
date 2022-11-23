@@ -6,7 +6,7 @@
 
     public unsafe class D3D11DepthStencilView : DeviceChildBase, IDepthStencilView
     {
-        private readonly ID3D11DepthStencilView* dsv;
+        internal readonly ID3D11DepthStencilView* dsv;
 
         public D3D11DepthStencilView(ID3D11DepthStencilView* dsv, DepthStencilViewDescription description)
         {

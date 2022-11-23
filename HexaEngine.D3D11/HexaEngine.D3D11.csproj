@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
 	  <Platforms>AnyCPU;x64</Platforms>
+	  <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
     <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
+    <ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
   </ItemGroup>
 
 </Project>

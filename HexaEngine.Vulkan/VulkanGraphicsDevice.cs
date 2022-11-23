@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Reflection;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using Silk.NET.Vulkan;
@@ -64,6 +65,8 @@
         public string? DebugName { get; set; }
 
         public bool IsDisposed { get; }
+
+        public event EventHandler? OnDisposed;
 
         #region Helpers
 
@@ -735,6 +738,41 @@
         }
 
         public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        {
+            throw new NotImplementedException();
+        }
+
+        public ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsContext CreateDeferredContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
         {
             throw new NotImplementedException();
         }

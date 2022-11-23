@@ -25,10 +25,11 @@
 
         private int instanceCapacity;
 
-        public BoundingBox Box;
+        public BoundingBox AABB;
 
-        public ModelMesh(IGraphicsDevice device, Span<MeshVertex> vertices, Span<int> indices)
+        public ModelMesh(IGraphicsDevice device, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box)
         {
+            AABB = box;
             if (!vertices.IsEmpty)
             {
                 VB = device.CreateBuffer(vertices, BindFlags.VertexBuffer, Usage.Immutable);
@@ -50,13 +51,14 @@
 
         public int InstanceCount => instanceCount;
 
-        public void Update(IGraphicsDevice device, Span<MeshVertex> vertices, Span<int> indices)
+        public void Update(IGraphicsDevice device, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box)
         {
             semaphore.Wait();
             VB?.Dispose();
             VB = null;
             IB?.Dispose();
             IB = null;
+            AABB = box;
             semaphore.Release();
             if (!vertices.IsEmpty)
             {
@@ -125,14 +127,17 @@
             EnsureCapacity(device, instanceCount);
         }
 
-        public void UpdateInstanceBuffer(IGraphicsContext context)
+        public int UpdateInstanceBuffer(IGraphicsContext context)
         {
-            if (ISB == null) return;
+            if (ISB == null) return -1;
+            int count = 0;
             for (int i = 0; i < instanceCount; i++)
             {
                 transforms[i] = Instances[i].Transform;
+                count++;
             }
             context.Write(ISB, transforms);
+            return count;
         }
 
         public unsafe void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
@@ -144,7 +149,6 @@
             if (semaphore.CurrentCount == 0) return;
 
             Material.Bind(context);
-            UpdateInstanceBuffer(context);
             context.SetVertexBuffer(VB, sizeof(MeshVertex));
             context.SetVertexBuffer(1, ISB, sizeof(Matrix4x4), 0);
             context.SetIndexBuffer(IB, Format.R32UInt, 0);

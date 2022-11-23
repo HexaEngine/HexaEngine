@@ -5,7 +5,7 @@
     using ImGuiNET;
     using System.Linq;
 
-    public unsafe class MaterialsWidget : Widget
+    public unsafe class MaterialsWidget : ImGuiWindow
     {
         private int current = -1;
 
@@ -14,27 +14,15 @@
             IsShown = true;
         }
 
-        public override void Dispose()
+        protected override string Name => "Materials";
+
+        public override void DrawContent(IGraphicsContext context)
         {
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.MenuBar;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-
-            if (!ImGui.Begin("Materials", ref IsShown, flags))
-            {
-                ImGui.End();
-                return;
-            }
-
             var scene = SceneManager.Current;
             if (scene is null)
             {
-                ImGui.End();
+                EndWindow();
+
                 return;
             }
 
@@ -60,9 +48,9 @@
                     }
                 }
 
-                var color = material.Albedo;
+                var color = material.BaseColor;
                 if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))
-                    material.Albedo = color;
+                    material.BaseColor = color;
 
                 var opacity = material.Opacity;
                 if (ImGui.SliderFloat("Opacity", ref opacity, 0, 1))
@@ -80,13 +68,17 @@
                 if (ImGui.SliderFloat("Ao", ref Ao, 0, 1))
                     material.Ao = Ao;
 
+                var Anisotropic = material.Anisotropic;
+                if (ImGui.SliderFloat("Anisotropic", ref Anisotropic, 0, 1))
+                    material.Anisotropic = Anisotropic;
+
                 var Emissivness = material.Emissivness;
                 if (ImGui.ColorEdit3("Emissivness", ref Emissivness, ImGuiColorEditFlags.Float))
                     material.Emissivness = Emissivness;
 
-                var texAlbedo = material.AlbedoTextureMap;
+                var texAlbedo = material.BaseColorTextureMap;
                 if (ImGui.InputText("Albedo Tex", ref texAlbedo, 256))
-                    material.AlbedoTextureMap = texAlbedo;
+                    material.BaseColorTextureMap = texAlbedo;
 
                 var texNormal = material.NormalTextureMap;
                 if (ImGui.InputText("Normal Tex", ref texNormal, 256))
@@ -116,20 +108,6 @@
                 if (ImGui.InputText("RM Tex", ref texRM, 256))
                     material.RoughnessMetalnessTextureMap = texRM;
             }
-
-            ImGui.End();
-        }
-
-        public override void DrawMenu()
-        {
-            if (ImGui.MenuItem("Material"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Init(IGraphicsDevice device)
-        {
         }
     }
 }

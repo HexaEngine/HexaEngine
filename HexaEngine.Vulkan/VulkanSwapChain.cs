@@ -18,6 +18,9 @@
         public int Width { get; }
         public int Height { get; }
         public Viewport Viewport { get; }
+        public bool VSync { get; set; }
+        public int TargetFPS { get; set; }
+        public bool LimitFPS { get; set; }
 
         public event EventHandler? Resizing;
 
@@ -29,6 +32,16 @@
         }
 
         public void Present(uint syncInt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Present(bool sync)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Present()
         {
             throw new NotImplementedException();
         }

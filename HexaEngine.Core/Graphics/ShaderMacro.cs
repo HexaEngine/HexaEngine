@@ -61,5 +61,10 @@
         public static bool operator ==(ShaderMacro left, ShaderMacro right) => left.Equals(right);
 
         public static bool operator !=(ShaderMacro left, ShaderMacro right) => !left.Equals(right);
+
+        public override string ToString()
+        {
+            return $"{Name}: {Definition}";
+        }
     }
 }

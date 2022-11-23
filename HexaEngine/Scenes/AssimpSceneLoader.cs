@@ -271,14 +271,14 @@
                 material.Textures = texs;
                 materials[i] = new Objects.Material()
                 {
-                    Albedo = material.BaseColor,
+                    BaseColor = material.BaseColor,
                     Ao = 1,
                     Emissivness = material.ColorEmissive,
                     Metalness = material.MetallicFactor,
                     Roughness = material.RoughnessFactor,
                     Opacity = material.Opacity,
                     Name = material.Name,
-                    AlbedoTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
+                    BaseColorTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
                     AoTextureMap = material.Textures[(int)TextureType.AmbientOcclusion].File ?? string.Empty,
                     DisplacementTextureMap = material.Textures[(int)TextureType.Displacement].File ?? string.Empty,
                     EmissiveTextureMap = material.Textures[(int)TextureType.EmissionColor].File ?? string.Empty,
@@ -323,8 +323,10 @@
                     MeshVertex vertex = new(pos, new(tex.X, tex.Y), nor, tan);
                     vertices[j] = vertex;
                 }
-
-                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Material = materials[(int)msh->MMaterialIndex] };
+                Vector3 min = new(msh->MAABB.Min.X, msh->MAABB.Min.Y, msh->MAABB.Min.Z);
+                Vector3 max = new(msh->MAABB.Max.X, msh->MAABB.Max.Y, msh->MAABB.Max.Z);
+                BoundingBox box = new(min, max);
+                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Material = materials[(int)msh->MMaterialIndex], AABB = box };
                 meshesT.Add(msh, meshes[i]);
             }
         }

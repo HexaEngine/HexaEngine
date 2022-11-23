@@ -6,7 +6,7 @@
 
     public unsafe class D3D11ShaderResourceView : DeviceChildBase, IShaderResourceView
     {
-        private readonly ID3D11ShaderResourceView* srv;
+        internal readonly ID3D11ShaderResourceView* srv;
 
         public D3D11ShaderResourceView(ID3D11ShaderResourceView* srv, ShaderResourceViewDescription description)
         {

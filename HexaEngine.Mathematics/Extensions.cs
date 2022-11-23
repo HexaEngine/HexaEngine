@@ -14,6 +14,12 @@
         public const float PIDIV2 = MathF.PI / 2;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int ComputeMipLevels(int width, int height)
+        {
+            return (int)MathF.Log2(MathF.Max(width, height));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Round(this float x)
         {
             return (int)MathF.Floor(x);
@@ -88,21 +94,25 @@
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 ToDeg(this Vector3 v)
         {
             return new Vector3((float)(v.X * RadToDefFactor), (float)(v.Y * RadToDefFactor), (float)(v.Z * RadToDefFactor));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 ToRad(this Vector3 v)
         {
             return new Vector3((float)(v.X * DegToRadFactor), (float)(v.Y * DegToRadFactor), (float)(v.Z * DegToRadFactor));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToDeg(this float v)
         {
             return (float)(v * RadToDefFactor);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float ToRad(this float v)
         {
             return (float)(v * DegToRadFactor);
@@ -122,6 +132,8 @@
         /// <param name="cameraUpVector">The up vector of the camera.</param>
         /// <param name="cameraForwardVector">The forward vector of the camera.</param>
         /// <param name="result">When the method completes, contains the created billboard matrix.</param>
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 BillboardLH(Vector3 objectPosition, Vector3 cameraPosition, Vector3 cameraUpVector, Vector3 cameraForwardVector)
         {
             Vector3 crossed;
@@ -289,9 +301,22 @@
             return new(normalizedX, normalizedY);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(float x, float y, float s)
         {
             return x * (1 - s) + y * s;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Pack(this Vector4 color)
+        {
+            return Pack((uint)(color.W * 255), (uint)(color.X * 255), (uint)(color.Y * 255), (uint)(color.Z * 255));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint Pack(uint a, uint r, uint g, uint b)
+        {
+            return (a << 24) + (r << 16) + (g << 8) + b;
         }
     }
 }

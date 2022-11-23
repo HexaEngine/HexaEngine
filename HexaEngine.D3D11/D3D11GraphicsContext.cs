@@ -5,6 +5,7 @@
     using Silk.NET.Maths;
     using System;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using Format = Core.Graphics.Format;
     using MappedSubresource = Core.Graphics.MappedSubresource;
@@ -23,6 +24,13 @@
             Device = device;
         }
 
+        internal D3D11GraphicsContext(D3D11GraphicsDevice device, ID3D11DeviceContext1* context)
+        {
+            DeviceContext = context;
+            NativePointer = (nint)context;
+            Device = device;
+        }
+
         public IGraphicsDevice Device { get; }
 
         public IntPtr NativePointer { get; }
@@ -31,16 +39,21 @@
 
         public string? DebugName { get; set; } = string.Empty;
 
+        public event EventHandler? OnDisposed;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
         {
             DeviceContext->ClearDepthStencilView((ID3D11DepthStencilView*)depthStencilView.NativePointer, (uint)Helper.Convert(flags), depth, stencil);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)
         {
             DeviceContext->ClearRenderTargetView((ID3D11RenderTargetView*)renderTargetView.NativePointer, value.ToFloatPtr());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearRenderTargetViews(IRenderTargetView[] rtvs, Vector4 value)
         {
             for (int i = 0; i < rtvs.Length; i++)
@@ -49,31 +62,37 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearState()
         {
             DeviceContext->ClearState();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Draw(int vertexCount, int offset)
         {
             DeviceContext->Draw((uint)vertexCount, (uint)offset);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawIndexed(int indexCount, int indexOffset, int vertexOffset)
         {
             DeviceContext->DrawIndexed((uint)indexCount, (uint)indexOffset, vertexOffset);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
         {
             DeviceContext->DrawInstanced((uint)vertexCount, (uint)instanceCount, (uint)vertexOffset, (uint)instanceOffset);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawIndexedInstanced(int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset)
         {
             DeviceContext->DrawIndexedInstanced((uint)indexCount, (uint)instanceCount, (uint)indexOffset, vertexOffset, (uint)instanceOffset);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags)
         {
             Silk.NET.Direct3D11.MappedSubresource data;
@@ -81,16 +100,25 @@
             return new(data.PData, data.RowPitch, data.DepthPitch);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource)
+        {
+            DeviceContext->UpdateSubresource((ID3D11Resource*)resource.NativePointer, (uint)destSubresource, null, subresource.PData, subresource.RowPitch, subresource.DepthPitch);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Unmap(IResource resource, int subresourceIndex)
         {
             DeviceContext->Unmap((ID3D11Resource*)resource.NativePointer, (uint)subresourceIndex);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GenerateMips(IShaderResourceView resourceView)
         {
             DeviceContext->GenerateMips((ID3D11ShaderResourceView*)resourceView.NativePointer);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot)
         {
             if (constantBuffer != null)
@@ -149,6 +177,7 @@
                 }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
         {
             uint* firstConstantPtr = Utils.AsPointer(firstConstant);
@@ -209,6 +238,7 @@
                 }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot)
         {
             ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
@@ -242,6 +272,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
         {
             ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
@@ -277,6 +308,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset)
         {
             if (indexBuffer != null)
@@ -285,6 +317,7 @@
                 DeviceContext->IASetIndexBuffer((ID3D11Buffer*)null, Helper.Convert(format), (uint)offset);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetInputLayout(IInputLayout? inputLayout)
         {
             if (inputLayout != null)
@@ -293,11 +326,13 @@
                 DeviceContext->IASetInputLayout((ID3D11InputLayout*)null);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPrimitiveTopology(PrimitiveTopology topology)
         {
             DeviceContext->IASetPrimitiveTopology(Helper.Convert(topology));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView)
         {
             if (renderTargetView != null)
@@ -309,6 +344,7 @@
                 DeviceContext->OMSetRenderTargets(1, Utils.AsPointer((ID3D11RenderTargetView*)null), null);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView? depthStencilView)
         {
             ID3D11RenderTargetView** ptr = Utils.ToPointerArray<IRenderTargetView, ID3D11RenderTargetView>(views);
@@ -318,6 +354,7 @@
                 DeviceContext->OMSetRenderTargets((uint)views.Length, ptr, (ID3D11DepthStencilView*)null);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetSampler(ISamplerState? sampler, ShaderStage stage, int slot)
         {
             if (sampler != null)
@@ -376,6 +413,7 @@
                 }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetSamplers(ISamplerState[] samplers, ShaderStage stage, int slot)
         {
             ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
@@ -407,12 +445,14 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetScissorRect(int x, int y, int z, int w)
         {
             Rectangle<int> rect = new(x, y, z, w);
             DeviceContext->RSSetScissorRects(1, Utils.AsPointer(rect));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetShaderResource(IShaderResourceView? shaderResourceView, ShaderStage stage, int slot)
         {
             if (shaderResourceView is not null && !shaderResourceView.IsDisposed)
@@ -471,13 +511,10 @@
                 }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetShaderResources(IShaderResourceView[] shaderResourceViews, ShaderStage stage, int slot)
         {
             ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
-            for (int i = 0; i < shaderResourceViews.Length; i++)
-            {
-                var ptr2 = ptr[i];
-            }
             switch (stage)
             {
                 case ShaderStage.Vertex:
@@ -506,6 +543,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetRasterizerState(IRasterizerState? rasterizerState)
         {
             if (rasterizerState is not null)
@@ -514,6 +552,7 @@
                 DeviceContext->RSSetState(null);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetDepthStencilState(IDepthStencilState? depthStencilState, int stencilRef = 0)
         {
             if (depthStencilState is not null)
@@ -522,6 +561,7 @@
                 DeviceContext->OMSetDepthStencilState(null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetBlendState(IBlendState? blendState, Vector4? factor, uint sampleMask = uint.MaxValue)
         {
             if (blendState is not null)
@@ -533,6 +573,7 @@
                 DeviceContext->OMSetBlendState(null, null, sampleMask);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetVertexBuffer(IBuffer? vertexBuffer, int stride, int offset)
         {
             if (vertexBuffer is not null)
@@ -541,6 +582,7 @@
                 DeviceContext->IASetVertexBuffers(0, 1, Utils.AsPointer((ID3D11Buffer*)null), Utils.AsPointer((uint)stride), Utils.AsPointer((uint)offset));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetVertexBuffer(IBuffer? vertexBuffer, int stride)
         {
             if (vertexBuffer is not null)
@@ -549,6 +591,7 @@
                 DeviceContext->IASetVertexBuffers(0, 1, Utils.AsPointer((ID3D11Buffer*)null), Utils.AsPointer((uint)stride), Utils.AsPointer(0u));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride, int offset)
         {
             if (vertexBuffer is not null)
@@ -557,6 +600,7 @@
                 DeviceContext->IASetVertexBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null), Utils.AsPointer((uint)stride), Utils.AsPointer((uint)offset));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride)
         {
             if (vertexBuffer is not null)
@@ -565,11 +609,13 @@
                 DeviceContext->IASetVertexBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null), Utils.AsPointer((uint)stride), Utils.AsPointer(0u));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetViewport(Viewport viewport)
         {
             DeviceContext->RSSetViewports(1, Utils.AsPointer(Helper.Convert(viewport)));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void VSSetShader(IVertexShader? vertexShader)
         {
             if (vertexShader is not null && !vertexShader.IsDisposed)
@@ -578,6 +624,7 @@
                 DeviceContext->VSSetShader(null, null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void HSSetShader(IHullShader? hullShader)
         {
             if (hullShader is not null && !hullShader.IsDisposed)
@@ -586,6 +633,7 @@
                 DeviceContext->HSSetShader(null, null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DSSetShader(IDomainShader? domainShader)
         {
             if (domainShader is not null && !domainShader.IsDisposed)
@@ -594,6 +642,7 @@
                 DeviceContext->DSSetShader(null, null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void GSSetShader(IGeometryShader? geometryShader)
         {
             if (geometryShader is not null && !geometryShader.IsDisposed)
@@ -602,6 +651,7 @@
                 DeviceContext->GSSetShader(null, null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PSSetShader(IPixelShader? pixelShader)
         {
             if (pixelShader is not null && !pixelShader.IsDisposed)
@@ -610,6 +660,7 @@
                 DeviceContext->PSSetShader(null, null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CSSetShader(IComputeShader? computeShader)
         {
             if (computeShader is not null && !computeShader.IsDisposed)
@@ -618,6 +669,7 @@
                 DeviceContext->CSSetShader(null, null, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T value) where T : struct
         {
             Silk.NET.Direct3D11.MappedSubresource data;
@@ -631,6 +683,7 @@
             DeviceContext->Unmap(resource, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T[] values) where T : struct
         {
             Silk.NET.Direct3D11.MappedSubresource data;
@@ -649,11 +702,13 @@
             DeviceContext->Unmap(resource, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Read<T>(IBuffer buffer, T value) where T : struct
         {
             throw new NotImplementedException();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Read<T>(IBuffer buffer, T[] values) where T : struct
         {
             throw new NotImplementedException();
@@ -683,69 +738,340 @@
             GC.SuppressFinalize(this);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void QueryBegin(IQuery query)
         {
             DeviceContext->Begin((ID3D11Asynchronous*)query.NativePointer);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void QueryEnd(IQuery query)
         {
             DeviceContext->End((ID3D11Asynchronous*)query.NativePointer);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void QueryGetData(IQuery query)
         {
             DeviceContext->GetData((ID3D11Asynchronous*)query.NativePointer, null, 0, 0);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Flush()
         {
             DeviceContext->Flush();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
         {
             DeviceContext->Dispatch((uint)threadGroupCountX, (uint)threadGroupCountY, (uint)threadGroupCountZ);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CSSetUnorderedAccessViews(int startSlot, int count, IUnorderedAccessView[] views, int uavInitialCounts = -1)
         {
             uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
-            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)count, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)count, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CSSetUnorderedAccessViews(int startSlot, IUnorderedAccessView[] views, int uavInitialCounts = -1)
         {
             uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
-            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views, int uavInitialCounts = -1)
         {
             uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
-            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views)
         {
             uint pUAVInitialCounts = unchecked((uint)-1);
-            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), (uint*)pUAVInitialCounts);
-        }
-    }
-
-    public unsafe class D3D11UnorderedAccessView : DeviceChildBase, IUnorderedAccessView
-    {
-        private readonly ID3D11UnorderedAccessView* uva;
-
-        public D3D11UnorderedAccessView(ID3D11UnorderedAccessView* uva)
-        {
-            this.uva = uva;
-            nativePointer = (IntPtr)uva;
+            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
         }
 
-        protected override void DisposeCore()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ICommandList FinishCommandList(int restoreState)
         {
-            uva->Release();
+            ID3D11CommandList* commandList;
+            DeviceContext->FinishCommandList(restoreState, &commandList);
+            return new D3D11CommandList(commandList);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ExecuteCommandList(ICommandList commandList, int restoreState)
+        {
+            DeviceContext->ExecuteCommandList((ID3D11CommandList*)commandList.NativePointer, restoreState);
+        }
+
+        public void VSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            if (constantBuffer is not null)
+                DeviceContext->VSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer));
+            else
+                DeviceContext->VSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+        }
+
+        public void VSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            DeviceContext->VSSetConstantBuffers((uint)slot, count, ptr);
+        }
+
+        public void HSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            if (constantBuffer is not null)
+                DeviceContext->HSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer));
+            else
+                DeviceContext->HSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+        }
+
+        public void HSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            DeviceContext->HSSetConstantBuffers((uint)slot, count, ptr);
+        }
+
+        public void DSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            if (constantBuffer is not null)
+                DeviceContext->DSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer));
+            else
+                DeviceContext->DSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+        }
+
+        public void DSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            DeviceContext->DSSetConstantBuffers((uint)slot, count, ptr);
+        }
+
+        public void GSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            if (constantBuffer is not null)
+                DeviceContext->GSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer));
+            else
+                DeviceContext->GSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+        }
+
+        public void GSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            DeviceContext->GSSetConstantBuffers((uint)slot, count, ptr);
+        }
+
+        public void PSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            if (constantBuffer is not null)
+                DeviceContext->PSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer));
+            else
+                DeviceContext->PSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+        }
+
+        public void PSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            DeviceContext->PSSetConstantBuffers((uint)slot, count, ptr);
+        }
+
+        public void CSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        {
+            if (constantBuffer is not null)
+                DeviceContext->CSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)constantBuffer.NativePointer));
+            else
+                DeviceContext->CSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
+        }
+
+        public void CSSetConstantBuffers(IBuffer[] constantBuffers, int slot)
+        {
+            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
+            uint count = (uint)constantBuffers.Length;
+            if (count == 0) return;
+            DeviceContext->CSSetConstantBuffers((uint)slot, count, ptr);
+        }
+
+        public void VSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            if (shaderResourceView is not null)
+                DeviceContext->VSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)shaderResourceView.NativePointer));
+            else
+                DeviceContext->VSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)null));
+        }
+
+        public void VSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            DeviceContext->VSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
+        }
+
+        public void HSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            if (shaderResourceView is not null)
+                DeviceContext->HSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)shaderResourceView.NativePointer));
+            else
+                DeviceContext->HSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)null));
+        }
+
+        public void HSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            DeviceContext->HSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
+        }
+
+        public void DSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            if (shaderResourceView is not null)
+                DeviceContext->DSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)shaderResourceView.NativePointer));
+            else
+                DeviceContext->DSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)null));
+        }
+
+        public void DSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            DeviceContext->DSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
+        }
+
+        public void GSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            if (shaderResourceView is not null)
+                DeviceContext->GSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)shaderResourceView.NativePointer));
+            else
+                DeviceContext->GSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)null));
+        }
+
+        public void GSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            DeviceContext->GSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
+        }
+
+        public void PSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            if (shaderResourceView is not null)
+                DeviceContext->PSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)shaderResourceView.NativePointer));
+            else
+                DeviceContext->PSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)null));
+        }
+
+        public void PSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            DeviceContext->PSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
+        }
+
+        public void CSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        {
+            if (shaderResourceView is not null)
+                DeviceContext->CSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)shaderResourceView.NativePointer));
+            else
+                DeviceContext->CSSetShaderResources((uint)slot, 1, Utils.AsPointer((ID3D11ShaderResourceView*)null));
+        }
+
+        public void CSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot)
+        {
+            ID3D11ShaderResourceView** ptr = Utils.ToPointerArray<IShaderResourceView, ID3D11ShaderResourceView>(shaderResourceViews);
+            DeviceContext->CSSetShaderResources((uint)slot, (uint)shaderResourceViews.Length, ptr);
+        }
+
+        public void VSSetSampler(ISamplerState? sampler, int slot)
+        {
+            if (sampler is not null)
+                DeviceContext->VSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)sampler.NativePointer));
+            else
+                DeviceContext->VSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)null));
+        }
+
+        public void VSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
+            DeviceContext->VSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
+        }
+
+        public void HSSetSampler(ISamplerState? sampler, int slot)
+        {
+            if (sampler is not null)
+                DeviceContext->HSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)sampler.NativePointer));
+            else
+                DeviceContext->HSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)null));
+        }
+
+        public void HSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
+            DeviceContext->HSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
+        }
+
+        public void DSSetSampler(ISamplerState? sampler, int slot)
+        {
+            if (sampler is not null)
+                DeviceContext->DSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)sampler.NativePointer));
+            else
+                DeviceContext->DSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)null));
+        }
+
+        public void DSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
+            DeviceContext->DSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
+        }
+
+        public void GSSetSampler(ISamplerState? sampler, int slot)
+        {
+            if (sampler is not null)
+                DeviceContext->GSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)sampler.NativePointer));
+            else
+                DeviceContext->GSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)null));
+        }
+
+        public void GSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
+            DeviceContext->GSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
+        }
+
+        public void PSSetSampler(ISamplerState? sampler, int slot)
+        {
+            if (sampler is not null)
+                DeviceContext->PSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)sampler.NativePointer));
+            else
+                DeviceContext->PSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)null));
+        }
+
+        public void PSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
+            DeviceContext->PSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
+        }
+
+        public void CSSetSampler(ISamplerState? sampler, int slot)
+        {
+            if (sampler is not null)
+                DeviceContext->CSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)sampler.NativePointer));
+            else
+                DeviceContext->CSSetSamplers((uint)slot, 1, Utils.AsPointer((ID3D11SamplerState*)null));
+        }
+
+        public void CSSetSamplers(ISamplerState[] samplers, int slot)
+        {
+            ID3D11SamplerState** ptr = Utils.ToPointerArray<ISamplerState, ID3D11SamplerState>(samplers);
+            DeviceContext->CSSetSamplers((uint)slot, (uint)samplers.Length, ptr);
         }
     }
 }

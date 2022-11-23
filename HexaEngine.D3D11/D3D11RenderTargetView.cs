@@ -7,7 +7,7 @@
 
     public unsafe class D3D11RenderTargetView : DeviceChildBase, IRenderTargetView
     {
-        private readonly ID3D11RenderTargetView* rtv;
+        internal readonly ID3D11RenderTargetView* rtv;
 
         public D3D11RenderTargetView(ID3D11RenderTargetView* rtv, RenderTargetViewDescription description, Viewport viewport)
         {

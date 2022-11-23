@@ -3,7 +3,6 @@ using BepuPhysics.Collidables;
 using BepuUtilities;
 using HexaEngine.Cameras;
 using HexaEngine.Core.Input;
-using Silk.NET.SDL;
 using System;
 using System.Diagnostics;
 using System.Numerics;
@@ -25,12 +24,12 @@ namespace HexaEngine.Physics.Characters
         private readonly CharacterControllers characters;
         private readonly float speed;
         private Capsule shape;
-        private static KeyCode moveForward = KeyCode.KW;
-        private static KeyCode moveBackward = KeyCode.KS;
-        private static KeyCode moveRight = KeyCode.KD;
-        private static KeyCode moveLeft = KeyCode.KA;
-        private static KeyCode sprint = KeyCode.KLshift;
-        private static KeyCode jump = KeyCode.KSpace;
+        private static KeyCode moveForward = KeyCode.W;
+        private static KeyCode moveBackward = KeyCode.S;
+        private static KeyCode moveRight = KeyCode.D;
+        private static KeyCode moveLeft = KeyCode.A;
+        private static KeyCode sprint = KeyCode.LShift;
+        private static KeyCode jump = KeyCode.Space;
 
         public BodyHandle BodyHandle => bodyHandle;
 

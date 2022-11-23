@@ -3,7 +3,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using System;
+    using System.Buffers.Binary;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+    using System.Text;
 
     public static unsafe class Utilities
     {
@@ -40,7 +43,18 @@
 
         public static char* UTF16(string str)
         {
-            return (char*)Marshal.StringToHGlobalUni(str);
+            fixed (char* ptr = str)
+            {
+                return ptr;
+            }
+        }
+
+        public static byte* UTF8(string str)
+        {
+            fixed (byte* ptr = Encoding.UTF8.GetBytes(str))
+            {
+                return ptr;
+            }
         }
 
         public static T** AsPointer<T>(T*[] value) where T : unmanaged
@@ -77,6 +91,209 @@
                 ts[i] = AsPointer(pointers[i]);
             }
             return AsPointer(ts);
+        }
+
+        public static T* Alloc<T>() where T : unmanaged
+        {
+            fixed (void* ptr = new byte[sizeof(T)])
+                return (T*)ptr;
+        }
+
+        public static T** Alloc<T>(int count) where T : unmanaged
+        {
+            fixed (T** ptr = &(new T*[count])[0])
+                return ptr;
+        }
+
+        public static T** Alloc<T>(uint count) where T : unmanaged
+        {
+            fixed (T** ptr = &(new T*[count])[0])
+                return ptr;
+        }
+
+        public static void* Alloc(int size)
+        {
+            fixed (void* ptr = new byte[size])
+                return ptr;
+        }
+
+        public static void* Alloc(uint size)
+        {
+            fixed (void* ptr = new byte[size])
+                return ptr;
+        }
+
+        public unsafe static bool Cmp(byte* a, byte* b, uint length)
+        {
+            for (uint i = 0; i < length; i++)
+            {
+                if (a[i] != b[i]) return false;
+            }
+            return true;
+        }
+
+        public unsafe static bool Cmp(char* a, char* b, uint length)
+        {
+            for (uint i = 0; i < length; i++)
+            {
+                if (a[i] != b[i]) return false;
+            }
+            return true;
+        }
+
+        public unsafe static bool StrCmp(char* a, char* b)
+        {
+            int n1 = StringSizeNullTerminated(a);
+            int n2 = StringSizeNullTerminated(b);
+            ReadOnlySpan<char> chars1 = new(a, n1);
+            ReadOnlySpan<char> chars2 = new(b, n2);
+            if (n1 != n2)
+                return false;
+            return chars1.SequenceEqual(chars2);
+            
+        }
+
+
+        public static int StringSizeNullTerminated(char* str)
+        {
+            int ret = 0;
+            while (str[ret] != '\0') ret++;
+            return (ret + 1) * 2;
+        }
+        public static int StringSizeNullTerminated(ReadOnlySpan<char> str)
+        {
+            int ret = 0;
+            while (str[ret] != '\0') ret++;
+            return (ret + 1) * 2;
+        }
+
+        public static int StringSizeNullTerminated(byte* str)
+        {
+            int ret = 0;
+            while (str[ret] != (byte)'\0') ret++;
+            return ret+1;
+        }
+
+        public static int WriteString(Span<byte> dest, Endianness endianness, char* str)
+        {
+            if (endianness == Endianness.LittleEndian)
+            {
+                return WriteStringLittleEndian(dest, str);
+            }
+            else if (endianness == Endianness.BigEndian)
+            {
+                return WriteStringBigEndian(dest, str);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static int WriteStringLittleEndian(Span<byte> dest, char* str)
+        {
+            int size = StringSizeNullTerminated(str);
+
+            if (BitConverter.IsLittleEndian)
+            {
+                ReadOnlySpan<byte> chars = new(str, size);
+                chars.CopyTo(dest);
+            }
+            else
+            {
+                var src = new ReadOnlySpan<char>(str, size);
+                for (int i = 0; i < size; i++)
+                {
+                    BinaryPrimitives.WriteInt16LittleEndian(dest[(2 * i)..], (short)src[i]);
+                }
+            }
+            return size;
+        }
+
+        public static int WriteStringBigEndian(Span<byte> dest, char* str)
+        {
+            int size = StringSizeNullTerminated(str);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                fixed (void* pDest = dest)
+                {
+                    Unsafe.CopyBlockUnaligned(str, pDest, (uint)size);
+                }
+            }
+            else
+            {
+                var src = new ReadOnlySpan<char>(str, size / 2);
+                for (int i = 0; i < size / 2; i++)
+                {
+                    BinaryPrimitives.WriteInt16BigEndian(dest[(2 * i)..], (short)src[i]);
+                }
+            }
+            return size;
+        }
+
+        public static int ReadString(Span<byte> dest, Endianness endianness, char** str)
+        {
+            if (endianness == Endianness.LittleEndian)
+            {
+                return ReadStringLittleEndian(dest, str);
+            }
+            else if (endianness == Endianness.BigEndian)
+            {
+                return ReadStringBigEndian(dest, str);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static int ReadStringLittleEndian(Span<byte> dest, char** ppStr)
+        {
+            int size = StringSizeNullTerminated(MemoryMarshal.Cast<byte, char>(dest));
+            char* pStr = (char*)Alloc(size);
+            *ppStr = pStr;
+
+            if (BitConverter.IsLittleEndian)
+            {
+                fixed (void* pDest = dest)
+                {
+                    Unsafe.CopyBlockUnaligned(pStr, pDest, (uint)size);
+                }
+            }
+            else
+            {
+                var src = new ReadOnlySpan<char>(pStr, size);
+                for (int i = 0; i < size; i++)
+                {
+                    BinaryPrimitives.WriteInt16LittleEndian(dest[(2 * i)..], (short)src[i]);
+                }
+            }
+            return size;
+        }
+
+        public static int ReadStringBigEndian(Span<byte> dest, char** ppStr)
+        {
+            int size = StringSizeNullTerminated(MemoryMarshal.Cast<byte, char>(dest));
+            char* pStr = (char*)Alloc(size);
+            *ppStr = pStr;
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                fixed (void* pDest = dest)
+                {
+                    Unsafe.CopyBlockUnaligned(pStr, pDest, (uint)size);
+                }
+            }
+            else
+            {
+                var src = new ReadOnlySpan<char>(pStr, size);
+                for (int i = 0; i < size; i++)
+                {
+                    BinaryPrimitives.WriteInt16BigEndian(dest[(2 * i)..], (short)src[i]);
+                }
+            }
+            return size;
         }
     }
 }

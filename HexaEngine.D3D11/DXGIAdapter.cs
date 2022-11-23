@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;
@@ -16,6 +17,7 @@
 
         public DXGIAdapter()
         {
+            ImGuiConsole.Log(LogSeverity.Info, "Backend: Using Graphics API: D3D11");
             DXGI = DXGI.GetApi();
 
             IDXGIFactory2* factory;
@@ -83,8 +85,6 @@
                     adapter->GetDesc1(&desc);
                     string name = new(desc.Description);
 
-                    Trace.WriteLine($"Found Adapter {name}");
-
                     if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                     {
                         // Don't select the Basic Render Driver adapter.
@@ -92,7 +92,7 @@
                         continue;
                     }
 
-                    Trace.WriteLine($"Using {name}");
+                    ImGuiConsole.Log(LogSeverity.Info, $"Backend: Using Graphics Device: {name}");
 
                     return adapter;
                 }

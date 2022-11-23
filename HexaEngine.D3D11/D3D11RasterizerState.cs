@@ -6,7 +6,7 @@
 
     public unsafe class D3D11RasterizerState : DeviceChildBase, IRasterizerState
     {
-        private readonly ID3D11RasterizerState* state;
+        internal readonly ID3D11RasterizerState* state;
 
         internal D3D11RasterizerState(ID3D11RasterizerState* state, RasterizerDescription description)
         {

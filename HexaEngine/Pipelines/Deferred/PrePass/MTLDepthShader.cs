@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Pipelines
+﻿namespace HexaEngine.Pipelines.Deferred.PrePass
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;

@@ -1,16 +1,14 @@
-﻿namespace IBLBaker.Widgets
+﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Rendering;
-    using IBLBaker;
     using ImGuiNET;
 
-    public class IrradianceWidget : Widget, IDisposable
+    public class IrradianceWidget : ImGuiWindow, IDisposable
     {
         private FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
         private bool searchPathEnvironment;
@@ -38,6 +36,8 @@
         private int y;
         private int step;
         private int steps;
+
+        protected override string Name => "Bake Irradiance";
 
         public override void Init(IGraphicsDevice device)
         {
@@ -110,33 +110,14 @@
             }
         }
 
-        public override void DrawMenu()
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (ImGui.MenuItem("Bake Irradiance"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
             if (irradianceFilter == null) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.None;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
+            Flags = ImGuiWindowFlags.None;
             if (irradianceTex != null)
-                flags |= ImGuiWindowFlags.UnsavedDocument;
+                Flags |= ImGuiWindowFlags.UnsavedDocument;
             if (searchPathEnvironment)
-                flags |= ImGuiWindowFlags.NoInputs;
-
-            if (!ImGui.Begin("Irradiance", ref IsShown, flags))
-            {
-                ImGui.End();
-                return;
-            }
-
-            IsDocked = ImGui.IsWindowDocked();
+                Flags |= ImGuiWindowFlags.NoInputs;
 
             if (compute)
                 ImGui.BeginDisabled(true);
@@ -238,7 +219,7 @@
                 }
             }
 
-            ImGui.End();
+            EndWindow();
 
             if (searchPathEnvironment && picker.Draw())
             {

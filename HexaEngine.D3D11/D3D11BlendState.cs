@@ -6,7 +6,7 @@
 
     public unsafe class D3D11BlendState : DeviceChildBase, IBlendState
     {
-        private readonly ID3D11BlendState* blend;
+        internal readonly ID3D11BlendState* blend;
 
         internal D3D11BlendState(ID3D11BlendState* blend, BlendDescription description)
         {

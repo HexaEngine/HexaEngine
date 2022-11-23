@@ -19,7 +19,7 @@ namespace HexaEngine.Editor.Widgets
     using System.Numerics;
     using System.Reflection;
 
-    public class PropertiesWidget : Widget
+    public class PropertiesWidget : ImGuiWindow
     {
         private readonly List<EditorComponentAttribute> componentCache = new();
         private readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();
@@ -39,29 +39,18 @@ namespace HexaEngine.Editor.Widgets
                 .Where(x => x.IsAssignableTo(typeof(IComponent)))
                 .Select(x => x.GetCustomAttribute<EditorComponentAttribute>())
                 .Where(x => x != null));
+            Flags = ImGuiWindowFlags.MenuBar;
         }
 
-        public override void Dispose()
-        {
-        }
+        protected override string Name => "Properties";
 
-        public override void Draw(IGraphicsContext context)
+        public override void DrawContent(IGraphicsContext context)
         {
-            if (!IsShown) return;
-            ImGuiWindowFlags flags = ImGuiWindowFlags.MenuBar;
-            if (IsDocked)
-                flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-            if (!ImGui.Begin("Properties", ref IsShown, flags))
-            {
-                ImGui.End();
-                return;
-            }
-
             IsDocked = ImGui.IsWindowDocked();
 
             if (SceneNode.SelectedNode is null)
             {
-                ImGui.End();
+                EndWindow();
                 return;
             }
 
@@ -239,7 +228,7 @@ namespace HexaEngine.Editor.Widgets
                 ImGui.EndChild();
             }
 
-            ImGui.End();
+            EndWindow();
 
             ImGuizmo.Enable(true);
             ImGuizmo.SetOrthographic(false);
@@ -266,18 +255,6 @@ namespace HexaEngine.Editor.Widgets
                 gimbalGrabbed = false;
                 gimbalBefore = element.Transform.Local;
             }
-        }
-
-        public override void DrawMenu()
-        {
-            if (ImGui.MenuItem("Properties"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Init(IGraphicsDevice device)
-        {
         }
     }
 }

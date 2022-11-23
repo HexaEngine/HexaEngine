@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Debugging.Collections;
+    using HexaEngine.Core.Scripting;
     using ImGuiNET;
     using KeraLua;
-    using Kitty.Core.Scripting;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;

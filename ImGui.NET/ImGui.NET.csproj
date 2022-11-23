@@ -14,6 +14,7 @@
     <PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
     <RootNamespace>ImGuiNET</RootNamespace>
 	  <Platforms>AnyCPU;x64</Platforms>
+	  <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">

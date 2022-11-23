@@ -4,9 +4,9 @@
 
     public interface IRecord
     {
-        public void Encode(Span<byte> dest, Endianness endianness);
+        public int Encode(Span<byte> dest, Endianness endianness);
 
-        public void Decode(Span<byte> src, Endianness endianness);
+        public int Decode(Span<byte> src, Endianness endianness);
 
         public int Size();
     }

@@ -17,6 +17,7 @@
             get
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
+                if (child == null) return null;
                 uint len;
                 child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, null);
                 byte[] buffer = new byte[len];
@@ -26,6 +27,7 @@
             set
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
+                if (child == null) return;
                 if (value != null)
                 {
                     byte[] buffer = Encoding.UTF8.GetBytes(value);
@@ -52,11 +54,14 @@
 
         public bool IsDisposed => disposedValue;
 
+        public event EventHandler? OnDisposed;
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 DisposeCore();
+                OnDisposed?.Invoke(this, EventArgs.Empty);
                 LeakTracer.Release(this);
                 disposedValue = true;
             }

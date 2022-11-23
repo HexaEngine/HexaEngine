@@ -1,6 +1,7 @@
 ﻿namespace AssetsBundler
 {
     using CommandLine;
+    using HexaEngine.IO;
     using System;
     using System.IO;
 

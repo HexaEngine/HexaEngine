@@ -75,4 +75,19 @@
             return Position.GetHashCode() ^ Texture.GetHashCode() ^ Normal.GetHashCode() ^ Tangent.GetHashCode();
         }
     }
+
+    public struct TerrainVertex
+    {
+        public Vector3 Position;
+        public Vector2 Texture;
+        public Vector2 CTexture;
+    }
+    public struct TerrainVertexStatic
+    {
+        public Vector3 Position;
+        public Vector2 Texture;
+        public Vector2 CTexture;
+        public Vector3 Normal;
+        public Vector3 Tangent;
+    }
 }

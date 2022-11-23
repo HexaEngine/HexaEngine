@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using ImGuiNET;
 
-namespace imnodesNET
+namespace ImNodesNET
 {
     public unsafe partial struct Style
     {
@@ -25,14 +25,21 @@ namespace imnodesNET
         public StyleFlags flags;
         public fixed uint colors[16];
     }
+
     public unsafe partial struct StylePtr
     {
         public Style* NativePtr { get; }
+
         public StylePtr(Style* nativePtr) => NativePtr = nativePtr;
+
         public StylePtr(IntPtr nativePtr) => NativePtr = (Style*)nativePtr;
+
         public static implicit operator StylePtr(Style* nativePtr) => new(nativePtr);
-        public static implicit operator Style* (StylePtr wrappedPtr) => wrappedPtr.NativePtr;
+
+        public static implicit operator Style*(StylePtr wrappedPtr) => wrappedPtr.NativePtr;
+
         public static implicit operator StylePtr(IntPtr nativePtr) => new(nativePtr);
+
         public ref float grid_spacing => ref Unsafe.AsRef<float>(&NativePtr->grid_spacing);
         public ref float node_corner_rounding => ref Unsafe.AsRef<float>(&NativePtr->node_corner_rounding);
         public ref float node_padding_horizontal => ref Unsafe.AsRef<float>(&NativePtr->node_padding_horizontal);
@@ -49,9 +56,10 @@ namespace imnodesNET
         public ref float pin_offset => ref Unsafe.AsRef<float>(&NativePtr->pin_offset);
         public ref StyleFlags flags => ref Unsafe.AsRef<StyleFlags>(&NativePtr->flags);
         public RangeAccessor<uint> colors => new(NativePtr->colors, 16);
+
         public void Destroy()
         {
-            imnodesNative.Style_destroy(NativePtr);
+            ImNodesNative.Style_destroy(NativePtr);
         }
     }
 }

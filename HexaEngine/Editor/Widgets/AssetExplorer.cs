@@ -1,15 +1,15 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.IO;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public class AssetExplorer : Widget
+    public class AssetExplorer : ImGuiWindow
     {
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
@@ -23,6 +23,7 @@
         }
 
         public string? SelectedFile { get; private set; }
+        protected override string Name => "Assets";
 
         private static List<string> GetFileSystemEntries(string fullName)
         {
@@ -102,19 +103,8 @@
             }
         }
 
-        public override void Init(IGraphicsDevice device)
+        public override void DrawContent(IGraphicsContext context)
         {
-        }
-
-        public override void Draw(IGraphicsContext context)
-        {
-            if (!IsShown) return;
-            if (!ImGui.Begin("Assets", ref IsShown, ImGuiWindowFlags.MenuBar))
-            {
-                ImGui.End();
-                return;
-            }
-
             var di = new DirectoryInfo(CurrentFolder);
             if (di.Exists)
             {
@@ -237,7 +227,7 @@
                         }
                         ImGui.PopID();
 
-                        if (ImGui.IsMouseDoubleClicked(0))
+                        if (ImGui.IsItemClicked(0) && ImGui.IsMouseDoubleClicked(0))
                         {
                             OpenFile();
                         }
@@ -255,20 +245,6 @@
                     }
                 }
             }
-
-            ImGui.End();
-        }
-
-        public override void DrawMenu()
-        {
-            if (ImGui.MenuItem("Assets"))
-            {
-                IsShown = true;
-            }
-        }
-
-        public override void Dispose()
-        {
         }
     }
 }

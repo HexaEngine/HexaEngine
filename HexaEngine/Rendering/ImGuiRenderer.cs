@@ -4,10 +4,11 @@
 using HexaEngine.Core;
 using HexaEngine.Core.Graphics;
 using HexaEngine.Editor;
+using HexaEngine.IO;
 using HexaEngine.Mathematics;
 using ImGuiNET;
 using ImGuizmoNET;
-using imnodesNET;
+using ImNodesNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImDrawIdx = System.UInt16;
@@ -44,8 +45,8 @@ namespace HexaEngine.Rendering
             ImGui.SetCurrentContext(igContext);
             ImGuizmo.SetImGuiContext(igContext);
 
-            imnodes.SetImGuiContext(igContext);
-            imnodes.Initialize();
+            ImNodes.SetImGuiContext(igContext);
+            ImNodes.Initialize();
 
             this.device = device;
             context = device.Context;
@@ -61,7 +62,11 @@ namespace HexaEngine.Rendering
             var range = new char[] { (char)0xE700, (char)0xF800, (char)0 };
             fixed (char* buffer = range)
             {
-                io.Fonts.AddFontFromFileTTF("./assets/fonts/SEGMDL2.TTF", 14, config, (IntPtr)buffer);
+                var bytes = FileSystem.ReadAllBytes("./assets/fonts/SEGMDL2.TTF");
+                fixed (byte* buffer2 = bytes)
+                {
+                    io.Fonts.AddFontFromMemoryTTF((nint)buffer2, bytes.Length, 14, config, (IntPtr)buffer);
+                }
             }
 
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
@@ -98,6 +103,20 @@ namespace HexaEngine.Rendering
             colors[(int)ImGuiCol.NavHighlight] = new Vector4(0.92f, 0.26f, 0.98f, 1.00f);
             colors[(int)ImGuiCol.PlotHistogram] = new Vector4(0.98f, 0.56f, 0.95f, 0.40f);
             colors[(int)ImGuiCol.PlotHistogramHovered] = new Vector4(0.96f, 0.46f, 0.98f, 1.00f);
+            var bg = colors[(int)ImGuiCol.WindowBg];
+            ImNodes.StyleColorsDark();
+            var ncolors = ImNodes.GetStyle()->colors;
+            ncolors[(int)ColorStyle.NodeBackground] = new Vector4(0.06f, 0.06f, 0.06f, 0.94f).Pack();
+            ncolors[(int)ColorStyle.NodeBackgroundHovered] = new Vector4(0.12f, 0.12f, 0.12f, 0.94f).Pack();
+            ncolors[(int)ColorStyle.NodeBackgroundSelected] = new Vector4(0.16f, 0.16f, 0.16f, 0.94f).Pack();
+            ncolors[(int)ColorStyle.TitleBar] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
+            ncolors[(int)ColorStyle.TitleBarHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();
+            ncolors[(int)ColorStyle.TitleBarSelected] = new Vector4(0.70f, 0.10f, 0.75f, 1.00f).Pack();
+            ncolors[(int)ColorStyle.Link] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
+            ncolors[(int)ColorStyle.LinkHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();
+            ncolors[(int)ColorStyle.LinkSelected] = new Vector4(0.70f, 0.10f, 0.75f, 1.00f).Pack();
+            ncolors[(int)ColorStyle.Pin] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
+            ncolors[(int)ColorStyle.PinHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();
 
             inputHandler = new(window);
         }
@@ -372,11 +391,11 @@ namespace HexaEngine.Rendering
                         return output;
                     }";
 
-                device.Compile(vertexShaderCode, "main", "vs", "vs_4_0", out var vertexShaderBlob, out var errorBlob);
+                device.Compile(vertexShaderCode, "main", "vs", "vs_5_0", out var vertexShaderBlob, out var errorBlob);
                 if (vertexShaderBlob == null)
                     throw new Exception("error compiling vertex shader");
 
-                ShaderCache.CacheShader("Internal:ImGui", Array.Empty<ShaderMacro>(), vertexShaderBlob);
+                ShaderCache.CacheShader("Internal:ImGui:VS", Array.Empty<ShaderMacro>(), vertexShaderBlob);
                 vBytes = vertexShaderBlob.AsSpan();
                 vertexShaderBlob.Dispose();
             }
@@ -400,7 +419,7 @@ namespace HexaEngine.Rendering
                 CPUAccessFlags = CpuAccessFlags.Write,
             };
             constantBuffer = device.CreateBuffer(constBufferDesc);
-            if (!ShaderCache.GetShader("Internal:ImGui:VS", Array.Empty<ShaderMacro>(), out var pBytes))
+            if (!ShaderCache.GetShader("Internal:ImGui:PS", Array.Empty<ShaderMacro>(), out var pBytes))
             {
                 var pixelShaderCode =
                 @"struct PS_INPUT
@@ -419,9 +438,11 @@ namespace HexaEngine.Rendering
                         return out_col;
                     }";
 
-                device.Compile(pixelShaderCode, "main", "ps", "ps_4_0", out var pixelShaderBlob, out var errorBlob);
+                device.Compile(pixelShaderCode, "main", "ps", "ps_5_0", out var pixelShaderBlob, out var errorBlob);
                 if (pixelShaderBlob == null)
                     throw new Exception("error compiling pixel shader");
+
+                ShaderCache.CacheShader("Internal:ImGui:PS", Array.Empty<ShaderMacro>(), pixelShaderBlob);
                 pBytes = pixelShaderBlob.AsSpan();
                 pixelShaderBlob.Dispose();
             }
