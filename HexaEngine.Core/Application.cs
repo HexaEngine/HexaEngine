@@ -3,6 +3,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Text;
@@ -49,7 +50,8 @@
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
             Application.mainWindow = mainWindow;
             mainWindow.Closing += MainWindow_Closing;
-
+            Keyboard.Init(sdl);
+            Mouse.Init(sdl);
             mainWindow.Show();
             PlatformRun();
         }
@@ -130,16 +132,22 @@
                         case EventType.Keydown:
                             {
                                 var even = evnt.Key;
-                                SdlWindow window = windows[even.WindowID];
-                                window.ProcessInputKeyboard(even);
+                                if (windows.TryGetValue(even.WindowID, out var window))
+                                {
+                                    window.ProcessInputKeyboard(even);
+                                    Keyboard.Enqueue(even);
+                                }
                             }
                             break;
 
                         case EventType.Keyup:
                             {
                                 var even = evnt.Key;
-                                SdlWindow window = windows[even.WindowID];
-                                window.ProcessInputKeyboard(even);
+                                if (windows.TryGetValue(even.WindowID, out var window))
+                                {
+                                    window.ProcessInputKeyboard(even);
+                                    Keyboard.Enqueue(even);
+                                }
                             }
                             break;
 
@@ -152,10 +160,8 @@
                                 if (windows.TryGetValue(even.WindowID, out var window))
                                 {
                                     window.ProcessInputText(even);
-                                    break;
+                                    Keyboard.Enqueue(even);
                                 }
-                                KeyboardCharEventArgs args = new(Encoding.UTF8.GetString(even.Text, 1)[0]);
-                                Keyboard.Update(args);
                             }
                             break;
 
@@ -168,10 +174,8 @@
                                 if (windows.TryGetValue(even.WindowID, out var window))
                                 {
                                     window.ProcessInputMouse(even);
-                                    break;
+                                    Mouse.Enqueue(even);
                                 }
-                                MouseMotionEventArgs args = new(even.X, even.Y, even.Xrel, even.Yrel);
-                                Mouse.Update(args);
                             }
                             break;
 
@@ -181,12 +185,8 @@
                                 if (windows.TryGetValue(even.WindowID, out var window))
                                 {
                                     window.ProcessInputMouse(even);
-                                    break;
+                                    Mouse.Enqueue(even);
                                 }
-                                KeyState state = (KeyState)even.State;
-                                MouseButton button = (MouseButton)even.Button;
-                                MouseButtonEventArgs args = new(button, state, even.Clicks);
-                                Mouse.Update(args);
                             }
                             break;
 
@@ -196,12 +196,8 @@
                                 if (windows.TryGetValue(even.WindowID, out var window))
                                 {
                                     window.ProcessInputMouse(even);
-                                    break;
+                                    Mouse.Enqueue(even);
                                 }
-                                KeyState state = (KeyState)even.State;
-                                MouseButton button = (MouseButton)even.Button;
-                                MouseButtonEventArgs args = new(button, state, even.Clicks);
-                                Mouse.Update(args);
                             }
                             break;
 
@@ -211,10 +207,8 @@
                                 if (windows.TryGetValue(even.WindowID, out var window))
                                 {
                                     window.ProcessInputMouse(even);
-                                    break;
+                                    Mouse.Enqueue(even);
                                 }
-                                MouseWheelEventArgs args = new(even.X, even.Y, (MouseWheelDirection)even.Direction);
-                                Mouse.Update(args);
                             }
                             break;
 

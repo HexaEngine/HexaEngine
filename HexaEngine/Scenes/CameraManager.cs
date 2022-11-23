@@ -5,7 +5,6 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Editor;
     using HexaEngine.Mathematics;
-    using Silk.NET.SDL;
     using System;
     using System.Numerics;
 
@@ -31,9 +30,9 @@
 
         static CameraManager()
         {
-            Keyboard.OnKeyUp += (s, e) =>
+            Keyboard.Released += (s, e) =>
             {
-                if (e.KeyCode == KeyCode.KF6)
+                if (e.KeyCode == KeyCode.F6)
                 {
                     Mode = mode == CameraEditorMode.Orbit ? CameraEditorMode.Free : CameraEditorMode.Orbit;
                 }
@@ -48,11 +47,11 @@
             {
                 Vector2 delta = Vector2.Zero;
                 if (Mouse.IsDown(MouseButton.Middle))
-                    delta = Mouse.GetDelta();
+                    delta = Mouse.Delta;
 
                 float wheel = 0;
-                if (Keyboard.IsDown(KeyCode.KLshift))
-                    wheel = Mouse.WheelDelta.Y;
+                if (Keyboard.IsDown(KeyCode.LShift))
+                    wheel = Mouse.DeltaWheel.Y;
 
                 // Only update the camera's position if the mouse got moved in either direction
                 if (delta.X != 0f || delta.Y != 0f || wheel != 0f || first)
@@ -78,7 +77,7 @@
             {
                 Vector2 delta = Vector2.Zero;
                 if (Mouse.IsDown(MouseButton.Middle))
-                    delta = Mouse.GetDelta();
+                    delta = Mouse.Delta;
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
@@ -94,50 +93,50 @@
                     }
                 }
 
-                if (Keyboard.IsDown(KeyCode.KW))
+                if (Keyboard.IsDown(KeyCode.W))
                 {
                     var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, camera.Transform.Rotation.Y * DegToRadFactor, 0f);
-                    if (Keyboard.IsDown(KeyCode.KLshift))
+                    if (Keyboard.IsDown(KeyCode.LShift))
                         camera.Transform.Position += Vector3.Transform(Vector3.UnitZ, rotation) * Speed * 2 * Time.Delta;
                     else
                         camera.Transform.Position += Vector3.Transform(Vector3.UnitZ, rotation) * Speed * Time.Delta;
                 }
-                if (Keyboard.IsDown(KeyCode.KS))
+                if (Keyboard.IsDown(KeyCode.S))
                 {
                     var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
-                    if (Keyboard.IsDown(KeyCode.KLshift))
+                    if (Keyboard.IsDown(KeyCode.LShift))
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitZ, rotation) * Speed * 2 * Time.Delta;
                     else
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitZ, rotation) * Speed * Time.Delta;
                 }
-                if (Keyboard.IsDown(KeyCode.KA))
+                if (Keyboard.IsDown(KeyCode.A))
                 {
                     var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
-                    if (Keyboard.IsDown(KeyCode.KLshift))
+                    if (Keyboard.IsDown(KeyCode.LShift))
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitX, rotation) * Speed * 2 * Time.Delta;
                     else
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitX, rotation) * Speed * Time.Delta;
                 }
-                if (Keyboard.IsDown(KeyCode.KD))
+                if (Keyboard.IsDown(KeyCode.D))
                 {
                     var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
-                    if (Keyboard.IsDown(KeyCode.KLshift))
+                    if (Keyboard.IsDown(KeyCode.LShift))
                         camera.Transform.Position += Vector3.Transform(Vector3.UnitX, rotation) * Speed * 2 * Time.Delta;
                     else
                         camera.Transform.Position += Vector3.Transform(Vector3.UnitX, rotation) * Speed * Time.Delta;
                 }
-                if (Keyboard.IsDown(KeyCode.KSpace))
+                if (Keyboard.IsDown(KeyCode.Space))
                 {
                     var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
-                    if (Keyboard.IsDown(KeyCode.KLshift))
+                    if (Keyboard.IsDown(KeyCode.LShift))
                         camera.Transform.Position += Vector3.Transform(Vector3.UnitY, rotation) * Speed * 2 * Time.Delta;
                     else
                         camera.Transform.Position += Vector3.Transform(Vector3.UnitY, rotation) * Speed * Time.Delta;
                 }
-                if (Keyboard.IsDown(KeyCode.KC))
+                if (Keyboard.IsDown(KeyCode.C))
                 {
                     var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
-                    if (Keyboard.IsDown(KeyCode.KLshift))
+                    if (Keyboard.IsDown(KeyCode.LShift))
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * 2 * Time.Delta;
                     else
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * Time.Delta;

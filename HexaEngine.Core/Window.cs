@@ -12,6 +12,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.Versioning;
     using System.Text;
+    using KeyCode = Input.KeyCode;
 
     public enum WindowState
     {
@@ -516,14 +517,12 @@
             KeyState state = (KeyState)evnt.State;
             KeyCode keyCode = (KeyCode)Sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
             KeyboardEventArgs args = new(keyCode, state);
-            Keyboard.Update(args);
             OnKeyboardInput(args);
         }
 
         internal void ProcessInputText(TextInputEvent evnt)
         {
             KeyboardCharEventArgs args = new(Encoding.UTF8.GetString(evnt.Text, 1)[0]);
-            Keyboard.Update(args);
             OnKeyboardCharInput(args);
         }
 
@@ -532,7 +531,6 @@
             KeyState state = (KeyState)evnt.State;
             MouseButton button = (MouseButton)evnt.Button;
             MouseButtonEventArgs args = new(button, state, evnt.Clicks);
-            Mouse.Update(args);
             OnMouseButtonInput(args);
         }
 
@@ -541,15 +539,20 @@
             if (lockCursor)
                 Sdl.WarpMouseInWindow(window, 0, 0);
             MouseMotionEventArgs args = new(evnt.X, evnt.Y, evnt.Xrel, evnt.Yrel);
-            Mouse.Update(args);
             OnMouseMotionInput(args);
         }
 
         internal void ProcessInputMouse(MouseWheelEvent evnt)
         {
             MouseWheelEventArgs args = new(evnt.X, evnt.Y, (MouseWheelDirection)evnt.Direction);
-            Mouse.Update(args);
             OnMouseWheelInput(args);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected static void ProcessInput()
+        {
+            Keyboard.ProcessInput();
+            Mouse.ProcessInput();
         }
     }
 }

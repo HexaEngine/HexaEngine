@@ -158,7 +158,7 @@
                 renderer?.EndDraw();
                 DebugDraw.Render(CameraManager.Current, Viewport);
                 swapChain.Present();
-                Keyboard.FrameUpdate();
+                ProcessInput();
                 Time.FrameUpdate();
             }
 

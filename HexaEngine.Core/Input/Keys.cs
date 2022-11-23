@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Input2
+﻿namespace HexaEngine.Core.Input
 {
     /// <summary>
     /// Enumeration for virtual keys.
