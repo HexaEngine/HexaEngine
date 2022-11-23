@@ -6,7 +6,7 @@
     using Silk.NET.Core.Native;
     using System.Numerics;
 
-    public unsafe class Helper
+    public static unsafe class Helper
     {
         public static Silk.NET.Direct3D11.Viewport Convert(Viewport viewport)
         {

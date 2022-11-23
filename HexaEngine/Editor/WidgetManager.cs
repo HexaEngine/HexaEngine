@@ -19,6 +19,7 @@
             Register<PreviewWidget>();
             Register<PrefilterWidget>();
             Register<IrradianceWidget>();
+            Register<DFGLUTWidget>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()

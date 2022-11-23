@@ -48,9 +48,9 @@
                     }
                 }
 
-                var color = material.Albedo;
+                var color = material.BaseColor;
                 if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))
-                    material.Albedo = color;
+                    material.BaseColor = color;
 
                 var opacity = material.Opacity;
                 if (ImGui.SliderFloat("Opacity", ref opacity, 0, 1))
@@ -76,9 +76,9 @@
                 if (ImGui.ColorEdit3("Emissivness", ref Emissivness, ImGuiColorEditFlags.Float))
                     material.Emissivness = Emissivness;
 
-                var texAlbedo = material.AlbedoTextureMap;
+                var texAlbedo = material.BaseColorTextureMap;
                 if (ImGui.InputText("Albedo Tex", ref texAlbedo, 256))
-                    material.AlbedoTextureMap = texAlbedo;
+                    material.BaseColorTextureMap = texAlbedo;
 
                 var texNormal = material.NormalTextureMap;
                 if (ImGui.InputText("Normal Tex", ref texNormal, 256))

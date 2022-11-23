@@ -271,14 +271,14 @@
                 material.Textures = texs;
                 materials[i] = new Objects.Material()
                 {
-                    Albedo = material.BaseColor,
+                    BaseColor = material.BaseColor,
                     Ao = 1,
                     Emissivness = material.ColorEmissive,
                     Metalness = material.MetallicFactor,
                     Roughness = material.RoughnessFactor,
                     Opacity = material.Opacity,
                     Name = material.Name,
-                    AlbedoTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
+                    BaseColorTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
                     AoTextureMap = material.Textures[(int)TextureType.AmbientOcclusion].File ?? string.Empty,
                     DisplacementTextureMap = material.Textures[(int)TextureType.Displacement].File ?? string.Empty,
                     EmissiveTextureMap = material.Textures[(int)TextureType.EmissionColor].File ?? string.Empty,

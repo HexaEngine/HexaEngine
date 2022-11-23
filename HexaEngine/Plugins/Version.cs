@@ -1,9 +1,9 @@
-﻿namespace HexaEngine.Plugins
+﻿namespace HexaEngine.Plugins2
 {
     using HexaEngine.Core.Unsafes;
     using System.Buffers.Binary;
 
-    public unsafe struct PluginVersion : IRecord
+    public unsafe struct PluginVersion
     {
         public int Major;
         public int Minor;

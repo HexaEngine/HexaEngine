@@ -27,7 +27,7 @@
         public static CameraEditorMode Mode
         { get => mode; set { mode = value; first = true; } }
 
-        public static Camera? Current => Designer.InDesignMode ? camera : SceneManager.Current.CurrentCamera;
+        public static Camera? Current => Designer.InDesignMode ? camera : SceneManager.Current?.CurrentCamera;
 
         static CameraManager()
         {

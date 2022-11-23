@@ -4,6 +4,7 @@
 using HexaEngine.Core;
 using HexaEngine.Core.Graphics;
 using HexaEngine.Editor;
+using HexaEngine.IO;
 using HexaEngine.Mathematics;
 using ImGuiNET;
 using ImGuizmoNET;
@@ -61,7 +62,11 @@ namespace HexaEngine.Rendering
             var range = new char[] { (char)0xE700, (char)0xF800, (char)0 };
             fixed (char* buffer = range)
             {
-                io.Fonts.AddFontFromFileTTF("./assets/fonts/SEGMDL2.TTF", 14, config, (IntPtr)buffer);
+                var bytes = FileSystem.ReadAllBytes("./assets/fonts/SEGMDL2.TTF");
+                fixed (byte* buffer2 = bytes)
+                {
+                    io.Fonts.AddFontFromMemoryTTF((nint)buffer2, bytes.Length, 14, config, (IntPtr)buffer);
+                }
             }
 
             io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;

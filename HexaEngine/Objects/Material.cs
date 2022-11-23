@@ -7,18 +7,29 @@
     public class Material
     {
         private Scene? scene;
-        private string albedoTextureMap = string.Empty;
         private string normalTextureMap = string.Empty;
         private string displacementTextureMap = string.Empty;
+        private string baseColorTextureMap = string.Empty;
+        private string specularTextureMap = string.Empty;
+        private string specularColorTextureMap = string.Empty;
         private string roughnessTextureMap = string.Empty;
         private string metalnessTextureMap = string.Empty;
         private string roughnessmetalnessTextureMap = string.Empty;
-        private string emissiveTextureMap = string.Empty;
         private string aoTextureMap = string.Empty;
-        private Vector3 albedo;
+        private string cleancoatTextureMap = string.Empty;
+        private string cleancoatGlossTextureMap = string.Empty;
+        private string sheenTextureMap = string.Empty;
+        private string sheenTintTextureMap = string.Empty;
+        private string anisotropicTextureMap = string.Empty;
+        private string subsurfaceTextureMap = string.Empty;
+        private string subsurfaceColorTextureMap = string.Empty;
+        private string emissivenessTextureMap = string.Empty;
+
+        private Vector3 baseColor;
         private float opacity;
         private float specular;
         private float specularTint;
+        private Vector3 specularColor;
         private float ao;
         private float metalness;
         private float roughness;
@@ -28,15 +39,16 @@
         private float sheenTint;
         private float anisotropic;
         private float subsurface;
+        private Vector3 subsurfaceColor;
         private Vector3 emissivness;
 
         public string Name { get; set; } = string.Empty;
 
-        public Vector3 Albedo
+        public Vector3 BaseColor
         {
-            get => albedo; set
+            get => baseColor; set
             {
-                albedo = value; if (scene == null) return;
+                baseColor = value; if (scene == null) return;
                 scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
@@ -46,6 +58,33 @@
             get => opacity; set
             {
                 opacity = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public float Specular
+        {
+            get => specular; set
+            {
+                specular = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public float SpecularTint
+        {
+            get => specularTint; set
+            {
+                specularTint = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public Vector3 SpecularColor
+        {
+            get => specularColor; set
+            {
+                specularColor = value; if (scene == null) return;
                 scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
@@ -77,6 +116,42 @@
             }
         }
 
+        public float Cleancoat
+        {
+            get => cleancoat; set
+            {
+                cleancoat = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public float CleancoatGloss
+        {
+            get => cleancoatGloss; set
+            {
+                cleancoatGloss = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public float Sheen
+        {
+            get => sheen; set
+            {
+                cleancoat = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public float SheenTint
+        {
+            get => sheenTint; set
+            {
+                sheenTint = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
         public float Anisotropic
         {
             get => anisotropic; set
@@ -86,22 +161,29 @@
             }
         }
 
+        public float Subsurface
+        {
+            get => subsurface; set
+            {
+                subsurface = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public Vector3 SubsurfaceColor
+        {
+            get => subsurfaceColor; set
+            {
+                subsurfaceColor = value; if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
         public Vector3 Emissivness
         {
             get => emissivness; set
             {
                 emissivness = value; if (scene == null) return;
-                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
-            }
-        }
-
-        public string AlbedoTextureMap
-        {
-            get => albedoTextureMap;
-            set
-            {
-                albedoTextureMap = value;
-                if (scene == null) return;
                 scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
         }
@@ -123,6 +205,39 @@
             set
             {
                 displacementTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string BaseColorTextureMap
+        {
+            get => baseColorTextureMap;
+            set
+            {
+                baseColorTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string SpecularTextureMap
+        {
+            get => specularTextureMap;
+            set
+            {
+                specularTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string SpecularColorTextureMap
+        {
+            get => specularColorTextureMap;
+            set
+            {
+                specularColorTextureMap = value;
                 if (scene == null) return;
                 scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
@@ -161,23 +276,100 @@
             }
         }
 
-        public string EmissiveTextureMap
-        {
-            get => emissiveTextureMap;
-            set
-            {
-                emissiveTextureMap = value;
-                if (scene == null) return;
-                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
-            }
-        }
-
         public string AoTextureMap
         {
             get => aoTextureMap;
             set
             {
                 aoTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string CleancoatTextureMap
+        {
+            get => cleancoatTextureMap;
+            set
+            {
+                cleancoatTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string CleancoatGlossTextureMap
+        {
+            get => cleancoatGlossTextureMap;
+            set
+            {
+                cleancoatGlossTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string SheenTextureMap
+        {
+            get => sheenTextureMap;
+            set
+            {
+                cleancoatTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string SheenTintTextureMap
+        {
+            get => sheenTintTextureMap;
+            set
+            {
+                cleancoatGlossTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string AnisotropicTextureMap
+        {
+            get => anisotropicTextureMap;
+            set
+            {
+                anisotropicTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string SubsurfaceTextureMap
+        {
+            get => subsurfaceTextureMap;
+            set
+            {
+                subsurfaceTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string SubsurfaceColorTextureMap
+        {
+            get => subsurfaceColorTextureMap;
+            set
+            {
+                subsurfaceColorTextureMap = value;
+                if (scene == null) return;
+                scene.CommandQueue.Enqueue(new(CommandType.Update, this));
+            }
+        }
+
+        public string EmissiveTextureMap
+        {
+            get => emissivenessTextureMap;
+            set
+            {
+                emissivenessTextureMap = value;
                 if (scene == null) return;
                 scene.CommandQueue.Enqueue(new(CommandType.Update, this));
             }
@@ -213,12 +405,12 @@
 
         public CBMaterial(Material material)
         {
-            Color = new(material.Albedo, 1);
+            Color = new(material.BaseColor, 1);
             Emissive = new(material.Emissivness, 1);
             RMAo = new(material.Roughness, material.Metalness, material.Ao, 1);
             Anisotropic = new(material.Anisotropic, 0, 0, 0);
 
-            HasAlbedoMap = string.IsNullOrEmpty(material.AlbedoTextureMap) ? 0 : 1;
+            HasAlbedoMap = string.IsNullOrEmpty(material.BaseColorTextureMap) ? 0 : 1;
             HasNormalMap = string.IsNullOrEmpty(material.NormalTextureMap) ? 0 : 1;
             HasDisplacementMap = string.IsNullOrEmpty(material.DisplacementTextureMap) ? 0 : 1;
 

@@ -5,7 +5,10 @@
     using System;
     using System.Numerics;
 
+#if GenericAttributes
     [EditorNode<Spotlight>("Spotlight")]
+#endif
+
     public class Spotlight : Light
     {
         public new CameraTransform Transform;

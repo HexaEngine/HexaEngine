@@ -771,5 +771,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

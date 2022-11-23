@@ -47,7 +47,7 @@
         private BRDFLUT brdfFilter;
         private SkyboxPipeline skyboxShader;
 
-        private Material material = new() { Albedo = new(1, 0, 0), Ao = 1 };
+        private Material material = new() { BaseColor = new(1, 0, 0), Ao = 1 };
 
         private IBuffer vb;
         private IBuffer ib;
@@ -251,9 +251,9 @@
 
             ImGui.BeginChild("Settings");
 
-            var color = material.Albedo;
+            var color = material.BaseColor;
             if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))
-                material.Albedo = color;
+                material.BaseColor = color;
 
             var roughness = material.Roughness;
             if (ImGui.SliderFloat("Roughness", ref roughness, 0, 1))

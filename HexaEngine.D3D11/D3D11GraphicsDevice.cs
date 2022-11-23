@@ -4,8 +4,8 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
-    using HexaEngine.Core.IO;
     using HexaEngine.DirectXTex;
+    using HexaEngine.IO;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;

@@ -4,10 +4,10 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
+    using HexaEngine.IO;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
@@ -313,7 +313,7 @@
 
                 envsmp = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
 
-                brdflut = new(device, TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RG32Float));
+                brdflut = new(device, TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RGBA32Float));
 
                 window.RenderDispatcher.InvokeBlocking(() =>
                 {

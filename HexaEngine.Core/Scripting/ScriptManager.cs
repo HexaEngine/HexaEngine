@@ -1,7 +1,6 @@
-﻿namespace Kitty.Core.Scripting
+﻿namespace HexaEngine.Core.Scripting
 {
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO;
     using NLua;
     using System;
     using System.Collections.Generic;
@@ -18,14 +17,6 @@
         public static void Reload()
         {
             scripts.Clear();
-            if (Directory.Exists(Paths.CurrentConsoleScriptFolder))
-                foreach (var item in Directory.GetFiles(Paths.CurrentConsoleScriptFolder))
-                {
-                    if (Path.GetExtension(item) == ".lua")
-                    {
-                        scripts.Add(luaFactory.Create(item));
-                    }
-                }
         }
 
         public static void RegisterFunc(string name, MethodBase method)

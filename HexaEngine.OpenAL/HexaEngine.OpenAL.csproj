@@ -5,7 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
 	  <Platforms>AnyCPU;x64</Platforms>
 	  <Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>

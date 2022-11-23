@@ -14,6 +14,5 @@
         public char* Description;
         public char** Dependencies;
         public uint DependencyCount;
-        
     }
 }

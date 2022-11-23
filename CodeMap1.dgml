@@ -1,77 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <DirectedGraph DataVirtualized="True" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
   <Nodes>
-    <Node Id="(@1)" Category="CodeSchema_Assembly" Bounds="20,95,176.626666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(485b8722-c853-4012-ad17-45eea843392c.OutputPath)" Group="Collapsed" Label="HexaEngine.D3D11.dll" />
-    <Node Id="(@10)" Category="CodeSchema_Assembly" Bounds="169.376666666667,320,120.603333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(fc42039f-b2e0-47f7-8873-a3370cdba849.OutputPath)" Group="Collapsed" Label="IBLBaker.dll" />
-    <Node Id="(@11)" Category="CodeSchema_Assembly" Bounds="20,375,149.726666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(5b63d269-c89c-492e-a864-9540ad6ee223.OutputPath)" Group="Collapsed" Label="AssetsBundler.dll" />
-    <Node Id="(@12)" Category="CodeSchema_Assembly" Bounds="20,430,160.38,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(273637ee-feac-4fab-884a-81c1449560e4.OutputPath)" Group="Collapsed" Label="ShaderCompiler.dll" />
-    <Node Id="(@13)" Category="CodeSchema_Assembly" Bounds="467.306666666667,194.444608730193,106.793333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(8713dcb2-c42f-430d-9c25-c7f0af3cfb8f.OutputPath)" Group="Collapsed" Label="Editor.dll" />
-    <Node Id="(@14)" Category="CodeSchema_Assembly" Bounds="569.813433333333,469.444608730193,208.46,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(fb858230-5e8b-48ee-9a8f-aca5a03df308.OutputPath)" Group="Collapsed" Label="HexaEngine.Mathematics.dll" />
-    <Node Id="(@15)" Category="CodeSchema_Assembly" Bounds="339.98,524.444608730193,199.833333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(4fe4150f-9af9-4601-88a5-d84b6934a9d9.OutputPath)" Group="Collapsed" Label="HexaEngine.SPIRVCross.dll" />
-    <Node Id="(@16)" Category="CodeSchema_Assembly" Bounds="547.013333333333,414.444608730193,182.2,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(5f3978f8-55d0-4c04-bf88-8a0636b5fbf6.OutputPath)" Group="Collapsed" Label="HexaEngine.Projects.dll" />
-    <Node Id="(@17)" Category="CodeSchema_Assembly" Bounds="272.946716666667,-45.5553912698068,130.873333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(df30aa6b-eb68-4ef7-ab0b-99e24329c879.OutputPath)" Group="Collapsed" Label="ImGui.NET.dll" />
-    <Node Id="(@18)" Category="CodeSchema_Assembly" Bounds="272.946716666667,64.4446087301932,153.666666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(6a2c3b10-8ef2-4f5a-a5b5-73a29dcfafa6.OutputPath)" Group="Collapsed" Label="ImGuizmo.NET.dll" />
-    <Node Id="(@19)" Category="CodeSchema_Assembly" Bounds="272.946716666667,9.44460873019318,147.386666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(00eb3880-9721-4d2d-83a8-e1a312951bd1.OutputPath)" Group="Collapsed" Label="ImNodes.NET.dll" />
-    <Node Id="(@2)" Category="CodeSchema_Assembly" Bounds="604.1,280,126.986666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(0f6e5d33-41a9-47ca-bd10-5445bd5a9dea.OutputPath)" Group="Collapsed" Label="TestGame.dll" />
-    <Node Id="(@20)" Category="CodeSchema_Assembly" Bounds="433.82005,-45.5553912698068,133.666666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(a97883f5-e09e-439b-833a-e0e434a75dc7.OutputPath)" Group="Collapsed" Label="ImPlot.NET.dll" />
-    <Node Id="(@21)" Category="CodeSchema_Assembly" Bounds="339.98,469.444608730193,177.033333333333,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(803c57b7-ffef-4223-99b4-cfa9476d35c6.OutputPath)" Group="Collapsed" Label="HexaEngine.Dotnet.dll" />
-    <Node Id="(@22)" Category="CodeSchema_Assembly" Bounds="450.333383333333,9.44460873019318,150.35,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(9d54c009-2f4d-4fa8-a14a-b950be39a611.OutputPath)" Group="Collapsed" Label="DirectXTexNet.dll" />
-    <Node Id="(@23)" Category="CodeSchema_Assembly" Bounds="20,320,119.376666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(613f20db-6d13-41b6-a4f0-3ae2b223df15.OutputPath)" Group="Collapsed" Label="TexConv.dll" />
-    <Node Id="(@3)" Category="CodeSchema_Assembly" Bounds="339.98,304.444608730193,137.79,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(920655dd-57e8-44f1-ba7d-95116258773e.OutputPath)" Group="Collapsed" Label="HexaEngine.dll" />
-    <Node Id="(@4)" Category="CodeSchema_Assembly" Bounds="507.77,359.444608730193,165.3,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(e741f0c4-62d1-4654-af81-9e40b0b98f82.OutputPath)" Group="Collapsed" Label="HexaEngine.Core.dll" />
-    <Node Id="(@5)" Category="CodeSchema_Assembly" Bounds="20,205,182.946666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(d5a642ea-b317-4439-ab44-c392325b2a82.OutputPath)" Group="Collapsed" Label="HexaEngine.OpenAL.dll" />
-    <Node Id="(@6)" Category="CodeSchema_Assembly" Bounds="272.946716666667,119.444608730193,173.84,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(c92a44e6-5563-46a5-83a7-eb700eb75a8d.OutputPath)" Group="Collapsed" Label="DirectXTexNetImpl.dll" />
-    <Node Id="(@7)" Category="CodeSchema_Assembly" Bounds="20,40,176.106666666667,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(5f835c95-9c8e-40f4-8f49-4169a33c5634.OutputPath)" Group="Collapsed" Label="HexaEngine.Vulkan.dll" />
-    <Node Id="(@8)" Category="CodeSchema_Assembly" Bounds="20,150,179,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(ab16c108-b0c8-4ff5-bc79-d64662459aae.OutputPath)" Group="Collapsed" Label="HexaEngine.XAudio.dll" />
-    <Node Id="(@9)" Category="CodeSchema_Assembly" Bounds="339.98,249.444608730193,97.3266666666666,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(519c93db-bbb9-42e2-91af-0a0b06bd0530.OutputPath)" Group="Collapsed" Label="App.dll" />
-    <Node Id="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" Category="CodeMap_SolutionFolder" Bounds="0,0,222.946666666667,250" Group="Expanded" Label="Backends" />
-    <Node Id="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Category="CodeMap_SolutionFolder" Bounds="252.946716666667,-85.5553912698068,367.736666666667,250" Group="Expanded" Label="Libs" />
-    <Node Id="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" Category="CodeMap_SolutionFolder" Bounds="0,280,309.98,195" Group="Expanded" Label="Tools" />
+    <Node Id="(@1)" Category="CodeSchema_Assembly" Bounds="0,0,137.79,25" DelayedChildNodesState="NotFetched" DelayedCrossGroupLinksState="NotFetched" FilePath="$(920655dd-57e8-44f1-ba7d-95116258773e.OutputPath)" Group="Collapsed" Label="HexaEngine.dll" />
   </Nodes>
-  <Links>
-    <Link Source="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" Target="(@1)" Category="Contains" FetchingParent="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" />
-    <Link Source="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" Target="(@5)" Category="Contains" FetchingParent="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" />
-    <Link Source="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" Target="(@7)" Category="Contains" FetchingParent="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" />
-    <Link Source="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" Target="(@8)" Category="Contains" FetchingParent="Backends{61BAB061-566C-4436-990A-DADBB9C92F4C}" />
-    <Link Source="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Target="(@17)" Category="Contains" FetchingParent="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" />
-    <Link Source="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Target="(@18)" Category="Contains" FetchingParent="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" />
-    <Link Source="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Target="(@19)" Category="Contains" FetchingParent="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" />
-    <Link Source="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Target="(@20)" Category="Contains" FetchingParent="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" />
-    <Link Source="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Target="(@22)" Category="Contains" FetchingParent="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" />
-    <Link Source="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" Target="(@6)" Category="Contains" FetchingParent="Libs{DE433836-F1E0-46C2-B0AD-9F124F616C78}" />
-    <Link Source="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" Target="(@10)" Category="Contains" FetchingParent="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" />
-    <Link Source="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" Target="(@11)" Category="Contains" FetchingParent="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" />
-    <Link Source="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" Target="(@12)" Category="Contains" FetchingParent="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" />
-    <Link Source="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" Target="(@23)" Category="Contains" FetchingParent="Tools{A942B165-F8B1-4E21-8F72-B62BEC719E73}" />
-  </Links>
+  <Links />
   <Categories>
-    <Category Id="CodeMap_SolutionFolder" Label="Solution Folder" CanBeDataDriven="True" IsProviderRoot="False" NavigationActionLabel="Solution Folder" />
     <Category Id="CodeSchema_Assembly" Label="Assembly" BasedOn="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="CodeSchema_Assembly" NavigationActionLabel="Assemblies" />
-    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
     <Category Id="File" Label="File" CanBeDataDriven="True" DefaultAction="Microsoft.Contains" Icon="File" NavigationActionLabel="Files" />
   </Categories>
   <Properties>
     <Property Id="Bounds" DataType="System.Windows.Rect" />
     <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
-    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
     <Property Id="DataVirtualized" Label="Data Virtualized" Description="If true, the graph can contain nodes and links that represent data for virtualized nodes/links (i.e. not actually created in the graph)." DataType="System.Boolean" />
     <Property Id="DefaultAction" Label="DefaultAction" Description="DefaultAction" DataType="System.String" />
     <Property Id="DelayedChildNodesState" Label="Delayed Child Nodes State" Description="Unspecified if the delayed child nodes state is not specified. NotFetched if the group contains child nodes that are not fetched into the graph yet. Fetched if the group has all its delayed child nodes already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
     <Property Id="DelayedCrossGroupLinksState" Label="Delayed Cross-Group Links State" Description="Unspecified if the delayed cross-group links state is not specified. NotFetched if delayed cross-group links on this node are not fetched into the graph yet. Fetched if all delayed cross-group links have already fetched." DataType="Microsoft.VisualStudio.GraphModel.DelayedDataState" />
     <Property Id="Expression" DataType="System.String" />
-    <Property Id="FetchingParent" DataType="Microsoft.VisualStudio.GraphModel.GraphNodeId" />
     <Property Id="FilePath" Label="File Path" Description="File Path" DataType="System.String" />
     <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
     <Property Id="GroupLabel" DataType="System.String" />
-    <Property Id="Icon" DataType="System.String" />
-    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
-    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="Icon" Label="Icon" Description="Icon" DataType="System.String" />
     <Property Id="IsEnabled" DataType="System.Boolean" />
-    <Property Id="IsProviderRoot" Label="IsProviderRoot" Description="IsProviderRoot" DataType="System.Boolean" />
     <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
     <Property Id="Layout" DataType="System.String" />
     <Property Id="NavigationActionLabel" Label="NavigationActionLabel" Description="NavigationActionLabel" DataType="System.String" />
-    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
     <Property Id="TargetType" DataType="System.Type" />
     <Property Id="Value" DataType="System.String" />
     <Property Id="ValueLabel" DataType="System.String" />
@@ -82,29 +34,7 @@
     <Name Id="Assembly" Label="Assembly" ValueType="Uri" />
   </QualifiedNames>
   <IdentifierAliases>
-    <Alias n="1" Uri="Assembly=$(485b8722-c853-4012-ad17-45eea843392c.OutputPathUri)" />
-    <Alias n="2" Uri="Assembly=$(0f6e5d33-41a9-47ca-bd10-5445bd5a9dea.OutputPathUri)" />
-    <Alias n="3" Uri="Assembly=$(920655dd-57e8-44f1-ba7d-95116258773e.OutputPathUri)" />
-    <Alias n="4" Uri="Assembly=$(e741f0c4-62d1-4654-af81-9e40b0b98f82.OutputPathUri)" />
-    <Alias n="5" Uri="Assembly=$(d5a642ea-b317-4439-ab44-c392325b2a82.OutputPathUri)" />
-    <Alias n="6" Uri="Assembly=$(c92a44e6-5563-46a5-83a7-eb700eb75a8d.OutputPathUri)" />
-    <Alias n="7" Uri="Assembly=$(5f835c95-9c8e-40f4-8f49-4169a33c5634.OutputPathUri)" />
-    <Alias n="8" Uri="Assembly=$(ab16c108-b0c8-4ff5-bc79-d64662459aae.OutputPathUri)" />
-    <Alias n="9" Uri="Assembly=$(519c93db-bbb9-42e2-91af-0a0b06bd0530.OutputPathUri)" />
-    <Alias n="10" Uri="Assembly=$(fc42039f-b2e0-47f7-8873-a3370cdba849.OutputPathUri)" />
-    <Alias n="11" Uri="Assembly=$(5b63d269-c89c-492e-a864-9540ad6ee223.OutputPathUri)" />
-    <Alias n="12" Uri="Assembly=$(273637ee-feac-4fab-884a-81c1449560e4.OutputPathUri)" />
-    <Alias n="13" Uri="Assembly=$(8713dcb2-c42f-430d-9c25-c7f0af3cfb8f.OutputPathUri)" />
-    <Alias n="14" Uri="Assembly=$(fb858230-5e8b-48ee-9a8f-aca5a03df308.OutputPathUri)" />
-    <Alias n="15" Uri="Assembly=$(4fe4150f-9af9-4601-88a5-d84b6934a9d9.OutputPathUri)" />
-    <Alias n="16" Uri="Assembly=$(5f3978f8-55d0-4c04-bf88-8a0636b5fbf6.OutputPathUri)" />
-    <Alias n="17" Uri="Assembly=$(df30aa6b-eb68-4ef7-ab0b-99e24329c879.OutputPathUri)" />
-    <Alias n="18" Uri="Assembly=$(6a2c3b10-8ef2-4f5a-a5b5-73a29dcfafa6.OutputPathUri)" />
-    <Alias n="19" Uri="Assembly=$(00eb3880-9721-4d2d-83a8-e1a312951bd1.OutputPathUri)" />
-    <Alias n="20" Uri="Assembly=$(a97883f5-e09e-439b-833a-e0e434a75dc7.OutputPathUri)" />
-    <Alias n="21" Uri="Assembly=$(803c57b7-ffef-4223-99b4-cfa9476d35c6.OutputPathUri)" />
-    <Alias n="22" Uri="Assembly=$(9d54c009-2f4d-4fa8-a14a-b950be39a611.OutputPathUri)" />
-    <Alias n="23" Uri="Assembly=$(613f20db-6d13-41b6-a4f0-3ae2b223df15.OutputPathUri)" />
+    <Alias n="1" Uri="Assembly=$(920655dd-57e8-44f1-ba7d-95116258773e.OutputPathUri)" />
   </IdentifierAliases>
   <Styles>
     <Style TargetType="Node" GroupLabel="Results" ValueLabel="True">
@@ -324,51 +254,7 @@
     </Style>
   </Styles>
   <Paths>
-    <Path Id="00eb3880-9721-4d2d-83a8-e1a312951bd1.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\ImNodes.NET\bin\Debug\netstandard2.0\ImNodes.NET.dll" />
-    <Path Id="00eb3880-9721-4d2d-83a8-e1a312951bd1.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/ImNodes.NET/bin/Debug/netstandard2.0/ImNodes.NET.dll" />
-    <Path Id="0f6e5d33-41a9-47ca-bd10-5445bd5a9dea.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\TestGame\bin\Debug\net6.0-windows\TestGame.dll" />
-    <Path Id="0f6e5d33-41a9-47ca-bd10-5445bd5a9dea.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/TestGame/bin/Debug/net6.0-windows/TestGame.dll" />
-    <Path Id="273637ee-feac-4fab-884a-81c1449560e4.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\ShaderCompiler\bin\Debug\netstandard2.0\ShaderCompiler.dll" />
-    <Path Id="273637ee-feac-4fab-884a-81c1449560e4.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/ShaderCompiler/bin/Debug/netstandard2.0/ShaderCompiler.dll" />
-    <Path Id="485b8722-c853-4012-ad17-45eea843392c.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.D3D11\bin\Debug\net6.0\HexaEngine.D3D11.dll" />
-    <Path Id="485b8722-c853-4012-ad17-45eea843392c.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.D3D11/bin/Debug/net6.0/HexaEngine.D3D11.dll" />
-    <Path Id="4fe4150f-9af9-4601-88a5-d84b6934a9d9.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.SPIRVCross\bin\Debug\net6.0\HexaEngine.SPIRVCross.dll" />
-    <Path Id="4fe4150f-9af9-4601-88a5-d84b6934a9d9.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.SPIRVCross/bin/Debug/net6.0/HexaEngine.SPIRVCross.dll" />
-    <Path Id="519c93db-bbb9-42e2-91af-0a0b06bd0530.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\App\bin\Debug\net6.0-windows\App.dll" />
-    <Path Id="519c93db-bbb9-42e2-91af-0a0b06bd0530.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/App/bin/Debug/net6.0-windows/App.dll" />
-    <Path Id="5b63d269-c89c-492e-a864-9540ad6ee223.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\AssetsBundler\bin\Debug\net6.0\AssetsBundler.dll" />
-    <Path Id="5b63d269-c89c-492e-a864-9540ad6ee223.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/AssetsBundler/bin/Debug/net6.0/AssetsBundler.dll" />
-    <Path Id="5f3978f8-55d0-4c04-bf88-8a0636b5fbf6.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.Projects\bin\Debug\net6.0\HexaEngine.Projects.dll" />
-    <Path Id="5f3978f8-55d0-4c04-bf88-8a0636b5fbf6.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.Projects/bin/Debug/net6.0/HexaEngine.Projects.dll" />
-    <Path Id="5f835c95-9c8e-40f4-8f49-4169a33c5634.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.Vulkan\bin\Debug\net6.0\HexaEngine.Vulkan.dll" />
-    <Path Id="5f835c95-9c8e-40f4-8f49-4169a33c5634.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.Vulkan/bin/Debug/net6.0/HexaEngine.Vulkan.dll" />
-    <Path Id="613f20db-6d13-41b6-a4f0-3ae2b223df15.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\TexConv\bin\Debug\net6.0\TexConv.dll" />
-    <Path Id="613f20db-6d13-41b6-a4f0-3ae2b223df15.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/TexConv/bin/Debug/net6.0/TexConv.dll" />
-    <Path Id="6a2c3b10-8ef2-4f5a-a5b5-73a29dcfafa6.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\ImGuizmo.NET\bin\Debug\netstandard2.0\ImGuizmo.NET.dll" />
-    <Path Id="6a2c3b10-8ef2-4f5a-a5b5-73a29dcfafa6.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/ImGuizmo.NET/bin/Debug/netstandard2.0/ImGuizmo.NET.dll" />
-    <Path Id="803c57b7-ffef-4223-99b4-cfa9476d35c6.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.Dotnet\bin\Debug\net6.0\HexaEngine.Dotnet.dll" />
-    <Path Id="803c57b7-ffef-4223-99b4-cfa9476d35c6.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.Dotnet/bin/Debug/net6.0/HexaEngine.Dotnet.dll" />
-    <Path Id="8713dcb2-c42f-430d-9c25-c7f0af3cfb8f.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\Editor\bin\Debug\net6.0\Editor.dll" />
-    <Path Id="8713dcb2-c42f-430d-9c25-c7f0af3cfb8f.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/Editor/bin/Debug/net6.0/Editor.dll" />
-    <Path Id="920655dd-57e8-44f1-ba7d-95116258773e.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine\bin\Debug\net6.0\HexaEngine.dll" />
-    <Path Id="920655dd-57e8-44f1-ba7d-95116258773e.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine/bin/Debug/net6.0/HexaEngine.dll" />
-    <Path Id="9d54c009-2f4d-4fa8-a14a-b950be39a611.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\DirectXTexNet\bin\Debug\net5.0\DirectXTexNet.dll" />
-    <Path Id="9d54c009-2f4d-4fa8-a14a-b950be39a611.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/DirectXTexNet/bin/Debug/net5.0/DirectXTexNet.dll" />
-    <Path Id="a97883f5-e09e-439b-833a-e0e434a75dc7.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\ImPlot.NET\bin\Debug\netstandard2.0\ImPlot.NET.dll" />
-    <Path Id="a97883f5-e09e-439b-833a-e0e434a75dc7.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/ImPlot.NET/bin/Debug/netstandard2.0/ImPlot.NET.dll" />
-    <Path Id="ab16c108-b0c8-4ff5-bc79-d64662459aae.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.XAudio\bin\Debug\net6.0\HexaEngine.XAudio.dll" />
-    <Path Id="ab16c108-b0c8-4ff5-bc79-d64662459aae.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.XAudio/bin/Debug/net6.0/HexaEngine.XAudio.dll" />
-    <Path Id="c92a44e6-5563-46a5-83a7-eb700eb75a8d.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\x64\Debug\DirectXTexNetImpl.dll" />
-    <Path Id="c92a44e6-5563-46a5-83a7-eb700eb75a8d.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/x64/Debug/DirectXTexNetImpl.dll" />
-    <Path Id="d5a642ea-b317-4439-ab44-c392325b2a82.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.OpenAL\bin\Debug\net6.0\HexaEngine.OpenAL.dll" />
-    <Path Id="d5a642ea-b317-4439-ab44-c392325b2a82.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.OpenAL/bin/Debug/net6.0/HexaEngine.OpenAL.dll" />
-    <Path Id="df30aa6b-eb68-4ef7-ab0b-99e24329c879.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\ImGui.NET\bin\Debug\netstandard2.0\ImGui.NET.dll" />
-    <Path Id="df30aa6b-eb68-4ef7-ab0b-99e24329c879.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/ImGui.NET/bin/Debug/netstandard2.0/ImGui.NET.dll" />
-    <Path Id="e741f0c4-62d1-4654-af81-9e40b0b98f82.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.Core\bin\Debug\net6.0\HexaEngine.Core.dll" />
-    <Path Id="e741f0c4-62d1-4654-af81-9e40b0b98f82.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.Core/bin/Debug/net6.0/HexaEngine.Core.dll" />
-    <Path Id="fb858230-5e8b-48ee-9a8f-aca5a03df308.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\HexaEngine.Mathematics\bin\Debug\net6.0\HexaEngine.Mathematics.dll" />
-    <Path Id="fb858230-5e8b-48ee-9a8f-aca5a03df308.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/HexaEngine.Mathematics/bin/Debug/net6.0/HexaEngine.Mathematics.dll" />
-    <Path Id="fc42039f-b2e0-47f7-8873-a3370cdba849.OutputPath" Value="C:\Users\Juna\source\repos\HexaEngine\IBLBaker\bin\Debug\net6.0-windows\IBLBaker.dll" />
-    <Path Id="fc42039f-b2e0-47f7-8873-a3370cdba849.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/HexaEngine/IBLBaker/bin/Debug/net6.0-windows/IBLBaker.dll" />
+    <Path Id="920655dd-57e8-44f1-ba7d-95116258773e.OutputPath" Value="C:\Users\Juna\source\repos\JunaMeinhold\HexaEngine\HexaEngine\bin\x64\Debug\net7.0\HexaEngine.dll" />
+    <Path Id="920655dd-57e8-44f1-ba7d-95116258773e.OutputPathUri" Value="file:///C:/Users/Juna/source/repos/JunaMeinhold/HexaEngine/HexaEngine/bin/x64/Debug/net7.0/HexaEngine.dll" />
   </Paths>
 </DirectedGraph>
