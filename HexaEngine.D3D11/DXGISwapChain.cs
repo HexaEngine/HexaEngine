@@ -19,6 +19,7 @@
         private bool vSync;
         private bool limitFPS;
         private int targetFPS = 120;
+        private bool active;
 
         internal DXGISwapChain(D3D11GraphicsDevice device, IDXGISwapChain1* swapChain, SwapChainFlag flags)
         {
@@ -66,6 +67,8 @@
 
         public int TargetFPS { get => targetFPS; set => targetFPS = value; }
 
+        public bool Active { get => active; set => active = value; }
+
         public void Present(bool sync)
         {
             if (sync)
@@ -80,7 +83,11 @@
 
         public void Present()
         {
-            if (vSync)
+            if (!active)
+            {
+                swapChain->Present(4, 0);
+            }
+            else if (vSync)
             {
                 swapChain->Present(1, 0);
             }

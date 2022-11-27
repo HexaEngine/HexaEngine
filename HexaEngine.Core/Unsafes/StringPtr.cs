@@ -46,10 +46,10 @@
         public static int Read(UnsafeString** ppStr, Endianness endianness, Span<byte> src)
         {
             int length = endianness == Endianness.LittleEndian ? BinaryPrimitives.ReadInt32LittleEndian(src) : BinaryPrimitives.ReadInt32BigEndian(src);
-            UnsafeString* pStr = Utilities.Alloc<UnsafeString>();
+            UnsafeString* pStr = Utilities.GCAlloc<UnsafeString>();
 
             *ppStr = pStr;
-            pStr->Ptr = (char*)Utilities.Alloc(length);
+            pStr->Ptr = (char*)Utilities.GCAlloc(length);
             fixed (byte* srcPtr = src.Slice(4, length))
             {
                 Unsafe.CopyBlock(pStr->Ptr, srcPtr, (uint)length);

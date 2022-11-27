@@ -38,7 +38,7 @@ namespace TestApp
             pluginHeader.Description = Utilities.UTF16(string.Empty);
             pluginHeader.Endianness = BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
             pluginHeader.FormatVersion = PluginVersion.LatestFormatVersion;
-           
+
             plugin.Header = &pluginHeader;
 
             Plugin* pPlugin = &plugin;
@@ -142,7 +142,7 @@ namespace TestApp
             pluginHeader1.Description = Utilities.UTF16(string.Empty);
             pluginHeader1.Endianness = BitConverter.IsLittleEndian ? Endianness.LittleEndian : Endianness.BigEndian;
             pluginHeader1.FormatVersion = PluginVersion.LatestFormatVersion;
-            pluginHeader1.Dependencies = Utilities.Alloc<char>(1);
+            pluginHeader1.Dependencies = Utilities.GCAlloc<char>(1);
             pluginHeader1.Dependencies[0] = Utilities.UTF16("Test Plugin");
             pluginHeader1.DependencyCount = 1;
 
@@ -150,13 +150,12 @@ namespace TestApp
 
             Plugin* pPlugin1 = &plugin1;
 
-            Plugin** plugins = Utilities.Alloc<Plugin>(2);
+            Plugin** plugins = Utilities.GCAlloc<Plugin>(2);
             plugins[0] = pPlugin;
             plugins[1] = pPlugin1;
 
             Plugin** sorted;
             ReferenceBuilder.Sort(plugins, 2, &sorted);
-
         }
     }
 }

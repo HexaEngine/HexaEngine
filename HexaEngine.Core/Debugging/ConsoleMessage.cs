@@ -6,13 +6,13 @@
     {
         public LogSeverity Severity;
         public string Message;
-        public DateTime Timestamp;
+        public string Timestamp;
 
         public LogMessage(LogSeverity severity, string source, string message) : this()
         {
             Severity = severity;
             Message = $"[{source}]: {message}";
-            Timestamp = DateTime.Now;
+            Timestamp = DateTime.Now.ToShortTimeString();
         }
     }
 }

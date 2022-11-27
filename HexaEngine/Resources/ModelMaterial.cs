@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Objects;
 
-    public class ModelMaterial : IDisposable
+    public unsafe class ModelMaterial : IDisposable
     {
         private bool dirty = true;
         public Material Material;
@@ -17,7 +17,7 @@
         public ModelTexture? EmissiveTexture;
         public ModelTexture? AoTexture;
         public ModelTexture? RoughnessMetalnessTexture;
-        public IShaderResourceView[] SRVs;
+        public void** SRVs;
         public int Instances;
         private bool disposedValue;
 
@@ -26,7 +26,7 @@
             Material = material;
             CB = cB;
             SamplerState = samplerState;
-            SRVs = new IShaderResourceView[7];
+            SRVs = AllocArray(7);
         }
 
         public void Bind(IGraphicsContext context)
@@ -36,25 +36,25 @@
                 context.Write(CB, new CBMaterial(Material));
                 dirty = false;
             }
-            context.SetConstantBuffer(CB, ShaderStage.Domain, 2);
-            context.SetConstantBuffer(CB, ShaderStage.Pixel, 2);
-            context.SetSampler(SamplerState, ShaderStage.Pixel, 0);
-            context.SetSampler(SamplerState, ShaderStage.Domain, 0);
-            context.SetShaderResources(SRVs, ShaderStage.Pixel, 0);
-            context.SetShaderResource(DisplacementTexture?.SRV, ShaderStage.Domain, 0);
+            context.DSSetConstantBuffer(CB, 2);
+            context.PSSetConstantBuffer(CB, 2);
+            context.PSSetSampler(SamplerState, 0);
+            context.DSSetSampler(SamplerState, 0);
+            context.PSSetShaderResources(SRVs, 7, 0);
+            context.DSSetShaderResource(DisplacementTexture?.SRV, 0);
         }
 
         public void Update()
         {
 #nullable disable
             dirty = true;
-            SRVs[0] = AlbedoTexture?.SRV;
-            SRVs[1] = NormalTexture?.SRV;
-            SRVs[2] = RoughnessTexture?.SRV;
-            SRVs[3] = MetalnessTexture?.SRV;
-            SRVs[4] = EmissiveTexture?.SRV;
-            SRVs[5] = AoTexture?.SRV;
-            SRVs[6] = RoughnessMetalnessTexture?.SRV;
+            SRVs[0] = (void*)(AlbedoTexture?.SRV.NativePointer);
+            SRVs[1] = (void*)(NormalTexture?.SRV.NativePointer);
+            SRVs[2] = (void*)(RoughnessTexture?.SRV.NativePointer);
+            SRVs[3] = (void*)(MetalnessTexture?.SRV.NativePointer);
+            SRVs[4] = (void*)(EmissiveTexture?.SRV.NativePointer);
+            SRVs[5] = (void*)(AoTexture?.SRV.NativePointer);
+            SRVs[6] = (void*)(RoughnessMetalnessTexture?.SRV.NativePointer);
 #nullable enable
         }
 
@@ -62,6 +62,7 @@
         {
             if (!disposedValue)
             {
+                Free(SRVs);
                 CB.Dispose();
                 disposedValue = true;
             }

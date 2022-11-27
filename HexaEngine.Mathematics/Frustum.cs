@@ -88,9 +88,9 @@
         /// <returns>An array of points representing the eight corners of the bounding frustum.</returns>
         public Vector3[] GetCorners()
         {
-            Vector3[] results = new Vector3[CornerCount];
-            GetCorners(results);
-            return results;
+            //Vector3[] results = new Vector3[CornerCount];
+            //GetCorners(results);
+            return _corners;
         }
 
         /// <summary>

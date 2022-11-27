@@ -62,7 +62,7 @@
 
         public static unsafe int DecodePlugin(Span<byte> src, Plugin** ppPlugin)
         {
-            Plugin* pPlugin = Utilities.Alloc<Plugin>();
+            Plugin* pPlugin = Utilities.GCAlloc<Plugin>();
             *ppPlugin = pPlugin;
             Endianness endianness = (Endianness)src[0];
             int idx = DecodePluginHeader(src, endianness, &pPlugin->Header);
@@ -80,7 +80,7 @@
 
         public static unsafe int DecodePluginHeader(Span<byte> src, Endianness endianness, PluginHeader** ppHeader)
         {
-            PluginHeader* pHeader = Utilities.Alloc<PluginHeader>();
+            PluginHeader* pHeader = Utilities.GCAlloc<PluginHeader>();
             *ppHeader = pHeader;
 
             pHeader->Endianness = endianness;
@@ -118,7 +118,7 @@
 
                 case RecordType.Scene:
                     {
-                        SceneRecord* pSceneRecord = Utilities.Alloc<SceneRecord>();
+                        SceneRecord* pSceneRecord = Utilities.GCAlloc<SceneRecord>();
                         pSceneRecord->Header = pHeader;
                         *ppRecord = (Record*)pSceneRecord;
                         return idx + pSceneRecord->Decode(src[idx..], endianness);
@@ -147,7 +147,7 @@
 
         public static unsafe int DecodeRecordHeader(Span<byte> src, Endianness endianness, RecordHeader** ppHeader)
         {
-            RecordHeader* pHeader = Utilities.Alloc<RecordHeader>();
+            RecordHeader* pHeader = Utilities.GCAlloc<RecordHeader>();
             *ppHeader = pHeader;
             if (endianness == Endianness.LittleEndian)
             {

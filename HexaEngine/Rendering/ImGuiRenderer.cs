@@ -237,7 +237,7 @@ namespace HexaEngine.Rendering
 
                         textureResources.TryGetValue(cmd.TextureId, out var texture);
                         if (texture != null)
-                            ctx.SetShaderResource(texture, ShaderStage.Pixel, 0);
+                            ctx.PSSetShaderResource(texture, 0);
 
                         ctx.DrawIndexed((int)cmd.ElemCount, idx_offset, vtx_offset);
                     }
@@ -270,9 +270,9 @@ namespace HexaEngine.Rendering
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
             ctx.VSSetShader(vertexShader);
-            ctx.SetConstantBuffer(constantBuffer, ShaderStage.Vertex, 0);
+            ctx.VSSetConstantBuffer(constantBuffer, 0);
             ctx.PSSetShader(pixelShader);
-            ctx.SetSampler(fontSampler, ShaderStage.Pixel, 0);
+            ctx.PSSetSampler(fontSampler, 0);
             ctx.GSSetShader(null);
             ctx.HSSetShader(null);
             ctx.DSSetShader(null);

@@ -46,9 +46,10 @@
             set { size = value; }
         }
 
-        public override void Draw(IGraphicsContext context)
+        public override unsafe void Draw(IGraphicsContext context)
         {
-            context.Write(paramsBuffer, new Params() { Size = size });
+            var p = new Params() { Size = size };
+            context.Write(paramsBuffer, &p, sizeof(Params));
             DrawAuto(context, default);
         }
 

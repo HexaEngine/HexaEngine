@@ -48,13 +48,13 @@
             }
         }
 
-        public void Draw(IGraphicsContext context, Scene scene, Viewport viewport)
+        public unsafe void Draw(IGraphicsContext context, Scene scene, Viewport viewport)
         {
             for (int i = 0; i < scene.Meshes.Count; i++)
             {
                 if (manager.GetMesh(scene.Meshes[i], out var mesh))
                 {
-                    context.SetRenderTargets(gbuffers.RTVs, dsv);
+                    context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
                     mesh.DrawAuto(context, shader, gbuffers.Viewport);
                 }
             }

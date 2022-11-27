@@ -24,7 +24,7 @@
 
             var pluginsSorted = TopologicalSort(pluginsHashSet, edges);
 
-            Plugin** ppPluginsSorted = Utilities.Alloc<Plugin>(pluginsSorted.Count);
+            Plugin** ppPluginsSorted = Utilities.GCAlloc<Plugin>(pluginsSorted.Count);
             *pppPlugin = ppPluginsSorted;
             for (int i = 0; i < pluginsSorted.Count; i++)
             {
@@ -115,7 +115,7 @@
                 }
             }
 
-            Record** ppRecord = Utilities.Alloc<Record>(dict.Count);
+            Record** ppRecord = Utilities.GCAlloc<Record>(dict.Count);
             *pppRecords = ppRecord;
             *nRecords = (uint)dict.Count;
 

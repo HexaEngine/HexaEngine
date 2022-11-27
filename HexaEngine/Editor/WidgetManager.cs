@@ -16,7 +16,7 @@
             Register<PropertiesWidget>();
             Register<MaterialsWidget>();
             Register<MeshesWidget>();
-            Register<PreviewWidget>();
+            // Register<PreviewWidget>();
             Register<PrefilterWidget>();
             Register<IrradianceWidget>();
             Register<DFGLUTWidget>();

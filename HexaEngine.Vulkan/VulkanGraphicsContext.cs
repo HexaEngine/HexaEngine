@@ -478,5 +478,120 @@
         {
             throw new NotImplementedException();
         }
+
+        public unsafe void Write(IBuffer buffer, void* value, int size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void Write<T>(IBuffer buffer, T* value, int size) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Write<T>(IBuffer buffer, T[] values, int structSize) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void VSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void HSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void DSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void GSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void PSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void VSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void HSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void DSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void GSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void PSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void VSSetSamplers(void** samplers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void HSSetSamplers(void** samplers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void DSSetSamplers(void** samplers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void GSSetSamplers(void** samplers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void PSSetSamplers(void** samplers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetSamplers(void** samplers, uint count, int slot)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void SetRenderTargets(void** views, uint count, IDepthStencilView? depthStencilView)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void ClearRenderTargetViews(void** rtvs, uint count, Vector4 value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

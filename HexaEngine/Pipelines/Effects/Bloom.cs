@@ -63,12 +63,7 @@
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
             downsample = new(device);
-            downsample.Samplers.Add(new(sampler, ShaderStage.Pixel, 0));
-            downsample.Constants.Add(new(downsampleCB, ShaderStage.Pixel, 0));
-
             upsample = new(device);
-            upsample.Samplers.Add(new(sampler, ShaderStage.Pixel, 0));
-            upsample.Constants.Add(new(upsampleCB, ShaderStage.Pixel, 0));
             dirty = true;
         }
 
@@ -134,13 +129,15 @@
             {
                 if (i > 0)
                 {
-                    context.SetShaderResource(mipChainSRVs[i - 1], ShaderStage.Pixel, 0);
+                    context.PSSetShaderResource(mipChainSRVs[i - 1], 0);
                 }
                 else
                 {
-                    context.SetShaderResource(Source, ShaderStage.Pixel, 0);
+                    context.PSSetShaderResource(Source, 0);
                 }
 
+                context.PSSetConstantBuffer(downsampleCB, 0);
+                context.PSSetSampler(sampler, 0);
                 context.SetRenderTarget(mipChainRTVs[i], null);
                 downsample.Draw(context, mipChainRTVs[i].Viewport);
                 context.ClearState();
@@ -149,21 +146,12 @@
             for (int i = mipChainRTVs.Length - 1; i > 0; i--)
             {
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
-                context.SetShaderResource(mipChainSRVs[i], ShaderStage.Pixel, 0);
+                context.PSSetShaderResource(mipChainSRVs[i], 0);
+                context.PSSetConstantBuffer(upsampleCB, 0);
+                context.PSSetSampler(sampler, 0);
                 upsample.Draw(context, mipChainRTVs[i - 1].Viewport);
             }
             context.ClearState();
-        }
-
-        public void DrawSettings()
-        {
-            if (ImGui.CollapsingHeader("Bloom settings"))
-            {
-                if (ImGui.InputFloat("Radius", ref radius))
-                {
-                    dirty = true;
-                }
-            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -180,6 +168,7 @@
                 upsample.Dispose();
                 downsampleCB.Dispose();
                 upsampleCB.Dispose();
+                sampler.Dispose();
                 disposedValue = true;
             }
         }

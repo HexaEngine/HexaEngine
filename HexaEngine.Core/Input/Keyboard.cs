@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System;

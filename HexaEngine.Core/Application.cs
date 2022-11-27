@@ -1,12 +1,9 @@
 ﻿namespace HexaEngine.Core
 {
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Text;
 
     public static unsafe class Application
     {

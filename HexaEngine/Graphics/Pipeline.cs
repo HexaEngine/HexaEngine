@@ -69,10 +69,13 @@
             initialized = true;
         }
 
+        [Obsolete]
         public List<BoundConstant> Constants => constants;
 
+        [Obsolete]
         public List<BoundResource> Resources => resources;
 
+        [Obsolete]
         public List<BoundSampler> Samplers => samplers;
 
         public PipelineDesc Description => desc;
