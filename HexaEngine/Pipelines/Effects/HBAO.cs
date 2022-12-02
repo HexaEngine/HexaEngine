@@ -165,6 +165,7 @@
             context.PSSetConstantBuffers(blurCBs, 1, 0);
             context.PSSetSampler(samplerLinear, 0);
             quad.DrawAuto(context, blurPipeline, Output.Viewport);
+            context.ClearState();
         }
 
         protected virtual void Dispose(bool disposing)

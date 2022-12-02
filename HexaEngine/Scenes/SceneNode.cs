@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
+    using System.Text.Json.Serialization;
 
     public class SceneNode
     {
@@ -25,6 +26,8 @@
         private bool isSelected;
         private static SceneNode? selectedNode;
         private GCHandle gcHandle;
+
+        [JsonIgnore]
         public readonly IntPtr Pointer;
 
         public SceneNode()
@@ -50,6 +53,7 @@
             }
         }
 
+        [JsonIgnore]
         public virtual SceneNode? Parent
         {
             get => parent;
@@ -59,11 +63,13 @@
             }
         }
 
+        [JsonIgnore]
         public static SceneNode? SelectedNode
         {
             get => selectedNode;
         }
 
+        [JsonIgnore]
         public bool IsSelected
         {
             get => isSelected;
@@ -84,12 +90,16 @@
             }
         }
 
+        [JsonInclude]
         public virtual IReadOnlyList<SceneNode> Children => children;
 
+        [JsonInclude]
         public virtual IReadOnlyList<IComponent> Components => components;
 
+        [JsonInclude]
         public virtual IReadOnlyList<int> Meshes => meshes;
 
+        [JsonIgnore]
         public bool Initialized => initialized;
 
         public void SaveState()
@@ -294,6 +304,7 @@
 
         private IPropertyEditor? editor;
 
+        [JsonIgnore]
         public virtual IPropertyEditor Editor
         {
             get

@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
-    using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Rendering.ConstantBuffers;
     using HexaEngine.Resources;
@@ -15,7 +14,7 @@
         private readonly ResourceManager manager;
         private RenderTextureArray gbuffers;
         private IDepthStencilView dsv;
-        private PrepassShader shader;
+        private GeometryPass shader;
 
         public PrePass(ResourceManager manager)
         {
@@ -31,7 +30,7 @@
         public void Initialize(IGraphicsDevice device, int width, int height, RenderPassCollection passes)
         {
             shader = new(device);
-            shader.Constants.Add(new(passes.GetSharedBuffer<CBCamera>(), ShaderStage.Domain, 1));
+            shader.Camera = passes.GetSharedBuffer<CBCamera>();
             gbuffers = new(device, width, height, 8);
             passes.AddSharedShaderViews("GBUFFER", gbuffers.SRVs);
             dsv = passes.GetSharedDepthView("SWAPCHAIN");

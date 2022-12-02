@@ -253,7 +253,7 @@ namespace HexaEngine.Editor
                     {
                         RenderTexture val = (RenderTexture)value.Item2;
                         if (val != null)
-                            ImGui.Image(ImGuiRenderer.TryRegisterTexture(val.ResourceView), new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
+                            ImGui.Image(val.ResourceView.NativePointer, new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
                         return (false, null);
                     }));
                     continue;

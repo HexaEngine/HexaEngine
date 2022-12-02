@@ -2,9 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Mathematics;
 
-    public class OSMPipeline : Pipeline
+    public unsafe class OSMPipeline : Pipeline
     {
+        public IBuffer? View;
+        public IBuffer? Light;
+
         public OSMPipeline(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "forward/osm/vs.hlsl",
@@ -12,6 +16,13 @@
             DomainShader = "forward/osm/ds.hlsl",
             GeometryShader = "forward/osm/gs.hlsl",
             PixelShader = "forward/osm/ps.hlsl",
+        },
+        new PipelineState()
+        {
+            DepthStencil = DepthStencilDescription.Default,
+            Rasterizer = RasterizerDescription.CullFront,
+            Blend = BlendDescription.Opaque,
+            Topology = PrimitiveTopology.PatchListWith3ControlPoints,
         },
         new InputElementDescription[]
         {
@@ -23,20 +34,19 @@
                 new("INSTANCED_MATS", 1, Format.RGBA32Float, 16, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 2, Format.RGBA32Float, 32, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 3, Format.RGBA32Float, 48, 1, InputClassification.PerInstanceData, 1),
+        },
+        new ShaderMacro[]
+        {
+            new("INSTANCED", 1)
         })
         {
-            State = new()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.PatchListWith3ControlPoints,
-            };
         }
 
-        protected override ShaderMacro[] GetShaderMacros()
+        protected override void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
-            return new ShaderMacro[] { new("INSTANCED", 1) };
+            base.BeginDraw(context, viewport);
+            context.GSSetConstantBuffer(View, 0);
+            context.PSSetConstantBuffer(Light, 0);
         }
     }
 }

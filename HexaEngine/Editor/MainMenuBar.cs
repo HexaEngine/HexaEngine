@@ -38,6 +38,14 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
+                    if (ImGui.MenuItem("Export"))
+                    {
+                        if (SceneManager.Current != null)
+                        {
+                            SceneSerializer.Serialize(SceneManager.Current);
+                        }
+                    }
+
                     if (ImGui.MenuItem("Import"))
                     {
                         filePickerIsOpen = true;

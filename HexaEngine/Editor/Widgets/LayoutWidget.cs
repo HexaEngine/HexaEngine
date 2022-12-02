@@ -34,6 +34,7 @@
                 if (attr == null) continue;
                 cache.Add(attr.Name, attr);
             }
+            cache.Add("Node", new EditorNodeAttribute("Node", typeof(SceneNode), () => new SceneNode(), x => x is SceneNode));
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 

@@ -53,6 +53,7 @@
             context.VSSetConstantBuffers(cbs, 2, 0);
             context.PSSetShaderResource(Env, 0);
             sphere.DrawAuto(context, pipeline, Output.Viewport);
+            context.ClearState();
         }
 
         public void Dispose()

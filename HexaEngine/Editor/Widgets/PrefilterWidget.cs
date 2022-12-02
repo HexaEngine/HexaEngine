@@ -45,7 +45,6 @@
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
             prefilterFilter = new(device);
-            prefilterFilter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
         }
 
         public override void Dispose()
@@ -58,11 +57,6 @@
 
         private void DiscardIrradiance()
         {
-            if (pfSRV != null)
-                for (int i = 0; i < 6; i++)
-                {
-                    ImGuiRenderer.UnregisterTexture(pfSRV.Views[i]);
-                }
             pfRTV?.Dispose();
             pfRTV = null;
             pfSRV?.Dispose();
@@ -89,8 +83,7 @@
 
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeEffect filter = new(device);
-                    filter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
-                    filter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
+                    filter.Source = source.ResourceView;
                     RenderTexture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA32Float));
                     var cu = cube1.CreateRTVArray(device);
                     filter.Targets = cu;
@@ -103,7 +96,6 @@
                     ImGuiConsole.Log(LogSeverity.Log, "Exported environment ... ./env_o.dds");
                     cu.Dispose();
                     source.Dispose();
-                    filter.Samplers.Clear();
                     filter.Dispose();
                     return cube1;
 
@@ -174,11 +166,10 @@
                         pfRTV = prefilterTex.CreateRTVArray(device);
                         pfSRV = prefilterTex.CreateSRVArray(device);
                         prefilterFilter.Targets = pfRTV;
-                        prefilterFilter.Resources.Clear();
-                        prefilterFilter.Resources.Add(new(environmentTex?.ResourceView, ShaderStage.Pixel, 0));
+                        prefilterFilter.Source = environmentTex?.ResourceView;
                         for (int i = 0; i < 6; i++)
                         {
-                            pfIds[i] = ImGuiRenderer.RegisterTexture(pfSRV.Views[i]);
+                            pfIds[i] = pfSRV.Views[i].NativePointer;
                         }
                         steps = 6 * (pfSize / pfTileSize) * (pfSize / pfTileSize);
 

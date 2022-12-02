@@ -6,7 +6,6 @@
     using HexaEngine.Cameras;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Input;
     using HexaEngine.Editor;
     using HexaEngine.Lights;
     using HexaEngine.Objects;
@@ -17,6 +16,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using System.Text.Json.Serialization;
 
     public struct NodePtr
     {
@@ -36,12 +36,16 @@
         private readonly List<IScript> scripts = new();
         private readonly SemaphoreSlim semaphore = new(1);
 
+        [JsonIgnore]
         public readonly ConcurrentQueue<SceneCommand> CommandQueue = new();
 
+        [JsonIgnore]
         public Simulation Simulation;
 
+        [JsonIgnore]
         public BufferPool BufferPool;
 
+        [JsonIgnore]
         public ThreadDispatcher ThreadDispatcher;
 
         private readonly SceneNode root;
@@ -55,20 +59,26 @@
 
         public string Name { get; }
 
+        [JsonIgnore]
         public SceneDispatcher Dispatcher { get; } = new();
 
         public IReadOnlyList<Camera> Cameras => cameras;
 
         public IReadOnlyList<Light> Lights => lights;
 
+        [JsonIgnore]
         public IReadOnlyList<Mesh> Meshes => meshes;
 
+        [JsonIgnore]
         public IReadOnlyList<Material> Materials => materials;
 
+        [JsonIgnore]
         public IReadOnlyList<IScript> Scripts => scripts;
 
+        [JsonIgnore]
         public IReadOnlyList<SceneNode> Nodes => nodes;
 
+        [JsonIgnore]
         public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
 
         public SceneNode Root => root;

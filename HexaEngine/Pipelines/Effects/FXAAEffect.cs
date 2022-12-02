@@ -1,41 +1,58 @@
 ﻿namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects.Primitives;
-    using System.Collections.Generic;
 
-    public class FXAA : Effect
+    public class FXAA : IEffect
     {
-        public FXAA(IGraphicsDevice device) : base(device, new()
+        private readonly Quad quad;
+        private readonly Pipeline pipeline;
+        private readonly ISamplerState sampler;
+
+        public IRenderTargetView? Output;
+        public IShaderResourceView? Source;
+
+        public FXAA(IGraphicsDevice device)
         {
-            VertexShader = "effects/fxaa/vs.hlsl",
-            PixelShader = "effects/fxaa/ps.hlsl"
-        })
-        {
-            AutoClear = true;
-            Mesh = new Quad(device);
-            TargetType = PinType.Texture2D;
-            ResourceSlots.Add((0, "Image", PinType.Texture2D));
+            quad = new Quad(device);
+            pipeline = new(device, new()
+            {
+                VertexShader = "effects/fxaa/vs.hlsl",
+                PixelShader = "effects/fxaa/ps.hlsl"
+            });
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
         }
 
-        public override void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context)
         {
-#nullable disable
-            DrawAuto(context, Target.Viewport);
-#nullable enable
+            if (Output == null) return;
+            context.ClearRenderTargetView(Output, default);
+            context.SetRenderTarget(Output, default);
+            context.PSSetShaderResource(Source, 0);
+            context.PSSetSampler(sampler, 0);
+            quad.DrawAuto(context, pipeline, Output.Viewport);
+            context.ClearState();
         }
 
         public void Draw(IGraphicsContext context, Viewport viewport)
         {
-            DrawAuto(context, viewport);
+            if (Output == null) return;
+            context.ClearRenderTargetView(Output, default);
+            context.SetRenderTarget(Output, default);
+            context.PSSetShaderResource(Source, 0);
+            context.PSSetSampler(sampler, 0);
+            quad.DrawAuto(context, pipeline, viewport);
+            context.ClearState();
         }
 
-        public override void DrawSettings()
+        public void Dispose()
         {
-            throw new NotImplementedException();
+            quad.Dispose();
+            pipeline.Dispose();
+            sampler.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

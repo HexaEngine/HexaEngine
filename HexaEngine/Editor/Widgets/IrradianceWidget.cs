@@ -43,7 +43,6 @@
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
             irradianceFilter = new(device);
-            irradianceFilter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
         }
 
         public override void Dispose()
@@ -56,11 +55,6 @@
 
         private void DiscardIrradiance()
         {
-            if (irrSRV != null)
-                for (int i = 0; i < 6; i++)
-                {
-                    ImGuiRenderer.UnregisterTexture(irrSRV.Views[i]);
-                }
             irrRTV?.Dispose();
             irrRTV = null;
             irrSRV?.Dispose();
@@ -87,8 +81,7 @@
 
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeEffect filter = new(device);
-                    filter.Resources.Add(new(source.ResourceView, ShaderStage.Pixel, 0));
-                    filter.Samplers.Add(new(samplerState, ShaderStage.Pixel, 0));
+                    filter.Source = source.ResourceView;
                     RenderTexture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA32Float));
                     var cu = cube1.CreateRTVArray(device);
                     filter.Targets = cu;
@@ -101,7 +94,6 @@
                     ImGuiConsole.Log(LogSeverity.Log, "Exported environment ... ./env_o.dds");
                     cu.Dispose();
                     source.Dispose();
-                    filter.Samplers.Clear();
                     filter.Dispose();
                     return cube1;
 
@@ -153,11 +145,10 @@
                         irrRTV = irradianceTex.CreateRTVArray(device);
                         irrSRV = irradianceTex.CreateSRVArray(device);
                         irradianceFilter.Targets = irrRTV;
-                        irradianceFilter.Resources.Clear();
-                        irradianceFilter.Resources.Add(new(environmentTex?.ResourceView, ShaderStage.Pixel, 0));
+                        irradianceFilter.Source = environmentTex?.ResourceView;
                         for (int i = 0; i < 6; i++)
                         {
-                            irrIds[i] = ImGuiRenderer.RegisterTexture(irrSRV.Views[i]);
+                            irrIds[i] = irrSRV.Views[i].NativePointer;
                         }
                         steps = 6 * (irradianceSize / irrTileSize) * (irradianceSize / irrTileSize);
 

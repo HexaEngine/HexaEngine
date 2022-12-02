@@ -16,7 +16,6 @@ namespace HexaEngine.Rendering
         {
             this.window = window;
             window.MouseButtonInput += MouseButtonInput;
-            window.MouseWheelInput += MouseWheelInput;
             window.KeyboardInput += KeyboardInput;
             window.KeyboardCharInput += KeyboardCharInput;
             InitKeyMap();
@@ -32,13 +31,6 @@ namespace HexaEngine.Rendering
         {
             var io = ImGui.GetIO();
             io.AddKeyEvent(KeycodeToImGuiKey(e.KeyCode), e.KeyState == KeyState.Pressed);
-        }
-
-        private void MouseWheelInput(object? sender, Core.Input.Events.MouseWheelEventArgs e)
-        {
-            var io = ImGui.GetIO();
-            io.MouseWheel = e.Y;
-            io.MouseWheelH = e.X;
         }
 
         private void MouseButtonInput(object? sender, Core.Input.Events.MouseButtonEventArgs e)
@@ -81,6 +73,9 @@ namespace HexaEngine.Rendering
                 lastCursor = mouseCursor;
                 UpdateMouseCursor();
             }
+
+            io.MouseWheel = Mouse.DeltaWheel.Y;
+            io.MouseWheelH = Mouse.DeltaWheel.X;
         }
 
         private void UpdateKeyModifiers()

@@ -175,6 +175,7 @@
             };
         }
 
+        /*
         public Node CreateFromPipeline<T>(T pipeline, string name, bool removable = true, bool isStatic = false) where T : Pipeline
         {
             Node node = new(this, name, removable, isStatic);
@@ -239,6 +240,7 @@
 
             return node;
         }
+        */
 
         public void Draw()
         {

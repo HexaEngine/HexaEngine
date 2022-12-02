@@ -18,6 +18,10 @@
                 new("INSTANCED_MATS", 1, Format.RGBA32Float, 16, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 2, Format.RGBA32Float, 32, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 3, Format.RGBA32Float, 48, 1, InputClassification.PerInstanceData, 1),
+        },
+        new ShaderMacro[]
+        {
+            new("INSTANCED", 1)
         })
         {
             State = new()
@@ -27,11 +31,6 @@
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.LineList,
             };
-        }
-
-        protected override ShaderMacro[] GetShaderMacros()
-        {
-            return new ShaderMacro[] { new("INSTANCED", 1) };
         }
     }
 
@@ -53,6 +52,10 @@
                 new("INSTANCED_MATS", 1, Format.RGBA32Float, 16, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 2, Format.RGBA32Float, 32, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 3, Format.RGBA32Float, 48, 1, InputClassification.PerInstanceData, 1),
+        },
+        new ShaderMacro[]
+        {
+            new("INSTANCED", 1)
         })
         {
             State = new()
@@ -62,11 +65,6 @@
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
             };
-        }
-
-        protected override ShaderMacro[] GetShaderMacros()
-        {
-            return new ShaderMacro[] { new("INSTANCED", 1) };
         }
     }
 }

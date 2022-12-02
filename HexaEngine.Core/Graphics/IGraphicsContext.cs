@@ -35,41 +35,17 @@
 
         public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
 
-        [Obsolete("Use stage specific methods instead, due to overhead")]
-        public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot);
-
-        [Obsolete("Use stage specific methods instead, due to overhead")]
-        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot);
-
         public void VSSetConstantBuffer(IBuffer? constantBuffer, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void VSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
 
         public void HSSetConstantBuffer(IBuffer? constantBuffer, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void HSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
-
         public void DSSetConstantBuffer(IBuffer? constantBuffer, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void DSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
 
         public void GSSetConstantBuffer(IBuffer? constantBuffer, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void GSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
-
         public void PSSetConstantBuffer(IBuffer? constantBuffer, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void PSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
-
         public void CSSetConstantBuffer(IBuffer? constantBuffer, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void CSSetConstantBuffers(IBuffer[] constantBuffers, int slot);
 
         unsafe void VSSetConstantBuffers(void** constantBuffers, uint count, int slot);
 
@@ -83,41 +59,29 @@
 
         unsafe void CSSetConstantBuffers(void** constantBuffers, uint count, int slot);
 
-        [Obsolete("Use stage specific methods instead, due to overhead")]
-        public void SetShaderResource(IShaderResourceView? shaderResourceView, ShaderStage stage, int slot);
-
-        [Obsolete("Use stage specific methods instead, due to overhead")]
-        public void SetShaderResources(IShaderResourceView[] shaderResourceViews, ShaderStage stage, int slot);
-
         public void VSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void VSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+        unsafe void VSSetShaderResource(void* shaderResourceView, int slot);
 
         public void HSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void HSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+        unsafe void HSSetShaderResource(void* shaderResourceView, int slot);
 
         public void DSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void DSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+        unsafe void DSSetShaderResource(void* shaderResourceView, int slot);
 
         public void GSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void GSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+        unsafe void GSSetShaderResource(void* shaderResourceView, int slot);
 
         public void PSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void PSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
+        public unsafe void PSSetShaderResource(void* shaderResourceView, int slot);
+
+        unsafe void CSSetShaderResource(void* shaderResourceView, int slot);
 
         public void CSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        public void CSSetShaderResources(IShaderResourceView[] shaderResourceViews, int slot);
 
         unsafe void VSSetShaderResources(void** shaderResourceViews, uint count, int slot);
 
@@ -131,41 +95,17 @@
 
         unsafe void CSSetShaderResources(void** shaderResourceViews, uint count, int slot);
 
-        [Obsolete("Use stage specific methods instead, due to overhead")]
-        void SetSampler(ISamplerState? sampler, ShaderStage stage, int slot);
-
-        [Obsolete("Use stage specific methods instead, due to overhead")]
-        void SetSamplers(ISamplerState[] samplers, ShaderStage stage, int slot);
-
         void VSSetSampler(ISamplerState? sampler, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        void VSSetSamplers(ISamplerState[] samplers, int slot);
 
         void HSSetSampler(ISamplerState? sampler, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        void HSSetSamplers(ISamplerState[] samplers, int slot);
-
         void DSSetSampler(ISamplerState? sampler, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        void DSSetSamplers(ISamplerState[] samplers, int slot);
 
         void GSSetSampler(ISamplerState? sampler, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        void GSSetSamplers(ISamplerState[] samplers, int slot);
-
         void PSSetSampler(ISamplerState? sampler, int slot);
 
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        void PSSetSamplers(ISamplerState[] samplers, int slot);
-
         void CSSetSampler(ISamplerState? sampler, int slot);
-
-        [Obsolete("Use unsafe methods instead due to GC Pressure")]
-        void CSSetSamplers(ISamplerState[] samplers, int slot);
 
         unsafe void VSSetSamplers(void** samplers, uint count, int slot);
 

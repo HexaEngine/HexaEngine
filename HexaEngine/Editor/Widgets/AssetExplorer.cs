@@ -100,6 +100,10 @@
                 {
                     task = loader.OpenAsync(SelectedFile);
                 }
+                if (extension == ".obj")
+                {
+                    task = loader.OpenAsync(SelectedFile);
+                }
             }
         }
 

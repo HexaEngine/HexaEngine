@@ -14,6 +14,8 @@
     {
         private readonly IBuffer mvpBuffer;
         private readonly IBuffer rghbuffer;
+        private readonly ISamplerState sampler;
+        public IShaderResourceView? Source;
 
         public struct CubeFaceCamera
         {
@@ -74,8 +76,9 @@
         {
             AutoSetTarget = false;
             SetViewPoint(Vector3.Zero);
-            mvpBuffer = CreateConstantBuffer<ViewProj>(ShaderStage.Vertex, 0);
-            rghbuffer = CreateConstantBuffer<RoughnessBuffer>(ShaderStage.Pixel, 0);
+            mvpBuffer = device.CreateBuffer(new ViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            rghbuffer = device.CreateBuffer(new RoughnessBuffer(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
             Mesh = new Cube(device);
             State = new()
             {
@@ -94,6 +97,10 @@
             {
                 context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
                 Targets.ClearAndSetTarget(context, i);
+                context.VSSetConstantBuffer(mvpBuffer, 0);
+                context.PSSetConstantBuffer(rghbuffer, 0);
+                context.PSSetShaderResource(Source, 0);
+                context.PSSetSampler(sampler, 0);
                 base.DrawAuto(context, Targets.Viewport);
             }
         }
@@ -105,6 +112,10 @@
             context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
             context.SetScissorRect(x, y, xsize + x, ysize + y);
             Targets.SetTarget(context, i);
+            context.VSSetConstantBuffer(mvpBuffer, 0);
+            context.PSSetConstantBuffer(rghbuffer, 0);
+            context.PSSetShaderResource(Source, 0);
+            context.PSSetSampler(sampler, 0);
             base.DrawAuto(context, Targets.Viewport);
         }
 

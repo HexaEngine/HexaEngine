@@ -21,6 +21,7 @@
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using HexaEngine.Windows;
+    using ImGuiNET;
     using System;
     using System.Numerics;
 
@@ -45,11 +46,10 @@
         private IBuffer lightBuffer;
         private ConstantBuffer<CBWorld> skyboxBuffer;
         private IBuffer tesselationBuffer;
-        private PrepassShader materialShader;
+        private GeometryPass geometry;
         private MTLDepthShaderBack materialDepthBackface;
         private MTLDepthShaderFront materialDepthFrontface;
         private PrincipledBSDF light;
-        private FlatPipeline flatlightShader;
         private Skybox skybox;
 
         private DepthBuffer depthStencil;
@@ -120,6 +120,10 @@
             return
             Task.Factory.StartNew(() =>
             {
+                unsafe
+                {
+                    Zero(lights);
+                }
                 configKey = Config.Global.GetOrCreateKey("Renderer");
                 renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
 
@@ -188,7 +192,7 @@
                 csmDepthBuffer = new(device, TextureDescription.CreateTexture2DArrayWithRTV(4096, 4096, 3, 1, Format.R32Float), DepthStencilDesc.Default);
                 csmMvpBuffer = device.CreateBuffer(new Matrix4x4[16], BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
                 csmPipeline = new(device);
-                csmPipeline.Constants.Add(new(csmMvpBuffer, ShaderStage.Geometry, 0));
+                csmPipeline.View = csmMvpBuffer;
 
                 osmDepthBuffers = new RenderTexture[8];
                 osmSRVs = new IShaderResourceView[8];
@@ -201,8 +205,8 @@
                 osmBuffer = device.CreateBuffer(new Matrix4x4[6], BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
                 osmParamBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
                 osmPipeline = new(device);
-                osmPipeline.Constants.Add(new(osmBuffer, ShaderStage.Geometry, 0));
-                osmPipeline.Constants.Add(new(osmParamBuffer, ShaderStage.Pixel, 0));
+                osmPipeline.View = osmBuffer;
+                osmPipeline.Light = osmParamBuffer;
 
                 psmDepthBuffers = new RenderTexture[8];
                 psmSRVs = new IShaderResourceView[8];
@@ -214,20 +218,14 @@
 
                 psmBuffer = device.CreateBuffer(new Matrix4x4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
                 psmPipeline = new(device);
-                psmPipeline.Constants.Add(new(psmBuffer, ShaderStage.Domain, 1));
+                psmPipeline.View = psmBuffer;
 
-                materialShader = new(device);
-                materialShader.Constants.Add(new(cameraBuffer.Buffer, ShaderStage.Domain, 1));
+                geometry = new(device);
+                geometry.Camera = cameraBuffer.Buffer;
                 materialDepthBackface = new(device);
-                materialDepthBackface.Constants.Add(new(cameraBuffer.Buffer, ShaderStage.Domain, 1));
+                materialDepthBackface.Camera = cameraBuffer.Buffer;
                 materialDepthFrontface = new(device);
-                materialDepthFrontface.Constants.Add(new(cameraBuffer.Buffer, ShaderStage.Domain, 1));
-
-                flatlightShader = new(device);
-                flatlightShader.Constants.Add(new(lightBuffer, ShaderStage.Pixel, 0));
-                flatlightShader.Constants.Add(new(cameraBuffer.Buffer, ShaderStage.Pixel, 1));
-                flatlightShader.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
-                flatlightShader.Samplers.Add(new(anisoSampler, ShaderStage.Pixel, 1));
+                materialDepthFrontface.Camera = cameraBuffer.Buffer;
 
                 gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA32Float);
                 depthStencil = new DepthBuffer(device, new(width, height, 1, Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
@@ -278,9 +276,8 @@
 
                 fxaaBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
                 fxaa = new(device);
-                fxaa.Target = swapChain.BackbufferRTV;
-                fxaa.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
-                fxaa.Samplers.Add(new(anisoSampler, ShaderStage.Pixel, 0));
+                fxaa.Output = swapChain.BackbufferRTV;
+                fxaa.Source = fxaaBuffer.ResourceView;
 
                 tonemapBuffer = new(device, null, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
                 tonemap = new(device);
@@ -393,9 +390,8 @@
             light.Resize();
 
             fxaaBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            fxaa.Target = swapChain.BackbufferRTV;
-            fxaa.Resources.Clear();
-            fxaa.Resources.Add(new(fxaaBuffer.ResourceView, ShaderStage.Pixel, 0));
+            fxaa.Output = swapChain.BackbufferRTV;
+            fxaa.Source = fxaaBuffer.ResourceView;
 
             tonemapBuffer = new(device, dsv, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             tonemap.Output = fxaaBuffer.RenderTargetView;
@@ -524,7 +520,7 @@
                 {
                     mesh.UpdateInstanceBuffer(context);
                     context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
-                    mesh.DrawAuto(context, materialShader, gbuffers.Viewport);
+                    mesh.DrawAuto(context, geometry, gbuffers.Viewport);
                 }
             }
 
@@ -542,7 +538,6 @@
                 }
             }
 
-            Zero(lights);
             CBLight.Update(lights, scene.Lights);
 
             uint pointsd = 0;
@@ -629,38 +624,53 @@
 
             // SSAO Pass
             ssao.Draw(context);
-            context.ClearState();
 
             // Light Pass
             light.Draw(context);
-            context.ClearState();
 
+            // Screen Space Reflections
             ssr.Draw(context);
 
+            // Skybox
             skybox.Draw(context);
-            context.ClearState();
 
+            // Depth of field
             dof.Draw(context);
 
+            // Eye adaptation
             autoExposure.Draw(context);
 
+            // Bloom
             bloom.Draw(context);
-            context.ClearState();
 
+            // Compose and Tonemap
             tonemap.Draw(context);
-            context.ClearState();
 
+            // FXAA
             fxaa.Draw(context, viewport);
-            context.ClearState();
 
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             DebugDraw.Render(camera, viewport);
         }
 
-        public void DrawSettings()
-        {/*
-            if (!initialized) return;
+        private float zoom = 1;
 
+        public void DrawSettings()
+        {
+            if (!initialized) return;
+            var size = ImGui.GetWindowContentRegionMax();
+            size.Y = size.X / 16 * 9;
+            ImGui.DragFloat("Zoom", ref zoom, 0.01f, 0, 1);
+            if (ImGui.CollapsingHeader("Color"))
+                ImGui.Image(gbuffers.SRVs[0].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+
+            if (ImGui.CollapsingHeader("Position"))
+                ImGui.Image(gbuffers.SRVs[1].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+
+            if (ImGui.CollapsingHeader("Normals"))
+                ImGui.Image(gbuffers.SRVs[2].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+
+            /*
             {
                 if (ImGui.InputFloat("Render Resolution", ref renderResolution, 0, 0, "%.3f", ImGuiInputTextFlags.EnterReturnsTrue))
                 {
@@ -742,11 +752,10 @@
                 skyboxBuffer.Dispose();
                 tesselationBuffer.Dispose();
                 quad.Dispose();
-                materialShader.Dispose();
+                geometry.Dispose();
                 materialDepthBackface.Dispose();
                 materialDepthFrontface.Dispose();
                 light.Dispose();
-                flatlightShader.Dispose();
                 skybox.Dispose();
                 gbuffers.Dispose();
 

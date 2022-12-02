@@ -68,6 +68,7 @@
             context.PSSetSampler(sampler, 0);
             context.PSSetShaderResources(srvs, 2, 0);
             quad.DrawAuto(context, pipeline, Output.Viewport);
+            context.ClearState();
         }
 
         public void Dispose()

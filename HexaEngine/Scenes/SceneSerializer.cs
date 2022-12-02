@@ -3,18 +3,20 @@
     using System.Buffers.Binary;
     using System.Runtime.InteropServices;
     using System.Text;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
 
     public unsafe class SceneSerializer
     {
-        public void Serialize(Scene scene, Span<byte> dest)
+        public static void Serialize(Scene scene)
         {
-            int idx = 0;
-            BinaryPrimitives.WriteInt32LittleEndian(dest, scene.Nodes.Count);
-            idx += 4;
-            for (int i = 0; i < scene.Nodes.Count; i++)
-            {
-                SceneNode node = scene.Nodes[i];
-            }
+            JsonSerializerOptions options = new(JsonSerializerDefaults.Web);
+            options.IncludeFields = true;
+            options.WriteIndented = true;
+            options.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+            options.UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement;
+
+            File.WriteAllText("scene.json", JsonSerializer.Serialize(scene, typeof(Scene), options));
         }
 
         public void Deserialize(Scene scene)

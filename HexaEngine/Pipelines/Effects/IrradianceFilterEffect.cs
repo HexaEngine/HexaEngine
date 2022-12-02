@@ -10,6 +10,8 @@
     public class IrradianceFilterEffect : Effect
     {
         private readonly IBuffer mvpBuffer;
+        private readonly ISamplerState sampler;
+        public IShaderResourceView Source;
 
         public struct CubeFaceCamera
         {
@@ -62,7 +64,8 @@
         {
             AutoSetTarget = false;
             SetViewPoint(Vector3.Zero);
-            mvpBuffer = CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
+            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write); //CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
             Mesh = new Cube(device);
             State = new()
             {
@@ -91,6 +94,9 @@
                     {
                         context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
                         context.SetScissorRect(x, y, x + xTileSize, y + yTileSize);
+                        context.VSSetConstantBuffer(mvpBuffer, 0);
+                        context.PSSetSampler(sampler, 0);
+                        context.PSSetShaderResource(Source, 0);
                         Targets.SetTarget(context, i);
                         base.DrawAuto(context, Targets.Viewport);
                     }
@@ -105,6 +111,9 @@
 
             context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
             context.SetScissorRect(x, y, x + xSize, y + ySize);
+            context.VSSetConstantBuffer(mvpBuffer, 0);
+            context.PSSetSampler(sampler, 0);
+            context.PSSetShaderResource(Source, 0);
             Targets.SetTarget(context, i);
             base.DrawAuto(context, Targets.Viewport);
         }

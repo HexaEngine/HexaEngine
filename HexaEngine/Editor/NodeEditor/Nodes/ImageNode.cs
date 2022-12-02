@@ -27,35 +27,14 @@
             get => image;
             set
             {
-                if (image != null)
-                {
-                    image.OnDisposed -= OnDisposed;
-                    ImGuiRenderer.UnregisterTexture(image);
-                }
-
                 if (value == null)
                 {
                     image = value;
-                }
-                else
-                {
-                    image = value;
-                    value.OnDisposed += OnDisposed;
-                    imgId = ImGuiRenderer.RegisterTexture(value);
                 }
             }
         }
 
         public Vector2 Size = new(128, 128);
-
-        private void OnDisposed(object? sender, EventArgs e)
-        {
-            if (sender is IShaderResourceView srv)
-            {
-                ImGuiRenderer.UnregisterTexture(srv);
-                srv.OnDisposed -= OnDisposed;
-            }
-        }
 
         protected override void DrawContent()
         {
@@ -83,35 +62,14 @@
             get => image;
             set
             {
-                if (image != null)
-                {
-                    image.OnDisposed -= OnDisposed;
-                    ImGuiRenderer.UnregisterTexture(image);
-                }
-
                 if (value == null)
                 {
                     image = value;
-                }
-                else
-                {
-                    image = value;
-                    value.OnDisposed += OnDisposed;
-                    imgId = ImGuiRenderer.RegisterTexture(value);
                 }
             }
         }
 
         public Vector2 Size = new(128, 128);
-
-        private void OnDisposed(object? sender, EventArgs e)
-        {
-            if (sender is IShaderResourceView srv)
-            {
-                ImGuiRenderer.UnregisterTexture(srv);
-                srv.OnDisposed -= OnDisposed;
-            }
-        }
 
         protected override void DrawContent()
         {

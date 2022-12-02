@@ -2,9 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Mathematics;
 
     public class CSMPipeline : Pipeline
     {
+        public IBuffer? View;
+
         public CSMPipeline(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "forward/csm/vs.hlsl",
@@ -23,6 +26,10 @@
                 new("INSTANCED_MATS", 1, Format.RGBA32Float, 16, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 2, Format.RGBA32Float, 32, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 3, Format.RGBA32Float, 48, 1, InputClassification.PerInstanceData, 1),
+        },
+        new ShaderMacro[]
+        {
+            new("INSTANCED", 1)
         })
         {
             State = new()
@@ -34,9 +41,10 @@
             };
         }
 
-        protected override ShaderMacro[] GetShaderMacros()
+        protected override void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
-            return new ShaderMacro[] { new("INSTANCED", 1) };
+            base.BeginDraw(context, viewport);
+            context.GSSetConstantBuffer(View, 0);
         }
     }
 }
