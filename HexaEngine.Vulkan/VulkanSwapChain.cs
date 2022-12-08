@@ -21,6 +21,7 @@
         public bool VSync { get; set; }
         public int TargetFPS { get; set; }
         public bool LimitFPS { get; set; }
+        public bool Active { get; set; }
 
         public event EventHandler? Resizing;
 

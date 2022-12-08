@@ -4,25 +4,24 @@
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
-    public class HBAO : IEffect
+    public unsafe class HBAO : IEffect
     {
         private readonly Quad quad;
         private readonly Pipeline hbaoPipeline;
         private readonly IBuffer cbHBAO;
         private HBAOParams hbaoParams = new();
         private ITexture2D hbaoBuffer;
-        private readonly IShaderResourceView[] hbaoSRVs;
-        private readonly IBuffer[] hbaoCBs;
+        private readonly void** hbaoSRVs;
+        private readonly void** hbaoCBs;
         private IShaderResourceView hbaoSRV;
         private IRenderTargetView hbaoRTV;
 
         private readonly Pipeline blurPipeline;
         private readonly IBuffer cbBlur;
         private BlurParams blurParams = new();
-        private readonly IShaderResourceView[] blurSRVs;
-        private readonly IBuffer[] blurCBs;
+        private readonly void** blurSRVs;
+        private readonly void** blurCBs;
 
         private readonly ISamplerState samplerLinear;
 
@@ -85,9 +84,9 @@
             hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width, height));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
-            hbaoSRVs = new IShaderResourceView[2];
-            hbaoCBs = new IBuffer[2];
-            hbaoCBs[0] = cbHBAO;
+            hbaoSRVs = AllocArray(2);
+            hbaoCBs = AllocArray(2); //new IBuffer[2];
+            hbaoCBs[0] = (void*)cbHBAO.NativePointer;
 
             blurPipeline = new(device, new()
             {
@@ -95,8 +94,10 @@
                 PixelShader = "effects/blur/hbao.hlsl",
             });
             cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            blurSRVs = new IShaderResourceView[1] { hbaoSRV };
-            blurCBs = new IBuffer[] { cbBlur };
+            blurSRVs = AllocArray(1);
+            blurSRVs[0] = (void*)hbaoSRV.NativePointer;
+            blurCBs = AllocArray(1);
+            blurCBs[0] = (void*)cbBlur.NativePointer;
 
             samplerLinear = device.CreateSamplerState(SamplerDescription.LinearClamp);
         }
@@ -129,16 +130,16 @@
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width, height));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
             blurParams.InvResolutionDirection = new(1 / width, 1 / height);
-            blurSRVs[0] = hbaoSRV;
+            blurSRVs[0] = (void*)hbaoSRV.NativePointer;
 
             hbaoParams.Res = new(width, height);
             hbaoParams.ResInv = new(1 / width, 1 / height);
 
 #nullable disable
-            hbaoSRVs[0] = Position;
-            hbaoSRVs[1] = Normal;
+            hbaoSRVs[0] = (void*)Position.NativePointer;
+            hbaoSRVs[1] = (void*)Normal.NativePointer;
 
-            hbaoCBs[1] = Camera;
+            hbaoCBs[1] = (void*)Camera.NativePointer;
 #nullable enable
             isDirty = true;
         }
@@ -154,26 +155,25 @@
             }
 
             context.SetRenderTarget(hbaoRTV, null);
-            context.PSSetShaderResources(hbaoSRVs, 0);
-            context.PSSetConstantBuffers(hbaoCBs, 0);
+            context.PSSetShaderResources(hbaoSRVs, 2, 0);
+            context.PSSetConstantBuffers(hbaoCBs, 2, 0);
             context.PSSetSampler(samplerLinear, 0);
             quad.DrawAuto(context, hbaoPipeline, hbaoRTV.Viewport);
 
             context.SetRenderTarget(Output, null);
-            context.PSSetShaderResources(blurSRVs, 0);
-            context.PSSetConstantBuffers(blurCBs, 0);
+            context.PSSetShaderResources(blurSRVs, 1, 0);
+            context.PSSetConstantBuffers(blurCBs, 1, 0);
             context.PSSetSampler(samplerLinear, 0);
             quad.DrawAuto(context, blurPipeline, Output.Viewport);
-        }
-
-        public void DrawSettings()
-        {
+            context.ClearState();
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
+                Free(hbaoCBs);
+                Free(blurCBs);
                 quad.Dispose();
                 hbaoPipeline.Dispose();
                 cbHBAO.Dispose();

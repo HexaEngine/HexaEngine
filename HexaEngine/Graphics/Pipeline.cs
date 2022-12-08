@@ -2,10 +2,8 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Mathematics;
     using System;
-    using System.Collections.Generic;
 
     public class Pipeline
     {
@@ -19,20 +17,27 @@
         private IDepthStencilState? depthStencilState;
         private IBlendState? blendState;
         private readonly PipelineDesc desc;
+        private readonly ShaderMacro[] macros;
         private PipelineState state = PipelineState.Default;
         private bool initialized;
         private readonly IGraphicsDevice device;
         private readonly InputElementDescription[]? inputElements;
-        private readonly List<BoundConstant> constants = new();
-        private readonly List<BoundResource> resources = new();
-        private readonly List<BoundSampler> samplers = new();
-        public readonly Dictionary<ShaderStage, ShaderInputBindDescription[]> inputs = new();
-        public SignatureParameterDescription[] output;
 
         public Pipeline(IGraphicsDevice device, PipelineDesc desc)
         {
             this.device = device;
             this.desc = desc;
+            macros = Array.Empty<ShaderMacro>();
+            Compile();
+            Reload += OnReload;
+            initialized = true;
+        }
+
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, ShaderMacro[] macros)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.macros = macros;
             Compile();
             Reload += OnReload;
             initialized = true;
@@ -43,6 +48,18 @@
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
+            macros = Array.Empty<ShaderMacro>();
+            Compile();
+            Reload += OnReload;
+            initialized = true;
+        }
+
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.inputElements = inputElements;
+            this.macros = macros;
             Compile();
             Reload += OnReload;
             initialized = true;
@@ -53,27 +70,46 @@
             this.device = device;
             this.desc = desc;
             this.state = state;
+            macros = Array.Empty<ShaderMacro>();
             Compile();
             Reload += OnReload;
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements, PipelineState state)
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state, ShaderMacro[] macros)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.state = state;
+            this.macros = macros;
+            Compile();
+            Reload += OnReload;
+            initialized = true;
+        }
+
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state, InputElementDescription[] inputElements)
         {
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             this.state = state;
+            macros = Array.Empty<ShaderMacro>();
             Compile();
             Reload += OnReload;
             initialized = true;
         }
 
-        public List<BoundConstant> Constants => constants;
-
-        public List<BoundResource> Resources => resources;
-
-        public List<BoundSampler> Samplers => samplers;
+        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        {
+            this.device = device;
+            this.desc = desc;
+            this.inputElements = inputElements;
+            this.state = state;
+            this.macros = macros;
+            Compile();
+            Reload += OnReload;
+            initialized = true;
+        }
 
         public PipelineDesc Description => desc;
 
@@ -87,11 +123,6 @@
                 depthStencilState = device.CreateDepthStencilState(value.DepthStencil);
                 blendState = device.CreateBlendState(value.Blend);
             }
-        }
-
-        protected virtual ShaderMacro[] GetShaderMacros()
-        {
-            return Array.Empty<ShaderMacro>();
         }
 
         #region Hotreload
@@ -129,12 +160,9 @@
 
         private void Compile()
         {
-            inputs.Clear();
-            ShaderMacro[] macros = GetShaderMacros();
             if (desc.VertexShader != null)
                 if (ShaderCache.GetShader(desc.VertexShader, macros, out var data))
                 {
-                    inputs.Add(ShaderStage.Vertex, device.GetInputBindDescriptions(new(data)));
                     vs = device.CreateVertexShader(data);
                     vs.DebugName = GetType().Name + nameof(vs);
                     if (inputElements == null)
@@ -151,7 +179,7 @@
                     {
                         return;
                     }
-                    inputs.Add(ShaderStage.Vertex, device.GetInputBindDescriptions(vBlob));
+
                     ShaderCache.CacheShader(desc.VertexShader, macros, vBlob);
                     vs = device.CreateVertexShader(vBlob.AsBytes());
                     vs.DebugName = GetType().Name + nameof(vs);
@@ -165,7 +193,6 @@
             if (desc.HullShader != null)
                 if (ShaderCache.GetShader(desc.HullShader, macros, out var data))
                 {
-                    inputs.Add(ShaderStage.Hull, device.GetInputBindDescriptions(new(data)));
                     hs = device.CreateHullShader(data);
                     hs.DebugName = GetType().Name + nameof(hs);
                 }
@@ -177,7 +204,7 @@
                     {
                         return;
                     }
-                    inputs.Add(ShaderStage.Hull, device.GetInputBindDescriptions(pBlob));
+
                     ShaderCache.CacheShader(desc.HullShader, macros, pBlob);
                     hs = device.CreateHullShader(pBlob);
                     hs.DebugName = GetType().Name + nameof(hs);
@@ -186,7 +213,6 @@
             if (desc.DomainShader != null)
                 if (ShaderCache.GetShader(desc.DomainShader, macros, out var data))
                 {
-                    inputs.Add(ShaderStage.Domain, device.GetInputBindDescriptions(new(data)));
                     ds = device.CreateDomainShader(data);
                     ds.DebugName = GetType().Name + nameof(ds);
                 }
@@ -198,7 +224,6 @@
                     {
                         return;
                     }
-                    inputs.Add(ShaderStage.Domain, device.GetInputBindDescriptions(pBlob));
                     ShaderCache.CacheShader(desc.DomainShader, macros, pBlob);
                     ds = device.CreateDomainShader(pBlob);
                     ds.DebugName = GetType().Name + nameof(ds);
@@ -207,7 +232,6 @@
             if (desc.GeometryShader != null)
                 if (ShaderCache.GetShader(desc.GeometryShader, macros, out var data))
                 {
-                    inputs.Add(ShaderStage.Geometry, device.GetInputBindDescriptions(new(data)));
                     gs = device.CreateGeometryShader(data);
                     gs.DebugName = GetType().Name + nameof(gs);
                 }
@@ -219,7 +243,6 @@
                     {
                         return;
                     }
-                    inputs.Add(ShaderStage.Geometry, device.GetInputBindDescriptions(pBlob));
                     ShaderCache.CacheShader(desc.GeometryShader, macros, pBlob);
                     gs = device.CreateGeometryShader(pBlob);
                     gs.DebugName = GetType().Name + nameof(gs);
@@ -228,8 +251,6 @@
             if (desc.PixelShader != null)
                 if (ShaderCache.GetShader(desc.PixelShader, macros, out var data))
                 {
-                    inputs.Add(ShaderStage.Pixel, device.GetInputBindDescriptions(new(data)));
-                    output = device.GetOutputBindDescriptions(new(data));
                     ps = device.CreatePixelShader(data);
                     ps.DebugName = GetType().Name + nameof(ps);
                 }
@@ -241,8 +262,6 @@
                     {
                         return;
                     }
-                    inputs.Add(ShaderStage.Pixel, device.GetInputBindDescriptions(pBlob));
-                    output = device.GetOutputBindDescriptions(pBlob);
                     ShaderCache.CacheShader(desc.PixelShader, macros, pBlob);
                     ps = device.CreatePixelShader(pBlob);
                     ps.DebugName = GetType().Name + nameof(ps);
@@ -252,19 +271,6 @@
 
         protected virtual void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
-            for (int i = 0; i < constants.Count; i++)
-            {
-                constants[i].Bind(context);
-            }
-            for (int i = 0; i < resources.Count; i++)
-            {
-                resources[i].Bind(context);
-            }
-            for (int i = 0; i < samplers.Count; i++)
-            {
-                samplers[i].Bind(context);
-            }
-
             context.VSSetShader(vs);
             context.HSSetShader(hs);
             context.DSSetShader(ds);
@@ -315,44 +321,9 @@
             EndDraw(context);
         }
 
-        protected unsafe IBuffer CreateConstantBuffer<T>(params ShaderBinding[] bindings) where T : unmanaged
-        {
-            var constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(T), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-            constants.Add(new(constantBuffer, bindings));
-            return constantBuffer;
-        }
-
-        protected unsafe IBuffer CreateConstantBuffer<T>(int count, params ShaderBinding[] bindings) where T : unmanaged
-        {
-            var constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(T) * count, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-            constants.Add(new(constantBuffer, bindings));
-            return constantBuffer;
-        }
-
-        protected unsafe IBuffer CreateConstantBuffer<T>(ShaderStage stage, int index) where T : unmanaged
-        {
-            var constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(T), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-            constants.Add(new(constantBuffer, new ShaderBinding(stage, index)));
-            return constantBuffer;
-        }
-
-        protected unsafe IBuffer CreateConstantBuffer<T>(int count, ShaderStage stage, int index) where T : unmanaged
-        {
-            var constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(T) * count, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-            constants.Add(new(constantBuffer, new ShaderBinding(stage, index)));
-            return constantBuffer;
-        }
-
         public virtual void Dispose()
         {
             Reload -= OnReload;
-
-            foreach (var constant in constants)
-                constant.Constant?.Dispose();
-            foreach (var resource in resources)
-                resource.Resource?.Dispose();
-            foreach (var sampler in samplers)
-                sampler.Sampler?.Dispose();
 
             if (vs is not null)
                 vs.Dispose();

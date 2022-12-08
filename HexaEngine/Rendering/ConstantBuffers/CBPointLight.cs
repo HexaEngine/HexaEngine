@@ -14,5 +14,16 @@
             Color = point.Color * point.Strength;
             Position = point.Transform.GlobalPosition;
         }
+
+        public void Update(PointLight point)
+        {
+            Color = point.Color * point.Strength;
+            Position = point.Transform.GlobalPosition;
+        }
+
+        public override string ToString()
+        {
+            return Color.ToString();
+        }
     }
 }

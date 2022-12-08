@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
-    using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Rendering.ConstantBuffers;
     using HexaEngine.Resources;
@@ -15,7 +14,7 @@
         private readonly ResourceManager manager;
         private RenderTextureArray gbuffers;
         private IDepthStencilView dsv;
-        private PrepassShader shader;
+        private GeometryPass shader;
 
         public PrePass(ResourceManager manager)
         {
@@ -31,7 +30,7 @@
         public void Initialize(IGraphicsDevice device, int width, int height, RenderPassCollection passes)
         {
             shader = new(device);
-            shader.Constants.Add(new(passes.GetSharedBuffer<CBCamera>(), ShaderStage.Domain, 1));
+            shader.Camera = passes.GetSharedBuffer<CBCamera>();
             gbuffers = new(device, width, height, 8);
             passes.AddSharedShaderViews("GBUFFER", gbuffers.SRVs);
             dsv = passes.GetSharedDepthView("SWAPCHAIN");
@@ -48,13 +47,13 @@
             }
         }
 
-        public void Draw(IGraphicsContext context, Scene scene, Viewport viewport)
+        public unsafe void Draw(IGraphicsContext context, Scene scene, Viewport viewport)
         {
             for (int i = 0; i < scene.Meshes.Count; i++)
             {
                 if (manager.GetMesh(scene.Meshes[i], out var mesh))
                 {
-                    context.SetRenderTargets(gbuffers.RTVs, dsv);
+                    context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
                     mesh.DrawAuto(context, shader, gbuffers.Viewport);
                 }
             }

@@ -85,7 +85,7 @@
                 {
                     if (messages[^1].Message.EndsWith(Environment.NewLine))
                     {
-                        messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now });
+                        messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
                         m_ScrollToBottom = true;
                     }
                     else
@@ -96,14 +96,14 @@
                     }
                 }
                 else
-                    messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now });
+                    messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
             }
 
             public override void WriteLine(string? message)
             {
                 if (message == null)
                     return;
-                messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now });
+                messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
                 m_ScrollToBottom = true;
             }
         }
@@ -139,7 +139,7 @@
         public static void Log(LogSeverity type, string msg)
         {
             if (Redirect) Debug.WriteLine(msg);
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -149,7 +149,7 @@
         public static void Log(Exception e)
         {
             if (Redirect) Debug.WriteLine(e);
-            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e.ToString(), Timestamp = DateTime.Now });
+            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e.ToString(), Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -160,7 +160,7 @@
         {
             await semaphore.WaitAsync();
             if (Redirect) Debug.WriteLine(msg);
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -178,7 +178,7 @@
                 type = LogSeverity.Warning;
             if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
                 type = LogSeverity.Warning;
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -196,7 +196,7 @@
                 type = LogSeverity.Warning;
             if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
                 type = LogSeverity.Warning;
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now });
+            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -309,7 +309,7 @@
 
                         // Draw time stamp.
                         ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[LogSeverity.Timestamp]);
-                        ImGui.Text(item.Timestamp.ToShortTimeString());
+                        ImGui.Text(item.Timestamp);
                         ImGui.PopStyleColor();
                     }
                 }

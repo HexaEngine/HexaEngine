@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.Reflection.Metadata;
+
     public struct ShaderBinding
     {
         public ShaderBinding(ShaderStage stage, int slot)
@@ -34,7 +36,33 @@
         {
             for (int i = 0; i < Bindings.Count; i++)
             {
-                context.SetShaderResource(Resource, Bindings[i].Stage, Bindings[i].Slot);
+                var binding = Bindings[i];
+                switch (binding.Stage)
+                {
+                    case ShaderStage.Vertex:
+                        context.VSSetShaderResource(Resource, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Hull:
+                        context.HSSetShaderResource(Resource, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Domain:
+                        context.DSSetShaderResource(Resource, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Geometry:
+                        context.GSSetShaderResource(Resource, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Pixel:
+                        context.PSSetShaderResource(Resource, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Compute:
+                        context.CSSetShaderResource(Resource, Bindings[i].Slot);
+                        break;
+                }
             }
         }
     }
@@ -61,7 +89,33 @@
         {
             for (int i = 0; i < Bindings.Count; i++)
             {
-                context.SetSampler(Sampler, Bindings[i].Stage, Bindings[i].Slot);
+                var binding = Bindings[i];
+                switch (binding.Stage)
+                {
+                    case ShaderStage.Vertex:
+                        context.VSSetSampler(Sampler, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Hull:
+                        context.HSSetSampler(Sampler, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Domain:
+                        context.DSSetSampler(Sampler, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Geometry:
+                        context.GSSetSampler(Sampler, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Pixel:
+                        context.PSSetSampler(Sampler, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Compute:
+                        context.CSSetSampler(Sampler, Bindings[i].Slot);
+                        break;
+                }
             }
         }
     }
@@ -88,7 +142,33 @@
         {
             for (int i = 0; i < Bindings.Count; i++)
             {
-                context.SetConstantBuffer(Constant, Bindings[i].Stage, Bindings[i].Slot);
+                var binding = Bindings[i];
+                switch (binding.Stage)
+                {
+                    case ShaderStage.Vertex:
+                        context.VSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Hull:
+                        context.HSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Domain:
+                        context.DSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Geometry:
+                        context.GSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Pixel:
+                        context.PSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        break;
+
+                    case ShaderStage.Compute:
+                        context.CSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        break;
+                }
             }
         }
     }

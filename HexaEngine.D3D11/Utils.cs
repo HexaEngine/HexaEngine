@@ -93,10 +93,7 @@
 
         public static float* ToFloatPtr(this Vector4 vector)
         {
-            fixed (float* ptr = new float[] { vector.X, vector.Y, vector.Z, vector.W })
-            {
-                return ptr;
-            }
+            return (float*)&vector;
         }
 
         public static void ThrowHResult(this int code)

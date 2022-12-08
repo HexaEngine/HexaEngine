@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.IO
 {
     using System.IO;
+    using System.IO.Hashing;
+    using System.Text;
 
     public class AssetBundle
     {
@@ -67,10 +69,10 @@
             }
         }
 
-        public static void GenerateFrom(string path)
+        public static void GenerateFrom(string path, bool crcOutput = false)
         {
             var root = new DirectoryInfo(path);
-
+            Crc32 crc = new();
             foreach (var dir in root.GetDirectories())
             {
                 int i = 0;
@@ -84,11 +86,22 @@
                     var ts = file.OpenRead();
                     var rel = Path.GetRelativePath(dir.FullName, file.FullName);
                     var type = GetAssetType(rel, out string relTrim);
-                    Console.WriteLine($"Packing {filename} <-- [{type}] {relTrim}");
+                    byte[] buffer = new byte[ts.Length];
+                    ts.Read(buffer);
+                    if (crcOutput)
+                    {
+                        crc.Append(buffer);
+                        Console.WriteLine($"Packing CRC32:{ByteArrayToString(crc.GetHashAndReset())} {filename} <-- [{type}] {relTrim}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Packing {filename} <-- [{type}] {relTrim}");
+                    }
+
                     fs.WriteUInt64((ulong)type);
                     fs.WriteInt64(ts.Length);
                     fs.WriteString(rel);
-                    ts.CopyTo(fs);
+                    fs.Write(buffer);
                     ts.Close();
                     i++;
                 }
@@ -98,6 +111,14 @@
                 fs.Flush();
                 fs.Close();
             }
+        }
+
+        public static string ByteArrayToString(byte[] ba)
+        {
+            StringBuilder hex = new(ba.Length * 2);
+            foreach (byte b in ba)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
         }
 
         public static AssetType GetAssetType(string path, out string trimmed)

@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using Point = Mathematics.Point;
@@ -21,15 +19,15 @@
         private static readonly Dictionary<MouseButton, ButtonState> states = new();
         private static readonly MouseMotionEventArgs mouseMotionEventArgs = new();
 
-        private static Point* pos;
+        private static Point pos;
         private static Vector2 delta;
         private static Vector2 deltaWheel;
 
         internal static void Init(Sdl sdl)
         {
             Mouse.sdl = sdl;
-            pos = Utilities.Alloc<Point>();
-            sdl.GetMouseState(&pos->X, &pos->Y);
+            pos = default;
+            sdl.GetMouseState(ref pos.X, ref pos.Y);
 
             uint state = sdl.GetMouseState(null, null);
             uint maskLeft = unchecked(1 << ((int)MouseButton.Left - 1));
@@ -44,7 +42,7 @@
             states.Add(MouseButton.X2, (ButtonState)(state & maskX2));
         }
 
-        public static Vector2 Position => *pos;
+        public static Vector2 Position => pos;
 
         public static Vector2 Delta => delta;
 
@@ -93,7 +91,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void ProcessInput()
         {
-            sdl.GetMouseState(&pos->X, &pos->Y);
+            sdl.GetMouseState(ref pos.X, ref pos.Y);
 
             Vector2 del = new();
             while (motionEvents.TryDequeue(out var evnt))
@@ -106,8 +104,8 @@
             {
                 mouseMotionEventArgs.RelX = del.X;
                 mouseMotionEventArgs.RelY = del.Y;
-                mouseMotionEventArgs.X = pos->X;
-                mouseMotionEventArgs.Y = pos->Y;
+                mouseMotionEventArgs.X = pos.X;
+                mouseMotionEventArgs.Y = pos.Y;
                 Moved?.Invoke(null, mouseMotionEventArgs);
             }
 

@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
 
+    [Obsolete("Convert to effect for easy usage")]
     public class FlatPipeline : Pipeline
     {
         public FlatPipeline(IGraphicsDevice device) : base(device, new()

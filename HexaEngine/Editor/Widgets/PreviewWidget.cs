@@ -21,8 +21,9 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
 
-    public class PreviewWidget : ImGuiWindow, IDisposable
+    public class PreviewWidget // : ImGuiWindow, IDisposable
     {
+        /*
 #nullable disable
         private bool isdrawing;
         private DepthBuffer depth;
@@ -45,7 +46,7 @@
         private PrepassShader prepass;
         private BRDFPipeline pbrlightShader;
         private BRDFLUT brdfFilter;
-        private SkyboxPipeline skyboxShader;
+        private Skybox skyboxShader;
 
         private Material material = new() { BaseColor = new(1, 0, 0), Ao = 1 };
 
@@ -109,15 +110,17 @@
             prepass.Samplers.Add(new(ansioSampler, ShaderStage.Domain, 0));
             prepass.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 0));
 
-            pbrlightShader = new(device);
+            //pbrlightShader = new(device);
             pbrlightShader.Constants.Add(new(lightBuffer, ShaderStage.Pixel, 0));
             pbrlightShader.Constants.Add(new(cameraBuffer, ShaderStage.Pixel, 1));
             pbrlightShader.Samplers.Add(new(pointSampler, ShaderStage.Pixel, 0));
             pbrlightShader.Samplers.Add(new(ansioSampler, ShaderStage.Pixel, 1));
 
-            skyboxShader = new(device);
-            skyboxShader.Constants.Add(new(skyboxBuffer, ShaderStage.Vertex, 0));
-            skyboxShader.Constants.Add(new(cameraBuffer, ShaderStage.Vertex, 1));
+            //skyboxShader = new(device);
+            //skyboxShader.Output = dofBuffer.RenderTargetView;
+            //skyboxShader.Skybox = skyboxBuffer.Buffer;
+            //skyboxShader.Camera = cameraBuffer.Buffer;
+            //skyboxShader.Resize();
 
             sphere = new(device);
             quad = new(device);
@@ -152,7 +155,7 @@
             prepass.Dispose();
 
             pbrlightShader.Dispose();
-            skyboxShader.Dispose();
+            //skyboxShader.Dispose();
 
             sphere.Dispose();
             quad.Dispose();
@@ -209,7 +212,7 @@
             }
         }
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             Flags = ImGuiWindowFlags.None;
 
@@ -309,8 +312,8 @@
                 context.ClearDepthStencilView(depth.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
 
                 // Fill Geometry Buffer
-                context.ClearRenderTargetViews(gbuffer.RTVs, Vector4.Zero);
-                context.SetRenderTargets(gbuffer.RTVs, depth.DSV);
+                context.ClearRenderTargetViews(gbuffer.RTVs, gbuffer.Count, Vector4.Zero);
+                context.SetRenderTargets(gbuffer.RTVs, gbuffer.Count, depth.DSV);
                 context.Write(cbMaterial, new CBMaterial(material));
                 context.SetConstantBuffer(cbWorld, ShaderStage.Domain, 0);
                 context.SetConstantBuffer(cbWorld, ShaderStage.Vertex, 0);
@@ -336,10 +339,10 @@
                 context.SetShaderResource(env.ResourceView, ShaderStage.Pixel, 0);
                 context.SetSampler(ansioSampler, ShaderStage.Pixel, 0);
                 context.SetRenderTarget(rtv, depth.DSV);
-                sphere.DrawAuto(context, skyboxShader, target.Viewport);
+                // sphere.DrawAuto(context, skyboxShader, target.Viewport);
                 context.ClearState();
 #nullable enable
             }
-        }
+        }*/
     }
 }

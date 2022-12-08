@@ -9,6 +9,17 @@ namespace HexaEngine.Editor
     using System.Collections.Generic;
     using System.Numerics;
 
+    public class DebugDrawCommand
+    {
+        public PrimitiveTopology Topology;
+        public int[] Indices;
+        public VertexPositionColor[] Vertices;
+        public int nIndices;
+        public int nVertices;
+        public Matrix4x4 Transform = Matrix4x4.Identity;
+    }
+
+    // TODO: Fix GC Pressue
     public static unsafe class DebugDraw
     {
         private static IGraphicsDevice device;
@@ -21,6 +32,7 @@ namespace HexaEngine.Editor
         private static IBuffer vb;
         private static IBuffer ib;
         private static IBuffer cb;
+        private static CBView view = new();
         private static int vbCapacity = 1000;
         private static int ibCapacity = 1000;
 
@@ -28,10 +40,41 @@ namespace HexaEngine.Editor
         private static readonly List<int> lineIndices = new();
         private static readonly List<ValueTuple<int, int, PrimitiveTopology>> drawcmds = new();
 
+        private static readonly Dictionary<string, DebugDrawCommand> cache = new();
+        private static readonly List<string> drawqueue = new();
+        private static readonly List<string> clearqueue = new();
+
+        private static VertexPositionColor* vertices = Alloc<VertexPositionColor>(vbCapacity); //new VertexPositionColor[vbCapacity];
+        private static int* indices = Alloc<int>(ibCapacity);
+
+        private static int vertexCount;
+        private static int indexCount;
+
+        private static bool Draw(string id, PrimitiveTopology topology, int nIndex, int nVertex, out DebugDrawCommand command)
+        {
+            vertexCount += nVertex;
+            indexCount += nIndex;
+            clearqueue.Remove(id);
+            drawqueue.Add(id);
+            if (!cache.TryGetValue(id, out command))
+            {
+                command = new();
+                command.Topology = topology;
+                command.nVertices = nVertex;
+                command.nIndices = nIndex;
+                cache.Add(id, command);
+
+                return true;
+            }
+
+            return false;
+        }
+
         private struct CBView
         {
             public Matrix4x4 View;
             public Matrix4x4 Proj;
+            public Matrix4x4 World;
         }
 
         public static void Init(IGraphicsDevice device)
@@ -58,11 +101,13 @@ cbuffer MVPBuffer
 {
     matrix view;
     matrix proj;
+    matrix world;
 };
 GeometryInput main(VertexInputType input)
 {
 	GeometryInput output;
-    output.position = mul(float4(input.position, 1), view);
+    output.position = mul(float4(input.position, 1), world);
+    output.position = mul(output.position, view);
     output.position = mul(output.position, proj);
     output.color = input.color;
 	return output;
@@ -121,56 +166,125 @@ float4 main(PixelInputType pixel) : SV_TARGET
         public static void Render(Camera camera, Viewport viewport)
         {
             if (camera == null) return;
-            if (lineVertices.Count > vbCapacity)
+
+            for (int i = 0; i < clearqueue.Count; i++)
+            {
+                var id = clearqueue[i];
+                cache.Remove(id);
+            }
+
+            if (vertexCount > vbCapacity)
             {
                 vb.Dispose();
                 vbCapacity = (int)(lineVertices.Count * 1.5f);
-                vb = device.CreateBuffer(lineVertices.ToArray(), new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+                Free(vertices);
+                vertices = Alloc<VertexPositionColor>(vbCapacity);
+
+                int voffset = 0;
+
+                for (int i = 0; i < drawqueue.Count; i++)
+                {
+                    var cmd = cache[drawqueue[i]];
+                    for (int j = 0; j < cmd.nVertices; j++)
+                    {
+                        *(vertices + voffset) = cmd.Vertices[j];
+                        voffset++;
+                    }
+                }
+
+                vb = device.CreateBuffer(new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             }
             else
             {
-                context.Write(vb, lineVertices.ToArray());
+                int voffset = 0;
+
+                for (int i = 0; i < drawqueue.Count; i++)
+                {
+                    var cmd = cache[drawqueue[i]];
+                    for (int j = 0; j < cmd.nVertices; j++)
+                    {
+                        *(vertices + voffset) = cmd.Vertices[j];
+                        voffset++;
+                    }
+                }
+
+                context.Write(vb, vertices, vertexCount * sizeof(VertexPositionColor));
             }
-            if (lineIndices.Count > ibCapacity)
+
+            vertexCount = 0;
+
+            if (indexCount > ibCapacity)
             {
                 ib.Dispose();
                 ibCapacity = (int)(lineIndices.Count * 1.5f);
-                ib = device.CreateBuffer(lineIndices.ToArray(), new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+                Free(indices);
+                indices = Alloc<int>(ibCapacity);
+
+                int ioffset = 0;
+                for (int i = 0; i < drawqueue.Count; i++)
+                {
+                    var cmd = cache[drawqueue[i]];
+                    for (int j = 0; j < cmd.nIndices; j++)
+                    {
+                        *(indices + ioffset) = cmd.Indices[j];
+                        ioffset++;
+                    }
+                }
+
+                ib = device.CreateBuffer(new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             }
             else
             {
-                context.Write(ib, lineIndices.ToArray());
-            }
-            context.Write(cb, new CBView()
-            {
-                View = Matrix4x4.Transpose(camera.Transform.View),
-                Proj = Matrix4x4.Transpose(camera.Transform.Projection)
-            });
+                int ioffset = 0;
+                for (int i = 0; i < drawqueue.Count; i++)
+                {
+                    var cmd = cache[drawqueue[i]];
+                    for (int j = 0; j < cmd.nIndices; j++)
+                    {
+                        *(indices + ioffset) = cmd.Indices[j];
+                        ioffset++;
+                    }
+                }
 
-            int voffset = 0;
-            int ioffset = 0;
-            context.SetRasterizerState(rs);
-            context.SetDepthStencilState(ds);
-            context.VSSetShader(vs);
-            context.PSSetShader(ps);
-            context.SetInputLayout(il);
-            context.SetConstantBuffer(cb, ShaderStage.Vertex, 0);
-            context.SetVertexBuffer(vb, sizeof(VertexPositionColor));
-            context.SetIndexBuffer(ib, Format.R32UInt, 0);
-            context.SetViewport(viewport);
-            for (int i = 0; i < drawcmds.Count; i++)
-            {
-                var cmd = drawcmds[i];
-                context.SetPrimitiveTopology(cmd.Item3);
-                context.DrawIndexed(cmd.Item2, ioffset, voffset);
-                voffset += cmd.Item1;
-                ioffset += cmd.Item2;
+                context.Write(ib, indices, indexCount * sizeof(int));
             }
-            lineVertices.Clear();
-            lineIndices.Clear();
-            drawcmds.Clear();
+
+            indexCount = 0;
+
+            {
+                view.View = Matrix4x4.Transpose(camera.Transform.View);
+                view.Proj = Matrix4x4.Transpose(camera.Transform.Projection);
+
+                context.SetRasterizerState(rs);
+                context.SetDepthStencilState(ds);
+                context.VSSetShader(vs);
+                context.PSSetShader(ps);
+                context.SetInputLayout(il);
+                context.VSSetConstantBuffer(cb, 0);
+                context.SetVertexBuffer(vb, sizeof(VertexPositionColor));
+                context.SetIndexBuffer(ib, Format.R32UInt, 0);
+                context.SetViewport(viewport);
+
+                int voffset = 0;
+                int ioffset = 0;
+                for (int i = 0; i < drawqueue.Count; i++)
+                {
+                    var cmd = cache[drawqueue[i]];
+                    view.World = Matrix4x4.Transpose(cmd.Transform);
+                    context.Write(cb, view);
+                    context.SetPrimitiveTopology(cmd.Topology);
+                    context.DrawIndexed(cmd.nIndices, ioffset, voffset);
+                    voffset += cmd.nVertices;
+                    ioffset += cmd.nIndices;
+                }
+                drawqueue.Clear();
+            }
+
+            clearqueue.Clear();
+            clearqueue.AddRange(cache.Keys);
         }
 
+        [Obsolete]
         private static void BatchDraw(VertexPositionColor[] vertices, PrimitiveTopology topology)
         {
             drawcmds.Add((vertices.Length, vertices.Length, topology));
@@ -181,6 +295,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             lineIndices.AddRange(indices);
         }
 
+        [Obsolete]
         private static void BatchDraw(VertexPositionColor[] vertices, int[] indices, PrimitiveTopology topology)
         {
             drawcmds.Add((vertices.Length, indices.Length, topology));
@@ -188,13 +303,13 @@ float4 main(PixelInputType pixel) : SV_TARGET
             lineIndices.AddRange(indices);
         }
 
-        public static void DrawFrustum(BoundingFrustum frustum, Vector4 color)
+        public static void DrawFrustum(string id, BoundingFrustum frustum, Vector4 color)
         {
-            var corners = frustum.GetCorners();
-            VertexPositionColor[] verts = new VertexPositionColor[corners.Length];
-
-            int[] indices =
+            if (Draw(id, PrimitiveTopology.LineList, 24, BoundingFrustum.CornerCount, out var cmd))
             {
+                cmd.Vertices = new VertexPositionColor[BoundingFrustum.CornerCount];
+                cmd.Indices = new int[]
+                {
                 0,1,
                 1,2,
                 2,3,
@@ -207,20 +322,26 @@ float4 main(PixelInputType pixel) : SV_TARGET
                 5,6,
                 6,7,
                 7,4
-            };
-
-            for (int i = 0; i < corners.Length; i++)
-            {
-                verts[i].Color = color;
-                verts[i].Position = corners[i];
+                };
             }
-            BatchDraw(verts, indices, PrimitiveTopology.LineList);
+
+            var corners = frustum.GetCorners();
+            for (int i = 0; i < BoundingFrustum.CornerCount; i++)
+            {
+                cmd.Vertices[i].Color = color;
+                cmd.Vertices[i].Position = corners[i];
+            }
         }
 
-        public static void DrawRay(Vector3 origin, Vector3 direction, bool normalize, Vector4 color)
+        public static void DrawRay(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 color)
         {
-            VertexPositionColor[] verts = new VertexPositionColor[3];
-            verts[0].Position = origin;
+            if (Draw(id, PrimitiveTopology.LineStrip, 3, 3, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[3];
+                cmd.Indices = new int[] { 0, 1, 2 };
+            }
+
+            cmd.Vertices[0].Position = origin;
 
             Vector3 normDirection = Vector3.Normalize(direction);
             Vector3 rayDirection = normalize ? normDirection : direction;
@@ -233,41 +354,50 @@ float4 main(PixelInputType pixel) : SV_TARGET
             }
             perpVector = Vector3.Normalize(perpVector);
 
-            verts[1].Position = rayDirection + origin;
+            cmd.Vertices[1].Position = rayDirection + origin;
             perpVector *= 0.0625f;
             normDirection *= -0.25f;
             rayDirection = perpVector + rayDirection;
             rayDirection = normDirection + rayDirection;
-            verts[2].Position = rayDirection + origin;
+            cmd.Vertices[2].Position = rayDirection + origin;
 
-            verts[0].Color = color;
-            verts[1].Color = color;
-            verts[2].Color = color;
-
-            BatchDraw(verts, PrimitiveTopology.LineStrip);
+            cmd.Vertices[0].Color = color;
+            cmd.Vertices[1].Color = color;
+            cmd.Vertices[2].Color = color;
         }
 
-        public static void DrawLine(Vector3 origin, Vector3 direction, bool normalize, Vector4 color)
+        public static void DrawLine(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 color)
         {
-            VertexPositionColor[] verts = new VertexPositionColor[2];
-            verts[0].Position = origin;
+            if (Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[2];
+                cmd.Indices = new int[] { 0, 1 };
+            }
+
+            cmd.Vertices[0].Position = origin;
 
             Vector3 normDirection = Vector3.Normalize(direction);
             Vector3 rayDirection = normalize ? normDirection : direction;
 
-            verts[1].Position = rayDirection + origin;
+            cmd.Vertices[1].Position = rayDirection + origin;
 
-            verts[0].Color = color;
-            verts[1].Color = color;
-
-            BatchDraw(verts, PrimitiveTopology.LineStrip);
+            cmd.Vertices[0].Color = color;
+            cmd.Vertices[1].Color = color;
         }
 
-        public static void DrawRing(Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
+        public static void DrawRing(string id, Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
         {
             const int c_ringSegments = 32;
 
-            VertexPositionColor[] verts = new VertexPositionColor[c_ringSegments + 1];
+            if (Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[c_ringSegments + 1];
+                cmd.Indices = new int[c_ringSegments + 1];
+                for (int i = 0; i < c_ringSegments + 1; i++)
+                {
+                    cmd.Indices[i] = i;
+                }
+            }
 
             float fAngleDelta = MathUtil.PI2 / c_ringSegments;
             // Instead of calling cos/sin for each segment we calculate
@@ -281,23 +411,30 @@ float4 main(PixelInputType pixel) : SV_TARGET
             {
                 Vector3 pos = majorAxis * incrementalCos;
                 pos = minorAxis * incrementalSin + pos;
-                verts[i].Position = Vector3.Transform(pos, orientation) + origin;
-                verts[i].Color = color;
+                cmd.Vertices[i].Position = Vector3.Transform(pos, orientation) + origin;
+                cmd.Vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
                 Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
                 incrementalCos = newCos;
                 incrementalSin = newSin;
             }
-            verts[c_ringSegments] = verts[0];
-            BatchDraw(verts, PrimitiveTopology.LineStrip);
+            cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
         }
 
-        public static void DrawRing(Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
+        public static void DrawRing(string id, Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 color)
         {
             const int c_ringSegments = 32;
 
-            VertexPositionColor[] verts = new VertexPositionColor[c_ringSegments + 1];
+            if (Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[c_ringSegments + 1];
+                cmd.Indices = new int[c_ringSegments + 1];
+                for (int i = 0; i < c_ringSegments + 1; i++)
+                {
+                    cmd.Indices[i] = i;
+                }
+            }
 
             float fAngleDelta = MathUtil.PI2 / c_ringSegments;
             // Instead of calling cos/sin for each segment we calculate
@@ -311,23 +448,31 @@ float4 main(PixelInputType pixel) : SV_TARGET
             {
                 Vector3 pos = majorAxis * incrementalCos + origin;
                 pos = minorAxis * incrementalSin + pos;
-                verts[i].Position = pos;
-                verts[i].Color = color;
+                cmd.Vertices[i].Position = pos;
+                cmd.Vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
                 Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
                 incrementalCos = newCos;
                 incrementalSin = newSin;
             }
-            verts[c_ringSegments] = verts[0];
-            BatchDraw(verts, PrimitiveTopology.LineStrip);
+            cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
         }
 
-        public static void DrawRing(Vector3 origin, (Vector3, Vector3) ellipse, Vector4 color)
+        public static void DrawRing(string id, Vector3 origin, (Vector3, Vector3) ellipse, Vector4 color)
         {
             const int c_ringSegments = 32;
 
-            VertexPositionColor[] verts = new VertexPositionColor[c_ringSegments + 1];
+            if (Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[c_ringSegments + 1];
+                cmd.Indices = new int[c_ringSegments + 1];
+                for (int i = 0; i < c_ringSegments + 1; i++)
+                {
+                    cmd.Indices[i] = i;
+                }
+            }
+
             Vector3 majorAxis = ellipse.Item1;
             Vector3 minorAxis = ellipse.Item2;
             float fAngleDelta = MathUtil.PI2 / c_ringSegments;
@@ -342,22 +487,23 @@ float4 main(PixelInputType pixel) : SV_TARGET
             {
                 Vector3 pos = majorAxis * incrementalCos + origin;
                 pos = minorAxis * incrementalSin + pos;
-                verts[i].Position = pos;
-                verts[i].Color = color;
+                cmd.Vertices[i].Position = pos;
+                cmd.Vertices[i].Color = color;
                 // Standard formula to rotate a vector.
                 Vector3 newCos = incrementalCos * cosDelta - incrementalSin * sinDelta;
                 Vector3 newSin = incrementalCos * sinDelta + incrementalSin * cosDelta;
                 incrementalCos = newCos;
                 incrementalSin = newSin;
             }
-            verts[c_ringSegments] = verts[0];
-            BatchDraw(verts, PrimitiveTopology.LineStrip);
+            cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
         }
 
-        public static void DrawBox(Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 color)
+        public static void DrawBox(string id, Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 color)
         {
-            Vector3[] pos =
+            if (Draw(id, PrimitiveTopology.LineList, 24, 8, out var cmd))
             {
+                Vector3[] pos =
+          {
 new Vector3(-1, +1, -1),
 new Vector3(-1, -1, -1),
 new Vector3(+1, -1, -1),
@@ -368,28 +514,34 @@ new Vector3(+1, -1, +1),
 new Vector3(+1, +1, +1),
             };
 
-            int[] indices =
-            {
+                cmd.Indices = new int[]
+                {
                 0,1,1,2,2,3,3,0,
                 0,4,1,5,2,6,3,7,
                 4,5,5,6,6,7,7,4
-            };
-
-            Matrix4x4 transform = Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
-            VertexPositionColor[] verts = new VertexPositionColor[pos.Length];
-
-            for (int i = 0; i < pos.Length; i++)
-            {
-                verts[i].Color = color;
-                verts[i].Position = Vector3.Transform(pos[i], transform);
+                };
+                cmd.Vertices = new VertexPositionColor[pos.Length];
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    cmd.Vertices[i].Color = color;
+                    cmd.Vertices[i].Position = pos[i];
+                }
             }
-            BatchDraw(verts, indices, PrimitiveTopology.LineList);
+
+            cmd.Transform = Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
+
+            for (int i = 0; i < 24; i++)
+            {
+                cmd.Vertices[i].Color = color;
+            }
         }
 
-        public static void DrawSphere(Vector3 origin, Quaternion orientation, float radius, Vector4 color)
+        public static void DrawSphere(string id, Vector3 origin, Quaternion orientation, float radius, Vector4 color)
         {
-            Vector3[] pos =
+            if (Draw(id, PrimitiveTopology.LineList, 96 * 2, 90, out var cmd))
             {
+                Vector3[] pos =
+{
 new Vector3(-0.195090f,0.000000f,0.980785f),
 new Vector3(-0.382683f,0.000000f,0.923880f),
 new Vector3(-0.555570f,0.000000f,0.831470f),
@@ -481,9 +633,8 @@ new Vector3(-0.000000f,0.831470f,0.555570f),
 new Vector3(-0.000000f,0.923880f,0.382683f),
 new Vector3(-0.000000f,0.980785f,0.195090f),
             };
-
-            int[] indices =
-            {
+                cmd.Indices = (new int[]
+                {
 0,1,
 1,2,
 2,3,
@@ -580,21 +731,29 @@ new Vector3(-0.000000f,0.980785f,0.195090f),
 31,82,
 75,74,
 32,61,
-            };
-            Matrix4x4 transform = Matrix4x4.CreateScale(radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
-            VertexPositionColor[] verts = new VertexPositionColor[pos.Length];
+            });
+                cmd.Vertices = new VertexPositionColor[pos.Length];
 
-            for (int i = 0; i < pos.Length; i++)
-            {
-                verts[i].Color = color;
-                verts[i].Position = Vector3.Transform(pos[i], transform);
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    cmd.Vertices[i].Color = color;
+                    cmd.Vertices[i].Position = pos[i];
+                }
             }
-            BatchDraw(verts, indices, PrimitiveTopology.LineList);
+
+            cmd.Transform = Matrix4x4.CreateScale(radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
+
+            for (int i = 0; i < 90; i++)
+            {
+                cmd.Vertices[i].Color = color;
+            }
         }
 
-        public static void DrawCapsule(Vector3 origin, Quaternion orientation, float radius, float length, Vector4 color)
+        public static void DrawCapsule(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 color)
         {
-            Vector3[] pos =
+            if (Draw(id, PrimitiveTopology.LineList, 132 * 2, 124, out var cmd))
+            {
+                Vector3[] pos =
             {
 new Vector3(0.000000f,-0.500000f,1.000000f),
 new Vector3(-0.195090f,-0.500000f,0.980785f),
@@ -722,8 +881,8 @@ new Vector3(0.382683f,0.961940f,-0.000000f),
 new Vector3(0.195090f,0.990393f,-0.000000f),
             };
 
-            int[] indices =
-            {
+                cmd.Indices = (new int[]
+                {
 1,0,
 3,2,
 5,4,
@@ -856,23 +1015,28 @@ new Vector3(0.195090f,0.990393f,-0.000000f),
 120,119,
 122,121,
 109,123,
-            };
-
-            Matrix4x4 transform = Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
-            VertexPositionColor[] verts = new VertexPositionColor[pos.Length];
-
-            for (int i = 0; i < pos.Length; i++)
-            {
-                verts[i].Color = color;
-                verts[i].Position = Vector3.Transform(pos[i], transform);
+            });
+                cmd.Vertices = new VertexPositionColor[pos.Length];
+                for (int i = 0; i < 124; i++)
+                {
+                    cmd.Vertices[i].Position = pos[i];
+                }
             }
-            BatchDraw(verts, indices, PrimitiveTopology.LineList);
+
+            cmd.Transform = Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
+
+            for (int i = 0; i < 124; i++)
+            {
+                cmd.Vertices[i].Color = color;
+            }
         }
 
-        public static void DrawCylinder(Vector3 origin, Quaternion orientation, float radius, float length, Vector4 color)
+        public static void DrawCylinder(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 color)
         {
-            Vector3[] pos =
+            if (Draw(id, PrimitiveTopology.LineList, 68 * 2, 64, out var cmd))
             {
+                Vector3[] pos =
+                       {
 new Vector3(0.000000f,1.000000f,1.000000f),
 new Vector3(0.195090f,1.000000f,0.980785f),
 new Vector3(0.382683f,1.000000f,0.923880f),
@@ -939,8 +1103,8 @@ new Vector3(-0.382683f,-1.000000f,0.923880f),
 new Vector3(-0.195090f,-1.000000f,0.980785f),
             };
 
-            int[] indices =
-            {
+                cmd.Indices = (new int[]
+                {
 1,0,
 2,1,
 3,2,
@@ -1009,27 +1173,35 @@ new Vector3(-0.195090f,-1.000000f,0.980785f),
 0,31,
 32,63,
 24,56,
-            };
-
-            Matrix4x4 transform = Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
-            VertexPositionColor[] verts = new VertexPositionColor[pos.Length];
-
-            for (int i = 0; i < pos.Length; i++)
-            {
-                verts[i].Color = color;
-                verts[i].Position = Vector3.Transform(pos[i], transform);
+            });
+                cmd.Vertices = new VertexPositionColor[pos.Length];
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    cmd.Vertices[i].Color = color;
+                    cmd.Vertices[i].Position = pos[i];
+                }
             }
-            BatchDraw(verts, indices, PrimitiveTopology.LineList);
+
+            cmd.Transform = Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
+
+            for (int i = 0; i < 64; i++)
+            {
+                cmd.Vertices[i].Color = color;
+            }
         }
 
-        public static void DrawTriangle(Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 color)
+        public static void DrawTriangle(string id, Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 color)
         {
-            VertexPositionColor[] verts = new VertexPositionColor[4];
-            verts[0] = new(Vector3.Transform(a, orientation) + origin, color);
-            verts[1] = new(Vector3.Transform(b, orientation) + origin, color);
-            verts[2] = new(Vector3.Transform(c, orientation) + origin, color);
-            verts[3] = verts[0];
-            BatchDraw(verts, PrimitiveTopology.LineStrip);
+            if (Draw(id, PrimitiveTopology.LineStrip, 4, 4, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[4];
+                cmd.Indices = new int[] { 0, 1, 2, 3 };
+            }
+
+            cmd.Vertices[0] = new(Vector3.Transform(a, orientation) + origin, color);
+            cmd.Vertices[1] = new(Vector3.Transform(b, orientation) + origin, color);
+            cmd.Vertices[2] = new(Vector3.Transform(c, orientation) + origin, color);
+            cmd.Vertices[3] = cmd.Vertices[0];
         }
     }
 }

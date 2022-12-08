@@ -127,7 +127,7 @@
             EnsureCapacity(device, instanceCount);
         }
 
-        public int UpdateInstanceBuffer(IGraphicsContext context)
+        public unsafe int UpdateInstanceBuffer(IGraphicsContext context)
         {
             if (ISB == null) return -1;
             int count = 0;
@@ -136,7 +136,12 @@
                 transforms[i] = Instances[i].Transform;
                 count++;
             }
-            context.Write(ISB, transforms);
+
+            fixed (void* p = transforms)
+            {
+                context.Write(ISB, p, sizeof(Matrix4x4) * instanceCount);
+            }
+
             return count;
         }
 

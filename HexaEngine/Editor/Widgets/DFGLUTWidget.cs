@@ -13,7 +13,6 @@
         private ITexture2D tex;
         private IRenderTargetView rtv;
         private IShaderResourceView srv;
-        private nint id;
         private bool renderContinues;
 
         protected override string Name => "DFG LUT";
@@ -29,7 +28,6 @@
             tex = device.CreateTexture2D(Format.RGBA32Float, 512, 512, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             rtv = device.CreateRenderTargetView(tex, new(512, 512));
             srv = device.CreateShaderResourceView(tex);
-            id = ImGuiRenderer.RegisterTexture(srv);
             base.Init(device);
         }
 
@@ -51,7 +49,7 @@
                 context.ClearState();
             }
 
-            ImGui.Image(id, new(512, 512));
+            ImGui.Image(srv.NativePointer, new(512, 512));
         }
 
         public override void Dispose()

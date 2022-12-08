@@ -26,5 +26,7 @@
         bool VSync { get; set; }
         int TargetFPS { get; set; }
         bool LimitFPS { get; set; }
+
+        bool Active { get; set; }
     }
 }

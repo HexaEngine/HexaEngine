@@ -48,20 +48,20 @@
                     Light light = scene.Lights[i];
                     if (light.Type == LightType.Directional)
                     {
-                        DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
-                        DebugDraw.DrawSphere(light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Name + "1", light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }
                     if (light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawRay(light.Transform.GlobalPosition, light.Transform.Forward * 10, false, Vector4.One);
+                        DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * 10, false, Vector4.One);
 
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
-                        DebugDraw.DrawRing(light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
+                        DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
+                        DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
+                        DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
                     }
                     if (light.Type == LightType.Point)
                     {
-                        DebugDraw.DrawSphere(light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Name, light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }
                 }
             }
@@ -71,7 +71,7 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.DrawFrustum(new BoundingFrustum(cam.Transform.View * cam.Transform.Projection), Vector4.Zero);
+                    DebugDraw.DrawFrustum(cam.Name, new BoundingFrustum(cam.Transform.View * cam.Transform.Projection), Vector4.Zero);
                 }
             }
 
@@ -92,7 +92,7 @@
                         var destMtx = ndestMtx * skele?.GetTransform(bone.Name) ?? Matrix4x4.Identity;
                         var origin = Vector3.Zero.ApplyMatrix(originMtx);
                         var dest = Vector3.Zero.ApplyMatrix(destMtx);
-                        DebugDraw.DrawLine(origin, dest - origin, false, Vector4.One);
+                        DebugDraw.DrawLine(bone.Name, origin, dest - origin, false, Vector4.One);
                     }
                 }
             }
@@ -101,29 +101,30 @@
             {
                 for (int i = 0; i < scene.Nodes.Count; i++)
                 {
+                    var node = scene.Nodes[i];
                     Transform transform = scene.Nodes[i].Transform;
                     for (int j = 0; j < scene.Nodes[i].Components.Count; j++)
                     {
                         IComponent component = scene.Nodes[i].Components[j];
                         if (component is BoxCollider box)
                         {
-                            DebugDraw.DrawBox(transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
+                            DebugDraw.DrawBox(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);
                         }
                         if (component is SphereCollider sphere)
                         {
-                            DebugDraw.DrawSphere(transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
+                            DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, sphere.Radius, Vector4.One);
                         }
                         if (component is CapsuleCollider capsule)
                         {
-                            DebugDraw.DrawCapsule(transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
+                            DebugDraw.DrawCapsule(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, capsule.Radius, capsule.Length, Vector4.One);
                         }
                         if (component is CylinderCollider cylinder)
                         {
-                            DebugDraw.DrawCylinder(transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
+                            DebugDraw.DrawCylinder(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, cylinder.Radius, cylinder.Length, Vector4.One);
                         }
                         if (component is TriangleCollider triangle)
                         {
-                            DebugDraw.DrawTriangle(transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
+                            DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
                         }
                     }
                 }

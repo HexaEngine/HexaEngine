@@ -13,8 +13,6 @@
         // Properties
         public static float Delta { get; private set; }
 
-        public static TimeSpan DeltaTime { get; private set; }
-
         public static float CumulativeFrameTime { get => cumulativeFrameTime; }
 
         public static int FixedUpdateRate { get; set; } = 3;

@@ -2,16 +2,12 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Input;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
-    using HexaEngine.Windows;
     using ImGuiNET;
     using ImGuizmoNET;
-    using Silk.NET.SDL;
     using System;
-    using System.Diagnostics;
     using System.Numerics;
 
     public class Framebuffer

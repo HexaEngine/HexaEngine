@@ -37,6 +37,22 @@ struct VSOut
 
 float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D depthTex, SamplerState state)
 {
+#if HARD_SHADOWS
+	float4 fragPosLightSpace = mul(float4(fragPos, 1.0), light.view);
+	fragPosLightSpace.y = -fragPosLightSpace.y;
+	float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+	float currentDepth = projCoords.z;
+
+	projCoords = projCoords * 0.5 + 0.5;
+
+	float depth = depthTex.Sample(state, projCoords.xy).r;
+	float shadow += (currentDepth - bias) > depth ? 1.0 : 0.0;
+
+	if (currentDepth > 1.0)
+		shadow = 0;
+
+	return shadow;
+#else
 	float4 fragPosLightSpace = mul(float4(fragPos, 1.0), light.view);
 	fragPosLightSpace.y = -fragPosLightSpace.y;
 	float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
@@ -68,6 +84,7 @@ float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D
 		shadow = 0;
 
 	return shadow;
+#endif
 }
 
 // array of offset direction for sampling
@@ -82,13 +99,13 @@ float3 gridSamplingDisk[20] =
 
 float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCube depthTex, SamplerState state)
 {
-#if (HARD_POINT_SHADOWS)
+#if (HARD_SHADOWS)
 	// get vector between fragment position and light position
 	float3 fragToLight = fragPos - light.position;
 	// use the light to fragment vector to sample from the depth map
 	float closestDepth = depthTex.Sample(state, fragToLight).r; //texture(depthMap, fragToLight).r;
 	// it is currently in linear range between [0,1]. Re-transform back to original value
-	closestDepth *= 25;
+	closestDepth *= light.far;
 	// now get current linear depth as the length between the fragment and light position
 	float currentDepth = length(fragToLight);
 	// now test for shadows
@@ -104,13 +121,13 @@ float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCub
 	float shadow = 0.0;
 	float bias = 0.15;
 	float viewDistance = length(V);
-	float diskRadius = (1.0 + (viewDistance / 25)) / 25.0;
+	float diskRadius = (1.0 + (viewDistance / light.far)) / 25.0;
 
 	[unroll]
 	for (int i = 0; i < 20; ++i)
 	{
 		float closestDepth = depthTex.Sample(state, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-		closestDepth *= 25; // undo mapping [0;1]
+		closestDepth *= light.far; // undo mapping [0;1]
 		shadow += (currentDepth - bias) > closestDepth ? 1.0 : 0.0;
 	}
 	shadow /= 20;
@@ -162,6 +179,18 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, floa
 		bias *= 1 / (cascadePlaneDistance * biasModifier);
 	}
 
+#if (HARD_SHADOWS)
+	float depth = depthTex.Sample(state, float3(projCoords.xy, layer)).r;
+	float shadow = (currentDepth - bias) > depth ? 1.0 : 0.0;
+
+	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+	if (currentDepth > 1.0)
+	{
+		shadow = 0.0;
+	}
+
+	return shadow;
+#else
 	// PCF
 	float shadow = 0.0;
 	float2 texelSize = 1.0 / float2(w, h);
@@ -185,6 +214,7 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, floa
 	}
 
 	return shadow;
+#endif
 }
 
 float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)

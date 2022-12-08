@@ -4,6 +4,7 @@
     using HexaEngine.Core.Unsafes;
     using System;
     using System.Buffers.Binary;
+    using System.Drawing;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -93,37 +94,101 @@
             return AsPointer(ts);
         }
 
-        public static T* Alloc<T>() where T : unmanaged
+        public static T* GCAlloc<T>() where T : unmanaged
         {
             fixed (void* ptr = new byte[sizeof(T)])
                 return (T*)ptr;
         }
 
-        public static T** Alloc<T>(int count) where T : unmanaged
+        public static T** GCAlloc<T>(int count) where T : unmanaged
         {
             fixed (T** ptr = &(new T*[count])[0])
                 return ptr;
+        }
+
+        public static T** GCAlloc<T>(uint count) where T : unmanaged
+        {
+            fixed (T** ptr = &(new T*[count])[0])
+                return ptr;
+        }
+
+        public static void* GCAlloc(int size)
+        {
+            fixed (void* ptr = new byte[size])
+                return ptr;
+        }
+
+        public static void* GCAlloc(uint size)
+        {
+            fixed (void* ptr = new byte[size])
+                return ptr;
+        }
+
+        public static void Zero<T>(T* pointer) where T : unmanaged
+        {
+            Zero(pointer, (uint)sizeof(T));
+        }
+
+        public static void Zero(void* pointer, uint size)
+        {
+            byte* ptr = (byte*)pointer;
+            for (int i = 0; i < size; i++)
+            {
+                ptr[i] = (byte)0;
+            }
+        }
+
+        public static T* Alloc<T>() where T : unmanaged
+        {
+            return (T*)Marshal.AllocHGlobal(sizeof(T));
+        }
+
+        public static T* Alloc<T>(int count) where T : unmanaged
+        {
+            return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
         }
 
         public static T** Alloc<T>(uint count) where T : unmanaged
         {
-            fixed (T** ptr = &(new T*[count])[0])
-                return ptr;
+            return (T**)Marshal.AllocHGlobal((int)(sizeof(T) * count));
         }
 
         public static void* Alloc(int size)
         {
-            fixed (void* ptr = new byte[size])
-                return ptr;
+            return (void*)Marshal.AllocHGlobal(size);
         }
 
         public static void* Alloc(uint size)
         {
-            fixed (void* ptr = new byte[size])
-                return ptr;
+            return (void*)Marshal.AllocHGlobal((int)size);
         }
 
-        public unsafe static bool Cmp(byte* a, byte* b, uint length)
+        public static void** Alloc(int size, int length)
+        {
+            return (void**)Marshal.AllocHGlobal(size * length);
+        }
+
+        public static void** Alloc(uint size, uint length)
+        {
+            return (void**)Marshal.AllocHGlobal((int)(size * length));
+        }
+
+        public static void** AllocArray(uint length)
+        {
+            return (void**)Marshal.AllocHGlobal((int)(sizeof(nint) * length));
+        }
+
+        public static void Free(void* p)
+        {
+            Marshal.FreeHGlobal((nint)p);
+        }
+
+        public static void Free(void** p)
+        {
+            Marshal.FreeHGlobal((nint)p);
+        }
+
+        public static unsafe bool Cmp(byte* a, byte* b, uint length)
         {
             for (uint i = 0; i < length; i++)
             {
@@ -132,7 +197,7 @@
             return true;
         }
 
-        public unsafe static bool Cmp(char* a, char* b, uint length)
+        public static unsafe bool Cmp(char* a, char* b, uint length)
         {
             for (uint i = 0; i < length; i++)
             {
@@ -141,7 +206,7 @@
             return true;
         }
 
-        public unsafe static bool StrCmp(char* a, char* b)
+        public static unsafe bool StrCmp(char* a, char* b)
         {
             int n1 = StringSizeNullTerminated(a);
             int n2 = StringSizeNullTerminated(b);
@@ -150,9 +215,7 @@
             if (n1 != n2)
                 return false;
             return chars1.SequenceEqual(chars2);
-            
         }
-
 
         public static int StringSizeNullTerminated(char* str)
         {
@@ -160,6 +223,7 @@
             while (str[ret] != '\0') ret++;
             return (ret + 1) * 2;
         }
+
         public static int StringSizeNullTerminated(ReadOnlySpan<char> str)
         {
             int ret = 0;
@@ -171,7 +235,7 @@
         {
             int ret = 0;
             while (str[ret] != (byte)'\0') ret++;
-            return ret+1;
+            return ret + 1;
         }
 
         public static int WriteString(Span<byte> dest, Endianness endianness, char* str)
@@ -251,7 +315,7 @@
         public static int ReadStringLittleEndian(Span<byte> dest, char** ppStr)
         {
             int size = StringSizeNullTerminated(MemoryMarshal.Cast<byte, char>(dest));
-            char* pStr = (char*)Alloc(size);
+            char* pStr = (char*)GCAlloc(size);
             *ppStr = pStr;
 
             if (BitConverter.IsLittleEndian)
@@ -275,7 +339,7 @@
         public static int ReadStringBigEndian(Span<byte> dest, char** ppStr)
         {
             int size = StringSizeNullTerminated(MemoryMarshal.Cast<byte, char>(dest));
-            char* pStr = (char*)Alloc(size);
+            char* pStr = (char*)GCAlloc(size);
             *ppStr = pStr;
 
             if (!BitConverter.IsLittleEndian)

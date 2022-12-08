@@ -13,28 +13,40 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
-    <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+    <DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="assets\shared\shaders\deferred\phong\**" />
+    <Compile Remove="assets\shared\shaders\deferred\toon\**" />
+    <Compile Remove="Windows\Events\**" />
+    <EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
+    <EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
+    <EmbeddedResource Remove="Windows\Events\**" />
+    <None Remove="assets\shared\shaders\deferred\phong\**" />
+    <None Remove="assets\shared\shaders\deferred\toon\**" />
+    <None Remove="Windows\Events\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="assets\shared\fonts\SEGMDL2.TTF" />
@@ -390,12 +402,8 @@
 
 
 	<ItemGroup>
-	  <Folder Include="assets\shared\shaders\deferred\phong\" />
-	  <Folder Include="assets\shared\shaders\deferred\toon\" />
-	  <Folder Include="Editor\Attributes\" />
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
-	  <Folder Include="Windows\Events\" />
 	</ItemGroup>
 
 

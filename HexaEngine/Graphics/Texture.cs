@@ -574,65 +574,6 @@
             return new ShaderResourceViewArray(device, resource, Description.ArraySize);
         }
 
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddBinding(ShaderStage stage, int slot)
-        {
-            AddBinding(new(stage, slot));
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveBinding(ShaderStage stage, int slot)
-        {
-            RemoveBinding(new(stage, slot));
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddBinding(ShaderBinding binding)
-        {
-            bindings.Add(binding);
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveBinding(ShaderBinding binding)
-        {
-            bindings.Remove(binding);
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearBindings()
-        {
-            bindings.Clear();
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Bind(IGraphicsContext context)
-        {
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                context.SetShaderResource(ResourceView, bindings[i].Stage, bindings[i].Slot);
-            }
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Bind(IGraphicsContext context, int slot)
-        {
-            context.SetShaderResource(ResourceView, ShaderStage.Pixel, slot);
-        }
-
-        [Obsolete("Use context.SetXXX or Pipeline.XXX.Add(XXX, ShaderStage, int index) instead")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Bind(IGraphicsContext context, int slot, ShaderStage stage)
-        {
-            context.SetShaderResource(ResourceView, stage, slot);
-        }
-
         #endregion IShaderResource
 
         #region IRenderTargetView

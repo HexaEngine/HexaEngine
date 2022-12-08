@@ -2,22 +2,67 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Objects.Primitives;
 
-    public class SkyboxPipeline : Pipeline
+    public unsafe class Skybox : IEffect
     {
-        public SkyboxPipeline(IGraphicsDevice device) : base(device, new()
+        private readonly UVSphere sphere;
+        private readonly Pipeline pipeline;
+        private readonly ISamplerState sampler;
+        private readonly void** cbs;
+
+        public IRenderTargetView? Output;
+        public IDepthStencilView? DSV;
+        public IShaderResourceView? Env;
+        public IBuffer? Camera;
+        public IBuffer? World;
+
+        public Skybox(IGraphicsDevice device)
         {
-            VertexShader = "forward/skybox/vs.hlsl",
-            PixelShader = "forward/skybox/ps.hlsl"
-        })
-        {
-            State = new()
+            sphere = new(device);
+            pipeline = new(device, new()
             {
-                DepthStencil = DepthStencilDescription.Default,
+                VertexShader = "forward/skybox/vs.hlsl",
+                PixelShader = "forward/skybox/ps.hlsl"
+            });
+            pipeline.State = new PipelineState()
+            {
                 Rasterizer = RasterizerDescription.CullNone,
-                Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
+                Blend = BlendDescription.Opaque,
+                DepthStencil = DepthStencilDescription.Default,
             };
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+            cbs = AllocArray(2);
+        }
+
+        public void Resize()
+        {
+#nullable disable
+            cbs[0] = (void*)World?.NativePointer;
+            cbs[1] = (void*)Camera?.NativePointer;
+#nullable enable
+        }
+
+        public void Draw(IGraphicsContext context)
+        {
+            if (Output == null) return;
+
+            context.SetRenderTarget(Output, DSV);
+            context.PSSetSampler(sampler, 0);
+            context.VSSetConstantBuffers(cbs, 2, 0);
+            context.PSSetShaderResource(Env, 0);
+            sphere.DrawAuto(context, pipeline, Output.Viewport);
+            context.ClearState();
+        }
+
+        public void Dispose()
+        {
+            sphere.Dispose();
+            pipeline.Dispose();
+            sampler.Dispose();
+            Free(cbs);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -2,15 +2,25 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Mathematics;
 
     public class PSMPipeline : Pipeline
     {
+        public IBuffer? View;
+
         public PSMPipeline(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "forward/psm/vs.hlsl",
             HullShader = "forward/psm/hs.hlsl",
             DomainShader = "forward/psm/ds.hlsl",
             PixelShader = "forward/psm/ps.hlsl",
+        },
+        new PipelineState()
+        {
+            DepthStencil = DepthStencilDescription.Default,
+            Rasterizer = RasterizerDescription.CullFront,
+            Blend = BlendDescription.Opaque,
+            Topology = PrimitiveTopology.PatchListWith3ControlPoints,
         },
         new InputElementDescription[]
         {
@@ -22,20 +32,18 @@
                 new("INSTANCED_MATS", 1, Format.RGBA32Float, 16, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 2, Format.RGBA32Float, 32, 1, InputClassification.PerInstanceData, 1),
                 new("INSTANCED_MATS", 3, Format.RGBA32Float, 48, 1, InputClassification.PerInstanceData, 1),
+        },
+        new ShaderMacro[]
+        {
+            new("INSTANCED", 1)
         })
         {
-            State = new()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullFront,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.PatchListWith3ControlPoints,
-            };
         }
 
-        protected override ShaderMacro[] GetShaderMacros()
+        protected override void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
-            return new ShaderMacro[] { new("INSTANCED", 1) };
+            base.BeginDraw(context, viewport);
+            context.DSSetConstantBuffer(View, 0);
         }
     }
 }

@@ -7,7 +7,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
-    [EditorComponent(typeof(BoxCollider))]
+    [EditorComponent(typeof(BoxCollider), "Box Collider")]
     public class BoxCollider : IComponent
     {
         public static BoxCollider Con()
@@ -36,10 +36,8 @@
         }
 
         public IPropertyEditor? Editor { get; }
-#if GenericAttributes
-        [EditorProperty<ColliderType>("Type")]
-#endif
 
+        [EditorProperty<ColliderType>("Type")]
         public ColliderType Type
         { get => type; set { type = value; update = true; } }
 

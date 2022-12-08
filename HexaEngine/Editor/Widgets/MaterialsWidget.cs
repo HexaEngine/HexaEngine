@@ -21,6 +21,7 @@
             var scene = SceneManager.Current;
             if (scene is null)
             {
+                current = -1;
                 EndWindow();
 
                 return;
@@ -29,6 +30,10 @@
             if (ImGui.Button("Create"))
             {
                 scene.AddMaterial(new() { Name = "New Material" });
+            }
+            if (scene.Materials.Count == 0)
+            {
+                current = -1;
             }
 
             bool selected = ImGui.Combo("Material", ref current, scene.Materials.Select(x => x.Name).ToArray(), scene.Materials.Count);

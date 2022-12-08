@@ -26,5 +26,21 @@
             Direction = spotlight.Transform.Forward;
             OuterCutOff = MathF.Cos((MathUtil.Lerp(0, spotlight.ConeAngle, 1 - spotlight.Blend) / 2).ToRad());
         }
+
+        public void Update(Spotlight spotlight)
+        {
+            View = PSMHelper.GetLightSpaceMatrix(spotlight.Transform, spotlight.ConeAngle.ToRad());
+            Proj = default;
+            Color = spotlight.Color * spotlight.Strength;
+            Position = spotlight.Transform.GlobalPosition;
+            CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());
+            Direction = spotlight.Transform.Forward;
+            OuterCutOff = MathF.Cos((MathUtil.Lerp(0, spotlight.ConeAngle, 1 - spotlight.Blend) / 2).ToRad());
+        }
+
+        public override string ToString()
+        {
+            return Color.ToString();
+        }
     }
 }

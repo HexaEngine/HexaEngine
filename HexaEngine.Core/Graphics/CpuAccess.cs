@@ -5,6 +5,7 @@
     {
         Write = unchecked(65536),
         Read = unchecked(131072),
-        None = unchecked(0)
+        None = unchecked(0),
+        RW = Read | Write
     }
 }

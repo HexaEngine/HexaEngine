@@ -4,6 +4,8 @@
     using HexaEngine.IO;
     using System;
     using System.IO;
+    using System.IO.Hashing;
+    using System.Text;
 
     internal class Program
     {
@@ -43,9 +45,12 @@
                         if (File.Exists(o.Path))
                         {
                             AssetBundle bundle = new(o.Path);
+                            Crc32 crc = new();
+
                             foreach (Asset asset in bundle.Assets)
                             {
-                                Console.WriteLine(asset.Path);
+                                crc.Append(asset.GetData());
+                                Console.WriteLine($"[{asset.Type}] CRC32:{ByteArrayToString(crc.GetHashAndReset())} {asset.Path}");
                             }
                         }
                         break;
@@ -53,7 +58,7 @@
                     case Mode.gen:
                         if (Directory.Exists(o.Path))
                         {
-                            AssetBundle.GenerateFrom(o.Path);
+                            AssetBundle.GenerateFrom(o.Path, false);
                         }
                         break;
 
@@ -69,6 +74,14 @@
                         break;
                 }
             });
+        }
+
+        public static string ByteArrayToString(byte[] ba)
+        {
+            StringBuilder hex = new(ba.Length * 2);
+            foreach (byte b in ba)
+                hex.AppendFormat("{0:x2}", b);
+            return hex.ToString();
         }
     }
 }

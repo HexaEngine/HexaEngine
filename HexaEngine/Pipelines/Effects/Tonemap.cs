@@ -1,37 +1,23 @@
 ﻿namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
-    using ImGuiNET;
     using System.Numerics;
 
-    public class Tonemap : Effect
+    public unsafe class Tonemap : IEffect
     {
+        private readonly Quad quad;
+        private readonly Pipeline pipeline;
         private readonly IBuffer buffer;
+        private readonly ISamplerState sampler;
+        private readonly void** srvs;
         private float bloomStrength = 0.04f;
         private bool dirty;
 
-        public Tonemap(IGraphicsDevice device) : base(device, new()
-        {
-            VertexShader = "effects/tonemap/vs.hlsl",
-            PixelShader = "effects/tonemap/ps.hlsl",
-        })
-        {
-            Mesh = new Quad(device);
-            State = new()
-            {
-                Blend = BlendDescription.Opaque,
-                DepthStencil = DepthStencilDescription.None,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleList,
-            };
-            TargetType = PinType.Texture2D;
-            ResourceSlots.Add((0, "Image", PinType.Texture2D));
-            buffer = device.CreateBuffer(new Params(bloomStrength), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            Constants.Add(new(buffer, ShaderStage.Pixel, 0));
-        }
+        public IRenderTargetView? Output;
+        public IShaderResourceView? HDR;
+        public IShaderResourceView? Bloom;
 
         private struct Params
         {
@@ -45,30 +31,54 @@
             }
         }
 
+        public Tonemap(IGraphicsDevice device)
+        {
+            quad = new(device);
+            pipeline = new(device, new()
+            {
+                VertexShader = "effects/tonemap/vs.hlsl",
+                PixelShader = "effects/tonemap/ps.hlsl",
+            });
+            buffer = device.CreateBuffer(new Params(bloomStrength), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            srvs = AllocArray(2);
+        }
+
         public float BloomStrength
         { get => bloomStrength; set { bloomStrength = value; dirty = true; } }
 
-        public override void Draw(IGraphicsContext context)
+        public void Resize()
         {
-            if (dirty)
-            {
-                context.Write(buffer, new Params(BloomStrength));
-                dirty = false;
-            }
-#nullable disable
-            DrawAuto(context, Target.Viewport);
-#nullable enable
+            srvs[0] = (void*)HDR?.NativePointer;
+            srvs[1] = (void*)Bloom?.NativePointer;
         }
 
-        public override void DrawSettings()
+        public void Draw(IGraphicsContext context)
         {
-            if (ImGui.CollapsingHeader("Tonemap settings"))
+            if (Output is null) return;
+            if (dirty)
             {
-                if (ImGui.InputFloat("Bloom strength", ref bloomStrength))
-                {
-                    dirty = true;
-                }
+                var data = new Params(BloomStrength);
+                context.Write(buffer, &data, sizeof(Params));
+                dirty = false;
             }
+
+            context.SetRenderTarget(Output, default);
+            context.PSSetConstantBuffer(buffer, 0);
+            context.PSSetSampler(sampler, 0);
+            context.PSSetShaderResources(srvs, 2, 0);
+            quad.DrawAuto(context, pipeline, Output.Viewport);
+            context.ClearState();
+        }
+
+        public void Dispose()
+        {
+            quad.Dispose();
+            pipeline.Dispose();
+            sampler.Dispose();
+            buffer.Dispose();
+            Free(srvs);
+            GC.SuppressFinalize(this);
         }
     }
 }

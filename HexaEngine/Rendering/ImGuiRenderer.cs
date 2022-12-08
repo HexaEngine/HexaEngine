@@ -37,8 +37,6 @@ namespace HexaEngine.Rendering
         private IDepthStencilState depthStencilState;
         private int vertexBufferSize = 5000, indexBufferSize = 10000;
 
-        private static readonly Dictionary<IntPtr, IShaderResourceView> textureResources = new();
-
         public ImGuiRenderer(SdlWindow window, IGraphicsDevice device)
         {
             IntPtr igContext = ImGui.CreateContext();
@@ -235,9 +233,7 @@ namespace HexaEngine.Rendering
                     {
                         ctx.SetScissorRect((int)cmd.ClipRect.X, (int)cmd.ClipRect.Y, (int)cmd.ClipRect.Z, (int)cmd.ClipRect.W);
 
-                        textureResources.TryGetValue(cmd.TextureId, out var texture);
-                        if (texture != null)
-                            ctx.SetShaderResource(texture, ShaderStage.Pixel, 0);
+                        ctx.PSSetShaderResource((void*)cmd.TextureId, 0);
 
                         ctx.DrawIndexed((int)cmd.ElemCount, idx_offset, vtx_offset);
                     }
@@ -270,9 +266,9 @@ namespace HexaEngine.Rendering
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
             ctx.VSSetShader(vertexShader);
-            ctx.SetConstantBuffer(constantBuffer, ShaderStage.Vertex, 0);
+            ctx.VSSetConstantBuffer(constantBuffer, 0);
             ctx.PSSetShader(pixelShader);
-            ctx.SetSampler(fontSampler, ShaderStage.Pixel, 0);
+            ctx.PSSetSampler(fontSampler, 0);
             ctx.GSSetShader(null);
             ctx.HSSetShader(null);
             ctx.DSSetShader(null);
@@ -321,7 +317,7 @@ namespace HexaEngine.Rendering
             fontTextureView = device.CreateShaderResourceView(texture, resViewDesc);
             texture.Dispose();
 
-            io.Fonts.TexID = RegisterTexture(fontTextureView);
+            io.Fonts.TexID = fontTextureView.NativePointer;
 
             var samplerDesc = new SamplerDescription
             {
@@ -335,26 +331,6 @@ namespace HexaEngine.Rendering
                 MaxLOD = 0f
             };
             fontSampler = device.CreateSamplerState(samplerDesc);
-        }
-
-        public static IntPtr RegisterTexture(IShaderResourceView texture)
-        {
-            var imguiID = texture.NativePointer;
-            textureResources.Add(imguiID, texture);
-            return imguiID;
-        }
-
-        public static IntPtr TryRegisterTexture(IShaderResourceView texture)
-        {
-            var imguiID = texture.NativePointer;
-            if (!textureResources.ContainsKey(imguiID))
-                textureResources.Add(imguiID, texture);
-            return imguiID;
-        }
-
-        public static void UnregisterTexture(IShaderResourceView texture)
-        {
-            textureResources.Remove(texture.NativePointer);
         }
 
         private void CreateDeviceObjects()

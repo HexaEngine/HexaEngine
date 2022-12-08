@@ -56,6 +56,20 @@
             base.OnShown(args);
         }
 
+        protected override void OnFocusGained(FocusGainedEventArgs args)
+        {
+            if (swapChain != null)
+                renderDispatcher.Invoke(() => swapChain.Active = true);
+            base.OnFocusGained(args);
+        }
+
+        protected override void OnFocusLost(FocusLostEventArgs args)
+        {
+            if (swapChain != null)
+                renderDispatcher.Invoke(() => swapChain.Active = false);
+            base.OnFocusLost(args);
+        }
+
         [STAThread]
         private void RenderVoid()
         {
@@ -64,6 +78,7 @@
                 device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
                 context = device.Context;
                 swapChain = device.SwapChain ?? throw new PlatformNotSupportedException();
+                swapChain.Active = true;
             }
             else
             {
@@ -72,6 +87,9 @@
 
             renderDispatcher = new(device);
             framebuffer = new(device);
+
+            bool sceneGraph = Flags.HasFlag(RendererFlags.SceneGraph);
+            bool imGuiWidgets = Flags.HasFlag(RendererFlags.ImGuiWidgets);
 
             if (Flags.HasFlag(RendererFlags.ImGui))
             {
@@ -125,7 +143,7 @@
                 if (renderer is not null)
                     renderer.BeginDraw();
 
-                if (Flags.HasFlag(RendererFlags.ImGuiWidgets) && Designer.IsShown)
+                if (imGuiWidgets && Designer.IsShown)
                 {
                     Designer.Draw();
                     WidgetManager.Draw(context);
@@ -135,7 +153,7 @@
                     framebuffer.Draw();
                 }
 
-                if (initTask.IsCompleted && Flags.HasFlag(RendererFlags.SceneGraph) && SceneManager.Current is not null)
+                if (initTask.IsCompleted && sceneGraph && SceneManager.Current is not null)
                     lock (SceneManager.Current)
                     {
                         SceneManager.Current.Tick();
@@ -156,7 +174,6 @@
                 OnRender(context);
 
                 renderer?.EndDraw();
-                DebugDraw.Render(CameraManager.Current, Viewport);
                 swapChain.Present();
                 ProcessInput();
                 Time.FrameUpdate();

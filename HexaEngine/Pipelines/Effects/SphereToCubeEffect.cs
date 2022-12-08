@@ -14,6 +14,8 @@ namespace HexaEngine.Pipelines.Effects
     public class EquiRectangularToCubeEffect : Effect
     {
         private readonly IBuffer mvpBuffer;
+        private readonly ISamplerState sampler;
+        public IShaderResourceView Source;
 
         public struct CubeFaceCamera
         {
@@ -64,7 +66,8 @@ namespace HexaEngine.Pipelines.Effects
         {
             AutoSetTarget = false;
             SetViewPoint(Vector3.Zero);
-            mvpBuffer = CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
+            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
             Mesh = new Cube(device);
             State = new()
             {
@@ -80,6 +83,9 @@ namespace HexaEngine.Pipelines.Effects
             for (int i = 0; i < 6; i++)
             {
                 context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
+                context.VSSetConstantBuffer(mvpBuffer, 0);
+                context.PSSetSampler(sampler, 0);
+                context.PSSetShaderResource(Source, 0);
                 Targets.ClearAndSetTarget(context, i);
                 base.DrawAuto(context, Targets.Viewport);
             }

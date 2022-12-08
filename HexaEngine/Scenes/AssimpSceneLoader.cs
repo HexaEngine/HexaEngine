@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
@@ -13,13 +14,13 @@
 
     public class AssimpSceneLoader
     {
-        public static Assimp Assimp = Assimp.GetApi();
+        public static Assimp assimp = Assimp.GetApi();
 
         private readonly Dictionary<Pointer<Node>, SceneNode> nodesT = new();
         private readonly Dictionary<Pointer<Mesh>, Objects.Mesh> meshesT = new();
         private readonly Dictionary<string, Cameras.Camera> camerasT = new();
         private readonly Dictionary<string, Lights.Light> lightsT = new();
-        private SceneNode[] nodes;
+        private List<SceneNode> nodes;
         private Objects.Mesh[] meshes;
         private Objects.Material[] materials;
         private Cameras.Camera[] cameras;
@@ -296,7 +297,6 @@
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Mesh* msh = scene->MMeshes[i];
-                //AssimpMesh mesh = new();
                 MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
                 int[] indices = new int[msh->MNumFaces * 3];
                 for (int j = 0; j < msh->MNumFaces; j++)
@@ -402,6 +402,7 @@
 
         private unsafe void LoadSceneGraph(AssimpScene* scene)
         {
+            nodes = new();
             root = WalkNode(scene->MRootNode, null);
         }
 
@@ -434,26 +435,59 @@
                 sceneNode.AddChild(child);
             }
 
+            nodes.Add(sceneNode);
             return sceneNode;
         }
 
         private unsafe void InjectResources(Scene scene)
         {
+            var baseMat = scene.Materials.Count;
+            var baseMesh = scene.Meshes.Count;
             for (int i = 0; i < materials.Length; i++)
             {
                 scene.AddMaterial(materials[i]);
             }
 
+            /* for (int j = 0; j < meshes.Length; j++)
+             {
+                 var mesh = meshes[j];
+                 mesh.MaterialIndex =
+                 node.RemoveMesh(mesh);
+                 node.AddMesh(mesh + baseMesh);
+             }
+            */
             for (int i = 0; i < meshes.Length; i++)
             {
                 scene.AddMesh(meshes[i]);
             }
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                for (int j = 0; j < node.Meshes.Count; j++)
+                {
+                    var mesh = node.Meshes[j];
+                    node.RemoveMesh(mesh);
+                    node.AddMesh(mesh + baseMesh);
+                }
+            }
+        }
+
+        public static unsafe void Log(byte* a, byte* b)
+        {
+            string user = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(b));
+            string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(a));
+            ImGuiConsole.Log(msg);
         }
 
         public unsafe void Import(string path, Scene sceneTarget)
         {
-            var scene = Assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
-            var scene1 = Assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs));
+            LogStream stream = new(new(Log), UTF8("HexaEngine"));
+            assimp.AttachLogStream(&stream);
+            assimp.EnableVerboseLogging(Assimp.True);
+
+            var scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
+            var scene1 = assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData | PostProcessSteps.RemoveRedundantMaterials));
 
             if (scene1 != scene)
             {
@@ -482,7 +516,7 @@
             camerasT.Clear();
             lightsT.Clear();
 
-            Assimp.ReleaseImport(scene);
+            assimp.ReleaseImport(scene);
         }
 
         public unsafe void Open(string path)
