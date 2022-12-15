@@ -1,7 +1,18 @@
-# HexaEngine
+# Features
+- Principled BSDF
+- Shadow Mapping (PSM, CSM, OSM)
+- Instancing
+- HBAO
+- HDR Bloom
+- Auto Exposure
+- Tonemapping
+- DDA SSR
+- Editor
+- Physics Engine
+- Plugin System
 
-A work in progress cross platform game engine
-
-[X] Windows (D3D11)
-[] Windows (D3D12)
-[] Linux & Windows (Vulkan)
+# Backends
+- D3D11: Yes
+- D3D12: Planned
+- Vulkan: Planned
+- OpenGL: Not planned
