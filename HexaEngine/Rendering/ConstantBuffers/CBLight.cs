@@ -212,5 +212,13 @@
             cb->SpotlightSDCount = spotlightSDCount;
             cb->SpotlightCount = spotlightCount;
         }
+
+        public CBSpotlightSD* GetSpotlightSDs()
+        {
+            fixed (void* ptr = &this)
+            {
+                return (CBSpotlightSD*)((byte*)ptr + SpotlightSDPointerOffset);
+            }
+        }
     }
 }

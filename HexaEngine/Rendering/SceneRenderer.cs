@@ -14,7 +14,6 @@
     using HexaEngine.Objects;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Deferred;
-    using HexaEngine.Pipelines.Deferred.PrePass;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
     using HexaEngine.Rendering.ConstantBuffers;
@@ -25,7 +24,7 @@
     using System;
     using System.Numerics;
 
-    public class DeferredRenderer : ISceneRenderer
+    public class SceneRenderer : ISceneRenderer
     {
 #nullable disable
         private bool initialized;
@@ -47,9 +46,9 @@
         private IBuffer lightBuffer;
         private ConstantBuffer<CBWorld> skyboxBuffer;
         private IBuffer tesselationBuffer;
-        private GeometryPass geometry;
-        private MTLDepthShaderBack materialDepthBackface;
-        private MTLDepthShaderFront materialDepthFrontface;
+        private Geometry geometry;
+        private GeometryDepthBack materialDepthBackface;
+        private GeometryDepthFront materialDepthFrontface;
         private DeferredPrincipledBSDF deferred;
         private ForwardPrincipledBSDF forward;
         private Skybox skybox;
@@ -113,7 +112,7 @@
 
 #nullable enable
 
-        public DeferredRenderer()
+        public SceneRenderer()
         {
         }
 
@@ -538,16 +537,19 @@
             if (!initialized) return;
             if (camera == null) return;
 
+            // Note the "new" doesn't apply any gc pressure, because the buffer as an array in the background that is already allocated on the unmanaged heap.
             cameraBuffer[0] = new CBCamera(camera);
             cameraBuffer.Update(context);
             skyboxBuffer[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
             skyboxBuffer.Update(context);
 
             context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+            /*
             for (int i = 0; i < gbuffers.Count; i++)
             {
                 //context.ClearRenderTargetView(gbuffers.ppRTVs[i], default);
             }
+            */
 
             if (!forwardMode)
             {
@@ -644,9 +646,10 @@
                             continue;
                         }
                         light.Updated = false;
-                        CBSpotlightSD* spotlights = (CBSpotlightSD*)(lights + CBLight.SpotlightSDPointerOffset);
+                        CBSpotlightSD* spotlights = lights->GetSpotlightSDs();
                         context.Write(psmBuffer, spotlights[spotsd].View);
                         psmDepthBuffers[spotsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
+                        context.DSSetConstantBuffer(psmBuffer, 1);
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
                             if (resourceManager.GetMesh(scene.Meshes[j], out var mesh))
@@ -702,7 +705,7 @@
             // Compose and Tonemap
             tonemap.Draw(context);
 
-            // FXAA
+            // Fast approximate anti-aliasing
             fxaa.Draw(context, viewport);
 
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
@@ -725,72 +728,6 @@
 
             if (ImGui.CollapsingHeader("Normals"))
                 ImGui.Image(gbuffers.SRVs[2].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
-
-            /*
-            {
-                if (ImGui.InputFloat("Render Resolution", ref renderResolution, 0, 0, "%.3f", ImGuiInputTextFlags.EnterReturnsTrue))
-                {
-                    if (renderResolution == 0)
-                    {
-                        renderResolution = 1;
-                    }
-                    configKey.SetValue(nameof(renderResolution), renderResolution);
-                    OnResizeBegin(null, EventArgs.Empty);
-                    OnResizeEnd(null, new(windowWidth, windowHeight, windowWidth, windowHeight));
-                    Config.Global.Save();
-                }
-                bool vsync = swapChain.VSync;
-                if (ImGui.Checkbox("VSync", ref vsync))
-                {
-                    swapChain.VSync = vsync;
-                    configKey.SetValue("VSync", vsync);
-                }
-
-                ImGui.BeginDisabled(vsync);
-
-                bool limitFPS = swapChain.LimitFPS;
-                if (ImGui.Checkbox("Limit FPS", ref limitFPS))
-                {
-                    swapChain.LimitFPS = limitFPS;
-                    configKey.SetValue("LimitFPS", limitFPS);
-                }
-
-                int target = swapChain.TargetFPS;
-                if (ImGui.InputInt("FPS Target", ref target, 1, 2, ImGuiInputTextFlags.EnterReturnsTrue))
-                {
-                    swapChain.TargetFPS = target;
-                    configKey.SetValue("TargetFPS", target);
-                }
-
-                ImGui.EndDisabled();
-            }
-
-            if (ImGui.Button("Reload Skybox"))
-            {
-                env.Dispose();
-                envirr.Dispose();
-                envfilter.Dispose();
-                env = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
-                envirr = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "irradiance_o.dds", TextureDimension.TextureCube));
-                envfilter = new(device, new TextureFileDescription(Paths.CurrentTexturePath + "prefilter_o.dds", TextureDimension.TextureCube));
-                dirty = true;
-            }
-
-            if (ImGui.Combo("Shading Model", ref currentShadingModelIndex, availableShadingModelStrings, availableShadingModelStrings.Length))
-            {
-                currentShadingModel = availableShadingModels[currentShadingModelIndex];
-                switch (currentShadingModel)
-                {
-                    case ShadingModel.Flat:
-                        activeShader = flatlightShader;
-                        break;
-
-                    case ShadingModel.PbrBrdf:
-                        activeShader = pbrlightShader;
-                        break;
-                }
-                dirty = true;
-            }*/
         }
 
         protected virtual void Dispose(bool disposing)
@@ -864,7 +801,7 @@
             }
         }
 
-        ~DeferredRenderer()
+        ~SceneRenderer()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

@@ -176,7 +176,6 @@
             context.SetVertexBuffer(1, ISB, sizeof(Matrix4x4), 0);
             context.SetIndexBuffer(IB, Format.R32UInt, 0);
             pipeline.DrawIndexedInstanced(context, viewport, IndexCount, instanceCount, 0, 0, 0);
-            context.ClearState();
         }
 
         protected virtual void Dispose(bool disposing)

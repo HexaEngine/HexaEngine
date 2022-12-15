@@ -3,9 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
 
-    public class GridShader : Pipeline
+    public class Grid : Pipeline
     {
-        public GridShader(IGraphicsDevice device) : base(device, new()
+        public Grid(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "deferred/grid/vs.hlsl",
             PixelShader = "deferred/grid/ps.hlsl"
@@ -34,9 +34,9 @@
         }
     }
 
-    public class TerrainShader : Pipeline
+    public class Terrain : Pipeline
     {
-        public TerrainShader(IGraphicsDevice device) : base(device, new()
+        public Terrain(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "deferred/terrain/vs.hlsl",
             HullShader = "deferred/terrain/hs.hlsl",

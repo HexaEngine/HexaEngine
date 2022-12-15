@@ -35,7 +35,7 @@
         private IGraphicsContext context;
         private ISwapChain swapChain;
         private Framebuffer framebuffer;
-        private DeferredRenderer deferredRenderer;
+        private SceneRenderer deferredRenderer;
         private Task? rendererUpdateTask;
 
         private bool resize = false;

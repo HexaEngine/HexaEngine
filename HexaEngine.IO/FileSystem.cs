@@ -10,70 +10,92 @@
     public class FileSystem
     {
         private static readonly List<Asset> assetBundles = new();
+        private static readonly Dictionary<string, string> fileIndices = new();
 
         static FileSystem()
         {
-            foreach (string file in Directory.GetFiles("assets/", "*.assets", SearchOption.TopDirectoryOnly))
+            foreach (string file in Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly))
             {
                 assetBundles.AddRange(new AssetBundle(file).Assets);
+            }
+            foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
+            {
+                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                {
+                    var abs = Path.GetFullPath(file);
+                    var rel = Path.GetRelativePath(dir, abs);
+                    var log = Path.Combine("assets\\", rel);
+
+                    if (fileIndices.ContainsKey(log))
+                    {
+                        fileIndices[log] = abs;
+                    }
+                    else
+                    {
+                        fileIndices.Add(log, abs);
+                    }
+                }
             }
         }
 
         public static bool Exists(string? path)
         {
-            if (string.IsNullOrWhiteSpace(path)) return false;
-            if (File.Exists(path))
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            if (string.IsNullOrWhiteSpace(realPath)) return false;
+            if (fileIndices.ContainsKey(realPath))
             {
                 return true;
             }
             else
             {
-                var rel = Path.GetRelativePath("assets/", path);
+                var rel = Path.GetRelativePath("assets/", realPath);
                 return assetBundles.Find(x => x.Path == rel) != null; ;
             }
         }
 
         public static VirtualStream Open(string path)
         {
-            if (File.Exists(path))
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            if (fileIndices.TryGetValue(realPath, out string? value))
             {
-                var fs = File.OpenRead(path);
+                var fs = File.OpenRead(value);
 
                 return new(fs, 0, fs.Length, true);
             }
-            else if (!string.IsNullOrWhiteSpace(path))
+            else if (!string.IsNullOrWhiteSpace(realPath))
             {
-                var rel = Path.GetRelativePath("assets/", path);
+                var rel = Path.GetRelativePath("assets/", realPath);
                 var asset = assetBundles.Find(x => x.Path == rel);
 
                 if (asset == null)
                 {
-                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {path} is missing!");
-                    throw new FileNotFoundException(path);
+                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {realPath} is missing!");
+                    throw new FileNotFoundException(realPath);
                 }
 
                 return asset.GetStream();
             }
 
-            throw new FileNotFoundException(path);
+            throw new FileNotFoundException(realPath);
         }
 
         public static bool TryOpen(string path, [NotNullWhen(true)] out VirtualStream? stream)
         {
-            if (File.Exists(path))
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            if (fileIndices.TryGetValue(realPath, out string? value))
             {
-                var fs = File.OpenRead(path);
+                var fs = File.OpenRead(value);
                 stream = new(fs, 0, fs.Length, true);
                 return true;
             }
-            else if (!string.IsNullOrWhiteSpace(path))
+            else if (!string.IsNullOrWhiteSpace(realPath))
             {
-                var rel = Path.GetRelativePath("assets/", path);
+                var rel = Path.GetRelativePath("assets/", realPath);
                 var asset = assetBundles.Find(x => x.Path == rel);
 
                 if (asset == null)
                 {
-                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {path} is missing!");
+                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {realPath} is missing!");
                     stream = default;
                     return false;
                 }
