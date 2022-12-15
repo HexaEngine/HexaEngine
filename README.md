@@ -1,6 +1,8 @@
 # Features
 - Principled BSDF
+- IBL
 - Shadow Mapping (PSM, CSM, OSM)
+- Deferred rendering
 - Instancing
 - HBAO
 - HDR Bloom
