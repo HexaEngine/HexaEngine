@@ -62,6 +62,12 @@
 
                 return new(fs, 0, fs.Length, true);
             }
+            else if (File.Exists(path))
+            {
+                var fs = File.OpenRead(path);
+
+                return new(fs, 0, fs.Length, true);
+            }
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
@@ -75,6 +81,7 @@
 
                 return asset.GetStream();
             }
+            
 
             throw new FileNotFoundException(realPath);
         }
@@ -85,6 +92,12 @@
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenRead(value);
+                stream = new(fs, 0, fs.Length, true);
+                return true;
+            }
+            else if (File.Exists(path))
+            {
+                var fs = File.OpenRead(path);
                 stream = new(fs, 0, fs.Length, true);
                 return true;
             }
@@ -103,6 +116,7 @@
                 stream = asset.GetStream();
                 return true;
             }
+            
             stream = default;
             return false;
         }

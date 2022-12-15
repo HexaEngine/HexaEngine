@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.IO;
@@ -110,21 +111,31 @@
                 var extension = Path.GetExtension(SelectedFile);
                 if (extension == ".glb")
                 {
-                    task = loader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
                 }
                 if (extension == ".gltf")
                 {
-                    task = loader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
                 }
                 if (extension == ".dae")
                 {
-                    task = loader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
                 }
                 if (extension == ".obj")
                 {
-                    task = loader.OpenAsync(SelectedFile);
+                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
                 }
             }
+        }
+
+        private Task HandleError(Task task)
+        {
+            if (!task.IsCompletedSuccessfully)
+            {
+                ImGuiConsole.Log(task.Exception);
+            }
+            task.Dispose();
+            return Task.CompletedTask;
         }
 
         private void DisplayDir(Item dir)

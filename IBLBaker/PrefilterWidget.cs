@@ -84,7 +84,7 @@
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeEffect filter = new(device);
                     filter.Source = source.ResourceView;
-                    Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA32Float));
+                    Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA16Float));
                     var cu = cube1.CreateRTVArray(device);
                     filter.Targets = cu;
                     filter.Draw(context);
