@@ -11,13 +11,10 @@
     using HexaEngine.Scripting;
     using NLua;
 
-#if GenericAttributes
     [EditorComponent<ScriptComponent>("Script")]
-#endif
-
     public class ScriptComponent : IComponent, IScript
     {
-        private SceneNode node;
+        private GameObject node;
         private readonly Lua context;
         private LuaFunction? UpdateFunc;
         private LuaFunction? FixedUpdateFunc;
@@ -45,8 +42,6 @@
 
         public IPropertyEditor? Editor { get; }
 
-        public Lua Context => context;
-
         private void Load()
         {
             if (file != null && FileSystem.Exists(Paths.CurrentScriptFolder + file) && update)
@@ -73,7 +68,7 @@
             }
         }
 
-        public void Initialize(IGraphicsDevice device, SceneNode node)
+        public void Awake(IGraphicsDevice device, GameObject node)
         {
             this.node = node;
             Load();
@@ -92,7 +87,7 @@
             UpdateFunc?.Call();
         }
 
-        public void Uninitialize()
+        public void Destory()
         {
             Load();
             DestroyFunc?.Call();

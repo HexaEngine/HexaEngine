@@ -20,9 +20,6 @@
 
         public static string CurrentConsoleScriptFolder { get; set; } = "assets/console/";
 
-        public static string GetRoot()
-        {
-            return Path.GetFullPath("assets");
-        }
+        public static string CurrentProjectFolder { get; set; } = Path.GetFullPath(CurrentAssetsPath);
     }
 }

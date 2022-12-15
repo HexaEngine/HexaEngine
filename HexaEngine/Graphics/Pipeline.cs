@@ -19,7 +19,7 @@
         private readonly PipelineDesc desc;
         private readonly ShaderMacro[] macros;
         private PipelineState state = PipelineState.Default;
-        private bool initialized;
+        private volatile bool initialized;
         private readonly IGraphicsDevice device;
         private readonly InputElementDescription[]? inputElements;
 
@@ -146,6 +146,7 @@
         protected virtual void OnReload(object? sender, EventArgs args)
         {
             initialized = false;
+            Interlocked.MemoryBarrier();
             vs?.Dispose();
             hs?.Dispose();
             ds?.Dispose();
@@ -269,8 +270,10 @@
                 }
         }
 
-        protected virtual void BeginDraw(IGraphicsContext context, Viewport viewport)
+        public virtual void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
+            if (!initialized) return;
+
             context.VSSetShader(vs);
             context.HSSetShader(hs);
             context.DSSetShader(ds);
@@ -325,24 +328,15 @@
         {
             Reload -= OnReload;
 
-            if (vs is not null)
-                vs.Dispose();
-            if (hs is not null)
-                hs.Dispose();
-            if (ds is not null)
-                ds.Dispose();
-            if (gs is not null)
-                gs.Dispose();
-            if (ps is not null)
-                ps.Dispose();
-            if (layout is not null)
-                layout.Dispose();
-            if (rasterizerState is not null)
-                rasterizerState.Dispose();
-            if (depthStencilState is not null)
-                depthStencilState.Dispose();
-            if (blendState is not null)
-                blendState.Dispose();
+            vs?.Dispose();
+            hs?.Dispose();
+            ds?.Dispose();
+            gs?.Dispose();
+            ps?.Dispose();
+            layout?.Dispose();
+            rasterizerState?.Dispose();
+            depthStencilState?.Dispose();
+            blendState?.Dispose();
         }
     }
 }

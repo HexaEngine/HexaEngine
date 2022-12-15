@@ -16,16 +16,16 @@
     {
         public static Assimp assimp = Assimp.GetApi();
 
-        private readonly Dictionary<Pointer<Node>, SceneNode> nodesT = new();
+        private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
         private readonly Dictionary<Pointer<Mesh>, Objects.Mesh> meshesT = new();
         private readonly Dictionary<string, Cameras.Camera> camerasT = new();
         private readonly Dictionary<string, Lights.Light> lightsT = new();
-        private List<SceneNode> nodes;
+        private List<GameObject> nodes;
         private Objects.Mesh[] meshes;
         private Objects.Material[] materials;
         private Cameras.Camera[] cameras;
         private Lights.Light[] lights;
-        private SceneNode root;
+        private GameObject root;
 
         public Task ImportAsync(string path, Scene scene)
         {
@@ -406,10 +406,10 @@
             root = WalkNode(scene->MRootNode, null);
         }
 
-        private unsafe SceneNode WalkNode(Node* node, SceneNode? parent)
+        private unsafe GameObject WalkNode(Node* node, GameObject? parent)
         {
             string name = node->MName;
-            SceneNode sceneNode = new();
+            GameObject sceneNode = new();
 
             if (camerasT.TryGetValue(name, out var camera))
             {

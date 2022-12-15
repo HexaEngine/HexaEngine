@@ -22,10 +22,5 @@
             DrawAuto(context, Target.Viewport);
 #nullable enable
         }
-
-        public override void DrawSettings()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

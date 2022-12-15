@@ -11,7 +11,7 @@
     [EditorNode<Camera>("Camera")]
 #endif
 
-    public class Camera : SceneNode, IView
+    public class Camera : GameObject, IView
     {
         public new CameraTransform Transform;
         private bool autoSize = true;

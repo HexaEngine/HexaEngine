@@ -90,10 +90,5 @@ namespace HexaEngine.Pipelines.Effects
                 base.DrawAuto(context, Targets.Viewport);
             }
         }
-
-        public override void DrawSettings()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

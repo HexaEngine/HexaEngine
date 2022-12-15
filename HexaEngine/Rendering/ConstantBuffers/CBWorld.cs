@@ -9,7 +9,7 @@
         public Matrix4x4 World;
         public Matrix4x4 WorldInv;
 
-        public CBWorld(SceneNode mesh)
+        public CBWorld(GameObject mesh)
         {
             World = Matrix4x4.Transpose(mesh.Transform.Global);
             WorldInv = Matrix4x4.Transpose(mesh.Transform.GlobalInverse);

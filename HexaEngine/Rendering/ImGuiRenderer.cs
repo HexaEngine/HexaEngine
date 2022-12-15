@@ -282,9 +282,7 @@ namespace HexaEngine.Rendering
         private void CreateFontsTexture()
         {
             var io = ImGui.GetIO();
-            byte* pixels;
-            int width, height;
-            io.Fonts.GetTexDataAsRGBA32(out pixels, out width, out height);
+            io.Fonts.GetTexDataAsRGBA32(out byte* pixels, out int width, out int height);
 
             var texDesc = new Texture2DDescription
             {

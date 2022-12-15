@@ -19,7 +19,7 @@ struct GeometryAttributes
 	float3 normal;
 	float roughness;
 	float metalness;
-	float3 clearcoatnormal;
+	float3 tangent;
 	float3 emission;
 	float emissionstrength;
 	float specular;
@@ -30,8 +30,7 @@ struct GeometryAttributes
 	float anisotropicrotation;
 	float clearcoat;
 	float clearcoatroughness;
-	float transmission;
-	float transmissionroughness;
+	float subsurface;
 	float sheen;
 	float sheentint;
 };
@@ -61,7 +60,7 @@ GeometryData PackGeometryData(
 	in float3 normal,
 	in float roughness,
 	in float metalness,
-	in float3 clearcoatnormal,
+	in float3 tangent,
 	in float3 emission,
 	in float emissionstrength,
 	in float specular,
@@ -85,7 +84,7 @@ GeometryData PackGeometryData(
 	data.position.w = depth;
 	data.normal.xyz = normal;
 	data.normal.w = roughness;
-	data.clearcoat.xyz = clearcoatnormal;
+	data.clearcoat.xyz = tangent;
 	data.clearcoat.w = metalness;
 	data.emission.xyz = emission;
 	data.emission.w = emissionstrength;
@@ -132,7 +131,7 @@ void ExtractGeometryData(
 	attrs.depth = position.w;
 	attrs.normal = normal.xyz;
 	attrs.roughness = normal.w;
-	attrs.clearcoatnormal = clearcoat.xyz;
+	attrs.tangent = clearcoat.xyz;
 	attrs.metalness = clearcoat.w;
 	attrs.emission = emission.xyz;
 	attrs.emissionstrength = emission.w;
@@ -144,8 +143,7 @@ void ExtractGeometryData(
 	attrs.anisotropicrotation = misc1.g;
 	attrs.clearcoat = misc1.b;
 	attrs.clearcoatroughness = misc1.a;
-	attrs.transmission = misc2.r;
-	attrs.transmissionroughness = misc2.g;
+	attrs.subsurface = misc2.r;
 	attrs.sheen = misc2.b;
 	attrs.sheentint = misc2.a;
 }

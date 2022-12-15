@@ -118,10 +118,5 @@
             context.PSSetSampler(sampler, 0);
             base.DrawAuto(context, Targets.Viewport);
         }
-
-        public override void DrawSettings()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

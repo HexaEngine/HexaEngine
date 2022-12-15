@@ -10,7 +10,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Objects;
     using HexaEngine.Physics;
-    using HexaEngine.Scripting;
+    using HexaEngine.Scenes.Managers;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -28,12 +28,12 @@
 #nullable disable
         private IGraphicsDevice device;
 #nullable enable
-        private readonly List<SceneNode> nodes = new();
+        private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
         private readonly List<Mesh> meshes = new();
         private readonly List<Material> materials = new();
-        private readonly List<IScript> scripts = new();
+        private readonly ScriptManager scriptManager = new();
         private readonly SemaphoreSlim semaphore = new(1);
 
         [JsonIgnore]
@@ -48,7 +48,7 @@
         [JsonIgnore]
         public ThreadDispatcher ThreadDispatcher;
 
-        private readonly SceneNode root;
+        private readonly GameObject root;
         public int ActiveCamera;
 
         public Scene()
@@ -73,19 +73,16 @@
         public IReadOnlyList<Material> Materials => materials;
 
         [JsonIgnore]
-        public IReadOnlyList<IScript> Scripts => scripts;
-
-        [JsonIgnore]
-        public IReadOnlyList<SceneNode> Nodes => nodes;
+        public IReadOnlyList<GameObject> Nodes => nodes;
 
         [JsonIgnore]
         public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
 
-        public SceneNode Root => root;
+        public GameObject Root => root;
 
         public bool IsSimulating;
 
-        public void Initialize(IGraphicsDevice device, SdlWindow window)
+        public void Initialize(IGraphicsDevice device)
         {
             semaphore.Wait();
 
@@ -189,13 +186,10 @@
                 root.Children[i].Update();
             }
 
-            for (int i = 0; i < scripts.Count; i++)
-            {
-                scripts[i].Update();
-            }
+            scriptManager.Update();
         }
 
-        public SceneNode? Find(string? name)
+        public GameObject? Find(string? name)
         {
             if (string.IsNullOrEmpty(name)) return null;
             semaphore.Wait();
@@ -204,30 +198,30 @@
             return result;
         }
 
-        public string GetAvailableName(SceneNode node, string name)
+        public string GetAvailableName(GameObject node, string name)
         {
             if (!string.IsNullOrEmpty(name)) return node.Name;
             if (Find(name) != null) return node.Name;
             return name;
         }
 
-        internal void RegisterChild(SceneNode node)
+        internal void RegisterChild(GameObject node)
         {
             nodes.Add(node);
             cameras.AddIfIs(node);
             lights.AddIfIs(node);
-            scripts.AddComponentIfIs(node);
+            scriptManager.Register(node);
         }
 
-        internal void UnregisterChild(SceneNode node)
+        internal void UnregisterChild(GameObject node)
         {
             nodes.Remove(node);
             cameras.RemoveIfIs(node);
             lights.RemoveIfIs(node);
-            scripts.RemoveComponentIfIs(node);
+            scriptManager.Unregister(node);
         }
 
-        private class SceneRootNode : SceneNode
+        private class SceneRootNode : GameObject
         {
             private readonly Scene parent;
 
@@ -240,6 +234,11 @@
             {
                 return parent;
             }
+
+            public override void GetDepth(ref int depth)
+            {
+                return;
+            }
         }
 
         public void AddMesh(Mesh mesh)
@@ -251,21 +250,21 @@
             semaphore.Release();
         }
 
-        public void AddChild(SceneNode node)
+        public void AddChild(GameObject node)
         {
             semaphore.Wait();
             root.AddChild(node);
             semaphore.Release();
         }
 
-        public void RemoveChild(SceneNode node)
+        public void RemoveChild(GameObject node)
         {
             semaphore.Wait();
             root.RemoveChild(node);
             semaphore.Release();
         }
 
-        public void Merge(SceneNode node)
+        public void Merge(GameObject node)
         {
             semaphore.Wait();
             root.Merge(node);
@@ -280,6 +279,29 @@
             Simulation.Dispose();
             ThreadDispatcher.Dispose();
             semaphore.Release();
+        }
+
+        public IEnumerable<GameObject> GetRange(GameObject start, GameObject end)
+        {
+            bool collect = false;
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var current = nodes[i];
+                if (current == start || current == end)
+                {
+                    if (!collect)
+                    {
+                        collect = true;
+                    }
+                    else
+                    {
+                        yield return current;
+                        break;
+                    }
+                }
+                if (collect && current.IsVisible)
+                    yield return current;
+            }
         }
     }
 }

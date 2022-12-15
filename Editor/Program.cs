@@ -6,6 +6,7 @@
     using HexaEngine.Core.Logging;
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
+    using HexaEngine.Plugins;
     using HexaEngine.Scenes;
     using System.Diagnostics;
     using Window = HexaEngine.Windows.Window;
@@ -18,6 +19,7 @@
         private static void Main()
         {
             CrashLogger.Start();
+            PluginManager.Load();
             ShaderCache.DisableCache = false;
 
             Trace.Listeners.Add(new DebugListener("output.log"));
@@ -36,6 +38,8 @@
             });
 
             Application.Run(window);
+
+            PluginManager.Unload();
         }
     }
 }

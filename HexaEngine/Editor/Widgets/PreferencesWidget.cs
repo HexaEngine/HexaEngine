@@ -55,6 +55,8 @@
                     var value = displayedKey.Values[j];
                     var val = value.Value;
                     bool changed = false;
+                    if (value.IsReadOnly)
+                        ImGui.BeginDisabled(true);
                     switch (value.DataType)
                     {
                         case DataType.String:
@@ -204,7 +206,18 @@
                                     val = v.ToString();
                             }
                             break;
+
+                        case DataType.Button:
+                            {
+                                changed = ImGui.Button(value.Name);
+                                if (changed)
+                                    val = null;
+                            }
+                            break;
                     }
+
+                    if (value.IsReadOnly)
+                        ImGui.EndDisabled();
 
                     if (changed)
                         value.Value = val;

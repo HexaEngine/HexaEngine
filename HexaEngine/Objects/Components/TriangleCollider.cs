@@ -16,7 +16,7 @@
     {
         private bool init = false;
         private bool update = true;
-        private SceneNode? node;
+        private GameObject? node;
         private Scene? scene;
         private TypedIndex index;
         private StaticHandle staticHandle;
@@ -106,14 +106,14 @@
             scene.Simulation.Shapes.Remove(index);
         }
 
-        public void Initialize(IGraphicsDevice device, SceneNode node)
+        public void Awake(IGraphicsDevice device, GameObject node)
         {
             this.node = node;
             scene = node.GetScene();
             Init();
         }
 
-        public void Uninitialize()
+        public void Destory()
         {
             Uninit();
         }

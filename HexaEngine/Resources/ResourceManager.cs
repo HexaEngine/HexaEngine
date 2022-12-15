@@ -9,7 +9,7 @@
 
     public class ResourceManager : IDisposable
     {
-        private readonly ConcurrentDictionary<SceneNode, ModelInstance> instances = new();
+        private readonly ConcurrentDictionary<GameObject, ModelInstance> instances = new();
         private readonly ConcurrentDictionary<Mesh, ModelMesh> meshes = new();
         private readonly ConcurrentDictionary<Material, ModelMaterial> materials = new();
         private readonly ConcurrentDictionary<string, ModelTexture> textures = new();
@@ -37,7 +37,7 @@
             return meshes.TryGetValue(mesh, out model);
         }
 
-        public ModelInstance CreateInstance(Mesh mesh, SceneNode node)
+        public ModelInstance CreateInstance(Mesh mesh, GameObject node)
         {
             if (!meshes.TryGetValue(mesh, out var modelMesh))
             {
@@ -50,7 +50,7 @@
             return instance;
         }
 
-        public async Task<ModelInstance> AsyncCreateInstance(Mesh mesh, SceneNode node)
+        public async Task<ModelInstance> AsyncCreateInstance(Mesh mesh, GameObject node)
         {
             if (!meshes.TryGetValue(mesh, out var modelMesh))
             {
@@ -63,7 +63,7 @@
             return instance;
         }
 
-        public void DestroyInstance(Mesh mesh, SceneNode node)
+        public void DestroyInstance(Mesh mesh, GameObject node)
         {
             if (!instances.TryGetValue(node, out var instance))
             {
@@ -76,7 +76,7 @@
             }
 
             modelMesh.DestroyInstance(device, instance);
-            instances.TryRemove(new KeyValuePair<SceneNode, ModelInstance>(node, instance));
+            instances.TryRemove(new KeyValuePair<GameObject, ModelInstance>(node, instance));
 
             if (modelMesh.InstanceCount == 0)
             {
@@ -84,7 +84,7 @@
             }
         }
 
-        public Task AsyncDestroyInstance(Mesh mesh, SceneNode node)
+        public Task AsyncDestroyInstance(Mesh mesh, GameObject node)
         {
             return Task.Factory.StartNew(() => DestroyInstance(mesh, node));
         }

@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using System.Numerics;
+using System.Runtime.Intrinsics.X86;
 
 namespace HexaEngine.Editor.Widgets
 {
@@ -11,17 +12,31 @@ namespace HexaEngine.Editor.Widgets
 
     public class FilePicker
     {
+        private DirectoryInfo currentDir;
+        private readonly List<Item> files = new();
+        private readonly List<Item> dirs = new();
         public string RootFolder;
-        public string CurrentFolder;
+        public string currentFolder;
         public string SelectedFile = string.Empty;
         public List<string> AllowedExtensions = new();
         public bool OnlyAllowFolders;
         public bool OnlyAllowFilteredExtensions;
         public FilePickerResult Result;
 
-        public readonly Stack<string> backHistory = new();
-
+        private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
+
+        private struct Item
+        {
+            public string Path;
+            public string Name;
+
+            public Item(string name, string path)
+            {
+                Name = name;
+                Path = path;
+            }
+        }
 
         public FilePicker()
         {
@@ -40,11 +55,11 @@ namespace HexaEngine.Editor.Widgets
             RootFolder = startingPath;
             CurrentFolder = startingPath;
             OnlyAllowFolders = false;
+            currentDir = new DirectoryInfo(CurrentFolder);
         }
 
-        public FilePicker(string? searchFilter = null)
+        public FilePicker(string startingPath)
         {
-            string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (File.Exists(startingPath))
             {
                 startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
@@ -59,16 +74,7 @@ namespace HexaEngine.Editor.Widgets
             RootFolder = startingPath;
             CurrentFolder = startingPath;
             OnlyAllowFolders = false;
-
-            if (searchFilter != null)
-            {
-                if (AllowedExtensions != null)
-                    AllowedExtensions.Clear();
-                else
-                    AllowedExtensions = new List<string>();
-
-                AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
-            }
+            currentDir = new DirectoryInfo(CurrentFolder);
         }
 
         public FilePicker(string startingPath, string? searchFilter = null)
@@ -97,6 +103,18 @@ namespace HexaEngine.Editor.Widgets
 
                 AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
             }
+
+            currentDir = new DirectoryInfo(CurrentFolder);
+        }
+
+        public string CurrentFolder
+        {
+            get => currentFolder;
+            set
+            {
+                currentFolder = value;
+                Refresh();
+            }
         }
 
         public bool Draw()
@@ -104,22 +122,27 @@ namespace HexaEngine.Editor.Widgets
             if (ImGui.Begin("File picker", ImGuiWindowFlags.NoDocking))
             {
                 ImGui.SetWindowFocus();
-                if (ImGui.Button("Home"))
+                if (ImGui.Button("\xe80f"))
                 {
                     CurrentFolder = RootFolder;
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("<"))
+                if (ImGui.Button("\xe72b"))
                 {
                     TryGoBack();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button(">"))
+                if (ImGui.Button("\xe72a"))
                 {
                     TryGoForward();
                 }
                 ImGui.SameLine();
-                ImGui.InputText("Path", ref CurrentFolder, 1024);
+                if (ImGui.Button("\xe72c"))
+                {
+                    Refresh();
+                }
+                ImGui.SameLine();
+                ImGui.InputText("Path", ref currentFolder, 1024);
 
                 float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
 
@@ -166,44 +189,41 @@ namespace HexaEngine.Editor.Widgets
                 ImGui.SameLine();
                 if (ImGui.BeginChild(2, new Vector2(width, -footerHeightToReserve), true, 0))
                 {
-                    var di = new DirectoryInfo(CurrentFolder);
-                    if (di.Exists)
+                    if (currentDir.Exists)
                     {
-                        if (di.Parent != null)
+                        if (currentDir.Parent != null)
                         {
                             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
                             if (ImGui.Selectable("../", false, ImGuiSelectableFlags.DontClosePopups))
-                                SetFolder(di.Parent.FullName);
+                                SetFolder(currentDir.Parent.FullName);
 
                             ImGui.PopStyleColor();
                         }
 
-                        var fileSystemEntries = GetFileSystemEntries(di.FullName);
-                        foreach (var fse in fileSystemEntries)
+                        for (int i = 0; i < files.Count; i++)
                         {
-                            if (Directory.Exists(fse))
-                            {
-                                var name = Path.GetFileName(fse);
-                                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
-                                if (ImGui.Selectable("\xe8b7" + name, false, ImGuiSelectableFlags.DontClosePopups))
-                                    SetFolder(fse);
-                                ImGui.PopStyleColor();
-                            }
-                            else
-                            {
-                                var name = Path.GetFileName(fse);
-                                bool isSelected = SelectedFile == fse;
-                                if (ImGui.Selectable("\xe8a5" + name, isSelected, ImGuiSelectableFlags.DontClosePopups))
-                                    SelectedFile = fse;
+                            var file = files[i];
 
-                                if (ImGui.IsMouseDoubleClicked(0))
-                                {
-                                    Result = FilePickerResult.Ok;
-                                    ImGui.EndChild();
-                                    ImGui.End();
-                                    return true;
-                                }
+                            bool isSelected = SelectedFile == file.Path;
+                            if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.DontClosePopups))
+                                SelectedFile = file.Path;
+
+                            if (ImGui.IsMouseDoubleClicked(0))
+                            {
+                                Result = FilePickerResult.Ok;
+                                ImGui.EndChild();
+                                ImGui.End();
+                                return true;
                             }
+                        }
+
+                        for (int i = 0; i < dirs.Count; i++)
+                        {
+                            var dir = dirs[i];
+                            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
+                            if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.DontClosePopups))
+                                SetFolder(dir.Path);
+                            ImGui.PopStyleColor();
                         }
                     }
                 }
@@ -293,6 +313,40 @@ namespace HexaEngine.Editor.Widgets
                 Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                 Environment.GetFolderPath(Environment.SpecialFolder.MyVideos),
             };
+        }
+
+        public void Refresh()
+        {
+            currentDir = new DirectoryInfo(CurrentFolder);
+            files.Clear();
+            dirs.Clear();
+
+            foreach (var fse in Directory.GetFileSystemEntries(currentFolder, string.Empty))
+            {
+                if (File.GetAttributes(fse).HasFlag(FileAttributes.System))
+                    continue;
+                if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden))
+                    continue;
+                if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
+                    continue;
+                if (Directory.Exists(fse))
+                {
+                    dirs.Add(new("\xe8b7" + Path.GetFileName(fse), fse));
+                }
+                else if (!OnlyAllowFolders)
+                {
+                    if (OnlyAllowFilteredExtensions)
+                    {
+                        var ext = Path.GetExtension(fse);
+                        if (AllowedExtensions.Contains(ext))
+                            files.Add(new("\xe8a5" + Path.GetFileName(fse), fse));
+                    }
+                    else
+                    {
+                        files.Add(new("\xe8a5" + Path.GetFileName(fse), fse));
+                    }
+                }
+            }
         }
 
         private List<string> GetFileSystemEntries(string fullName)

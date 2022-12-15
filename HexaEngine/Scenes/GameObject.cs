@@ -4,39 +4,40 @@
     using HexaEngine.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
     using System.Text.Json.Serialization;
 
-    public class SceneNode
+    public class GameObject
     {
 #nullable disable
         protected IGraphicsDevice Device;
 #nullable enable
-        private readonly List<SceneNode> children = new();
+        private readonly List<GameObject> children = new();
         private readonly List<IComponent> components = new();
         private readonly List<int> meshes = new();
         private Scene? scene;
-        private SceneNode? parent;
+        private GameObject? parent;
         private bool initialized;
 
         public Transform Transform = new();
         private string name = string.Empty;
         private bool isSelected;
-        private static SceneNode? selectedNode;
+        private static GameObjectSelection selected = new();
         private GCHandle gcHandle;
 
         [JsonIgnore]
         public readonly IntPtr Pointer;
 
-        public SceneNode()
+        public GameObject()
         {
             gcHandle = GCHandle.Alloc(this, GCHandleType.WeakTrackResurrection);
             Pointer = GCHandle.ToIntPtr(gcHandle);
         }
 
-        ~SceneNode()
+        ~GameObject()
         {
             gcHandle.Free();
         }
@@ -54,7 +55,7 @@
         }
 
         [JsonIgnore]
-        public virtual SceneNode? Parent
+        public virtual GameObject? Parent
         {
             get => parent;
             set
@@ -64,34 +65,134 @@
         }
 
         [JsonIgnore]
-        public static SceneNode? SelectedNode
-        {
-            get => selectedNode;
-        }
+        public static GameObjectSelection Selected => selected;
 
         [JsonIgnore]
-        public bool IsSelected
+        public bool IsSelected => isSelected;
+
+        [JsonIgnore]
+        public bool IsOpen { get; set; }
+
+        [JsonIgnore]
+        public bool IsVisible
         {
-            get => isSelected;
+            get => isVisible;
             set
             {
-                if (value)
+                if (isVisible == value) return;
+                if (!value)
                 {
-                    if (selectedNode != null)
-                        selectedNode.isSelected = false;
-                    selectedNode = this;
+                    for (int i = 0; i < Children.Count; i++)
+                    {
+                        Children[i].IsVisible = false;
+                    }
                 }
-                else if (selectedNode == this)
-                {
-                    selectedNode = null;
-                }
-
-                isSelected = value;
+                isVisible = value;
             }
         }
 
+        #region Sele
+
+        public class GameObjectSelection : IEnumerable
+        {
+            private readonly List<GameObject> _objects = new();
+
+            public GameObject this[int index] { get => ((IList<GameObject>)_objects)[index]; set => ((IList<GameObject>)_objects)[index] = value; }
+
+            public int Count => ((ICollection<GameObject>)_objects).Count;
+
+            public bool IsReadOnly => ((ICollection<GameObject>)_objects).IsReadOnly;
+
+            public void PurgeSelection()
+            {
+                foreach (GameObject gameObject in _objects)
+                {
+                    gameObject.Parent?.RemoveChild(gameObject);
+                }
+                ClearSelection();
+            }
+
+            public void MoveSelection(GameObject parent)
+            {
+                foreach (GameObject gameObject in _objects)
+                {
+                    parent.AddChild(gameObject);
+                }
+            }
+
+            public void AddSelection(GameObject gameObject)
+            {
+                gameObject.isSelected = true;
+                _objects.Add(gameObject);
+            }
+
+            public void AddOverwriteSelection(GameObject gameObject)
+            {
+                ClearSelection();
+                gameObject.isSelected = true;
+                _objects.Add(gameObject);
+            }
+
+            public void AddMultipleSelection(IEnumerable<GameObject> gameObjects)
+            {
+                foreach (GameObject gameObject in gameObjects)
+                {
+                    AddSelection(gameObject);
+                }
+            }
+
+            public void RemoveSelection(GameObject item)
+            {
+                item.isSelected = false;
+                _objects.Remove(item);
+            }
+
+            public void RemoveMultipleSelection(IEnumerable<GameObject> gameObjects)
+            {
+                foreach (GameObject gameObject in gameObjects)
+                {
+                    RemoveSelection(gameObject);
+                }
+            }
+
+            public void ClearSelection()
+            {
+                foreach (GameObject gameObject in _objects)
+                {
+                    gameObject.isSelected = false;
+                }
+                ((ICollection<GameObject>)_objects).Clear();
+            }
+
+            public GameObject First() => _objects[0];
+
+            public GameObject Last() => _objects[^1];
+
+            public bool Contains(GameObject item)
+            {
+                return ((ICollection<GameObject>)_objects).Contains(item);
+            }
+
+            public void CopyTo(GameObject[] array, int arrayIndex)
+            {
+                ((ICollection<GameObject>)_objects).CopyTo(array, arrayIndex);
+            }
+
+            public IEnumerator<GameObject> GetEnumerator()
+            {
+                return ((IEnumerable<GameObject>)_objects).GetEnumerator();
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return ((IEnumerable)_objects).GetEnumerator();
+            }
+        }
+
+        #endregion Sele
+
         [JsonInclude]
-        public virtual IReadOnlyList<SceneNode> Children => children;
+        public virtual IReadOnlyList<GameObject> Children => children;
 
         [JsonInclude]
         public virtual IReadOnlyList<IComponent> Components => components;
@@ -120,7 +221,7 @@
             }
         }
 
-        public void Merge(SceneNode node)
+        public void Merge(GameObject node)
         {
             if (Initialized)
             {
@@ -155,7 +256,7 @@
             }
         }
 
-        public virtual void AddChild(SceneNode node)
+        public virtual void AddChild(GameObject node)
         {
             node.parent?.RemoveChild(node);
             node.parent = this;
@@ -166,7 +267,7 @@
             }
         }
 
-        public virtual void RemoveChild(SceneNode node)
+        public virtual void RemoveChild(GameObject node)
         {
             if (initialized)
             {
@@ -180,13 +281,13 @@
         {
             components.Add(component);
             if (initialized)
-                component.Initialize(Device, this);
+                component.Awake(Device, this);
         }
 
         public virtual void RemoveComponent(IComponent component)
         {
             if (initialized)
-                component.Uninitialize();
+                component.Destory();
             components.Remove(component);
         }
 
@@ -224,7 +325,7 @@
             initialized = true;
             for (int i = 0; i < components.Count; i++)
             {
-                components[i].Initialize(device, this);
+                components[i].Awake(device, this);
             }
             for (int i = 0; i < children.Count; i++)
             {
@@ -237,7 +338,7 @@
             Device = null;
             for (int i = 0; i < components.Count; i++)
             {
-                components[i].Uninitialize();
+                components[i].Destory();
             }
             for (int i = 0; i < children.Count; i++)
             {
@@ -255,6 +356,12 @@
             return parent?.GetScene() ?? throw new("Node tree invalid");
         }
 
+        public virtual void GetDepth(ref int depth)
+        {
+            depth++;
+            parent?.GetDepth(ref depth);
+        }
+
         public virtual void AddMesh(int index)
         {
             meshes.Add(index);
@@ -269,9 +376,9 @@
                 GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, this, ChildCommandType.Removed, index));
         }
 
-        public virtual T? GetParentNodeOf<T>() where T : SceneNode
+        public virtual T? GetParentNodeOf<T>() where T : GameObject
         {
-            SceneNode? current = parent;
+            GameObject? current = parent;
             while (true)
             {
                 if (current is T t)
@@ -303,13 +410,14 @@
         }
 
         private IPropertyEditor? editor;
+        private bool isVisible;
 
         [JsonIgnore]
         public virtual IPropertyEditor Editor
         {
             get
             {
-                editor ??= new PropertyEditor<SceneNode>(this);
+                editor ??= new PropertyEditor<GameObject>(this);
                 return editor;
             }
             protected set
@@ -318,7 +426,7 @@
             }
         }
 
-        protected void CreatePropertyEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>() where T : SceneNode
+        protected void CreatePropertyEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>() where T : GameObject
         {
             editor = new PropertyEditor<T>((T)this);
         }

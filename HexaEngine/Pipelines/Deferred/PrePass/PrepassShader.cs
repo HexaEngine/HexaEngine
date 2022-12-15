@@ -40,7 +40,7 @@
         {
         }
 
-        protected override void BeginDraw(IGraphicsContext context, Viewport viewport)
+        public override void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
             base.BeginDraw(context, viewport);
             context.DSSetConstantBuffer(Camera, 1);

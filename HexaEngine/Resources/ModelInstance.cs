@@ -7,7 +7,7 @@
     public class ModelInstance
     {
         public ModelMesh Mesh;
-        public SceneNode Node;
+        public GameObject Node;
 
         public Matrix4x4 Transform => Node.Transform.Global;
 
@@ -16,7 +16,7 @@
             box = BoundingBox.Transform(Mesh.AABB, Node.Transform.Global);
         }
 
-        public ModelInstance(ModelMesh mesh, SceneNode node)
+        public ModelInstance(ModelMesh mesh, GameObject node)
         {
             Mesh = mesh;
             Node = node;

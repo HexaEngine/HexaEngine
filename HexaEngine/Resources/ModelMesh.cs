@@ -6,6 +6,7 @@
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System.Numerics;
+    using System.Reflection;
 
     public class ModelMesh : IDisposable
     {
@@ -111,7 +112,7 @@
             }
         }
 
-        public ModelInstance CreateInstance(IGraphicsDevice device, SceneNode node)
+        public ModelInstance CreateInstance(IGraphicsDevice device, GameObject node)
         {
             ModelInstance instance = new(this, node);
             Instances.Add(instance);
@@ -141,8 +142,25 @@
             {
                 context.Write(ISB, p, sizeof(Matrix4x4) * instanceCount);
             }
-
             return count;
+        }
+
+        public unsafe bool DrawAuto(IGraphicsContext context, IEffect effect)
+        {
+            if (VB == null) return false;
+            if (IB == null) return false;
+            if (Material == null) return false;
+            if (ISB == null) return false;
+            if (semaphore.CurrentCount == 0) return false;
+
+            effect.Draw(context);
+            Material.Bind(context);
+            context.SetVertexBuffer(VB, sizeof(MeshVertex));
+            context.SetVertexBuffer(1, ISB, sizeof(Matrix4x4), 0);
+            context.SetIndexBuffer(IB, Format.R32UInt, 0);
+            context.DrawIndexedInstanced(IndexCount, instanceCount, 0, 0, 0);
+            context.ClearState();
+            return true;
         }
 
         public unsafe void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
@@ -188,7 +206,7 @@
 
     public class ModelInstances
     {
-        private readonly List<SceneNode> Instances = new();
+        private readonly List<GameObject> Instances = new();
         private readonly ModelMaterial Material;
 
         private Matrix4x4[] transforms = Array.Empty<Matrix4x4>();
@@ -245,14 +263,14 @@
             }
         }
 
-        public void Add(IGraphicsDevice device, SceneNode node)
+        public void Add(IGraphicsDevice device, GameObject node)
         {
             Instances.Add(node);
             instanceCount++;
             EnsureCapacity(device, instanceCount);
         }
 
-        public void Remove(IGraphicsDevice device, SceneNode node)
+        public void Remove(IGraphicsDevice device, GameObject node)
         {
             Instances.Remove(node);
             instanceCount--;

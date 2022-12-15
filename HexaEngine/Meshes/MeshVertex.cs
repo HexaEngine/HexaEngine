@@ -9,7 +9,7 @@
         public string Name;
         public MeshWeight[] Weights;
         public Matrix4x4 Offset;
-        public SceneNode Node;
+        public GameObject Node;
 
         public MeshBone(string name, MeshWeight[] weights, Matrix4x4 offset)
         {

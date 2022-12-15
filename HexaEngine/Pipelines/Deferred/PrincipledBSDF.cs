@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Pipelines.Deferred.Lighting
+﻿namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
@@ -6,7 +6,7 @@
     using HexaEngine.Rendering.ConstantBuffers;
     using System;
 
-    public unsafe class PrincipledBSDF : IEffect
+    public unsafe class DeferredPrincipledBSDF : IEffect
     {
         private readonly Quad quad;
         private readonly Pipeline brdf;
@@ -31,7 +31,7 @@
         public IBuffer? Camera;
         public IBuffer? Lights;
 
-        public PrincipledBSDF(IGraphicsDevice device)
+        public DeferredPrincipledBSDF(IGraphicsDevice device)
         {
             quad = new(device);
             brdf = new(device, new()
@@ -107,7 +107,7 @@
             }
         }
 
-        ~PrincipledBSDF()
+        ~DeferredPrincipledBSDF()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

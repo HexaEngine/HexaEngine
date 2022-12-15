@@ -32,5 +32,5 @@ float4 main(VSOut input) : SV_Target
 
 	float4 mix = lerp(a, b, x * 5 / 2);
 
-	return saturate(color + mix);
+	return color + mix;
 }
