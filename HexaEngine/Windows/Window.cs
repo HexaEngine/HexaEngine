@@ -9,6 +9,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using System;
     using System.Diagnostics;
     using System.Numerics;
@@ -140,8 +141,7 @@
 
                 renderDispatcher.ExecuteQueue(context);
 
-                if (renderer is not null)
-                    renderer.BeginDraw();
+                renderer?.BeginDraw();
 
                 if (imGuiWidgets && Designer.IsShown)
                 {

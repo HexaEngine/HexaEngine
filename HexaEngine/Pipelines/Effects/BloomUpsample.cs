@@ -37,10 +37,5 @@
             DrawAuto(context, viewport);
 #nullable enable
         }
-
-        public override void DrawSettings()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

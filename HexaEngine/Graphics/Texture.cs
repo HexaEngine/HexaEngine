@@ -10,7 +10,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
-    public class RenderTexture : IDisposable
+    public class Texture : IDisposable
     {
         #region Fields
 
@@ -39,7 +39,7 @@
 
         #region Constructors
 
-        public RenderTexture(IGraphicsDevice device, IDepthStencilView depthStencil, IResource resource)
+        public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, IResource resource)
         {
             Description = new(resource);
 
@@ -53,7 +53,7 @@
             overrwittenDSV = true;
         }
 
-        public RenderTexture(IGraphicsDevice device, IResource resource, DepthStencilDesc desc)
+        public Texture(IGraphicsDevice device, IResource resource, DepthStencilDesc desc)
         {
             Description = new(resource);
             DepthStencilViewDescription depthStencilViewDesc = new()
@@ -179,7 +179,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public RenderTexture(IGraphicsDevice device, IResource resource)
+        public Texture(IGraphicsDevice device, IResource resource)
         {
             Description = new(resource);
 
@@ -191,7 +191,7 @@
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
         }
 
-        public RenderTexture(IResource resource, IShaderResourceView srv, IRenderTargetView rtv)
+        public Texture(IResource resource, IShaderResourceView srv, IRenderTargetView rtv)
         {
             Description = new(resource);
 
@@ -203,7 +203,7 @@
                 renderTargetView = rtv;
         }
 
-        public RenderTexture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
+        public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
         {
             Description = description;
 
@@ -225,7 +225,7 @@
             DepthStencilView = depthStencil;
         }
 
-        public RenderTexture(IGraphicsDevice device, TextureDescription description, DepthStencilDesc desc)
+        public Texture(IGraphicsDevice device, TextureDescription description, DepthStencilDesc desc)
         {
             Description = description;
             DepthStencilViewDescription depthStencilViewDesc = new()
@@ -350,7 +350,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public RenderTexture(IGraphicsDevice device, TextureDescription description)
+        public Texture(IGraphicsDevice device, TextureDescription description)
         {
             Description = description;
 
@@ -370,7 +370,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public unsafe RenderTexture(IGraphicsDevice device, TextureFileDescription description)
+        public unsafe Texture(IGraphicsDevice device, TextureFileDescription description)
         {
             switch (description.Dimension)
             {
@@ -450,7 +450,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public unsafe RenderTexture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, int slicePitch, TextureDescription description)
+        public unsafe Texture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, int slicePitch, TextureDescription description)
         {
             SubresourceData subresourceData;
             fixed (byte* ptr = rawPixelData)
@@ -477,7 +477,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public unsafe RenderTexture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, TextureDescription description)
+        public unsafe Texture(IGraphicsDevice device, Span<byte> rawPixelData, int rowPitch, TextureDescription description)
         {
             SubresourceData subresourceData;
             fixed (byte* ptr = rawPixelData)
@@ -502,7 +502,7 @@
             Viewport = Description.GetViewport();
         }
 
-        public unsafe RenderTexture(IGraphicsDevice device, byte[][] rawPixelData, int rowPitch, TextureDescription description)
+        public unsafe Texture(IGraphicsDevice device, byte[][] rawPixelData, int rowPitch, TextureDescription description)
         {
             SubresourceData[] subresources = new SubresourceData[rawPixelData.Length];
 
@@ -632,7 +632,7 @@
             }
         }
 
-        ~RenderTexture()
+        ~Texture()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
@@ -647,7 +647,7 @@
 
         #endregion IDisposable
 
-        public static RenderTexture Combine2D(IGraphicsDevice device, params string[] textures)
+        public static Texture Combine2D(IGraphicsDevice device, params string[] textures)
         {
             var texs = new ITexture2D[textures.Length];
             for (int i = 0; i < textures.Length; i++)
@@ -660,7 +660,7 @@
             desc.ArraySize = textures.Length;
 
             var tex = device.CreateTexture2D(desc);
-            var texArray = new RenderTexture(device, tex);
+            var texArray = new Texture(device, tex);
 
             for (int texElement = 0; texElement < textures.Length; texElement++)
             {

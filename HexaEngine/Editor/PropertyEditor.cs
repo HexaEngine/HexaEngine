@@ -246,12 +246,12 @@ namespace HexaEngine.Editor
                     continue;
                 }
 
-                if (propType == typeof(RenderTexture))
+                if (propType == typeof(Texture))
                 {
                     if (!(property.CanRead)) continue;
                     values.Add(new(property, value =>
                     {
-                        RenderTexture val = (RenderTexture)value.Item2;
+                        Texture val = (Texture)value.Item2;
                         if (val != null)
                             ImGui.Image(val.ResourceView.NativePointer, new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
                         return (false, null);

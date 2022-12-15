@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Scenes.Managers
 {
     public enum CameraEditorMode
     {

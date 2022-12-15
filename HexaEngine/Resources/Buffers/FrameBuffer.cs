@@ -44,7 +44,7 @@
     [StructLayout(LayoutKind.Sequential)]
     public struct PerFrameBuffer2
     {
-        public PerFrameBuffer2(SceneNode element, IView view) : this(element.Transform, view.Transform.View, view.Transform.Projection)
+        public PerFrameBuffer2(GameObject element, IView view) : this(element.Transform, view.Transform.View, view.Transform.Projection)
         {
         }
 

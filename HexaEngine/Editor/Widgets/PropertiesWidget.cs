@@ -10,6 +10,7 @@ namespace HexaEngine.Editor.Widgets
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using ImGuizmoNET;
     using System;
@@ -48,13 +49,13 @@ namespace HexaEngine.Editor.Widgets
         {
             IsDocked = ImGui.IsWindowDocked();
 
-            if (SceneNode.SelectedNode is null)
+            if (GameObject.Selected.Count == 0)
             {
                 EndWindow();
                 return;
             }
 
-            SceneNode element = SceneNode.SelectedNode;
+            GameObject element = GameObject.Selected.First();
             Scene scene = element.GetScene();
             Camera camera = CameraManager.Current;
 

@@ -1,19 +1,19 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: light.ps
-////////////////////////////////////////////////////////////////////////////////
+#include "defs.hlsl"
 #include "../../gbuffer.hlsl"
-#include "../../brdf.hlsl"
-#include "../../camera.hlsl"
+#include "../../material.hlsl"
 #include "../../light.hlsl"
+#include "../../camera.hlsl"
+#include "../../brdf.hlsl"
 
-Texture2D colorTexture : register(t0);
-Texture2D positionTexture : register(t1);
-Texture2D normalTexture : register(t2);
-Texture2D cleancoatNormalTexture : register(t3);
-Texture2D emissionTexture : register(t4);
-Texture2D misc0Texture : register(t5);
-Texture2D misc1Texture : register(t6);
-Texture2D misc2Texture : register(t7);
+#if (DEPTH != 1)
+Texture2D albedoTexture : register(t0);
+Texture2D normalTexture : register(t1);
+Texture2D roughnessTexture : register(t2);
+Texture2D metalnessTexture : register(t3);
+Texture2D emissiveTexture : register(t4);
+Texture2D aoTexture : register(t5);
+Texture2D rmTexture : register(t6);
+
 TextureCube irradianceTexture : register(t8);
 TextureCube prefilterTexture : register(t9);
 Texture2D brdfLUT : register(t10);
@@ -23,17 +23,15 @@ Texture2DArray depthCSM : register(t12);
 TextureCube depthOSM[8] : register(t13);
 Texture2D depthPSM[8] : register(t21);
 
-SamplerState SampleTypePoint : register(s0);
-SamplerState SampleTypeAnsio : register(s1);
+SamplerState materialSample : register(s0);
+SamplerState SampleTypePoint : register(s1);
+SamplerState SampleTypeAnsio : register(s2);
 
-//////////////
-// TYPEDEFS //
-//////////////
-struct VSOut
+cbuffer MaterialBuffer : register(b2)
 {
-	float4 Pos : SV_Position;
-	float2 Tex : TEXCOORD;
+	Material material;
 };
+
 
 float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D depthTex, SamplerState state)
 {
@@ -217,7 +215,36 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, floa
 #endif
 }
 
-float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
+float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
+{
+	// Uncompress each component from [0,1] to [-1,1].
+	float3 normalT = 2.0f * normalMapSample - 1.0f;
+
+	// Build orthonormal basis.
+	float3 N = unitNormalW;
+	float3 T = normalize(tangentW - dot(tangentW, N) * N);
+	float3 B = cross(N, T);
+
+	float3x3 TBN = float3x3(T, B, N);
+
+	// Transform from tangent space to world space.
+	float3 bumpedNormalW = mul(normalT, TBN);
+
+	return bumpedNormalW;
+}
+
+#endif
+
+#if (DEPTH == 1)
+
+float4 main(PixelInput input) : SV_Target
+{
+	return float4(input.depth, input.depth, input.depth, 1.0f);
+}
+
+#else
+
+float4 ComputeLightingPBR(GeometryAttributes attrs)
 {
 	float3 position = attrs.pos;
 	float3 baseColor = attrs.albedo;
@@ -226,7 +253,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	float specularTint = 0;
 	float sheen = 0;
 	float sheenTint = 0.5f;
-	float clearcoat = 0.5f;
+	float clearcoat = 0.0f;
 	float clearcoatGloss = 1;
 	float anisotropic = attrs.anisotropic;
 	float subsurface = 0;
@@ -234,9 +261,9 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	float metalness = attrs.metalness;
 
 	float3 N = normalize(attrs.normal);
-	float3 X;
-	float3 Y;
-	directionOfAnisotropicity(N, X, Y);
+	float3 X = normalize(attrs.tangent);
+	float3 Y = normalize(cross(N, X));
+
 	float3 V = normalize(GetCameraPos() - position);
 
 	float IOR = 1.5;
@@ -333,28 +360,95 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 		}
 	}
 
-	float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
+	float ao = attrs.ao;
 	float3 ambient = BRDFIndirect(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao, anisotropic);
 
 	float3 color = ambient + Lo;
 
-	return float4(color, attrs.opacity);
+	return float4(color, 1);
 }
 
-float4 main(VSOut pixel) : SV_TARGET
+float4 main(PixelInput input) : SV_Target
 {
 	GeometryAttributes attrs;
-	ExtractGeometryData(
-	pixel.Tex,
-	colorTexture,
-	positionTexture,
-	normalTexture,
-	cleancoatNormalTexture,
-	emissionTexture,
-	misc0Texture,
-	misc1Texture,
-	misc2Texture,
-	SampleTypePoint,
-	attrs);
-	return ComputeLightingPBR(pixel, attrs);
+
+	attrs.albedo = float3(0.8,0.8,0.8);
+	attrs.opacity = 1;
+	attrs.pos = (float3)input.pos;
+	attrs.depth = input.depth;
+	attrs.normal = input.normal;
+	attrs.tangent = input.tangent;
+	attrs.anisotropic = material.Anisotropic.x;
+	attrs.specular = 0.5f;
+	attrs.speculartint = 0;
+	attrs.sheen = 0;
+	attrs.sheentint = 0.5f;
+	attrs.clearcoat = 0.0f;
+	attrs.clearcoatroughness = 1;
+	attrs.subsurface = 0;
+	attrs.roughness = 0.8;
+	attrs.metalness = 0;
+
+	if (material.DANR.y)
+	{
+		float4 color = albedoTexture.Sample(materialSample, (float2) input.tex);
+		attrs.albedo = color.rgb;
+		attrs.opacity = color.a;
+	}
+	else
+	{
+		attrs.albedo = material.Color.rgb;
+	}
+	if (material.DANR.z)
+	{
+		attrs.normal = NormalSampleToWorldSpace(normalTexture.Sample(materialSample, (float2) input.tex).rgb, input.normal, input.tangent);
+	}
+	else
+	{
+		attrs.normal = input.normal;
+	}
+	if (material.DANR.w)
+	{
+		attrs.roughness = roughnessTexture.Sample(materialSample, (float2) input.tex).r;
+	}
+	else
+	{
+		attrs.roughness = material.RoughnessMetalnessAo.x;
+	}
+	if (material.MEAoRM.x)
+	{
+		attrs.metalness = metalnessTexture.Sample(materialSample, (float2) input.tex).r;
+	}
+	else
+	{
+		attrs.metalness = material.RoughnessMetalnessAo.y;
+	}
+	if (material.MEAoRM.y)
+	{
+		attrs.emission = emissiveTexture.Sample(materialSample, (float2) input.tex).rgb;
+	}
+	else
+	{
+		attrs.emission = material.Emissive.xyz;
+	}
+	if (material.MEAoRM.z)
+	{
+		attrs.ao = aoTexture.Sample(materialSample, (float2) input.tex).r;
+	}
+	else
+	{
+		attrs.ao = material.RoughnessMetalnessAo.z;
+	}
+	if (material.MEAoRM.w)
+	{
+		attrs.roughness = rmTexture.Sample(materialSample, (float2) input.tex).g;
+		attrs.metalness = rmTexture.Sample(materialSample, (float2) input.tex).b;
+	}
+
+	if (attrs.opacity < 0.1f)
+		discard;
+
+	return ComputeLightingPBR(attrs);
 }
+
+#endif

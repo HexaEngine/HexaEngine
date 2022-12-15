@@ -5,32 +5,29 @@
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
     using HexaEngine.Pipelines.Effects;
-    using HexaEngine.Rendering;
     using ImGuiNET;
-    using System;
-    using System.Linq;
 
-    public class PrefilterWidget : ImGuiWindow, IDisposable
+    public class IrradianceWidget : ImGuiWindow, IDisposable
     {
-        private readonly FilePicker picker = new() { CurrentFolder = Environment.CurrentDirectory };
+        private FilePicker picker = new(Environment.CurrentDirectory);
         private bool searchPathEnvironment;
         private string pathEnvironment = string.Empty;
 
-        private readonly Mode[] modes = Enum.GetValues<Mode>();
-        private readonly string[] modesStrings = Enum.GetValues<Mode>().Select(x => x.ToString()).ToArray();
+        private Mode[] modes = Enum.GetValues<Mode>();
+        private string[] modesStrings = Enum.GetValues<Mode>().Select(x => x.ToString()).ToArray();
         private int modeIndex;
         private Mode mode;
 
-        private int pfSize = 4096;
-        private readonly int pfTileSize = 4096 / 4;
+        private int irradianceSize = 1024;
+        private int irrTileSize = 1024 / 4;
 
         private ISamplerState? samplerState;
-        private RenderTexture? environmentTex;
-        private RenderTexture? prefilterTex;
-        private RenderTargetViewArray? pfRTV;
-        private ShaderResourceViewArray? pfSRV;
-        private readonly IntPtr[] pfIds = new IntPtr[6];
-        private PreFilterEffect? prefilterFilter;
+        private Texture? environmentTex;
+        private Texture? irradianceTex;
+        private RenderTargetViewArray? irrRTV;
+        private ShaderResourceViewArray? irrSRV;
+        private IntPtr[] irrIds = new IntPtr[6];
+        private IrradianceFilterEffect? irradianceFilter;
 
         private bool compute;
         private int side;
@@ -39,52 +36,52 @@
         private int step;
         private int steps;
 
-        protected override string Name => "IBL Prefilter";
+        protected override string Name => "Bake Irradiance";
 
         public override void Init(IGraphicsDevice device)
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-            prefilterFilter = new(device);
+            irradianceFilter = new(device);
         }
 
         public override void Dispose()
         {
             DiscardIrradiance();
             samplerState?.Dispose();
-            prefilterFilter?.Dispose();
+            irradianceFilter?.Dispose();
             environmentTex?.Dispose();
         }
 
         private void DiscardIrradiance()
         {
-            pfRTV?.Dispose();
-            pfRTV = null;
-            pfSRV?.Dispose();
-            pfSRV = null;
-            prefilterTex?.Dispose();
-            prefilterTex = null;
+            irrRTV?.Dispose();
+            irrRTV = null;
+            irrSRV?.Dispose();
+            irrSRV = null;
+            irradianceTex?.Dispose();
+            irradianceTex = null;
         }
 
-        public RenderTexture? ImportTexture(IGraphicsDevice device, IGraphicsContext context)
+        public Texture? ImportTexture(IGraphicsDevice device, IGraphicsContext context)
         {
             switch (mode)
             {
                 case Mode.Cube:
                     ImGuiConsole.Log(LogSeverity.Log, "Loading environment ...");
-                    RenderTexture tex = new(device, new TextureFileDescription(pathEnvironment, TextureDimension.TextureCube));
+                    Texture tex = new(device, new TextureFileDescription(pathEnvironment, TextureDimension.TextureCube));
                     ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
                     return tex;
 
                 case Mode.Panorama:
 
                     ImGuiConsole.Log(LogSeverity.Log, "Loading environment ...");
-                    RenderTexture source = new(device, new TextureFileDescription(pathEnvironment));
+                    Texture source = new(device, new TextureFileDescription(pathEnvironment));
                     ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
 
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeEffect filter = new(device);
                     filter.Source = source.ResourceView;
-                    RenderTexture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA32Float));
+                    Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA32Float));
                     var cu = cube1.CreateRTVArray(device);
                     filter.Targets = cu;
                     filter.Draw(context);
@@ -106,26 +103,12 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
-            if (prefilterFilter == null)
-            {
-                EndWindow();
-                return;
-            }
+            if (irradianceFilter == null) return;
             Flags = ImGuiWindowFlags.None;
-            if (IsDocked)
-                Flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
-            if (prefilterTex != null)
+            if (irradianceTex != null)
                 Flags |= ImGuiWindowFlags.UnsavedDocument;
             if (searchPathEnvironment)
                 Flags |= ImGuiWindowFlags.NoInputs;
-
-            if (!ImGui.Begin("Pre-Filter", ref IsShown, Flags))
-            {
-                ImGui.End();
-                return;
-            }
-
-            IsDocked = ImGui.IsWindowDocked();
 
             if (compute)
                 ImGui.BeginDisabled(true);
@@ -144,15 +127,11 @@
                 mode = modes[modeIndex];
             }
 
-            if (ImGui.InputInt("Size", ref pfSize))
+            if (ImGui.InputInt("Size", ref irradianceSize))
             {
             }
 
-            if (ImGui.SliderFloat("Roughness", ref prefilterFilter.Roughness, 0, 1))
-            {
-            }
-
-            if (ImGui.Button("Filter"))
+            if (ImGui.Button("Compute"))
             {
                 if (File.Exists(pathEnvironment))
                 {
@@ -161,19 +140,18 @@
                         var device = context.Device;
                         DiscardIrradiance();
                         environmentTex = ImportTexture(device, device.Context);
-                        int numLevels = (int)(1 + MathF.Floor(MathF.Log2(pfSize)));
-                        prefilterTex = new(device, TextureDescription.CreateTextureCubeWithRTV(pfSize, numLevels, Format.RGBA32Float, resourceOptionFlags: ResourceMiscFlag.TextureCube | ResourceMiscFlag.GenerateMips));
-                        pfRTV = prefilterTex.CreateRTVArray(device);
-                        pfSRV = prefilterTex.CreateSRVArray(device);
-                        prefilterFilter.Targets = pfRTV;
-                        prefilterFilter.Source = environmentTex?.ResourceView;
+                        irradianceTex = new(device, TextureDescription.CreateTextureCubeWithRTV(irradianceSize, 1, Format.RGBA32Float));
+                        irrRTV = irradianceTex.CreateRTVArray(device);
+                        irrSRV = irradianceTex.CreateSRVArray(device);
+                        irradianceFilter.Targets = irrRTV;
+                        irradianceFilter.Source = environmentTex?.ResourceView;
                         for (int i = 0; i < 6; i++)
                         {
-                            pfIds[i] = pfSRV.Views[i].NativePointer;
+                            irrIds[i] = irrSRV.Views[i].NativePointer;
                         }
-                        steps = 6 * (pfSize / pfTileSize) * (pfSize / pfTileSize);
+                        steps = 6 * (irradianceSize / irrTileSize) * (irradianceSize / irrTileSize);
 
-                        ImGuiConsole.Log(LogSeverity.Log, "Pre-Filtering environment ...");
+                        ImGuiConsole.Log(LogSeverity.Log, "Computing irradiance ...");
                         compute = true;
                         ImGui.BeginDisabled(true);
                     }
@@ -184,16 +162,15 @@
                 }
             }
 
-            if (prefilterTex != null && pfRTV != null && pfSRV != null)
+            if (irradianceTex != null && irrRTV != null && irrSRV != null)
             {
                 ImGui.SameLine();
 
-                if (ImGui.Button("Export") && prefilterTex.ResourceView != null)
+                if (ImGui.Button("Export"))
                 {
-                    ImGuiConsole.Log(LogSeverity.Log, "Exporting prefilter map ...");
-                    context.GenerateMips(prefilterTex.ResourceView);
-                    context.Device.SaveTextureCube((ITexture2D)prefilterTex.Resource, Format.RGBA8UNorm, "prefilter_o.dds");
-                    ImGuiConsole.Log(LogSeverity.Log, "Exported prefilter map ... ./prefilter_o.dds");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exporting irradiance ...");
+                    context.Device.SaveTextureCube((ITexture2D)irradianceTex.Resource, "irr_o.dds");
+                    ImGuiConsole.Log(LogSeverity.Log, "Exported irradiance ... ./irr_o.dds");
                 }
 
                 ImGui.SameLine();
@@ -221,18 +198,18 @@
 
                     ImGui.SameLine();
 
-                    ImGui.TextColored(new(0, 1, 0, 1), $"Filtering... {(float)step / steps * 100f:n2} ({step} / {steps})");
+                    ImGui.TextColored(new(0, 1, 0, 1), $"Computing... {(float)step / steps * 100f:n2} ({step} / {steps})");
                 }
 
                 for (int i = 0; i < 6; i++)
                 {
-                    ImGui.Image(pfIds[i], new(128, 128));
+                    ImGui.Image(irrIds[i], new(128, 128));
                     if (i != 5)
                         ImGui.SameLine();
                 }
             }
 
-            ImGui.End();
+            EndWindow();
 
             if (searchPathEnvironment && picker.Draw())
             {
@@ -244,17 +221,17 @@
             {
                 if (side < 6)
                 {
-                    if (x < pfSize)
+                    if (x < irradianceSize)
                     {
-                        if (y < pfSize)
+                        if (y < irradianceSize)
                         {
-                            prefilterFilter.DrawSlice(context, side, x, y, pfTileSize, pfTileSize);
-                            y += pfTileSize;
+                            irradianceFilter.DrawSlice(context, side, x, y, irrTileSize, irrTileSize);
+                            y += irrTileSize;
                             step++;
                         }
                         else
                         {
-                            x += pfTileSize;
+                            x += irrTileSize;
                             y = 0;
                         }
                     }
@@ -274,7 +251,7 @@
                     step = 0;
                     environmentTex?.Dispose();
                     environmentTex = null;
-                    ImGuiConsole.Log(LogSeverity.Log, "Pre-Filtering ... done!");
+                    ImGuiConsole.Log(LogSeverity.Log, "Computing irradiance ... done!");
                 }
             }
         }

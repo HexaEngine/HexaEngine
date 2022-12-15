@@ -61,7 +61,9 @@ GeometryData main(PixelInput input)
 
 	if (material.DANR.y)
 	{
-		albedo = albedoTexture.Sample(materialSamplerState, (float2) input.tex).rgb;
+		float4 color = albedoTexture.Sample(materialSamplerState, (float2) input.tex);
+		albedo = color.rgb * color.a;
+		opacity = color.a;
 	}
 	else
 	{
@@ -114,7 +116,10 @@ GeometryData main(PixelInput input)
 		metalness = rmTexture.Sample(materialSamplerState, (float2) input.tex).b;
 	}
 
-	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, float3(0, 0, 0), emissive, 0, 1, 0.5f, ao, 1, anisotropic, 0, 0, 0, 0, 0, 0, 0);
+	if (opacity == 0)
+		discard;
+
+	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, input.tangent, emissive, 0, 1, 0.5f, ao, 1, anisotropic, 0, 0, 0, 0, 0, 0, 0);
 }
 
 #endif

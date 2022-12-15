@@ -13,7 +13,7 @@
         }
 
         public string Name;
-        public SceneNode Node;
+        public GameObject Node;
         public List<MeshBone> Bones = new();
         public Dictionary<string, MeshBone> BonesDictionary = new();
         public Dictionary<string, Relation> Relationships = new();

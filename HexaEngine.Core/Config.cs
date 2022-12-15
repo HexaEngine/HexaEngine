@@ -60,11 +60,12 @@
     {
         private string? value;
 
-        public ConfigValue(string name, DataType dataType, string? value)
+        public ConfigValue(string name, DataType dataType, string? value, bool isReadOnly)
         {
             Name = name;
             DataType = dataType;
             Value = value;
+            IsReadOnly = isReadOnly;
         }
 
         public DataType DataType { get; set; }
@@ -81,99 +82,144 @@
             }
         }
 
+        public bool IsReadOnly { get; set; }
+
         public event Action<ConfigValue, string?>? ValueChanged;
 
         public byte GetUInt8()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return byte.Parse(Value);
         }
 
         public sbyte GetInt8()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return sbyte.Parse(Value);
         }
 
         public ushort GetUInt16()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return ushort.Parse(Value);
         }
 
         public short GetInt16()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return short.Parse(Value);
         }
 
         public uint GetUInt32()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return uint.Parse(Value);
         }
 
         public int GetInt32()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return int.Parse(Value);
         }
 
         public ulong GetUInt64()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return ulong.Parse(Value);
         }
 
         public long GetInt64()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return long.Parse(Value);
         }
 
         public float GetFloat()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return float.Parse(Value);
         }
 
         public double GetDouble()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return double.Parse(Value);
         }
 
         public bool GetBool()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             return bool.Parse(Value);
         }
 
         public Vector2 GetVector2()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             string trimed = Value.Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            for (int i = 0; i < components.Length; i++) components[i] = components[i].Trim(',', '.');
+            for (int i = 0; i < components.Length; i++)
+            {
+                components[i] = components[i].Trim(',', '.');
+            }
+
             return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture));
         }
 
         public Vector3 GetVector3()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             string trimed = Value.Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             return new(float.Parse(components[0], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[1], NumberStyles.Any, CultureInfo.InvariantCulture), float.Parse(components[2], NumberStyles.Any, CultureInfo.InvariantCulture));
@@ -182,7 +228,10 @@
         public Vector4 GetVector4()
         {
             if (Value == null)
+            {
                 return default;
+            }
+
             string trimed = Value.Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             return new(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]), float.Parse(components[3]));
@@ -230,12 +279,12 @@
             return value != null;
         }
 
-        public void TryGetOrAddKeyValue(string key, string defaultValue, DataType type, out ConfigValue value)
+        public void TryGetOrAddKeyValue(string key, string defaultValue, DataType type, bool isReadOnly, out ConfigValue value)
         {
             var val = Values.Find(x => x.Name == key);
             if (val == null)
             {
-                val = new ConfigValue(key, type, defaultValue);
+                val = new ConfigValue(key, type, defaultValue, isReadOnly);
                 Values.Add(val);
             }
             value = val;
@@ -246,20 +295,23 @@
             return Values.Any(x => x.Name == key);
         }
 
-        public void AddValue(string key, DataType type, string? value)
+        public void AddValue(string key, DataType type, string? value, bool isReadOnly)
         {
-            Values.Add(new(key, type, value));
+            Values.Add(new(key, type, value, isReadOnly));
         }
 
         public int TryGet(string key, int defaultValue)
         {
             if (!TryGetValue(key, out string? value))
             {
-                AddValue(key, DataType.Int32, defaultValue.ToString());
+                AddValue(key, DataType.Int32, defaultValue.ToString(), false);
                 return defaultValue;
             }
             if (value == null)
+            {
                 return defaultValue;
+            }
+
             return int.Parse(value);
         }
 
@@ -267,11 +319,14 @@
         {
             if (!TryGetValue(key, out string? value))
             {
-                AddValue(key, DataType.Float, defaultValue.ToString());
+                AddValue(key, DataType.Float, defaultValue.ToString(), false);
                 return defaultValue;
             }
             if (value == null)
+            {
                 return defaultValue;
+            }
+
             return float.Parse(value);
         }
 
@@ -279,11 +334,14 @@
         {
             if (!TryGetValue(key, out string? value))
             {
-                AddValue(key, DataType.Bool, defaultValue.ToString());
+                AddValue(key, DataType.Bool, defaultValue.ToString(), false);
                 return defaultValue;
             }
             if (value == null)
+            {
                 return defaultValue;
+            }
+
             return bool.Parse(value);
         }
 
@@ -291,12 +349,15 @@
         {
             if (!TryGetValue(key, out string? value))
             {
-                AddValue(key, DataType.Float3, defaultValue.ToString());
+                AddValue(key, DataType.Float3, defaultValue.ToString(), false);
                 return defaultValue;
             }
 
             if (value == null)
+            {
                 return defaultValue;
+            }
+
             return default;
         }
 
@@ -304,7 +365,7 @@
         {
             if (!TryGetValue(key, out string? value))
             {
-                AddValue(key, type, convertBack(defaultValue));
+                AddValue(key, type, convertBack(defaultValue), false);
                 return defaultValue;
             }
 
@@ -334,7 +395,9 @@
             key ??= new(name);
             key.InitAuto(t);
             if (isNew)
+            {
                 Keys.Add(key);
+            }
         }
 
         public void GenerateAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t)
@@ -347,8 +410,9 @@
                 ConfigValue? val = null;
                 if (property.PropertyType == typeof(string))
                 {
-                    val = new(property.Name, DataType.String, property.GetValue(t) as string);
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.String, property.GetValue(t) as string, !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         property.SetValue(t, e);
                     };
@@ -356,173 +420,247 @@
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    val = new(property.Name, DataType.Bool, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, bool.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(bool));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(byte))
                 {
-                    val = new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, byte.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(byte));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(sbyte))
                 {
-                    val = new(property.Name, DataType.Int8, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, sbyte.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(sbyte));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(ushort))
                 {
-                    val = new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, ushort.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(ushort));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(short))
                 {
-                    val = new(property.Name, DataType.Int16, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Int16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, short.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(short));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(uint))
                 {
-                    val = new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, uint.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(uint));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
-                    val = new(property.Name, DataType.Int32, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, int.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(int));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(ulong))
                 {
-                    val = new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, ulong.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(ulong));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(long))
                 {
-                    val = new(property.Name, DataType.Int64, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, long.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(long));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(float))
                 {
-                    val = new(property.Name, DataType.Float, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, float.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(float));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(double))
                 {
-                    val = new(property.Name, DataType.Double, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, double.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(double));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(Vector2))
                 {
-                    val = new(property.Name, DataType.Float2, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Float2, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, s.GetVector2());
+                        }
                         else
+                        {
                             property.SetValue(t, default(Vector2));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(Vector3))
                 {
-                    val = new(property.Name, DataType.Float3, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Float3, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, s.GetVector3());
+                        }
                         else
+                        {
                             property.SetValue(t, default(Vector3));
+                        }
                     };
                 }
 
                 if (property.PropertyType == typeof(Vector4))
                 {
-                    val = new(property.Name, DataType.Float4, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val = new(property.Name, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, s.GetVector4());
+                        }
                         else
+                        {
                             property.SetValue(t, default(Vector4));
+                        }
                     };
                 }
 
-                if (val == null) continue;
+                if (val == null)
+                {
+                    continue;
+                }
+
                 Values.Add(val);
             }
         }
@@ -538,186 +676,292 @@
                 bool isNew = val == null;
                 if (property.PropertyType == typeof(string))
                 {
-                    val ??= new(property.Name, DataType.String, property.GetValue(t) as string);
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.String, property.GetValue(t) as string, !property.CanWrite);
+                    if (property.CanWrite)
                     {
-                        property.SetValue(t, e);
-                    };
+                        val.ValueChanged += (s, e) =>
+                        {
+                            property.SetValue(t, e);
+                        };
+                    }
                 }
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    val ??= new(property.Name, DataType.Bool, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, bool.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(bool));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(byte))
                 {
-                    val ??= new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, byte.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(byte));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(sbyte))
                 {
-                    val ??= new(property.Name, DataType.Int8, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, sbyte.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(sbyte));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(ushort))
                 {
-                    val ??= new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, ushort.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(ushort));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(short))
                 {
-                    val ??= new(property.Name, DataType.Int16, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Int16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, short.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(short));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(uint))
                 {
-                    val ??= new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, uint.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(uint));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
-                    val ??= new(property.Name, DataType.Int32, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, int.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(int));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(ulong))
                 {
-                    val ??= new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, ulong.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(ulong));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(long))
                 {
-                    val ??= new(property.Name, DataType.Int64, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, long.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(long));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(float))
                 {
-                    val ??= new(property.Name, DataType.Float, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, float.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(float));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(double))
                 {
-                    val ??= new(property.Name, DataType.Double, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, double.Parse(e));
+                        }
                         else
+                        {
                             property.SetValue(t, default(double));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(Vector2))
                 {
-                    val ??= new(property.Name, DataType.Float2, ((Vector2)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture));
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Float2, ((Vector2)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, s.GetVector2());
+                        }
                         else
+                        {
                             property.SetValue(t, default(Vector2));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(Vector3))
                 {
-                    val ??= new(property.Name, DataType.Float3, ((Vector3)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture));
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Float3, ((Vector3)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, s.GetVector3());
+                        }
                         else
+                        {
                             property.SetValue(t, default(Vector3));
+                        }
                     };
+                    }
                 }
 
                 if (property.PropertyType == typeof(Vector4))
                 {
-                    val ??= new(property.Name, DataType.Float4, property.GetValue(t)?.ToString());
-                    val.ValueChanged += (s, e) =>
+                    val ??= new(property.Name, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    if (property.CanWrite)
+                    {
+                        val.ValueChanged += (s, e) =>
                     {
                         if (e != null)
+                        {
                             property.SetValue(t, s.GetVector4());
+                        }
                         else
+                        {
                             property.SetValue(t, default(Vector4));
+                        }
                     };
+                    }
                 }
 
-                if (val == null) continue;
-
+                if (val == null)
+                {
+                    continue;
+                }
+                val.IsReadOnly = !property.CanWrite;
                 val.Value = val.Value;
                 if (isNew)
+                {
                     Values.Add(val);
+                }
             }
         }
     }

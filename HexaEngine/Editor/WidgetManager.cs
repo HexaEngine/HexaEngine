@@ -16,10 +16,6 @@
             Register<PropertiesWidget>();
             Register<MaterialsWidget>();
             Register<MeshesWidget>();
-            // Register<PreviewWidget>();
-            Register<PrefilterWidget>();
-            Register<IrradianceWidget>();
-            Register<DFGLUTWidget>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()
@@ -36,6 +32,20 @@
                 widget.Init(device);
                 widgets.Add(widget);
                 return true;
+            }
+        }
+
+        public static void Unregister<T>() where T : ImGuiWindow, new()
+        {
+            ImGuiWindow? window = widgets.FirstOrDefault(x => x is T);
+            if (window != null)
+            {
+                if (device != null)
+                {
+                    window.Dispose();
+                }
+
+                widgets.Remove(window);
             }
         }
 

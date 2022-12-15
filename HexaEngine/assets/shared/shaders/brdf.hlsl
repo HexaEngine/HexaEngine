@@ -9,6 +9,11 @@ float SchlickFresnel(float u)
 	return m2 * m2 * m; // pow(m,5)
 }
 
+float F_Schlick(float f0, float f90, float VoH)
+{
+	return f0 + (f90 - f0) * pow(1 - VoH, 5);
+}
+
 float GTR1(float NdotH, float a)
 {
 	if (a >= 1) return 1 / PI;
@@ -52,6 +57,10 @@ void directionOfAnisotropicity(float3 normal, out float3 tangent, out float3 bin
 	tangent = normalize(cross(normal, binormal));
 }
 
+void DirectionOfAnisotropicityTan(float3 normal, float3 tangent, out float3 binormal) {
+	binormal = normalize(cross(normal, tangent));
+}
+
 float3 BRDF(
 	float3 L,
 	float3 V,
@@ -74,7 +83,7 @@ float3 BRDF(
 	float NdotH = dot(N, H);
 	float LdotH = dot(L, H);
 
-	float3 Cdlin = mon2lin(baseColor);
+	float3 Cdlin = baseColor; //mon2lin(baseColor);
 	float Cdlum = .3 * Cdlin[0] + .6 * Cdlin[1] + .1 * Cdlin[2]; // luminance approx.
 
 	float3 Ctint = Cdlum > 0 ? Cdlin / Cdlum : float3(1, 1, 1); // normalize lum. to isolate hue+sat
@@ -83,9 +92,12 @@ float3 BRDF(
 
 	// Diffuse fresnel - go from 1 at normal incidence to .5 at grazing
 	// and lerp in diffuse retro-reflection based on roughness
-	float FL = SchlickFresnel(NdotL), FV = SchlickFresnel(NdotV);
 	float Fd90 = 0.5 + 2 * LdotH * LdotH * roughness;
-	float Fd = lerp(1.0, Fd90, FL) * lerp(1.0, Fd90, FV);
+	float FL = F_Schlick(1, Fd90, NdotL);
+	float FV = F_Schlick(1, Fd90, NdotV);
+	float Fd = FL * FV;
+
+
 
 	// Based on Hanrahan-Krueger brdf approximation of isotropic bssrdf
 	// 1.25 scale is used to (roughly) preserve albedo
@@ -107,13 +119,15 @@ float3 BRDF(
 
 	// sheen
 	float3 Fsheen = FH * sheen * Csheen;
-
+	
 	// clearcoat (ior = 1.5 -> F0 = 0.04)
 	float Dr = GTR1(NdotH, lerp(.1, .001, clearcoatGloss));
 	float Fr = lerp(.04, 1.0, FH);
 	float Gr = smithG_GGX(NdotL, .25) * smithG_GGX(NdotV, .25);
 
-	return ((1 / PI) * lerp(Fd, ss, subsurface) * Cdlin + Fsheen)
+
+
+	return ((1 / PI) * (lerp(Fd * Cdlin, ss * float3(1,0,0), subsurface)) + Fsheen)
 		* (1 - metallic)
 		+ Gs * Fs * Ds + .25 * clearcoat * Gr * Fr * Dr;
 }
@@ -122,6 +136,7 @@ float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
 {
 	return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
+
 
 float3 BRDFIndirect(
 	SamplerState samplerState,

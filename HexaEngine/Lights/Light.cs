@@ -4,7 +4,7 @@
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public abstract class Light : SceneNode
+    public abstract class Light : GameObject
     {
         public bool Updated;
         protected const float DegToRadFactor = 0.0174532925f;

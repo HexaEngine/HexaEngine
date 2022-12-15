@@ -19,5 +19,6 @@
         Float4,
         ColorRGBA,
         ColorRGB,
+        Button,
     }
 }

@@ -8,9 +8,9 @@
     {
         public IPropertyEditor? Editor { get; }
 
-        public void Initialize(IGraphicsDevice device, SceneNode node);
+        public void Awake(IGraphicsDevice device, GameObject node);
 
-        public void Uninitialize();
+        public void Destory();
 
         public void FixedUpdate()
         {

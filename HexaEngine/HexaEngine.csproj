@@ -6,8 +6,7 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>embedded</DebugType>
-    <AnalysisLevel>latest-all</AnalysisLevel>
-	<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+	<EnableTrimAnalyzer>false</EnableTrimAnalyzer>
 	<Platforms>AnyCPU;x64</Platforms>
 	<Configurations>Debug;Release;TraceLeak</Configurations>
   </PropertyGroup>
@@ -59,7 +58,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-rc.2.22472.3" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="Silk.NET.Assimp" Version="2.16.0" />
 	</ItemGroup>
 
@@ -118,6 +117,21 @@
 	  <None Update="assets\shared\shaders\effects\skybox\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shared\shaders\forward\bsdf\defs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\forward\bsdf\ds.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\forward\bsdf\hs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\forward\bsdf\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\forward\bsdf\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shared\shaders\material.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -148,7 +162,7 @@
 	  <None Update="assets\shared\shaders\deferred\terrain\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shared\shaders\deferred\pbrbrdf\ps.hlsl">
+	  <None Update="assets\shared\shaders\deferred\bsdf\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	    <ShaderProfile>hs_5_0</ShaderProfile>
 	    <EntryPointName>main</EntryPointName>
@@ -270,7 +284,7 @@
 	  <None Update="assets\shared\shaders\light.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	  <None Update="assets\shared\shaders\deferred\pbrbrdf\vs.hlsl">
+	  <None Update="assets\shared\shaders\deferred\bsdf\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\world.hlsl">

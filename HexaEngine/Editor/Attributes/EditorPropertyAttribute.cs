@@ -97,7 +97,7 @@
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class EditorNodeAttribute : Attribute
     {
-        public EditorNodeAttribute(string name, Type type, Func<SceneNode> constructor, Func<SceneNode, bool> isType)
+        public EditorNodeAttribute(string name, Type type, Func<GameObject> constructor, Func<GameObject, bool> isType)
         {
             Name = name;
             Type = type;
@@ -109,16 +109,16 @@
 
         public Type Type { get; }
 
-        public Func<SceneNode> Constructor { get; }
+        public Func<GameObject> Constructor { get; }
 
-        public Func<SceneNode, bool> IsType { get; }
+        public Func<GameObject, bool> IsType { get; }
     }
 
 #if GenericAttributes
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class EditorNodeAttribute<T> : EditorNodeAttribute where T : SceneNode, new()
+    public class EditorNodeAttribute<T> : EditorNodeAttribute where T : GameObject, new()
     {
-        public EditorNodeAttribute(string name) : base(name, typeof(T), () => new T(), (SceneNode other) => other is T)
+        public EditorNodeAttribute(string name) : base(name, typeof(T), () => new T(), (GameObject other) => other is T)
         {
         }
     }

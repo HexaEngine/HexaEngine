@@ -12,7 +12,7 @@
     {
         private static float height;
         private static bool isShown = true;
-        private static FilePicker filePicker = new();
+        private static FilePicker filePicker = new(Environment.CurrentDirectory);
         private static bool filePickerIsOpen = false;
         private static Action<FilePickerResult, string>? filePickerCallback;
         private static readonly AssimpSceneLoader loader = new();
@@ -38,6 +38,11 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
+                    if (ImGui.MenuItem("New Scene"))
+                    {
+                        SceneManager.Load(new());
+                    }
+
                     if (ImGui.MenuItem("Export"))
                     {
                         if (SceneManager.Current != null)
@@ -117,13 +122,17 @@
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))
                     {
-                        recompileShadersTaskIsComplete = false;
+                        ShaderCache.Clear();
+                        Pipeline.ReloadShaders();
+                        ComputePipeline.ReloadShaders();
+                        //TODO: Fix async recompile
+                        /*recompileShadersTaskIsComplete = false;
                         recompileShadersTask = Task.Run(() =>
                         {
                             ShaderCache.Clear();
                             Pipeline.ReloadShaders();
                             ComputePipeline.ReloadShaders();
-                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });*/
                     }
 
                     ImGui.Separator();

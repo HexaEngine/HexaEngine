@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core;
@@ -10,7 +10,7 @@
 
     public static class CameraManager
     {
-        internal static readonly Camera camera = new() { Far = 100 };
+        internal static readonly Camera camera = new() { Far = 1000 };
         private static Vector3 center = default;
         private static CameraEditorMode mode = CameraEditorMode.Orbit;
         private static Vector3 sc = new(10, 0, 0);

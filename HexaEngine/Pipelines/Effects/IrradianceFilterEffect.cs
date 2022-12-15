@@ -117,10 +117,5 @@
             Targets.SetTarget(context, i);
             base.DrawAuto(context, Targets.Viewport);
         }
-
-        public override void DrawSettings()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

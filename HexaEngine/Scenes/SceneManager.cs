@@ -43,7 +43,7 @@ namespace HexaEngine.Scenes
 
             window.RenderDispatcher.InvokeBlocking(() =>
             {
-                scene.Initialize(window.Device, window);
+                scene.Initialize(window.Device);
                 if (Current == null)
                 {
                     Current = scene;
@@ -72,7 +72,7 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     Current?.Uninitialize();
-                    Current.Initialize(window.Device, window);
+                    Current.Initialize(window.Device);
                     SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
@@ -105,7 +105,7 @@ namespace HexaEngine.Scenes
             {
                 lock (Current)
                 {
-                    Current.Initialize(window.Device, window);
+                    Current.Initialize(window.Device);
                     SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
@@ -125,7 +125,7 @@ namespace HexaEngine.Scenes
 
             await window.RenderDispatcher.InvokeAsync(() =>
             {
-                scene.Initialize(window.Device, window);
+                scene.Initialize(window.Device);
                 if (Current == null)
                 {
                     Current = scene;
