@@ -356,5 +356,9 @@ float4 main(VSOut pixel) : SV_TARGET
 	misc2Texture,
 	SampleTypeAnsio,
 	attrs);
+
+	if (attrs.opacity < 0.1)
+		discard;
+
 	return ComputeLightingPBR(pixel, attrs);
 }

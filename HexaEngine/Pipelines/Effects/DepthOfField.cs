@@ -14,9 +14,9 @@
         private readonly IBuffer cbBokeh;
         private readonly IBuffer cbDof;
         private readonly ISamplerState pointSampler;
-        private readonly Pipeline pipelineBlur;
-        private readonly Pipeline pipelineBokeh;
-        private readonly Pipeline pipelineDof;
+        private readonly GraphicsPipeline pipelineBlur;
+        private readonly GraphicsPipeline pipelineBokeh;
+        private readonly GraphicsPipeline pipelineDof;
         private ITexture2D outOfFocusTex;
         private IShaderResourceView outOfFocusSRV;
         private IRenderTargetView outOfFocusRTV;

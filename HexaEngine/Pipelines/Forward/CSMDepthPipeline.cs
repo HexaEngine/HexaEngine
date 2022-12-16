@@ -4,7 +4,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
-    public class CSMPipeline : Pipeline
+    public class CSMPipeline : GraphicsPipeline
     {
         public IBuffer? View;
 

@@ -11,6 +11,8 @@
         static WidgetManager()
         {
             Register<PreferencesWidget>();
+            Register<ProjectExplorer>();
+            Register<PipelineWidget>();
             Register<AssetExplorer>();
             Register<LayoutWidget>();
             Register<PropertiesWidget>();

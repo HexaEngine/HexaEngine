@@ -1,10 +1,10 @@
-﻿namespace HexaEngine.Pipelines.Compute
+﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
 
     public class ComputePipeline : IDisposable
     {
+        private bool initialized;
         private IComputeShader? cs;
         private readonly IGraphicsDevice device;
         private ComputePipelineDesc desc;
@@ -12,19 +12,30 @@
 
         public ComputePipeline(IGraphicsDevice device, ComputePipelineDesc desc)
         {
+            Name = new FileInfo(desc.Path ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
+            PipelineManager.Register(this);
             this.device = device;
             this.desc = desc;
             Compile();
-            Reload += OnReload;
+            initialized = true;
         }
+
+        public static Task<ComputePipeline> CreateAsync(IGraphicsDevice device, ComputePipelineDesc desc)
+        {
+            return Task.Factory.StartNew(() => new ComputePipeline(device, desc));
+        }
+
+        public string Name { get; }
 
         public virtual void BeginDispatch(IGraphicsContext context)
         {
+            if (!initialized) return;
             context.CSSetShader(cs);
         }
 
         public void Dispatch(IGraphicsContext context, int x, int y, int z)
         {
+            if (!initialized) return;
             BeginDispatch(context);
             context.Dispatch(x, y, z);
             EndDispatch(context);
@@ -32,33 +43,27 @@
 
         public virtual void EndDispatch(IGraphicsContext context)
         {
+            if (!initialized) return;
             context.ClearState();
         }
 
-        #region Hotreload
-
-        public static event EventHandler? Reload;
-
-        public static void ReloadShaders()
+        public void Recompile()
         {
-            ImGuiConsole.Log(LogSeverity.Info, "recompiling compute shaders ...");
-            Reload?.Invoke(null, EventArgs.Empty);
-            ImGuiConsole.Log(LogSeverity.Info, "recompiling compute shaders ... done!");
-        }
+            initialized = false;
 
-        protected virtual void OnReload(object? sender, EventArgs args)
-        {
             cs?.Dispose();
-            Compile();
+            cs = null;
+
+            Compile(true);
+
+            initialized = true;
         }
 
-        #endregion Hotreload
-
-        private void Compile()
+        private void Compile(bool bypassCache = false)
         {
             ShaderMacro[] macros = GetShaderMacros();
             if (desc.Path != null)
-                if (ShaderCache.GetShader(desc.Path, macros, out var data))
+                if (ShaderCache.GetShader(desc.Path, macros, out var data) && !bypassCache)
                 {
                     cs = device.CreateComputeShader(data);
                     cs.DebugName = GetType().Name + nameof(cs);
@@ -104,7 +109,7 @@
         {
             if (!disposedValue)
             {
-                Reload -= OnReload;
+                PipelineManager.Unregister(this);
                 cs?.Dispose();
                 disposedValue = true;
             }

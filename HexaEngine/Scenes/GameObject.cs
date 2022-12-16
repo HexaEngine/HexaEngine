@@ -17,7 +17,6 @@
 #nullable enable
         private readonly List<GameObject> children = new();
         private readonly List<IComponent> components = new();
-        private readonly List<int> meshes = new();
         private Scene? scene;
         private GameObject? parent;
         private bool initialized;
@@ -197,9 +196,6 @@
         [JsonInclude]
         public virtual IReadOnlyList<IComponent> Components => components;
 
-        [JsonInclude]
-        public virtual IReadOnlyList<int> Meshes => meshes;
-
         [JsonIgnore]
         public bool Initialized => initialized;
 
@@ -227,23 +223,18 @@
             {
                 var childs = node.children.ToArray();
                 var comps = node.components.ToArray();
-                var meshes = node.meshes.ToArray();
                 if (node.initialized)
                 {
                     foreach (var child in childs)
                         node.RemoveChild(child);
                     foreach (var comp in comps)
                         node.RemoveComponent(comp);
-                    foreach (var mesh in meshes)
-                        node.RemoveMesh(mesh);
                 }
                 node.Parent?.RemoveChild(node);
                 foreach (var child in childs)
                     AddChild(child);
                 foreach (var comp in comps)
                     AddComponent(comp);
-                foreach (var mesh in meshes)
-                    AddMesh(mesh);
             }
             else
             {
@@ -251,8 +242,6 @@
                 node.children.Clear();
                 components.AddRange(node.components);
                 node.components.Clear();
-                meshes.AddRange(node.meshes);
-                node.meshes.Clear();
             }
         }
 
@@ -362,20 +351,6 @@
             parent?.GetDepth(ref depth);
         }
 
-        public virtual void AddMesh(int index)
-        {
-            meshes.Add(index);
-            if (Initialized)
-                GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, this, ChildCommandType.Added, index));
-        }
-
-        public virtual void RemoveMesh(int index)
-        {
-            meshes.Remove(index);
-            if (Initialized)
-                GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, this, ChildCommandType.Removed, index));
-        }
-
         public virtual T? GetParentNodeOf<T>() where T : GameObject
         {
             GameObject? current = parent;
@@ -390,6 +365,18 @@
             }
         }
 
+        public virtual T GetOrCreateComponent<T>() where T : IComponent, new()
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (components[i] is T t)
+                    return t;
+            }
+            T t1 = new();
+            components.Add(t1);
+            return t1;
+        }
+
         public virtual T? GetComponent<T>() where T : IComponent
         {
             for (int i = 0; i < components.Count; i++)
@@ -398,6 +385,20 @@
                     return t;
             }
             return default;
+        }
+
+        public virtual bool TryGetComponent<T>([NotNullWhen(true)] out T? value) where T : class, IComponent
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (components[i] is T t)
+                {
+                    value = t;
+                    return true;
+                }
+            }
+            value = default;
+            return false;
         }
 
         public virtual IEnumerable<T> GetComponents<T>() where T : IComponent

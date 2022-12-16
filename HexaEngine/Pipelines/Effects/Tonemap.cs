@@ -8,7 +8,7 @@
     public unsafe class Tonemap : IEffect
     {
         private readonly Quad quad;
-        private readonly Pipeline pipeline;
+        private readonly GraphicsPipeline pipeline;
         private readonly IBuffer buffer;
         private readonly ISamplerState sampler;
         private readonly void** srvs;

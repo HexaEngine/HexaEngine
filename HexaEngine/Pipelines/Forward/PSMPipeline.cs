@@ -4,7 +4,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
-    public class PSMPipeline : Pipeline
+    public class PSMPipeline : GraphicsPipeline
     {
         public IBuffer? View;
 
@@ -15,7 +15,7 @@
             DomainShader = "forward/psm/ds.hlsl",
             PixelShader = "forward/psm/ps.hlsl",
         },
-        new PipelineState()
+        new GraphicsPipelineState()
         {
             DepthStencil = DepthStencilDescription.Default,
             Rasterizer = RasterizerDescription.CullFront,

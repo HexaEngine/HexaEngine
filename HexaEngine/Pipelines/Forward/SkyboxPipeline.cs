@@ -7,7 +7,7 @@
     public unsafe class Skybox : IEffect
     {
         private readonly UVSphere sphere;
-        private readonly Pipeline pipeline;
+        private readonly GraphicsPipeline pipeline;
         private readonly ISamplerState sampler;
         private readonly void** cbs;
 
@@ -25,7 +25,7 @@
                 VertexShader = "forward/skybox/vs.hlsl",
                 PixelShader = "forward/skybox/ps.hlsl"
             });
-            pipeline.State = new PipelineState()
+            pipeline.State = new GraphicsPipelineState()
             {
                 Rasterizer = RasterizerDescription.CullNone,
                 Topology = PrimitiveTopology.TriangleList,

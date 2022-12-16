@@ -163,7 +163,7 @@
             return true;
         }
 
-        public unsafe void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
+        public unsafe void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
         {
             if (VB == null) return;
             if (IB == null) return;
@@ -286,7 +286,7 @@
             context.Write(instanceBuffer, transforms);
         }
 
-        public void Draw(IGraphicsContext context, int indexCount, Pipeline pipeline, Viewport viewport)
+        public void Draw(IGraphicsContext context, int indexCount, GraphicsPipeline pipeline, Viewport viewport)
         {
             Update(context);
             Material.Bind(context);

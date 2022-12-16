@@ -8,17 +8,18 @@
     public abstract class HexaItem : INotifyCollectionChanged
     {
         private bool isSelected;
+        private bool isVisible;
 
-        [JsonIgnore]
+        [XmlIgnore]
         public HexaParent? Parent { get; set; }
 
         [JsonInclude]
         public string Name { get; set; } = string.Empty;
 
-        [JsonIgnore]
+        [XmlIgnore]
         public virtual IntPtr Icon { get; }
 
-        [JsonIgnore]
+        [XmlIgnore]
         public bool IsSelected
         {
             get => isSelected;
@@ -34,8 +35,28 @@
             }
         }
 
-        [JsonIgnore]
+        [XmlIgnore]
         public bool IsExpanded { get; set; }
+
+        [XmlIgnore]
+        public bool IsVisible
+        {
+            get => isVisible;
+            set
+            {
+                if (isVisible == value) return;
+
+                if (!value && this is HexaParent parent)
+                {
+                    for (int i = 0; i < parent.Items.Count; i++)
+                    {
+                        parent.Items[i].IsVisible = false;
+                    }
+                }
+
+                isVisible = value;
+            }
+        }
 
         public abstract event NotifyCollectionChangedEventHandler? CollectionChanged;
 
@@ -55,7 +76,9 @@
     {
         public ObservableCollection<HexaItem> Items { get; } = new();
 
-        public abstract void Import(string path);
+        public abstract void ImportFile(string path);
+
+        public abstract void ImportFolder(string path);
 
         public abstract void Remove(HexaItem item);
 

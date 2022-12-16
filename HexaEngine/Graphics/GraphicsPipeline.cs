@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Graphics
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System;
 
-    public class Pipeline
+    public class GraphicsPipeline
     {
         private IVertexShader? vs;
         private IHullShader? hs;
@@ -16,104 +15,154 @@
         private IRasterizerState? rasterizerState;
         private IDepthStencilState? depthStencilState;
         private IBlendState? blendState;
-        private readonly PipelineDesc desc;
+        private readonly GraphicsPipelineDesc desc;
         private readonly ShaderMacro[] macros;
-        private PipelineState state = PipelineState.Default;
+        private GraphicsPipelineState state = GraphicsPipelineState.Default;
         private volatile bool initialized;
         private readonly IGraphicsDevice device;
         private readonly InputElementDescription[]? inputElements;
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             macros = Array.Empty<ShaderMacro>();
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, ShaderMacro[] macros)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.macros = macros;
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             macros = Array.Empty<ShaderMacro>();
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             this.macros = macros;
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.state = state;
             macros = Array.Empty<ShaderMacro>();
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state, ShaderMacro[] macros)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.state = state;
             this.macros = macros;
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state, InputElementDescription[] inputElements)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             this.state = state;
             macros = Array.Empty<ShaderMacro>();
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public Pipeline(IGraphicsDevice device, PipelineDesc desc, PipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        public GraphicsPipeline(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
         {
+            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             this.state = state;
             this.macros = macros;
             Compile();
-            Reload += OnReload;
+            PipelineManager.Register(this);
             initialized = true;
         }
 
-        public PipelineDesc Description => desc;
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc));
+        }
 
-        public PipelineState State
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, macros));
+        }
+
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, inputElements));
+        }
+
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, inputElements, macros));
+        }
+
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state));
+        }
+
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state, macros));
+        }
+
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state, inputElements));
+        }
+
+        public static Task<GraphicsPipeline> CreateAsync(IGraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        {
+            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state, inputElements, macros));
+        }
+
+        public string Name { get; }
+
+        public GraphicsPipelineDesc Description => desc;
+
+        public GraphicsPipelineState State
         {
             get => state;
             set
@@ -125,44 +174,30 @@
             }
         }
 
-        #region Hotreload
-
-        public static event EventHandler? Reload;
-
-        public static void ReloadShaders()
-        {
-            ImGuiConsole.Log(LogSeverity.Info, "recompiling shaders ...");
-            Reload?.Invoke(null, EventArgs.Empty);
-            ImGuiConsole.Log(LogSeverity.Info, "recompiling shaders ... done!");
-        }
-
-        public void ReloadShader()
-        {
-            ImGuiConsole.Log(LogSeverity.Info, "recompiling shader ...");
-            OnReload(this, EventArgs.Empty);
-            ImGuiConsole.Log(LogSeverity.Info, "recompiling shader ... done!");
-        }
-
-        protected virtual void OnReload(object? sender, EventArgs args)
+        public void Recompile()
         {
             initialized = false;
-            Interlocked.MemoryBarrier();
+
             vs?.Dispose();
+            vs = null;
             hs?.Dispose();
+            hs = null;
             ds?.Dispose();
+            ds = null;
             gs?.Dispose();
+            gs = null;
             ps?.Dispose();
+            ps = null;
             layout?.Dispose();
-            Compile();
+            layout = null;
+            Compile(true);
             initialized = true;
         }
 
-        #endregion Hotreload
-
-        private void Compile()
+        private void Compile(bool bypassCache = false)
         {
             if (desc.VertexShader != null)
-                if (ShaderCache.GetShader(desc.VertexShader, macros, out var data))
+                if (ShaderCache.GetShader(desc.VertexShader, macros, out var data) && !bypassCache)
                 {
                     vs = device.CreateVertexShader(data);
                     vs.DebugName = GetType().Name + nameof(vs);
@@ -192,7 +227,7 @@
                     vBlob.Dispose();
                 }
             if (desc.HullShader != null)
-                if (ShaderCache.GetShader(desc.HullShader, macros, out var data))
+                if (ShaderCache.GetShader(desc.HullShader, macros, out var data) && !bypassCache)
                 {
                     hs = device.CreateHullShader(data);
                     hs.DebugName = GetType().Name + nameof(hs);
@@ -212,7 +247,7 @@
                     pBlob.Dispose();
                 }
             if (desc.DomainShader != null)
-                if (ShaderCache.GetShader(desc.DomainShader, macros, out var data))
+                if (ShaderCache.GetShader(desc.DomainShader, macros, out var data) && !bypassCache)
                 {
                     ds = device.CreateDomainShader(data);
                     ds.DebugName = GetType().Name + nameof(ds);
@@ -231,7 +266,7 @@
                     pBlob.Dispose();
                 }
             if (desc.GeometryShader != null)
-                if (ShaderCache.GetShader(desc.GeometryShader, macros, out var data))
+                if (ShaderCache.GetShader(desc.GeometryShader, macros, out var data) && !bypassCache)
                 {
                     gs = device.CreateGeometryShader(data);
                     gs.DebugName = GetType().Name + nameof(gs);
@@ -250,7 +285,7 @@
                     pBlob.Dispose();
                 }
             if (desc.PixelShader != null)
-                if (ShaderCache.GetShader(desc.PixelShader, macros, out var data))
+                if (ShaderCache.GetShader(desc.PixelShader, macros, out var data) && !bypassCache)
                 {
                     ps = device.CreatePixelShader(data);
                     ps.DebugName = GetType().Name + nameof(ps);
@@ -326,7 +361,7 @@
 
         public virtual void Dispose()
         {
-            Reload -= OnReload;
+            PipelineManager.Unregister(this);
 
             vs?.Dispose();
             hs?.Dispose();

@@ -365,12 +365,12 @@ namespace HexaEngine.Rendering
                         return output;
                     }";
 
-                device.Compile(vertexShaderCode, "main", "vs", "vs_5_0", out var vertexShaderBlob, out var errorBlob);
+                device.Compile(vertexShaderCode, "main", "Internal:ImGui:VS", "vs_5_0", out var vertexShaderBlob, out var errorBlob);
                 if (vertexShaderBlob == null)
                     throw new Exception("error compiling vertex shader");
 
                 ShaderCache.CacheShader("Internal:ImGui:VS", Array.Empty<ShaderMacro>(), vertexShaderBlob);
-                vBytes = vertexShaderBlob.AsSpan();
+                vBytes = vertexShaderBlob.AsBytes();
                 vertexShaderBlob.Dispose();
             }
 
@@ -412,12 +412,12 @@ namespace HexaEngine.Rendering
                         return out_col;
                     }";
 
-                device.Compile(pixelShaderCode, "main", "ps", "ps_5_0", out var pixelShaderBlob, out var errorBlob);
+                device.Compile(pixelShaderCode, "main", "Internal:ImGui:PS", "ps_5_0", out var pixelShaderBlob, out var errorBlob);
                 if (pixelShaderBlob == null)
                     throw new Exception("error compiling pixel shader");
 
                 ShaderCache.CacheShader("Internal:ImGui:PS", Array.Empty<ShaderMacro>(), pixelShaderBlob);
-                pBytes = pixelShaderBlob.AsSpan();
+                pBytes = pixelShaderBlob.AsBytes();
                 pixelShaderBlob.Dispose();
             }
 

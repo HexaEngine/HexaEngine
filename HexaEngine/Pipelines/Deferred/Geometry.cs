@@ -4,7 +4,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
-    public class Geometry : Pipeline
+    public class Geometry : GraphicsPipeline
     {
         public IBuffer? Camera;
 
@@ -15,7 +15,7 @@
             DomainShader = "deferred/prepass/ds.hlsl",
             PixelShader = "deferred/prepass/ps.hlsl"
         },
-        new PipelineState()
+        new GraphicsPipelineState()
         {
             DepthStencil = DepthStencilDescription.Default,
             Rasterizer = RasterizerDescription.CullBack,

@@ -8,7 +8,7 @@
     public unsafe class HBAO : IEffect
     {
         private readonly Quad quad;
-        private readonly Pipeline hbaoPipeline;
+        private readonly GraphicsPipeline hbaoPipeline;
         private readonly IBuffer cbHBAO;
         private HBAOParams hbaoParams = new();
         private ITexture2D hbaoBuffer;
@@ -17,7 +17,7 @@
         private IShaderResourceView hbaoSRV;
         private IRenderTargetView hbaoRTV;
 
-        private readonly Pipeline blurPipeline;
+        private readonly GraphicsPipeline blurPipeline;
         private readonly IBuffer cbBlur;
         private BlurParams blurParams = new();
         private readonly void** blurSRVs;

@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
 
-    public class SelectionPipeline : Pipeline
+    public class SelectionPipeline : GraphicsPipeline
     {
         public SelectionPipeline(IGraphicsDevice device) : base(device, new()
         {

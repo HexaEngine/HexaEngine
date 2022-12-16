@@ -3,7 +3,7 @@
 using HexaEngine.Core.Graphics;
 using HexaEngine.Graphics;
 
-public class SkinnedMTLShader : Pipeline
+public class SkinnedMTLShader : GraphicsPipeline
 {
     public SkinnedMTLShader(IGraphicsDevice device) : base(device, new()
     {

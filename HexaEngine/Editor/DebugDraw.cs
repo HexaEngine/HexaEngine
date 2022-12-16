@@ -124,23 +124,23 @@ float4 main(PixelInputType pixel) : SV_TARGET
     return pixel.color;
 }
 ";
-            if (!ShaderCache.GetShader("DEBUGDRAW-INTERNAL-VS", Array.Empty<ShaderMacro>(), out var vsBytes))
+            if (!ShaderCache.GetShader("Internal:DebugDraw:VS", Array.Empty<ShaderMacro>(), out var vsBytes))
             {
-                device.Compile(vsCode, "main", "VS", "vs_5_0", out var vsBlob);
-                vsBytes = vsBlob.AsSpan();
+                device.Compile(vsCode, "main", "Internal:DebugDraw:VS", "vs_5_0", out var vsBlob);
+                vsBytes = vsBlob.AsBytes();
 
-                ShaderCache.CacheShader("DEBUGDRAW-INTERNAL-VS", Array.Empty<ShaderMacro>(), vsBlob);
+                ShaderCache.CacheShader("Internal:DebugDraw:VS", Array.Empty<ShaderMacro>(), vsBlob);
             }
 
             vs = device.CreateVertexShader(vsBytes);
             il = device.CreateInputLayout(vsBytes);
 
-            if (!ShaderCache.GetShader("DEBUGDRAW-INTERNAL-PS", Array.Empty<ShaderMacro>(), out var psBytes))
+            if (!ShaderCache.GetShader("Internal:DebugDraw:PS", Array.Empty<ShaderMacro>(), out var psBytes))
             {
-                device.Compile(psCode, "main", "PS", "ps_5_0", out var psBlob);
-                psBytes = psBlob.AsSpan();
+                device.Compile(psCode, "main", "Internal:DebugDraw:PS", "ps_5_0", out var psBlob);
+                psBytes = psBlob.AsBytes();
 
-                ShaderCache.CacheShader("DEBUGDRAW-INTERNAL-PS", Array.Empty<ShaderMacro>(), psBlob);
+                ShaderCache.CacheShader("Internal:DebugDraw:PS", Array.Empty<ShaderMacro>(), psBlob);
             }
 
             ps = device.CreatePixelShader(psBytes);

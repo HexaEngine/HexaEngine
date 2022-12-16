@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Mathematics;
     using System;
+    using System.Threading.Tasks;
 
     public interface IGraphicsDevice : IDeviceChild
     {
@@ -207,5 +208,9 @@
         ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
         ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
         IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description);
+        Task<(Blob?, Blob?)> CompileAsync(string code, ShaderMacro[] macros, string entry, string sourceName, string profile);
+        Task<(Blob?, Blob?)> CompileAsync(string code, string entry, string sourceName, string profile);
+        Task<(Blob?, Blob?)> CompileFromFileAsync(string path, string entry, string profile);
+        Task<(Blob?, Blob?)> CompileFromFileAsync(string path, ShaderMacro[] macros, string entry, string profile);
     }
 }

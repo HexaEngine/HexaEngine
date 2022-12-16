@@ -8,10 +8,14 @@
     using System.Linq;
     using System.Text;
 
+    /// <summary>
+    /// Thread-safe shader cache
+    /// </summary>
     public static class ShaderCache
     {
         private const string file = "cache/shadercache.bin";
         private static readonly List<ShaderCacheEntry> entries = new();
+        private static readonly SemaphoreSlim semaphore = new(1);
 
         static ShaderCache()
         {
@@ -27,7 +31,51 @@
 
         public static bool DisableCache { get; set; } = false;
 
+        public static async Task CacheShaderAsync(string path, ShaderMacro[] macros, Blob blob)
+        {
+            await semaphore.WaitAsync();
+            CacheShaderInternal(path, macros, blob);
+            semaphore.Release();
+        }
+
+        public static async Task<(bool, byte[]?)> GetShaderAsync(string path, ShaderMacro[] macros)
+        {
+            await semaphore.WaitAsync();
+            bool result = GetShaderInternal(path, macros, out byte[]? data);
+            semaphore.Release();
+            return (result, data);
+        }
+
+        public static async Task ClearAsync()
+        {
+            await semaphore.WaitAsync();
+            ClearInternal();
+            semaphore.Release();
+        }
+
         public static void CacheShader(string path, ShaderMacro[] macros, Blob blob)
+        {
+            semaphore.Wait();
+            CacheShaderInternal(path, macros, blob);
+            semaphore.Release();
+        }
+
+        public static bool GetShader(string path, ShaderMacro[] macros, out byte[]? data)
+        {
+            semaphore.Wait();
+            var result = GetShaderInternal(path, macros, out data);
+            semaphore.Release();
+            return result;
+        }
+
+        public static void Clear()
+        {
+            semaphore.Wait();
+            ClearInternal();
+            semaphore.Release();
+        }
+
+        private static void CacheShaderInternal(string path, ShaderMacro[] macros, Blob blob)
         {
             if (DisableCache) return;
             var entry = new ShaderCacheEntry(path, macros, blob.AsBytes());
@@ -35,7 +83,7 @@
             entries.Add(entry);
         }
 
-        public static bool GetShader(string path, ShaderMacro[] macros, out Span<byte> data)
+        private static bool GetShaderInternal(string path, ShaderMacro[] macros, out byte[]? data)
         {
             data = default;
             if (DisableCache) return false;
@@ -50,7 +98,7 @@
             return false;
         }
 
-        public static void Clear()
+        private static void ClearInternal()
         {
             ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ...");
             entries.Clear();

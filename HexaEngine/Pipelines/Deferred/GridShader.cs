@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
 
-    public class Grid : Pipeline
+    public class Grid : GraphicsPipeline
     {
         public Grid(IGraphicsDevice device) : base(device, new()
         {
@@ -34,7 +34,7 @@
         }
     }
 
-    public class Terrain : Pipeline
+    public class Terrain : GraphicsPipeline
     {
         public Terrain(IGraphicsDevice device) : base(device, new()
         {

@@ -4,7 +4,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
-    public class GeometryDepthBack : Pipeline
+    public class GeometryDepthBack : GraphicsPipeline
     {
         public IBuffer? Camera;
 

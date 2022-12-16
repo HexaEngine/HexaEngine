@@ -28,10 +28,6 @@
 
             var window = new Window() { Flags = HexaEngine.Windows.RendererFlags.All };
 
-            ImGuiConsole.RegisterCommand("recompile_shaders", _ =>
-            {
-                SceneManager.Current.Dispatcher.Invoke(() => { ShaderCache.Clear(); Pipeline.ReloadShaders(); });
-            });
             ImGuiConsole.RegisterCommand("gc_force", _ =>
             {
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);

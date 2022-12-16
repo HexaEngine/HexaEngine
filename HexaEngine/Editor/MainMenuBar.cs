@@ -2,9 +2,9 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
-    using HexaEngine.Pipelines.Compute;
     using HexaEngine.Scenes;
     using ImGuiNET;
 
@@ -12,10 +12,12 @@
     {
         private static float height;
         private static bool isShown = true;
-        private static FilePicker filePicker = new(Environment.CurrentDirectory);
+        private static readonly FilePicker filePicker = new(Environment.CurrentDirectory);
+        private static readonly FileSaver fileSaver = new(Environment.CurrentDirectory);
         private static bool filePickerIsOpen = false;
+        private static bool fileSaverIsOpen = false;
         private static Action<FilePickerResult, string>? filePickerCallback;
-        private static readonly AssimpSceneLoader loader = new();
+        private static Action<FilePickerResult, FileSaver>? fileSaverCallback;
         private static Task recompileShadersTask;
         private static bool recompileShadersTaskIsComplete = true;
 
@@ -32,12 +34,52 @@
                     filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
                 }
             }
+
+            if (fileSaverIsOpen)
+            {
+                if (fileSaver.Draw())
+                {
+                    fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
+                }
+            }
+
             if (!isShown) return;
 
             if (ImGui.BeginMainMenuBar())
             {
                 if (ImGui.BeginMenu("File"))
                 {
+                    if (ImGui.MenuItem("New Project"))
+                    {
+                        fileSaverIsOpen = true;
+                        fileSaverCallback = (e, r) =>
+                        {
+                            if (e == FilePickerResult.Ok)
+                            {
+                                Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
+                                Designer.CurrentProject = HexaProject.Create(Path.Combine(r.CurrentFolder, r.SelectedFile, r.SelectedFile + ".hexproj"));
+                            }
+                            fileSaverIsOpen = false;
+                        };
+                    }
+
+                    if (ImGui.MenuItem("Load Project"))
+                    {
+                        filePickerIsOpen = true;
+                        filePicker.AllowedExtensions.Add(".hexproj");
+                        filePicker.OnlyAllowFilteredExtensions = true;
+                        filePickerCallback = (e, r) =>
+                        {
+                            if (e == FilePickerResult.Ok)
+                            {
+                                Designer.CurrentProject = HexaProject.Load(r);
+                            }
+                            filePickerIsOpen = false;
+                            filePicker.AllowedExtensions.Clear();
+                            filePicker.OnlyAllowFilteredExtensions = false;
+                        };
+                    }
+
                     if (ImGui.MenuItem("New Scene"))
                     {
                         SceneManager.Load(new());
@@ -58,7 +100,7 @@
                         {
                             if (r == FilePickerResult.Ok)
                             {
-                                loader.ImportAsync(filePicker.SelectedFile);
+                                Designer.OpenFile(filePicker.SelectedFile);
                             }
                             filePickerIsOpen = false;
                         };
@@ -121,18 +163,17 @@
                 {
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))
-                    {
+                    {/*
                         ShaderCache.Clear();
                         Pipeline.ReloadShaders();
-                        ComputePipeline.ReloadShaders();
+                        ComputePipeline.ReloadShaders();*/
                         //TODO: Fix async recompile
-                        /*recompileShadersTaskIsComplete = false;
+                        recompileShadersTaskIsComplete = false;
                         recompileShadersTask = Task.Run(() =>
                         {
                             ShaderCache.Clear();
-                            Pipeline.ReloadShaders();
-                            ComputePipeline.ReloadShaders();
-                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });*/
+                            PipelineManager.Recompile();
+                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
                     }
 
                     ImGui.Separator();

@@ -10,7 +10,6 @@
     using System.Numerics;
     using System.Threading.Tasks;
 
-    // TODO: Cache entries for folder mode and add project view mode.
     public class AssetExplorer : ImGuiWindow
     {
         private DirectoryInfo currentDir;
@@ -19,8 +18,6 @@
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
         private string CurrentFolder = Paths.CurrentProjectFolder;
-        private Task? task;
-        private readonly AssimpSceneLoader loader = new();
 
         private struct Item
         {
@@ -104,40 +101,6 @@
             }
         }
 
-        public void OpenFile()
-        {
-            if ((task == null || task.IsCompleted) && SelectedFile != null)
-            {
-                var extension = Path.GetExtension(SelectedFile);
-                if (extension == ".glb")
-                {
-                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
-                }
-                if (extension == ".gltf")
-                {
-                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
-                }
-                if (extension == ".dae")
-                {
-                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
-                }
-                if (extension == ".obj")
-                {
-                    task = loader.OpenAsync(SelectedFile).ContinueWith(HandleError);
-                }
-            }
-        }
-
-        private Task HandleError(Task task)
-        {
-            if (!task.IsCompletedSuccessfully)
-            {
-                ImGuiConsole.Log(task.Exception);
-            }
-            task.Dispose();
-            return Task.CompletedTask;
-        }
-
         private void DisplayDir(Item dir)
         {
             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
@@ -211,7 +174,7 @@
                 if (ImGui.MenuItem("Open"))
                 {
                     SelectedFile = file.Path;
-                    OpenFile();
+                    Designer.OpenFile(SelectedFile);
                 }
                 if (ImGui.MenuItem("Delete"))
                 {
@@ -224,7 +187,7 @@
 
             if (ImGui.IsItemClicked(0) && ImGui.IsMouseDoubleClicked(0))
             {
-                OpenFile();
+                Designer.OpenFile(SelectedFile);
             }
 
             if (ImGui.BeginDragDropSource())

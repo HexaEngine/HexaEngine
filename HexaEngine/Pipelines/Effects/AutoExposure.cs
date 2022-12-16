@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
-    using HexaEngine.Pipelines.Compute;
     using System;
     using System.Numerics;
 
@@ -28,7 +27,7 @@
         private readonly IUnorderedAccessView lumaUAV;
         private readonly IUnorderedAccessView[] lumaAvgUAVs;
 
-        private readonly Pipeline exposurePipeline;
+        private readonly GraphicsPipeline exposurePipeline;
         private readonly Quad quad;
         private ExposureParams exposureParams = new();
         private readonly IBuffer cbExposureParams;

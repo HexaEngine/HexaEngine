@@ -12,6 +12,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
+    using HexaEngine.Objects.Components;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Effects;
@@ -24,6 +25,7 @@
     using System;
     using System.Numerics;
 
+    // TODO: Cleanup and specialization
     public class SceneRenderer : ISceneRenderer
     {
 #nullable disable
@@ -391,7 +393,7 @@
             depthStencil = new DepthBuffer(device, new(width, height, 1, Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
             dsv = depthStencil.DSV;
 
-            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1), DepthStencilDesc.Default);
+            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float), DepthStencilDesc.Default);
 
             ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
             ssao.Output = ssaoBuffer.RenderTargetView;
@@ -457,6 +459,7 @@
             ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             ssr.Resize(device, width, height);
             ssr.Output = dofBuffer.RenderTargetView;
+            ssr.Camera = cameraBuffer.Buffer;
             ssr.Color = lightMap.ResourceView;
             ssr.Position = gbuffers.SRVs[1];
             ssr.Normal = gbuffers.SRVs[2];
@@ -473,18 +476,28 @@
                     switch (cmd.Type)
                     {
                         case CommandType.Load:
-                            for (int i = 0; i < node.Meshes.Count; i++)
                             {
-                                await resourceManager.AsyncCreateInstance(scene.Meshes[node.Meshes[i]], node);
-                                dirty = true;
+                                if (node.TryGetComponent<RendererComponent>(out var renderer))
+                                {
+                                    for (int i = 0; i < renderer.Meshes.Count; i++)
+                                    {
+                                        await resourceManager.AsyncCreateInstance(scene.Meshes[renderer.Meshes[i]], node);
+                                        dirty = true;
+                                    }
+                                }
                             }
                             break;
 
                         case CommandType.Unload:
-                            for (int i = 0; i < node.Meshes.Count; i++)
                             {
-                                await resourceManager.AsyncDestroyInstance(scene.Meshes[node.Meshes[i]], node);
-                                dirty = true;
+                                if (node.TryGetComponent<RendererComponent>(out var renderer))
+                                {
+                                    for (int i = 0; i < renderer.Meshes.Count; i++)
+                                    {
+                                        await resourceManager.AsyncDestroyInstance(scene.Meshes[renderer.Meshes[i]], node);
+                                        dirty = true;
+                                    }
+                                }
                             }
                             break;
 
@@ -728,6 +741,9 @@
 
             if (ImGui.CollapsingHeader("Normals"))
                 ImGui.Image(gbuffers.SRVs[2].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+
+            if (ImGui.CollapsingHeader("SSR"))
+                ImGui.Image(ssr.ssrSRV.NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
         }
 
         protected virtual void Dispose(bool disposing)
