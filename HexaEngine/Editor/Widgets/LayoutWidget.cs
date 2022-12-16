@@ -199,7 +199,7 @@
                 return;
             }
 
-            ImGui.BeginChild("LayoutContent", ImGui.GetWindowSize());
+            ImGui.BeginChild("LayoutContent");
 
             DisplayContextMenu();
 
