@@ -1,21 +1,21 @@
-﻿namespace HexaEngine.Pipelines.Deferred.PrePass
+﻿namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
-    public class GeometryPass : Pipeline
+    public class Geometry : GraphicsPipeline
     {
         public IBuffer? Camera;
 
-        public GeometryPass(IGraphicsDevice device) : base(device, new()
+        public Geometry(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "deferred/prepass/vs.hlsl",
             HullShader = "deferred/prepass/hs.hlsl",
             DomainShader = "deferred/prepass/ds.hlsl",
             PixelShader = "deferred/prepass/ps.hlsl"
         },
-        new PipelineState()
+        new GraphicsPipelineState()
         {
             DepthStencil = DepthStencilDescription.Default,
             Rasterizer = RasterizerDescription.CullBack,

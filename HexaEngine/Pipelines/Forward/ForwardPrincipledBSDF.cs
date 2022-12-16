@@ -7,7 +7,7 @@
 
     public unsafe class ForwardPrincipledBSDF : IEffect
     {
-        private readonly Pipeline brdf;
+        private readonly GraphicsPipeline brdf;
         private readonly ISamplerState pointSampler;
         private readonly ISamplerState anisoSampler;
         private readonly void** cbs;

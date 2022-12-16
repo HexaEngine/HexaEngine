@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Graphics
 {
-    public struct PipelineDesc
+    public struct GraphicsPipelineDesc
     {
-        public PipelineDesc()
+        public GraphicsPipelineDesc()
         {
         }
 

@@ -5,6 +5,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Objects.Components;
     using Silk.NET.Assimp;
     using System.Diagnostics;
     using System.Numerics;
@@ -426,7 +427,8 @@
             sceneNode.Transform.PositionRotationScale = (position, orientation, scale);
             for (int i = 0; i < node->MNumMeshes; i++)
             {
-                sceneNode.AddMesh((int)node->MMeshes[i]);
+                var renderer = sceneNode.GetOrCreateComponent<RendererComponent>();
+                renderer.AddMesh((int)node->MMeshes[i]);
             }
 
             for (int i = 0; i < node->MNumChildren; i++)
@@ -464,12 +466,13 @@
             for (int i = 0; i < nodes.Count; i++)
             {
                 var node = nodes[i];
-                for (int j = 0; j < node.Meshes.Count; j++)
-                {
-                    var mesh = node.Meshes[j];
-                    node.RemoveMesh(mesh);
-                    node.AddMesh(mesh + baseMesh);
-                }
+                if (node.TryGetComponent<RendererComponent>(out var renderer))
+                    for (int j = 0; j < renderer.Meshes.Count; j++)
+                    {
+                        var mesh = renderer.Meshes[j];
+                        renderer.RemoveMesh(mesh);
+                        renderer.AddMesh(mesh + baseMesh);
+                    }
             }
         }
 

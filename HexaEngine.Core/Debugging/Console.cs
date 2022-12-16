@@ -156,6 +156,16 @@
             }
         }
 
+        public static Task HandleError(Task task)
+        {
+            if (!task.IsCompletedSuccessfully && task.Exception != null)
+            {
+                Log(task.Exception);
+            }
+            task.Dispose();
+            return Task.CompletedTask;
+        }
+
         public static async Task LogAsync(LogSeverity type, string msg)
         {
             await semaphore.WaitAsync();

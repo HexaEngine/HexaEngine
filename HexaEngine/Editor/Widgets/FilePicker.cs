@@ -1,6 +1,5 @@
 ﻿using ImGuiNET;
 using System.Numerics;
-using System.Runtime.Intrinsics.X86;
 
 namespace HexaEngine.Editor.Widgets
 {
@@ -420,9 +419,9 @@ namespace HexaEngine.Editor.Widgets
             OnlyAllowFolders = false;
         }
 
-        public FileSaver(string? searchFilter = null)
+        public FileSaver(string startingPath)
         {
-            string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
             if (File.Exists(startingPath))
             {
                 startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
@@ -437,16 +436,6 @@ namespace HexaEngine.Editor.Widgets
             RootFolder = startingPath;
             CurrentFolder = startingPath;
             OnlyAllowFolders = false;
-
-            if (searchFilter != null)
-            {
-                if (AllowedExtensions != null)
-                    AllowedExtensions.Clear();
-                else
-                    AllowedExtensions = new List<string>();
-
-                AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
-            }
         }
 
         public FileSaver(string startingPath, string? searchFilter = null)
@@ -590,6 +579,7 @@ namespace HexaEngine.Editor.Widgets
 
                 if (ImGui.InputText("Selected", ref SelectedFile, 1024))
                 {
+                    
                 }
 
                 ImGui.SameLine();
@@ -603,7 +593,7 @@ namespace HexaEngine.Editor.Widgets
                 if (OnlyAllowFolders)
                 {
                     ImGui.SameLine();
-                    if (ImGui.Button("Open"))
+                    if (ImGui.Button("Save"))
                     {
                         Result = FilePickerResult.Ok;
                         SelectedFile = CurrentFolder;
@@ -623,7 +613,7 @@ namespace HexaEngine.Editor.Widgets
                 }
             }
 
-            ImGui.SetWindowPos(ImGui.GetWindowSize() * 0.5f);
+          
             ImGui.End();
             return false;
         }

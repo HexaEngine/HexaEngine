@@ -20,18 +20,39 @@
             Directory.CreateDirectory(GetAbsolutePath());
         }
 
-        [JsonIgnore]
+        [XmlIgnore]
         public override IntPtr Icon => IntPtr.Zero;
 
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;
 
-        public override void Import(string path)
+        public override void ImportFile(string path)
         {
             string filename = Path.GetFileName(path);
             string newPath = GetAbsolutePath(filename);
             File.Copy(path, newPath, true);
             HexaFile file = new(filename, this);
             Items.Add(file);
+        }
+
+        public override void ImportFolder(string path)
+        {
+            Stack<string> folders = new();
+            folders.Push(path);
+
+            while (folders.Count > 0)
+            {
+                var folder = folders.Pop();
+                var hexFolder = CreateFolder(path);
+                foreach (string subFolder in Directory.GetDirectories(folder, "*", SearchOption.TopDirectoryOnly))
+                {
+                    folders.Push(subFolder);
+                }
+
+                foreach (string file in Directory.GetFiles(folder, "*", SearchOption.TopDirectoryOnly))
+                {
+                    hexFolder.ImportFile(file);
+                }
+            }
         }
 
         public HexaDirectory CreateFolder(string name)

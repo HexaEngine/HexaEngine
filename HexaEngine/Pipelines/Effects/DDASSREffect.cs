@@ -12,21 +12,21 @@
         private bool disposedValue;
         private bool enabled;
 
-        private readonly Pipeline ssrPipeline;
+        private readonly GraphicsPipeline ssrPipeline;
         private readonly IBuffer cbSSR;
         private DDASSRParams ssrParams = new();
         private ITexture2D ssrBuffer;
         private IRenderTargetView ssrRTV;
-        private IShaderResourceView ssrSRV;
+        public IShaderResourceView ssrSRV;
 
-        private readonly Pipeline blurPipeline;
+        private readonly GraphicsPipeline blurPipeline;
         private readonly IBuffer cbBlur;
         private BlurParams blurParams = new();
         private ITexture2D blurBuffer;
         private IRenderTargetView blurRTV;
         private IShaderResourceView blurSRV;
 
-        private readonly Pipeline mixPipeline;
+        private readonly GraphicsPipeline mixPipeline;
         private readonly IBuffer cbMix;
         private MixParams mixParams = new();
 
@@ -39,6 +39,7 @@
         public IShaderResourceView? Depth;
         public IBuffer? Camera;
         public IRenderTargetView? Output;
+        private bool debug;
 
         #region Structs
 
@@ -57,8 +58,6 @@
             public DDASSRParams()
             {
                 Enabled = 0;
-                TargetSize = new(200, 200);
-                InvTargetSize = new(1 / 200, 1 / 200);
                 MaxRayStep = 70;
                 Depthbias = 0.01f;
                 RayStepScale = 1.05f;
@@ -142,15 +141,15 @@
 
             samplerPoint = device.CreateSamplerState(SamplerDescription.LinearClamp);
             samplerAnsio = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+
+            ssrParams.TargetSize = new(width, height);
+            isDirty = true;
         }
 
         #region Properties
 
         public bool Enabled
         { get => enabled; set { enabled = value; isDirty = true; } }
-
-        public Vector2 TargetSize
-        { get => ssrParams.TargetSize; set { ssrParams.TargetSize = value; isDirty = true; } }
 
         public int MaxRayStep
         { get => ssrParams.MaxRayStep; set { ssrParams.MaxRayStep = value; isDirty = true; } }
@@ -166,6 +165,8 @@
 
         public float MaxRayLength
         { get => ssrParams.MaxRayLength; set { ssrParams.MaxRayLength = value; isDirty = true; } }
+
+        public bool Debug { get => debug; set => debug = value; }
 
         #endregion Properties
 
@@ -184,6 +185,9 @@
             blurBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             blurRTV = device.CreateRenderTargetView(blurBuffer, new(width, height));
             blurSRV = device.CreateShaderResourceView(blurBuffer);
+
+            ssrParams.TargetSize = new(width, height);
+            isDirty = true;
         }
 
         public void Draw(IGraphicsContext context)
@@ -201,6 +205,7 @@
 
             if (enabled)
             {
+
                 context.SetRenderTarget(ssrRTV, null);
                 context.PSSetConstantBuffer(cbSSR, 0);
                 context.PSSetConstantBuffer(Camera, 1);
@@ -211,18 +216,24 @@
                 context.PSSetSampler(samplerPoint, 0);
                 quad.DrawAuto(context, ssrPipeline, ssrRTV.Viewport);
 
-                context.SetRenderTarget(blurRTV, null);
-                context.PSSetConstantBuffer(cbBlur, 0);
-                context.PSSetShaderResource(ssrSRV, 0);
-                context.PSSetSampler(samplerAnsio, 0);
-                quad.DrawAuto(context, blurPipeline, blurRTV.Viewport);
+                if (!debug)
+                {
+                    context.SetRenderTarget(blurRTV, null);
+                    context.PSSetConstantBuffer(cbBlur, 0);
+                    context.PSSetShaderResource(ssrSRV, 0);
+                    context.PSSetSampler(samplerAnsio, 0);
+                    quad.DrawAuto(context, blurPipeline, blurRTV.Viewport);
+                }
             }
 
             context.SetRenderTarget(Output, null);
             context.PSSetConstantBuffer(cbMix, 0);
             context.PSSetShaderResource(Color, 0);
             context.PSSetShaderResource(ssrSRV, 1);
-            context.PSSetShaderResource(blurSRV, 2);
+            if (!debug)
+                context.PSSetShaderResource(blurSRV, 2);
+            else
+                context.PSSetShaderResource(ssrSRV, 2);
             context.PSSetShaderResource(Normal, 3);
             context.PSSetSampler(samplerPoint, 0);
             quad.DrawAuto(context, mixPipeline, Output.Viewport);

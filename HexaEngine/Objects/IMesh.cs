@@ -10,6 +10,6 @@
     {
         void Bind(IGraphicsContext context, out int vertexCount, out int indexCount, out int instanceCount);
 
-        void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport);
+        void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Pipelines.Compute
+﻿namespace HexaEngine.Graphics
 {
     public struct ComputePipelineDesc
     {

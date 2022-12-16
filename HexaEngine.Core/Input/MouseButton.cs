@@ -6,10 +6,8 @@
         Left = 1,
         Middle = 2,
         Right = 3,
-        WheelUp = 4,
-        WheelDown = 5,
-        X1 = 6,
-        X2 = 7
+        X1 = 4,
+        X2 = 5
     }
 
     public enum ButtonState

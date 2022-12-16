@@ -25,7 +25,7 @@
 
         public BoundingBox BoundingBox;
 
-        public void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
+        public void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
         {
             vertexBuffer.Bind(context);
             if (indexBuffer != null)

@@ -410,6 +410,7 @@
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	  <ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
 	  <ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
+	  <ProjectReference Include="..\HexaEngine.Projects\HexaEngine.Projects.csproj" />
 	  <ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
 	</ItemGroup>
 
@@ -418,6 +419,7 @@
 	<ItemGroup>
 	  <Folder Include="Physics\Actors\" />
 	  <Folder Include="Physics\Shapes\" />
+	  <Folder Include="Pipelines\Compute\" />
 	</ItemGroup>
 
 

@@ -163,7 +163,7 @@
             return true;
         }
 
-        public unsafe void DrawAuto(IGraphicsContext context, Pipeline pipeline, Viewport viewport)
+        public unsafe void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
         {
             if (VB == null) return;
             if (IB == null) return;
@@ -176,7 +176,6 @@
             context.SetVertexBuffer(1, ISB, sizeof(Matrix4x4), 0);
             context.SetIndexBuffer(IB, Format.R32UInt, 0);
             pipeline.DrawIndexedInstanced(context, viewport, IndexCount, instanceCount, 0, 0, 0);
-            context.ClearState();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -287,7 +286,7 @@
             context.Write(instanceBuffer, transforms);
         }
 
-        public void Draw(IGraphicsContext context, int indexCount, Pipeline pipeline, Viewport viewport)
+        public void Draw(IGraphicsContext context, int indexCount, GraphicsPipeline pipeline, Viewport viewport)
         {
             Update(context);
             Material.Bind(context);

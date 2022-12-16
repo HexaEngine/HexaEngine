@@ -8,7 +8,7 @@
     public class FXAA : IEffect
     {
         private readonly Quad quad;
-        private readonly Pipeline pipeline;
+        private readonly GraphicsPipeline pipeline;
         private readonly ISamplerState sampler;
 
         public IRenderTargetView? Output;

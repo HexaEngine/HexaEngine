@@ -75,7 +75,7 @@
             }
         }
 
-        private void DisplayNodeContextMenu(GameObject element)
+        private static void DisplayNodeContextMenu(GameObject element)
         {
             ImGui.PushID(element.Name);
             if (ImGui.BeginPopupContextItem(element.Name))
@@ -199,7 +199,7 @@
                 return;
             }
 
-            ImGui.BeginChild("LayoutContent", ImGui.GetWindowSize());
+            ImGui.BeginChild("LayoutContent");
 
             DisplayContextMenu();
 

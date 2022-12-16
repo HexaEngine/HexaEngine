@@ -21,7 +21,7 @@
     using Usage = Core.Graphics.Usage;
     using Viewport = Mathematics.Viewport;
 
-    public unsafe class D3D11GraphicsDevice : IGraphicsDevice
+    public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
         internal readonly D3D11 D3D11;
         private bool disposedValue;

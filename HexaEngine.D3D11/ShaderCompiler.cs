@@ -16,10 +16,25 @@
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
         private static readonly ConcurrentDictionary<Pointer<ID3DInclude>, string> paths = new();
 
-        public static unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        public static async Task<(bool, Blob?, Blob?)> CompileAsync(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile)
+        {
+            await semaphore.WaitAsync();
+            var result = CompileInternal(source, macros, entryPoint, sourceName, profile, out var shaderBlob, out var errorBlob);
+            semaphore.Release();
+            return (result, shaderBlob, errorBlob);
+        }
+
+        public static bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        {
+            semaphore.Wait();
+            var result = CompileInternal(source, macros, entryPoint, sourceName, profile, out shaderBlob, out errorBlob);
+            semaphore.Release();
+            return result;
+        }
+
+        private static unsafe bool CompileInternal(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             Trace.WriteLine($"[{Thread.CurrentThread.Name}] Compiling {sourceName}");
-            semaphore.Wait();
             shaderBlob = null;
             errorBlob = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
@@ -86,13 +101,12 @@
 
             if (vBlob == null)
             {
-                semaphore.Release();
                 return false;
             }
 
             shaderBlob = new(vBlob->Buffer.ToArray());
             vBlob->Release();
-            semaphore.Release();
+
             return true;
         }
 

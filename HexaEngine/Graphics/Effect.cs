@@ -6,7 +6,7 @@
     using HexaEngine.Objects;
     using System.Numerics;
 
-    public class Effect : Pipeline, IEffect
+    public class Effect : GraphicsPipeline, IEffect
     {
         public Vector4 AutoClearColor;
         public bool AutoClear;
@@ -15,7 +15,7 @@
         public PinType TargetType;
         public readonly List<(int, string, PinType)> ResourceSlots = new();
 
-        public Effect(IGraphicsDevice device, PipelineDesc desc) : base(device, desc)
+        public Effect(IGraphicsDevice device, GraphicsPipelineDesc desc) : base(device, desc)
         {
         }
 

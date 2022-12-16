@@ -9,7 +9,7 @@
     public unsafe class DeferredPrincipledBSDF : IEffect
     {
         private readonly Quad quad;
-        private readonly Pipeline brdf;
+        private readonly GraphicsPipeline brdf;
         private readonly ISamplerState pointSampler;
         private readonly ISamplerState anisoSampler;
         private readonly void** cbs;
@@ -36,8 +36,8 @@
             quad = new(device);
             brdf = new(device, new()
             {
-                VertexShader = "deferred/pbrbrdf/vs.hlsl",
-                PixelShader = "deferred/pbrbrdf/ps.hlsl",
+                VertexShader = "deferred/bsdf/vs.hlsl",
+                PixelShader = "deferred/bsdf/ps.hlsl",
             });
             pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
             anisoSampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);

@@ -6,9 +6,6 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
-static const float g_FarPlaneDist = 100;
-static const float g_nearPlaneDist = 0.001f;
-
 cbuffer ConfigBuffer
 {
 	float2 g_targetSize = float2(200, 200);
@@ -42,7 +39,7 @@ float Noise(float2 seed)
 
 bool TraceScreenSpaceRay(float3 dir, float3 viewPos, out float3 hitPixel_alpha)
 {
-	float rayLength = (viewPos.z + dir.z * g_maxRayLength) < g_nearPlaneDist ? (g_nearPlaneDist - viewPos.z) / dir.z : g_maxRayLength;
+	float rayLength = (viewPos.z + dir.z * g_maxRayLength) < cam_near ? (cam_near - viewPos.z) / dir.z : g_maxRayLength;
 
 	hitPixel_alpha = float3(-1, -1, 1);
 
@@ -86,8 +83,8 @@ bool TraceScreenSpaceRay(float3 dir, float3 viewPos, out float3 hitPixel_alpha)
 
 	dPk *= g_rayStepScale;
 
-	//float jitter = Noise( Pk.xy );
-	//Pk += dPk * jitter;
+	float jitter = Noise(Pk.xy);
+	Pk += dPk * jitter;
 
 	float thickness = g_maxThickness;
 
@@ -108,8 +105,8 @@ bool TraceScreenSpaceRay(float3 dir, float3 viewPos, out float3 hitPixel_alpha)
 		rayZ = 1 / Pk.z;
 
 		sceneZMax = positionTexture.SampleLevel(samplerState, hitPixel_alpha.xy, 0).w;
-		thickness = backdepthTexture.SampleLevel(samplerState, hitPixel_alpha.xy, 0).r * g_FarPlaneDist;
-		sceneZMax *= g_FarPlaneDist;
+		thickness = backdepthTexture.SampleLevel(samplerState, hitPixel_alpha.xy, 0).r * cam_far;
+		sceneZMax *= cam_far;
 		thickness -= sceneZMax;
 		sceneZMax += g_depthbias;
 	}

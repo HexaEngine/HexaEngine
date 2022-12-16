@@ -4,7 +4,7 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
-    public unsafe class OSMPipeline : Pipeline
+    public unsafe class OSMPipeline : GraphicsPipeline
     {
         public IBuffer? View;
         public IBuffer? Light;
@@ -17,7 +17,7 @@
             GeometryShader = "forward/osm/gs.hlsl",
             PixelShader = "forward/osm/ps.hlsl",
         },
-        new PipelineState()
+        new GraphicsPipelineState()
         {
             DepthStencil = DepthStencilDescription.Default,
             Rasterizer = RasterizerDescription.CullFront,
