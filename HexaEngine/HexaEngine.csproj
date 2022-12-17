@@ -38,12 +38,18 @@
   <ItemGroup>
     <Compile Remove="assets\shared\shaders\deferred\phong\**" />
     <Compile Remove="assets\shared\shaders\deferred\toon\**" />
+    <Compile Remove="Physics\Actors\**" />
+    <Compile Remove="Physics\Shapes\**" />
     <Compile Remove="Windows\Events\**" />
     <EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
     <EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
+    <EmbeddedResource Remove="Physics\Actors\**" />
+    <EmbeddedResource Remove="Physics\Shapes\**" />
     <EmbeddedResource Remove="Windows\Events\**" />
     <None Remove="assets\shared\shaders\deferred\phong\**" />
     <None Remove="assets\shared\shaders\deferred\toon\**" />
+    <None Remove="Physics\Actors\**" />
+    <None Remove="Physics\Shapes\**" />
     <None Remove="Windows\Events\**" />
   </ItemGroup>
 
@@ -417,8 +423,6 @@
 
 
 	<ItemGroup>
-	  <Folder Include="Physics\Actors\" />
-	  <Folder Include="Physics\Shapes\" />
 	  <Folder Include="Pipelines\Compute\" />
 	</ItemGroup>
 

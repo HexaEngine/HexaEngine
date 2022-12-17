@@ -3,19 +3,21 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using System;
-    using System.Reflection;
 
-    public class RendererComponent : IComponent
+    public class RendererComponent2 : IComponent, IDrawable
     {
         private readonly List<int> meshes = new();
+        private string name;
+        private Mesh mesh;
         private GameObject? gameObject;
         private bool initialized;
 
-        public RendererComponent()
+        public RendererComponent2()
         {
-            Editor = new RendererComponentEditor(this);
+            Editor = new RendererComponentEditor2(this);
         }
 
         public IPropertyEditor? Editor { get; }
@@ -24,12 +26,16 @@
 
         public void Awake(IGraphicsDevice device, GameObject node)
         {
+            mesh = GraphicsManager.Resources.LoadMesh(name);
+            GraphicsManager.Queue.Enqueue(RenderQueueIndex.Opaque, this);
             gameObject = node;
             initialized = true;
         }
 
         public void Destory()
         {
+            GraphicsManager.Queue.Dequeue(RenderQueueIndex.Opaque, this);
+
             initialized = false;
         }
 
@@ -47,14 +53,39 @@
                 gameObject?.GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, gameObject, ChildCommandType.Removed, mesh));
         }
 
-        private class RendererComponentEditor : IPropertyEditor
+        public void Update(IGraphicsContext context)
         {
-            private readonly RendererComponent component;
+            throw new NotImplementedException();
+        }
+
+        public void Draw(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawDepth(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawBackDepth(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Draw(IGraphicsContext context, RenderQueueIndex index)
+        {
+            throw new NotImplementedException();
+        }
+
+        private class RendererComponentEditor2 : IPropertyEditor
+        {
+            private readonly RendererComponent2 component;
             private int currentMesh;
 
-            public RendererComponentEditor(RendererComponent component)
+            public RendererComponentEditor2(RendererComponent2 component)
             {
-                Type = typeof(RendererComponent);
+                Type = typeof(RendererComponent2);
                 Name = "Renderer";
                 this.component = component;
             }

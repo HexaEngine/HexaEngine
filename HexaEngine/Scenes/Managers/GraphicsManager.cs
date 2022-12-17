@@ -1,117 +1,66 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Lights;
-    using HexaEngine.Objects;
-    using System.Collections.Generic;
+    using HexaEngine.Core.Unsafes;
+    using HexaEngine.Mathematics;
+    using System.Numerics;
 
-    public interface IResourceManager
+    public enum RenderFlags
     {
-        public Mesh LoadMesh(string name);
-
-        public Mesh CreateMesh(string name);
-
-        public Material LoadMaterial(string name);
-
-        public Material CreateMaterial(string name);
-
-        public Texture LoadTexture(string name);
-
-        public Texture CreateTexture(string name);
-
-        public Effect LoadEffect(string name);
-
-        public Effect CreateEffect(string name);
+        None = 0,
+        Depth = 1,
+        Skinned = 2,
+        Instanced = 4,
     }
 
-    public interface ILightManager
+    public enum MeshType
     {
-        public IReadOnlyList<Light> Lights { get; }
+        None = 0,
 
-        public RenderQueue Queue { get; set; }
+        /// <summary>
+        /// <seealso cref="Meshes.MeshVertex"/>
+        /// </summary>
+        Mesh,
 
-        public void AddLight(Light light);
+        /// <summary>
+        /// <seealso cref="Meshes.SkinnedMeshVertex"/>
+        /// </summary>
+        Skinned,
 
-        public void RemoveLight(Light light);
-
-        public void Update();
-
-        public void Draw();
-    }
-
-    public interface IPostProcessManager
-    {
-        public void AddEffect(Effect effect);
-
-        public void RemoveEffect(Effect effect);
-
-        public void Draw();
-    }
-
-    public enum RenderQueueIndex
-    {
-        OpaqueNoCull,
-        Opaque,
+        /// <summary>
+        /// <seealso cref="Meshes.TerrainVertex"/>
+        /// </summary>
         Terrain,
-        Billboard,
-        BackgroundNoCull,
-        Background,
-        Opacity,
-        Wireframe,
-        Effect,
-        EffectOverlay,
-        Overlay,
-        Debug,
+
+        /// <summary>
+        /// <seealso cref="Meshes.TerrainVertexStatic"/>
+        /// </summary>
+        TerrainStatic,
+
+        //TODO: Add Vertex Type
+        /// <summary>
+        /// Not yet implemented
+        /// </summary>
+        Particle,
     }
 
-    public interface IDrawable
+    public unsafe struct Mesh2
     {
-        void Draw(IGraphicsContext context);
-
-        void DrawDepth(IGraphicsContext context);
+        public UnsafeString* Name;
+        public void* VertexBuffer;
+        public void* IndexBuffer;
+        public int VertexCount;
+        public int IndexCount;
+        public MeshType Type;
     }
 
-    public struct RenderQueueItem
+    public struct MeshInstance
     {
-        public RenderQueueIndex Index;
-        public IDrawable Drawable;
-    }
-
-    public unsafe class RenderQueue
-    {
-        private readonly RenderQueueIndex[] keys;
-        private readonly Dictionary<RenderQueueIndex, List<RenderQueueItem>> queues = new();
-        private RenderQueueItem item;
-
-        public RenderQueue()
-        {
-            keys = Enum.GetValues<RenderQueueIndex>();
-            foreach (var value in keys)
-            {
-                queues.Add(value, new List<RenderQueueItem>());
-            }
-        }
-
-        public virtual void Clear()
-        {
-            for (int i = 0; i < keys.Length; i++)
-            {
-                queues[keys[i]].Clear();
-            }
-        }
-
-        public virtual void Enqueue(RenderQueueIndex index, IDrawable drawable)
-        {
-            item.Index = index;
-            item.Drawable = drawable;
-            queues[index].Add(item);
-        }
-
-        public virtual IReadOnlyList<RenderQueueItem> GetQueue(RenderQueueIndex index)
-        {
-            return queues[index];
-        }
+        public int Id;
+        public Matrix4x4 Transform;
+        public BoundingBox BoundingBox;
+        public BoundingSphere BoundingSphere;
+        public RenderFlags Flags;
     }
 
     public static class GraphicsManager
@@ -135,5 +84,9 @@
         public static ILightManager Lights => lights;
 
         public static IPostProcessManager PostProcess => postProcess;
+    }
+
+    public interface IInstanceManger
+    {
     }
 }

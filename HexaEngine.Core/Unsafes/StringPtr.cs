@@ -31,6 +31,17 @@
         public char* Ptr;
         public int Length;
 
+        public bool Compare(UnsafeString* other)
+        {
+            if (Length != other->Length) return false;
+            for (uint i = 0; i < Length; i++)
+            {
+                if (Ptr[i] != other->Ptr[i])
+                    return false;
+            }
+            return true;
+        }
+
         public static int Write(UnsafeString* str, Endianness endianness, Span<byte> dest)
         {
             Span<char> srcChars = new(str->Ptr, str->Length + 1);
@@ -57,8 +68,6 @@
             pStr->Length = length;
             return length + 4;
         }
-
-
 
         public int Sizeof()
         {

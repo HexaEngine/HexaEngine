@@ -175,7 +175,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             if (vertexCount > vbCapacity)
             {
                 vb.Dispose();
-                vbCapacity = (int)(lineVertices.Count * 1.5f);
+                vbCapacity = (int)(vertexCount * 1.5f);
                 Free(vertices);
                 vertices = Alloc<VertexPositionColor>(vbCapacity);
 
@@ -215,7 +215,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             if (indexCount > ibCapacity)
             {
                 ib.Dispose();
-                ibCapacity = (int)(lineIndices.Count * 1.5f);
+                ibCapacity = (int)(indexCount * 1.5f);
                 Free(indices);
                 indices = Alloc<int>(ibCapacity);
 
