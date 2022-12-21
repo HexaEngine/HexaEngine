@@ -36,11 +36,6 @@
                             mesh.Name = name;
                         }
                     }
-                    if (ImGui.Combo("Material", ref mesh.MaterialIndex, scene.Materials.Select(x => x.Name).ToArray(), scene.Materials.Count))
-                    {
-                        mesh.MaterialName = scene.Materials[mesh.MaterialIndex].Name;
-                        scene.CommandQueue.Enqueue(new SceneCommand(CommandType.Update, mesh));
-                    }
                 }
             }
         }

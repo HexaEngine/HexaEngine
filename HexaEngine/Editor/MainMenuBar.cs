@@ -157,6 +157,10 @@
                     if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
                         Inspector.DrawColliders = drawColliders;
 
+                    var drawBoundingBoxes = Inspector.DrawBoundingBoxes;
+                    if (ImGui.Checkbox("Draw Bounding Boxes", ref drawBoundingBoxes))
+                        Inspector.DrawBoundingBoxes = drawBoundingBoxes;
+
                     ImGui.EndMenu();
                 }
                 if (ImGui.BeginMenu("Debug"))

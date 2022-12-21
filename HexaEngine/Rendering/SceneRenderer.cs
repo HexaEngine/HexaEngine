@@ -32,7 +32,6 @@
         private bool initialized;
         private bool dirty = true;
         private ICommandList commandList;
-        private ResourceManager resourceManager;
         private bool disposedValue;
         private IGraphicsDevice device;
         private IGraphicsContext context;
@@ -135,7 +134,6 @@
                 width = (int)(window.Width * renderResolution);
                 height = (int)(window.Height * renderResolution);
                 SceneManager.SceneChanged += SceneManager_SceneChanged;
-                resourceManager = new ResourceManager(device);
 
                 this.device = device;
                 context = device.Context;
@@ -471,68 +469,6 @@
             if (!initialized) return;
             while (scene.CommandQueue.TryDequeue(out var cmd))
             {
-                if (cmd.Sender is GameObject node)
-                {
-                    switch (cmd.Type)
-                    {
-                        case CommandType.Load:
-                            {
-                                if (node.TryGetComponent<RendererComponent>(out var renderer))
-                                {
-                                    for (int i = 0; i < renderer.Meshes.Count; i++)
-                                    {
-                                        await resourceManager.AsyncCreateInstance(scene.Meshes[renderer.Meshes[i]], node);
-                                        dirty = true;
-                                    }
-                                }
-                            }
-                            break;
-
-                        case CommandType.Unload:
-                            {
-                                if (node.TryGetComponent<RendererComponent>(out var renderer))
-                                {
-                                    for (int i = 0; i < renderer.Meshes.Count; i++)
-                                    {
-                                        await resourceManager.AsyncDestroyInstance(scene.Meshes[renderer.Meshes[i]], node);
-                                        dirty = true;
-                                    }
-                                }
-                            }
-                            break;
-
-                        case CommandType.Update:
-                            if (cmd.Child is int child)
-                            {
-                                switch (cmd.ChildCommand)
-                                {
-                                    case ChildCommandType.Added:
-                                        await resourceManager.AsyncCreateInstance(scene.Meshes[child], node);
-                                        dirty = true;
-                                        break;
-
-                                    case ChildCommandType.Removed:
-                                        await resourceManager.AsyncDestroyInstance(scene.Meshes[child], node);
-                                        dirty = true;
-                                        break;
-                                }
-                            }
-                            break;
-                    }
-                }
-
-                if (cmd.Sender is Mesh mesh)
-                {
-                    await resourceManager.AsyncUpdateMesh(mesh);
-                    dirty = true;
-                }
-
-                if (cmd.Sender is Material material)
-                {
-                    await resourceManager.AsyncUpdateMaterial(material);
-                    dirty = true;
-                }
-
                 if (cmd.Sender is Light)
                 {
                     switch (cmd.Type)
@@ -571,10 +507,10 @@
 
                 for (int i = 0; i < scene.Meshes.Count; i++)
                 {
-                    if (resourceManager.GetMesh(scene.Meshes[i], out var mesh))
+                    if (ResourceManager.GetMesh(scene.Meshes[i], out var mesh))
                     {
-                        mesh.UpdateInstanceBuffer(context);
                         context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
+                        mesh.UpdateInstanceBuffer(context, camera.Transform.Frustum);
                         mesh.DrawAuto(context, geometry, gbuffers.Viewport);
                     }
                 }
@@ -586,7 +522,7 @@
                 depthbuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.Stencil | DepthStencilClearFlags.Depth);
                 for (int i = 0; i < scene.Meshes.Count; i++)
                 {
-                    if (resourceManager.GetMesh(scene.Meshes[i], out var mesh))
+                    if (ResourceManager.GetMesh(scene.Meshes[i], out var mesh))
                     {
                         depthbuffer.SetTarget(context);
                         mesh.DrawAuto(context, materialDepthBackface, depthbuffer.Viewport);
@@ -616,7 +552,7 @@
 
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
-                            if (resourceManager.GetMesh(scene.Meshes[j], out var mesh))
+                            if (ResourceManager.GetMesh(scene.Meshes[j], out var mesh))
                             {
                                 context.SetRenderTarget(csmDepthBuffer.RenderTargetView, csmDepthBuffer.DepthStencilView);
                                 mesh.DrawAuto(context, csmPipeline, csmDepthBuffer.Viewport);
@@ -641,7 +577,7 @@
 
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
-                            if (resourceManager.GetMesh(scene.Meshes[j], out var mesh))
+                            if (ResourceManager.GetMesh(scene.Meshes[j], out var mesh))
                             {
                                 context.SetRenderTarget(osmDepthBuffers[pointsd].RenderTargetView, osmDepthBuffers[pointsd].DepthStencilView);
                                 mesh.DrawAuto(context, osmPipeline, osmDepthBuffers[pointsd].Viewport);
@@ -665,7 +601,7 @@
                         context.DSSetConstantBuffer(psmBuffer, 1);
                         for (int j = 0; j < scene.Meshes.Count; j++)
                         {
-                            if (resourceManager.GetMesh(scene.Meshes[j], out var mesh))
+                            if (ResourceManager.GetMesh(scene.Meshes[j], out var mesh))
                             {
                                 context.SetRenderTarget(psmDepthBuffers[spotsd].RenderTargetView, psmDepthBuffers[spotsd].DepthStencilView);
                                 mesh.DrawAuto(context, psmPipeline, psmDepthBuffers[spotsd].Viewport);
@@ -687,10 +623,10 @@
             {
                 for (int i = 0; i < scene.Meshes.Count; i++)
                 {
-                    if (resourceManager.GetMesh(scene.Meshes[i], out var mesh))
+                    if (ResourceManager.GetMesh(scene.Meshes[i], out var mesh))
                     {
                         context.DSSetConstantBuffer(cameraBuffer.Buffer, 1);
-                        mesh.UpdateInstanceBuffer(context);
+                        mesh.UpdateInstanceBuffer(context, camera.Transform.Frustum);
                         mesh.DrawAuto(context, forward);
                     }
                 }
@@ -755,7 +691,6 @@
                 depthStencil.Dispose();
                 commandList?.Dispose();
                 deferredContext.Dispose();
-                resourceManager.Dispose();
                 lightBuffer.Dispose();
                 cameraBuffer.Dispose();
                 skyboxBuffer.Dispose();

@@ -283,7 +283,7 @@
                     var item = messages[i];
 
                     // Exit if word is filtered.
-                    if (m_TextFilter.Length != 0 && !m_TextFilter.Contains(item.Message))
+                    if (m_TextFilter.Length != 0 && !item.Message.Contains(m_TextFilter))
                         continue;
 
                     if (m_TimeStamps)

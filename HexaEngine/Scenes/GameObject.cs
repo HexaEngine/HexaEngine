@@ -115,6 +115,10 @@
             {
                 foreach (GameObject gameObject in _objects)
                 {
+                    gameObject.Uninitialize();
+                }
+                foreach (GameObject gameObject in _objects)
+                {
                     parent.AddChild(gameObject);
                 }
             }

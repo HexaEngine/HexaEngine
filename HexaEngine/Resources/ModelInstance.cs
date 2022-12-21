@@ -1,25 +1,35 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
-    using System.Numerics;
 
     public class ModelInstance
     {
-        public ModelMesh Mesh;
-        public GameObject Node;
-
-        public Matrix4x4 Transform => Node.Transform.Global;
+        public readonly int Id;
+        public readonly ModelInstanceType Type;
+        public readonly ModelMesh Mesh;
+        public readonly Transform Transform;
 
         public void GetBoundingBox(out BoundingBox box)
         {
-            box = BoundingBox.Transform(Mesh.AABB, Node.Transform.Global);
+            box = BoundingBox.Transform(Mesh.AABB, Transform);
         }
 
-        public ModelInstance(ModelMesh mesh, GameObject node)
+        public bool VisibilityTest(BoundingFrustum frustum)
         {
-            Mesh = mesh;
-            Node = node;
+            return frustum.Intersects(BoundingBox.Transform(Mesh.AABB, Transform));
+        }
+
+        public ModelInstance(int id, ModelInstanceType type, Transform node)
+        {
+            Id = id;
+            Type = type;
+            Mesh = type.Mesh;
+            Transform = node;
+        }
+
+        public override string ToString()
+        {
+            return $"{Type}:{Id}";
         }
     }
 }

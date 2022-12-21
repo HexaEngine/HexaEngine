@@ -3,6 +3,7 @@
 namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
+    using HexaEngine.Resources;
     using HexaEngine.Windows;
     using Silk.NET.Assimp;
     using System;
@@ -53,8 +54,20 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     var old = Current;
-                    Current?.Uninitialize();
-                    Current = scene;
+                    if (scene == null)
+                    {
+                        Current?.Uninitialize();
+                        Current = null;
+                        ResourceManager.Release();
+                    }
+                    else
+                    {
+                        ResourceManager.BeginPauseCleanup();
+                        Current?.Uninitialize();
+                        Current = scene;
+                        ResourceManager.EndPauseCleanup();
+                    }
+
                     SceneChanged?.Invoke(null, new(old, scene));
                 }
                 GC.WaitForPendingFinalizers();

@@ -2,17 +2,73 @@
 {
     using HexaEngine.Core.Graphics;
 
-    public class ModelTexture
+    public unsafe class ModelTexture : IDisposable
     {
-        public string Name;
-        public IShaderResourceView SRV;
-        public int InstanceCount;
+        public string _name;
+        private IShaderResourceView? srv;
+        private int instanceCount;
+        private bool disposedValue;
 
-        public ModelTexture(string name, IShaderResourceView sRV, int instances)
+        public ModelTexture(string name, int instances)
         {
-            Name = name;
-            SRV = sRV;
-            InstanceCount = instances;
+            _name = name;
+            Volatile.Write(ref instanceCount, instances);
+        }
+
+        public string Name => _name;
+        public int InstanceCount => Volatile.Read(ref instanceCount);
+
+        public bool IsUsed => Volatile.Read(ref instanceCount) > 0;
+#nullable disable
+        public void* Pointer => (void*)(srv?.NativePointer ?? null);
+#nullable enable
+
+        public void AddRef()
+        {
+            Volatile.Write(ref instanceCount, Volatile.Read(ref instanceCount) + 1);
+        }
+
+        public void RemoveRef()
+        {
+            Volatile.Write(ref instanceCount, Volatile.Read(ref instanceCount) - 1);
+        }
+
+        public void BeginLoad()
+        {
+            srv?.Dispose();
+        }
+
+        public void EndLoad(IShaderResourceView srv)
+        {
+            this.srv = srv;
+        }
+
+        public void Wait()
+        {
+            if (srv != null) return;
+            SpinWait.SpinUntil(() => srv != null);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                srv?.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~ModelTexture()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
