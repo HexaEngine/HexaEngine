@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.IO
 {
     using System.IO;
+    using System.IO.Compression;
     using System.IO.Hashing;
     using System.Text;
 
@@ -13,15 +14,24 @@
             var fs = Stream.Synchronized(File.OpenRead(path));
             stream = fs;
             var count = fs.ReadInt();
+            var compression = fs.ReadInt();
             Assets = new Asset[count];
             for (int i = 0; i < count; i++)
             {
                 var type = fs.ReadUInt64();
                 var length = fs.ReadInt64();
+                var decompressedLength = fs.ReadInt64();
                 var apath = fs.ReadString();
                 var pointer = fs.Position;
-                fs.Position += length;
-                Assets[i] = new Asset((AssetType)type, pointer, length, apath, stream);
+                if (compression == 0)
+                    Assets[i] = new Asset((AssetType)type, pointer, length, apath, stream);
+                else if (compression == 1)
+                {
+                    MemoryStream ms = new(new byte[decompressedLength]);
+                    Decompress(new VirtualStream(stream, pointer, length, false), ms);
+                    Assets[i] = new Asset((AssetType)type, 0, decompressedLength, apath, ms);
+                }
+                fs.Position = pointer + length;
             }
         }
 
@@ -43,7 +53,7 @@
             }
         }
 
-        public static void CreateFrom(string path)
+        public static void CreateFrom(string path, bool compress = false, CompressionLevel level = CompressionLevel.Optimal)
         {
             var root = new DirectoryInfo(path);
 
@@ -51,34 +61,50 @@
             {
                 int i = 0;
                 var fs = File.Create(dir.Name + ".assets");
-                fs.Position = 4; foreach (var file in root.GetFiles("*.*", SearchOption.AllDirectories))
+                fs.Position = 8;
+                foreach (var file in root.GetFiles("*.*", SearchOption.AllDirectories))
                 {
                     if (file.Extension == ".assets")
                         continue;
                     var ts = file.OpenRead();
+
                     fs.WriteUInt64((ulong)AssetType.Binary);
+                    var p = fs.Position;
+                    fs.WriteInt64(ts.Length);
                     fs.WriteInt64(ts.Length);
                     fs.WriteString(Path.GetRelativePath(path, file.FullName));
-                    ts.CopyTo(fs);
+                    var p1 = fs.Position;
+                    if (compress)
+                    {
+                        var buffer = Compress(ts, level);
+                        fs.Position = p;
+                        fs.WriteInt64(buffer.Length);
+                        fs.Position = p1;
+                        fs.Write(buffer);
+                    }
+                    else
+                    {
+                        ts.CopyTo(fs);
+                    }
                     i++;
                 }
                 fs.Position = 0;
                 fs.WriteInt(i);
+                fs.WriteInt(compress ? 1 : 0);
                 fs.Flush();
                 fs.Close();
             }
         }
 
-        public static void GenerateFrom(string path, bool crcOutput = false)
+        public static void GenerateFrom(string path, bool compress = false, CompressionLevel level = CompressionLevel.Optimal)
         {
             var root = new DirectoryInfo(path);
-            Crc32 crc = new();
             foreach (var dir in root.GetDirectories())
             {
                 int i = 0;
                 var filename = dir.Name + ".assets";
                 var fs = File.Create(root.FullName + dir.Name + ".assets");
-                fs.Position = 4;
+                fs.Position = 8;
                 foreach (var file in dir.GetFiles("*.*", SearchOption.AllDirectories))
                 {
                     if (file.Extension == ".assets")
@@ -86,28 +112,34 @@
                     var ts = file.OpenRead();
                     var rel = Path.GetRelativePath(dir.FullName, file.FullName);
                     var type = GetAssetType(rel, out string relTrim);
-                    byte[] buffer = new byte[ts.Length];
-                    ts.Read(buffer);
-                    if (crcOutput)
+
+                    Console.WriteLine($"Packing {filename} <-- [{type}] {relTrim}");
+
+                    fs.WriteUInt64((ulong)type);
+                    var p = fs.Position;
+                    fs.WriteInt64(ts.Length);
+                    fs.WriteInt64(ts.Length);
+                    fs.WriteString(rel);
+                    var p1 = fs.Position;
+                    if (compress)
                     {
-                        crc.Append(buffer);
-                        Console.WriteLine($"Packing CRC32:{ByteArrayToString(crc.GetHashAndReset())} {filename} <-- [{type}] {relTrim}");
+                        var buffer = Compress(ts, level);
+                        fs.Position = p;
+                        fs.WriteInt64(buffer.Length);
+                        fs.Position = p1;
+                        fs.Write(buffer);
                     }
                     else
                     {
-                        Console.WriteLine($"Packing {filename} <-- [{type}] {relTrim}");
+                        ts.CopyTo(fs);
                     }
-
-                    fs.WriteUInt64((ulong)type);
-                    fs.WriteInt64(ts.Length);
-                    fs.WriteString(rel);
-                    fs.Write(buffer);
                     ts.Close();
                     i++;
                 }
                 dir.Delete(true);
                 fs.Position = 0;
                 fs.WriteInt(i);
+                fs.WriteInt(compress ? 1 : 0);
                 fs.Flush();
                 fs.Close();
             }
@@ -161,6 +193,22 @@
 
             trimmed = path;
             return AssetType.Binary;
+        }
+
+        private static byte[] Compress(Stream input, CompressionLevel level)
+        {
+            using var compressStream = new MemoryStream();
+            using var compressor = new DeflateStream(compressStream, level);
+            input.CopyTo(compressor);
+            compressor.Close();
+            return compressStream.ToArray();
+        }
+
+        private static void Decompress(Stream input, Stream output)
+        {
+            using var decompressor = new DeflateStream(input, CompressionMode.Decompress);
+            decompressor.CopyTo(output);
+            decompressor.Close();
         }
     }
 }

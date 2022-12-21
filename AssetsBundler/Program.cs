@@ -4,6 +4,7 @@
     using HexaEngine.IO;
     using System;
     using System.IO;
+    using System.IO.Compression;
     using System.IO.Hashing;
     using System.Text;
 
@@ -17,7 +18,11 @@
             [Option('p', "path", Required = true, HelpText = "path to dir")]
             public string Path { get; set; }
 
-            public bool SkipImages { get; set; }
+            [Option('c', "compress", Required = false, HelpText = "enable compression")]
+            public bool Compress { get; set; } = false;
+
+            [Option('l', "Compression level", Required = false, HelpText = "compression level")]
+            public int CompressionLevel { get; set; } = 0;
         }
 
         private enum Mode
@@ -37,7 +42,7 @@
                     case Mode.create:
                         if (Directory.Exists(o.Path))
                         {
-                            AssetBundle.CreateFrom(o.Path);
+                            AssetBundle.CreateFrom(o.Path, o.Compress, (CompressionLevel)o.CompressionLevel);
                         }
                         break;
 
@@ -58,7 +63,7 @@
                     case Mode.gen:
                         if (Directory.Exists(o.Path))
                         {
-                            AssetBundle.GenerateFrom(o.Path, false);
+                            AssetBundle.GenerateFrom(o.Path, o.Compress, (CompressionLevel)o.CompressionLevel);
                         }
                         break;
 

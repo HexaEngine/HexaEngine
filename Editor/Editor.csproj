@@ -54,9 +54,10 @@
   <ItemGroup>
     <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 </ItemGroup>
-	<!-- 	<Target Name="BuildPackAssets1" AfterTargets="AfterBuild">
-		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -p $(TargetDir)assets\" />
-	</Target> -->
+
+	<Target Name="PublishPackAssets" AfterTargets="Publish">
+		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
+	</Target>
   <ItemGroup>
     <None Update="imgui.ini">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

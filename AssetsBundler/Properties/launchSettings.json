@@ -2,7 +2,7 @@
   "profiles": {
     "AssetsBundler": {
       "commandName": "Project",
-      "commandLineArgs": "create C:\\Users\\Tom\\source\\repos\\HexaCore\\Application\\bin\\x64\\Debug\\net5.0\\assets"
+      "commandLineArgs": "-m create -p C:\\Users\\Juna\\source\\repos\\JunaMeinhold\\HexaEngine\\Editor\\bin\\x64\\Debug\\net7.0\\assets\\"
     }
   }
 }
