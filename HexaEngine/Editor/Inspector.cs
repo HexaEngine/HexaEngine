@@ -4,6 +4,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using HexaEngine.Objects.Components;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using System.Numerics;
 
@@ -13,6 +14,7 @@
         private static bool drawLights = true;
         private static bool drawCameras = true;
         private static bool drawSkeletons = true;
+        private static bool drawBoundingBoxes = true;
         private static bool drawColliders = true;
         private static bool enabled = true;
 
@@ -28,6 +30,8 @@
 
         public static bool DrawColliders { get => drawColliders; set => drawColliders = value; }
 
+        public static bool DrawBoundingBoxes { get => drawBoundingBoxes; set => drawBoundingBoxes = value; }
+
         public static void Draw()
         {
             if (!enabled)
@@ -38,7 +42,6 @@
 
             if (drawGrid)
             {
-                //DebugDraw.DrawGrid(10, 10, Vector4.Zero);
             }
 
             if (drawLights)
@@ -94,6 +97,17 @@
                         var dest = Vector3.Zero.ApplyMatrix(destMtx);
                         DebugDraw.DrawLine(bone.Name, origin, dest - origin, false, Vector4.One);
                     }
+                }
+            }
+
+            if (drawBoundingBoxes)
+            {
+                InstanceManager manager = scene.InstanceManager;
+                for (int i = 0; i < manager.Instances.Count; i++)
+                {
+                    var instance = manager.Instances[i];
+                    instance.GetBoundingBox(out var boundingBox);
+                    DebugDraw.DrawBoundingBox(instance.ToString(), boundingBox, Vector4.One);
                 }
             }
 

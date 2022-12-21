@@ -3,204 +3,143 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.IO;
     using HexaEngine.Objects;
-    using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
 
-    public class ResourceManager : IDisposable
+    public static class ResourceManager
     {
-        private readonly ConcurrentDictionary<GameObject, ModelInstance> instances = new();
-        private readonly ConcurrentDictionary<Mesh, ModelMesh> meshes = new();
-        private readonly ConcurrentDictionary<Material, ModelMaterial> materials = new();
-        private readonly ConcurrentDictionary<string, ModelTexture> textures = new();
-        private bool suppressCleanup;
-        private readonly IGraphicsDevice device;
-        private bool disposedValue;
+        private static readonly ConcurrentDictionary<string, ModelMesh> meshes = new();
+        private static readonly ConcurrentDictionary<string, ModelMaterial> materials = new();
+        private static readonly ConcurrentDictionary<string, ModelTexture> textures = new();
+        private static bool suppressCleanup;
+        private static IGraphicsDevice device;
 
-        public ResourceManager(IGraphicsDevice device)
+        public static void Initialize(IGraphicsDevice device)
         {
-            this.device = device;
+            ResourceManager.device = device;
         }
 
-        public void KeepAlive()
+        /// <summary>
+        /// Begins to ignore cleanup
+        /// </summary>
+        public static void BeginPauseCleanup()
         {
+            if (suppressCleanup) return;
             suppressCleanup = true;
         }
 
-        public void ClearKeepAlive()
+        /// <summary>
+        /// Ends cleanup free region, this causes an full cleanup
+        /// </summary>
+        public static void EndPauseCleanup()
         {
+            if (!suppressCleanup) return;
             suppressCleanup = false;
-        }
-
-        public bool GetMesh(Mesh mesh, [NotNullWhen(true)] out ModelMesh? model)
-        {
-            return meshes.TryGetValue(mesh, out model);
-        }
-
-        public ModelInstance CreateInstance(Mesh mesh, GameObject node)
-        {
-            if (!meshes.TryGetValue(mesh, out var modelMesh))
+            foreach (var mesh in meshes.ToArray())
             {
-                modelMesh = LoadMesh(mesh);
-            }
-
-            var instance = modelMesh.CreateInstance(device, node);
-            instances.TryAdd(node, instance);
-
-            return instance;
-        }
-
-        public async Task<ModelInstance> AsyncCreateInstance(Mesh mesh, GameObject node)
-        {
-            if (!meshes.TryGetValue(mesh, out var modelMesh))
-            {
-                modelMesh = await AsyncLoadMesh(mesh);
-            }
-
-            var instance = modelMesh.CreateInstance(device, node);
-            instances.TryAdd(node, instance);
-
-            return instance;
-        }
-
-        public void DestroyInstance(Mesh mesh, GameObject node)
-        {
-            if (!instances.TryGetValue(node, out var instance))
-            {
-                return;
-            }
-
-            if (!meshes.TryGetValue(mesh, out var modelMesh))
-            {
-                return;
-            }
-
-            modelMesh.DestroyInstance(device, instance);
-            instances.TryRemove(new KeyValuePair<GameObject, ModelInstance>(node, instance));
-
-            if (modelMesh.InstanceCount == 0)
-            {
-                UnloadMesh(mesh);
-            }
-        }
-
-        public Task AsyncDestroyInstance(Mesh mesh, GameObject node)
-        {
-            return Task.Factory.StartNew(() => DestroyInstance(mesh, node));
-        }
-
-        public ModelMesh LoadMesh(Mesh mesh)
-        {
-            ModelMesh model = new(device, mesh.Vertices, mesh.Indices, mesh.AABB);
-
-            if (mesh.Material != null)
-            {
-                if (!materials.TryGetValue(mesh.Material, out var modelMaterial))
+                if (!mesh.Value.IsUsed)
                 {
-                    modelMaterial = LoadMaterial(mesh.Material);
+                    meshes.Remove(mesh.Key, out _);
+                    mesh.Value.Dispose();
                 }
-                modelMaterial.Instances++;
-                model.Material = modelMaterial;
             }
-
-            meshes.TryAdd(mesh, model);
-            return model;
-        }
-
-        public async Task<ModelMesh> AsyncLoadMesh(Mesh mesh)
-        {
-            ModelMesh model = new(device, mesh.Vertices, mesh.Indices, mesh.AABB);
-
-            if (mesh.Material != null)
+            foreach (var material in materials.ToArray())
             {
-                if (!materials.TryGetValue(mesh.Material, out var modelMaterial))
+                if (!material.Value.IsUsed)
                 {
-                    modelMaterial = await AsyncLoadMaterial(mesh.Material);
+                    materials.Remove(material.Key, out _);
+                    material.Value.Dispose();
                 }
-                modelMaterial.Instances++;
-                model.Material = modelMaterial;
             }
-
-            meshes.TryAdd(mesh, model);
-            return model;
-        }
-
-        public void UpdateMesh(Mesh mesh)
-        {
-            if (meshes.TryGetValue(mesh, out var model))
+            foreach (var texture in textures.ToArray())
             {
-                model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
-
-                if (mesh.Material != null)
+                if (!texture.Value.IsUsed)
                 {
-                    if (!materials.TryGetValue(mesh.Material, out var modelMaterial))
-                    {
-                        modelMaterial = LoadMaterial(mesh.Material);
-                    }
-                    var before = model.Material;
-                    modelMaterial.Instances++;
-                    model.Material = modelMaterial;
-                    if (before != null)
-                    {
-                        before.Instances--;
-                        if (before.Instances == 0)
-                        {
-                            UnloadMaterial(before);
-                        }
-                    }
+                    textures.Remove(texture.Key, out _);
+                    texture.Value.Dispose();
                 }
             }
         }
 
-        public async Task AsyncUpdateMesh(Mesh mesh)
+        public static bool GetMesh(Mesh mesh, [NotNullWhen(true)] out ModelMesh? model)
         {
-            if (meshes.TryGetValue(mesh, out var model))
-            {
-                model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
+            return meshes.TryGetValue(mesh.Name, out model);
+        }
 
-                if (mesh.Material != null)
+        public static ModelMesh LoadMesh(Mesh mesh)
+        {
+            lock (meshes)
+            {
+                if (meshes.TryGetValue(mesh.Name, out var value))
+                    return value;
+                ModelMesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.AABB);
+                meshes.TryAdd(mesh.Name, model);
+                return model;
+            }
+        }
+
+        public static async Task<ModelMesh> LoadMeshAsync(Mesh mesh)
+        {
+            return await Task.Factory.StartNew(() => LoadMesh(mesh));
+        }
+
+        public static void UpdateMesh(Mesh mesh)
+        {
+            lock (meshes)
+            {
+                if (meshes.TryGetValue(mesh.Name, out var model))
                 {
-                    if (!materials.TryGetValue(mesh.Material, out var modelMaterial))
-                    {
-                        modelMaterial = await AsyncLoadMaterial(mesh.Material);
-                    }
-                    var before = model.Material;
-                    modelMaterial.Instances++;
-                    model.Material = modelMaterial;
-                    if (before != null)
-                    {
-                        before.Instances--;
-                        if (before.Instances == 0)
-                        {
-                            UnloadMaterial(before);
-                        }
-                    }
+                    model.Update(device, mesh.Vertices, mesh.Indices, mesh.AABB);
                 }
             }
         }
 
-        public void UnloadMesh(Mesh mesh)
+        public static async Task AsyncUpdateMesh(Mesh mesh)
+        {
+            await Task.Factory.StartNew(() => UpdateMesh(mesh));
+        }
+
+        public static void UnloadMesh(Mesh mesh)
         {
             if (suppressCleanup) return;
-            if (meshes.TryGetValue(mesh, out var model))
+            lock (meshes)
             {
-                meshes.Remove(mesh, out _);
-                model.Dispose();
-                var material = model.Material;
-                if (material != null)
+                if (meshes.TryGetValue(mesh.Name, out var model))
                 {
-                    material.Instances--;
-                    if (material.Instances == 0)
-                        UnloadMaterial(material);
+                    meshes.Remove(mesh.Name, out _);
+                    model.Dispose();
                 }
             }
         }
 
-        public ModelMaterial LoadMaterial(Material material)
+        public static void UnloadMesh(ModelMesh model)
         {
-            ModelMaterial modelMaterial = new(material,
-                device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
-                device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
+            if (suppressCleanup) return;
+            lock (meshes)
+            {
+                meshes.Remove(model.Name, out _);
+                model.Dispose();
+            }
+        }
+
+        public static ModelMaterial LoadMaterial(Material material)
+        {
+            ModelMaterial? modelMaterial;
+            lock (materials)
+            {
+                if (materials.TryGetValue(material.Name, out var model))
+                {
+                    model.AddRef();
+                    return model;
+                }
+
+                modelMaterial = new(material,
+                    device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
+                    device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
+
+                materials.TryAdd(material.Name, modelMaterial);
+            }
+
             modelMaterial.AlbedoTexture = LoadTexture(material.BaseColorTextureMap);
             modelMaterial.NormalTexture = LoadTexture(material.NormalTextureMap);
             modelMaterial.DisplacementTexture = LoadTexture(material.DisplacementTextureMap);
@@ -209,16 +148,28 @@
             modelMaterial.EmissiveTexture = LoadTexture(material.EmissiveTextureMap);
             modelMaterial.RoughnessMetalnessTexture = LoadTexture(material.RoughnessMetalnessTextureMap);
             modelMaterial.AoTexture = LoadTexture(material.AoTextureMap);
-            modelMaterial.Update();
-            materials.TryAdd(material, modelMaterial);
+            modelMaterial.EndUpdate();
+
             return modelMaterial;
         }
 
-        public async Task<ModelMaterial> AsyncLoadMaterial(Material material)
+        public static async Task<ModelMaterial> LoadMaterialAsync(Material material)
         {
-            ModelMaterial modelMaterial = new(material,
-                device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
-                device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
+            ModelMaterial? modelMaterial;
+            lock (materials)
+            {
+                if (materials.TryGetValue(material.Name, out modelMaterial))
+                {
+                    modelMaterial.AddRef();
+                    return modelMaterial;
+                }
+
+                modelMaterial = new(material,
+                    device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
+                    device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
+                materials.TryAdd(material.Name, modelMaterial);
+            }
+
             modelMaterial.AlbedoTexture = await AsyncLoadTexture(material.BaseColorTextureMap);
             modelMaterial.NormalTexture = await AsyncLoadTexture(material.NormalTextureMap);
             modelMaterial.DisplacementTexture = await AsyncLoadTexture(material.DisplacementTextureMap);
@@ -227,48 +178,69 @@
             modelMaterial.EmissiveTexture = await AsyncLoadTexture(material.EmissiveTextureMap);
             modelMaterial.RoughnessMetalnessTexture = await AsyncLoadTexture(material.RoughnessMetalnessTextureMap);
             modelMaterial.AoTexture = await AsyncLoadTexture(material.AoTextureMap);
-            modelMaterial.Update();
-            materials.TryAdd(material, modelMaterial);
+            modelMaterial.EndUpdate();
+
             return modelMaterial;
         }
 
-        public void UpdateMaterial(Material material)
+        public static void UpdateMaterial(Material material)
         {
-            if (materials.TryGetValue(material, out var modelMaterial))
+            ModelMaterial? modelMaterial;
+            lock (materials)
             {
-                UpdateTexture(ref modelMaterial.AlbedoTexture, material.BaseColorTextureMap);
-                UpdateTexture(ref modelMaterial.NormalTexture, material.NormalTextureMap);
-                UpdateTexture(ref modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
-                UpdateTexture(ref modelMaterial.RoughnessTexture, material.RoughnessTextureMap);
-                UpdateTexture(ref modelMaterial.MetalnessTexture, material.MetalnessTextureMap);
-                UpdateTexture(ref modelMaterial.EmissiveTexture, material.EmissiveTextureMap);
-                UpdateTexture(ref modelMaterial.RoughnessMetalnessTexture, material.RoughnessMetalnessTextureMap);
-                UpdateTexture(ref modelMaterial.AoTexture, material.AoTextureMap);
-                modelMaterial.Update();
+                if (!materials.TryGetValue(material.Name, out modelMaterial))
+                {
+                    return;
+                }
             }
+
+            modelMaterial.BeginUpdate();
+            UpdateTexture(ref modelMaterial.AlbedoTexture, material.BaseColorTextureMap);
+            UpdateTexture(ref modelMaterial.NormalTexture, material.NormalTextureMap);
+            UpdateTexture(ref modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
+            UpdateTexture(ref modelMaterial.RoughnessTexture, material.RoughnessTextureMap);
+            UpdateTexture(ref modelMaterial.MetalnessTexture, material.MetalnessTextureMap);
+            UpdateTexture(ref modelMaterial.EmissiveTexture, material.EmissiveTextureMap);
+            UpdateTexture(ref modelMaterial.RoughnessMetalnessTexture, material.RoughnessMetalnessTextureMap);
+            UpdateTexture(ref modelMaterial.AoTexture, material.AoTextureMap);
+            modelMaterial.EndUpdate();
         }
 
-        public async Task AsyncUpdateMaterial(Material material)
+        public static async Task AsyncUpdateMaterial(Material material)
         {
-            if (materials.TryGetValue(material, out var modelMaterial))
+            ModelMaterial? modelMaterial;
+            lock (materials)
             {
-                modelMaterial.AlbedoTexture = await AsyncUpdateTexture(modelMaterial.AlbedoTexture, material.BaseColorTextureMap);
-                modelMaterial.NormalTexture = await AsyncUpdateTexture(modelMaterial.NormalTexture, material.NormalTextureMap);
-                modelMaterial.DisplacementTexture = await AsyncUpdateTexture(modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
-                modelMaterial.RoughnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessTexture, material.RoughnessTextureMap);
-                modelMaterial.MetalnessTexture = await AsyncUpdateTexture(modelMaterial.MetalnessTexture, material.MetalnessTextureMap);
-                modelMaterial.EmissiveTexture = await AsyncUpdateTexture(modelMaterial.EmissiveTexture, material.EmissiveTextureMap);
-                modelMaterial.RoughnessMetalnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessMetalnessTexture, material.RoughnessMetalnessTextureMap);
-                modelMaterial.AoTexture = await AsyncUpdateTexture(modelMaterial.AoTexture, material.AoTextureMap);
-                modelMaterial.Update();
+                if (!materials.TryGetValue(material.Name, out modelMaterial))
+                {
+                    return;
+                }
             }
+
+            modelMaterial.BeginUpdate();
+            modelMaterial.AlbedoTexture = await AsyncUpdateTexture(modelMaterial.AlbedoTexture, material.BaseColorTextureMap);
+            modelMaterial.NormalTexture = await AsyncUpdateTexture(modelMaterial.NormalTexture, material.NormalTextureMap);
+            modelMaterial.DisplacementTexture = await AsyncUpdateTexture(modelMaterial.DisplacementTexture, material.DisplacementTextureMap);
+            modelMaterial.RoughnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessTexture, material.RoughnessTextureMap);
+            modelMaterial.MetalnessTexture = await AsyncUpdateTexture(modelMaterial.MetalnessTexture, material.MetalnessTextureMap);
+            modelMaterial.EmissiveTexture = await AsyncUpdateTexture(modelMaterial.EmissiveTexture, material.EmissiveTextureMap);
+            modelMaterial.RoughnessMetalnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessMetalnessTexture, material.RoughnessMetalnessTextureMap);
+            modelMaterial.AoTexture = await AsyncUpdateTexture(modelMaterial.AoTexture, material.AoTextureMap);
+            modelMaterial.EndUpdate();
         }
 
-        public void UnloadMaterial(ModelMaterial material)
+        public static void UnloadMaterial(ModelMaterial material)
         {
+            material.RemoveRef();
+            if (material.IsUsed) return;
             if (suppressCleanup) return;
-            materials.Remove(material.Material, out _);
-            material.Dispose();
+
+            lock (materials)
+            {
+                materials.Remove(material.Name, out _);
+                material.Dispose();
+            }
+
             UnloadTexture(material.AlbedoTexture);
             UnloadTexture(material.NormalTexture);
             UnloadTexture(material.DisplacementTexture);
@@ -279,39 +251,51 @@
             UnloadTexture(material.AoTexture);
         }
 
-        public ModelTexture? LoadTexture(string? name)
+        public static ModelTexture? LoadTexture(string? name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (string.IsNullOrEmpty(name)) return null;
-            if (textures.TryGetValue(fullname, out var texture))
+            ModelTexture? texture;
+            lock (textures)
             {
-                texture.InstanceCount++;
-                return texture;
+                if (textures.TryGetValue(fullname, out texture))
+                {
+                    texture.Wait();
+                    texture.AddRef();
+                    return texture;
+                }
+
+                texture = new(fullname, 1);
+                textures.TryAdd(fullname, texture);
             }
+
             var tex = device.LoadTexture2D(fullname);
-            texture = new(fullname, device.CreateShaderResourceView(tex), 1);
+            texture.EndLoad(device.CreateShaderResourceView(tex));
             tex.Dispose();
-            textures.TryAdd(fullname, texture);
+
             return texture;
         }
 
-        public Task<ModelTexture?> AsyncLoadTexture(string? name)
+        public static Task<ModelTexture?> AsyncLoadTexture(string? name)
         {
             return Task.Factory.StartNew(() => LoadTexture(name));
         }
 
-        public void UnloadTexture(ModelTexture? texture)
+        public static void UnloadTexture(ModelTexture? texture)
         {
             if (texture == null) return;
-            texture.InstanceCount--;
-            if (texture.InstanceCount == 0)
+            texture.RemoveRef();
+            if (!texture.IsUsed)
             {
-                textures.Remove(texture.Name, out _);
-                texture.SRV.Dispose();
+                lock (textures)
+                {
+                    textures.Remove(texture.Name, out _);
+                    texture.Dispose();
+                }
             }
         }
 
-        public void UpdateTexture(ref ModelTexture? texture, string name)
+        public static void UpdateTexture(ref ModelTexture? texture, string name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (texture?.Name == fullname) return;
@@ -319,7 +303,7 @@
             texture = LoadTexture(name);
         }
 
-        public async Task<ModelTexture?> AsyncUpdateTexture(ModelTexture? texture, string name)
+        public static async Task<ModelTexture?> AsyncUpdateTexture(ModelTexture? texture, string name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (texture?.Name == fullname) return texture;
@@ -327,46 +311,23 @@
             return await AsyncLoadTexture(name);
         }
 
-        protected virtual void Dispose(bool disposing)
+        public static void Release()
         {
-            if (!disposedValue)
+            foreach (var mesh in meshes.Values)
             {
-                if (disposing)
-                {
-                    instances.Clear();
-                    foreach (var mesh in meshes.Values)
-                    {
-                        mesh.Dispose();
-                    }
-                    meshes.Clear();
-                    foreach (var material in materials.Values)
-                    {
-                        material.CB.Dispose();
-                        material.SamplerState.Dispose();
-                    }
-                    materials.Clear();
-                    foreach (var texture in textures.Values)
-                    {
-                        texture.SRV.Dispose();
-                    }
-                    textures.Clear();
-                }
-
-                disposedValue = true;
+                mesh.Dispose();
             }
-        }
-
-        ~ResourceManager()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            meshes.Clear();
+            foreach (var material in materials.Values)
+            {
+                material.Dispose();
+            }
+            materials.Clear();
+            foreach (var texture in textures.Values)
+            {
+                texture.Dispose();
+            }
+            textures.Clear();
         }
     }
 }

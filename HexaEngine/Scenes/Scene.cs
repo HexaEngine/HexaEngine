@@ -10,6 +10,7 @@
     using HexaEngine.Lights;
     using HexaEngine.Objects;
     using HexaEngine.Physics;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Collections.Concurrent;
@@ -34,6 +35,7 @@
         private readonly List<Mesh> meshes = new();
         private readonly List<Material> materials = new();
         private readonly ScriptManager scriptManager = new();
+        private InstanceManager instanceManager;
         private readonly SemaphoreSlim semaphore = new(1);
 
         [JsonIgnore]
@@ -78,12 +80,16 @@
         [JsonIgnore]
         public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
 
+        [JsonIgnore]
+        public InstanceManager InstanceManager => instanceManager;
+
         public GameObject Root => root;
 
         public bool IsSimulating;
 
         public void Initialize(IGraphicsDevice device)
         {
+            instanceManager = new(device);
             semaphore.Wait();
 
             BufferPool = new BufferPool();

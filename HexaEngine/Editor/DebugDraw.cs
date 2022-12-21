@@ -175,7 +175,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             if (vertexCount > vbCapacity)
             {
                 vb.Dispose();
-                vbCapacity = (int)(lineVertices.Count * 1.5f);
+                vbCapacity = (int)(vertexCount * 1.5f);
                 Free(vertices);
                 vertices = Alloc<VertexPositionColor>(vbCapacity);
 
@@ -215,7 +215,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             if (indexCount > ibCapacity)
             {
                 ib.Dispose();
-                ibCapacity = (int)(lineIndices.Count * 1.5f);
+                ibCapacity = (int)(indexCount * 1.5f);
                 Free(indices);
                 indices = Alloc<int>(ibCapacity);
 
@@ -310,6 +310,53 @@ float4 main(PixelInputType pixel) : SV_TARGET
             {
                 cmd.Vertices[i].Color = color;
                 cmd.Vertices[i].Position = corners[i];
+            }
+        }
+
+        public static void DrawBoundingBox(string id, BoundingBox box, Vector4 color)
+        {
+            if (Draw(id, PrimitiveTopology.LineList, 24, 8, out var cmd))
+            {
+                Vector3[] pos =
+          {
+new Vector3(box.Min.X, box.Max.Y, box.Min.Z),
+new Vector3(box.Min.X, box.Min.Y, box.Min.Z),
+new Vector3(box.Max.X, box.Min.Y, box.Min.Z),
+new Vector3(box.Max.X, box.Max.Y, box.Min.Z),
+new Vector3(box.Min.X, box.Max.Y, box.Max.Z),
+new Vector3(box.Min.X, box.Min.Y, box.Max.Z),
+new Vector3(box.Max.X, box.Min.Y, box.Max.Z),
+new Vector3(box.Max.X, box.Max.Y, box.Max.Z),
+            };
+
+                cmd.Indices = new int[]
+                {
+                0,1,1,2,2,3,3,0,
+                0,4,1,5,2,6,3,7,
+                4,5,5,6,6,7,7,4
+                };
+                cmd.Vertices = new VertexPositionColor[pos.Length];
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    cmd.Vertices[i].Color = color;
+                    cmd.Vertices[i].Position = pos[i];
+                }
+            }
+
+            cmd.Transform = Matrix4x4.Identity;
+
+            cmd.Vertices[0].Position = new Vector3(box.Min.X, box.Max.Y, box.Min.Z);
+            cmd.Vertices[1].Position = new Vector3(box.Min.X, box.Min.Y, box.Min.Z);
+            cmd.Vertices[2].Position = new Vector3(box.Max.X, box.Min.Y, box.Min.Z);
+            cmd.Vertices[3].Position = new Vector3(box.Max.X, box.Max.Y, box.Min.Z);
+            cmd.Vertices[4].Position = new Vector3(box.Min.X, box.Max.Y, box.Max.Z);
+            cmd.Vertices[5].Position = new Vector3(box.Min.X, box.Min.Y, box.Max.Z);
+            cmd.Vertices[6].Position = new Vector3(box.Max.X, box.Min.Y, box.Max.Z);
+            cmd.Vertices[7].Position = new Vector3(box.Max.X, box.Max.Y, box.Max.Z);
+
+            for (int i = 0; i < 8; i++)
+            {
+                cmd.Vertices[i].Color = color;
             }
         }
 

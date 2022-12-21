@@ -8,6 +8,7 @@
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
     using HexaEngine.Rendering;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
@@ -86,6 +87,7 @@
                 throw new PlatformNotSupportedException();
             }
 
+            ResourceManager.Initialize(device);
             renderDispatcher = new(device);
             framebuffer = new(device);
 
@@ -195,6 +197,7 @@
                 initTask.Wait();
             deferredRenderer.Dispose();
             renderDispatcher.Dispose();
+            ResourceManager.Release();
             context.Dispose();
             device.Dispose();
         }

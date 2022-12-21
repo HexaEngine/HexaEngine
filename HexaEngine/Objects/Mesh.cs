@@ -109,10 +109,7 @@
         public int[]? Indices;
         public MeshBone[]? Bones;
         public Animature? Animature;
-        public Material? Material;
-        public int MaterialIndex = -1;
         public BoundingBox AABB;
-        private string materialName = string.Empty;
         private string name = string.Empty;
 
         public string Name
@@ -121,15 +118,6 @@
             set
             {
                 name = value;
-            }
-        }
-
-        public string MaterialName
-        {
-            get => materialName;
-            set
-            {
-                materialName = value;
             }
         }
     }

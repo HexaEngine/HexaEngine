@@ -2,14 +2,15 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System;
-    using System.Reflection;
 
     public class RendererComponent : IComponent
     {
-        private readonly List<int> meshes = new();
+        private readonly List<Model> models = new();
+        private readonly List<ModelInstance> instances = new();
         private GameObject? gameObject;
         private bool initialized;
 
@@ -20,31 +21,65 @@
 
         public IPropertyEditor? Editor { get; }
 
-        public IReadOnlyList<int> Meshes => meshes;
+        public IReadOnlyList<Model> Meshes => models;
 
         public void Awake(IGraphicsDevice device, GameObject node)
         {
             gameObject = node;
             initialized = true;
+            for (int i = 0; i < models.Count; i++)
+            {
+                var model = models[i];
+                if (model.Material != null)
+                {
+                    node.GetScene().InstanceManager.CreateInstanceAsync(model, node.Transform).ContinueWith(t =>
+                    {
+                        instances.Add(t.Result);
+                    });
+                }
+            }
         }
 
         public void Destory()
         {
             initialized = false;
+            for (int i = 0; i < instances.Count; i++)
+            {
+                gameObject.GetScene().InstanceManager.DestroyInstance(instances[i]);
+            }
+            instances.Clear();
         }
 
-        public void AddMesh(int mesh)
+        public void AddMesh(Model model)
         {
-            meshes.Add(mesh);
+            models.Add(model);
             if (initialized)
-                gameObject?.GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, gameObject, ChildCommandType.Added, mesh));
+            {
+                if (model.Material != null)
+                {
+                    instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
+                }
+            }
         }
 
-        public void RemoveMesh(int mesh)
+        public void UpdateModel(Model model)
         {
-            meshes.Remove(mesh);
+            if (model.Material != null)
+            {
+                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
+            }
+        }
+
+        public void RemoveMesh(Model model)
+        {
+            models.Remove(model);
             if (initialized)
-                gameObject?.GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Update, gameObject, ChildCommandType.Removed, mesh));
+            {
+                if (model.Material != null)
+                {
+                    instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
+                }
+            }
         }
 
         private class RendererComponentEditor : IPropertyEditor
@@ -55,12 +90,9 @@
             public RendererComponentEditor(RendererComponent component)
             {
                 Type = typeof(RendererComponent);
-                Properties = Type.GetProperties();
                 Name = "Renderer";
                 this.component = component;
             }
-
-            public PropertyInfo[] Properties { get; }
 
             public Type Type { get; }
 
@@ -69,25 +101,10 @@
             public void Draw()
             {
                 var scene = SceneManager.Current;
-                if (ImGui.Button("Add mesh"))
+                for (int i = 0; i < component.models.Count; i++)
                 {
-                    if (currentMesh > -1 && currentMesh < scene.Meshes.Count)
-                    {
-                        component.AddMesh(currentMesh);
-                    }
-                }
-                ImGui.SameLine();
-                ImGui.Combo("Mesh", ref currentMesh, scene.Meshes.Select(x => x.Name).ToArray(), scene.Meshes.Count);
-
-                for (int i = 0; i < component.Meshes.Count; i++)
-                {
-                    var mesh = component.Meshes[i];
-                    ImGui.Text(scene.Meshes[mesh].Name);
-                    ImGui.SameLine();
-                    if (ImGui.Button("Remove Mesh"))
-                    {
-                        component.RemoveMesh(mesh);
-                    }
+                    Model model = component.models[i];
+                    ImGui.Text($"{model.Mesh.Name}, {model.Material.Name}");
                 }
             }
         }

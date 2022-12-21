@@ -6,7 +6,9 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Objects.Components;
+    using HexaEngine.Resources;
     using Silk.NET.Assimp;
+    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
@@ -23,6 +25,7 @@
         private readonly Dictionary<string, Lights.Light> lightsT = new();
         private List<GameObject> nodes;
         private Objects.Mesh[] meshes;
+        private Model[] models;
         private Objects.Material[] materials;
         private Cameras.Camera[] cameras;
         private Lights.Light[] lights;
@@ -295,9 +298,11 @@
         private unsafe void LoadMeshes(AssimpScene* scene)
         {
             meshes = new Objects.Mesh[scene->MNumMeshes];
+            models = new Model[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Mesh* msh = scene->MMeshes[i];
+
                 MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
                 int[] indices = new int[msh->MNumFaces * 3];
                 for (int j = 0; j < msh->MNumFaces; j++)
@@ -309,6 +314,8 @@
                     }
                 }
 
+                Vector3 min = new(0, 0, 0);
+                Vector3 max = new(0, 0, 0);
                 for (int j = 0; j < msh->MNumVertices; j++)
                 {
                     Vector3 pos = msh->MVertices[j];
@@ -323,11 +330,13 @@
 
                     MeshVertex vertex = new(pos, new(tex.X, tex.Y), nor, tan);
                     vertices[j] = vertex;
+                    max = Vector3.Max(max, pos);
+                    min = Vector3.Min(min, pos);
                 }
-                Vector3 min = new(msh->MAABB.Min.X, msh->MAABB.Min.Y, msh->MAABB.Min.Z);
-                Vector3 max = new(msh->MAABB.Max.X, msh->MAABB.Max.Y, msh->MAABB.Max.Z);
+
                 BoundingBox box = new(min, max);
-                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, Material = materials[(int)msh->MMaterialIndex], AABB = box };
+                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, AABB = box };
+                models[i] = new(meshes[i], materials[(int)msh->MMaterialIndex]);
                 meshesT.Add(msh, meshes[i]);
             }
         }
@@ -428,7 +437,8 @@
             for (int i = 0; i < node->MNumMeshes; i++)
             {
                 var renderer = sceneNode.GetOrCreateComponent<RendererComponent>();
-                renderer.AddMesh((int)node->MMeshes[i]);
+                var model = models[(int)node->MMeshes[i]];
+                renderer.AddMesh(model);
             }
 
             for (int i = 0; i < node->MNumChildren; i++)
@@ -462,18 +472,6 @@
             {
                 scene.AddMesh(meshes[i]);
             }
-
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                var node = nodes[i];
-                if (node.TryGetComponent<RendererComponent>(out var renderer))
-                    for (int j = 0; j < renderer.Meshes.Count; j++)
-                    {
-                        var mesh = renderer.Meshes[j];
-                        renderer.RemoveMesh(mesh);
-                        renderer.AddMesh(mesh + baseMesh);
-                    }
-            }
         }
 
         public static unsafe void Log(byte* a, byte* b)
@@ -490,7 +488,7 @@
             assimp.EnableVerboseLogging(Assimp.True);
 
             var scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
-            var scene1 = assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData | PostProcessSteps.RemoveRedundantMaterials));
+            var scene1 = assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData));
 
             if (scene1 != scene)
             {

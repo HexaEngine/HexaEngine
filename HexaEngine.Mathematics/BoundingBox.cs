@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Mathematics
 {
+    using System.Diagnostics.Metrics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -10,6 +11,18 @@
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct BoundingBox : IEquatable<BoundingBox>, IFormattable
     {
+        private static readonly Vector3[] g_BoxOffset = new Vector3[8]
+{
+    new Vector3(-1.0f, -1.0f,  1.0f),
+    new Vector3( 1.0f, -1.0f,  1.0f),
+    new Vector3( 1.0f,  1.0f,  1.0f),
+    new Vector3(-1.0f,  1.0f,  1.0f),
+    new Vector3(-1.0f, -1.0f, -1.0f),
+    new Vector3( 1.0f, -1.0f, -1.0f),
+    new Vector3( 1.0f,  1.0f, -1.0f),
+    new Vector3(-1.0f,  1.0f, -1.0f),
+};
+
         /// <summary>
         /// Specifies the total number of corners (8) in the BoundingBox.
         /// </summary>
@@ -176,16 +189,26 @@
         /// <param name="result">The transformed BoundingBox.</param>
         public static void Transform(in BoundingBox box, in Matrix4x4 transform, out BoundingBox result)
         {
-            Vector3 newCenter = Vector3.Transform(box.Center, transform);
-            Vector3 oldEdge = box.Size * 0.5f;
+            Vector3 vCenter = box.Center;
+            Vector3 vExtend = box.Extent;
 
-            Vector3 newEdge = new(
-                Math.Abs(transform.M11) * oldEdge.X + Math.Abs(transform.M12) * oldEdge.Y + Math.Abs(transform.M13) * oldEdge.Z,
-                Math.Abs(transform.M21) * oldEdge.X + Math.Abs(transform.M22) * oldEdge.Y + Math.Abs(transform.M23) * oldEdge.Z,
-                Math.Abs(transform.M31) * oldEdge.X + Math.Abs(transform.M32) * oldEdge.Y + Math.Abs(transform.M33) * oldEdge.Z
-            );
+            Vector3 corner = vExtend * g_BoxOffset[0] + vCenter;
 
-            result = new(newCenter - newEdge, newCenter + newEdge);
+            corner = Vector3.Transform(corner, transform);
+
+            Vector3 min, max;
+            min = max = corner;
+
+            for (uint i = 1; i < CornerCount; ++i)
+            {
+                corner = vExtend * g_BoxOffset[i] + vCenter;
+                corner = Vector3.Transform(corner, transform);
+
+                min = Vector3.Min(min, corner);
+                max = Vector3.Max(max, corner);
+            }
+
+            result = new(min, max);
         }
 
         /// <summary>
