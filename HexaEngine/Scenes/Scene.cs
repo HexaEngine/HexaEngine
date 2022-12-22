@@ -32,8 +32,6 @@
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
         private readonly List<Light> lights = new();
-        private readonly List<Mesh> meshes = new();
-        private readonly List<Material> materials = new();
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
         private readonly SemaphoreSlim semaphore = new(1);
@@ -69,12 +67,6 @@
         public IReadOnlyList<Light> Lights => lights;
 
         [JsonIgnore]
-        public IReadOnlyList<Mesh> Meshes => meshes;
-
-        [JsonIgnore]
-        public IReadOnlyList<Material> Materials => materials;
-
-        [JsonIgnore]
         public IReadOnlyList<GameObject> Nodes => nodes;
 
         [JsonIgnore]
@@ -104,8 +96,7 @@
             this.device = device;
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
-            materials.ForEach(x => { x.Initialize(this); CommandQueue.Enqueue(new() { Sender = x, Type = CommandType.Load }); });
-            meshes.ForEach(x => CommandQueue.Enqueue(new(CommandType.Load, x)));
+
             root.Initialize(device);
             Validate();
             semaphore.Release();
@@ -129,27 +120,6 @@
         public void RestoreState()
         {
             root.RestoreState();
-        }
-
-        public void AddMaterial(Material material)
-        {
-            semaphore.Wait();
-            if (root.Initialized)
-            {
-                CommandQueue.Enqueue(new(CommandType.Load, material));
-                material.Initialize(this);
-            }
-            materials.Add(material);
-            semaphore.Release();
-        }
-
-        public void RemoveMaterial(Material material)
-        {
-            semaphore.Wait();
-            if (root.Initialized)
-                CommandQueue.Enqueue(new(CommandType.Unload, material));
-            materials.Remove(material);
-            semaphore.Release();
         }
 
         private void FixedUpdate(object? sender, EventArgs e)
@@ -245,15 +215,6 @@
             {
                 return;
             }
-        }
-
-        public void AddMesh(Mesh mesh)
-        {
-            semaphore.Wait();
-            if (root.Initialized)
-                CommandQueue.Enqueue(new(CommandType.Load, mesh));
-            meshes.Add(mesh);
-            semaphore.Release();
         }
 
         public void AddChild(GameObject node)

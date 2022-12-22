@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Meshes
 {
+    using HexaEngine.Objects;
     using HexaEngine.Scenes;
     using System;
     using System.Numerics;
@@ -7,13 +8,16 @@
     public struct MeshBone
     {
         public string Name;
+        public Animature Animature;
+        public GameObject Node;
         public MeshWeight[] Weights;
         public Matrix4x4 Offset;
-        public GameObject Node;
 
-        public MeshBone(string name, MeshWeight[] weights, Matrix4x4 offset)
+        public MeshBone(string name, Animature animature, GameObject node, MeshWeight[] weights, Matrix4x4 offset)
         {
             Name = name;
+            Animature = animature;
+            Node = node;
             Weights = weights;
             Offset = offset;
         }

@@ -23,7 +23,7 @@
 
         public ModelInstance CreateInstance(Model model, Transform transform)
         {
-            var material = ResourceManager.LoadMaterial(model.Material ?? throw new InvalidOperationException("Material must not be null"));
+            var material = ResourceManager.LoadMaterial(model.Material);
             var mesh = ResourceManager.LoadMesh(model.Mesh);
             var instance = CreateInstance(mesh, material, transform);
             return instance;
@@ -31,13 +31,13 @@
 
         public async Task<ModelInstance> CreateInstanceAsync(Model model, Transform transform)
         {
-            var material = await ResourceManager.LoadMaterialAsync(model.Material ?? throw new InvalidOperationException("Material must not be null"));
+            var material = await ResourceManager.LoadMaterialAsync(model.Material);
             var mesh = await ResourceManager.LoadMeshAsync(model.Mesh);
             var instance = await CreateInstanceAsync(mesh, material, transform);
             return instance;
         }
 
-        public ModelInstance CreateInstance(ModelMesh mesh, ModelMaterial material, Transform transform)
+        public ModelInstance CreateInstance(Mesh mesh, Material material, Transform transform)
         {
             semaphore.Wait();
             ModelInstanceType type;
@@ -65,7 +65,7 @@
             return instance;
         }
 
-        public async Task<ModelInstance> CreateInstanceAsync(ModelMesh mesh, ModelMaterial material, Transform transform)
+        public async Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, Transform transform)
         {
             await semaphore.WaitAsync();
             ModelInstanceType type;

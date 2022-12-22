@@ -272,7 +272,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
                     view.World = Matrix4x4.Transpose(cmd.Transform);
                     context.Write(cb, view);
                     context.SetPrimitiveTopology(cmd.Topology);
-                    context.DrawIndexed(cmd.nIndices, ioffset, voffset);
+                    context.DrawIndexedInstanced(cmd.nIndices, 1, ioffset, voffset, 0);
                     voffset += cmd.nVertices;
                     ioffset += cmd.nIndices;
                 }

@@ -5,10 +5,11 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Objects;
     using HexaEngine.Objects.Components;
     using HexaEngine.Resources;
+    using HexaEngine.Scenes.Managers;
     using Silk.NET.Assimp;
-    using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
@@ -20,13 +21,15 @@
         public static Assimp assimp = Assimp.GetApi();
 
         private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
-        private readonly Dictionary<Pointer<Mesh>, Objects.Mesh> meshesT = new();
+        private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
+        private readonly Dictionary<Pointer<Node>, Animature> animatureT = new();
+        private readonly Dictionary<Pointer<Silk.NET.Assimp.Mesh>, MeshData> meshesT = new();
         private readonly Dictionary<string, Cameras.Camera> camerasT = new();
         private readonly Dictionary<string, Lights.Light> lightsT = new();
         private List<GameObject> nodes;
-        private Objects.Mesh[] meshes;
+        private MeshData[] meshes;
         private Model[] models;
-        private Objects.Material[] materials;
+        private MaterialDesc[] materials;
         private Cameras.Camera[] cameras;
         private Lights.Light[] lights;
         private GameObject root;
@@ -59,10 +62,10 @@
 
         private unsafe void LoadMaterials(AssimpScene* scene)
         {
-            materials = new Objects.Material[scene->MNumMaterials];
+            materials = new MaterialDesc[scene->MNumMaterials];
             for (int i = 0; i < scene->MNumMaterials; i++)
             {
-                Material* mat = scene->MMaterials[i];
+                Silk.NET.Assimp.Material* mat = scene->MMaterials[i];
                 Dictionary<(string, object), object> props = new();
                 AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.Unknown + 1];
                 for (int j = 0; j < texs.Length; j++)
@@ -274,11 +277,11 @@
                 if (material.Name == string.Empty)
                     material.Name = i.ToString();
                 material.Textures = texs;
-                materials[i] = new Objects.Material()
+                materials[i] = new MaterialDesc()
                 {
                     BaseColor = material.BaseColor,
                     Ao = 1,
-                    Emissivness = material.ColorEmissive,
+                    Emissive = material.ColorEmissive,
                     Metalness = material.MetallicFactor,
                     Roughness = material.RoughnessFactor,
                     Opacity = material.Opacity,
@@ -297,11 +300,11 @@
 
         private unsafe void LoadMeshes(AssimpScene* scene)
         {
-            meshes = new Objects.Mesh[scene->MNumMeshes];
+            meshes = new MeshData[scene->MNumMeshes];
             models = new Model[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
-                Mesh* msh = scene->MMeshes[i];
+                Silk.NET.Assimp.Mesh* msh = scene->MMeshes[i];
 
                 MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
                 int[] indices = new int[msh->MNumFaces * 3];
@@ -334,9 +337,32 @@
                     min = Vector3.Min(min, pos);
                 }
 
+                Animature? animature = null;
+
+                MeshBone[]? bones = new MeshBone[msh->MNumBones];
+                if (msh->MNumBones > 0)
+                {
+                    var node = msh->MBones[0]->MArmature;
+                    animature = new(node->MName);
+                    animatureT.Add(node, animature);
+                    for (int j = 0; j < bones.Length; j++)
+                    {
+                        var bn = msh->MBones[j];
+                        MeshWeight[] weights = new MeshWeight[bn->MNumWeights];
+                        for (int x = 0; x < weights.Length; x++)
+                        {
+                            weights[x] = new() { VertexId = bn->MWeights[x].MVertexId, Weight = bn->MWeights[x].MWeight };
+                        }
+
+                        bones[j] = new MeshBone(bn->MName, animature, nodesT[bn->MNode], weights, bn->MOffsetMatrix);
+                        animature.AddBone(bones[j]);
+                    }
+                }
+
                 BoundingBox box = new(min, max);
-                meshes[i] = new Objects.Mesh() { Name = msh->MName, Indices = indices, Vertices = vertices, AABB = box };
+                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, Vertices = vertices, BoundingBox = box, Bones = bones, Animature = animature };
                 models[i] = new(meshes[i], materials[(int)msh->MMaterialIndex]);
+
                 meshesT.Add(msh, meshes[i]);
             }
         }
@@ -434,12 +460,6 @@
             sceneNode.Name = name;
             Matrix4x4.Decompose(Matrix4x4.Transpose(node->MTransformation), out var scale, out var orientation, out var position);
             sceneNode.Transform.PositionRotationScale = (position, orientation, scale);
-            for (int i = 0; i < node->MNumMeshes; i++)
-            {
-                var renderer = sceneNode.GetOrCreateComponent<RendererComponent>();
-                var model = models[(int)node->MMeshes[i]];
-                renderer.AddMesh(model);
-            }
 
             for (int i = 0; i < node->MNumChildren; i++)
             {
@@ -447,30 +467,33 @@
                 sceneNode.AddChild(child);
             }
 
+            nodesT.Add(node, sceneNode);
+            nodesP.Add(sceneNode, node);
             nodes.Add(sceneNode);
             return sceneNode;
         }
 
         private unsafe void InjectResources(Scene scene)
         {
-            var baseMat = scene.Materials.Count;
-            var baseMesh = scene.Meshes.Count;
-            for (int i = 0; i < materials.Length; i++)
+            for (int x = 0; x < nodes.Count; x++)
             {
-                scene.AddMaterial(materials[i]);
+                GameObject node = nodes[x];
+                Node* p = nodesP[node];
+                for (int i = 0; i < p->MNumMeshes; i++)
+                {
+                    var renderer = node.GetOrCreateComponent<RendererComponent>();
+                    var model = models[(int)p->MMeshes[i]];
+                    renderer.AddMesh(model);
+                }
             }
 
-            /* for (int j = 0; j < meshes.Length; j++)
-             {
-                 var mesh = meshes[j];
-                 mesh.MaterialIndex =
-                 node.RemoveMesh(mesh);
-                 node.AddMesh(mesh + baseMesh);
-             }
-            */
+            for (int i = 0; i < materials.Length; i++)
+            {
+                MaterialManager.Add(materials[i]);
+            }
             for (int i = 0; i < meshes.Length; i++)
             {
-                scene.AddMesh(meshes[i]);
+                MeshManager.Add(meshes[i]);
             }
         }
 
@@ -495,6 +518,8 @@
                 Trace.Fail("");
             }
 
+            LoadSceneGraph(scene);
+
             LoadMaterials(scene);
 
             LoadMeshes(scene);
@@ -502,8 +527,6 @@
             LoadCameras(scene);
 
             LoadLights(scene);
-
-            LoadSceneGraph(scene);
 
             InjectResources(sceneTarget);
 
@@ -513,6 +536,7 @@
                 sceneTarget.AddChild(root);
 
             nodesT.Clear();
+            nodesP.Clear();
             meshesT.Clear();
             camerasT.Clear();
             lightsT.Clear();

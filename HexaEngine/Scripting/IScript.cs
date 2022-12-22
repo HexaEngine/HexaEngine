@@ -11,13 +11,5 @@
         public void Destroy()
         {
         }
-
-        public void Update()
-        {
-        }
-
-        public void FixedUpdate()
-        {
-        }
     }
 }

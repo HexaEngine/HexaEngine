@@ -81,18 +81,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Draw(int vertexCount, int offset)
-        {
-            DeviceContext->Draw((uint)vertexCount, (uint)offset);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DrawIndexed(int indexCount, int indexOffset, int vertexOffset)
-        {
-            DeviceContext->DrawIndexed((uint)indexCount, (uint)indexOffset, vertexOffset);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
         {
             DeviceContext->DrawInstanced((uint)vertexCount, (uint)instanceCount, (uint)vertexOffset, (uint)instanceOffset);
@@ -102,6 +90,30 @@
         public void DrawIndexedInstanced(int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset)
         {
             DeviceContext->DrawIndexedInstanced((uint)indexCount, (uint)instanceCount, (uint)indexOffset, vertexOffset, (uint)instanceOffset);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DrawIndexedInstancedIndirect(void* bufferForArgs, uint alignedByteOffsetForArgs)
+        {
+            DeviceContext->DrawIndexedInstancedIndirect((ID3D11Buffer*)bufferForArgs, alignedByteOffsetForArgs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DrawIndexedInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs)
+        {
+            DeviceContext->DrawIndexedInstancedIndirect((ID3D11Buffer*)bufferForArgs.NativePointer, alignedByteOffsetForArgs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DrawInstancedIndirect(void* bufferForArgs, uint alignedByteOffsetForArgs)
+        {
+            DeviceContext->DrawInstancedIndirect((ID3D11Buffer*)bufferForArgs, alignedByteOffsetForArgs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void DrawInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs)
+        {
+            DeviceContext->DrawInstancedIndirect((ID3D11Buffer*)bufferForArgs.NativePointer, alignedByteOffsetForArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -128,207 +140,6 @@
         public void GenerateMips(IShaderResourceView resourceView)
         {
             DeviceContext->GenerateMips((ID3D11ShaderResourceView*)resourceView.NativePointer);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot)
-        {
-            throw new NotSupportedException();
-            if (constantBuffer != null)
-            {
-                ID3D11Buffer* buffer = (ID3D11Buffer*)constantBuffer.NativePointer;
-                switch (stage)
-                {
-                    case ShaderStage.Vertex:
-                        DeviceContext->VSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Hull:
-                        DeviceContext->HSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Domain:
-                        DeviceContext->DSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Geometry:
-                        DeviceContext->GSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Pixel:
-                        DeviceContext->PSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Compute:
-                        DeviceContext->CSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-                }
-            }
-            else
-            {
-                ID3D11Buffer* buffer = null;
-                switch (stage)
-                {
-                    case ShaderStage.Vertex:
-                        DeviceContext->VSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Hull:
-                        DeviceContext->HSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Domain:
-                        DeviceContext->DSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Geometry:
-                        DeviceContext->GSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Pixel:
-                        DeviceContext->PSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-
-                    case ShaderStage.Compute:
-                        DeviceContext->CSSetConstantBuffers((uint)slot, 1, &buffer);
-                        break;
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
-        {
-            throw new NotSupportedException();
-            uint* firstConstantPtr = &firstConstant;
-            uint* constantCountPtr = &constantCount;
-            if (constantBuffer != null)
-            {
-                ID3D11Buffer* buffer = (ID3D11Buffer*)constantBuffer.NativePointer;
-                switch (stage)
-                {
-                    case ShaderStage.Vertex:
-                        DeviceContext->VSSetConstantBuffers1((uint)slot, 1, &buffer, &firstConstant, &constantCount);
-                        break;
-
-                    case ShaderStage.Hull:
-                        DeviceContext->HSSetConstantBuffers1((uint)slot, 1, &buffer, &firstConstant, &constantCount);
-                        break;
-
-                    case ShaderStage.Domain:
-                        DeviceContext->DSSetConstantBuffers1((uint)slot, 1, &buffer, &firstConstant, &constantCount);
-                        break;
-
-                    case ShaderStage.Geometry:
-                        DeviceContext->GSSetConstantBuffers1((uint)slot, 1, &buffer, &firstConstant, &constantCount);
-                        break;
-
-                    case ShaderStage.Pixel:
-                        DeviceContext->PSSetConstantBuffers1((uint)slot, 1, &buffer, &firstConstant, &constantCount);
-                        break;
-
-                    case ShaderStage.Compute:
-                        DeviceContext->CSSetConstantBuffers1((uint)slot, 1, &buffer, &firstConstant, &constantCount);
-                        break;
-                }
-            }
-            else
-                switch (stage)
-                {
-                    case ShaderStage.Vertex:
-                        DeviceContext->VSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
-                        break;
-
-                    case ShaderStage.Hull:
-                        DeviceContext->HSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
-                        break;
-
-                    case ShaderStage.Domain:
-                        DeviceContext->DSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
-                        break;
-
-                    case ShaderStage.Geometry:
-                        DeviceContext->GSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
-                        break;
-
-                    case ShaderStage.Pixel:
-                        DeviceContext->PSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
-                        break;
-
-                    case ShaderStage.Compute:
-                        DeviceContext->CSSetConstantBuffers((uint)slot, 1, Utils.AsPointer((ID3D11Buffer*)null));
-                        break;
-                }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot)
-        {
-            throw new NotSupportedException();
-            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
-            uint count = (uint)constantBuffers.Length;
-            if (count == 0) return;
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    DeviceContext->VSSetConstantBuffers((uint)slot, count, ptr);
-                    break;
-
-                case ShaderStage.Hull:
-                    DeviceContext->HSSetConstantBuffers((uint)slot, count, ptr);
-                    break;
-
-                case ShaderStage.Domain:
-                    DeviceContext->DSSetConstantBuffers((uint)slot, count, ptr);
-                    break;
-
-                case ShaderStage.Geometry:
-                    DeviceContext->GSSetConstantBuffers((uint)slot, count, ptr);
-                    break;
-
-                case ShaderStage.Pixel:
-                    DeviceContext->PSSetConstantBuffers((uint)slot, count, ptr);
-                    break;
-
-                case ShaderStage.Compute:
-                    DeviceContext->CSSetConstantBuffers((uint)slot, count, ptr);
-                    break;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot, uint firstConstant, uint constantCount)
-        {
-            throw new NotSupportedException();
-            ID3D11Buffer** ptr = Utils.ToPointerArray<IBuffer, ID3D11Buffer>(constantBuffers);
-            uint count = (uint)constantBuffers.Length;
-            if (count == 0) return;
-            switch (stage)
-            {
-                case ShaderStage.Vertex:
-                    DeviceContext->VSSetConstantBuffers1((uint)slot, count, ptr, &firstConstant, &constantCount);
-                    break;
-
-                case ShaderStage.Hull:
-                    DeviceContext->HSSetConstantBuffers1((uint)slot, count, ptr, &firstConstant, &constantCount);
-                    break;
-
-                case ShaderStage.Domain:
-                    DeviceContext->DSSetConstantBuffers1((uint)slot, count, ptr, &firstConstant, &constantCount);
-                    break;
-
-                case ShaderStage.Geometry:
-                    DeviceContext->GSSetConstantBuffers1((uint)slot, count, ptr, &firstConstant, &constantCount);
-                    break;
-
-                case ShaderStage.Pixel:
-                    DeviceContext->PSSetConstantBuffers1((uint)slot, count, ptr, &firstConstant, &constantCount);
-                    break;
-
-                case ShaderStage.Compute:
-                    DeviceContext->CSSetConstantBuffers1((uint)slot, count, ptr, &firstConstant, &constantCount);
-                    break;
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -612,6 +423,7 @@
         {
             if (!disposedValue)
             {
+                OnDisposed?.Invoke(this, EventArgs.Empty);
                 DeviceContext->ClearState();
                 DeviceContext->Flush();
                 DeviceContext->Release();

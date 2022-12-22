@@ -235,7 +235,7 @@ namespace HexaEngine.Rendering
 
                         ctx.PSSetShaderResource((void*)cmd.TextureId, 0);
 
-                        ctx.DrawIndexed((int)cmd.ElemCount, idx_offset, vtx_offset);
+                        ctx.DrawIndexedInstanced((int)cmd.ElemCount, 1, idx_offset, vtx_offset, 0);
                     }
                     idx_offset += (int)cmd.ElemCount;
                 }

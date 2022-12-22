@@ -38,7 +38,7 @@
                 }
                 else
                 {
-                    pipeline.DrawIndexed(context, viewport, indexBuffer.Count, 0, 0);
+                    pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, 1, 0, 0, 0);
                 }
             }
             else
@@ -50,7 +50,7 @@
                 }
                 else
                 {
-                    pipeline.Draw(context, viewport, vertexBuffer.Count, 0);
+                    pipeline.DrawInstanced(context, viewport, vertexBuffer.Count, 1, 0, 0);
                 }
             }
         }

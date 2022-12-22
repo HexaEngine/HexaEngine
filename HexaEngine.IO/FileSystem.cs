@@ -16,7 +16,7 @@
         {
             foreach (string file in Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly))
             {
-                assetBundles.AddRange(new AssetBundle(file).Assets);
+                assetBundles.AddRange(new AssetArchive(file).Assets);
             }
             foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
             {

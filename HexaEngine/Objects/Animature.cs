@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using System.Numerics;
@@ -93,31 +92,6 @@
                     return name;
                 name = relation.ParentName ?? throw new();
                 relation = relation.Parent;
-            }
-        }
-    }
-
-    public class Relation
-    {
-        public string? ParentName;
-        public Relation? Parent;
-    }
-
-    public unsafe class Mesh
-    {
-        public MeshVertex[]? Vertices;
-        public int[]? Indices;
-        public MeshBone[]? Bones;
-        public Animature? Animature;
-        public BoundingBox AABB;
-        private string name = string.Empty;
-
-        public string Name
-        {
-            get => name;
-            set
-            {
-                name = value;
             }
         }
     }

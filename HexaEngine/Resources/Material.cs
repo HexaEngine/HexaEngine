@@ -2,31 +2,32 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Objects;
+    using HexaEngine.Rendering.ConstantBuffers;
 
-    public unsafe class ModelMaterial : IDisposable
+    public unsafe class Material : IDisposable
     {
         private readonly string name;
         private bool dirty = true;
-        public Material Material;
+        public MaterialDesc desc;
         public IBuffer CB;
         public ISamplerState SamplerState;
-        public ModelTexture? AlbedoTexture;
-        public ModelTexture? NormalTexture;
-        public ModelTexture? DisplacementTexture;
-        public ModelTexture? RoughnessTexture;
-        public ModelTexture? MetalnessTexture;
-        public ModelTexture? EmissiveTexture;
-        public ModelTexture? AoTexture;
-        public ModelTexture? RoughnessMetalnessTexture;
+        public Texture? AlbedoTexture;
+        public Texture? NormalTexture;
+        public Texture? DisplacementTexture;
+        public Texture? RoughnessTexture;
+        public Texture? MetalnessTexture;
+        public Texture? EmissiveTexture;
+        public Texture? AoTexture;
+        public Texture? RoughnessMetalnessTexture;
         public void** SRVs;
         private int instances;
         private bool disposedValue;
         private bool loaded;
 
-        public ModelMaterial(Material material, IBuffer cB, ISamplerState samplerState)
+        public Material(MaterialDesc desc, IBuffer cB, ISamplerState samplerState)
         {
-            name = material.Name;
-            Material = material;
+            this.desc = desc;
+            name = desc.Name;
             CB = cB;
             SamplerState = samplerState;
             SRVs = AllocArray(7);
@@ -41,7 +42,7 @@
             if (!loaded) return false;
             if (dirty)
             {
-                context.Write(CB, new CBMaterial(Material));
+                context.Write(CB, (CBMaterial)desc);
                 dirty = false;
             }
             context.DSSetConstantBuffer(CB, 2);
@@ -52,6 +53,12 @@
             if (DisplacementTexture != null)
                 context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
             return true;
+        }
+
+        public void Update(MaterialDesc desc)
+        {
+            this.desc = desc;
+            dirty = true;
         }
 
         public void AddRef()
@@ -117,7 +124,7 @@
             }
         }
 
-        ~ModelMaterial()
+        ~Material()
         {
             // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: false);

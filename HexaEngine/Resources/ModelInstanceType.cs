@@ -19,10 +19,10 @@
         private int instanceCapacity;
         private int idCounter;
 
-        public readonly ModelMesh Mesh;
-        public readonly ModelMaterial Material;
+        public readonly Mesh Mesh;
+        public readonly Material Material;
 
-        public ModelInstanceType(IGraphicsDevice device, ModelMesh mesh, ModelMaterial material)
+        public ModelInstanceType(IGraphicsDevice device, Mesh mesh, Material material)
         {
             Mesh = mesh;
             Material = material;
@@ -122,6 +122,7 @@
 
         public unsafe bool DrawAuto(IGraphicsContext context, int indexCount)
         {
+            if (visibleCount == 0) return false;
             if (Material == null) return false;
             if (ISB == null) return false;
             if (semaphore.CurrentCount == 0) return false;
@@ -134,6 +135,7 @@
 
         public unsafe void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, int indexCount)
         {
+            if (visibleCount == 0) return;
             if (Material == null) return;
             if (ISB == null) return;
             if (semaphore.CurrentCount == 0) return;

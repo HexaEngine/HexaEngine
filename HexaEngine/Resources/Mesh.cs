@@ -6,7 +6,7 @@
     using HexaEngine.Meshes;
     using System.Collections.Concurrent;
 
-    public class ModelMesh : IDisposable
+    public class Mesh : IDisposable
     {
         private readonly SemaphoreSlim semaphore = new(1);
         private readonly ConcurrentDictionary<string, ModelInstanceType> materialToType = new();
@@ -17,12 +17,12 @@
         public IBuffer? IB;
         public int VertexCount;
         public int IndexCount;
-        public BoundingBox AABB;
+        public BoundingBox BoundingBox;
 
-        public ModelMesh(IGraphicsDevice device, string name, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box)
+        public Mesh(IGraphicsDevice device, string name, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box)
         {
             this.name = name;
-            AABB = box;
+            BoundingBox = box;
             if (!vertices.IsEmpty)
             {
                 VB = device.CreateBuffer(vertices, BindFlags.VertexBuffer, Usage.Immutable);
@@ -46,7 +46,7 @@
             VB = null;
             IB?.Dispose();
             IB = null;
-            AABB = box;
+            BoundingBox = box;
             semaphore.Release();
             if (!vertices.IsEmpty)
             {
@@ -60,7 +60,7 @@
             }
         }
 
-        public ModelInstanceType CreateInstanceType(IGraphicsDevice device, ModelMaterial material)
+        public ModelInstanceType CreateInstanceType(IGraphicsDevice device, Material material)
         {
             semaphore.Wait();
             lock (materialToType)
@@ -166,7 +166,7 @@
             }
         }
 
-        ~ModelMesh()
+        ~Mesh()
         {
             // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: false);

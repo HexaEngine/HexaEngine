@@ -30,6 +30,13 @@
             fs.Position = Pointer;
             return fs.Read(Length);
         }
+
+        public void CopyTo(Stream target)
+        {
+            var fs = Stream;
+            fs.Position = Pointer;
+            fs.CopyTo(target);
+        }
     }
 
     public class BinaryAsset

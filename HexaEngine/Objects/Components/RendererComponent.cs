@@ -30,13 +30,10 @@
             for (int i = 0; i < models.Count; i++)
             {
                 var model = models[i];
-                if (model.Material != null)
+                node.GetScene().InstanceManager.CreateInstanceAsync(model, node.Transform).ContinueWith(t =>
                 {
-                    node.GetScene().InstanceManager.CreateInstanceAsync(model, node.Transform).ContinueWith(t =>
-                    {
-                        instances.Add(t.Result);
-                    });
-                }
+                    instances.Add(t.Result);
+                });
             }
         }
 
@@ -55,19 +52,13 @@
             models.Add(model);
             if (initialized)
             {
-                if (model.Material != null)
-                {
-                    instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
-                }
+                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
             }
         }
 
         public void UpdateModel(Model model)
         {
-            if (model.Material != null)
-            {
-                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
-            }
+            instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
         }
 
         public void RemoveMesh(Model model)
@@ -75,10 +66,7 @@
             models.Remove(model);
             if (initialized)
             {
-                if (model.Material != null)
-                {
-                    instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
-                }
+                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
             }
         }
 

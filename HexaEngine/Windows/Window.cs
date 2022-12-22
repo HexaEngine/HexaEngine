@@ -88,6 +88,8 @@
             }
 
             ResourceManager.Initialize(device);
+            PipelineManager.Initialize(device);
+
             renderDispatcher = new(device);
             framebuffer = new(device);
 

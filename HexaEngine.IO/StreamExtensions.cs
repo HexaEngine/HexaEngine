@@ -2,6 +2,7 @@
 {
     using System;
     using System.Buffers;
+    using System.Buffers.Binary;
     using System.IO;
     using System.Text;
 
@@ -13,12 +14,26 @@
             stream.Write(Encoding.UTF8.GetBytes(str));
         }
 
+        public static void WriteString(this Stream stream, string str, Encoding encoding)
+        {
+            stream.WriteInt(str.Length);
+            stream.Write(encoding.GetBytes(str));
+        }
+
         public static string ReadString(this Stream stream)
         {
             var length = stream.ReadInt();
             var buffer = new byte[length];
             stream.Read(buffer);
             return Encoding.UTF8.GetString(buffer);
+        }
+
+        public static string ReadString(this Stream stream, Encoding encoding)
+        {
+            var length = stream.ReadInt();
+            var buffer = new byte[length];
+            stream.Read(buffer);
+            return encoding.GetString(buffer);
         }
 
         public static void WriteInt(this Stream stream, int val)
@@ -68,6 +83,45 @@
             var buffer = new byte[length];
             stream.Read(buffer, 0, (int)length);
             return buffer;
+        }
+
+        public static bool Compare(this Stream stream, byte[] compare)
+        {
+            var buffer = ArrayPool<byte>.Shared.Rent(compare.Length);
+            stream.Read(buffer, 0, compare.Length);
+            for (int i = 0; i < compare.Length; i++)
+            {
+                if (buffer[i] != compare[i])
+                    return false;
+            }
+            ArrayPool<byte>.Shared.Return(buffer);
+            return true;
+        }
+
+        public static bool Compare(this Stream stream, ulong value)
+        {
+            var other = stream.ReadUInt64();
+            return other == value;
+        }
+
+        public static bool Compare(this ReadOnlySpan<byte> src, ulong value)
+        {
+            return BinaryPrimitives.ReadUInt64LittleEndian(src) == value;
+        }
+
+        public static string ReadString(this ReadOnlySpan<byte> src, Encoding encoding, out int read)
+        {
+            var len = BinaryPrimitives.ReadInt32LittleEndian(src);
+            read = len + 4;
+            return encoding.GetString(src.Slice(4, len));
+        }
+
+        public static int WriteString(this Span<byte> dest, ReadOnlySpan<char> src, Encoding encoding)
+        {
+            var len = encoding.GetByteCount(src);
+            BinaryPrimitives.WriteInt32LittleEndian(dest, len);
+            encoding.GetBytes(src, dest[4..]);
+            return 4 + len;
         }
     }
 }

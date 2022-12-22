@@ -2,20 +2,21 @@
 {
     using HexaEngine.Core.Graphics;
 
-    public unsafe class ModelTexture : IDisposable
+    public unsafe class Texture : IDisposable
     {
         public string _name;
         private IShaderResourceView? srv;
         private int instanceCount;
         private bool disposedValue;
 
-        public ModelTexture(string name, int instances)
+        public Texture(string name, int instances)
         {
             _name = name;
             Volatile.Write(ref instanceCount, instances);
         }
 
         public string Name => _name;
+
         public int InstanceCount => Volatile.Read(ref instanceCount);
 
         public bool IsUsed => Volatile.Read(ref instanceCount) > 0;
@@ -58,7 +59,7 @@
             }
         }
 
-        ~ModelTexture()
+        ~Texture()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

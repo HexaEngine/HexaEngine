@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
 
     public class MeshesWidget : ImGuiWindow
@@ -20,20 +21,22 @@
                 return;
             }
 
-            bool selected = ImGui.Combo("Mesh", ref current, scene.Meshes.Select(x => x.Name).ToArray(), scene.Meshes.Count);
+            bool selected = ImGui.Combo("Mesh", ref current, MeshManager.Meshes.Select(x => x.Name).ToArray(), MeshManager.Count);
 
             ImGui.Separator();
 
             if (current != -1)
             {
-                Mesh mesh = scene.Meshes[current];
+                MeshData mesh = MeshManager.Meshes[current];
                 {
                     string name = mesh.Name;
                     if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                     {
-                        if (scene.Meshes.All(x => x.Name != name))
+                        if (MeshManager.Meshes.All(x => x.Name != name))
                         {
+                            MeshManager.Remove(mesh);
                             mesh.Name = name;
+                            MeshManager.Add(mesh);
                         }
                     }
                 }

@@ -20,7 +20,9 @@
             T2*[] ptrs = new T2*[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
+#nullable disable
                 ptrs[i] = (T2*)values[i]?.NativePointer;
+#nullable enable
             }
             return AsPointer(ptrs);
         }

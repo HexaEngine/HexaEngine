@@ -327,22 +327,6 @@
         {
         }
 
-        public void Draw(IGraphicsContext context, Viewport viewport, int vertexCount, int offset)
-        {
-            if (!initialized) return;
-            BeginDraw(context, viewport);
-            context.Draw(vertexCount, offset);
-            EndDraw(context);
-        }
-
-        public void DrawIndexed(IGraphicsContext context, Viewport viewport, int indexCount, int indexOffset, int vertexOffset)
-        {
-            if (!initialized) return;
-            BeginDraw(context, viewport);
-            context.DrawIndexed(indexCount, indexOffset, vertexOffset);
-            EndDraw(context);
-        }
-
         public void DrawInstanced(IGraphicsContext context, Viewport viewport, int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
         {
             if (!initialized) return;

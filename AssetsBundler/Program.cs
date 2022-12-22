@@ -18,8 +18,8 @@
             [Option('p', "path", Required = true, HelpText = "path to dir")]
             public string Path { get; set; }
 
-            [Option('c', "compress", Required = false, HelpText = "enable compression")]
-            public bool Compress { get; set; } = false;
+            [Option('c', "compression", Required = false, HelpText = "compression 0 = none, 1 = deflate")]
+            public int Compress { get; set; } = 0;
 
             [Option('l', "Compression level", Required = false, HelpText = "compression level")]
             public int CompressionLevel { get; set; } = 0;
@@ -42,14 +42,14 @@
                     case Mode.create:
                         if (Directory.Exists(o.Path))
                         {
-                            AssetBundle.CreateFrom(o.Path, o.Compress, (CompressionLevel)o.CompressionLevel);
+                            AssetArchive.CreateFrom(o.Path, (Compression)o.Compress, (CompressionLevel)o.CompressionLevel);
                         }
                         break;
 
                     case Mode.list:
                         if (File.Exists(o.Path))
                         {
-                            AssetBundle bundle = new(o.Path);
+                            AssetArchive bundle = new(o.Path);
                             Crc32 crc = new();
 
                             foreach (Asset asset in bundle.Assets)
@@ -63,14 +63,14 @@
                     case Mode.gen:
                         if (Directory.Exists(o.Path))
                         {
-                            AssetBundle.GenerateFrom(o.Path, o.Compress, (CompressionLevel)o.CompressionLevel);
+                            AssetArchive.GenerateFrom(o.Path, (Compression)o.Compress, (CompressionLevel)o.CompressionLevel);
                         }
                         break;
 
                     case Mode.extract:
                         if (File.Exists(o.Path))
                         {
-                            AssetBundle bundle = new(o.Path);
+                            AssetArchive bundle = new(o.Path);
                             if (Directory.Exists("assets/"))
                                 Directory.Delete("assets/", true);
                             Directory.CreateDirectory("assets/");

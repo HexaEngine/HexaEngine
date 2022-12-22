@@ -4,10 +4,10 @@
 
     public class Model
     {
-        public Mesh Mesh;
-        public Material? Material;
+        public MeshData Mesh;
+        public MaterialDesc Material;
 
-        public Model(Mesh mesh, Material? material)
+        public Model(MeshData mesh, MaterialDesc material)
         {
             Mesh = mesh;
             Material = material;

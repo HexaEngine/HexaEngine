@@ -1162,6 +1162,7 @@
         {
             if (!disposedValue)
             {
+                OnDisposed?.Invoke(this, EventArgs.Empty);
                 SwapChain?.Dispose();
                 Context.Dispose();
                 Device->Release();

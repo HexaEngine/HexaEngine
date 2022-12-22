@@ -20,10 +20,12 @@
     using HexaEngine.Rendering.ConstantBuffers;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
     using ImGuiNET;
     using System;
     using System.Numerics;
+    using Texture = Graphics.Texture;
 
     // TODO: Cleanup and specialization
     public class SceneRenderer : ISceneRenderer
@@ -505,9 +507,9 @@
                 // Fill Geometry Buffer
                 context.ClearRenderTargetViews(gbuffers.RTVs, gbuffers.Count, Vector4.Zero);
 
-                for (int i = 0; i < scene.Meshes.Count; i++)
+                for (int i = 0; i < MeshManager.Count; i++)
                 {
-                    if (ResourceManager.GetMesh(scene.Meshes[i], out var mesh))
+                    if (ResourceManager.GetMesh(MeshManager.Meshes[i], out var mesh))
                     {
                         context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
                         mesh.UpdateInstanceBuffer(context, camera.Transform.Frustum);
@@ -520,9 +522,9 @@
             if (ssr.Enabled)
             {
                 depthbuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.Stencil | DepthStencilClearFlags.Depth);
-                for (int i = 0; i < scene.Meshes.Count; i++)
+                for (int i = 0; i < MeshManager.Count; i++)
                 {
-                    if (ResourceManager.GetMesh(scene.Meshes[i], out var mesh))
+                    if (ResourceManager.GetMesh(MeshManager.Meshes[i], out var mesh))
                     {
                         depthbuffer.SetTarget(context);
                         mesh.DrawAuto(context, materialDepthBackface, depthbuffer.Viewport);
@@ -550,9 +552,9 @@
                         context.Write(csmMvpBuffer, mtxs, sizeof(Matrix4x4) * 16);
                         csmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
 
-                        for (int j = 0; j < scene.Meshes.Count; j++)
+                        for (int j = 0; j < MeshManager.Count; j++)
                         {
-                            if (ResourceManager.GetMesh(scene.Meshes[j], out var mesh))
+                            if (ResourceManager.GetMesh(MeshManager.Meshes[j], out var mesh))
                             {
                                 context.SetRenderTarget(csmDepthBuffer.RenderTargetView, csmDepthBuffer.DepthStencilView);
                                 mesh.DrawAuto(context, csmPipeline, csmDepthBuffer.Viewport);
@@ -575,9 +577,9 @@
                         context.Write(osmParamBuffer, new Vector4(light.Transform.GlobalPosition, far));
                         osmDepthBuffers[pointsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
 
-                        for (int j = 0; j < scene.Meshes.Count; j++)
+                        for (int j = 0; j < MeshManager.Count; j++)
                         {
-                            if (ResourceManager.GetMesh(scene.Meshes[j], out var mesh))
+                            if (ResourceManager.GetMesh(MeshManager.Meshes[j], out var mesh))
                             {
                                 context.SetRenderTarget(osmDepthBuffers[pointsd].RenderTargetView, osmDepthBuffers[pointsd].DepthStencilView);
                                 mesh.DrawAuto(context, osmPipeline, osmDepthBuffers[pointsd].Viewport);
@@ -599,9 +601,9 @@
                         context.Write(psmBuffer, spotlights[spotsd].View);
                         psmDepthBuffers[spotsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
                         context.DSSetConstantBuffer(psmBuffer, 1);
-                        for (int j = 0; j < scene.Meshes.Count; j++)
+                        for (int j = 0; j < MeshManager.Count; j++)
                         {
-                            if (ResourceManager.GetMesh(scene.Meshes[j], out var mesh))
+                            if (ResourceManager.GetMesh(MeshManager.Meshes[j], out var mesh))
                             {
                                 context.SetRenderTarget(psmDepthBuffers[spotsd].RenderTargetView, psmDepthBuffers[spotsd].DepthStencilView);
                                 mesh.DrawAuto(context, psmPipeline, psmDepthBuffers[spotsd].Viewport);
@@ -621,9 +623,9 @@
             // Light Pass
             if (forwardMode)
             {
-                for (int i = 0; i < scene.Meshes.Count; i++)
+                for (int i = 0; i < MeshManager.Count; i++)
                 {
-                    if (ResourceManager.GetMesh(scene.Meshes[i], out var mesh))
+                    if (ResourceManager.GetMesh(MeshManager.Meshes[i], out var mesh))
                     {
                         context.DSSetConstantBuffer(cameraBuffer.Buffer, 1);
                         mesh.UpdateInstanceBuffer(context, camera.Transform.Frustum);

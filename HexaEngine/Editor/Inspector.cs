@@ -6,6 +6,7 @@
     using HexaEngine.Objects.Components;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public static class Inspector
@@ -80,9 +81,9 @@
 
             if (drawSkeletons)
             {
-                for (int i = 0; i < scene.Meshes.Count; i++)
+                for (int i = 0; i < MeshManager.Count; i++)
                 {
-                    var mesh = scene.Meshes[i];
+                    var mesh = MeshManager.Meshes[i];
                     if (mesh.Bones == null || mesh.Bones.Length == 0)
                         continue;
                     for (int j = 0; j < mesh.Bones.Length; j++)

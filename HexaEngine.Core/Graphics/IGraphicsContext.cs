@@ -157,13 +157,17 @@
 
         void SetInputLayout(IInputLayout? inputLayout);
 
-        void Draw(int vertexCount, int offset);
-
-        void DrawIndexed(int indexCount, int indexOffset, int vertexOffset);
-
         void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset);
 
         void DrawIndexedInstanced(int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset);
+
+        void DrawIndexedInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs);
+
+        unsafe void DrawIndexedInstancedIndirect(void* bufferForArgs, uint alignedByteOffsetForArgs);
+
+        void DrawInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs);
+
+        unsafe void DrawInstancedIndirect(void* bufferForArgs, uint alignedByteOffsetForArgs);
 
         void QueryBegin(IQuery query);
 
@@ -172,10 +176,6 @@
         void QueryGetData(IQuery query);
 
         void Flush();
-
-        void SetConstantBuffers(IBuffer[] constantBuffers, ShaderStage stage, int slot, uint firstConstant, uint constantCount);
-
-        void SetConstantBuffer(IBuffer? constantBuffer, ShaderStage stage, int slot, uint firstConstant, uint constantCount);
 
         void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ);
 
@@ -201,6 +201,10 @@
     }
 
     public interface IQuery : IDeviceChild
+    {
+    }
+
+    public interface IPredicate : IDeviceChild
     {
     }
 

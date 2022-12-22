@@ -1,22 +1,23 @@
 ﻿namespace HexaEngine.Resources
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
 
     public class ModelInstance
     {
         public readonly int Id;
         public readonly ModelInstanceType Type;
-        public readonly ModelMesh Mesh;
+        public readonly Mesh Mesh;
         public readonly Transform Transform;
 
         public void GetBoundingBox(out BoundingBox box)
         {
-            box = BoundingBox.Transform(Mesh.AABB, Transform);
+            box = BoundingBox.Transform(Mesh.BoundingBox, Transform);
         }
 
         public bool VisibilityTest(BoundingFrustum frustum)
         {
-            return frustum.Intersects(BoundingBox.Transform(Mesh.AABB, Transform));
+            return frustum.Intersects(BoundingBox.Transform(Mesh.BoundingBox, Transform));
         }
 
         public ModelInstance(int id, ModelInstanceType type, Transform node)
