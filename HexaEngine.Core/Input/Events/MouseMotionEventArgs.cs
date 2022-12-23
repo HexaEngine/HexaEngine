@@ -6,17 +6,9 @@
         {
         }
 
-        public MouseMotionEventArgs(float x, float y, float relX, float relY)
-        {
-            X = x;
-            Y = y;
-            RelX = relX;
-            RelY = relY;
-        }
-
-        public float X;
-        public float Y;
-        public float RelX;
-        public float RelY;
+        public float X { get; internal set; }
+        public float Y { get; internal set; }
+        public float RelX { get; internal set; }
+        public float RelY { get; internal set; }
     }
 }

@@ -37,7 +37,6 @@
         private ISwapChain swapChain;
         private Framebuffer framebuffer;
         private SceneRenderer deferredRenderer;
-        private Task? rendererUpdateTask;
 
         private bool resize = false;
         private ImGuiRenderer? renderer;
@@ -161,11 +160,8 @@
                     lock (SceneManager.Current)
                     {
                         SceneManager.Current.Tick();
-                        if (rendererUpdateTask?.IsCompleted ?? true)
-                            rendererUpdateTask = deferredRenderer.Update(SceneManager.Current);
                         if (firstFrame)
                         {
-                            rendererUpdateTask.Wait();
                             Time.Initialize();
                             firstFrame = false;
                         }

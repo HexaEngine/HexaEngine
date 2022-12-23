@@ -6,11 +6,6 @@
         {
         }
 
-        public KeyboardCharEventArgs(char @char)
-        {
-            Char = @char;
-        }
-
-        public char Char;
+        public char Char { get; internal set; }
     }
 }

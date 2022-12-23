@@ -5,20 +5,36 @@
 
     public static class SceneNodeExensions
     {
-        public static void AddIfIs<T>(this IList<T> list, GameObject obj)
+        public static bool AddIfIs<T>(this IList<T> list, GameObject obj)
         {
             if (obj is T t)
             {
                 list.Add(t);
+                return true;
             }
+            return false;
         }
 
-        public static void RemoveIfIs<T>(this IList<T> list, GameObject obj)
+        public static bool RemoveIfIs<T>(this IList<T> list, GameObject obj)
         {
             if (obj is T t)
             {
                 list.Remove(t);
+                return true;
             }
+            return false;
+        }
+
+        public static bool RemoveIfIs<T>(this IList<T> list, GameObject obj, out int index)
+        {
+            if (obj is T t)
+            {
+                index = list.IndexOf(t);
+                list.RemoveAt(index);
+                return true;
+            }
+            index = -1;
+            return false;
         }
 
         public static void AddComponentIfIs<T>(this IList<T> list, GameObject obj) where T : IComponent

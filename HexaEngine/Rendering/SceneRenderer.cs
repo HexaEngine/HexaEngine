@@ -135,7 +135,6 @@
                 windowHeight = window.Height;
                 width = (int)(window.Width * renderResolution);
                 height = (int)(window.Height * renderResolution);
-                SceneManager.SceneChanged += SceneManager_SceneChanged;
 
                 this.device = device;
                 context = device.Context;
@@ -357,15 +356,6 @@
             });
         }
 
-        private void SceneManager_SceneChanged(object? sender, SceneChangedEventArgs e)
-        {
-            if (!initialized) return;
-            if (e.Old != null && e.Old != e.New)
-            {
-                Update(e.Old).Wait();
-            }
-        }
-
         private void OnResizeBegin(object? sender, EventArgs e)
         {
             if (!initialized) return;
@@ -464,23 +454,6 @@
             ssr.Position = gbuffers.SRVs[1];
             ssr.Normal = gbuffers.SRVs[2];
             ssr.Depth = depthbuffer.ResourceView;
-        }
-
-        public async Task Update(Scene scene)
-        {
-            if (!initialized) return;
-            while (scene.CommandQueue.TryDequeue(out var cmd))
-            {
-                if (cmd.Sender is Light)
-                {
-                    switch (cmd.Type)
-                    {
-                        case CommandType.Update:
-                            dirty = true;
-                            break;
-                    }
-                }
-            }
         }
 
         public unsafe void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera? camera)

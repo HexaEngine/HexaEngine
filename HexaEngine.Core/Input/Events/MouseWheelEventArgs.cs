@@ -4,17 +4,10 @@
 
     public class MouseWheelEventArgs : EventArgs
     {
-        public MouseWheelEventArgs(int x, int y, MouseWheelDirection direction)
-        {
-            X = x;
-            Y = y;
-            Direction = direction;
-        }
+        public int X { get; internal set; }
 
-        public int X { get; }
+        public int Y { get; internal set; }
 
-        public int Y { get; }
-
-        public MouseWheelDirection Direction { get; }
+        public MouseWheelDirection Direction { get; internal set; }
     }
 }

@@ -47,8 +47,6 @@ namespace HexaEngine.Editor.Widgets
 
         public override void DrawContent(IGraphicsContext context)
         {
-            IsDocked = ImGui.IsWindowDocked();
-
             if (GameObject.Selected.Count == 0)
             {
                 EndWindow();

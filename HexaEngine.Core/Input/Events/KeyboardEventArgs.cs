@@ -14,8 +14,8 @@
             KeyState = keyState;
         }
 
-        public KeyCode KeyCode { get; set; }
+        public KeyCode KeyCode { get; internal set; }
 
-        public KeyState KeyState { get; set; }
+        public KeyState KeyState { get; internal set; }
     }
 }

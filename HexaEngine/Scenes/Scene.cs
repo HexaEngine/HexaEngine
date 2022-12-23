@@ -17,6 +17,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
+    using System.Reflection;
     using System.Text.Json.Serialization;
 
     public struct NodePtr
@@ -31,6 +32,7 @@
 #nullable enable
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
+        private string[] cameraNames = Array.Empty<string>();
         private readonly List<Light> lights = new();
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
@@ -63,6 +65,8 @@
         public SceneDispatcher Dispatcher { get; } = new();
 
         public IReadOnlyList<Camera> Cameras => cameras;
+
+        public string[] CameraNames => cameraNames;
 
         public IReadOnlyList<Light> Lights => lights;
 
@@ -184,7 +188,17 @@
         internal void RegisterChild(GameObject node)
         {
             nodes.Add(node);
-            cameras.AddIfIs(node);
+            if (cameras.AddIfIs(node))
+            {
+                if (cameraNames.Length != cameras.Capacity)
+                {
+                    var old = cameraNames;
+                    cameraNames = new string[cameras.Capacity];
+                    Array.Copy(old, cameraNames, old.Length);
+                }
+                cameraNames[cameras.Count - 1] = node.Name;
+            }
+
             lights.AddIfIs(node);
             scriptManager.Register(node);
         }
@@ -192,7 +206,11 @@
         internal void UnregisterChild(GameObject node)
         {
             nodes.Remove(node);
-            cameras.RemoveIfIs(node);
+            if (cameras.RemoveIfIs(node, out int index))
+            {
+                Array.Copy(cameraNames, index + 1, cameraNames, index, cameras.Count - index);
+            }
+
             lights.RemoveIfIs(node);
             scriptManager.Unregister(node);
         }

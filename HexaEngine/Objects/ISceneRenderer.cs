@@ -16,7 +16,5 @@ namespace HexaEngine.Objects
         void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera camera);
 
         void DrawSettings();
-
-        Task Update(Scene scene);
     }
 }

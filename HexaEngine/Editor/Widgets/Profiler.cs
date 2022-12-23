@@ -3,12 +3,14 @@
     using ImGuiNET;
     using System;
     using System.Numerics;
+    using System.Text;
 
     public class Profiler
     {
+        private readonly StringBuilder stringBuilder = new();
         private readonly string label;
         private readonly Func<float> getCurrentValue;
-        private readonly Func<float, string> overlay;
+        private readonly Action<float, StringBuilder> overlay;
         private readonly float[] values;
         private readonly int length;
         private int index = 0;
@@ -18,7 +20,7 @@
         public Vector2 Size = new(120, 60);
         public bool Reverse;
 
-        public Profiler(string label, Func<float> getCurrentValue, Func<float, string> overlay, int length)
+        public Profiler(string label, Func<float> getCurrentValue, Action<float, StringBuilder> overlay, int length)
         {
             this.label = label;
             this.getCurrentValue = getCurrentValue;
@@ -51,7 +53,8 @@
             if (offset < 0)
                 offset += length;
 
-            ImGui.PlotHistogram(label, ref values[0], length, offset, overlay(current), 0, max + max / 2, Size);
+            overlay(current, stringBuilder);
+            ImGui.PlotHistogram(label, ref values[0], length, offset, stringBuilder.ToString(), 0, max + max / 2, Size);
         }
     }
 }

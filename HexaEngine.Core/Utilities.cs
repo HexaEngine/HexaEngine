@@ -134,7 +134,7 @@
             byte* ptr = (byte*)pointer;
             for (int i = 0; i < size; i++)
             {
-                ptr[i] = (byte)0;
+                ptr[i] = 0;
             }
         }
 

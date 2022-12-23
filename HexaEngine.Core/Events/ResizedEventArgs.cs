@@ -2,6 +2,10 @@
 {
     public class ResizedEventArgs : RoutedEventArgs
     {
+        public ResizedEventArgs()
+        {
+        }
+
         public ResizedEventArgs(int oldWidth, int oldHeight, int newWidth, int newHeight)
         {
             OldWidth = oldWidth;
@@ -10,12 +14,12 @@
             NewHeight = newHeight;
         }
 
-        public int OldWidth { get; }
+        public int OldWidth { get; internal set; }
 
-        public int OldHeight { get; }
+        public int OldHeight { get; internal set; }
 
-        public int NewWidth { get; }
+        public int NewWidth { get; internal set; }
 
-        public int NewHeight { get; }
+        public int NewHeight { get; internal set; }
     }
 }

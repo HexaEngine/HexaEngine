@@ -4,17 +4,10 @@
 
     public class MouseButtonEventArgs : EventArgs
     {
-        public MouseButtonEventArgs(MouseButton mouseButton, KeyState keyState, int clicks)
-        {
-            MouseButton = mouseButton;
-            KeyState = keyState;
-            Clicks = clicks;
-        }
+        public MouseButton MouseButton { get; internal set; }
 
-        public MouseButton MouseButton { get; }
+        public KeyState KeyState { get; internal set; }
 
-        public KeyState KeyState { get; }
-
-        public int Clicks { get; }
+        public int Clicks { get; internal set; }
     }
 }

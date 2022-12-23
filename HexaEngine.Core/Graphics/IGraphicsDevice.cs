@@ -70,6 +70,10 @@
 
         public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct;
 
+        unsafe IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged;
+
+        unsafe IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
+
         public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description);
 
         public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description);
@@ -201,16 +205,27 @@
         IQuery CreateQuery(Query type);
 
         IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data);
+
         ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader);
+
         SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader);
+
         IGraphicsContext CreateDeferredContext();
+
         ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+
         ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+
         ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+
         IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description);
+
         Task<(Blob?, Blob?)> CompileAsync(string code, ShaderMacro[] macros, string entry, string sourceName, string profile);
+
         Task<(Blob?, Blob?)> CompileAsync(string code, string entry, string sourceName, string profile);
+
         Task<(Blob?, Blob?)> CompileFromFileAsync(string path, string entry, string profile);
+
         Task<(Blob?, Blob?)> CompileFromFileAsync(string path, ShaderMacro[] macros, string entry, string profile);
     }
 }

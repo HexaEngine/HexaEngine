@@ -7,7 +7,9 @@
     using HexaEngine.Scenes;
     using ImGuiNET;
     using ImGuizmoNET;
+    using Silk.NET.DXGI;
     using System;
+    using System.Globalization;
     using System.Numerics;
 
     public class Framebuffer
@@ -29,7 +31,7 @@
 
         public static bool Fullframe;
 
-        private static readonly Profiler fpsProfiler = new("latency", () => Time.Delta, x => $"{x * 1000:n4}ms\n({1000 / Time.Delta:n0}fps)", 100);
+        private static readonly Profiler fpsProfiler = new("latency", () => 1000 / Time.Delta, (x, sb) => { }, 100);
 
         public Framebuffer(IGraphicsDevice device)
         {
@@ -112,7 +114,7 @@
                 }
 
                 int cameraIndex = scene.ActiveCamera;
-                if (ImGui.Combo("Current Camera", ref cameraIndex, scene.Cameras.Select(x => x.Name).ToArray(), scene.Cameras.Count))
+                if (ImGui.Combo("Current Camera", ref cameraIndex, scene.CameraNames, scene.Cameras.Count))
                 {
                     scene.ActiveCamera = cameraIndex;
                 }

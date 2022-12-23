@@ -14,6 +14,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
     using Format = Core.Graphics.Format;
     using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
@@ -204,6 +205,25 @@
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(values, description);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
+        {
+            uint size = (uint)(sizeof(T) * count);
+            ID3D11Buffer* buffer;
+            description.ByteWidth = (int)size;
+            BufferDesc desc = Helper.Convert(description);
+            var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
+            Device->CreateBuffer(&desc, &data, &buffer).ThrowHResult();
+            return new D3D11Buffer(buffer, description);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        {
+            BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
+            return CreateBuffer(values, count, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

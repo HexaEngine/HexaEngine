@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Resources
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
 
     public class ModelInstance
     {
+        public readonly string Name;
         public readonly int Id;
         public readonly ModelInstanceType Type;
         public readonly Mesh Mesh;
@@ -22,6 +22,7 @@
 
         public ModelInstance(int id, ModelInstanceType type, Transform node)
         {
+            Name = $"{type}:{id}";
             Id = id;
             Type = type;
             Mesh = type.Mesh;
@@ -30,7 +31,7 @@
 
         public override string ToString()
         {
-            return $"{Type}:{Id}";
+            return Name;
         }
     }
 }

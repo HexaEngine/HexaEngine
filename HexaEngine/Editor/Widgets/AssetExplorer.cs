@@ -1,18 +1,16 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.IO;
-    using HexaEngine.Scenes;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     public class AssetExplorer : ImGuiWindow
     {
         private DirectoryInfo currentDir;
+        private DirectoryInfo? parentDir;
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         private readonly Stack<string> backHistory = new();
@@ -36,6 +34,7 @@
             IsShown = true;
             Refresh();
             currentDir = new(CurrentFolder);
+            parentDir = currentDir?.Parent;
         }
 
         public string? SelectedFile { get; private set; }
@@ -45,6 +44,7 @@
         public void Refresh()
         {
             currentDir = new(CurrentFolder);
+            parentDir = currentDir?.Parent;
             files.Clear();
             dirs.Clear();
 
@@ -218,11 +218,11 @@
                     ImGui.EndPopup();
                 }
 
-                if (currentDir.Parent != null && CurrentFolder != Paths.CurrentProjectFolder)
+                if (parentDir != null && CurrentFolder != Paths.CurrentProjectFolder)
                 {
                     ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
                     if (ImGui.Selectable("../", false, ImGuiSelectableFlags.DontClosePopups))
-                        SetFolder(currentDir.Parent.FullName);
+                        SetFolder(parentDir.FullName);
 
                     if (ImGui.BeginDragDropTarget())
                     {

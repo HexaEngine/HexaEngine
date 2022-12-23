@@ -31,7 +31,7 @@ namespace HexaEngine.Editor
         private static IBuffer vb;
         private static IBuffer ib;
         private static IBuffer cb;
-        private static CBView view = new();
+        private static CBView* view;
         private static int vbCapacity = 1000;
         private static int ibCapacity = 1000;
 
@@ -148,6 +148,8 @@ float4 main(PixelInputType pixel) : SV_TARGET
             vb = device.CreateBuffer(new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             ib = device.CreateBuffer(new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             cb = device.CreateBuffer(new BufferDescription(sizeof(CBView), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+
+            view = Alloc<CBView>();
         }
 
         public static void Dispose()
@@ -160,6 +162,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
             vb.Dispose();
             ib.Dispose();
             cb.Dispose();
+            Free(view);
         }
 
         public static void Render(Camera camera, Viewport viewport)
@@ -251,8 +254,8 @@ float4 main(PixelInputType pixel) : SV_TARGET
             indexCount = 0;
 
             {
-                view.View = Matrix4x4.Transpose(camera.Transform.View);
-                view.Proj = Matrix4x4.Transpose(camera.Transform.Projection);
+                view->View = Matrix4x4.Transpose(camera.Transform.View);
+                view->Proj = Matrix4x4.Transpose(camera.Transform.Projection);
 
                 context.SetRasterizerState(rs);
                 context.SetDepthStencilState(ds);
@@ -269,8 +272,8 @@ float4 main(PixelInputType pixel) : SV_TARGET
                 for (int i = 0; i < drawqueue.Count; i++)
                 {
                     var cmd = cache[drawqueue[i]];
-                    view.World = Matrix4x4.Transpose(cmd.Transform);
-                    context.Write(cb, view);
+                    view->World = Matrix4x4.Transpose(cmd.Transform);
+                    context.Write(cb, view, sizeof(CBView));
                     context.SetPrimitiveTopology(cmd.Topology);
                     context.DrawIndexedInstanced(cmd.nIndices, 1, ioffset, voffset, 0);
                     voffset += cmd.nVertices;

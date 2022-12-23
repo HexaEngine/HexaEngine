@@ -19,11 +19,13 @@
         private int instanceCapacity;
         private int idCounter;
 
+        public readonly string Name;
         public readonly Mesh Mesh;
         public readonly Material Material;
 
         public ModelInstanceType(IGraphicsDevice device, Mesh mesh, Material material)
         {
+            Name = $"{mesh},{material}";
             Mesh = mesh;
             Material = material;
             instanceCapacity = CapacityStepSize;
@@ -169,7 +171,7 @@
 
         public override string ToString()
         {
-            return $"{Mesh},{Material}";
+            return Name;
         }
     }
 }

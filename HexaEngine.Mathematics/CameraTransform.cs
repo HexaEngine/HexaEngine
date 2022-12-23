@@ -13,7 +13,7 @@
         protected float fov = 90;
         protected float near = 0.01f;
         protected float far = 100f;
-        protected BoundingFrustum frustum;
+        protected BoundingFrustum frustum = new();
 
         public CameraTransform()
         {
@@ -110,7 +110,7 @@
                     break;
             }
             Matrix4x4.Invert(projection, out projectionInv);
-            frustum = new(view * projection);
+            frustum.Initialize(view * projection);
             OnUpdated();
         }
     }

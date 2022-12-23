@@ -2,10 +2,13 @@
 {
     using HexaEngine.Mathematics;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public interface IGraphicsContext : IDeviceChild
     {
         public IGraphicsDevice Device { get; }
+
+        void CopyResource(IResource dst, IResource src);
 
         unsafe void Write(IBuffer buffer, void* value, int size);
 
@@ -187,13 +190,9 @@
 
         void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
 
-        void CSSetUnorderedAccessViews(int startSlot, int count, IUnorderedAccessView[] views, int uavInitialCounts = -1);
+        unsafe void CSSetUnorderedAccessViews(uint offset, void** views, uint count, int uavInitialCounts = -1);
 
-        void CSSetUnorderedAccessViews(int startSlot, IUnorderedAccessView[] views, int uavInitialCounts = -1);
-
-        void CSSetUnorderedAccessViews(IUnorderedAccessView[] views, int uavInitialCounts = -1);
-
-        void CSSetUnorderedAccessViews(IUnorderedAccessView[] views);
+        unsafe void CSSetUnorderedAccessViews(void** views, uint count, int uavInitialCounts = -1);
 
         unsafe void SetRenderTargets(void** views, uint count, IDepthStencilView? depthStencilView);
 

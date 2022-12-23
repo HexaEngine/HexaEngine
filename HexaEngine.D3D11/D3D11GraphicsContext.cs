@@ -496,10 +496,17 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views)
+        public void CSSetUnorderedAccessViews(uint offset, void** views, uint count, int uavInitialCounts = -1)
         {
-            uint pUAVInitialCounts = unchecked((uint)-1);
-            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
+            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews(offset, count, (ID3D11UnorderedAccessView**)views, &pUAVInitialCounts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetUnorderedAccessViews(void** views, uint count, int uavInitialCounts = -1)
+        {
+            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
+            DeviceContext->CSSetUnorderedAccessViews(0, count, (ID3D11UnorderedAccessView**)views, &pUAVInitialCounts);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -826,6 +833,11 @@
         public void CSSetSamplers(void** samplers, uint count, int slot)
         {
             DeviceContext->CSSetSamplers((uint)slot, count, (ID3D11SamplerState**)samplers);
+        }
+
+        public void CopyResource(IResource dst, IResource src)
+        {
+            DeviceContext->CopyResource((ID3D11Resource*)dst.NativePointer, (ID3D11Resource*)src.NativePointer);
         }
     }
 }

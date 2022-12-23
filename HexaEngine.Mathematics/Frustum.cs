@@ -12,6 +12,12 @@
         private readonly Plane[] _planes;
         private readonly Vector3[] _corners;
 
+        public BoundingFrustum()
+        {
+            _planes = new Plane[6];
+            _corners = new Vector3[CornerCount];
+        }
+
         public BoundingFrustum(Matrix4x4 viewProjection)
         {
             _planes = new Plane[]
@@ -38,7 +44,27 @@
         }
 
         public IReadOnlyList<Vector3> Corners => _corners;
+
         public IReadOnlyList<Plane> Planes => _planes;
+
+        public void Initialize(Matrix4x4 viewProjection)
+        {
+            _planes[0] = Plane.Normalize(new Plane(-viewProjection.M13, -viewProjection.M23, -viewProjection.M33, -viewProjection.M43));
+            _planes[1] = Plane.Normalize(new Plane(viewProjection.M13 - viewProjection.M14, viewProjection.M23 - viewProjection.M24, viewProjection.M33 - viewProjection.M34, viewProjection.M43 - viewProjection.M44));
+            _planes[2] = Plane.Normalize(new Plane(-viewProjection.M14 - viewProjection.M11, -viewProjection.M24 - viewProjection.M21, -viewProjection.M34 - viewProjection.M31, -viewProjection.M44 - viewProjection.M41));
+            _planes[3] = Plane.Normalize(new Plane(viewProjection.M11 - viewProjection.M14, viewProjection.M21 - viewProjection.M24, viewProjection.M31 - viewProjection.M34, viewProjection.M41 - viewProjection.M44));
+            _planes[4] = Plane.Normalize(new Plane(viewProjection.M12 - viewProjection.M14, viewProjection.M22 - viewProjection.M24, viewProjection.M32 - viewProjection.M34, viewProjection.M42 - viewProjection.M44));
+            _planes[5] = Plane.Normalize(new Plane(-viewProjection.M14 - viewProjection.M12, -viewProjection.M24 - viewProjection.M22, -viewProjection.M34 - viewProjection.M32, -viewProjection.M44 - viewProjection.M42));
+
+            _corners[0] = IntersectionPoint(_planes[0], _planes[2], _planes[4]);
+            _corners[1] = IntersectionPoint(_planes[0], _planes[3], _planes[4]);
+            _corners[2] = IntersectionPoint(_planes[0], _planes[3], _planes[5]);
+            _corners[3] = IntersectionPoint(_planes[0], _planes[2], _planes[5]);
+            _corners[4] = IntersectionPoint(_planes[1], _planes[2], _planes[4]);
+            _corners[5] = IntersectionPoint(_planes[1], _planes[3], _planes[4]);
+            _corners[6] = IntersectionPoint(_planes[1], _planes[3], _planes[5]);
+            _corners[7] = IntersectionPoint(_planes[1], _planes[2], _planes[5]);
+        }
 
         /// <summary>
         /// Checks whether the current <see cref="BoundingFrustum"/> intersects with a specified <see cref="BoundingBox"/>.

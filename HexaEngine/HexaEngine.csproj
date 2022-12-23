@@ -40,16 +40,19 @@
     <Compile Remove="assets\shared\shaders\deferred\toon\**" />
     <Compile Remove="Physics\Actors\**" />
     <Compile Remove="Physics\Shapes\**" />
+    <Compile Remove="Pipelines\Compute\**" />
     <Compile Remove="Windows\Events\**" />
     <EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
     <EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
     <EmbeddedResource Remove="Physics\Actors\**" />
     <EmbeddedResource Remove="Physics\Shapes\**" />
+    <EmbeddedResource Remove="Pipelines\Compute\**" />
     <EmbeddedResource Remove="Windows\Events\**" />
     <None Remove="assets\shared\shaders\deferred\phong\**" />
     <None Remove="assets\shared\shaders\deferred\toon\**" />
     <None Remove="Physics\Actors\**" />
     <None Remove="Physics\Shapes\**" />
+    <None Remove="Pipelines\Compute\**" />
     <None Remove="Windows\Events\**" />
   </ItemGroup>
 
@@ -103,6 +106,12 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\effects\bokeh\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\effects\copy\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\effects\copy\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\effects\dof\ps.hlsl">
@@ -418,12 +427,6 @@
 	  <ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Projects\HexaEngine.Projects.csproj" />
 	  <ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
-	</ItemGroup>
-
-
-
-	<ItemGroup>
-	  <Folder Include="Pipelines\Compute\" />
 	</ItemGroup>
 
 

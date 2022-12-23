@@ -25,6 +25,27 @@
     public unsafe class SdlWindow
     {
         private readonly Sdl Sdl = Sdl.GetApi();
+        private readonly ShownEventArgs shownEventArgs = new();
+        private readonly HiddenEventArgs hiddenEventArgs = new();
+        private readonly ExposedEventArgs exposedEventArgs = new();
+        private readonly MovedEventArgs movedEventArgs = new();
+        private readonly ResizedEventArgs resizedEventArgs = new();
+        private readonly SizeChangedEventArgs sizeChangedEventArgs = new();
+        private readonly MinimizedEventArgs minimizedEventArgs = new();
+        private readonly MaximizedEventArgs maximizedEventArgs = new();
+        private readonly RestoredEventArgs restoredEventArgs = new();
+        private readonly EnterEventArgs enterEventArgs = new();
+        private readonly LeaveEventArgs leaveEventArgs = new();
+        private readonly FocusGainedEventArgs focusGainedEventArgs = new();
+        private readonly FocusLostEventArgs focusLostEventArgs = new();
+        private readonly CloseEventArgs closeEventArgs = new();
+        private readonly TakeFocusEventArgs takeFocusEventArgs = new();
+        private readonly HitTestEventArgs hitTestEventArgs = new();
+        private readonly KeyboardEventArgs keyboardEventArgs = new();
+        private readonly KeyboardCharEventArgs keyboardCharEventArgs = new();
+        private readonly MouseButtonEventArgs mouseButtonEventArgs = new();
+        private readonly MouseMotionEventArgs mouseMotionEventArgs = new();
+        private readonly MouseWheelEventArgs mouseWheelEventArgs = new();
 
         private Window* window;
         private bool created;
@@ -361,9 +382,9 @@
 
                 case WindowEventID.Shown:
                     {
-                        ShownEventArgs args = new();
-                        OnShown(args);
-                        if (args.Handled)
+                        shownEventArgs.Handled = false;
+                        OnShown(shownEventArgs);
+                        if (shownEventArgs.Handled)
                             Sdl.HideWindow(window);
                     }
                     break;
@@ -372,17 +393,18 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Hidden;
-                        HiddenEventArgs args = new(oldState, WindowState.Hidden);
-                        OnHidden(args);
-                        if (args.Handled)
+                        hiddenEventArgs.OldState = oldState;
+                        hiddenEventArgs.NewState = WindowState.Hidden;
+                        hiddenEventArgs.Handled = false;
+                        OnHidden(hiddenEventArgs);
+                        if (hiddenEventArgs.Handled)
                             Sdl.ShowWindow(window);
                     }
                     break;
 
                 case WindowEventID.Exposed:
                     {
-                        ExposedEventArgs args = new();
-                        OnExposed(args);
+                        OnExposed(exposedEventArgs);
                     }
                     break;
 
@@ -392,9 +414,13 @@
                         int yold = y;
                         x = evnt.Data1;
                         y = evnt.Data2;
-                        MovedEventArgs args = new(xold, yold, x, y);
-                        OnMoved(args);
-                        if (args.Handled)
+                        movedEventArgs.OldX = xold;
+                        movedEventArgs.OldY = yold;
+                        movedEventArgs.NewX = x;
+                        movedEventArgs.NewY = y;
+                        movedEventArgs.Handled = false;
+                        OnMoved(movedEventArgs);
+                        if (movedEventArgs.Handled)
                             Sdl.SetWindowPosition(window, xold, yold);
                     }
                     break;
@@ -406,17 +432,20 @@
                         width = evnt.Data1;
                         height = evnt.Data2;
                         Viewport = new(width, height);
-                        ResizedEventArgs args = new(widthOld, heightOld, width, height);
-                        OnResized(args);
-                        if (args.Handled)
+                        resizedEventArgs.OldWidth = widthOld;
+                        resizedEventArgs.OldWidth = heightOld;
+                        resizedEventArgs.NewWidth = width;
+                        resizedEventArgs.NewHeight = height;
+                        resizedEventArgs.Handled = false;
+                        OnResized(resizedEventArgs);
+                        if (resizedEventArgs.Handled)
                             Sdl.SetWindowSize(window, widthOld, heightOld);
                     }
                     break;
 
                 case WindowEventID.SizeChanged:
                     {
-                        SizeChangedEventArgs args = new();
-                        OnSizeChanged(args);
+                        OnSizeChanged(sizeChangedEventArgs);
                     }
                     break;
 
@@ -424,9 +453,11 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Minimized;
-                        MinimizedEventArgs args = new(oldState, WindowState.Minimized);
-                        OnMinimized(args);
-                        if (args.Handled)
+                        minimizedEventArgs.OldState = oldState;
+                        minimizedEventArgs.NewState = WindowState.Minimized;
+                        minimizedEventArgs.Handled = false;
+                        OnMinimized(minimizedEventArgs);
+                        if (minimizedEventArgs.Handled)
                             State = oldState;
                     }
                     break;
@@ -435,9 +466,11 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Maximized;
-                        MaximizedEventArgs args = new(oldState, WindowState.Maximized);
-                        OnMaximized(args);
-                        if (args.Handled)
+                        maximizedEventArgs.OldState = oldState;
+                        maximizedEventArgs.NewState = WindowState.Maximized;
+                        maximizedEventArgs.Handled = false;
+                        OnMaximized(maximizedEventArgs);
+                        if (maximizedEventArgs.Handled)
                             State = oldState;
                     }
                     break;
@@ -446,9 +479,11 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Normal;
-                        RestoredEventArgs args = new(oldState, WindowState.Normal);
-                        OnRestored(args);
-                        if (args.Handled)
+                        restoredEventArgs.OldState = oldState;
+                        restoredEventArgs.NewState = WindowState.Normal;
+                        restoredEventArgs.Handled = false;
+                        OnRestored(restoredEventArgs);
+                        if (restoredEventArgs.Handled)
                             State = oldState;
                     }
                     break;
@@ -456,57 +491,52 @@
                 case WindowEventID.Enter:
                     {
                         hovering = true;
-                        EnterEventArgs args = new();
-                        OnEnter(args);
+                        OnEnter(enterEventArgs);
                     }
                     break;
 
                 case WindowEventID.Leave:
                     {
                         hovering = false;
-                        LeaveEventArgs args = new();
-                        OnLeave(args);
+                        OnLeave(leaveEventArgs);
                     }
                     break;
 
                 case WindowEventID.FocusGained:
                     {
                         focused = true;
-                        FocusGainedEventArgs args = new();
-                        OnFocusGained(args);
+                        OnFocusGained(focusGainedEventArgs);
                     }
                     break;
 
                 case WindowEventID.FocusLost:
                     {
                         focused = false;
-                        FocusLostEventArgs args = new();
-                        OnFocusLost(args);
+                        OnFocusLost(focusLostEventArgs);
                     }
                     break;
 
                 case WindowEventID.Close:
                     {
-                        CloseEventArgs args = new();
-                        OnClose(args);
-                        if (!args.Handled)
+                        closeEventArgs.Handled = false;
+                        OnClose(closeEventArgs);
+                        if (!closeEventArgs.Handled)
                             Close();
                     }
                     break;
 
                 case WindowEventID.TakeFocus:
                     {
-                        TakeFocusEventArgs args = new();
-                        OnTakeFocus(args);
-                        if (!args.Handled)
+                        takeFocusEventArgs.Handled = false;
+                        OnTakeFocus(takeFocusEventArgs);
+                        if (!takeFocusEventArgs.Handled)
                             Sdl.SetWindowInputFocus(window);
                     }
                     break;
 
                 case WindowEventID.HitTest:
                     {
-                        HitTestEventArgs args = new();
-                        OnHitTest(args);
+                        OnHitTest(hitTestEventArgs);
                     }
                     break;
             }
@@ -516,36 +546,44 @@
         {
             KeyState state = (KeyState)evnt.State;
             KeyCode keyCode = (KeyCode)Sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
-            KeyboardEventArgs args = new(keyCode, state);
-            OnKeyboardInput(args);
+            keyboardEventArgs.KeyState = state;
+            keyboardEventArgs.KeyCode = keyCode;
+            OnKeyboardInput(keyboardEventArgs);
         }
 
         internal void ProcessInputText(TextInputEvent evnt)
         {
-            KeyboardCharEventArgs args = new(Encoding.UTF8.GetString(evnt.Text, 1)[0]);
-            OnKeyboardCharInput(args);
+            keyboardCharEventArgs.Char = (char)evnt.Text[0];
+            OnKeyboardCharInput(keyboardCharEventArgs);
         }
 
         internal void ProcessInputMouse(MouseButtonEvent evnt)
         {
             KeyState state = (KeyState)evnt.State;
             MouseButton button = (MouseButton)evnt.Button;
-            MouseButtonEventArgs args = new(button, state, evnt.Clicks);
-            OnMouseButtonInput(args);
+            mouseButtonEventArgs.MouseButton = button;
+            mouseButtonEventArgs.KeyState = state;
+            mouseButtonEventArgs.Clicks = evnt.Clicks;
+            OnMouseButtonInput(mouseButtonEventArgs);
         }
 
         internal void ProcessInputMouse(MouseMotionEvent evnt)
         {
             if (lockCursor)
                 Sdl.WarpMouseInWindow(window, 0, 0);
-            MouseMotionEventArgs args = new(evnt.X, evnt.Y, evnt.Xrel, evnt.Yrel);
-            OnMouseMotionInput(args);
+            mouseMotionEventArgs.X = evnt.X;
+            mouseMotionEventArgs.Y = evnt.Y;
+            mouseMotionEventArgs.RelX = evnt.Xrel;
+            mouseMotionEventArgs.RelY = evnt.Yrel;
+            OnMouseMotionInput(mouseMotionEventArgs);
         }
 
         internal void ProcessInputMouse(MouseWheelEvent evnt)
         {
-            MouseWheelEventArgs args = new(evnt.X, evnt.Y, (MouseWheelDirection)evnt.Direction);
-            OnMouseWheelInput(args);
+            mouseWheelEventArgs.X = evnt.X;
+            mouseWheelEventArgs.Y = evnt.Y;
+            mouseWheelEventArgs.Direction = (MouseWheelDirection)evnt.Direction;
+            OnMouseWheelInput(mouseWheelEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

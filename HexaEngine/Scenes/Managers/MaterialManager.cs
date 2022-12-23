@@ -2,11 +2,15 @@
 {
     using HexaEngine.Objects;
     using HexaEngine.Resources;
+    using System;
     using System.Collections.Generic;
 
     public static class MaterialManager
     {
         private static readonly List<MaterialDesc> materials = new();
+        private static string[] names = Array.Empty<string>();
+
+        public static string[] Names => names;
 
         public static IReadOnlyList<MaterialDesc> Materials => materials;
 
@@ -24,7 +28,27 @@
         {
             lock (materials)
             {
-                materials.Add(desc);
+                if (names.Contains(desc.Name))
+                {
+                    for (int i = 0; i < materials.Count; i++)
+                    {
+                        if (materials[i].Name == desc.Name)
+                        {
+                            materials[i] = desc;
+                        }
+                    }
+                }
+                else
+                {
+                    materials.Add(desc);
+                    if (names.Length != materials.Capacity)
+                    {
+                        var old = names;
+                        names = new string[materials.Capacity];
+                        Array.Copy(old, names, old.Length);
+                    }
+                    names[materials.Count - 1] = desc.Name;
+                }
             }
         }
 
@@ -48,7 +72,9 @@
         {
             lock (materials)
             {
-                materials.Remove(desc);
+                var index = materials.IndexOf(desc);
+                materials.RemoveAt(index);
+                Array.Copy(names, index + 1, names, index, materials.Count - index);
             }
         }
     }
