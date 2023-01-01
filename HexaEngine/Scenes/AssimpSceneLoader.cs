@@ -325,6 +325,10 @@
                     Vector3 nor = msh->MNormals[j];
                     Vector3 tex = default;
                     Vector3 tan = default;
+                    if (j == 0)
+                    {
+                        min = max = pos;
+                    }
 
                     if (msh->MTextureCoords[0] != null)
                         tex = msh->MTextureCoords[0][j];
@@ -360,7 +364,12 @@
                 }
 
                 BoundingBox box = new(min, max);
-                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, Vertices = vertices, BoundingBox = box, Bones = bones, Animature = animature };
+
+                Vector3 center = box.Center;
+                float radius = box.Extent.Length();
+                BoundingSphere sphere = new(center, radius);
+
+                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, Vertices = vertices, BoundingBox = box, BoundingSphere = sphere, Bones = bones, Animature = animature };
                 models[i] = new(meshes[i], materials[(int)msh->MMaterialIndex]);
 
                 meshesT.Add(msh, meshes[i]);

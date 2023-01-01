@@ -2081,9 +2081,9 @@ namespace ImGuiNET
                 native_label[native_label_offset] = 0;
             }
             else { native_label = null; }
-            int* items_byteCounts = stackalloc int[items.Length];
+            int* items_byteCounts = stackalloc int[items_count];
             int items_byteCount = 0;
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < items_count; i++)
             {
                 string s = items[i];
                 items_byteCounts[i] = Encoding.UTF8.GetByteCount(s);
@@ -2091,7 +2091,7 @@ namespace ImGuiNET
             }
             byte* native_items_data = stackalloc byte[items_byteCount];
             int offset = 0;
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < items_count; i++)
             {
                 string s = items[i];
                 fixed (char* sPtr = s)
@@ -2101,9 +2101,9 @@ namespace ImGuiNET
                     offset += 1;
                 }
             }
-            byte** native_items = stackalloc byte*[items.Length];
+            byte** native_items = stackalloc byte*[items_count];
             offset = 0;
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < items_count; i++)
             {
                 native_items[i] = &native_items_data[offset];
                 offset += items_byteCounts[i] + 1;

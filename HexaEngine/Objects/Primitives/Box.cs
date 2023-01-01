@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using System.Numerics;
 
     public class Cube : Primitive<Vector3>
@@ -12,7 +13,7 @@
 
         protected override (VertexBuffer<Vector3>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
         {
-            VertexBuffer<Vector3> vertexBuffer = new(device, new Vector3[]
+            VertexBuffer<Vector3> vertexBuffer = new(device, CpuAccessFlags.None, new Vector3[]
             {
                 new Vector3(-1.0f, 1.0f, -1.0f),
                 new Vector3(-1.0f, -1.0f, -1.0f),
@@ -24,7 +25,7 @@
                 new Vector3(1.0f, 1.0f, 1.0f)
             });
 
-            IndexBuffer indexBuffer = new(device, new int[]
+            IndexBuffer indexBuffer = new(device, CpuAccessFlags.None, new uint[]
             {
                 0,1,2,2,3,0,
                 4,1,0,0,5,4,

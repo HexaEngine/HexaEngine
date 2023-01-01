@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using System.Numerics;
@@ -27,10 +28,10 @@
             // Create the vertex array.
             VertexPositionColor[] vertices = new VertexPositionColor[VertexCount];
             // Create the index array.
-            int[] indices = new int[IndexCount];
+            uint[] indices = new uint[IndexCount];
 
             // Initialize the index to the vertex array.
-            int index = 0;
+            uint index = 0;
 
             // Load the vertex and index arrays with the terrain data.
             for (int j = 0; j < height - 1; j++)
@@ -103,7 +104,7 @@
                 }
             }
 
-            return (new VertexBuffer<VertexPositionColor>(device, vertices), new IndexBuffer(device, indices), null);
+            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer(device, CpuAccessFlags.None, indices), null);
         }
 
         public static (VertexPositionColor[], int[]) GenerateGrid()

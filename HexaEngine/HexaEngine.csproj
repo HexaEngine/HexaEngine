@@ -72,10 +72,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="assets\shared\shaders\compute\copy\drawArgs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\compute\hiz\shader - Copy.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shared\shaders\compute\lumaAvg\shader.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\compute\luma\shader.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\compute\occlusion\sort.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\compute\occlusion\occlusion.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\deferred\prepass2\defs.hlsl">
@@ -112,6 +124,9 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\effects\copy\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\compute\hiz\shader.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	  <None Update="assets\shared\shaders\effects\dof\ps.hlsl">

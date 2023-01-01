@@ -5,9 +5,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Logging;
     using HexaEngine.Editor;
-    using HexaEngine.Graphics;
     using HexaEngine.Plugins;
-    using HexaEngine.Scenes;
     using System.Diagnostics;
     using Window = HexaEngine.Windows.Window;
 

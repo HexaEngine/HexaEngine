@@ -8,7 +8,7 @@
 
     public interface IPrimitive : IDisposable
     {
-        void Bind(IGraphicsContext context, out int vertexCount, out int indexCount, out int instanceCount);
+        void Bind(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount);
 
         void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport);
     }

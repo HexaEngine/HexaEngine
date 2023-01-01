@@ -1,8 +1,11 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
+    using HexaEngine.Meshes;
     using System.Collections.Concurrent;
     using System.Numerics;
 
@@ -11,72 +14,46 @@
         private readonly SemaphoreSlim semaphore = new(1);
         private readonly List<ModelInstance> instances = new();
         private readonly ConcurrentQueue<ModelInstance> addQueue = new();
-        private Matrix4x4[] transforms = Array.Empty<Matrix4x4>();
         private bool disposedValue;
-        private const int CapacityStepSize = 64;
-        private IBuffer? ISB;
-        private int visibleCount;
-        private int instanceCapacity;
+        private readonly DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argBuffer;
+        private readonly StructuredUavBuffer<Matrix4x4> instanceBuffer;
+        private readonly StructuredUavBuffer<uint> instanceOffsets;
+        private readonly StructuredBuffer<Matrix4x4> frustumInstanceBuffer;
+        private readonly ConstantBuffer<uint> frustumIdBuffer;
+        private readonly ConstantBuffer<uint> idBuffer;
+        private uint argBufferOffset;
         private int idCounter;
 
         public readonly string Name;
         public readonly Mesh Mesh;
         public readonly Material Material;
 
-        public ModelInstanceType(IGraphicsDevice device, Mesh mesh, Material material)
+        public unsafe ModelInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, Mesh mesh, Material material)
         {
             Name = $"{mesh},{material}";
             Mesh = mesh;
             Material = material;
-            instanceCapacity = CapacityStepSize;
-            transforms = new Matrix4x4[instanceCapacity];
-            ISB = device.CreateBuffer(transforms, BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            argBuffer = argsBuffer;
+            this.instanceBuffer = instanceBuffer;
+            this.instanceOffsets = instanceOffsets;
+            frustumInstanceBuffer = new(device, CpuAccessFlags.Write);
+            frustumIdBuffer = new(device, 4, CpuAccessFlags.None);
+            idBuffer = new(device, 4, CpuAccessFlags.Write);
         }
+
+        public int VertexCount => Mesh.VertexCount;
+
+        public int IndexCount => Mesh.IndexCount;
+
+        public int Visible => (int)frustumInstanceBuffer.Count;
 
         public int Count => instances.Count;
 
-        public int Capacity => instanceCapacity;
-
         public bool IsEmpty => instances.Count == 0;
 
-        public void EnsureCapacity(IGraphicsDevice device, int capacity)
-        {
-            if (capacity == 0) return;
-            if (instanceCapacity < capacity)
-            {
-                var newCapacity = instanceCapacity;
-                while (newCapacity < capacity)
-                {
-                    newCapacity += CapacityStepSize;
-                }
+        public IBuffer ArgBuffer => argBuffer.Buffer;
 
-                var before = ISB;
-                ISB = null;
-                before?.Dispose();
-
-                transforms = new Matrix4x4[newCapacity];
-                ISB = device.CreateBuffer(transforms, BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                instanceCapacity = newCapacity;
-            }
-            else if (instanceCapacity > capacity && capacity > 0)
-            {
-                int currentStep = instanceCapacity / CapacityStepSize;
-                int capaStep = (int)Math.Ceiling(capacity / (float)CapacityStepSize);
-
-                if (capaStep < currentStep)
-                {
-                    var newCapacity = capaStep * CapacityStepSize;
-
-                    var before = ISB;
-                    ISB = null;
-                    before?.Dispose();
-
-                    transforms = new Matrix4x4[newCapacity];
-                    ISB = device.CreateBuffer(transforms, BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                    instanceCapacity = newCapacity;
-                }
-            }
-        }
+        public uint ArgBufferOffset => argBufferOffset;
 
         public ModelInstance CreateInstance(IGraphicsDevice device, Transform node)
         {
@@ -90,68 +67,113 @@
         {
             semaphore.Wait();
             instances.Remove(instance);
-            EnsureCapacity(device, instances.Count);
+
             semaphore.Release();
         }
 
-        public unsafe int UpdateInstanceBuffer(IGraphicsContext context, BoundingFrustum frustum)
+        public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum)
         {
-            if (ISB == null) return -1;
             int count = 0;
 
-            while (addQueue.TryDequeue(out var modelInstance))
+            while (addQueue.TryDequeue(out var instance))
             {
-                instances.Add(modelInstance);
-                EnsureCapacity(context.Device, instances.Count);
+                instances.Add(instance);
             }
+
+            idBuffer[0] = id;
+
+            argBufferOffset = (uint)(id * sizeof(DrawIndexedInstancedIndirectArgs));
+            frustumInstanceBuffer.ResetCounter();
 
             for (int i = 0; i < instances.Count; i++)
             {
                 var instance = instances[i];
-                if (instance.VisibilityTest(frustum))
+                instance.GetBoundingBox(out var aabb);
+                instance.GetBoundingSphere(out var sphere);
+                if (frustum.Intersects(sphere))
                 {
-                    transforms[count++] = instances[i].Transform;
+                    var world = Matrix4x4.Transpose(instance.Transform);
+                    buffer.Add(new(id, world, aabb.Min, aabb.Max, sphere.Center, sphere.Radius));
+                    frustumInstanceBuffer.Add(world);
                 }
             }
 
-            fixed (void* p = transforms)
-            {
-                context.Write(ISB, p, sizeof(Matrix4x4) * count);
-            }
-            visibleCount = count;
+            drawArgs.Add(new() { IndexCountPerInstance = (uint)Mesh.IndexCount });
+
             return count;
+        }
+
+        public unsafe bool BeginDrawNoOcculusion(IGraphicsContext context)
+        {
+            if (Mesh.VB == null) return false;
+            if (Mesh.IB == null) return false;
+            if (Material == null) return false;
+            if (semaphore.CurrentCount == 0) return false;
+            if (!Material.Bind(context)) return false;
+
+            frustumInstanceBuffer.Update(context);
+            idBuffer.Update(context);
+            context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(frustumInstanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(frustumIdBuffer.Buffer, 0);
+
+            return true;
+        }
+
+        public unsafe bool BeginDraw(IGraphicsContext context)
+        {
+            if (Mesh.VB == null) return false;
+            if (Mesh.IB == null) return false;
+            if (Material == null) return false;
+            if (semaphore.CurrentCount == 0) return false;
+            if (!Material.Bind(context)) return false;
+
+            frustumInstanceBuffer.Update(context);
+            idBuffer.Update(context);
+            context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+
+            return true;
         }
 
         public unsafe bool DrawAuto(IGraphicsContext context, int indexCount)
         {
-            if (visibleCount == 0) return false;
             if (Material == null) return false;
-            if (ISB == null) return false;
             if (semaphore.CurrentCount == 0) return false;
-
             if (!Material.Bind(context)) return false;
-            context.SetVertexBuffer(1, ISB, sizeof(Matrix4x4), 0);
-            context.DrawIndexedInstanced(indexCount, visibleCount, 0, 0, 0);
+
+            frustumInstanceBuffer.Update(context);
+            idBuffer.Update(context);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+            context.DrawIndexedInstancedIndirect(argBuffer.Buffer, argBufferOffset);
             return true;
         }
 
         public unsafe void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, int indexCount)
         {
-            if (visibleCount == 0) return;
             if (Material == null) return;
-            if (ISB == null) return;
             if (semaphore.CurrentCount == 0) return;
-
             if (!Material.Bind(context)) return;
-            context.SetVertexBuffer(1, ISB, sizeof(Matrix4x4), 0);
-            pipeline.DrawIndexedInstanced(context, viewport, indexCount, visibleCount, 0, 0, 0);
+
+            frustumInstanceBuffer.Update(context);
+            idBuffer.Update(context);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+            pipeline.DrawIndexedInstancedIndirect(context, viewport, argBuffer.Buffer, argBufferOffset);
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                ISB?.Dispose();
                 disposedValue = true;
             }
         }

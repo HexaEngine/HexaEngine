@@ -41,13 +41,17 @@
                 else
                 {
                     materials.Add(desc);
-                    if (names.Length != materials.Capacity)
+                    lock (names)
                     {
-                        var old = names;
-                        names = new string[materials.Capacity];
-                        Array.Copy(old, names, old.Length);
+                        if (names.Length != materials.Capacity)
+                        {
+                            var old = names;
+                            names = new string[materials.Capacity];
+                            Array.Fill(names, string.Empty);
+                            Array.Copy(old, names, old.Length);
+                        }
+                        names[materials.Count - 1] = desc.Name;
                     }
-                    names[materials.Count - 1] = desc.Name;
                 }
             }
         }
@@ -74,7 +78,10 @@
             {
                 var index = materials.IndexOf(desc);
                 materials.RemoveAt(index);
-                Array.Copy(names, index + 1, names, index, materials.Count - index);
+                lock (names)
+                {
+                    Array.Copy(names, index + 1, names, index, materials.Count - index);
+                }
             }
         }
     }

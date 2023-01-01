@@ -144,6 +144,11 @@
             return value._size;
         }
 
+        public static implicit operator nuint(PointerSize value)
+        {
+            return (nuint)value._size;
+        }
+
         public static unsafe implicit operator PointerSize(void* value)
         {
             return new PointerSize(value);

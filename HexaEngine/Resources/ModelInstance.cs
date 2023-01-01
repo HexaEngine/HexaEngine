@@ -15,6 +15,11 @@
             box = BoundingBox.Transform(Mesh.BoundingBox, Transform);
         }
 
+        public void GetBoundingSphere(out BoundingSphere box)
+        {
+            box = BoundingSphere.Transform(Mesh.BoundingSphere, Transform);
+        }
+
         public bool VisibilityTest(BoundingFrustum frustum)
         {
             return frustum.Intersects(BoundingBox.Transform(Mesh.BoundingBox, Transform));

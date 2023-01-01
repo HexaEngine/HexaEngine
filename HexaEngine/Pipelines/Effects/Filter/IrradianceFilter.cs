@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿namespace HexaEngine.Pipelines.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
@@ -7,15 +7,11 @@
     using System;
     using System.Numerics;
 
-    /// <summary>
-    /// Pre filter for the env map used in the brfd pipeline.
-    /// </summary>
-    public class PreFilterEffect : Effect
+    public class IrradianceFilter : Effect
     {
         private readonly IBuffer mvpBuffer;
-        private readonly IBuffer rghbuffer;
         private readonly ISamplerState sampler;
-        public IShaderResourceView? Source;
+        public IShaderResourceView Source;
 
         public struct CubeFaceCamera
         {
@@ -23,17 +19,9 @@
             public Matrix4x4 Projection;
         }
 
-        public struct RoughnessBuffer
-        {
-            public float Roughness;
-            public Vector3 Padd;
-        }
-
 #nullable disable
         private CubeFaceCamera[] Cameras;
 #nullable enable
-
-        public float Roughness;
 
         public void SetViewPoint(Vector3 camera)
         {
@@ -68,22 +56,21 @@
             }
         }
 
-        public PreFilterEffect(IGraphicsDevice device) : base(device, new()
+        public IrradianceFilter(IGraphicsDevice device) : base(device, new()
         {
-            VertexShader = "effects/prefilter/vs.hlsl",
-            PixelShader = "effects/prefilter/ps.hlsl"
+            VertexShader = "effects/irradiance/vs.hlsl",
+            PixelShader = "effects/irradiance/ps.hlsl"
         })
         {
             AutoSetTarget = false;
             SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            rghbuffer = device.CreateBuffer(new RoughnessBuffer(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write); //CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
             sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
             Mesh = new Cube(device);
             State = new()
             {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = new(CullMode.None, FillMode.Solid) { ScissorEnable = true },
+                DepthStencil = DepthStencilDescription.None,
+                Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Solid) { ScissorEnable = true },
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
             };
@@ -92,30 +79,42 @@
         public override void Draw(IGraphicsContext context)
         {
             if (Targets == null) return;
-            context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
+            int width = (int)Targets.Viewport.Width;
+            int height = (int)Targets.Viewport.Height;
+            int xTileSize = width / 8;
+            int yTileSize = height / 8;
+
             for (int i = 0; i < 6; i++)
             {
-                context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
-                Targets.ClearAndSetTarget(context, i);
-                context.VSSetConstantBuffer(mvpBuffer, 0);
-                context.PSSetConstantBuffer(rghbuffer, 0);
-                context.PSSetShaderResource(Source, 0);
-                context.PSSetSampler(sampler, 0);
-                base.DrawAuto(context, Targets.Viewport);
+                Targets.ClearTarget(context, i);
+
+                for (int x = 0; x < width; x += xTileSize)
+                {
+                    for (int y = 0; y < height; y += yTileSize)
+                    {
+                        context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
+                        context.SetScissorRect(x, y, x + xTileSize, y + yTileSize);
+                        context.VSSetConstantBuffer(mvpBuffer, 0);
+                        context.PSSetSampler(sampler, 0);
+                        context.PSSetShaderResource(Source, 0);
+                        Targets.SetTarget(context, i);
+                        base.DrawAuto(context, Targets.Viewport);
+                    }
+                    context.Flush();
+                }
             }
         }
 
-        public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xsize, int ysize)
+        public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xSize, int ySize)
         {
             if (Targets == null) return;
-            context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
-            context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
-            context.SetScissorRect(x, y, xsize + x, ysize + y);
-            Targets.SetTarget(context, i);
+
+            context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
+            context.SetScissorRect(x, y, x + xSize, y + ySize);
             context.VSSetConstantBuffer(mvpBuffer, 0);
-            context.PSSetConstantBuffer(rghbuffer, 0);
-            context.PSSetShaderResource(Source, 0);
             context.PSSetSampler(sampler, 0);
+            context.PSSetShaderResource(Source, 0);
+            Targets.SetTarget(context, i);
             base.DrawAuto(context, Targets.Viewport);
         }
     }

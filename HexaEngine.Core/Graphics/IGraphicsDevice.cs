@@ -140,75 +140,45 @@
 
         public void SaveTextureCube(ITexture2D texture, Format format, string path);
 
-        public IVertexShader CreateVertexShader(byte[] bytecode);
+        unsafe IVertexShader CreateVertexShader(Shader* shader);
 
-        public IHullShader CreateHullShader(byte[] bytecode);
+        unsafe IHullShader CreateHullShader(Shader* shader);
 
-        public IDomainShader CreateDomainShader(byte[] bytecode);
+        unsafe IDomainShader CreateDomainShader(Shader* shader);
 
-        public IGeometryShader CreateGeometryShader(byte[] bytecode);
+        unsafe IGeometryShader CreateGeometryShader(Shader* shader);
 
-        public IPixelShader CreatePixelShader(byte[] bytecode);
+        unsafe IPixelShader CreatePixelShader(Shader* shader);
 
-        public IComputeShader CreateComputeShader(byte[] bytecode);
+        unsafe IComputeShader CreateComputeShader(Shader* shader);
 
-        public IVertexShader CreateVertexShader(Span<byte> bytecode) => CreateVertexShader(bytecode.ToArray());
+        unsafe IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Shader* shader);
 
-        public IHullShader CreateHullShader(Span<byte> bytecode) => CreateHullShader(bytecode.ToArray());
+        unsafe IInputLayout CreateInputLayout(Shader* shader);
 
-        public IDomainShader CreateDomainShader(Span<byte> bytecode) => CreateDomainShader(bytecode.ToArray());
+        unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob);
 
-        public IGeometryShader CreateGeometryShader(Span<byte> bytecode) => CreateGeometryShader(bytecode.ToArray());
+        unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader);
 
-        public IPixelShader CreatePixelShader(Span<byte> bytecode) => CreatePixelShader(bytecode.ToArray());
+        unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob);
 
-        public IComputeShader CreateComputeShader(Span<byte> bytecode) => CreateComputeShader(bytecode.ToArray());
+        unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader);
 
-        public IVertexShader CreateVertexShader(Blob bytecode) => CreateVertexShader(bytecode.AsBytes());
+        unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob);
 
-        public IHullShader CreateHullShader(Blob bytecode) => CreateHullShader(bytecode.AsBytes());
+        unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader);
 
-        public IDomainShader CreateDomainShader(Blob bytecode) => CreateDomainShader(bytecode.AsBytes());
+        unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob);
 
-        public IGeometryShader CreateGeometryShader(Blob bytecode) => CreateGeometryShader(bytecode.AsBytes());
-
-        public IPixelShader CreatePixelShader(Blob bytecode) => CreatePixelShader(bytecode.AsBytes());
-
-        public IComputeShader CreateComputeShader(Blob bytecode) => CreateComputeShader(bytecode.AsBytes());
-
-        public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Blob vertexShaderBlob);
-
-        public IInputLayout CreateInputLayout(byte[] data);
-
-        public IInputLayout CreateInputLayout(Span<byte> data) => CreateInputLayout(data.ToArray());
-
-        public IInputLayout CreateInputLayout(Blob vBlob) => CreateInputLayout(vBlob.AsBytes());
-
-        public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob);
-
-        public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob);
-
-        public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob);
-
-        public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob);
-
-        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob);
-
-        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob);
-
-        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob);
-
-        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob);
+        unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader);
 
         IQuery CreateQuery();
 
         IQuery CreateQuery(Query type);
 
-        IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data);
+        unsafe ShaderInputBindDescription[] GetInputBindDescriptions(Shader* shader);
 
-        ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader);
-
-        SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader);
+        unsafe SignatureParameterDescription[] GetOutputBindDescriptions(Shader* shader);
 
         IGraphicsContext CreateDeferredContext();
 
@@ -227,5 +197,7 @@
         Task<(Blob?, Blob?)> CompileFromFileAsync(string path, string entry, string profile);
 
         Task<(Blob?, Blob?)> CompileFromFileAsync(string path, ShaderMacro[] macros, string entry, string profile);
+
+        IShaderResourceView CreateShaderResourceView(IBuffer buffer);
     }
 }

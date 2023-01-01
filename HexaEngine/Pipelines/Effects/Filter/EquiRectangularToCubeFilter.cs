@@ -1,8 +1,6 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
-namespace HexaEngine.Pipelines.Effects
+namespace HexaEngine.Pipelines.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
@@ -11,7 +9,7 @@ namespace HexaEngine.Pipelines.Effects
     using System;
     using System.Numerics;
 
-    public class EquiRectangularToCubeEffect : Effect
+    public class EquiRectangularToCubeFilter : Effect
     {
         private readonly IBuffer mvpBuffer;
         private readonly ISamplerState sampler;
@@ -58,7 +56,7 @@ namespace HexaEngine.Pipelines.Effects
             }
         }
 
-        public EquiRectangularToCubeEffect(IGraphicsDevice device) : base(device, new()
+        public EquiRectangularToCubeFilter(IGraphicsDevice device) : base(device, new()
         {
             VertexShader = "effects/equitocube/vs.hlsl",
             PixelShader = "effects/equitocube/ps.hlsl"

@@ -132,11 +132,11 @@
             });
             cbSSR = device.CreateBuffer(ssrParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             cbRot = new(device, CpuAccessFlags.Write); //device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            ssrBuffer = device.CreateTexture2D(Format.RGBA16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            ssrBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
             ssrSRV = device.CreateShaderResourceView(ssrBuffer);
 
-            ssrFramebuffer = device.CreateTexture2D(Format.RGBA16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            ssrFramebuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrFramebufferSRV = device.CreateShaderResourceView(ssrFramebuffer);
 
             blurPipeline = new(device, new()
@@ -145,7 +145,7 @@
                 PixelShader = "effects/blur/box.hlsl",
             });
             cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            blurBuffer = device.CreateTexture2D(Format.RGBA16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            blurBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             blurRTV = device.CreateRenderTargetView(blurBuffer, new(width, height));
             blurSRV = device.CreateShaderResourceView(blurBuffer);
 
@@ -192,19 +192,19 @@
             ssrBuffer.Dispose();
             ssrRTV.Dispose();
             ssrSRV.Dispose();
-            ssrBuffer = device.CreateTexture2D(Format.RGBA16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            ssrBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
             ssrSRV = device.CreateShaderResourceView(ssrBuffer);
 
             ssrFramebuffer.Dispose();
             ssrFramebufferSRV.Dispose();
-            ssrFramebuffer = device.CreateTexture2D(Format.RGBA16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            ssrFramebuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrFramebufferSRV = device.CreateShaderResourceView(ssrFramebuffer);
 
             blurBuffer.Dispose();
             blurRTV.Dispose();
             blurSRV.Dispose();
-            blurBuffer = device.CreateTexture2D(Format.RGBA16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            blurBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             blurRTV = device.CreateRenderTargetView(blurBuffer, new(width, height));
             blurSRV = device.CreateShaderResourceView(blurBuffer);
 

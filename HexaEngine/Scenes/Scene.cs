@@ -263,6 +263,7 @@
             root.Uninitialize();
             Simulation.Dispose();
             ThreadDispatcher.Dispose();
+            instanceManager.Dispose();
             semaphore.Release();
         }
 

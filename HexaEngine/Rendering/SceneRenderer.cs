@@ -12,7 +12,6 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
-    using HexaEngine.Objects.Components;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Effects;
@@ -59,6 +58,8 @@
         private DepthBuffer depthStencil;
         private IDepthStencilView dsv;
         private RenderTextureArray gbuffers;
+
+        private DepthMipChain hizBuffer;
 
         private Texture ssaoBuffer;
         private Texture lightMap;
@@ -110,6 +111,8 @@
         private float renderResolution;
         private int width;
         private int height;
+        private int rendererWidth;
+        private int rendererHeight;
         private int windowWidth;
         private int windowHeight;
 
@@ -131,21 +134,37 @@
                 configKey = Config.Global.GetOrCreateKey("Renderer");
                 renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
 
-                windowWidth = window.Width;
-                windowHeight = window.Height;
-                width = (int)(window.Width * renderResolution);
-                height = (int)(window.Height * renderResolution);
-
                 this.device = device;
                 context = device.Context;
                 swapChain = device.SwapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
-                swapChain.Resizing += OnResizeBegin;
-                swapChain.Resized += OnResizeEnd;
+                swapChain.Resized += OnWindowResizeEnd;
 
                 #region Settings
 
                 #region Common
 
+                {
+                    configKey.TryGetOrAddKeyValue("Width", "1920", DataType.Int32, false, out var val);
+                    rendererWidth = val.GetInt32();
+                    val.ValueChanged += (ss, ee) =>
+                    {
+                        rendererWidth = ss.GetInt32();
+                        OnRendererResizeBegin();
+                        OnRendererResizeEnd(rendererWidth, rendererHeight);
+                        Config.Global.Save();
+                    };
+                }
+                {
+                    configKey.TryGetOrAddKeyValue("Height", "1080", DataType.Int32, false, out var val);
+                    rendererHeight = val.GetInt32();
+                    val.ValueChanged += (ss, ee) =>
+                    {
+                        rendererHeight = ss.GetInt32();
+                        OnRendererResizeBegin();
+                        OnRendererResizeEnd(rendererWidth, rendererHeight);
+                        Config.Global.Save();
+                    };
+                }
                 {
                     configKey.TryGetOrAddKeyValue("Forward Rendering", false.ToString(), DataType.Bool, false, out var val);
                     forwardMode = val.GetBool();
@@ -182,6 +201,11 @@
                         Config.Global.Save();
                     };
                 }
+
+                windowWidth = window.Width;
+                windowHeight = window.Height;
+                width = rendererWidth;
+                height = rendererHeight;
 
                 #endregion Common
 
@@ -238,14 +262,15 @@
                 materialDepthFrontface = new(device);
                 materialDepthFrontface.Camera = cameraBuffer.Buffer;
 
-                gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA16Float);
-                depthStencil = new DepthBuffer(device, new(width, height, 1, Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
+                gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA32Float);
+                depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
                 dsv = depthStencil.DSV;
+                hizBuffer = new(device, width, height);
 
-                depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float), DepthStencilDesc.Default);
+                depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource), DepthStencilDesc.Default);
 
-                ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float));
-                ssao = new(device, width, height);
+                ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
+                ssao = new(device, width / 2, height / 2);
                 ssao.Output = ssaoBuffer.RenderTargetView;
                 ssao.Camera = cameraBuffer.Buffer;
                 ssao.Position = gbuffers.SRVs[1];
@@ -356,7 +381,16 @@
             });
         }
 
-        private void OnResizeBegin(object? sender, EventArgs e)
+        private void OnWindowResizeBegin()
+        {
+        }
+
+        private void OnWindowResizeEnd(object? sender, ResizedEventArgs args)
+        {
+            fxaa.Output = swapChain.BackbufferRTV;
+        }
+
+        private void OnRendererResizeBegin()
         {
             if (!initialized) return;
             depthStencil.Dispose();
@@ -371,25 +405,22 @@
             depthbuffer.Dispose();
         }
 
-        private void OnResizeEnd(object? sender, ResizedEventArgs e)
+        private void OnRendererResizeEnd(int width, int height)
         {
             if (!initialized) return;
-            windowWidth = e.NewWidth;
-            windowHeight = e.NewHeight;
-            width = (int)(e.NewWidth * renderResolution);
-            height = (int)(e.NewHeight * renderResolution);
             dirty = true;
-            gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA16Float);
-            depthStencil = new DepthBuffer(device, new(width, height, 1, Format.Depth24UNormStencil8, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
+            gbuffers = new RenderTextureArray(device, width, height, 8, Format.RGBA32Float);
+            depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
             dsv = depthStencil.DSV;
 
             depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float), DepthStencilDesc.Default);
+            hizBuffer.Resize(device, width, height);
 
             ssaoBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
             ssao.Output = ssaoBuffer.RenderTargetView;
             ssao.Position = gbuffers.SRVs[1];
             ssao.Normal = gbuffers.SRVs[2];
-            ssao.Resize(device, width, height);
+            ssao.Resize(device, width / 2, height / 2);
 
             lightMap = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             deferred.Output = lightMap.RenderTargetView;
@@ -461,13 +492,14 @@
             if (!initialized) return;
             if (camera == null) return;
 
+            var types = scene.InstanceManager.Types;
+
             // Note the "new" doesn't apply any gc pressure, because the buffer as an array in the background that is already allocated on the unmanaged heap.
             cameraBuffer[0] = new CBCamera(camera);
             cameraBuffer.Update(context);
             skyboxBuffer[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
             skyboxBuffer.Update(context);
 
-            context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             /*
             for (int i = 0; i < gbuffers.Count; i++)
             {
@@ -475,20 +507,29 @@
             }
             */
 
+            {
+                hizBuffer.Generate(context, depthStencil.Resource, depthStencil.SRV);
+
+                scene.InstanceManager.DoCulling(context, cameraBuffer.Buffer, camera.Transform.Frustum, hizBuffer);
+            }
+
+            context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+
             if (!forwardMode)
             {
                 // Fill Geometry Buffer
                 context.ClearRenderTargetViews(gbuffers.RTVs, gbuffers.Count, Vector4.Zero);
-
-                for (int i = 0; i < MeshManager.Count; i++)
+                context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
+                geometry.BeginDraw(context, gbuffers.Viewport);
+                for (int i = 0; i < types.Count; i++)
                 {
-                    if (ResourceManager.GetMesh(MeshManager.Meshes[i], out var mesh))
+                    var type = types[i];
+                    if (type.BeginDraw(context))
                     {
-                        context.SetRenderTargets(gbuffers.RTVs, gbuffers.Count, dsv);
-                        mesh.UpdateInstanceBuffer(context, camera.Transform.Frustum);
-                        mesh.DrawAuto(context, geometry, gbuffers.Viewport);
+                        context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
                     }
                 }
+                context.ClearState();
             }
 
             // Draw backface depth
@@ -601,7 +642,6 @@
                     if (ResourceManager.GetMesh(MeshManager.Meshes[i], out var mesh))
                     {
                         context.DSSetConstantBuffer(cameraBuffer.Buffer, 1);
-                        mesh.UpdateInstanceBuffer(context, camera.Transform.Frustum);
                         mesh.DrawAuto(context, forward);
                     }
                 }
@@ -664,6 +704,8 @@
                 if (!initialized) return;
                 dsv.Dispose();
                 depthStencil.Dispose();
+
+                hizBuffer.Dispose();
                 commandList?.Dispose();
                 deferredContext.Dispose();
                 lightBuffer.Dispose();

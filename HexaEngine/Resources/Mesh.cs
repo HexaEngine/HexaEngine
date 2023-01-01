@@ -2,9 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using System.Collections.Concurrent;
+    using System.Numerics;
 
     public class Mesh : IDisposable
     {
@@ -18,11 +20,13 @@
         public int VertexCount;
         public int IndexCount;
         public BoundingBox BoundingBox;
+        public BoundingSphere BoundingSphere;
 
-        public Mesh(IGraphicsDevice device, string name, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box)
+        public Mesh(IGraphicsDevice device, string name, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box, BoundingSphere boundingSphere)
         {
             this.name = name;
             BoundingBox = box;
+            BoundingSphere = boundingSphere;
             if (!vertices.IsEmpty)
             {
                 VB = device.CreateBuffer(vertices, BindFlags.VertexBuffer, Usage.Immutable);
@@ -39,35 +43,14 @@
 
         public bool IsUsed => instanceTypes.Count > 0;
 
-        public void Update(IGraphicsDevice device, Span<MeshVertex> vertices, Span<int> indices, BoundingBox box)
-        {
-            semaphore.Wait();
-            VB?.Dispose();
-            VB = null;
-            IB?.Dispose();
-            IB = null;
-            BoundingBox = box;
-            semaphore.Release();
-            if (!vertices.IsEmpty)
-            {
-                VB = device.CreateBuffer(vertices, BindFlags.VertexBuffer, Usage.Immutable);
-                VertexCount = vertices.Length;
-            }
-            if (!indices.IsEmpty)
-            {
-                IB = device.CreateBuffer(indices, BindFlags.IndexBuffer, Usage.Immutable);
-                IndexCount = indices.Length;
-            }
-        }
-
-        public ModelInstanceType CreateInstanceType(IGraphicsDevice device, Material material)
+        internal ModelInstanceType CreateInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, Material material)
         {
             semaphore.Wait();
             lock (materialToType)
             {
                 if (!materialToType.TryGetValue(material.Name, out var type))
                 {
-                    type = new(device, this, material);
+                    type = new(device, argsBuffer, instanceBuffer, instanceOffsets, this, material);
                     if (!materialToType.TryAdd(material.Name, type))
                         throw new Exception();
                     lock (instanceTypes)
@@ -81,7 +64,7 @@
             }
         }
 
-        public void DestroyInstanceType(ModelInstanceType type)
+        internal void DestroyInstanceType(ModelInstanceType type)
         {
             if (instanceTypes.Contains(type))
             {
@@ -98,17 +81,6 @@
             }
         }
 
-        public unsafe void UpdateInstanceBuffer(IGraphicsContext context, BoundingFrustum frustum)
-        {
-            lock (instanceTypes)
-            {
-                for (int i = 0; i < instanceTypes.Count; i++)
-                {
-                    instanceTypes[i].UpdateInstanceBuffer(context, frustum);
-                }
-            }
-        }
-
         public unsafe bool DrawAuto(IGraphicsContext context, IEffect effect)
         {
             if (VB == null) return false;
@@ -116,7 +88,7 @@
             if (semaphore.CurrentCount == 0) return false;
 
             effect.Draw(context);
-            context.SetVertexBuffer(VB, sizeof(MeshVertex));
+            context.SetVertexBuffer(VB, (uint)sizeof(MeshVertex));
             context.SetIndexBuffer(IB, Format.R32UInt, 0);
             lock (instanceTypes)
             {
@@ -135,7 +107,7 @@
             if (IB == null) return;
             if (semaphore.CurrentCount == 0) return;
 
-            context.SetVertexBuffer(VB, sizeof(MeshVertex));
+            context.SetVertexBuffer(VB, (uint)sizeof(MeshVertex));
             context.SetIndexBuffer(IB, Format.R32UInt, 0);
             lock (instanceTypes)
             {

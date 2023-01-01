@@ -28,7 +28,7 @@
             int arraySize,
             int mipLevels,
             SampleDescription sampleDescription,
-            Format format = Format.RGBA16Float,
+            Format format = Format.RGBA32Float,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -56,7 +56,7 @@
             int depth,
             int arraySize,
             int mipLevels,
-            Format format = Format.RGBA16Float,
+            Format format = Format.RGBA32Float,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -83,7 +83,7 @@
             int height,
             int depth,
             int mipLevels,
-            Format format = Format.RGBA16Float,
+            Format format = Format.RGBA32Float,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -108,7 +108,7 @@
             TextureDimension dimension,
             int width,
             int height,
-            Format format = Format.RGBA16Float,
+            Format format = Format.RGBA32Float,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -192,67 +192,67 @@
             }
         }
 
-        public static TextureDescription CreateTexture1D(int width, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1D(int width, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture1DWithRTV(int width, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1DWithRTV(int width, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture1DArray(int width, int arraySize, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1DArray(int width, int arraySize, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture1DArrayWithRTV(int width, int arraySize, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1DArrayWithRTV(int width, int arraySize, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture2D(int width, int height, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2D(int width, int height, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture2DWithRTV(int width, int height, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2DWithRTV(int width, int height, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture2DArray(int width, int height, int arraySize, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2DArray(int width, int height, int arraySize, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture2DArrayWithRTV(int width, int height, int arraySize, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2DArrayWithRTV(int width, int height, int arraySize, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTextureCube(int width, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        public static TextureDescription CreateTextureCube(int width, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTextureCubeWithRTV(int width, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        public static TextureDescription CreateTextureCubeWithRTV(int width, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTextureCubeArrayWithRTV(int width, int size, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        public static TextureDescription CreateTextureCubeArrayWithRTV(int width, int size, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6 * size, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture3D(int width, int height, int depth, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture3D(int width, int height, int depth, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture3D, width, height, depth, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
 
-        public static TextureDescription CreateTexture3DWithRTV(int width, int height, int depth, int mips, Format format = Format.RGBA16Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture3DWithRTV(int width, int height, int depth, int mips, Format format = Format.RGBA32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture3D, width, height, depth, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }

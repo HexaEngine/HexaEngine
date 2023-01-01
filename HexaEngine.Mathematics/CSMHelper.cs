@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Mathematics
 {
     using System;
-    using System.Diagnostics.Metrics;
     using System.Numerics;
-    using System.Text;
 
     public static class CSMHelper
     {
@@ -51,12 +49,12 @@
             for (int i = 0; i < corners.Length; i++)
             {
                 var trf = Vector4.Transform(corners[i], lightView);
-                minX = Math.Min(minX, trf.X);
-                maxX = Math.Max(maxX, trf.X);
-                minY = Math.Min(minY, trf.Y);
-                maxY = Math.Max(maxY, trf.Y);
-                minZ = Math.Min(minZ, trf.Z);
-                maxZ = Math.Max(maxZ, trf.Z);
+                minX = MathF.Min(minX, trf.X);
+                maxX = MathF.Max(maxX, trf.X);
+                minY = MathF.Min(minY, trf.Y);
+                maxY = MathF.Max(maxY, trf.Y);
+                minZ = MathF.Min(minZ, trf.Z);
+                maxZ = MathF.Max(maxZ, trf.Z);
             }
 
             // Tune this parameter according to the scene
@@ -83,10 +81,6 @@
             return Matrix4x4.Transpose(lightView * lightProjection);
         }
 
-        public static float Uniform(int i, float n, float m, float far) => (far - n) * (i / m);
-
-        public static float Logarithmic(int i, float n, float far) => 1 / MathF.Log(far / n) * MathF.Log(i / n);
-
         public static unsafe void GetCascades(CameraTransform camera, float* result, int count)
         {
             float farClip = camera.Far;
@@ -110,8 +104,47 @@
                 float splitDist = (d - nearClip) / clipRange;
                 result[i] = nearClip + splitDist * clipRange;
             }
+        }
 
-            Span<float> span = new Span<float>(result, count);
+        public static Matrix4x4 GetCameraView(CameraTransform camera)
+        {
+            Quaternion r = camera.GlobalOrientation;
+
+            float halfYaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y)) * 0.5f;
+            float sy = MathF.Sin(halfYaw);
+
+            float y2 = sy + sy;
+
+            float wy2 = MathF.Cos(halfYaw) * y2;
+
+            float zaxisZ = 1 - sy * y2;
+
+            Vector3 pos = camera.GlobalPosition;
+
+            float yaxisY = zaxisZ * zaxisZ - wy2 * -wy2;
+
+            Matrix4x4 result = Matrix4x4.Identity;
+
+            result.M11 = zaxisZ;
+            result.M21 = 0;
+            result.M31 = -wy2;
+
+            result.M12 = 0;
+            result.M22 = yaxisY;
+            result.M32 = 0;
+
+            result.M13 = wy2;
+            result.M23 = 0;
+            result.M33 = zaxisZ;
+
+            result.M41 = zaxisZ * pos.X - wy2 * pos.Z;
+            result.M42 = yaxisY * pos.Y;
+            result.M43 = wy2 * pos.X + zaxisZ * pos.Z;
+
+            result.M41 = -result.M41;
+            result.M42 = -result.M42;
+            result.M43 = -result.M43;
+            return result;
         }
 
         public static unsafe Matrix4x4* GetLightSpaceMatrices(CameraTransform camera, Transform light, Matrix4x4* ret, float* cascades, int cascadesCount = 4)
@@ -120,20 +153,22 @@
             float aspect = camera.AspectRatio;
             float far = camera.Far;
             float near = camera.Near;
+
+            Matrix4x4 view = GetCameraView(camera);
             GetCascades(camera, cascades, cascadesCount);
             for (int i = 0; i < cascadesCount; i++)
             {
                 if (i == 0)
                 {
-                    ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov, aspect, near, cascades[i]), light);
+                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, near, cascades[i]), light);
                 }
                 else if (i < cascadesCount)
                 {
-                    ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], cascades[i]), light);
+                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], cascades[i]), light);
                 }
                 else
                 {
-                    ret[i] = GetLightSpaceMatrix(camera.View * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], far), light);
+                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], far), light);
                 }
             }
             return ret;

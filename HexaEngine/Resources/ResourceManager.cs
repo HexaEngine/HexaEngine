@@ -73,7 +73,7 @@
             {
                 if (meshes.TryGetValue(mesh.Name, out var value))
                     return value;
-                Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.BoundingBox);
+                Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.BoundingBox, mesh.BoundingSphere);
                 meshes.TryAdd(mesh.Name, model);
                 return model;
             }
@@ -82,22 +82,6 @@
         public static async Task<Mesh> LoadMeshAsync(MeshData mesh)
         {
             return await Task.Factory.StartNew(() => LoadMesh(mesh));
-        }
-
-        public static void UpdateMesh(MeshData mesh)
-        {
-            lock (meshes)
-            {
-                if (meshes.TryGetValue(mesh.Name, out var model))
-                {
-                    model.Update(device, mesh.Vertices, mesh.Indices, mesh.BoundingBox);
-                }
-            }
-        }
-
-        public static async Task UpdateMeshAsync(MeshData mesh)
-        {
-            await Task.Factory.StartNew(() => UpdateMesh(mesh));
         }
 
         public static void UnloadMesh(MeshData mesh)

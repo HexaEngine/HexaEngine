@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using System;
 
@@ -15,26 +16,20 @@
         public Primitive(IGraphicsDevice device)
         {
             (vertexBuffer, indexBuffer, instanceBuffer) = InitializeMesh(device);
-            if (vertexBuffer.GetVertices() is Vertex[] v)
-            {
-                BoundingBox = BoundingBoxHelper.Compute(v);
-            }
         }
 
         protected abstract (VertexBuffer<T>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device);
 
-        public BoundingBox BoundingBox;
-
         public void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
         {
-            vertexBuffer.Bind(context);
+            context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
-                indexBuffer.Bind(context);
+                context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
                 if (instanceBuffer != null)
                 {
                     instanceBuffer.Bind(context, 1);
-                    pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, instanceBuffer.Count, 0, 0, 0);
+                    pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, (uint)instanceBuffer.Count, 0, 0, 0);
                 }
                 else
                 {
@@ -46,20 +41,20 @@
                 if (instanceBuffer != null)
                 {
                     instanceBuffer.Bind(context, 1);
-                    pipeline.DrawInstanced(context, viewport, vertexBuffer.Count, instanceBuffer.Count, 0, 0);
+                    pipeline.DrawInstanced(context, viewport, (uint)vertexBuffer.Count, (uint)instanceBuffer.Count, 0, 0);
                 }
                 else
                 {
-                    pipeline.DrawInstanced(context, viewport, vertexBuffer.Count, 1, 0, 0);
+                    pipeline.DrawInstanced(context, viewport, (uint)vertexBuffer.Count, 1, 0, 0);
                 }
             }
         }
 
-        public void Bind(IGraphicsContext context, out int vertexCount, out int indexCount, out int instanceCount)
+        public void Bind(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount)
         {
-            vertexBuffer.Bind(context);
+            context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             vertexCount = vertexBuffer.Count;
-            indexBuffer?.Bind(context);
+            context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
             indexCount = indexBuffer?.Count ?? 0;
             instanceBuffer?.Bind(context, 1);
             instanceCount = instanceBuffer?.Count ?? 0;

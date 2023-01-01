@@ -75,21 +75,35 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearUnorderedAccessViewUint(IUnorderedAccessView uav, uint r, uint g, uint b, uint a)
+        {
+            uint* values = stackalloc uint[4] { r, g, b, a };
+            DeviceContext->ClearUnorderedAccessViewUint((ID3D11UnorderedAccessView*)uav.NativePointer, values);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ClearUnorderedAccessViewFloat(IUnorderedAccessView uav, float r, float g, float b, float a)
+        {
+            float* values = stackalloc float[4] { r, g, b, a };
+            DeviceContext->ClearUnorderedAccessViewFloat((ID3D11UnorderedAccessView*)uav.NativePointer, values);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearState()
         {
             DeviceContext->ClearState();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset)
+        public void DrawInstanced(uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
         {
-            DeviceContext->DrawInstanced((uint)vertexCount, (uint)instanceCount, (uint)vertexOffset, (uint)instanceOffset);
+            DeviceContext->DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DrawIndexedInstanced(int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset)
+        public void DrawIndexedInstanced(uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
         {
-            DeviceContext->DrawIndexedInstanced((uint)indexCount, (uint)instanceCount, (uint)indexOffset, vertexOffset, (uint)instanceOffset);
+            DeviceContext->DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -233,10 +247,10 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetVertexBuffer(IBuffer? vertexBuffer, int stride, int offset)
+        public void SetVertexBuffer(IBuffer? vertexBuffer, uint stride, uint offset)
         {
-            uint ustride = (uint)stride;
-            uint uoffset = (uint)offset;
+            uint ustride = stride;
+            uint uoffset = offset;
 #nullable disable
             ID3D11Buffer* buffer = (ID3D11Buffer*)vertexBuffer?.NativePointer;
 #nullable enable
@@ -244,9 +258,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetVertexBuffer(IBuffer? vertexBuffer, int stride)
+        public void SetVertexBuffer(IBuffer? vertexBuffer, uint stride)
         {
-            uint ustride = (uint)stride;
+            uint ustride = stride;
             uint uoffset = 0;
 #nullable disable
             ID3D11Buffer* buffer = (ID3D11Buffer*)vertexBuffer?.NativePointer;
@@ -255,11 +269,11 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride, int offset)
+        public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride, uint offset)
         {
-            uint uslot = (uint)slot;
-            uint ustride = (uint)stride;
-            uint uoffset = (uint)offset;
+            uint uslot = slot;
+            uint ustride = stride;
+            uint uoffset = offset;
 #nullable disable
             ID3D11Buffer* buffer = (ID3D11Buffer*)vertexBuffer?.NativePointer;
 #nullable enable
@@ -267,10 +281,10 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride)
+        public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride)
         {
-            uint uslot = (uint)slot;
-            uint ustride = (uint)stride;
+            uint uslot = slot;
+            uint ustride = stride;
             uint uoffset = 0;
 #nullable disable
             ID3D11Buffer* buffer = (ID3D11Buffer*)vertexBuffer?.NativePointer;
@@ -472,27 +486,6 @@
         public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
         {
             DeviceContext->Dispatch((uint)threadGroupCountX, (uint)threadGroupCountY, (uint)threadGroupCountZ);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CSSetUnorderedAccessViews(int startSlot, int count, IUnorderedAccessView[] views, int uavInitialCounts = -1)
-        {
-            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
-            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)count, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CSSetUnorderedAccessViews(int startSlot, IUnorderedAccessView[] views, int uavInitialCounts = -1)
-        {
-            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
-            DeviceContext->CSSetUnorderedAccessViews((uint)startSlot, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CSSetUnorderedAccessViews(IUnorderedAccessView[] views, int uavInitialCounts = -1)
-        {
-            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
-            DeviceContext->CSSetUnorderedAccessViews(0, (uint)views.Length, (ID3D11UnorderedAccessView**)Utils.ToPointerArray(views), &pUAVInitialCounts);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

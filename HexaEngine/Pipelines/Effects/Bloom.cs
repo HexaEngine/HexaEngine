@@ -3,19 +3,22 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
-    using ImGuiNET;
+    using HexaEngine.Objects.Primitives;
     using System.Numerics;
 
     public class Bloom : IEffect
     {
-        private ITexture2D[] mipChainTex;
-        private IRenderTargetView[] mipChainRTVs;
-        private IShaderResourceView[] mipChainSRVs;
-        private readonly BloomDownsample downsample;
-        private readonly BloomUpsample upsample;
+        private readonly Quad quad;
+        private readonly GraphicsPipeline downsample;
+        private readonly GraphicsPipeline upsample;
         private readonly IBuffer downsampleCB;
         private readonly IBuffer upsampleCB;
         private readonly ISamplerState sampler;
+
+        private ITexture2D[] mipChainTex;
+        private IRenderTargetView[] mipChainRTVs;
+        private IShaderResourceView[] mipChainSRVs;
+
         private bool enabled;
         private float radius = 0.003f;
         private bool dirty;
@@ -54,6 +57,7 @@
 
         public Bloom(IGraphicsDevice device)
         {
+            quad = new(device);
             mipChainTex = Array.Empty<ITexture2D>();
             mipChainRTVs = Array.Empty<IRenderTargetView>();
             mipChainSRVs = Array.Empty<IShaderResourceView>();
@@ -62,8 +66,16 @@
 
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
-            downsample = new(device);
-            upsample = new(device);
+            downsample = new(device, new()
+            {
+                VertexShader = "effects/bloom/downsample/vs.hlsl",
+                PixelShader = "effects/bloom/downsample/ps.hlsl",
+            });
+            upsample = new(device, new()
+            {
+                VertexShader = "effects/bloom/upsample/vs.hlsl",
+                PixelShader = "effects/bloom/upsample/ps.hlsl",
+            });
             dirty = true;
         }
 
@@ -139,7 +151,7 @@
                 context.PSSetConstantBuffer(downsampleCB, 0);
                 context.PSSetSampler(sampler, 0);
                 context.SetRenderTarget(mipChainRTVs[i], null);
-                downsample.Draw(context, mipChainRTVs[i].Viewport);
+                quad.DrawAuto(context, downsample, mipChainRTVs[i].Viewport);
                 context.ClearState();
             }
 
@@ -149,7 +161,7 @@
                 context.PSSetShaderResource(mipChainSRVs[i], 0);
                 context.PSSetConstantBuffer(upsampleCB, 0);
                 context.PSSetSampler(sampler, 0);
-                upsample.Draw(context, mipChainRTVs[i - 1].Viewport);
+                quad.DrawAuto(context, upsample, mipChainRTVs[i - 1].Viewport);
             }
             context.ClearState();
         }
@@ -158,6 +170,7 @@
         {
             if (!disposedValue)
             {
+                quad.Dispose();
                 for (int i = 0; i < mipChainTex?.Length; i++)
                 {
                     mipChainTex[i]?.Dispose();

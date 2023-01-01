@@ -73,20 +73,22 @@
             public float LogLuminanceRange;
             public float TimeDelta;
             public float Tau;
-            public Vector3 padd;
+            public Vector3 Padd;
 
             public LumaAvgParams()
             {
                 MinLogLuminance = -8.0f;
-                LogLuminanceRange = (3.0f + 8.0f);
+                LogLuminanceRange = 3.0f + 8.0f;
                 Tau = 1.1f;
+                Padd = default;
             }
 
             public void Default()
             {
                 MinLogLuminance = -8.0f;
-                LogLuminanceRange = (3.0f + 8.0f);
+                LogLuminanceRange = 3.0f + 8.0f;
                 Tau = 1.1f;
+                Padd = default;
             }
         }
 

@@ -215,7 +215,7 @@ namespace HexaEngine.Rendering
             // Render command lists
             // (Because we merged all buffers into a single one, we maintain our own offset into them)
             int vtx_offset = 0;
-            int idx_offset = 0;
+            uint idx_offset = 0;
 
             for (int n = 0; n < data.CmdListsCount; n++)
             {
@@ -235,9 +235,9 @@ namespace HexaEngine.Rendering
 
                         ctx.PSSetShaderResource((void*)cmd.TextureId, 0);
 
-                        ctx.DrawIndexedInstanced((int)cmd.ElemCount, 1, idx_offset, vtx_offset, 0);
+                        ctx.DrawIndexedInstanced(cmd.ElemCount, 1, idx_offset, vtx_offset, 0);
                     }
-                    idx_offset += (int)cmd.ElemCount;
+                    idx_offset += cmd.ElemCount;
                 }
                 vtx_offset += cmdList.VtxBuffer.Size;
             }
@@ -259,8 +259,8 @@ namespace HexaEngine.Rendering
             var viewport = new Viewport(drawData.DisplaySize.X, drawData.DisplaySize.Y);
             ctx.SetViewport(viewport);
 
-            int stride = sizeof(ImDrawVert);
-            int offset = 0;
+            uint stride = (uint)sizeof(ImDrawVert);
+            uint offset = 0;
             ctx.SetInputLayout(inputLayout);
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
@@ -333,9 +333,7 @@ namespace HexaEngine.Rendering
 
         private void CreateDeviceObjects()
         {
-            if (!ShaderCache.GetShader("Internal:ImGui:VS", Array.Empty<ShaderMacro>(), out var vBytes))
-            {
-                var vertexShaderCode =
+            var vertexShaderCode =
     @"
                     cbuffer vertexBuffer : register(b0)
                     {
@@ -365,16 +363,10 @@ namespace HexaEngine.Rendering
                         return output;
                     }";
 
-                device.Compile(vertexShaderCode, "main", "Internal:ImGui:VS", "vs_5_0", out var vertexShaderBlob, out var errorBlob);
-                if (vertexShaderBlob == null)
-                    throw new Exception("error compiling vertex shader");
+            Shader* vsShader;
+            ShaderCache.GetShaderOrCompile(device, vertexShaderCode, "Internal:ImGui:VS", "vs_5_0", &vsShader);
 
-                ShaderCache.CacheShader("Internal:ImGui:VS", Array.Empty<ShaderMacro>(), vertexShaderBlob);
-                vBytes = vertexShaderBlob.AsBytes();
-                vertexShaderBlob.Dispose();
-            }
-
-            vertexShader = device.CreateVertexShader(vBytes);
+            vertexShader = device.CreateVertexShader(vsShader);
 
             var inputElements = new[]
             {
@@ -383,7 +375,7 @@ namespace HexaEngine.Rendering
                 new InputElementDescription( "COLOR",    0, Format.RGBA8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
             };
 
-            inputLayout = device.CreateInputLayout(inputElements, vBytes.ToArray());
+            inputLayout = device.CreateInputLayout(inputElements, vsShader);
 
             var constBufferDesc = new BufferDescription
             {
@@ -393,9 +385,8 @@ namespace HexaEngine.Rendering
                 CPUAccessFlags = CpuAccessFlags.Write,
             };
             constantBuffer = device.CreateBuffer(constBufferDesc);
-            if (!ShaderCache.GetShader("Internal:ImGui:PS", Array.Empty<ShaderMacro>(), out var pBytes))
-            {
-                var pixelShaderCode =
+
+            var pixelShaderCode =
                 @"struct PS_INPUT
                     {
                         float4 pos : SV_POSITION;
@@ -412,16 +403,10 @@ namespace HexaEngine.Rendering
                         return out_col;
                     }";
 
-                device.Compile(pixelShaderCode, "main", "Internal:ImGui:PS", "ps_5_0", out var pixelShaderBlob, out var errorBlob);
-                if (pixelShaderBlob == null)
-                    throw new Exception("error compiling pixel shader");
+            Shader* psShader;
+            ShaderCache.GetShaderOrCompile(device, pixelShaderCode, "Internal:ImGui:PS", "ps_5_0", &psShader);
 
-                ShaderCache.CacheShader("Internal:ImGui:PS", Array.Empty<ShaderMacro>(), pixelShaderBlob);
-                pBytes = pixelShaderBlob.AsBytes();
-                pixelShaderBlob.Dispose();
-            }
-
-            pixelShader = device.CreatePixelShader(pBytes);
+            pixelShader = device.CreatePixelShader(psShader);
 
             var blendDesc = new BlendDescription
             {

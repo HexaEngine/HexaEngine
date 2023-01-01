@@ -1,5 +1,4 @@
 #include "defs.hlsl"
-#include "../../world.hlsl"
 #include "../../camera.hlsl"
 #include "../../material.hlsl"
 
@@ -29,15 +28,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 
 	// Calculate the normal vector against the world matrix only.
 #if (DEPTH != 1)
-#if (INSTANCED != 1)
-	output.normal = mul(output.normal, (float3x3) world);
-#endif
 	output.normal = normalize(output.normal);
-#endif
-
-#if (INSTANCED != 1)
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(output.position, world);
 #endif
 
 	if (material.DANR.r)
@@ -64,9 +55,6 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 #endif
 
 #if (DEPTH != 1)
-#if (INSTANCED != 1)
-	output.tangent = mul(output.tangent, (float3x3)world);
-#endif
 	output.tangent = normalize(output.tangent);
 #endif
 

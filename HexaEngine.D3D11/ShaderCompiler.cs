@@ -135,9 +135,23 @@
             return output;
         }
 
+        public static unsafe Blob GetInputSignature(Shader* shader)
+        {
+            ID3D10Blob* signature;
+            D3DCompiler.GetInputSignatureBlob(shader->Bytecode, shader->Length, &signature);
+            Blob output = new(signature->Buffer.ToArray());
+            signature->Release();
+            return output;
+        }
+
         public static unsafe void Reflect(Blob blob, Guid guid, void** reflector)
         {
             D3DCompiler.Reflect((void*)blob.BufferPointer, (nuint)(int)blob.PointerSize, Utils.Guid(guid), reflector);
+        }
+
+        public static unsafe void Reflect(Shader* blob, Guid guid, void** reflector)
+        {
+            D3DCompiler.Reflect(blob->Bytecode, blob->Length, Utils.Guid(guid), reflector);
         }
     }
 }

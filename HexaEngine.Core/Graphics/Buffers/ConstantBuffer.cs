@@ -7,7 +7,7 @@
     {
         private readonly CpuAccessFlags accessFlags;
         private IBuffer buffer;
-        private T* values;
+        private T* items;
         private int length;
         private int size;
         private readonly int stride;
@@ -18,15 +18,15 @@
             this.accessFlags = accessFlags;
             stride = sizeof(T);
             size = stride * length;
-            values = (T*)Marshal.AllocHGlobal(size);
+            items = (T*)Marshal.AllocHGlobal(size);
             for (int i = 0; i < length; i++)
             {
-                values[i] = default;
+                items[i] = default;
             }
 
             if (accessFlags == CpuAccessFlags.None)
             {
-                buffer = device.CreateBuffer(new(size, BindFlags.ConstantBuffer, Usage.Immutable, accessFlags));
+                buffer = device.CreateBuffer(items, (uint)length, new(size, BindFlags.ConstantBuffer, Usage.Immutable, accessFlags));
             }
             else if (accessFlags == CpuAccessFlags.Write)
             {
@@ -49,10 +49,10 @@
             stride = sizeof(T);
             size = stride * length;
 
-            this.values = (T*)Marshal.AllocHGlobal(size);
+            this.items = (T*)Marshal.AllocHGlobal(size);
             for (int i = 0; i < length; i++)
             {
-                this.values[i] = values[i];
+                this.items[i] = values[i];
             }
 
             if (accessFlags == CpuAccessFlags.None)
@@ -79,15 +79,15 @@
             length = 1;
             size = stride = sizeof(T);
 
-            values = (T*)Marshal.AllocHGlobal(size);
+            items = (T*)Marshal.AllocHGlobal(size);
             for (int i = 0; i < length; i++)
             {
-                values[i] = default;
+                items[i] = default;
             }
 
             if (accessFlags == CpuAccessFlags.None)
             {
-                buffer = device.CreateBuffer(new(size, BindFlags.ConstantBuffer, Usage.Immutable, accessFlags));
+                buffer = device.CreateBuffer(items, (uint)length, new(size, BindFlags.ConstantBuffer, Usage.Immutable, accessFlags));
             }
             else if (accessFlags == CpuAccessFlags.Write)
             {
@@ -105,8 +105,11 @@
 
         public T this[int index]
         {
-            get { return values[index]; }
-            set { values[index] = value; }
+            get { return items[index]; }
+            set
+            {
+                items[index] = value;
+            }
         }
 
         public IBuffer Buffer => buffer;
@@ -118,15 +121,15 @@
             this.length = length;
             size = stride * length;
 
-            var old = values;
+            var old = items;
 
-            values = (T*)Marshal.AllocHGlobal(size);
+            items = (T*)Marshal.AllocHGlobal(size);
             for (int i = 0; i < length; i++)
             {
                 if (i < oldLen)
-                    values[i] = old[i];
+                    items[i] = old[i];
                 else
-                    values[i] = default;
+                    items[i] = default;
             }
 
             Marshal.FreeHGlobal((nint)old);
@@ -151,15 +154,15 @@
 
         public void Update(IGraphicsContext context)
         {
-            context.Write(buffer, values, size);
+            context.Write(buffer, items, size);
         }
 
         public void Dispose()
         {
             length = 0;
             size = 0;
-            Marshal.FreeHGlobal((nint)values);
-            values = null;
+            Marshal.FreeHGlobal((nint)items);
+            items = null;
             buffer.Dispose();
             GC.SuppressFinalize(this);
         }

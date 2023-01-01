@@ -1,30 +1,24 @@
 #include "defs.hlsl"
 
-HullInput main(VertexInput input)
+cbuffer cb
+{
+	uint offset;
+}
+
+StructuredBuffer<float4x4> instances;
+StructuredBuffer<uint> offsets;
+
+HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
 	HullInput output;
 
-#if (INSTANCED == 1)
-	float4x4 mat = float4x4(input.instance, input.instance1, input.instance2, input.instance3);
+	float4x4 mat = instances[instanceId + offsets[offset]];
 	output.pos = mul(float4(input.pos, 1), mat).xyz;
-#else
-	output.pos = input.pos;
-#endif
-
 	output.tex = input.tex;
-
-#if (INSTANCED == 1)
 	output.normal = mul(input.normal, (float3x3)mat);
-#else
-	output.normal = input.normal;
-#endif
 
 #if (DEPTH != 1)
-#if (INSTANCED == 1)
 	output.tangent = mul(input.tangent, (float3x3)mat);
-#else
-	output.tangent = input.tangent;
-#endif
 #endif
 
 	output.TessFactor = 1;

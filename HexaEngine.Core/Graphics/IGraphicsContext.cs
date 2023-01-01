@@ -28,13 +28,13 @@
 
         public void Unmap(IResource resource, int subresourceIndex);
 
-        public void SetVertexBuffer(IBuffer? vertexBuffer, int stride);
+        public void SetVertexBuffer(IBuffer? vertexBuffer, uint stride);
 
-        public void SetVertexBuffer(IBuffer? vertexBuffer, int stride, int offset);
+        public void SetVertexBuffer(IBuffer? vertexBuffer, uint stride, uint offset);
 
-        public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride);
+        public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride);
 
-        public void SetVertexBuffer(int slot, IBuffer? vertexBuffer, int stride, int offset);
+        public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride, uint offset);
 
         public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
 
@@ -160,9 +160,9 @@
 
         void SetInputLayout(IInputLayout? inputLayout);
 
-        void DrawInstanced(int vertexCount, int instanceCount, int vertexOffset, int instanceOffset);
+        void DrawInstanced(uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset);
 
-        void DrawIndexedInstanced(int indexCount, int instanceCount, int indexOffset, int vertexOffset, int instanceOffset);
+        void DrawIndexedInstanced(uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset);
 
         void DrawIndexedInstancedIndirect(IBuffer bufferForArgs, uint alignedByteOffsetForArgs);
 
@@ -197,6 +197,8 @@
         unsafe void SetRenderTargets(void** views, uint count, IDepthStencilView? depthStencilView);
 
         unsafe void ClearRenderTargetViews(void** rtvs, uint count, Vector4 value);
+
+        void ClearUnorderedAccessViewUint(IUnorderedAccessView uav, uint r, uint g, uint b, uint a);
     }
 
     public interface IQuery : IDeviceChild

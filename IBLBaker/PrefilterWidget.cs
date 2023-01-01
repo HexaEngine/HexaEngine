@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
-    using HexaEngine.Pipelines.Effects;
+    using HexaEngine.Pipelines.Effects.Filter;
     using HexaEngine.Rendering;
     using ImGuiNET;
     using System;
@@ -30,7 +30,7 @@
         private RenderTargetViewArray? pfRTV;
         private ShaderResourceViewArray? pfSRV;
         private readonly IntPtr[] pfIds = new IntPtr[6];
-        private PreFilterEffect? prefilterFilter;
+        private PreFilter? prefilterFilter;
 
         private bool compute;
         private int side;
@@ -82,7 +82,7 @@
                     ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
 
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
-                    EquiRectangularToCubeEffect filter = new(device);
+                    EquiRectangularToCubeFilter filter = new(device);
                     filter.Source = source.ResourceView;
                     Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA16Float));
                     var cu = cube1.CreateRTVArray(device);

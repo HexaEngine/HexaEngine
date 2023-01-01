@@ -9,6 +9,7 @@
         public MeshVertex[]? Vertices;
         public int[]? Indices;
         public BoundingBox BoundingBox;
+        public BoundingSphere BoundingSphere;
         public MeshBone[]? Bones;
         public Animature? Animature;
 

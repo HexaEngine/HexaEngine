@@ -129,13 +129,19 @@
             Zero(pointer, (uint)sizeof(T));
         }
 
+        public static void ZeroRange<T>(T* pointer, uint length) where T : unmanaged
+        {
+            Zero(pointer, (uint)sizeof(T) * length);
+        }
+
         public static void Zero(void* pointer, uint size)
         {
-            byte* ptr = (byte*)pointer;
-            for (int i = 0; i < size; i++)
-            {
-                ptr[i] = 0;
-            }
+            new Span<byte>(pointer, (int)size).Clear();
+        }
+
+        public static void Zero(void* pointer, int size)
+        {
+            new Span<byte>(pointer, size).Clear();
         }
 
         public static T* Alloc<T>() where T : unmanaged
@@ -148,9 +154,9 @@
             return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
         }
 
-        public static T** Alloc<T>(uint count) where T : unmanaged
+        public static T* Alloc<T>(uint count) where T : unmanaged
         {
-            return (T**)Marshal.AllocHGlobal((int)(sizeof(T) * count));
+            return (T*)Marshal.AllocHGlobal((int)(sizeof(T) * count));
         }
 
         public static void* Alloc(int size)

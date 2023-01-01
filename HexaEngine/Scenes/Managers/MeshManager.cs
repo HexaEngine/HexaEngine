@@ -35,22 +35,5 @@
                 meshes.Remove(data);
             }
         }
-
-        public static async void Update(MeshData data)
-        {
-            lock (meshes)
-            {
-                for (int i = 0; i < meshes.Count; i++)
-                {
-                    var mesh = meshes[i];
-                    if (mesh.Name == data.Name)
-                    {
-                        meshes[i] = mesh;
-                    }
-                }
-            }
-
-            await ResourceManager.UpdateMeshAsync(data);
-        }
     }
 }

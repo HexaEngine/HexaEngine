@@ -1,6 +1,8 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Graphics
+using HexaEngine;
+
+namespace HexaEngine.Graphics.Buffers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
@@ -99,12 +101,12 @@ namespace HexaEngine.Graphics
             isDirty = false;
         }
 
-        public void Bind(IGraphicsContext context, int slot)
+        public void Bind(IGraphicsContext context, uint slot)
         {
             Bind(context, slot, 0);
         }
 
-        public void Bind(IGraphicsContext context, int slot, int offset)
+        public void Bind(IGraphicsContext context, uint slot, uint offset)
         {
             if (isDirty)
             {
@@ -114,7 +116,7 @@ namespace HexaEngine.Graphics
                 isDirty = false;
             }
 
-            context.SetVertexBuffer(slot, instanceBuffer, sizeof(InstanceData), offset);
+            context.SetVertexBuffer(slot, instanceBuffer, (uint)sizeof(InstanceData), offset);
         }
 
         protected virtual void Dispose(bool disposing)

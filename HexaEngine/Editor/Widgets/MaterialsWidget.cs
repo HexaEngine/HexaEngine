@@ -37,8 +37,11 @@
             {
                 current = -1;
             }
-
-            bool selected = ImGui.Combo("Material", ref current, MaterialManager.Names, MaterialManager.Count);
+            /*
+            lock (MaterialManager.Names)
+            {
+                bool selected = ImGui.Combo("Material", ref current, MaterialManager.Names, MaterialManager.Count);
+            }*/
 
             ImGui.Separator();
 

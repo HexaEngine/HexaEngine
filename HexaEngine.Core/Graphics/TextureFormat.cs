@@ -50,6 +50,7 @@ namespace HexaEngine.Core.Graphics
         Depth32Float,
         Depth24UNormStencil8,
         Depth32FloatStencil8,
+        Depth32FloatStencil8X24UInt,
         BC1RGBAUNorm,
         BC1RGBAUNormSrgb,
         BC2RGBAUNorm,
@@ -64,6 +65,31 @@ namespace HexaEngine.Core.Graphics
         BC6HRGBFloat,
         BC7RGBAUNorm,
         BC7RGBAUNormSrgb,
+
+        R8Typeless,
+        R16Typeless,
         R32Typeless,
+        RG8Typeless,
+        RG16Typeless,
+        RG32Typeless,
+        RGB32Typeless,
+        RGBA8Typeless,
+        RGBA16Typeless,
+        RGBA32Typeless,
+
+        BGRX8Typeless,
+        BGRA8Typeless,
+
+        BC6HTypeless,
+        BC7Typeless,
+
+        X32TypelessG8X24UInt,
+        RGB10A2Typeless,
+
+        R24G8Typeless,
+        R24UNormX8Typeless,
+        R32G8X24Typeless,
+        R32FloatX8X24Typeless,
+        X24TypelessG8UInt,
     }
 }

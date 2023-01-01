@@ -8,7 +8,7 @@
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	  <Platforms>AnyCPU;x64</Platforms>
 	  <Configurations>Debug;Release;TraceLeak</Configurations>
-	  <DefineConstants>$(DefineConstants)TRACE;SHADER_FORCE_OPTIMIZE</DefineConstants>
+	  <DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

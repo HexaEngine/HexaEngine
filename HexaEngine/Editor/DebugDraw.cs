@@ -14,8 +14,8 @@ namespace HexaEngine.Editor
         public PrimitiveTopology Topology;
         public int[] Indices;
         public VertexPositionColor[] Vertices;
-        public int nIndices;
-        public int nVertices;
+        public uint nIndices;
+        public uint nVertices;
         public Matrix4x4 Transform = Matrix4x4.Identity;
     }
 
@@ -25,6 +25,7 @@ namespace HexaEngine.Editor
         private static IGraphicsContext context;
         private static IRasterizerState rs;
         private static IDepthStencilState ds;
+        private static IBlendState bs;
         private static IVertexShader vs;
         private static IPixelShader ps;
         private static IInputLayout il;
@@ -46,10 +47,10 @@ namespace HexaEngine.Editor
         private static VertexPositionColor* vertices = Alloc<VertexPositionColor>(vbCapacity); //new VertexPositionColor[vbCapacity];
         private static int* indices = Alloc<int>(ibCapacity);
 
-        private static int vertexCount;
-        private static int indexCount;
+        private static uint vertexCount;
+        private static uint indexCount;
 
-        private static bool Draw(string id, PrimitiveTopology topology, int nIndex, int nVertex, out DebugDrawCommand command)
+        private static bool Draw(string id, PrimitiveTopology topology, uint nIndex, uint nVertex, out DebugDrawCommand command)
         {
             vertexCount += nVertex;
             indexCount += nIndex;
@@ -85,6 +86,7 @@ namespace HexaEngine.Editor
             desc.MultisampleEnable = false;
             rs = device.CreateRasterizerState(desc);
             ds = device.CreateDepthStencilState(DepthStencilDescription.None);
+            bs = device.CreateBlendState(BlendDescription.NonPremultiplied);
             string vsCode = @"
 struct VertexInputType
 {
@@ -124,26 +126,16 @@ float4 main(PixelInputType pixel) : SV_TARGET
     return pixel.color;
 }
 ";
-            if (!ShaderCache.GetShader("Internal:DebugDraw:VS", Array.Empty<ShaderMacro>(), out var vsBytes))
-            {
-                device.Compile(vsCode, "main", "Internal:DebugDraw:VS", "vs_5_0", out var vsBlob);
-                vsBytes = vsBlob.AsBytes();
+            Shader* vsShader;
+            ShaderCache.GetShaderOrCompile(device, vsCode, "Internal:DebugDraw:VS", "vs_5_0", &vsShader);
 
-                ShaderCache.CacheShader("Internal:DebugDraw:VS", Array.Empty<ShaderMacro>(), vsBlob);
-            }
+            vs = device.CreateVertexShader(vsShader);
+            il = device.CreateInputLayout(vsShader);
 
-            vs = device.CreateVertexShader(vsBytes);
-            il = device.CreateInputLayout(vsBytes);
+            Shader* psShader;
+            ShaderCache.GetShaderOrCompile(device, psCode, "Internal:DebugDraw:PS", "ps_5_0", &psShader);
 
-            if (!ShaderCache.GetShader("Internal:DebugDraw:PS", Array.Empty<ShaderMacro>(), out var psBytes))
-            {
-                device.Compile(psCode, "main", "Internal:DebugDraw:PS", "ps_5_0", out var psBlob);
-                psBytes = psBlob.AsBytes();
-
-                ShaderCache.CacheShader("Internal:DebugDraw:PS", Array.Empty<ShaderMacro>(), psBlob);
-            }
-
-            ps = device.CreatePixelShader(psBytes);
+            ps = device.CreatePixelShader(psShader);
 
             vb = device.CreateBuffer(new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             ib = device.CreateBuffer(new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
@@ -156,6 +148,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
         {
             rs.Dispose();
             ds.Dispose();
+            bs.Dispose();
             vs.Dispose();
             ps.Dispose();
             il.Dispose();
@@ -210,7 +203,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
                     }
                 }
 
-                context.Write(vb, vertices, vertexCount * sizeof(VertexPositionColor));
+                context.Write(vb, vertices, (int)vertexCount * sizeof(VertexPositionColor));
             }
 
             vertexCount = 0;
@@ -248,7 +241,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
                     }
                 }
 
-                context.Write(ib, indices, indexCount * sizeof(int));
+                context.Write(ib, indices, (int)indexCount * sizeof(int));
             }
 
             indexCount = 0;
@@ -257,18 +250,19 @@ float4 main(PixelInputType pixel) : SV_TARGET
                 view->View = Matrix4x4.Transpose(camera.Transform.View);
                 view->Proj = Matrix4x4.Transpose(camera.Transform.Projection);
 
+                context.SetBlendState(bs, Vector4.One);
                 context.SetRasterizerState(rs);
                 context.SetDepthStencilState(ds);
                 context.VSSetShader(vs);
                 context.PSSetShader(ps);
                 context.SetInputLayout(il);
                 context.VSSetConstantBuffer(cb, 0);
-                context.SetVertexBuffer(vb, sizeof(VertexPositionColor));
+                context.SetVertexBuffer(vb, (uint)sizeof(VertexPositionColor));
                 context.SetIndexBuffer(ib, Format.R32UInt, 0);
                 context.SetViewport(viewport);
 
                 int voffset = 0;
-                int ioffset = 0;
+                uint ioffset = 0;
                 for (int i = 0; i < drawqueue.Count; i++)
                 {
                     var cmd = cache[drawqueue[i]];
@@ -276,7 +270,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
                     context.Write(cb, view, sizeof(CBView));
                     context.SetPrimitiveTopology(cmd.Topology);
                     context.DrawIndexedInstanced(cmd.nIndices, 1, ioffset, voffset, 0);
-                    voffset += cmd.nVertices;
+                    voffset += (int)cmd.nVertices;
                     ioffset += cmd.nIndices;
                 }
                 drawqueue.Clear();
@@ -358,6 +352,219 @@ new Vector3(box.Max.X, box.Max.Y, box.Max.Z),
             cmd.Vertices[7].Position = new Vector3(box.Max.X, box.Max.Y, box.Max.Z);
 
             for (int i = 0; i < 8; i++)
+            {
+                cmd.Vertices[i].Color = color;
+            }
+        }
+
+        public static void DrawBoundingSphere(string id, BoundingSphere sphere, Vector4 color)
+        {
+            if (Draw(id, PrimitiveTopology.LineList, 96 * 2, 90, out var cmd))
+            {
+                Vector3[] pos =
+{
+new Vector3(-0.195090f,0.000000f,0.980785f),
+new Vector3(-0.382683f,0.000000f,0.923880f),
+new Vector3(-0.555570f,0.000000f,0.831470f),
+new Vector3(-0.707107f,0.000000f,0.707107f),
+new Vector3(-0.831470f,0.000000f,0.555570f),
+new Vector3(-0.923880f,0.000000f,0.382683f),
+new Vector3(-0.980785f,0.000000f,0.195090f),
+new Vector3(-1.000000f,0.000000f,0.000000f),
+new Vector3(-0.980785f,0.000000f,-0.195090f),
+new Vector3(-0.923880f,0.000000f,-0.382683f),
+new Vector3(-0.831470f,0.000000f,-0.555570f),
+new Vector3(-0.707107f,0.000000f,-0.707107f),
+new Vector3(-0.555570f,0.000000f,-0.831470f),
+new Vector3(-0.382683f,0.000000f,-0.923880f),
+new Vector3(-0.195090f,0.000000f,-0.980785f),
+new Vector3(-0.000000f,0.000000f,-1.000000f),
+new Vector3(0.195090f,0.000000f,-0.980785f),
+new Vector3(0.382683f,0.000000f,-0.923880f),
+new Vector3(0.555570f,0.000000f,-0.831470f),
+new Vector3(0.707107f,0.000000f,-0.707107f),
+new Vector3(0.831470f,0.000000f,-0.555570f),
+new Vector3(0.923880f,0.000000f,-0.382683f),
+new Vector3(0.980785f,0.000000f,-0.195090f),
+new Vector3(1.000000f,0.000000f,0.000000f),
+new Vector3(0.980785f,0.000000f,0.195090f),
+new Vector3(0.923880f,0.000000f,0.382683f),
+new Vector3(0.831470f,0.000000f,0.555570f),
+new Vector3(0.707107f,0.000000f,0.707107f),
+new Vector3(0.555570f,0.000000f,0.831470f),
+new Vector3(0.382683f,0.000000f,0.923880f),
+new Vector3(0.195090f,0.000000f,0.980785f),
+new Vector3(0.000000f,0.000000f,1.000000f),
+new Vector3(-0.000000f,1.000000f,-0.000000f),
+new Vector3(0.195090f,0.980785f,-0.000000f),
+new Vector3(0.382683f,0.923880f,-0.000000f),
+new Vector3(0.555570f,0.831470f,-0.000000f),
+new Vector3(0.707107f,0.707107f,-0.000000f),
+new Vector3(0.831470f,0.555570f,-0.000000f),
+new Vector3(0.923880f,0.382683f,-0.000000f),
+new Vector3(0.980785f,0.195090f,-0.000000f),
+new Vector3(0.980785f,-0.195090f,0.000000f),
+new Vector3(0.923880f,-0.382683f,0.000000f),
+new Vector3(0.831470f,-0.555570f,0.000000f),
+new Vector3(0.707107f,-0.707107f,0.000000f),
+new Vector3(0.555570f,-0.831470f,0.000000f),
+new Vector3(0.382683f,-0.923880f,0.000000f),
+new Vector3(0.195090f,-0.980785f,0.000000f),
+new Vector3(0.000000f,-1.000000f,0.000000f),
+new Vector3(-0.195090f,-0.980785f,0.000000f),
+new Vector3(-0.382683f,-0.923880f,0.000000f),
+new Vector3(-0.555570f,-0.831470f,0.000000f),
+new Vector3(-0.707107f,-0.707107f,0.000000f),
+new Vector3(-0.831470f,-0.555570f,0.000000f),
+new Vector3(-0.923880f,-0.382683f,0.000000f),
+new Vector3(-0.980785f,-0.195090f,0.000000f),
+new Vector3(-0.980785f,0.195090f,-0.000000f),
+new Vector3(-0.923880f,0.382683f,-0.000000f),
+new Vector3(-0.831470f,0.555570f,-0.000000f),
+new Vector3(-0.707107f,0.707107f,-0.000000f),
+new Vector3(-0.555570f,0.831470f,-0.000000f),
+new Vector3(-0.382683f,0.923880f,-0.000000f),
+new Vector3(-0.195090f,0.980785f,-0.000000f),
+new Vector3(-0.000000f,0.980785f,-0.195090f),
+new Vector3(-0.000000f,0.923880f,-0.382683f),
+new Vector3(-0.000000f,0.831470f,-0.555570f),
+new Vector3(-0.000000f,0.707107f,-0.707107f),
+new Vector3(-0.000000f,0.555570f,-0.831470f),
+new Vector3(-0.000000f,0.382683f,-0.923880f),
+new Vector3(-0.000000f,0.195090f,-0.980785f),
+new Vector3(-0.000000f,-0.195090f,-0.980785f),
+new Vector3(-0.000000f,-0.382683f,-0.923880f),
+new Vector3(-0.000000f,-0.555570f,-0.831470f),
+new Vector3(0.000000f,-0.707107f,-0.707107f),
+new Vector3(0.000000f,-0.831470f,-0.555570f),
+new Vector3(0.000000f,-0.923880f,-0.382683f),
+new Vector3(0.000000f,-0.980785f,-0.195090f),
+new Vector3(0.000000f,-0.980785f,0.195090f),
+new Vector3(0.000000f,-0.923880f,0.382683f),
+new Vector3(0.000000f,-0.831470f,0.555570f),
+new Vector3(0.000000f,-0.707107f,0.707107f),
+new Vector3(0.000000f,-0.555570f,0.831470f),
+new Vector3(0.000000f,-0.382683f,0.923880f),
+new Vector3(0.000000f,-0.195090f,0.980785f),
+new Vector3(0.000000f,0.195090f,0.980785f),
+new Vector3(0.000000f,0.382683f,0.923880f),
+new Vector3(0.000000f,0.555570f,0.831470f),
+new Vector3(0.000000f,0.707107f,0.707107f),
+new Vector3(-0.000000f,0.831470f,0.555570f),
+new Vector3(-0.000000f,0.923880f,0.382683f),
+new Vector3(-0.000000f,0.980785f,0.195090f),
+            };
+                cmd.Indices = (new int[]
+                {
+0,1,
+1,2,
+2,3,
+3,4,
+4,5,
+5,6,
+6,7,
+7,8,
+8,9,
+9,10,
+10,11,
+11,12,
+12,13,
+13,14,
+14,15,
+15,16,
+16,17,
+17,18,
+18,19,
+19,20,
+20,21,
+21,22,
+22,23,
+23,24,
+24,25,
+25,26,
+26,27,
+27,28,
+28,29,
+29,30,
+31,0,
+33,32,
+34,33,
+35,34,
+36,35,
+37,36,
+38,37,
+39,38,
+40,23,
+41,40,
+42,41,
+43,42,
+44,43,
+45,44,
+46,45,
+47,46,
+48,47,
+49,48,
+50,49,
+51,50,
+52,51,
+53,52,
+54,53,
+55,7,
+56,55,
+57,56,
+58,57,
+59,58,
+60,59,
+61,60,
+62,32,
+63,62,
+64,63,
+65,64,
+66,65,
+67,66,
+15,68,
+69,15,
+70,69,
+71,70,
+72,71,
+73,72,
+74,73,
+47,75,
+76,47,
+77,76,
+78,77,
+79,78,
+80,79,
+81,80,
+82,81,
+83,31,
+84,83,
+85,84,
+86,85,
+87,86,
+88,87,
+32,89,
+7,54,
+68,67,
+23,39,
+89,88,
+30,31,
+31,82,
+75,74,
+32,61,
+            });
+                cmd.Vertices = new VertexPositionColor[pos.Length];
+
+                for (int i = 0; i < pos.Length; i++)
+                {
+                    cmd.Vertices[i].Color = color;
+                    cmd.Vertices[i].Position = pos[i];
+                }
+            }
+
+            cmd.Transform = Matrix4x4.CreateScale(sphere.Radius) * Matrix4x4.CreateTranslation(sphere.Center);
+
+            for (int i = 0; i < 90; i++)
             {
                 cmd.Vertices[i].Color = color;
             }

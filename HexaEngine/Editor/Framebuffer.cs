@@ -31,7 +31,7 @@
 
         public static bool Fullframe;
 
-        private static readonly Profiler fpsProfiler = new("latency", () => 1000 / Time.Delta, (x, sb) => { }, 100);
+        private static readonly Profiler fpsProfiler = new("latency", () => (int)(1000 / Time.Delta), (x, sb) => { }, 100);
 
         public Framebuffer(IGraphicsDevice device)
         {

@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Objects;
@@ -15,11 +16,11 @@
 
         protected override (VertexBuffer<Vertex>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
         {
-            CreateSphere(out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer);
+            CreateSphere(device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer);
             return (vertexBuffer, indexBuffer, null);
         }
 
-        public static void CreateSphere(out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer, int LatLines = 10, int LongLines = 10)
+        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 10, uint LongLines = 10)
         {
             float radius = 1;
             float x, y, z, xy;                              // vertex position
@@ -30,8 +31,8 @@
             float stackStep = MathF.PI / LatLines;
             float sectorAngle, stackAngle;
 
-            vertexBuffer = new();
-            indexBuffer = new();
+            uint vcounter = 0;
+            Vertex[] vertices = new Vertex[(LatLines +1) * (LongLines+1)];
 
             for (int i = 0; i <= LatLines; ++i)
             {
@@ -61,37 +62,43 @@
                     s = (float)j / LongLines;
                     t = (float)i / LatLines;
                     v.Texture = new(s, t, 0);
-                    vertexBuffer.Append(v);
+                    vertices[vcounter++] = v;
                 }
             }
 
-            int k1, k2;
+            vertexBuffer = new(device, CpuAccessFlags.None, vertices);
 
-            for (int i = 0; i < LatLines; ++i)
+            uint k1, k2;
+
+            uint counter = 0;
+            uint[] uints = new uint[(LatLines * LongLines * 2 - 2) * 3];
+            for (uint i = 0; i < LatLines; ++i)
             {
                 k1 = i * (LongLines + 1);     // beginning of current stack
                 k2 = k1 + LongLines + 1;      // beginning of next stack
 
-                for (int j = 0; j < LongLines; ++j, ++k1, ++k2)
+                for (uint j = 0; j < LongLines; ++j, ++k1, ++k2)
                 {
                     // 2 triangles per sector excluding first and last stacks
                     // k1 => k2 => k1+1
                     if (i != 0)
                     {
-                        indexBuffer.Append(k1);
-                        indexBuffer.Append(k2);
-                        indexBuffer.Append(k1 + 1);
+                        uints[counter++] = k1;
+                        uints[counter++] = k2;
+                        uints[counter++] = k1 + 1;
                     }
 
                     // k1+1 => k2 => k2+1
                     if (i != LatLines - 1)
                     {
-                        indexBuffer.Append(k1 + 1);
-                        indexBuffer.Append(k2);
-                        indexBuffer.Append(k2 + 1);
+                        uints[counter++] = k1 + 1;
+                        uints[counter++] = k2;
+                        uints[counter++] = k2 + 1;
                     }
                 }
             }
+
+            indexBuffer = new(device, CpuAccessFlags.None, uints);
         }
 
         public static void CreateSphere(out Vertex[] vertices, out int[] indexBuffer, int LatLines = 10, int LongLines = 10)

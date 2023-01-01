@@ -7,6 +7,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Thread-safe shader cache
@@ -15,7 +16,6 @@
     {
         private const string file = "cache/shadercache.bin";
         private static readonly List<ShaderCacheEntry> entries = new();
-        private static readonly SemaphoreSlim semaphore = new(1);
 
         static ShaderCache()
         {
@@ -27,131 +27,194 @@
         private static void CurrentDomain_ProcessExit(object? sender, EventArgs e)
         {
             Save();
+            for (int i = 0; i < entries.Count; i++)
+            {
+                entries[i].Free();
+            }
         }
 
         public static bool DisableCache { get; set; } = false;
 
-        public static async Task CacheShaderAsync(string path, ShaderMacro[] macros, Blob blob)
+        public static unsafe void CacheShader(string path, ShaderMacro[] macros, Shader* shader)
         {
-            await semaphore.WaitAsync();
-            CacheShaderInternal(path, macros, blob);
-            semaphore.Release();
+            lock (entries)
+            {
+                if (DisableCache) return;
+                var entry = new ShaderCacheEntry(path, macros, shader);
+                entries.RemoveAll(x => x.Equals(entry));
+                entries.Add(entry);
+            }
         }
 
-        public static async Task<(bool, byte[]?)> GetShaderAsync(string path, ShaderMacro[] macros)
+        public static unsafe void GetShaderOrCompile(IGraphicsDevice device, string code, string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
-            await semaphore.WaitAsync();
-            bool result = GetShaderInternal(path, macros, out byte[]? data);
-            semaphore.Release();
-            return (result, data);
+            Shader* pShader;
+            if (bypassCache || !GetShader(path, macros, &pShader))
+            {
+                device.Compile(code, entry, path, profile, &pShader);
+                CacheShader(entry, macros, pShader);
+            }
+            *shader = pShader;
         }
 
-        public static async Task ClearAsync()
+        public static unsafe void GetShaderOrCompileFile(IGraphicsDevice device, string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
-            await semaphore.WaitAsync();
-            ClearInternal();
-            semaphore.Release();
+            Shader* pShader;
+            if (bypassCache || !GetShader(path, macros, &pShader))
+            {
+                device.CompileFromFile(path, entry, profile, &pShader);
+                CacheShader(entry, macros, pShader);
+            }
+            *shader = pShader;
         }
 
-        public static void CacheShader(string path, ShaderMacro[] macros, Blob blob)
+        public static unsafe void GetShaderOrCompile(IGraphicsDevice device, string code, string entry, string path, string profile, Shader** shader, bool bypassCache = false)
         {
-            semaphore.Wait();
-            CacheShaderInternal(path, macros, blob);
-            semaphore.Release();
+            Shader* pShader;
+            if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                device.Compile(code, entry, path, profile, &pShader);
+                CacheShader(entry, Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
         }
 
-        public static bool GetShader(string path, ShaderMacro[] macros, out byte[]? data)
+        public static unsafe void GetShaderOrCompileFile(IGraphicsDevice device, string entry, string path, string profile, Shader** shader, bool bypassCache = false)
         {
-            semaphore.Wait();
-            var result = GetShaderInternal(path, macros, out data);
-            semaphore.Release();
-            return result;
+            Shader* pShader;
+            if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                device.CompileFromFile(path, entry, profile, &pShader);
+                CacheShader(entry, Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompile(IGraphicsDevice device, string code, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                device.Compile(code, "main", path, profile, &pShader);
+                CacheShader("main", Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompileFile(IGraphicsDevice device, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                device.CompileFromFile(path, "main", profile, &pShader);
+                CacheShader("main", Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe bool GetShader(string path, ShaderMacro[] macros, Shader** shader)
+        {
+            lock (entries)
+            {
+                *shader = default;
+                if (DisableCache) return false;
+
+                var ventry = new ShaderCacheEntry(path, macros, null);
+                var entry = entries.FirstOrDefault(x => x.Equals(ventry));
+                if (entry != default)
+                {
+                    *shader = entry.Shader;
+                    return true;
+                }
+                return false;
+            }
         }
 
         public static void Clear()
         {
-            semaphore.Wait();
-            ClearInternal();
-            semaphore.Release();
-        }
-
-        private static void CacheShaderInternal(string path, ShaderMacro[] macros, Blob blob)
-        {
-            if (DisableCache) return;
-            var entry = new ShaderCacheEntry(path, macros, blob.AsBytes());
-            entries.RemoveAll(x => x.Equals(entry));
-            entries.Add(entry);
-        }
-
-        private static bool GetShaderInternal(string path, ShaderMacro[] macros, out byte[]? data)
-        {
-            data = default;
-            if (DisableCache) return false;
-
-            var ventry = new ShaderCacheEntry(path, macros, null);
-            var entry = entries.FirstOrDefault(x => x.Equals(ventry));
-            if (entry != default)
+            lock (entries)
             {
-                data = entry.Bytecode;
-                return true;
+                ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ...");
+                for (int i = 0; i < entries.Count; i++)
+                {
+                    entries[i].Free();
+                }
+                entries.Clear();
+                ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ... done");
             }
-            return false;
         }
 
-        private static void ClearInternal()
+        private static unsafe bool GetShaderInternal(string path, ShaderMacro[] macros, Shader** shader)
         {
-            ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ...");
-            entries.Clear();
-            ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ... done");
+            lock (entries)
+            {
+                *shader = null;
+                if (DisableCache) return false;
+
+                var ventry = new ShaderCacheEntry(path, macros, null);
+                var entry = entries.FirstOrDefault(x => x.Equals(ventry));
+                if (entry != default)
+                {
+                    *shader = entry.Shader;
+                    return true;
+                }
+                return false;
+            }
         }
 
         private static void Load()
         {
             if (!File.Exists(file)) return;
-            var span = (Span<byte>)File.ReadAllBytes(file);
-            var decoder = Encoding.UTF8.GetDecoder();
-            var count = BinaryPrimitives.ReadInt32LittleEndian(span);
-            entries.EnsureCapacity(count);
-
-            int idx = 4;
-            for (int i = 0; i < count; i++)
+            lock (entries)
             {
-                var entry = new ShaderCacheEntry();
-                idx += entry.Read(span[idx..], decoder);
-                entries.Add(entry);
+                var span = (Span<byte>)File.ReadAllBytes(file);
+                var decoder = Encoding.UTF8.GetDecoder();
+                var count = BinaryPrimitives.ReadInt32LittleEndian(span);
+                entries.EnsureCapacity(count);
+
+                int idx = 4;
+                for (int i = 0; i < count; i++)
+                {
+                    var entry = new ShaderCacheEntry();
+                    idx += entry.Read(span[idx..], decoder);
+                    entries.Add(entry);
+                }
             }
         }
 
         private static void Save()
         {
-            var encoder = Encoding.UTF8.GetEncoder();
-            var size = 4 + entries.Sum(x => x.SizeOf(encoder));
-            var span = size < 2048 ? stackalloc byte[size] : new byte[size];
-
-            BinaryPrimitives.WriteInt32LittleEndian(span, entries.Count);
-
-            int idx = 4;
-            for (var i = 0; i < entries.Count; i++)
+            lock (entries)
             {
-                var entry = entries[i];
-                idx += entry.Write(span[idx..], encoder);
-            }
+                var encoder = Encoding.UTF8.GetEncoder();
+                var size = 4 + entries.Sum(x => x.SizeOf(encoder));
+                var span = size < 2048 ? stackalloc byte[size] : new byte[size];
 
-            File.WriteAllBytes(file, span.ToArray());
+                BinaryPrimitives.WriteInt32LittleEndian(span, entries.Count);
+
+                int idx = 4;
+                for (var i = 0; i < entries.Count; i++)
+                {
+                    var entry = entries[i];
+                    idx += entry.Write(span[idx..], encoder);
+                }
+
+                File.WriteAllBytes(file, span.ToArray());
+            }
         }
     }
 
-    public struct ShaderCacheEntry : IEquatable<ShaderCacheEntry>
+    public unsafe struct ShaderCacheEntry : IEquatable<ShaderCacheEntry>
     {
         public string Name;
         public ShaderMacro[] Macros;
-        public byte[]? Bytecode;
+        public Shader* Shader;
 
-        public ShaderCacheEntry(string name, ShaderMacro[] macros, byte[]? bytecode)
+        public ShaderCacheEntry(string name, ShaderMacro[] macros, Shader* bytecode)
         {
             Name = name;
             Macros = macros;
-            Bytecode = bytecode;
+            Shader = bytecode;
         }
 
         public int Write(Span<byte> dest, Encoder encoder)
@@ -166,10 +229,22 @@
                 idx += WriteString(dest[idx..], macro.Name, encoder);
                 idx += WriteString(dest[idx..], macro.Definition, encoder);
             }
-            BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], Bytecode?.Length ?? 0);
+            if (Shader != null)
+                BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], (int)Shader->Length);
+            else
+                BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], 0);
             idx += 4;
-            Bytecode?.CopyTo(dest[idx..]);
-            idx += Bytecode?.Length ?? 0;
+
+            if (Shader != null)
+            {
+                Shader->CopyTo(dest[idx..]);
+                idx += (int)Shader->Length;
+            }
+            else
+            {
+                idx += 0;
+            }
+
             return idx;
         }
 
@@ -188,8 +263,14 @@
             }
             int len = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
-            Bytecode = src.Slice(idx, len).ToArray();
-            idx += Bytecode.Length;
+            Shader = Utilities.Alloc<Shader>();
+            Shader->Bytecode = Utilities.Alloc<byte>(len);
+            Shader->Length = (nuint)len;
+            fixed (void* ptr = src.Slice(idx, len))
+            {
+                Buffer.MemoryCopy(ptr, Shader->Bytecode, len, len);
+            }
+            idx += len;
             return idx;
         }
 
@@ -217,7 +298,16 @@
 
         public int SizeOf(Encoder encoder)
         {
-            return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) + Bytecode?.Length ?? 0;
+            if (Shader != null)
+                return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) + (int)Shader->Length;
+            else
+                return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder));
+        }
+
+        public void Free()
+        {
+            Shader->Free();
+            Utilities.Free(Shader);
         }
 
         public bool Equals(ShaderCacheEntry other)

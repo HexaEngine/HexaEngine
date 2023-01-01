@@ -56,12 +56,79 @@
             return Matrix4x4.CreateTranslation(pos) * Matrix4x4.CreateScale(scale);
         }
 
+        /// <summary>Creates a new quaternion from the given yaw, pitch, and roll.</summary>
+        /// <param name="yaw">The yaw angle, in radians, around the Y axis.</param>
+        /// <returns>The resulting quaternion.</returns>
+        public static Quaternion CreateFromYaw(float yaw)
+        {
+            //  Roll first, about axis the object is facing, then
+            //  pitch upward, then yaw to face into the new heading
+            float sy, cy;
+
+            float halfYaw = yaw * 0.5f;
+            sy = MathF.Sin(halfYaw);
+            cy = MathF.Cos(halfYaw);
+
+            Quaternion result;
+
+            result.X = 0;
+            result.Y = sy;
+            result.Z = 0;
+            result.W = cy;
+
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Transform(Vector3 value, float yaw)
+        {
+            float sy, cy;
+
+            float halfYaw = yaw * 0.5f;
+            sy = MathF.Sin(halfYaw);
+            cy = MathF.Cos(halfYaw);
+
+            float y2 = sy + sy;
+
+            float wy2 = cy * y2;
+            float yy2 = sy * y2;
+
+            return new Vector3(
+                value.X * (1.0f - yy2) + value.Z * wy2,
+                value.Y,
+                value.X * wy2 + value.Z * (1.0f - yy2)
+            );
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 TransformOnlyYaw(this Vector3 value, Quaternion r)
+        {
+            float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
+
+            float halfYaw = yaw * 0.5f;
+            float sy = MathF.Sin(halfYaw);
+            float cy = MathF.Cos(halfYaw);
+
+            float y2 = sy + sy;
+
+            float wy2 = cy * y2;
+            float yy2 = sy * y2;
+
+            return new Vector3(value.X * (1.0f - yy2) + value.Z * wy2, value.Y, value.X * wy2 + value.Z * (1.0f - yy2));
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void GetYawPitchRoll(this Quaternion r, out float yaw, out float pitch, out float roll)
         {
             yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
             pitch = MathF.Asin(2.0f * (r.X * r.W - r.Y * r.Z));
             roll = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void GetYaw(this Quaternion r, out float yaw)
+        {
+            yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

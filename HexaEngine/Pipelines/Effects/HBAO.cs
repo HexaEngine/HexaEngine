@@ -85,7 +85,7 @@
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width, height));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
             hbaoSRVs = AllocArray(2);
-            hbaoCBs = AllocArray(2); //new IBuffer[2];
+            hbaoCBs = AllocArray(2);
             hbaoCBs[0] = (void*)cbHBAO.NativePointer;
 
             blurPipeline = new(device, new()

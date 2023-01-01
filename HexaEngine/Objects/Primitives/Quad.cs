@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using System.Diagnostics.CodeAnalysis;
@@ -23,20 +24,14 @@
         {
             if (instances == 0)
             {
-                VertexBuffer = new();
-                IndexBuffer = new();
-
-                VertexBuffer.Append(new OrthoVertex(new Vector3(-1, 1, 0), new Vector2(0, 0)));
-                VertexBuffer.Append(new OrthoVertex(new Vector3(-1, -1, 0), new Vector2(0, 1)));
-                VertexBuffer.Append(new OrthoVertex(new Vector3(1, 1, 0), new Vector2(1, 0)));
-                VertexBuffer.Append(new OrthoVertex(new Vector3(1, -1, 0), new Vector2(1, 1)));
-
-                IndexBuffer.Append(0);
-                IndexBuffer.Append(3);
-                IndexBuffer.Append(1);
-                IndexBuffer.Append(0);
-                IndexBuffer.Append(2);
-                IndexBuffer.Append(3);
+                VertexBuffer = new(device, CpuAccessFlags.None, new OrthoVertex[]
+                {
+                    new OrthoVertex(new(-1, 1, 0), new(0, 0)),
+                    new OrthoVertex(new(-1, -1, 0), new(0, 1)),
+                    new OrthoVertex(new(1, 1, 0), new(1, 0)),
+                    new OrthoVertex(new(1, -1, 0), new(1, 1))
+                });
+                IndexBuffer = new(device, CpuAccessFlags.None, new uint[] { 0, 3, 1, 0, 2, 3 });
             }
 
             instances++;

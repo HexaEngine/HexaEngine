@@ -59,29 +59,17 @@
             initialized = true;
         }
 
-        private void Compile(bool bypassCache = false)
+        private unsafe void Compile(bool bypassCache = false)
         {
             ShaderMacro[] macros = GetShaderMacros();
+
             if (desc.Path != null)
-                if (ShaderCache.GetShader(desc.Path, macros, out var data) && !bypassCache)
-                {
-                    cs = device.CreateComputeShader(data);
-                    cs.DebugName = GetType().Name + nameof(cs);
-                }
-                else
-                {
-                    device.CompileFromFile(desc.Path, macros, desc.Entry, "cs_5_0", out var vBlob);
-
-                    if (vBlob == null)
-                    {
-                        return;
-                    }
-
-                    ShaderCache.CacheShader(desc.Path, macros, vBlob);
-                    cs = device.CreateComputeShader(vBlob.AsBytes());
-                    cs.DebugName = GetType().Name + nameof(cs);
-                    vBlob.Dispose();
-                }
+            {
+                Shader* shader;
+                ShaderCache.GetShaderOrCompileFile(device, desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
+                cs = device.CreateComputeShader(shader);
+                cs.DebugName = GetType().Name + nameof(cs);
+            }
         }
 
         public static IBuffer CreateRawBuffer<T>(IGraphicsDevice device, T[] values) where T : struct
