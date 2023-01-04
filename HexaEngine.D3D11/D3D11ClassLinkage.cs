@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using Silk.NET.Direct3D11;
 
@@ -16,14 +17,18 @@
         public IClassInstance CreateClassInstance(string name, uint cbOffset, uint cvOffset, uint texOffset, uint samplerOffset)
         {
             ID3D11ClassInstance* instance;
-            classLinkage->CreateClassInstance(Utils.ToBytes(name), cbOffset, cvOffset, texOffset, samplerOffset, &instance);
+            byte* pName = name.ToUTF8();
+            classLinkage->CreateClassInstance(pName, cbOffset, cvOffset, texOffset, samplerOffset, &instance);
+            Free(pName);
             return new D3D11ClassInstance(instance);
         }
 
         public IClassInstance GetClassInstance(string name, uint index)
         {
             ID3D11ClassInstance* instance;
-            classLinkage->GetClassInstance(Utils.ToBytes(name), index, &instance);
+            byte* pName = name.ToUTF8();
+            classLinkage->GetClassInstance(pName, index, &instance);
+            Free(pName);
             return new D3D11ClassInstance(instance);
         }
 

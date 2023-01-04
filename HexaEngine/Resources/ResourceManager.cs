@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graphics;
     using HexaEngine.IO;
     using HexaEngine.Objects;
     using HexaEngine.Rendering.ConstantBuffers;
@@ -12,10 +13,14 @@
         private static readonly ConcurrentDictionary<string, Mesh> meshes = new();
         private static readonly ConcurrentDictionary<string, Material> materials = new();
         private static readonly ConcurrentDictionary<string, Texture> textures = new();
+        private static readonly List<object> resources = new();
+        private static readonly Dictionary<string, object> sharedResources = new();
         private static bool suppressCleanup;
+#nullable disable
         private static IGraphicsDevice device;
+#nullable enable
 
-        public static void Initialize(IGraphicsDevice device)
+        internal static void Initialize(IGraphicsDevice device)
         {
             ResourceManager.device = device;
         }
@@ -67,13 +72,13 @@
             return meshes.TryGetValue(mesh.Name, out model);
         }
 
-        public static Mesh LoadMesh(MeshData mesh)
+        public static unsafe Mesh LoadMesh(MeshData mesh)
         {
             lock (meshes)
             {
                 if (meshes.TryGetValue(mesh.Name, out var value))
                     return value;
-                Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.BoundingBox, mesh.BoundingSphere);
+                Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.VerticesCount, mesh.Indices, mesh.IndicesCount, mesh.BoundingBox, mesh.BoundingSphere);
                 meshes.TryAdd(mesh.Name, model);
                 return model;
             }
@@ -296,6 +301,171 @@
             if (texture?.Name == fullname) return texture;
             UnloadTexture(texture);
             return await AsyncLoadTexture(name);
+        }
+
+        public static object GetResource(string name)
+        {
+            lock (sharedResources)
+            {
+                return sharedResources[name];
+            }
+        }
+
+        public static object? GetResource<T>(string name) where T : class
+        {
+            lock (sharedResources)
+            {
+                sharedResources.TryGetValue(name, out object? value);
+                return value is T t ? t : null;
+            }
+        }
+
+        public static bool TryGetResource<T>(string name, [NotNullWhen(true)] out T? value) where T : class
+        {
+            lock (sharedResources)
+            {
+                sharedResources.TryGetValue(name, out object? val);
+                value = val is T t ? t : null;
+                return value != null;
+            }
+        }
+
+        public static void AddResource(string name, object resource)
+        {
+            lock (sharedResources)
+            {
+                resources.Add(resource);
+                sharedResources[name] = resource;
+            }
+        }
+
+        public static void RemoveResource(string name)
+        {
+            lock (sharedResources)
+            {
+                var resource = sharedResources[name];
+                resources.Remove(resource);
+                sharedResources.Remove(name);
+            }
+        }
+
+        public static Graphics.Texture GetOrAdd(string name, TextureDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture;
+                }
+                texture = new(device, description);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
+        public static Graphics.Texture[] GetOrAdd(string name, int count, TextureDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture[]? textures))
+                {
+                    if (textures.Length == count)
+                        return textures;
+                    else
+                        throw new InvalidOperationException();
+                }
+                textures = new Graphics.Texture[count];
+                for (int i = 0; i < count; i++)
+                {
+                    textures[i] = new(device, description);
+                }
+                AddResource(name, textures);
+                return textures;
+            }
+        }
+
+        public static IRenderTargetView? GetOrAddRTV(string name, TextureDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture.RenderTargetView;
+                }
+                texture = new(device, description);
+                AddResource(name, texture);
+                return texture.RenderTargetView;
+            }
+        }
+
+        public static IShaderResourceView? GetOrAddSRV(string name, TextureDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture.ShaderResourceView;
+                }
+                texture = new(device, description);
+                AddResource(name, texture);
+                return texture.ShaderResourceView;
+            }
+        }
+
+        public static IDepthStencilView? GetOrAddDSV(string name, TextureDescription description, DepthStencilDesc depthStencilDesc)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture.DepthStencilView;
+                }
+                texture = new(device, description, depthStencilDesc);
+                AddResource(name, texture);
+                return texture.DepthStencilView;
+            }
+        }
+
+        public static Graphics.Texture GetOrAdd(string name, TextureFileDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture;
+                }
+                texture = new(device, description);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
+        public static IRenderTargetView? GetOrAddRTV(string name, TextureFileDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture.RenderTargetView;
+                }
+                texture = new(device, description);
+                AddResource(name, texture);
+                return texture.RenderTargetView;
+            }
+        }
+
+        public static IShaderResourceView? GetOrAddSRV(string name, TextureFileDescription description)
+        {
+            lock (sharedResources)
+            {
+                if (TryGetResource(name, out Graphics.Texture? texture))
+                {
+                    return texture.ShaderResourceView;
+                }
+                texture = new(device, description);
+                AddResource(name, texture);
+                return texture.ShaderResourceView;
+            }
         }
 
         public static void Release()

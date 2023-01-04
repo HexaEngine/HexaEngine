@@ -4,6 +4,7 @@
 
     public class ComputePipeline : IDisposable
     {
+        private bool valid;
         private bool initialized;
         private IComputeShader? cs;
         private readonly IGraphicsDevice device;
@@ -29,12 +30,14 @@
 
         public virtual void BeginDispatch(IGraphicsContext context)
         {
+            if (!valid) return;
             if (!initialized) return;
             context.CSSetShader(cs);
         }
 
         public void Dispatch(IGraphicsContext context, int x, int y, int z)
         {
+            if (!valid) return;
             if (!initialized) return;
             BeginDispatch(context);
             context.Dispatch(x, y, z);
@@ -43,6 +46,7 @@
 
         public virtual void EndDispatch(IGraphicsContext context)
         {
+            if (!valid) return;
             if (!initialized) return;
             context.ClearState();
         }
@@ -67,14 +71,16 @@
             {
                 Shader* shader;
                 ShaderCache.GetShaderOrCompileFile(device, desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
+                if (shader == null)
+                {
+                    valid = false;
+                    return;
+                }
                 cs = device.CreateComputeShader(shader);
                 cs.DebugName = GetType().Name + nameof(cs);
+                Free(shader);
+                valid = true;
             }
-        }
-
-        public static IBuffer CreateRawBuffer<T>(IGraphicsDevice device, T[] values) where T : struct
-        {
-            return device.CreateBuffer(values, BindFlags.UnorderedAccess | BindFlags.ShaderResource | BindFlags.IndexBuffer | BindFlags.VertexBuffer, miscFlags: ResourceMiscFlag.BufferAllowRawViews);
         }
 
         public static IBuffer CreateRawBuffer(IGraphicsDevice device, int size)

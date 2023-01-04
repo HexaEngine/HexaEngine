@@ -25,16 +25,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 	float3 normal = bary.x * tri[0].normal + bary.y * tri[1].normal + bary.z * tri[2].normal;
 	float2 tex = bary.x * tri[0].tex + bary.y * tri[1].tex + bary.z * tri[2].tex;
 
-	// Calculate the normal vector against the world matrix only.
-#if (INSTANCED != 1)
-	normal = mul(normal, (float3x3) world);
-#endif
 	normal = normalize(normal);
-
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-#if (INSTANCED != 1)
-	output.position = mul(output.position, world);
-#endif
 
 	if (material.DANR.r)
 	{

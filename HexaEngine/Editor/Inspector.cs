@@ -78,7 +78,7 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
-                    DebugDraw.DrawFrustum(cam.Name, new BoundingFrustum(cam.Transform.View * cam.Transform.Projection), Vector4.Zero);
+                    DebugDraw.DrawFrustum(cam.Name, cam.Transform.Frustum, Vector4.One);
                 }
             }
 

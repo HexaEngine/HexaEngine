@@ -2,11 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
+    using System.Numerics;
 
     public unsafe class OSMPipeline : GraphicsPipeline
     {
-        public IBuffer? View;
+        public ConstantBuffer<Matrix4x4>? View;
         public IBuffer? Light;
 
         public OSMPipeline(IGraphicsDevice device) : base(device, new()
@@ -34,7 +36,7 @@
         public override void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
             base.BeginDraw(context, viewport);
-            context.GSSetConstantBuffer(View, 0);
+            context.GSSetConstantBuffer(View?.Buffer, 0);
             context.PSSetConstantBuffer(Light, 0);
         }
     }

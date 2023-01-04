@@ -644,14 +644,12 @@
             };
         }
 
-        public static Silk.NET.Direct3D11.SubresourceData[] Convert(SubresourceData[] datas)
+        public static void Convert(SubresourceData[] datas, Silk.NET.Direct3D11.SubresourceData* subresourceDatas)
         {
-            Silk.NET.Direct3D11.SubresourceData[] subresourceDatas = new Silk.NET.Direct3D11.SubresourceData[datas.Length];
             for (int i = 0; i < datas.Length; i++)
             {
                 subresourceDatas[i] = Convert(datas[i]);
             }
-            return subresourceDatas;
         }
 
         public static Silk.NET.Direct3D11.SubresourceData Convert(SubresourceData data)
@@ -1052,14 +1050,12 @@
             return result;
         }
 
-        public static Silk.NET.Direct3D11.InputElementDesc[] Convert(InputElementDescription[] inputElements)
+        public static void Convert(InputElementDescription[] inputElements, Silk.NET.Direct3D11.InputElementDesc* descs)
         {
-            Silk.NET.Direct3D11.InputElementDesc[] descs = new Silk.NET.Direct3D11.InputElementDesc[inputElements.Length];
             for (int i = 0; i < inputElements.Length; i++)
             {
                 descs[i] = Convert(inputElements[i]);
             }
-            return descs;
         }
 
         public static Silk.NET.Direct3D11.InputElementDesc Convert(InputElementDescription description)

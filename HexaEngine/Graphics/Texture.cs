@@ -15,7 +15,7 @@
         #region Fields
 
         private readonly IResource resource;
-        public readonly IShaderResourceView? ResourceView;
+        public readonly IShaderResourceView? ShaderResourceView;
         private readonly IRenderTargetView? renderTargetView;
         private readonly IResource? depthStencil;
         public IDepthStencilView? DepthStencilView;
@@ -46,7 +46,7 @@
             this.resource = resource;
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
             DepthStencilView = depthStencil;
@@ -171,7 +171,7 @@
             }
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -186,7 +186,7 @@
             this.resource = resource;
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
         }
@@ -198,7 +198,7 @@
             this.resource = resource;
 
             if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = srv;
+                ShaderResourceView = srv;
             if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = rtv;
         }
@@ -216,7 +216,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -342,7 +342,7 @@
             }
 
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -363,7 +363,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -443,7 +443,7 @@
             }
 
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -470,7 +470,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -495,7 +495,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -525,7 +525,7 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
-                ResourceView = device.CreateShaderResourceView(resource);
+                ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
@@ -623,7 +623,7 @@
             if (!disposedValue)
             {
                 resource?.Dispose();
-                ResourceView?.Dispose();
+                ShaderResourceView?.Dispose();
                 renderTargetView?.Dispose();
                 depthStencil?.Dispose();
                 if (!overrwittenDSV)

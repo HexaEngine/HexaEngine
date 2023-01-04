@@ -253,7 +253,7 @@ namespace HexaEngine.Editor
                     {
                         Texture val = (Texture)value.Item2;
                         if (val != null)
-                            ImGui.Image(val.ResourceView.NativePointer, new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
+                            ImGui.Image(val.ShaderResourceView.NativePointer, new Vector2(ImGui.GetWindowWidth(), ImGui.GetWindowWidth()));
                         return (false, null);
                     }));
                     continue;

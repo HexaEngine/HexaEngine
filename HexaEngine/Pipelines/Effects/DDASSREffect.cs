@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
+    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Objects.Primitives;
     using System.Numerics;
     using System.Reflection.Metadata;

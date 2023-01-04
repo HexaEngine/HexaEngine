@@ -18,7 +18,7 @@
         {
         }
 
-        protected override (VertexBuffer<VertexPositionColor>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<VertexPositionColor>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             // Calculate the number of vertices in the terrain mesh.
             VertexCount = (width - 1) * (height - 1) * 8;
@@ -104,7 +104,7 @@
                 }
             }
 
-            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer(device, CpuAccessFlags.None, indices), null);
+            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer(device, CpuAccessFlags.None, indices));
         }
 
         public static (VertexPositionColor[], int[]) GenerateGrid()

@@ -3,7 +3,6 @@
 
 using HexaEngine.Core;
 using HexaEngine.Core.Graphics;
-using HexaEngine.Editor;
 using HexaEngine.IO;
 using HexaEngine.Mathematics;
 using ImGuiNET;
@@ -377,6 +376,8 @@ namespace HexaEngine.Rendering
 
             inputLayout = device.CreateInputLayout(inputElements, vsShader);
 
+            Free(vsShader);
+
             var constBufferDesc = new BufferDescription
             {
                 ByteWidth = VertexConstantBufferSize,
@@ -407,6 +408,8 @@ namespace HexaEngine.Rendering
             ShaderCache.GetShaderOrCompile(device, pixelShaderCode, "Internal:ImGui:PS", "ps_5_0", &psShader);
 
             pixelShader = device.CreatePixelShader(psShader);
+
+            Free(psShader);
 
             var blendDesc = new BlendDescription
             {

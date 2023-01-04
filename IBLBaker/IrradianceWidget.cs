@@ -80,13 +80,13 @@
 
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
                     EquiRectangularToCubeFilter filter = new(device);
-                    filter.Source = source.ResourceView;
+                    filter.Source = source.ShaderResourceView;
                     Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA16Float));
                     var cu = cube1.CreateRTVArray(device);
                     filter.Targets = cu;
                     filter.Draw(context);
                     context.ClearState();
-                    context.GenerateMips(cube1.ResourceView ?? throw new Exception("Cannot convert texture!"));
+                    context.GenerateMips(cube1.ShaderResourceView ?? throw new Exception("Cannot convert texture!"));
                     ImGuiConsole.Log(LogSeverity.Log, "Converted environment to cubemap ...");
                     ImGuiConsole.Log(LogSeverity.Log, "Exporting environment ...");
                     device.SaveTexture2D((ITexture2D)cube1.Resource, "env_o.dds");
@@ -144,7 +144,7 @@
                         irrRTV = irradianceTex.CreateRTVArray(device);
                         irrSRV = irradianceTex.CreateSRVArray(device);
                         irradianceFilter.Targets = irrRTV;
-                        irradianceFilter.Source = environmentTex?.ResourceView;
+                        irradianceFilter.Source = environmentTex?.ShaderResourceView;
                         for (int i = 0; i < 6; i++)
                         {
                             irrIds[i] = irrSRV.Views[i].NativePointer;

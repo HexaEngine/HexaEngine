@@ -1,26 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System.Runtime.InteropServices;
-
-    public unsafe struct Shader
-    {
-        public byte* Bytecode;
-        public nuint Length;
-
-        public void CopyTo(Span<byte> span)
-        {
-            fixed (byte* ptr = span)
-            {
-                Buffer.MemoryCopy(Bytecode, ptr, Length, Length);
-            }
-        }
-
-        public void Free()
-        {
-            Marshal.FreeHGlobal((nint)Bytecode);
-        }
-    }
-
     public struct ShaderMacro
     {
         public string Name;

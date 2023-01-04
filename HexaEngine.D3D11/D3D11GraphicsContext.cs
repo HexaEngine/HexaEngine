@@ -1,10 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
-    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
-    using Silk.NET.DXGI;
     using Silk.NET.Maths;
     using System;
     using System.Numerics;
@@ -54,15 +51,6 @@
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)
         {
             DeviceContext->ClearRenderTargetView((ID3D11RenderTargetView*)renderTargetView.NativePointer, (float*)&value);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearRenderTargetViews(IRenderTargetView[] rtvs, Vector4 value)
-        {
-            for (int i = 0; i < rtvs.Length; i++)
-            {
-                ClearRenderTargetView(rtvs[i], value);
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -193,11 +181,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView? depthStencilView)
         {
-#nullable disable
-            ID3D11RenderTargetView** ptr = Utils.ToPointerArray<IRenderTargetView, ID3D11RenderTargetView>(views);
-            ID3D11DepthStencilView* dsv = (ID3D11DepthStencilView*)(depthStencilView?.NativePointer);
-#nullable enable
-            DeviceContext->OMSetRenderTargets((uint)views.Length, ptr, dsv);
+            throw new NotImplementedException();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

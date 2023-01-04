@@ -11,7 +11,7 @@
         {
         }
 
-        protected override (VertexBuffer<Vector3>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<Vector3>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             VertexBuffer<Vector3> vertexBuffer = new(device, CpuAccessFlags.None, new Vector3[]
             {
@@ -35,7 +35,7 @@
                 1,4,2,2,4,6,
             });
 
-            return (vertexBuffer, indexBuffer, null);
+            return (vertexBuffer, indexBuffer);
         }
     }
 }

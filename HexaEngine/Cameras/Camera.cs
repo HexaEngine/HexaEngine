@@ -5,12 +5,10 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-#if GenericAttributes
     [EditorNode<Camera>("Camera")]
-#endif
-
     public class Camera : GameObject, IView
     {
         public new CameraTransform Transform;
@@ -25,9 +23,7 @@
             CreatePropertyEditor<Camera>();
         }
 
-#if GenericAttributes
         [EditorProperty<ProjectionType>("Type")]
-#endif
         public ProjectionType ProjectionType { get => Transform.ProjectionType; set => Transform.ProjectionType = value; }
 
         [EditorProperty(nameof(Fov))]
@@ -47,6 +43,16 @@
 
         [EditorProperty(nameof(Height))]
         public float Height { get => Transform.Height; set => Transform.Height = value; }
+
+        [EditorProperty(nameof(VisualizeCulling))]
+        public bool VisualizeCulling
+        {
+            get => CameraManager.Culling == this;
+            set
+            {
+                CameraManager.Culling = value ? this : null;
+            }
+        }
 
         CameraTransform IView.Transform => Transform;
 

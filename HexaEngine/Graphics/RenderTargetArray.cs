@@ -50,7 +50,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetTargets(IGraphicsContext context)
         {
-            context.SetRenderTargets(views, DepthStencil);
+            //context.SetRenderTargets(views, DepthStencil);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

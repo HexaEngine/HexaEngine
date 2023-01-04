@@ -7,7 +7,7 @@ cbuffer params
 	float2 padd;
 };
 
-[numthreads(1, 1, 1)]
+[numthreads(32, 32, 1)]
 void main(uint2 groupIndex : SV_GroupThreadID, uint3 threadId : SV_DispatchThreadID)
 {
 	float2 texelCoords = threadId.xy * texelSize;

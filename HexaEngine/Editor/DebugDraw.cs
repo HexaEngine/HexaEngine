@@ -131,11 +131,14 @@ float4 main(PixelInputType pixel) : SV_TARGET
 
             vs = device.CreateVertexShader(vsShader);
             il = device.CreateInputLayout(vsShader);
+            Free(vsShader);
 
             Shader* psShader;
             ShaderCache.GetShaderOrCompile(device, psCode, "Internal:DebugDraw:PS", "ps_5_0", &psShader);
 
             ps = device.CreatePixelShader(psShader);
+
+            Free(psShader);
 
             vb = device.CreateBuffer(new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             ib = device.CreateBuffer(new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));

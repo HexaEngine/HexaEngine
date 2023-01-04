@@ -13,14 +13,14 @@
         private int height;
         private bool dirty;
         private readonly ComputePipeline lumaCompute;
-        private LumaParams* lumaParams;
+        private readonly LumaParams* lumaParams;
         private readonly IBuffer cbLumaParams;
         private readonly IBuffer histogram;
         private readonly IUnorderedAccessView histogramUAV;
         private readonly void** lumaUAVs;
 
         private readonly ComputePipeline lumaAvgCompute;
-        private LumaAvgParams* lumaAvgParams;
+        private readonly LumaAvgParams* lumaAvgParams;
         private readonly IBuffer cbLumaAvgParams;
         private readonly ITexture2D luma;
         private readonly IShaderResourceView lumaSRV;
@@ -29,7 +29,7 @@
 
         private readonly GraphicsPipeline exposurePipeline;
         private readonly Quad quad;
-        private ExposureParams* exposureParams;
+        private readonly ExposureParams* exposureParams;
         private readonly IBuffer cbExposureParams;
         private readonly ISamplerState samplerPoint;
 
@@ -56,14 +56,6 @@
                 MinLogLuminance = -8.0f;
                 OneOverLogLuminanceRange = 1.0f / (3.0f + 8.0f);
             }
-
-            public void Default()
-            {
-                InputWidth = 0;
-                InputHeight = 0;
-                MinLogLuminance = -8.0f;
-                OneOverLogLuminanceRange = 1.0f / (3.0f + 8.0f);
-            }
         }
 
         private struct LumaAvgParams
@@ -76,14 +68,6 @@
             public Vector3 Padd;
 
             public LumaAvgParams()
-            {
-                MinLogLuminance = -8.0f;
-                LogLuminanceRange = 3.0f + 8.0f;
-                Tau = 1.1f;
-                Padd = default;
-            }
-
-            public void Default()
             {
                 MinLogLuminance = -8.0f;
                 LogLuminanceRange = 3.0f + 8.0f;
@@ -112,7 +96,6 @@
             this.height = height;
             lumaCompute = new(device, new("compute/luma/shader.hlsl"));
             lumaParams = Alloc<LumaParams>();
-            lumaParams->Default();
             lumaParams->InputWidth = (uint)width;
             lumaParams->InputHeight = (uint)height;
             cbLumaParams = device.CreateBuffer(lumaParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
@@ -123,7 +106,6 @@
 
             lumaAvgCompute = new(device, new("compute/lumaAvg/shader.hlsl"));
             lumaAvgParams = Alloc<LumaAvgParams>();
-            lumaAvgParams->Default();
             lumaAvgParams->PixelCount = (uint)(width * height);
             cbLumaAvgParams = device.CreateBuffer(lumaAvgParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             luma = device.CreateTexture2D(Format.R32Float, 1, 1, 1, 1, null, BindFlags.ShaderResource | BindFlags.UnorderedAccess, ResourceMiscFlag.None);

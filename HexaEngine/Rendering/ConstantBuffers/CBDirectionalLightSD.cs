@@ -2,6 +2,7 @@
 {
     using HexaEngine.Lights;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public unsafe struct CBDirectionalLightSD
     {
@@ -57,6 +58,24 @@
             Color = light.Color;
             Direction = light.Transform.Forward;
             padd = default;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Matrix4x4* GetViews()
+        {
+            fixed (CBDirectionalLightSD* @this = &this)
+            {
+                return (Matrix4x4*)@this;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public float* GetCascades()
+        {
+            fixed (CBDirectionalLightSD* @this = &this)
+            {
+                return (float*)((byte*)@this + CascadePointerOffset);
+            }
         }
 
         public override string ToString()

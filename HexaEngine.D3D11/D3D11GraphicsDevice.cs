@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using BepuPhysics.Collidables;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
@@ -19,8 +18,10 @@
     using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using SubresourceData = Core.Graphics.SubresourceData;
+    using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
     using Usage = Core.Graphics.Usage;
     using Viewport = Mathematics.Viewport;
+    using BepuPhysics.Trees;
 
     public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
@@ -115,17 +116,16 @@
                 description.ByteWidth = Marshal.SizeOf<T>();
             }
 
-            SubresourceData data;
-
-            var basePtr = Marshal.AllocHGlobal(description.ByteWidth);
-            data = new(basePtr, description.ByteWidth);
-            Marshal.StructureToPtr(value, basePtr, true);
-
             ID3D11Buffer* buffer;
             BufferDesc desc = Helper.Convert(description);
-            Device->CreateBuffer(&desc, Utils.AsPointer(Helper.Convert(new SubresourceData[] { data })), &buffer).ThrowHResult();
 
-            Marshal.FreeHGlobal(basePtr);
+            var data = Alloc(description.ByteWidth);
+            Marshal.StructureToPtr(value, (nint)data, true);
+            D3D11SubresourceData* bufferData = Alloc(new D3D11SubresourceData(data, (uint)description.ByteWidth));
+
+            Device->CreateBuffer(&desc, bufferData, &buffer).ThrowHResult();
+            Free(bufferData);
+            Free(data);
 
             return new D3D11Buffer(buffer, description);
         }
@@ -135,76 +135,6 @@
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(value, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : struct
-        {
-            int size = Marshal.SizeOf<T>();
-            if (description.ByteWidth == 0)
-            {
-                description.ByteWidth = size * values.Length;
-            }
-            SubresourceData data;
-
-            var basePtr = Marshal.AllocHGlobal(description.ByteWidth);
-            data = new(basePtr, description.ByteWidth);
-            long ptr = basePtr.ToInt64();
-            for (int i = 0; i < values.Length; i++)
-            {
-                Marshal.StructureToPtr(values[i], (IntPtr)ptr, true);
-                ptr += size;
-            }
-
-            ID3D11Buffer* buffer;
-            BufferDesc desc = Helper.Convert(description);
-            Device->CreateBuffer(&desc, Utils.AsPointer(Helper.Convert(new SubresourceData[] { data })), &buffer).ThrowHResult();
-
-            Marshal.FreeHGlobal(basePtr);
-
-            return new D3D11Buffer(buffer, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
-        {
-            BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
-            return CreateBuffer(values, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(Span<T> values, BufferDescription description) where T : struct
-        {
-            int size = Marshal.SizeOf<T>();
-            if (description.ByteWidth == 0)
-            {
-                description.ByteWidth = size * values.Length;
-            }
-            SubresourceData data;
-
-            var basePtr = Marshal.AllocHGlobal(description.ByteWidth);
-            data = new(basePtr, description.ByteWidth);
-            long ptr = basePtr.ToInt64();
-            for (int i = 0; i < values.Length; i++)
-            {
-                Marshal.StructureToPtr(values[i], (IntPtr)ptr, true);
-                ptr += size;
-            }
-
-            ID3D11Buffer* buffer;
-            BufferDesc desc = Helper.Convert(description);
-            Device->CreateBuffer(&desc, Utils.AsPointer(Helper.Convert(new SubresourceData[] { data })), &buffer).ThrowHResult();
-
-            Marshal.FreeHGlobal(basePtr);
-
-            return new D3D11Buffer(buffer, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
-        {
-            BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
-            return CreateBuffer(values, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -423,12 +353,14 @@
             Texture1DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
-                var data = Helper.Convert(subresources);
-                Device->CreateTexture1D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                Helper.Convert(subresources, data);
+                Device->CreateTexture1D(&desc, data, &texture).ThrowHResult();
+                Free(data);
             }
             else
             {
-                Device->CreateTexture1D(ref desc, null, &texture).ThrowHResult();
+                Device->CreateTexture1D(&desc, null, &texture).ThrowHResult();
             }
             return new D3D11Texture1D(texture, description);
         }
@@ -448,12 +380,14 @@
 
             if (subresources != null)
             {
-                var data = Helper.Convert(subresources);
-                Device->CreateTexture1D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                Helper.Convert(subresources, data);
+                Device->CreateTexture1D(&desc, data, &texture).ThrowHResult();
+                Free(data);
             }
             else
             {
-                Device->CreateTexture1D(ref desc, null, &texture).ThrowHResult();
+                Device->CreateTexture1D(&desc, null, &texture).ThrowHResult();
             }
 
             return new D3D11Texture1D(texture, description);
@@ -475,12 +409,14 @@
             Texture2DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
-                var data = Helper.Convert(subresources);
-                Device->CreateTexture2D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                Helper.Convert(subresources, data);
+                Device->CreateTexture2D(&desc, data, &texture).ThrowHResult();
+                Free(data);
             }
             else
             {
-                Device->CreateTexture2D(ref desc, null, &texture).ThrowHResult();
+                Device->CreateTexture2D(&desc, null, &texture).ThrowHResult();
             }
             return new D3D11Texture2D(texture, description);
         }
@@ -500,12 +436,14 @@
 
             if (subresources != null)
             {
-                var data = Helper.Convert(subresources);
-                Device->CreateTexture2D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                Helper.Convert(subresources, data);
+                Device->CreateTexture2D(&desc, data, &texture).ThrowHResult();
+                Free(data);
             }
             else
             {
-                Device->CreateTexture2D(ref desc, null, &texture).ThrowHResult();
+                Device->CreateTexture2D(&desc, null, &texture).ThrowHResult();
             }
 
             return new D3D11Texture2D(texture, description);
@@ -527,12 +465,13 @@
             Texture3DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
-                var data = Helper.Convert(subresources);
-                Device->CreateTexture3D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                Helper.Convert(subresources, data);
+                Device->CreateTexture3D(&desc, data, &texture).ThrowHResult();
             }
             else
             {
-                Device->CreateTexture3D(ref desc, null, &texture).ThrowHResult();
+                Device->CreateTexture3D(&desc, null, &texture).ThrowHResult();
             }
             return new D3D11Texture3D(texture, description);
         }
@@ -552,12 +491,13 @@
 
             if (subresources != null)
             {
-                var data = Helper.Convert(subresources);
-                Device->CreateTexture3D(ref desc, Utils.AsPointer(data), &texture).ThrowHResult();
+                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                Helper.Convert(subresources, data);
+                Device->CreateTexture3D(&desc, data, &texture).ThrowHResult();
             }
             else
             {
-                Device->CreateTexture3D(ref desc, null, &texture).ThrowHResult();
+                Device->CreateTexture3D(&desc, null, &texture).ThrowHResult();
             }
 
             return new D3D11Texture3D(texture, description);
@@ -984,8 +924,8 @@
             ShaderCompiler.Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out errorBlob);
             if (shaderBlob != null)
             {
-                Shader* pShader = Utilities.Alloc<Shader>();
-                pShader->Bytecode = Utilities.Alloc<byte>(shaderBlob.PointerSize);
+                Shader* pShader = Alloc<Shader>();
+                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
             }
@@ -1018,8 +958,8 @@
             ShaderCompiler.Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out errorBlob);
             if (shaderBlob != null)
             {
-                Shader* pShader = Utilities.Alloc<Shader>();
-                pShader->Bytecode = Utilities.Alloc<byte>(shaderBlob.PointerSize);
+                Shader* pShader = Alloc<Shader>();
+                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
             }
@@ -1049,8 +989,10 @@
         public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Shader* shader)
         {
             ID3D11InputLayout* layout;
-            InputElementDesc[] descs = Helper.Convert(inputElements);
-            Device->CreateInputLayout(Utils.AsPointer(descs), (uint)descs.Length, shader->Bytecode, shader->Length, &layout).ThrowHResult();
+            InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
+            Helper.Convert(inputElements, descs);
+            Device->CreateInputLayout(descs, (uint)inputElements.Length, shader->Bytecode, shader->Length, &layout).ThrowHResult();
+            Free(descs);
             return new D3D11InputLayout(layout);
         }
 
@@ -1128,7 +1070,7 @@
             ShaderDesc desc;
             reflection->GetDesc(&desc);
 
-            InputElementDesc[] inputElements = new InputElementDesc[desc.InputParameters];
+            InputElementDesc* inputElements = Alloc<InputElementDesc>(desc.InputParameters);
             for (uint i = 0; i < desc.InputParameters; i++)
             {
                 SignatureParameterDesc parameterDesc;
@@ -1191,9 +1133,9 @@
                 inputElements[i] = inputElement;
             }
 
-            InputElementDesc* ptr = Utils.AsPointer(inputElements);
             reflection->Release();
-            Device->CreateInputLayout(ptr, (uint)inputElements.Length, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
+            Device->CreateInputLayout(inputElements, desc.InputParameters, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
+            Free(inputElements);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1204,7 +1146,7 @@
             ShaderDesc desc;
             reflection->GetDesc(&desc);
 
-            InputElementDesc[] inputElements = new InputElementDesc[desc.InputParameters];
+            InputElementDesc* inputElements = Alloc<InputElementDesc>(desc.InputParameters);
             for (uint i = 0; i < desc.InputParameters; i++)
             {
                 SignatureParameterDesc parameterDesc;
@@ -1267,9 +1209,9 @@
                 inputElements[i] = inputElement;
             }
 
-            InputElementDesc* ptr = Utils.AsPointer(inputElements);
             reflection->Release();
-            Device->CreateInputLayout(ptr, (uint)inputElements.Length, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
+            Device->CreateInputLayout(inputElements, desc.InputParameters, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
+            Free(inputElements);
         }
 
         protected virtual void Dispose(bool disposing)

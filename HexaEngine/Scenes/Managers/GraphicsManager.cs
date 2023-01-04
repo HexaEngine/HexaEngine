@@ -24,8 +24,4 @@
 
         public static IPostProcessManager PostProcess => postProcess;
     }
-
-    public interface IInstanceManger
-    {
-    }
 }

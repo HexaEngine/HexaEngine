@@ -88,6 +88,7 @@
 
             ResourceManager.Initialize(device);
             PipelineManager.Initialize(device);
+            CullingManager.Initialize(device);
 
             renderDispatcher = new(device);
             framebuffer = new(device);
@@ -195,6 +196,7 @@
                 initTask.Wait();
             deferredRenderer.Dispose();
             renderDispatcher.Dispose();
+            CullingManager.Release();
             ResourceManager.Release();
             context.Dispose();
             device.Dispose();

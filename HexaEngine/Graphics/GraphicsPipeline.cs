@@ -207,6 +207,7 @@
                 else
                     layout = device.CreateInputLayout(inputElements, shader);
                 layout.DebugName = GetType().Name + nameof(layout);
+                Free(shader);
             }
 
             if (desc.HullShader != null)
@@ -215,6 +216,7 @@
                 ShaderCache.GetShaderOrCompileFile(device, desc.HullShaderEntrypoint, desc.HullShader, "hs_5_0", macros, &shader);
                 hs = device.CreateHullShader(shader);
                 hs.DebugName = GetType().Name + nameof(hs);
+                Free(shader);
             }
 
             if (desc.DomainShader != null)
@@ -231,6 +233,7 @@
                 ShaderCache.GetShaderOrCompileFile(device, desc.GeometryShaderEntrypoint, desc.GeometryShader, "gs_5_0", macros, &shader);
                 gs = device.CreateGeometryShader(shader);
                 gs.DebugName = GetType().Name + nameof(gs);
+                Free(shader);
             }
 
             if (desc.PixelShader != null)
@@ -239,6 +242,7 @@
                 ShaderCache.GetShaderOrCompileFile(device, desc.PixelShaderEntrypoint, desc.PixelShader, "ps_5_0", macros, &shader);
                 ps = device.CreatePixelShader(shader);
                 ps.DebugName = GetType().Name + nameof(ps);
+                Free(shader);
             }
         }
 

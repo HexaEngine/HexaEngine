@@ -11,7 +11,7 @@
         BigEndian = byte.MaxValue,
     }
 
-    public unsafe struct UnsafeString
+    public unsafe struct UnsafeString : IFreeable
     {
         public UnsafeString(string str)
         {
@@ -57,16 +57,21 @@
         public static int Read(UnsafeString** ppStr, Endianness endianness, Span<byte> src)
         {
             int length = endianness == Endianness.LittleEndian ? BinaryPrimitives.ReadInt32LittleEndian(src) : BinaryPrimitives.ReadInt32BigEndian(src);
-            UnsafeString* pStr = Utilities.GCAlloc<UnsafeString>();
+            UnsafeString* pStr = Alloc<UnsafeString>();
 
             *ppStr = pStr;
-            pStr->Ptr = (char*)Utilities.GCAlloc(length);
+            pStr->Ptr = Alloc<char>(length);
             fixed (byte* srcPtr = src.Slice(4, length))
             {
                 Unsafe.CopyBlock(pStr->Ptr, srcPtr, (uint)length);
             }
             pStr->Length = length;
             return length + 4;
+        }
+
+        public void Free()
+        {
+            Utils.Free(Ptr);
         }
 
         public int Sizeof()

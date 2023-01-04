@@ -6,7 +6,7 @@
 
     public unsafe class StructuredUavBuffer<T> : IBuffer where T : unmanaged
     {
-        private const int DefaultCapacity = 64;
+        private const int DefaultCapacity = 128;
         private readonly IGraphicsDevice device;
         private readonly bool canWrite;
         private readonly BufferUnorderedAccessViewFlags flags;
@@ -86,7 +86,7 @@
                 buffer = device.CreateBuffer(items, capacity, new(sizeof(T) * (int)capacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T)));
                 if (canWrite)
                     copyBuffer = device.CreateBuffer(new(sizeof(T) * (int)value, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T)));
-                uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, DefaultCapacity, flags));
+                uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)capacity, flags));
                 srv = device.CreateShaderResourceView(buffer);
                 isDirty = true;
             }

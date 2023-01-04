@@ -4,7 +4,7 @@
     using HexaEngine.Mathematics;
     using System;
     using System.Runtime.CompilerServices;
-    using static HexaEngine.Core.Utilities;
+    using static HexaEngine.Core.Utils;
 
     public unsafe class RenderTextureArray : IDisposable
     {

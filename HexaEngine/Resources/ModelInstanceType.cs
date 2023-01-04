@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
@@ -71,7 +70,7 @@
             semaphore.Release();
         }
 
-        public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum)
+        public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum, bool doCulling)
         {
             int count = 0;
 
@@ -90,7 +89,7 @@
                 var instance = instances[i];
                 instance.GetBoundingBox(out var aabb);
                 instance.GetBoundingSphere(out var sphere);
-                if (frustum.Intersects(sphere))
+                if (!doCulling || frustum.Intersects(sphere))
                 {
                     var world = Matrix4x4.Transpose(instance.Transform);
                     buffer.Add(new(id, world, aabb.Min, aabb.Max, sphere.Center, sphere.Radius));
@@ -99,6 +98,51 @@
             }
 
             drawArgs.Add(new() { IndexCountPerInstance = (uint)Mesh.IndexCount });
+
+            return count;
+        }
+
+        public unsafe int UpdateFrustumInstanceBuffer(BoundingFrustum frustum)
+        {
+            frustumInstanceBuffer.ResetCounter();
+
+            int count = 0;
+
+            for (int i = 0; i < instances.Count; i++)
+            {
+                var instance = instances[i];
+                instance.GetBoundingSphere(out var sphere);
+                if (frustum.Intersects(sphere))
+                {
+                    var world = Matrix4x4.Transpose(instance.Transform);
+                    frustumInstanceBuffer.Add(world);
+                }
+            }
+
+            return count;
+        }
+
+        public unsafe int UpdateFrustumInstanceBuffer(BoundingFrustum[] frusta)
+        {
+            frustumInstanceBuffer.ResetCounter();
+
+            int count = 0;
+
+            for (int i = 0; i < instances.Count; i++)
+            {
+                var instance = instances[i];
+                instance.GetBoundingSphere(out var sphere);
+                for (int j = 0; j < frusta.Length; j++)
+                {
+                    var frustum = frusta[j];
+                    if (frustum.Intersects(sphere))
+                    {
+                        var world = Matrix4x4.Transpose(instance.Transform);
+                        frustumInstanceBuffer.Add(world);
+                        break;
+                    }
+                }
+            }
 
             return count;
         }
@@ -112,7 +156,6 @@
             if (!Material.Bind(context)) return false;
 
             frustumInstanceBuffer.Update(context);
-            idBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
             context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(frustumInstanceBuffer.SRV, 0);
@@ -130,7 +173,6 @@
             if (semaphore.CurrentCount == 0) return false;
             if (!Material.Bind(context)) return false;
 
-            frustumInstanceBuffer.Update(context);
             idBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
             context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
@@ -139,6 +181,18 @@
             context.VSSetConstantBuffer(idBuffer.Buffer, 0);
 
             return true;
+        }
+
+        public void Draw(IGraphicsContext context)
+        {
+            if (BeginDraw(context))
+                context.DrawIndexedInstancedIndirect(ArgBuffer, ArgBufferOffset);
+        }
+
+        public void DrawNoOcclusion(IGraphicsContext context)
+        {
+            if (BeginDrawNoOcculusion(context))
+                context.DrawIndexedInstanced((uint)IndexCount, (uint)Visible, 0, 0, 0);
         }
 
         public unsafe bool DrawAuto(IGraphicsContext context, int indexCount)

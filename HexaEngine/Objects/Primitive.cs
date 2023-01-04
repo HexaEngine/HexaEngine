@@ -10,15 +10,14 @@
     {
         protected VertexBuffer<T> vertexBuffer;
         protected IndexBuffer? indexBuffer;
-        protected InstanceBuffer? instanceBuffer;
         private bool disposedValue;
 
         public Primitive(IGraphicsDevice device)
         {
-            (vertexBuffer, indexBuffer, instanceBuffer) = InitializeMesh(device);
+            (vertexBuffer, indexBuffer) = InitializeMesh(device);
         }
 
-        protected abstract (VertexBuffer<T>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device);
+        protected abstract (VertexBuffer<T>, IndexBuffer?) InitializeMesh(IGraphicsDevice device);
 
         public void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
         {
@@ -26,27 +25,12 @@
             if (indexBuffer != null)
             {
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-                if (instanceBuffer != null)
-                {
-                    instanceBuffer.Bind(context, 1);
-                    pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, (uint)instanceBuffer.Count, 0, 0, 0);
-                }
-                else
-                {
-                    pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, 1, 0, 0, 0);
-                }
+
+                pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, 1, 0, 0, 0);
             }
             else
             {
-                if (instanceBuffer != null)
-                {
-                    instanceBuffer.Bind(context, 1);
-                    pipeline.DrawInstanced(context, viewport, (uint)vertexBuffer.Count, (uint)instanceBuffer.Count, 0, 0);
-                }
-                else
-                {
-                    pipeline.DrawInstanced(context, viewport, (uint)vertexBuffer.Count, 1, 0, 0);
-                }
+                pipeline.DrawInstanced(context, viewport, (uint)vertexBuffer.Count, 1, 0, 0);
             }
         }
 
@@ -56,8 +40,7 @@
             vertexCount = vertexBuffer.Count;
             context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
             indexCount = indexBuffer?.Count ?? 0;
-            instanceBuffer?.Bind(context, 1);
-            instanceCount = instanceBuffer?.Count ?? 0;
+            instanceCount = 1;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -66,7 +49,6 @@
             {
                 vertexBuffer?.Dispose();
                 indexBuffer?.Dispose();
-                instanceBuffer?.Dispose();
                 disposedValue = true;
             }
         }

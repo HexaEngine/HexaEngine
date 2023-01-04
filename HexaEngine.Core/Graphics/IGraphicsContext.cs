@@ -124,13 +124,9 @@
 
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
 
-        public void ClearRenderTargetViews(IRenderTargetView[] rtvs, Vector4 value);
-
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
 
         public void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView);
-
-        public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView? depthStencilView);
 
         void SetScissorRect(int x, int y, int z, int w);
 

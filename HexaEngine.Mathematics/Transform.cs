@@ -426,7 +426,7 @@
         /// <summary>
         /// Invokes the <see cref="Updated"/> event.
         /// </summary>
-        protected void OnUpdated()
+        protected virtual void OnUpdated()
         {
             Updated?.Invoke(this, EventArgs.Empty);
         }

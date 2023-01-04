@@ -14,10 +14,10 @@
         {
         }
 
-        protected override (VertexBuffer<Vertex>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<Vertex>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             CreateSphere(device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer);
-            return (vertexBuffer, indexBuffer, null);
+            return (vertexBuffer, indexBuffer);
         }
 
         public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 10, uint LongLines = 10)
@@ -32,7 +32,7 @@
             float sectorAngle, stackAngle;
 
             uint vcounter = 0;
-            Vertex[] vertices = new Vertex[(LatLines +1) * (LongLines+1)];
+            Vertex[] vertices = new Vertex[(LatLines + 1) * (LongLines + 1)];
 
             for (int i = 0; i <= LatLines; ++i)
             {

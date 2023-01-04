@@ -20,7 +20,7 @@
         {
         }
 
-        protected override (VertexBuffer<OrthoVertex>, IndexBuffer?, InstanceBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<OrthoVertex>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             if (instances == 0)
             {
@@ -35,7 +35,7 @@
             }
 
             instances++;
-            return (VertexBuffer, IndexBuffer, null);
+            return (VertexBuffer, IndexBuffer);
         }
 
         protected override void Dispose(bool disposing)

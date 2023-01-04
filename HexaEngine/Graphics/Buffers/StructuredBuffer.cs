@@ -5,7 +5,7 @@
 
     public unsafe class StructuredBuffer<T> : IBuffer where T : unmanaged
     {
-        private const int DefaultCapacity = 64;
+        private const int DefaultCapacity = 128;
         private readonly IGraphicsDevice device;
 
         private IBuffer buffer;

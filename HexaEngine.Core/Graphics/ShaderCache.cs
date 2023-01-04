@@ -7,7 +7,6 @@
     using System.IO;
     using System.Linq;
     using System.Text;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     /// <summary>
     /// Thread-safe shader cache
@@ -40,7 +39,7 @@
             lock (entries)
             {
                 if (DisableCache) return;
-                var entry = new ShaderCacheEntry(path, macros, shader);
+                var entry = new ShaderCacheEntry(path, macros, shader->Clone());
                 entries.RemoveAll(x => x.Equals(entry));
                 entries.Add(entry);
             }
@@ -52,7 +51,7 @@
             if (bypassCache || !GetShader(path, macros, &pShader))
             {
                 device.Compile(code, entry, path, profile, &pShader);
-                CacheShader(entry, macros, pShader);
+                CacheShader(path, macros, pShader);
             }
             *shader = pShader;
         }
@@ -63,7 +62,8 @@
             if (bypassCache || !GetShader(path, macros, &pShader))
             {
                 device.CompileFromFile(path, entry, profile, &pShader);
-                CacheShader(entry, macros, pShader);
+                if (pShader == null) return;
+                CacheShader(path, macros, pShader);
             }
             *shader = pShader;
         }
@@ -74,7 +74,7 @@
             if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
             {
                 device.Compile(code, entry, path, profile, &pShader);
-                CacheShader(entry, Array.Empty<ShaderMacro>(), pShader);
+                CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
             }
             *shader = pShader;
         }
@@ -85,7 +85,7 @@
             if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
             {
                 device.CompileFromFile(path, entry, profile, &pShader);
-                CacheShader(entry, Array.Empty<ShaderMacro>(), pShader);
+                CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
             }
             *shader = pShader;
         }
@@ -96,7 +96,7 @@
             if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
             {
                 device.Compile(code, "main", path, profile, &pShader);
-                CacheShader("main", Array.Empty<ShaderMacro>(), pShader);
+                CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
             }
             *shader = pShader;
         }
@@ -107,7 +107,7 @@
             if (bypassCache || !GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
             {
                 device.CompileFromFile(path, "main", profile, &pShader);
-                CacheShader("main", Array.Empty<ShaderMacro>(), pShader);
+                CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
             }
             *shader = pShader;
         }
@@ -123,7 +123,7 @@
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
                 {
-                    *shader = entry.Shader;
+                    *shader = entry.Shader->Clone();
                     return true;
                 }
                 return false;
@@ -263,8 +263,8 @@
             }
             int len = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
-            Shader = Utilities.Alloc<Shader>();
-            Shader->Bytecode = Utilities.Alloc<byte>(len);
+            Shader = Utils.Alloc<Shader>();
+            Shader->Bytecode = Utils.Alloc<byte>(len);
             Shader->Length = (nuint)len;
             fixed (void* ptr = src.Slice(idx, len))
             {
@@ -306,8 +306,7 @@
 
         public void Free()
         {
-            Shader->Free();
-            Utilities.Free(Shader);
+            Utils.Free(Shader);
         }
 
         public bool Equals(ShaderCacheEntry other)

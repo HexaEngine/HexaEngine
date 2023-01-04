@@ -18,7 +18,7 @@
 
         public static IReadOnlyList<ComputePipeline> ComputePipelines => computePipelines;
 
-        public static void Initialize(IGraphicsDevice device)
+        internal static void Initialize(IGraphicsDevice device)
         {
             PipelineManager.device = device;
         }

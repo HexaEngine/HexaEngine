@@ -1,0 +1,5 @@
+﻿<CodeCloneSettings>
+	<Exclusions>
+		<File>*.cs</File>
+	</Exclusions>
+</CodeCloneSettings>

@@ -220,5 +220,13 @@
                 return (CBSpotlightSD*)((byte*)ptr + SpotlightSDPointerOffset);
             }
         }
+
+        public CBDirectionalLightSD* GetDirectionalLightSDs()
+        {
+            fixed (void* ptr = &this)
+            {
+                return (CBDirectionalLightSD*)ptr;
+            }
+        }
     }
 }

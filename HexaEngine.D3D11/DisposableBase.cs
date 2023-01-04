@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using Silk.NET.Direct3D11;
     using System;
-    using System.Text;
 
     public abstract unsafe class DeviceChildBase : DisposableBase, IDeviceChild
     {
@@ -20,9 +19,11 @@
                 if (child == null) return null;
                 uint len;
                 child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, null);
-                byte[] buffer = new byte[len];
-                child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, Utils.AsPointer(buffer));
-                return Encoding.UTF8.GetString(buffer);
+                byte* pName = Alloc<byte>(len);
+                child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, pName);
+                string str = Utils.ToStr(pName);
+                Free(pName);
+                return str;
             }
             set
             {
@@ -30,8 +31,9 @@
                 if (child == null) return;
                 if (value != null)
                 {
-                    byte[] buffer = Encoding.UTF8.GetBytes(value);
-                    child->SetPrivateData(Utils.Guid(D3DDebugObjectName), (uint)buffer.Length, Utils.AsPointer(buffer));
+                    byte* pName = value.ToUTF8();
+                    child->SetPrivateData(Utils.Guid(D3DDebugObjectName), (uint)value.Length, pName);
+                    Free(pName);
                 }
                 else
                 {

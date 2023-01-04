@@ -42,9 +42,9 @@
             context.DSSetConstantBuffer(Camera, 1);
         }
 
-        public void BeginDrawDepth(IGraphicsContext context, Viewport viewport)
+        public void BeginDrawDepth(IGraphicsContext context, IBuffer camera, Viewport viewport)
         {
-            context.DSSetConstantBuffer(Camera, 1);
+            context.DSSetConstantBuffer(camera, 1);
 
             context.VSSetShader(vs);
             context.HSSetShader(hs);

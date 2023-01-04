@@ -6,6 +6,7 @@
     {
         protected Matrix4x4 projection;
         protected Matrix4x4 projectionInv;
+        protected Matrix4x4 viewProjection;
         protected ProjectionType projectionType;
         protected float width = 16;
         protected float height = 9;
@@ -95,6 +96,8 @@
 
         public BoundingFrustum Frustum => frustum;
 
+        public Matrix4x4 ViewProjection => viewProjection;
+
         protected override void Recalculate()
         {
             base.Recalculate();
@@ -110,8 +113,15 @@
                     break;
             }
             Matrix4x4.Invert(projection, out projectionInv);
-            frustum.Initialize(view * projection);
+
             OnUpdated();
+        }
+
+        protected override void OnUpdated()
+        {
+            viewProjection = view * projection;
+            frustum.Initialize(viewProjection);
+            base.OnUpdated();
         }
     }
 }

@@ -14,6 +14,7 @@
             return (Guid*)Unsafe.AsPointer(ref guid);
         }
 
+        [Obsolete]
         public static T2** ToPointerArray<T1, T2>(T1[]? values) where T1 : IDeviceChild where T2 : unmanaged
         {
             if (values == null) return null;
@@ -27,6 +28,7 @@
             return AsPointer(ptrs);
         }
 
+        [Obsolete]
         public static void** ToPointerArray<T1>(T1[] values) where T1 : IDeviceChild
         {
             void*[] ptrs = new void*[values.Length];
@@ -40,6 +42,7 @@
             }
         }
 
+        [Obsolete]
         public static T** AsPointer<T>(T* value) where T : unmanaged
         {
             fixed (T** ptr = new T*[] { value })
@@ -48,6 +51,7 @@
             }
         }
 
+        [Obsolete]
         public static T** AsPointer<T>(T*[] value) where T : unmanaged
         {
             fixed (T** ptr = value)
@@ -56,6 +60,7 @@
             }
         }
 
+        [Obsolete]
         public static void** AsPointerArray<T>(T*[] value) where T : unmanaged
         {
             fixed (T** ptr = value)
@@ -64,6 +69,7 @@
             }
         }
 
+        [Obsolete]
         public static T* AsPointer<T>(T[] value) where T : unmanaged
         {
             fixed (T* ptr = value)
@@ -72,6 +78,7 @@
             }
         }
 
+        [Obsolete]
         public static T* AsPointer<T>(T value) where T : unmanaged
         {
             fixed (T* ptr = new T[] { value })
@@ -85,6 +92,7 @@
             return (T2*)t;
         }
 
+        [Obsolete]
         public static byte* ToBytes(this string str)
         {
             fixed (byte* ptr = Encoding.UTF8.GetBytes(str))
@@ -93,6 +101,7 @@
             }
         }
 
+        [Obsolete]
         public static float* ToFloatPtr(this Vector4 vector)
         {
             return (float*)&vector;

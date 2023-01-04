@@ -306,8 +306,8 @@
             {
                 Silk.NET.Assimp.Mesh* msh = scene->MMeshes[i];
 
-                MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
-                int[] indices = new int[msh->MNumFaces * 3];
+                MeshVertex* vertices = Alloc<MeshVertex>(msh->MNumVertices);
+                int* indices = Alloc<int>(msh->MNumFaces * 3);
                 for (int j = 0; j < msh->MNumFaces; j++)
                 {
                     var face = msh->MFaces[j];
@@ -369,7 +369,7 @@
                 float radius = box.Extent.Length();
                 BoundingSphere sphere = new(center, radius);
 
-                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, Vertices = vertices, BoundingBox = box, BoundingSphere = sphere, Bones = bones, Animature = animature };
+                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, IndicesCount = msh->MNumFaces * 3, Vertices = vertices, VerticesCount = msh->MNumVertices, BoundingBox = box, BoundingSphere = sphere, Bones = bones, Animature = animature };
                 models[i] = new(meshes[i], materials[(int)msh->MMaterialIndex]);
 
                 meshesT.Add(msh, meshes[i]);
@@ -515,7 +515,8 @@
 
         public unsafe void Import(string path, Scene sceneTarget)
         {
-            LogStream stream = new(new(Log), UTF8("HexaEngine"));
+            var name = "HexaEngine".ToUTF8();
+            LogStream stream = new(new(Log), name);
             assimp.AttachLogStream(&stream);
             assimp.EnableVerboseLogging(Assimp.True);
 
@@ -551,6 +552,8 @@
             lightsT.Clear();
 
             assimp.ReleaseImport(scene);
+
+            Free(name);
         }
 
         public unsafe void Open(string path)

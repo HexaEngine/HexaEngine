@@ -3,11 +3,13 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
 
-    public struct MeshData
+    public unsafe struct MeshData
     {
         public string Name = string.Empty;
-        public MeshVertex[]? Vertices;
-        public int[]? Indices;
+        public MeshVertex* Vertices;
+        public uint VerticesCount;
+        public int* Indices;
+        public uint IndicesCount;
         public BoundingBox BoundingBox;
         public BoundingSphere BoundingSphere;
         public MeshBone[]? Bones;

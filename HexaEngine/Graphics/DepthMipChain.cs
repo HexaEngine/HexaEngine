@@ -129,7 +129,7 @@
             context.ClearState();
         }
 
-        public void Generate(IGraphicsContext context, IResource resource, IShaderResourceView input)
+        public void Generate(IGraphicsContext context, IShaderResourceView input)
         {
             context.SetRenderTarget(RTV, null);
             context.PSSetShaderResource(input, 0);
@@ -143,7 +143,7 @@
                 context.CSSetConstantBuffer(cbDownsample, 0);
                 context.CSSetUnorderedAccessViews(&pUavs[i], 1);
                 context.CSSetShaderResource(srvs[i - 1], 0);
-                downsample.Dispatch(context, (int)viewports[i].Width, (int)viewports[i].Height, 1);
+                downsample.Dispatch(context, (int)viewports[i].Width / 32 + 1, (int)viewports[i].Height / 32 + 1, 1);
             }
 
             context.ClearState();

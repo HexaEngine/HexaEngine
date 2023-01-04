@@ -11,6 +11,7 @@
     public static class CameraManager
     {
         internal static readonly Camera camera = new() { Far = 1000 };
+        private static Camera? culling;
         private static Vector3 center = default;
         private static CameraEditorMode mode = CameraEditorMode.Orbit;
         private static Vector3 sc = new(10, 0, 0);
@@ -27,6 +28,8 @@
         { get => mode; set { mode = value; first = true; } }
 
         public static Camera? Current => Designer.InDesignMode ? camera : SceneManager.Current?.CurrentCamera;
+
+        public static Camera? Culling { get => Designer.InDesignMode ? culling ?? Current : SceneManager.Current?.CurrentCamera; set => culling = value; }
 
         static CameraManager()
         {
@@ -66,12 +69,12 @@
                     sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta, -1.5f, 1.5f);
 
                     first = false;
-                }
 
-                // Calculate the cartesian coordinates
-                Vector3 pos = SphereHelper.GetCartesianCoordinates(sc) + center;
-                var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
-                camera.Transform.PositionRotation = (pos, orientation);
+                    // Calculate the cartesian coordinates
+                    Vector3 pos = SphereHelper.GetCartesianCoordinates(sc) + center;
+                    var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
+                    camera.Transform.PositionRotation = (pos, orientation);
+                }
             }
             if (mode == CameraEditorMode.Free)
             {
