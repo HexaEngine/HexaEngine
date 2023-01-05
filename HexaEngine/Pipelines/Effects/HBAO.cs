@@ -3,27 +3,30 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Resources;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
-    public unsafe class HBAO : IEffect
+    public class HBAO : IEffect
     {
-        private readonly Quad quad;
-        private readonly GraphicsPipeline hbaoPipeline;
-        private readonly IBuffer cbHBAO;
+        private IGraphicsDevice device;
+        private Quad quad;
+        private GraphicsPipeline hbaoPipeline;
+        private IBuffer cbHBAO;
         private HBAOParams hbaoParams = new();
         private ITexture2D hbaoBuffer;
-        private readonly void** hbaoSRVs;
-        private readonly void** hbaoCBs;
+        private unsafe void** hbaoSRVs;
+        private unsafe void** hbaoCBs;
         private IShaderResourceView hbaoSRV;
         private IRenderTargetView hbaoRTV;
 
-        private readonly GraphicsPipeline blurPipeline;
-        private readonly IBuffer cbBlur;
+        private GraphicsPipeline blurPipeline;
+        private IBuffer cbBlur;
         private BlurParams blurParams = new();
-        private readonly void** blurSRVs;
-        private readonly void** blurCBs;
+        private unsafe void** blurSRVs;
+        private unsafe void** blurCBs;
 
-        private readonly ISamplerState samplerLinear;
+        private ISamplerState samplerLinear;
 
         public IRenderTargetView? Output;
         public IBuffer? Camera;
@@ -71,37 +74,6 @@
 
         #endregion Structs
 
-        public unsafe HBAO(IGraphicsDevice device, int width, int height)
-        {
-            quad = new Quad(device);
-
-            hbaoPipeline = new(device, new()
-            {
-                VertexShader = "effects/hbao/vs.hlsl",
-                PixelShader = "effects/hbao/ps.hlsl",
-            });
-            cbHBAO = device.CreateBuffer(hbaoParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-            hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width, height));
-            hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
-            hbaoSRVs = AllocArray(2);
-            hbaoCBs = AllocArray(2);
-            hbaoCBs[0] = (void*)cbHBAO.NativePointer;
-
-            blurPipeline = new(device, new()
-            {
-                VertexShader = "effects/blur/vs.hlsl",
-                PixelShader = "effects/blur/hbao.hlsl",
-            });
-            cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            blurSRVs = AllocArray(1);
-            blurSRVs[0] = (void*)hbaoSRV.NativePointer;
-            blurCBs = AllocArray(1);
-            blurCBs[0] = (void*)cbBlur.NativePointer;
-
-            samplerLinear = device.CreateSamplerState(SamplerDescription.LinearClamp);
-        }
-
         #region Properties
 
         public bool Enabled
@@ -121,30 +93,96 @@
 
         #endregion Properties
 
-        public void Resize(IGraphicsDevice device, int width, int height)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
+            this.device = device;
+            Output = ResourceManager.AddTextureRTV("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
+
+            quad = new Quad(device);
+
+            hbaoPipeline = new(device, new()
+            {
+                VertexShader = "effects/hbao/vs.hlsl",
+                PixelShader = "effects/hbao/ps.hlsl",
+            });
+            cbHBAO = device.CreateBuffer(hbaoParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+            hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
+            hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
+
+            Position = await ResourceManager.GetResourceAsync<IShaderResourceView>("GBuffer.Position");
+            Normal = await ResourceManager.GetResourceAsync<IShaderResourceView>("GBuffer.Normal");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+
+            unsafe
+            {
+                hbaoSRVs = AllocArray(2);
+                hbaoSRVs[0] = (void*)Position.NativePointer;
+                hbaoSRVs[1] = (void*)Normal.NativePointer;
+                hbaoCBs = AllocArray(2);
+                hbaoCBs[0] = (void*)cbHBAO.NativePointer;
+                hbaoCBs[1] = (void*)Camera.NativePointer;
+            }
+
+            blurPipeline = new(device, new()
+            {
+                VertexShader = "effects/blur/vs.hlsl",
+                PixelShader = "effects/blur/hbao.hlsl",
+            });
+            cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+
+            unsafe
+            {
+                blurSRVs = AllocArray(1);
+                blurSRVs[0] = (void*)hbaoSRV.NativePointer;
+                blurCBs = AllocArray(1);
+                blurCBs[0] = (void*)cbBlur.NativePointer;
+            }
+
+            samplerLinear = device.CreateSamplerState(SamplerDescription.LinearClamp);
+        }
+
+        public void BeginResize()
+        {
+            ResourceManager.RequireUpdate("SSAOBuffer");
+        }
+
+        public async void EndResize(int width, int height)
+        {
+            Output = ResourceManager.UpdateTextureRTV("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
+
             hbaoBuffer.Dispose();
             hbaoRTV.Dispose();
             hbaoSRV.Dispose();
-            hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-            hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width, height));
+            hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+            hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
             blurParams.InvResolutionDirection = new(1 / width, 1 / height);
-            blurSRVs[0] = (void*)hbaoSRV.NativePointer;
+
+            unsafe
+            {
+                blurSRVs[0] = (void*)hbaoSRV.NativePointer;
+            }
 
             hbaoParams.Res = new(width, height);
             hbaoParams.ResInv = new(1 / width, 1 / height);
 
-#nullable disable
-            hbaoSRVs[0] = (void*)Position.NativePointer;
-            hbaoSRVs[1] = (void*)Normal.NativePointer;
+            Position = await ResourceManager.GetTextureSRVAsync("GBuffer.Position");
+            Normal = await ResourceManager.GetTextureSRVAsync("GBuffer.Normal");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
 
-            hbaoCBs[1] = (void*)Camera.NativePointer;
-#nullable enable
+            unsafe
+            {
+                hbaoSRVs[0] = (void*)Position.NativePointer;
+                hbaoSRVs[1] = (void*)Normal.NativePointer;
+
+                hbaoCBs[1] = (void*)Camera.NativePointer;
+            }
+
             isDirty = true;
         }
 
-        public void Draw(IGraphicsContext context)
+        public unsafe void Draw(IGraphicsContext context)
         {
             if (Output is null) return;
             if (isDirty)
@@ -168,7 +206,7 @@
             context.ClearState();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual unsafe void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

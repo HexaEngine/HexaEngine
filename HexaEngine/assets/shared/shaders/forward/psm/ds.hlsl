@@ -1,5 +1,4 @@
 #include "defs.hlsl"
-#include "../../world.hlsl"
 #include "../../material.hlsl"
 
 Texture2D displacmentTexture : register(t0);

@@ -4,18 +4,19 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Resources;
+    using System.Diagnostics;
     using System.Numerics;
 
     public class Bloom : IEffect
     {
-        private readonly Quad quad;
-        private readonly GraphicsPipeline downsample;
-        private readonly GraphicsPipeline upsample;
-        private readonly IBuffer downsampleCB;
-        private readonly IBuffer upsampleCB;
-        private readonly ISamplerState sampler;
+        private Quad quad;
+        private GraphicsPipeline downsample;
+        private GraphicsPipeline upsample;
+        private IBuffer downsampleCB;
+        private IBuffer upsampleCB;
+        private ISamplerState sampler;
 
-        private ITexture2D[] mipChainTex;
         private IRenderTargetView[] mipChainRTVs;
         private IShaderResourceView[] mipChainSRVs;
 
@@ -26,10 +27,8 @@
         private int width;
         private int height;
 
-        public IShaderResourceView? Source;
+        private IShaderResourceView? Source;
         private bool disposedValue;
-
-        public IShaderResourceView Output => mipChainSRVs[0];
 
         private struct ParamsDownsample
         {
@@ -55,12 +54,23 @@
             }
         }
 
-        public Bloom(IGraphicsDevice device)
+        public bool Enabled
         {
+            get => enabled;
+            set
+            {
+                enabled = value;
+                dirty = true;
+            }
+        }
+
+        public float Radius
+        { get => radius; set { radius = value; dirty = true; } }
+
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        {
+            
             quad = new(device);
-            mipChainTex = Array.Empty<ITexture2D>();
-            mipChainRTVs = Array.Empty<IRenderTargetView>();
-            mipChainSRVs = Array.Empty<IShaderResourceView>();
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
@@ -76,47 +86,63 @@
                 VertexShader = "effects/bloom/upsample/vs.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",
             });
-            dirty = true;
-        }
 
-        public bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                enabled = value;
-                dirty = true;
-            }
-        }
-
-        public float Radius
-        { get => radius; set { radius = value; dirty = true; } }
-
-        public void Resize(IGraphicsDevice device, int width, int height)
-        {
             int currentWidth = width / 2;
             int currentHeight = height / 2;
             int levels = MathUtil.ComputeMipLevels(currentWidth, currentHeight);
 
-            for (int i = 0; i < mipChainTex?.Length; i++)
-            {
-                mipChainTex[i]?.Dispose();
-                mipChainRTVs[i]?.Dispose();
-                mipChainSRVs[i]?.Dispose();
-            }
-
-            mipChainTex = new ITexture2D[levels];
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainTex[i] = device.CreateTexture2D(Format.RGBA32Float, currentWidth, currentHeight, 1, 1, null, BindFlags.RenderTarget | BindFlags.ShaderResource);
-                mipChainRTVs[i] = device.CreateRenderTargetView(mipChainTex[i], new(0, 0, currentWidth, currentHeight));
-                mipChainSRVs[i] = device.CreateShaderResourceView(mipChainTex[i]);
+                mipChainRTVs[i] = ResourceManager.AddTextureRTV($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)) ?? throw new InvalidOperationException();
+                mipChainSRVs[i] = ResourceManager.GetTextureSRV($"Bloom.{i}") ?? throw new InvalidOperationException();
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
+
+            ResourceManager.SetOrAddResource("Bloom", ResourceManager.GetTexture("Bloom.0") ?? throw new InvalidOperationException());
+
+            this.width = width;
+            this.height = height;
+
+            dirty = true;
+
+            Source = await ResourceManager.GetTextureSRVAsync("Tonemap");
+        }
+
+        public void BeginResize()
+        {
+            ResourceManager.RequireUpdate("Bloom");
+        }
+
+        public async void EndResize(int width, int height)
+        {
+            Source = await ResourceManager.GetTextureSRVAsync("Tonemap");
+
+            int currentWidth = width / 2;
+            int currentHeight = height / 2;
+            int levels = MathUtil.ComputeMipLevels(currentWidth, currentHeight);
+
+            for (int i = 0; i < mipChainRTVs?.Length; i++)
+            {
+                ResourceManager.RemoveResource($"Bloom.{i}");
+            }
+
+            mipChainRTVs = new IRenderTargetView[levels];
+            mipChainSRVs = new IShaderResourceView[levels];
+
+            for (int i = 0; i < levels; i++)
+            {
+                mipChainRTVs[i] = ResourceManager.AddTextureRTV($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)) ?? throw new InvalidOperationException();
+                mipChainSRVs[i] = ResourceManager.GetTextureSRV($"Bloom.{i}") ?? throw new InvalidOperationException();
+                currentWidth /= 2;
+                currentHeight /= 2;
+            }
+
+            ResourceManager.SetOrAddResource("Bloom", ResourceManager.GetTexture("Bloom.0") ?? throw new InvalidOperationException());
+
             this.width = width;
             this.height = height;
             dirty = true;
@@ -171,11 +197,9 @@
             if (!disposedValue)
             {
                 quad.Dispose();
-                for (int i = 0; i < mipChainTex?.Length; i++)
+                for (int i = 0; i < mipChainRTVs?.Length; i++)
                 {
-                    mipChainTex[i]?.Dispose();
-                    mipChainRTVs[i]?.Dispose();
-                    mipChainSRVs[i]?.Dispose();
+                    ResourceManager.RemoveResource($"Bloom.{i}");
                 }
                 downsample.Dispose();
                 upsample.Dispose();

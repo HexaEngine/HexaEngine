@@ -34,7 +34,7 @@
 
         private static unsafe bool CompileInternal(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
-            Trace.WriteLine($"[{Thread.CurrentThread.Name}] Compiling {sourceName}");
+            Debug.WriteLine($"Compiling: {sourceName}");
             shaderBlob = null;
             errorBlob = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
@@ -65,23 +65,24 @@
             delegate*<ID3DInclude*, D3DIncludeType, byte*, void*, void**, uint*, int> pOpen = &Open;
             delegate*<ID3DInclude*, void*, int> pClose = &Close;
 
-            ID3DInclude include;
+            void** callbacks = AllocArray(2);
 
-            void*[] callbacks = new void*[] { pOpen, pClose };
+            callbacks[0] = pOpen;
+            callbacks[1] = pClose;
 
-            fixed (void** pCallbacks = callbacks)
-            {
-                include = new ID3DInclude(pCallbacks);
-            }
+            ID3DInclude* include = Alloc<ID3DInclude>();
 
-            ID3DInclude* pInclude = &include;
+            include->LpVtbl = callbacks;
 
             lock (D3DCompiler)
             {
-                paths.TryAdd(pInclude, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
-                D3DCompiler.Compile(pSource, (nuint)source.Length, pSourceName, pMacros, pInclude, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
-                paths.Remove(pInclude, out _);
+                paths.TryAdd(include, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
+                D3DCompiler.Compile(pSource, (nuint)source.Length, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
+                paths.Remove(include, out _);
             }
+
+            Free(callbacks);
+            Free(include);
 
             Marshal.FreeCoTaskMem((nint)pSource);
             Marshal.FreeCoTaskMem((nint)pEntryPoint);

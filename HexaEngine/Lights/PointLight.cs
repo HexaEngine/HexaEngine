@@ -6,16 +6,13 @@
     [EditorNode<PointLight>("Point Light")]
     public class PointLight : Light
     {
-        public readonly BoundingFrustum[] Frusta = new BoundingFrustum[6];
+        public readonly unsafe BoundingBox* ShadowBox;
 
-        public PointLight()
+        public unsafe PointLight()
         {
             CreatePropertyEditor<PointLight>();
             Transform.Updated += (s, e) => { Updated = true; };
-            for (int i = 0; i < Frusta.Length; i++)
-            {
-                Frusta[i] = new();
-            }
+            ShadowBox = Alloc<BoundingBox>();
         }
 
         [EditorProperty("Shadow Range")]

@@ -4,7 +4,7 @@ namespace HexaEngine.Graphics.Buffers
 {
     using System;
 
-    public unsafe class ConstantBuffer<T> : IDisposable where T : unmanaged
+    public unsafe class ConstantBuffer<T> : IConstantBuffer, IConstantBuffer<T> where T : unmanaged
     {
         private readonly IGraphicsDevice device;
         private readonly BufferDescription description;

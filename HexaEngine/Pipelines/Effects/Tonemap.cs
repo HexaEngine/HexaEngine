@@ -3,21 +3,23 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Resources;
+    using System.Diagnostics;
     using System.Numerics;
 
-    public unsafe class Tonemap : IEffect
+    public class Tonemap : IEffect
     {
-        private readonly Quad quad;
-        private readonly GraphicsPipeline pipeline;
-        private readonly IBuffer buffer;
-        private readonly ISamplerState sampler;
-        private readonly void** srvs;
+        private Quad quad;
+        private GraphicsPipeline pipeline;
+        private IBuffer buffer;
+        private ISamplerState sampler;
+        private unsafe void** srvs;
         private float bloomStrength = 0.04f;
         private bool dirty;
 
-        public IRenderTargetView? Output;
-        public IShaderResourceView? HDR;
-        public IShaderResourceView? Bloom;
+        private IRenderTargetView? Output;
+        private IShaderResourceView? HDR;
+        private IShaderResourceView? Bloom;
 
         private struct Params
         {
@@ -31,8 +33,14 @@
             }
         }
 
-        public Tonemap(IGraphicsDevice device)
+        public float BloomStrength
+        { get => bloomStrength; set { bloomStrength = value; dirty = true; } }
+
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
+            
+            HDR = ResourceManager.AddTextureSRV("Tonemap", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
             quad = new(device);
             pipeline = new(device, new()
             {
@@ -41,19 +49,40 @@
             });
             buffer = device.CreateBuffer(new Params(bloomStrength), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
-            srvs = AllocArray(2);
+
+            Output = await ResourceManager.GetTextureRTVAsync("FXAA");
+            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom");
+
+            InitUnsafe();
         }
 
-        public float BloomStrength
-        { get => bloomStrength; set { bloomStrength = value; dirty = true; } }
+        private unsafe void InitUnsafe()
+        {
+            srvs = AllocArray(2);
+            srvs[0] = (void*)HDR?.NativePointer;
+            srvs[1] = (void*)Bloom?.NativePointer;
+        }
 
-        public void Resize()
+        public void BeginResize()
+        {
+            ResourceManager.RequireUpdate("Tonemap");
+        }
+
+        public async void EndResize(int width, int height)
+        {
+            Output = await ResourceManager.GetTextureRTVAsync("FXAA");
+            HDR = ResourceManager.UpdateTextureSRV("Tonemap", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom");
+            EndResizeUnsafe();
+        }
+
+        private unsafe void EndResizeUnsafe()
         {
             srvs[0] = (void*)HDR?.NativePointer;
             srvs[1] = (void*)Bloom?.NativePointer;
         }
 
-        public void Draw(IGraphicsContext context)
+        public unsafe void Draw(IGraphicsContext context)
         {
             if (Output is null) return;
             if (dirty)
@@ -71,7 +100,7 @@
             context.ClearState();
         }
 
-        public void Dispose()
+        public unsafe void Dispose()
         {
             quad.Dispose();
             pipeline.Dispose();

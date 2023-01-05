@@ -4,18 +4,22 @@
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Resources;
+    using System.Diagnostics;
 
     public class FXAA : IEffect
     {
-        private readonly Quad quad;
-        private readonly GraphicsPipeline pipeline;
-        private readonly ISamplerState sampler;
+        private Quad quad;
+        private GraphicsPipeline pipeline;
+        private ISamplerState sampler;
 
         public IRenderTargetView? Output;
         public IShaderResourceView? Source;
 
-        public FXAA(IGraphicsDevice device)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
+            Source = ResourceManager.AddTextureSRV("FXAA", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
             quad = new Quad(device);
             pipeline = new(device, new()
             {
@@ -23,6 +27,19 @@
                 PixelShader = "effects/fxaa/ps.hlsl"
             });
             sampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+
+            Output = await ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV");
+        }
+
+        public void BeginResize()
+        {
+            ResourceManager.RequireUpdate("FXAA");
+        }
+
+        public void EndResize(int width, int height)
+        {
+            Output = ResourceManager.GetResource<IRenderTargetView>("SwapChain.RTV");
+            Source = ResourceManager.UpdateTextureSRV("FXAA", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
         }
 
         public void Draw(IGraphicsContext context)
@@ -52,6 +69,7 @@
             quad.Dispose();
             pipeline.Dispose();
             sampler.Dispose();
+            ResourceManager.RemoveResource("FXAA");
             GC.SuppressFinalize(this);
         }
     }

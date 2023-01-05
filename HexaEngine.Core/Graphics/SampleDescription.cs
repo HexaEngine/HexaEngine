@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    public struct SampleDescription
+    using System;
+
+    public struct SampleDescription : IEquatable<SampleDescription>
     {
         public int Count;
         public int Quality;
@@ -22,5 +24,31 @@
         }
 
         public override string ToString() => $"Count: {Count}, Quality: {Quality}";
+
+        public override bool Equals(object? obj)
+        {
+            return obj is SampleDescription description && Equals(description);
+        }
+
+        public bool Equals(SampleDescription other)
+        {
+            return Count == other.Count &&
+                   Quality == other.Quality;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Count, Quality);
+        }
+
+        public static bool operator ==(SampleDescription left, SampleDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(SampleDescription left, SampleDescription right)
+        {
+            return !(left == right);
+        }
     }
 }

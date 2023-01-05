@@ -14,7 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="default-44100.mhr">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="default-48000.mhr">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="env_o.dds">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="piano2.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -23,6 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
+    <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
     <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
     <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
   </ItemGroup>

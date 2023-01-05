@@ -99,7 +99,8 @@
 
             swapBuffer.Update(context);
 
-            swapBuffer.Capacity = drawIndirectArgs.Capacity = instanceOffsets.Capacity = instanceCounts.Capacity = instanceDataOutBuffer.Capacity = instanceDataBuffer.Capacity;
+            drawIndirectArgs.Capacity = instanceOffsets.Capacity = instanceCounts.Capacity = swapBuffer.Capacity;
+            instanceDataOutBuffer.Capacity = instanceDataBuffer.Capacity;
             instanceDataBuffer.Update(context);
             count = (int)instanceDataBuffer.Count;
         }

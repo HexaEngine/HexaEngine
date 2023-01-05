@@ -52,6 +52,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
     <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 </ItemGroup>
 
@@ -59,6 +60,9 @@
 		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c 1 -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
 	</Target>
   <ItemGroup>
+    <None Update="assets\editor\sounds\piano2.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="imgui.ini">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

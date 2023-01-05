@@ -19,6 +19,7 @@
         protected readonly ShaderMacro[] macros;
         protected GraphicsPipelineState state = GraphicsPipelineState.Default;
         protected volatile bool initialized;
+        protected bool valid;
         protected readonly IGraphicsDevice device;
         protected readonly InputElementDescription[]? inputElements;
 
@@ -199,7 +200,12 @@
             if (desc.VertexShader != null)
             {
                 Shader* shader;
-                ShaderCache.GetShaderOrCompileFile(device, desc.VertexShaderEntrypoint, desc.VertexShader, "vs_5_0", macros, &shader);
+                ShaderCache.GetShaderOrCompileFile(device, desc.VertexShaderEntrypoint, desc.VertexShader, "vs_5_0", macros, &shader, bypassCache);
+                if (shader == null)
+                {
+                    valid = false;
+                    return;
+                }
                 vs = device.CreateVertexShader(shader);
                 vs.DebugName = GetType().Name + nameof(vs);
                 if (inputElements == null)
@@ -207,13 +213,19 @@
                 else
                     layout = device.CreateInputLayout(inputElements, shader);
                 layout.DebugName = GetType().Name + nameof(layout);
+
                 Free(shader);
             }
 
             if (desc.HullShader != null)
             {
                 Shader* shader;
-                ShaderCache.GetShaderOrCompileFile(device, desc.HullShaderEntrypoint, desc.HullShader, "hs_5_0", macros, &shader);
+                ShaderCache.GetShaderOrCompileFile(device, desc.HullShaderEntrypoint, desc.HullShader, "hs_5_0", macros, &shader, bypassCache);
+                if (shader == null)
+                {
+                    valid = false;
+                    return;
+                }
                 hs = device.CreateHullShader(shader);
                 hs.DebugName = GetType().Name + nameof(hs);
                 Free(shader);
@@ -222,7 +234,12 @@
             if (desc.DomainShader != null)
             {
                 Shader* shader;
-                ShaderCache.GetShaderOrCompileFile(device, desc.DomainShaderEntrypoint, desc.DomainShader, "ds_5_0", macros, &shader);
+                ShaderCache.GetShaderOrCompileFile(device, desc.DomainShaderEntrypoint, desc.DomainShader, "ds_5_0", macros, &shader, bypassCache);
+                if (shader == null)
+                {
+                    valid = false;
+                    return;
+                }
                 ds = device.CreateDomainShader(shader);
                 ds.DebugName = GetType().Name + nameof(hs);
             }
@@ -230,7 +247,12 @@
             if (desc.GeometryShader != null)
             {
                 Shader* shader;
-                ShaderCache.GetShaderOrCompileFile(device, desc.GeometryShaderEntrypoint, desc.GeometryShader, "gs_5_0", macros, &shader);
+                ShaderCache.GetShaderOrCompileFile(device, desc.GeometryShaderEntrypoint, desc.GeometryShader, "gs_5_0", macros, &shader, bypassCache);
+                if (shader == null)
+                {
+                    valid = false;
+                    return;
+                }
                 gs = device.CreateGeometryShader(shader);
                 gs.DebugName = GetType().Name + nameof(gs);
                 Free(shader);
@@ -239,16 +261,24 @@
             if (desc.PixelShader != null)
             {
                 Shader* shader;
-                ShaderCache.GetShaderOrCompileFile(device, desc.PixelShaderEntrypoint, desc.PixelShader, "ps_5_0", macros, &shader);
+                ShaderCache.GetShaderOrCompileFile(device, desc.PixelShaderEntrypoint, desc.PixelShader, "ps_5_0", macros, &shader, bypassCache);
+                if (shader == null)
+                {
+                    valid = false;
+                    return;
+                }
                 ps = device.CreatePixelShader(shader);
                 ps.DebugName = GetType().Name + nameof(ps);
                 Free(shader);
             }
+
+            valid = true;
         }
 
         public virtual void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
             if (!initialized) return;
+            if (!valid) return;
 
             context.VSSetShader(vs);
             context.HSSetShader(hs);
@@ -271,6 +301,8 @@
         public void DrawInstanced(IGraphicsContext context, Viewport viewport, uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
         {
             if (!initialized) return;
+            if (!valid) return;
+
             BeginDraw(context, viewport);
             context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
             EndDraw(context);
@@ -279,6 +311,8 @@
         public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
         {
             if (!initialized) return;
+            if (!valid) return;
+
             BeginDraw(context, viewport);
             context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
             EndDraw(context);
@@ -287,6 +321,8 @@
         public void DrawInstanced(IGraphicsContext context, Viewport viewport, IBuffer args, uint stride)
         {
             if (!initialized) return;
+            if (!valid) return;
+
             BeginDraw(context, viewport);
             context.DrawInstancedIndirect(args, stride);
             EndDraw(context);
@@ -295,6 +331,8 @@
         public void DrawIndexedInstancedIndirect(IGraphicsContext context, Viewport viewport, IBuffer args, uint stride)
         {
             if (!initialized) return;
+            if (!valid) return;
+
             BeginDraw(context, viewport);
             context.DrawIndexedInstancedIndirect(args, stride);
             EndDraw(context);

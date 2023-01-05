@@ -87,12 +87,12 @@
             for (int i = 0; i < instances.Count; i++)
             {
                 var instance = instances[i];
-                instance.GetBoundingBox(out var aabb);
+                instance.GetBoundingBox(out var box);
                 instance.GetBoundingSphere(out var sphere);
-                if (!doCulling || frustum.Intersects(sphere))
+                if (!doCulling || frustum.Intersects(box))
                 {
                     var world = Matrix4x4.Transpose(instance.Transform);
-                    buffer.Add(new(id, world, aabb.Min, aabb.Max, sphere.Center, sphere.Radius));
+                    buffer.Add(new(id, world, box.Min, box.Max, sphere.Center, sphere.Radius));
                     frustumInstanceBuffer.Add(world);
                 }
             }
@@ -111,8 +111,8 @@
             for (int i = 0; i < instances.Count; i++)
             {
                 var instance = instances[i];
-                instance.GetBoundingSphere(out var sphere);
-                if (frustum.Intersects(sphere))
+                instance.GetBoundingBox(out var box);
+                if (frustum.Intersects(box))
                 {
                     var world = Matrix4x4.Transpose(instance.Transform);
                     frustumInstanceBuffer.Add(world);
@@ -122,7 +122,7 @@
             return count;
         }
 
-        public unsafe int UpdateFrustumInstanceBuffer(BoundingFrustum[] frusta)
+        public unsafe int UpdateFrustumInstanceBuffer(BoundingBox viewBox)
         {
             frustumInstanceBuffer.ResetCounter();
 
@@ -131,16 +131,13 @@
             for (int i = 0; i < instances.Count; i++)
             {
                 var instance = instances[i];
-                instance.GetBoundingSphere(out var sphere);
-                for (int j = 0; j < frusta.Length; j++)
+                instance.GetBoundingBox(out var box);
+
+                if (viewBox.Intersects(box))
                 {
-                    var frustum = frusta[j];
-                    if (frustum.Intersects(sphere))
-                    {
-                        var world = Matrix4x4.Transpose(instance.Transform);
-                        frustumInstanceBuffer.Add(world);
-                        break;
-                    }
+                    var world = Matrix4x4.Transpose(instance.Transform);
+                    frustumInstanceBuffer.Add(world);
+                    break;
                 }
             }
 

@@ -141,6 +141,12 @@
 	  <None Update="assets\shared\shaders\effects\exposure\vs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shared\shaders\effects\hbao2\ps.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="assets\shared\shaders\effects\hbao2\vs.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shared\shaders\effects\skybox\ps.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -449,6 +455,7 @@
 	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	  <ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
 	  <ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
+	  <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
 	  <ProjectReference Include="..\HexaEngine.Projects\HexaEngine.Projects.csproj" />
 	  <ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
 	</ItemGroup>

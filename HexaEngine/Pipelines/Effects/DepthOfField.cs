@@ -3,20 +3,24 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Resources;
+    using Silk.NET.Direct3D.Compilers;
     using System.Numerics;
+    using System.Security.Cryptography;
 
     public class DepthOfField : IEffect
     {
+        private IGraphicsDevice device;
         private bool enabled;
         private bool bokehEnabled;
-        private readonly Quad quad;
-        private readonly IBuffer cbBlur;
-        private readonly IBuffer cbBokeh;
-        private readonly IBuffer cbDof;
-        private readonly ISamplerState pointSampler;
-        private readonly GraphicsPipeline pipelineBlur;
-        private readonly GraphicsPipeline pipelineBokeh;
-        private readonly GraphicsPipeline pipelineDof;
+        private Quad quad;
+        private IBuffer cbBlur;
+        private IBuffer cbBokeh;
+        private IBuffer cbDof;
+        private ISamplerState pointSampler;
+        private GraphicsPipeline pipelineBlur;
+        private GraphicsPipeline pipelineBokeh;
+        private GraphicsPipeline pipelineDof;
         private ITexture2D outOfFocusTex;
         private IShaderResourceView outOfFocusSRV;
         private IRenderTargetView outOfFocusRTV;
@@ -115,43 +119,6 @@
         }
 
         #endregion Structs
-
-        public DepthOfField(IGraphicsDevice device, int width, int height)
-        {
-            quad = new(device);
-            blurParams = new BlurParams();
-            bokehParams = new BokehParams();
-            dofParams = new DofParams();
-            pipelineBlur = new(device, new()
-            {
-                VertexShader = "effects/blur/vs.hlsl",
-                PixelShader = "effects/blur/box.hlsl"
-            });
-            pipelineBokeh = new(device, new()
-            {
-                VertexShader = "effects/bokeh/vs.hlsl",
-                PixelShader = "effects/bokeh/ps.hlsl"
-            });
-            pipelineDof = new(device, new()
-            {
-                VertexShader = "effects/dof/vs.hlsl",
-                PixelShader = "effects/dof/ps.hlsl"
-            });
-
-            outOfFocusTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
-            outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
-
-            bokehTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            bokehSRV = device.CreateShaderResourceView(bokehTex);
-            bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
-
-            cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            cbBokeh = device.CreateBuffer(bokehParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            cbDof = device.CreateBuffer(dofParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-
-            pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
-        }
 
         #region Properties
 
@@ -288,7 +255,56 @@
 
         #endregion Properties
 
-        public void Resize(IGraphicsDevice device, int width, int height)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        {
+            this.device = device;
+            Color = ResourceManager.AddTextureSRV("DepthOfField", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
+            quad = new(device);
+            blurParams = new BlurParams();
+            bokehParams = new BokehParams();
+            dofParams = new DofParams();
+            pipelineBlur = new(device, new()
+            {
+                VertexShader = "effects/blur/vs.hlsl",
+                PixelShader = "effects/blur/box.hlsl"
+            });
+            pipelineBokeh = new(device, new()
+            {
+                VertexShader = "effects/bokeh/vs.hlsl",
+                PixelShader = "effects/bokeh/ps.hlsl"
+            });
+            pipelineDof = new(device, new()
+            {
+                VertexShader = "effects/dof/vs.hlsl",
+                PixelShader = "effects/dof/ps.hlsl"
+            });
+
+            outOfFocusTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
+            outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
+
+            bokehTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            bokehSRV = device.CreateShaderResourceView(bokehTex);
+            bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
+
+            cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            cbBokeh = device.CreateBuffer(bokehParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            cbDof = device.CreateBuffer(dofParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+
+            pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            Target = await ResourceManager.GetTextureRTVAsync("AutoExposure");
+            Position = await ResourceManager.GetTextureSRVAsync("GBuffer.Position");
+        }
+
+        public void BeginResize()
+        {
+            ResourceManager.RequireUpdate("DepthOfField");
+        }
+
+        public async void EndResize(int width, int height)
         {
             outOfFocusTex.Dispose();
             outOfFocusSRV.Dispose();
@@ -302,6 +318,11 @@
             bokehTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             bokehSRV = device.CreateShaderResourceView(bokehTex);
             bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
+
+            Color = ResourceManager.UpdateTextureSRV("DepthOfField", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            Target = await ResourceManager.GetTextureRTVAsync("AutoExposure");
+            Position = await ResourceManager.GetTextureSRVAsync("GBuffer.Position");
         }
 
         public void Dispose()
@@ -375,10 +396,6 @@
             quad.DrawAuto(context, pipelineDof, Target.Viewport);
 #nullable enable
             context.ClearState();
-        }
-
-        public void DrawSettings()
-        {
         }
     }
 }

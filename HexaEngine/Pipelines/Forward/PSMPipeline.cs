@@ -32,7 +32,7 @@
         public override void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
             base.BeginDraw(context, viewport);
-            context.DSSetConstantBuffer(View, 0);
+            context.DSSetConstantBuffer(View, 1);
         }
     }
 }

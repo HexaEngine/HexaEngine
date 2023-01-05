@@ -49,6 +49,7 @@
             {
                 if (value <= 0) return;
                 if (value == capacity) return;
+                if (value < capacity) return;
                 var tmp = Alloc<T>((int)value);
                 System.Buffer.MemoryCopy(items, tmp, value * sizeof(T), count * sizeof(T) > value * sizeof(T) ? value * sizeof(T) : count * sizeof(T));
                 Free(items);

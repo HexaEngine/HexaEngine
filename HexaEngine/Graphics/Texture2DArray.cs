@@ -6,9 +6,8 @@
     using System.Runtime.CompilerServices;
     using static HexaEngine.Core.Utils;
 
-    public unsafe class RenderTextureArray : IDisposable
+    public unsafe class TextureArray : IDisposable
     {
-        private readonly IRenderTargetView[] rtvs;
         private bool disposedValue;
 
         public int Width { get; }
@@ -20,23 +19,27 @@
         public readonly uint Count;
 
         public readonly IShaderResourceView[] SRVs;
-        public readonly void** RTVs;
+        public readonly IRenderTargetView[] RTVs;
+        public readonly void** PSRVs;
+        public readonly void** PRTVs;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RenderTextureArray(IGraphicsDevice device, int width, int height, uint count = 1, Format format = Format.RGBA32Float)
+        public TextureArray(IGraphicsDevice device, int width, int height, uint count = 1, Format format = Format.RGBA32Float)
         {
             Count = count;
             Width = width;
             Height = height;
-            rtvs = new IRenderTargetView[count];
+            RTVs = new IRenderTargetView[count];
             SRVs = new IShaderResourceView[count];
-            RTVs = Alloc((uint)sizeof(nint), count);
+            PSRVs = AllocArray(count);
+            PRTVs = AllocArray(count);
             for (int i = 0; i < count; i++)
             {
                 ITexture2D tex = device.CreateTexture2D(format, Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
                 SRVs[i] = device.CreateShaderResourceView(tex);
-                rtvs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
-                RTVs[i] = (void*)rtvs[i].NativePointer;
+                RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
+                PSRVs[i] = (void*)SRVs[i].NativePointer;
+                PRTVs[i] = (void*)RTVs[i].NativePointer;
                 tex.Dispose();
             }
         }
@@ -45,18 +48,19 @@
         {
             if (!disposedValue)
             {
-                foreach (IRenderTargetView rtv in rtvs)
+                foreach (IRenderTargetView rtv in RTVs)
                     rtv.Dispose();
                 foreach (IShaderResourceView srv in SRVs)
                     srv.Dispose();
 
-                Free(RTVs);
+                Free(PSRVs);
+                Free(PRTVs);
 
                 disposedValue = true;
             }
         }
 
-        ~RenderTextureArray()
+        ~TextureArray()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

@@ -4,17 +4,18 @@
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Rendering.ConstantBuffers;
+    using HexaEngine.Resources;
     using System;
 
-    public unsafe class DeferredPrincipledBSDF : IEffect
+    public class DeferredPrincipledBSDF : IEffect
     {
-        private readonly Quad quad;
-        private readonly GraphicsPipeline brdf;
-        private readonly ISamplerState pointSampler;
-        private readonly ISamplerState anisoSampler;
-        private readonly void** cbs;
-        private readonly void** smps;
-        private readonly void** srvs;
+        private Quad quad;
+        private GraphicsPipeline brdf;
+        private ISamplerState pointSampler;
+        private ISamplerState anisoSampler;
+        private unsafe void** cbs;
+        private unsafe void** smps;
+        private unsafe void** srvs;
         private const uint nsrvs = 8 + 4 + CBLight.MaxDirectionalLightSDs + CBLight.MaxPointLightSDs + CBLight.MaxSpotlightSDs;
         private bool disposedValue;
 
@@ -31,26 +32,61 @@
         public IBuffer? Camera;
         public IBuffer? Lights;
 
-        public DeferredPrincipledBSDF(IGraphicsDevice device)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
+            Output = ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             quad = new(device);
             brdf = new(device, new()
             {
                 VertexShader = "deferred/bsdf/vs.hlsl",
                 PixelShader = "deferred/bsdf/ps.hlsl",
             });
-            pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
-            anisoSampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-            smps = AllocArray(2);
-            smps[0] = (void*)pointSampler.NativePointer;
-            smps[1] = (void*)anisoSampler.NativePointer;
-            srvs = AllocArray(nsrvs);
-            cbs = AllocArray(2);
+
+            pointSampler = ResourceManager.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp);
+            anisoSampler = ResourceManager.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp);
+
+            unsafe
+            {
+                smps = AllocArray(2);
+                smps[0] = (void*)pointSampler.NativePointer;
+                smps[1] = (void*)anisoSampler.NativePointer;
+                srvs = AllocArray(nsrvs);
+                cbs = AllocArray(2);
+            }
+
+            Lights = await ResourceManager.GetConstantBufferAsync("CBLight");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            GBuffers = await ResourceManager.GetTextureArraySRVAsync("GBuffer");
+            Irraidance = await ResourceManager.GetTextureSRVAsync("EnvironmentIrradiance");
+            EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
+            LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
+            SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+
+            UpdateResources();
         }
 
-        public void Resize()
+        public void BeginResize()
         {
-#nullable disable
+            ResourceManager.RequireUpdate("LightBuffer");
+        }
+
+        public async void EndResize(int width, int height)
+        {
+            Output = ResourceManager.UpdateTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
+            Lights = await ResourceManager.GetConstantBufferAsync("CBLight");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            GBuffers = await ResourceManager.GetTextureArraySRVAsync("GBuffer");
+            Irraidance = await ResourceManager.GetTextureSRVAsync("EnvironmentIrradiance");
+            EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
+            LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
+            SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+
+            UpdateResources();
+        }
+
+        private unsafe void UpdateResources()
+        {
             cbs[0] = (void*)Lights?.NativePointer;
             cbs[1] = (void*)Camera?.NativePointer;
 
@@ -77,10 +113,9 @@
                 {
                     srvs[i + 13 + CBLight.MaxPointLightSDs] = (void*)PSMs[i]?.NativePointer;
                 }
-#nullable enable
         }
 
-        public void Draw(IGraphicsContext context)
+        public unsafe void Draw(IGraphicsContext context)
         {
             if (Output == null) return;
             context.ClearRenderTargetView(Output, default);
@@ -92,7 +127,7 @@
             context.ClearState();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual unsafe void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

@@ -5,6 +5,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Logging;
     using HexaEngine.Editor;
+    using HexaEngine.IO;
+    using HexaEngine.OpenAL;
     using HexaEngine.Plugins;
     using System.Diagnostics;
     using Window = HexaEngine.Windows.Window;
@@ -14,7 +16,7 @@
         /// <summary>
         /// Defines the entry point of the application.
         /// </summary>
-        private static void Main()
+        private static unsafe void Main()
         {
             CrashLogger.Start();
             PluginManager.Load();

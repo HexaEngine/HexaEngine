@@ -8,7 +8,7 @@
     {
         public IPropertyEditor? Editor { get; }
 
-        public void Awake(IGraphicsDevice device, GameObject node);
+        public void Awake(IGraphicsDevice device, GameObject gameObject);
 
         public void Destory();
 

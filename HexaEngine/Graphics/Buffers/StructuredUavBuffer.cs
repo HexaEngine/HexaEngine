@@ -6,7 +6,7 @@
 
     public unsafe class StructuredUavBuffer<T> : IBuffer where T : unmanaged
     {
-        private const int DefaultCapacity = 128;
+        private const int DefaultCapacity = 64;
         private readonly IGraphicsDevice device;
         private readonly bool canWrite;
         private readonly BufferUnorderedAccessViewFlags flags;
@@ -70,6 +70,7 @@
             {
                 if (value == 0) return;
                 if (value == capacity) return;
+                if (value < capacity) return;
                 var tmp = Alloc<T>((int)value);
                 Zero(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
@@ -92,16 +93,52 @@
             }
         }
 
+        /// <summary>
+        /// Gets the description.
+        /// </summary>
+        /// <value>
+        /// The description.
+        /// </value>
         public BufferDescription Description => buffer.Description;
 
+        /// <summary>
+        /// Gets the length.
+        /// </summary>
+        /// <value>
+        /// The length.
+        /// </value>
         public int Length => buffer.Length;
 
+        /// <summary>
+        /// Gets the dimension.
+        /// </summary>
+        /// <value>
+        /// The dimension.
+        /// </value>
         public ResourceDimension Dimension => buffer.Dimension;
 
+        /// <summary>
+        /// Gets the native pointer.
+        /// </summary>
+        /// <value>
+        /// The native pointer.
+        /// </value>
         public nint NativePointer => buffer.NativePointer;
 
+        /// <summary>
+        /// Gets or sets the name of the debug.
+        /// </summary>
+        /// <value>
+        /// The name of the debug.
+        /// </value>
         public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is disposed.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+        /// </value>
         public bool IsDisposed => buffer.IsDisposed;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -2,17 +2,20 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
+    using HexaEngine.Objects.Primitives;
     using HexaEngine.Rendering.ConstantBuffers;
+    using HexaEngine.Resources;
     using System;
+    using System.Security.Cryptography;
 
-    public unsafe class ForwardPrincipledBSDF : IEffect
+    public class ForwardPrincipledBSDF : IEffect
     {
-        private readonly GraphicsPipeline brdf;
-        private readonly ISamplerState pointSampler;
-        private readonly ISamplerState anisoSampler;
-        private readonly void** cbs;
-        private readonly void** smps;
-        private readonly void** srvs;
+        private GraphicsPipeline brdf;
+        private ISamplerState pointSampler;
+        private ISamplerState anisoSampler;
+        private unsafe void** cbs;
+        private unsafe void** smps;
+        private unsafe void** srvs;
         private const uint nsrvs = 4 + CBLight.MaxDirectionalLightSDs + CBLight.MaxPointLightSDs + CBLight.MaxSpotlightSDs;
         private bool disposedValue;
 
@@ -29,19 +32,13 @@
         public IBuffer? Camera;
         public IBuffer? Lights;
 
-        public ForwardPrincipledBSDF(IGraphicsDevice device)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             brdf = new(device, new()
             {
-                VertexShader = "forward/bsdf/vs.hlsl",
-                HullShader = "forward/bsdf/hs.hlsl",
-                DomainShader = "forward/bsdf/ds.hlsl",
-                PixelShader = "forward/bsdf/ps.hlsl",
-            },
-        new ShaderMacro[]
-        {
-            new("INSTANCED", 1)
-        });
+                VertexShader = "deferred/bsdf/vs.hlsl",
+                PixelShader = "deferred/bsdf/ps.hlsl",
+            });
             brdf.State = new()
             {
                 Blend = BlendDescription.AlphaBlend,
@@ -49,16 +46,47 @@
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
             };
-            pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
-            anisoSampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-            smps = AllocArray(2);
-            smps[0] = (void*)pointSampler.NativePointer;
-            smps[1] = (void*)anisoSampler.NativePointer;
-            srvs = AllocArray(nsrvs);
-            cbs = AllocArray(2);
+
+            pointSampler = ResourceManager.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp);
+            anisoSampler = ResourceManager.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp);
+
+            unsafe
+            {
+                smps = AllocArray(2);
+                smps[0] = (void*)pointSampler.NativePointer;
+                smps[1] = (void*)anisoSampler.NativePointer;
+                srvs = AllocArray(nsrvs);
+                cbs = AllocArray(2);
+            }
+
+            Output = await ResourceManager.GetTextureRTVAsync("LightBuffer");
+            DSV = await ResourceManager.GetDepthStencilViewAsync("SwapChain.DSV");
+            Lights = await ResourceManager.GetConstantBufferAsync("CBLight");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            Irraidance = await ResourceManager.GetTextureSRVAsync("EnvironmentIrradiance");
+            EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
+            LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
+            SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+
+            UpdateResources();
         }
 
-        public void Resize()
+        public void BeginResize()
+        {
+        }
+
+        public async void EndResize(int width, int height)
+        {
+            Output = await ResourceManager.GetTextureRTVAsync("LightBuffer");
+            Lights = await ResourceManager.GetConstantBufferAsync("CBLight");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            Irraidance = await ResourceManager.GetTextureSRVAsync("EnvironmentIrradiance");
+            EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
+            LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
+            SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+        }
+
+        public unsafe void UpdateResources()
         {
 #nullable disable
             cbs[0] = (void*)Lights?.NativePointer;
@@ -82,17 +110,18 @@
 #nullable enable
         }
 
-        public void Draw(IGraphicsContext context)
+        public unsafe void Draw(IGraphicsContext context)
         {
             if (Output == null) return;
             context.SetRenderTarget(Output, DSV);
             context.PSSetConstantBuffers(cbs, 2, 0);
+            context.DSSetConstantBuffer(Camera, 1);
             context.PSSetShaderResources(srvs, nsrvs, 8);
             context.PSSetSamplers(smps, 2, 1);
             brdf.BeginDraw(context, Output.Viewport);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual unsafe void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

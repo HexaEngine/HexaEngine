@@ -1,38 +1,71 @@
 ﻿namespace TestApp
 {
     using HexaEngine.Mathematics;
+    using HexaEngine.OpenAL;
+    using Silk.NET.Core.Native;
+    using Silk.NET.OpenAL;
     using System.Collections.Concurrent;
+    using System.Diagnostics;
+    using System.Numerics;
 
     public class Program
     {
         private static List<Tes> e = new List<Tes>();
 
+        public unsafe delegate void LPALCRESETDEVICESOFT(Device* device, int* attributes);
+
+        public const int AL_SOURCE_SPATIALIZE_SOFT = 0x1214;
+        public const int ALC_HRTF_SOFT = 0x1992;
+        public const int ALC_TRUE = 1;
+
         public static unsafe void Main()
         {
-            /*
-            List<string> strings = new List<string>();
+            var devs = AudioSystem.GetAvailableDevices();
+            AudioDevice device = AudioSystem.CreateAudioDevice(null);
+
+            /*if (alc.IsExtensionPresent("ALC_SOFT_HRTF"))
+            {
+                delegate*<Device*, int*, int> alcResetDeviceSOFT = (delegate*<Device*, int*, int>)al.GetProcAddress("alcResetDeviceSOFT");
+
+                int* attributes = Alloc<int>(3);
+                attributes[0] = ALC_HRTF_SOFT;
+                attributes[1] = ALC_TRUE;
+                attributes[2] = 0;
+
+                var result = alcResetDeviceSOFT(device.Device, attributes);
+
+                int hrtfenabled = 0;
+                delegate*<Device*, int, int, int*, void> alcGetIntegerv = (delegate*<Device*, int, int, int*, void>)al.GetProcAddress("alcGetIntegerv");
+                alcGetIntegerv(device.Device, ALC_HRTF_SOFT, 1, &hrtfenabled);
+
+                Debug.WriteLine($"HRTF is {(hrtfenabled == 1 ? "enabled" : "not enabled")}");
+            }*/
+
+            var stream = device.CreateAudioStream(File.OpenRead("piano2.wav"));
+            var source = al.GenSource();
+            stream.Initialize(source);
+            stream.Looping = true;
+            al.SourcePlay(source);
+            al.SetSourceProperty(source, (SourceBoolean)AL_SOURCE_SPATIALIZE_SOFT, true);
+            float x = -100;
+
+            al.DistanceModel(DistanceModel.ExponentDistance);
+            al.SetListenerProperty(ListenerVector3.Position, new Vector3(0, 0, 0));
+            al.SetListenerProperty(ListenerVector3.Velocity, new Vector3(0, 0, 0));
+            fixed (Vector3* d = new Vector3[2] { new(0, 0, -1), new(0, 1, 0) })
+                al.SetListenerProperty(ListenerFloatArray.Orientation, (float*)d);
+
+            al.SetSourceProperty(source, SourceFloat.Pitch, 1);
+            al.SetSourceProperty(source, SourceFloat.Gain, 1);
+            al.SetSourceProperty(source, SourceFloat.RolloffFactor, 0.5f);
+            al.SetSourceProperty(source, SourceVector3.Position, new Vector3(0, -10, 10));
+            al.SetSourceProperty(source, SourceVector3.Velocity, new Vector3(0, 0, 0));
 
             while (true)
             {
-                string? input = Console.ReadLine();
-                if (input == null) continue;
-                if (input == "e") break;
-                strings.Add(input);
-            }
-            string inp = string.Join(string.Empty, strings.ToArray());
-            string[] nums = inp.Replace(Environment.NewLine, "").Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            int[] ints = nums.Select(int.Parse).ToArray();
-            StringBuilder sb = new();
-            for (int i = 0; i < ints.Length; i += 2)
-            {
-                sb.AppendLine($"{ints[i] - 1},{ints[i + 1] - 1},");
-            }
+                Thread.Sleep(10);
 
-            Console.WriteLine(sb.ToString());*/
-
-            for (int i = 0; i < 16; i++)
-            {
-                Do(i);
+                stream.Update(source);
             }
         }
 

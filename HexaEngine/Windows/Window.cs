@@ -1,18 +1,19 @@
 ﻿namespace HexaEngine.Windows
 {
+    using HexaEngine.Audio;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Input;
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
+    using HexaEngine.IO;
+    using HexaEngine.OpenAL;
     using HexaEngine.Rendering;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
-    using System.Diagnostics;
     using System.Numerics;
 
     public enum RendererFlags
@@ -86,6 +87,7 @@
                 throw new PlatformNotSupportedException();
             }
 
+            AudioManager.Initialize();
             ResourceManager.Initialize(device);
             PipelineManager.Initialize(device);
             CullingManager.Initialize(device);
@@ -198,6 +200,7 @@
             renderDispatcher.Dispose();
             CullingManager.Release();
             ResourceManager.Release();
+            AudioManager.Release();
             context.Dispose();
             device.Dispose();
         }

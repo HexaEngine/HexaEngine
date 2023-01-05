@@ -4,41 +4,51 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
+    using HexaEngine.Resources;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
 
-    public unsafe class AutoExposure : IEffect
+    public class AutoExposure : IEffect
     {
         private int width;
         private int height;
         private bool dirty;
-        private readonly ComputePipeline lumaCompute;
-        private readonly LumaParams* lumaParams;
-        private readonly IBuffer cbLumaParams;
-        private readonly IBuffer histogram;
-        private readonly IUnorderedAccessView histogramUAV;
-        private readonly void** lumaUAVs;
+        private ComputePipeline lumaCompute;
+        private unsafe LumaParams* lumaParams;
+        private IBuffer cbLumaParams;
+        private IBuffer histogram;
+        private IUnorderedAccessView histogramUAV;
+        private unsafe void** lumaUAVs;
 
-        private readonly ComputePipeline lumaAvgCompute;
-        private readonly LumaAvgParams* lumaAvgParams;
-        private readonly IBuffer cbLumaAvgParams;
-        private readonly ITexture2D luma;
-        private readonly IShaderResourceView lumaSRV;
-        private readonly IUnorderedAccessView lumaUAV;
-        private readonly void** lumaAvgUAVs;
+        private ComputePipeline lumaAvgCompute;
+        private unsafe LumaAvgParams* lumaAvgParams;
+        private IBuffer cbLumaAvgParams;
+        private ITexture2D luma;
+        private IShaderResourceView lumaSRV;
+        private IUnorderedAccessView lumaUAV;
+        private unsafe void** lumaAvgUAVs;
 
-        private readonly GraphicsPipeline exposurePipeline;
-        private readonly Quad quad;
-        private readonly ExposureParams* exposureParams;
-        private readonly IBuffer cbExposureParams;
-        private readonly ISamplerState samplerPoint;
+        private GraphicsPipeline exposurePipeline;
+        private Quad quad;
+        private unsafe ExposureParams* exposureParams;
+        private IBuffer cbExposureParams;
+        private ISamplerState samplerPoint;
 
         public IShaderResourceView? Color;
         public IRenderTargetView? Output;
         private bool enabled;
 
-        public bool Enabled
-        { get => enabled; set { exposureParams->Enabled = value ? 1 : 0; enabled = value; dirty = true; } }
+        public unsafe bool Enabled
+        {
+            get => enabled;
+            set
+            {
+                exposureParams->Enabled = value ? 1 : 0;
+                enabled = value;
+                dirty = true;
+            }
+        }
 
         #region Structs
 
@@ -90,17 +100,42 @@
 
         #endregion Structs
 
-        public AutoExposure(IGraphicsDevice device, int width, int height)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
+            Color = ResourceManager.AddTextureSRV("AutoExposure", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
             this.width = width;
             this.height = height;
             lumaCompute = new(device, new("compute/luma/shader.hlsl"));
+
+            histogram = ComputePipeline.CreateRawBuffer(device, 256 * sizeof(uint));
+            histogramUAV = device.CreateUnorderedAccessView(histogram, new(histogram, Format.R32Typeless, 0, 256, BufferUnorderedAccessViewFlags.Raw));
+
+            luma = device.CreateTexture2D(Format.R32Float, 1, 1, 1, 1, null, BindFlags.ShaderResource | BindFlags.UnorderedAccess, ResourceMiscFlag.None);
+            lumaUAV = device.CreateUnorderedAccessView(luma, new(luma, UnorderedAccessViewDimension.Texture2D));
+            lumaSRV = device.CreateShaderResourceView(luma);
+
+            exposurePipeline = new(device, new()
+            {
+                VertexShader = "effects/exposure/vs.hlsl",
+                PixelShader = "effects/exposure/ps.hlsl",
+            });
+
+            samplerPoint = device.CreateSamplerState(SamplerDescription.PointClamp);
+
+            quad = new(device);
+            InitUnsafe(device);
+
+            Output = await ResourceManager.GetTextureRTVAsync("Tonemap");
+        }
+
+        private unsafe void InitUnsafe(IGraphicsDevice device)
+        {
             lumaParams = Alloc<LumaParams>();
             lumaParams->InputWidth = (uint)width;
             lumaParams->InputHeight = (uint)height;
             cbLumaParams = device.CreateBuffer(lumaParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            histogram = ComputePipeline.CreateRawBuffer(device, 256 * sizeof(uint));
-            histogramUAV = device.CreateUnorderedAccessView(histogram, new(histogram, Format.R32Typeless, 0, 256, BufferUnorderedAccessViewFlags.Raw));
+
             lumaUAVs = AllocArray(2);
             lumaUAVs[0] = (void*)histogramUAV.NativePointer;
 
@@ -108,59 +143,40 @@
             lumaAvgParams = Alloc<LumaAvgParams>();
             lumaAvgParams->PixelCount = (uint)(width * height);
             cbLumaAvgParams = device.CreateBuffer(lumaAvgParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            luma = device.CreateTexture2D(Format.R32Float, 1, 1, 1, 1, null, BindFlags.ShaderResource | BindFlags.UnorderedAccess, ResourceMiscFlag.None);
-            lumaUAV = device.CreateUnorderedAccessView(luma, new(luma, UnorderedAccessViewDimension.Texture2D));
-            lumaSRV = device.CreateShaderResourceView(luma);
+
             lumaAvgUAVs = AllocArray(2);
             lumaAvgUAVs[0] = (void*)histogramUAV.NativePointer;
             lumaAvgUAVs[1] = (void*)lumaUAV.NativePointer;
 
-            exposurePipeline = new(device, new()
-            {
-                VertexShader = "effects/exposure/vs.hlsl",
-                PixelShader = "effects/exposure/ps.hlsl",
-            });
             exposureParams = Alloc<ExposureParams>();
             Zero(exposureParams);
             cbExposureParams = device.CreateBuffer(exposureParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            samplerPoint = device.CreateSamplerState(SamplerDescription.PointClamp);
-
-            quad = new(device);
         }
 
-        public void Dispose()
+        public void BeginResize()
         {
-            lumaCompute.Dispose();
-            cbLumaParams.Dispose();
-            histogram.Dispose();
-            histogramUAV.Dispose();
-
-            lumaAvgCompute.Dispose();
-            cbLumaAvgParams.Dispose();
-            luma.Dispose();
-            lumaSRV.Dispose();
-            lumaUAV.Dispose();
-
-            exposurePipeline.Dispose();
-            cbExposureParams.Dispose();
-            samplerPoint.Dispose();
-            quad.Dispose();
-            Free(lumaUAVs);
-            Free(lumaAvgUAVs);
-            GC.SuppressFinalize(this);
+            ResourceManager.RequireUpdate("AutoExposure");
         }
 
-        public void Resize(int width, int height)
+        public async void EndResize(int width, int height)
         {
+            Output = await ResourceManager.GetTextureRTVAsync("Tonemap");
+            Color = ResourceManager.UpdateTextureSRV("AutoExposure", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
             this.width = width;
             this.height = height;
-            lumaParams->InputWidth = (uint)width;
-            lumaParams->InputHeight = (uint)height;
-            lumaAvgParams->PixelCount = (uint)(width * height);
+            EndResizeUnsafe(width, height);
             dirty = true;
         }
 
-        public void Draw(IGraphicsContext context)
+        private unsafe void EndResizeUnsafe(int width, int height)
+        {
+            lumaParams->InputWidth = (uint)width;
+            lumaParams->InputHeight = (uint)height;
+            lumaAvgParams->PixelCount = (uint)(width * height);
+        }
+
+        public unsafe void Draw(IGraphicsContext context)
         {
             if (Output == null) return;
             if (dirty)
@@ -193,8 +209,26 @@
             context.ClearState();
         }
 
-        public void DrawSettings()
+        public unsafe void Dispose()
         {
+            lumaCompute.Dispose();
+            cbLumaParams.Dispose();
+            histogram.Dispose();
+            histogramUAV.Dispose();
+
+            lumaAvgCompute.Dispose();
+            cbLumaAvgParams.Dispose();
+            luma.Dispose();
+            lumaSRV.Dispose();
+            lumaUAV.Dispose();
+
+            exposurePipeline.Dispose();
+            cbExposureParams.Dispose();
+            samplerPoint.Dispose();
+            quad.Dispose();
+            Free(lumaUAVs);
+            Free(lumaAvgUAVs);
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -181,5 +181,20 @@
 
             return numLevels;
         }
+
+        public void BeginResize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndResize(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

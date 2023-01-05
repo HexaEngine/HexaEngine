@@ -378,13 +378,13 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private unsafe void UpdatePointLight(IGraphicsContext context, uint index, PointLight light)
         {
-            OSMHelper.GetLightSpaceMatrices(light.Transform, light.ShadowRange, osmBuffer.Local, light.Frusta);
+            OSMHelper.GetLightSpaceMatrices(light.Transform, light.ShadowRange, osmBuffer.Local, light.ShadowBox);
             osmBuffer.Update(context);
             context.Write(osmParamBuffer, new Vector4(light.Transform.GlobalPosition, light.ShadowRange));
 
             osmDepthBuffers[index].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
             context.SetRenderTarget(osmDepthBuffers[index].RenderTargetView, osmDepthBuffers[index].DepthStencilView);
-            DrawScene(context, osmPipeline, osmDepthBuffers[index].Viewport, light.Frusta);
+            DrawScene(context, osmPipeline, osmDepthBuffers[index].Viewport, *light.ShadowBox);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -399,12 +399,12 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void DrawScene(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, BoundingFrustum[] frusta)
+        private unsafe void DrawScene(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, BoundingBox box)
         {
             pipeline.BeginDraw(context, viewport);
             for (int j = 0; j < instanceManager.TypeCount; j++)
             {
-                instanceManager.Types[j].UpdateFrustumInstanceBuffer(frusta);
+                instanceManager.Types[j].UpdateFrustumInstanceBuffer(box);
                 instanceManager.Types[j].DrawNoOcclusion(context);
             }
             context.ClearState();
