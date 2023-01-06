@@ -90,7 +90,7 @@ namespace ImGuizmoNET
             return ret != 0;
         }
 
-        public static bool IsOver(OPERATION op)
+        public static bool IsOver(ImGuizmoOperation op)
         {
             byte ret = ImGuizmoNative.ImGuizmo_IsOverOPERATION(op);
             return ret != 0;
@@ -102,7 +102,7 @@ namespace ImGuizmoNET
             return ret != 0;
         }
 
-        public static bool Manipulate(ref float view, ref float projection, OPERATION operation, MODE mode, ref float matrix)
+        public static bool Manipulate(ref float view, ref float projection, ImGuizmoOperation operation, ImGuizmoMode mode, ref float matrix)
         {
             float* deltaMatrix = null;
             float* snap = null;
@@ -121,7 +121,7 @@ namespace ImGuizmoNET
             }
         }
 
-        public static bool Manipulate(ref Matrix4x4 view, ref Matrix4x4 projection, OPERATION operation, MODE mode, ref Matrix4x4 matrix)
+        public static bool Manipulate(ref Matrix4x4 view, ref Matrix4x4 projection, ImGuizmoOperation operation, ImGuizmoMode mode, ref Matrix4x4 matrix)
         {
             float* deltaMatrix = null;
             float* snap = null;
@@ -140,7 +140,7 @@ namespace ImGuizmoNET
             }
         }
 
-        public static bool Manipulate(float[] view, float[] projection, OPERATION operation, MODE mode, float[] matrix)
+        public static bool Manipulate(float[] view, float[] projection, ImGuizmoOperation operation, ImGuizmoMode mode, float[] matrix)
         {
             float* deltaMatrix = null;
             float* snap = null;
@@ -159,7 +159,7 @@ namespace ImGuizmoNET
             }
         }
 
-        public static bool Manipulate(ref float view, ref float projection, OPERATION operation, MODE mode, ref float matrix, ref float deltaMatrix)
+        public static bool Manipulate(ref float view, ref float projection, ImGuizmoOperation operation, ImGuizmoMode mode, ref float matrix, ref float deltaMatrix)
         {
             float* snap = null;
             float* localBounds = null;
@@ -180,7 +180,7 @@ namespace ImGuizmoNET
             }
         }
 
-        public static bool Manipulate(ref float view, ref float projection, OPERATION operation, MODE mode, ref float matrix, ref float deltaMatrix, ref float snap)
+        public static bool Manipulate(ref float view, ref float projection, ImGuizmoOperation operation, ImGuizmoMode mode, ref float matrix, ref float deltaMatrix, ref float snap)
         {
             float* localBounds = null;
             float* boundsSnap = null;
@@ -203,7 +203,7 @@ namespace ImGuizmoNET
             }
         }
 
-        public static bool Manipulate(ref float view, ref float projection, OPERATION operation, MODE mode, ref float matrix, ref float deltaMatrix, ref float snap, ref float localBounds)
+        public static bool Manipulate(ref float view, ref float projection, ImGuizmoOperation operation, ImGuizmoMode mode, ref float matrix, ref float deltaMatrix, ref float snap, ref float localBounds)
         {
             float* boundsSnap = null;
             fixed (float* native_view = &view)
@@ -228,7 +228,7 @@ namespace ImGuizmoNET
             }
         }
 
-        public static bool Manipulate(ref float view, ref float projection, OPERATION operation, MODE mode, ref float matrix, ref float deltaMatrix, ref float snap, ref float localBounds, ref float boundsSnap)
+        public static bool Manipulate(ref float view, ref float projection, ImGuizmoOperation operation, ImGuizmoMode mode, ref float matrix, ref float deltaMatrix, ref float snap, ref float localBounds, ref float boundsSnap)
         {
             fixed (float* native_view = &view)
             {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -23,13 +24,13 @@
 
         event Action<ModelInstanceType>? OnTypeDestroyed;
 
-        ModelInstance CreateInstance(Mesh mesh, Material material, Transform transform);
+        ModelInstance CreateInstance(Mesh mesh, Material material, GameObject parent);
 
-        ModelInstance CreateInstance(Model model, Transform transform);
+        ModelInstance CreateInstance(Model model, GameObject parent);
 
-        Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, Transform transform);
+        Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, GameObject parent);
 
-        Task<ModelInstance> CreateInstanceAsync(Model model, Transform transform);
+        Task<ModelInstance> CreateInstanceAsync(Model model, GameObject parent);
 
         void DestroyInstance(ModelInstance instance);
 

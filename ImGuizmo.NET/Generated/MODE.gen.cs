@@ -1,6 +1,6 @@
 namespace ImGuizmoNET
 {
-    public enum MODE
+    public enum ImGuizmoMode
     {
         LOCAL = 0,
         WORLD = 1,

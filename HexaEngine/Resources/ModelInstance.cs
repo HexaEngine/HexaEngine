@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
 
     public class ModelInstance
     {
@@ -9,6 +10,7 @@
         public readonly ModelInstanceType Type;
         public readonly Mesh Mesh;
         public readonly Transform Transform;
+        public readonly GameObject Parent;
 
         public void GetBoundingBox(out BoundingBox box)
         {
@@ -25,13 +27,14 @@
             return frustum.Intersects(BoundingBox.Transform(Mesh.BoundingBox, Transform));
         }
 
-        public ModelInstance(int id, ModelInstanceType type, Transform node)
+        public ModelInstance(int id, ModelInstanceType type, GameObject gameObject)
         {
             Name = $"{type}:{id}";
             Id = id;
             Type = type;
             Mesh = type.Mesh;
-            Transform = node;
+            Transform = gameObject.Transform;
+            Parent = gameObject;
         }
 
         public override string ToString()

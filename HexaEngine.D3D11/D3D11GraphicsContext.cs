@@ -8,6 +8,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using Format = Core.Graphics.Format;
+    using Map = Core.Graphics.Map;
     using MappedSubresource = Core.Graphics.MappedSubresource;
     using Viewport = Mathematics.Viewport;
 
@@ -358,6 +359,16 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged
+        {
+            Silk.NET.Direct3D11.MappedSubresource data;
+            ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
+            DeviceContext->Map(resource, 0, Helper.Convert(flags), 0, &data).ThrowHResult();
+            Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
+            DeviceContext->Unmap(resource, 0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T value) where T : struct
         {
             Silk.NET.Direct3D11.MappedSubresource data;
@@ -415,6 +426,20 @@
         public void Read<T>(IBuffer buffer, T[] values) where T : struct
         {
             throw new NotImplementedException();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Read<T>(IBuffer buffer, T* values, uint count) where T : unmanaged
+        {
+            Silk.NET.Direct3D11.MappedSubresource data;
+            ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
+            DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.Read, 0, &data);
+
+            long destinationLength = count * sizeof(T);
+            long bytesToCopy = data.RowPitch > destinationLength ? destinationLength : data.RowPitch;
+            Buffer.MemoryCopy(data.PData, values, destinationLength, bytesToCopy);
+
+            DeviceContext->Unmap(resource, 0);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -43,14 +43,14 @@
 
         public bool IsUsed => instanceTypes.Count > 0;
 
-        internal ModelInstanceType CreateInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, Material material)
+        internal ModelInstanceType CreateInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> noCullInstanceBuffer, StructuredBuffer<uint> noCullInstanceOffsets, Material material)
         {
             semaphore.Wait();
             lock (materialToType)
             {
                 if (!materialToType.TryGetValue(material.Name, out var type))
                 {
-                    type = new(device, argsBuffer, instanceBuffer, instanceOffsets, this, material);
+                    type = new(device, argsBuffer, instanceBuffer, instanceOffsets, noCullInstanceBuffer, noCullInstanceOffsets, this, material);
                     if (!materialToType.TryAdd(material.Name, type))
                         throw new Exception();
                     lock (instanceTypes)

@@ -30,7 +30,7 @@
             for (int i = 0; i < models.Count; i++)
             {
                 var model = models[i];
-                node.GetScene().InstanceManager.CreateInstanceAsync(model, node.Transform).ContinueWith(t =>
+                node.GetScene().InstanceManager.CreateInstanceAsync(model, node).ContinueWith(t =>
                 {
                     instances.Add(t.Result);
                 });
@@ -52,13 +52,13 @@
             models.Add(model);
             if (initialized)
             {
-                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
+                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
             }
         }
 
         public void UpdateModel(Model model)
         {
-            instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
+            instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
         }
 
         public void RemoveMesh(Model model)
@@ -66,7 +66,7 @@
             models.Remove(model);
             if (initialized)
             {
-                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject.Transform));
+                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
             }
         }
 

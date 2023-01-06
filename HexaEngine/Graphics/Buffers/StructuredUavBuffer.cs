@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Graphics.Buffers
 {
+    using BepuPhysics;
     using HexaEngine.Core.Graphics;
     using System;
     using System.Runtime.CompilerServices;
@@ -9,7 +10,10 @@
         private const int DefaultCapacity = 64;
         private readonly IGraphicsDevice device;
         private readonly bool canWrite;
+        private readonly bool canRead;
         private readonly BufferUnorderedAccessViewFlags flags;
+        private BufferDescription bufferDescription;
+        private BufferDescription copyDescription;
         private IBuffer buffer;
         private IBuffer? copyBuffer;
         private IUnorderedAccessView uav;
@@ -22,20 +26,67 @@
 
         private bool disposedValue;
 
-        public StructuredUavBuffer(IGraphicsDevice device, bool canWrite, BufferUnorderedAccessViewFlags flags = BufferUnorderedAccessViewFlags.None)
+        public StructuredUavBuffer(IGraphicsDevice device, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags flags = BufferUnorderedAccessViewFlags.None)
         {
             this.device = device;
             this.canWrite = canWrite;
+            this.canRead = canRead;
             this.flags = flags;
             capacity = DefaultCapacity;
             items = Alloc<T>(DefaultCapacity);
             Zero(items, DefaultCapacity * sizeof(T));
-            buffer = device.CreateBuffer(items, DefaultCapacity, new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T)));
+            bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
+            buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
             if (canWrite)
-                copyBuffer = device.CreateBuffer(new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T)));
+            {
+                copyDescription = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
+                if (canRead)
+                {
+                    copyDescription.BindFlags = BindFlags.None;
+                    copyDescription.Usage = Usage.Staging;
+                    copyDescription.CPUAccessFlags = CpuAccessFlags.RW;
+                }
+                copyBuffer = device.CreateBuffer(copyDescription);
+            }
+
             uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, DefaultCapacity, flags));
             srv = device.CreateShaderResourceView(buffer);
         }
+
+        public StructuredUavBuffer(IGraphicsDevice device, int intialCapacity, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags flags = BufferUnorderedAccessViewFlags.None)
+        {
+            this.device = device;
+            this.canWrite = canWrite;
+            this.canRead = canRead;
+            this.flags = flags;
+            capacity = (uint)intialCapacity;
+            items = Alloc<T>(intialCapacity);
+            Zero(items, intialCapacity * sizeof(T));
+            bufferDescription = new(sizeof(T) * intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
+            buffer = device.CreateBuffer(items, (uint)intialCapacity, bufferDescription);
+            if (canWrite)
+            {
+                copyDescription = new(sizeof(T) * intialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
+                if (canRead)
+                {
+                    copyDescription.BindFlags = BindFlags.None;
+                    copyDescription.Usage = Usage.Staging;
+                    copyDescription.CPUAccessFlags = CpuAccessFlags.RW;
+                }
+                copyBuffer = device.CreateBuffer(copyDescription);
+            }
+
+            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, intialCapacity, flags));
+            srv = device.CreateShaderResourceView(buffer);
+        }
+
+        public T this[int index]
+        {
+            get { return items[index]; }
+            set { items[index] = value; isDirty = true; }
+        }
+
+        public T* Local => items;
 
         public event EventHandler? OnDisposed
         {
@@ -50,17 +101,49 @@
             }
         }
 
+        /// <summary>
+        /// Gets the uav.
+        /// </summary>
+        /// <value>
+        /// The uav.
+        /// </value>
         public IUnorderedAccessView UAV => uav;
 
+        /// <summary>
+        /// Gets the SRV.
+        /// </summary>
+        /// <value>
+        /// The SRV.
+        /// </value>
         public IShaderResourceView SRV => srv;
 
         /// <summary>
-        /// Only set if CanWrite is true
+        /// Not null when CanWrite is true
         /// </summary>
         public IBuffer? CopyBuffer => copyBuffer;
 
+        /// <summary>
+        /// Gets a value indicating whether this instance can write.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance can write; otherwise, <c>false</c>.
+        /// </value>
         public bool CanWrite => canWrite;
 
+        /// <summary>
+        /// Gets a value indicating whether this instance can read.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance can read; otherwise, <c>false</c>.
+        /// </value>
+        public bool CanRead => canRead;
+
+        /// <summary>
+        /// Gets or sets the capacity.
+        /// </summary>
+        /// <value>
+        /// The capacity.
+        /// </value>
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -84,9 +167,14 @@
                 uav.Dispose();
                 buffer.Dispose();
                 copyBuffer?.Dispose();
-                buffer = device.CreateBuffer(items, capacity, new(sizeof(T) * (int)capacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T)));
+                bufferDescription.ByteWidth = sizeof(T) * (int)capacity;
+                buffer = device.CreateBuffer(items, capacity, bufferDescription);
                 if (canWrite)
-                    copyBuffer = device.CreateBuffer(new(sizeof(T) * (int)value, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T)));
+                {
+                    copyDescription.ByteWidth = sizeof(T) * (int)value;
+                    copyBuffer = device.CreateBuffer(copyDescription);
+                }
+
                 uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)capacity, flags));
                 srv = device.CreateShaderResourceView(buffer);
                 isDirty = true;
@@ -201,14 +289,32 @@
         public bool Update(IGraphicsContext context)
         {
             if (copyBuffer == null) throw new InvalidOperationException();
+            if (!canWrite) throw new InvalidOperationException();
             if (isDirty)
             {
-                context.Write(copyBuffer, items, (int)(count * sizeof(T)));
-                context.CopyResource(buffer, copyBuffer);
+                if (canRead)
+                {
+                    context.Write(copyBuffer, items, (int)(count * sizeof(T)), Map.Write);
+                    context.CopyResource(buffer, copyBuffer);
+                }
+                else
+                {
+                    context.Write(copyBuffer, items, (int)(count * sizeof(T)));
+                    context.CopyResource(buffer, copyBuffer);
+                }
+
                 isDirty = false;
                 return true;
             }
             return false;
+        }
+
+        public void Read(IGraphicsContext context)
+        {
+            if (copyBuffer == null) throw new InvalidOperationException();
+            if (!canRead) throw new InvalidOperationException();
+            context.CopyResource(copyBuffer, buffer);
+            context.Read(copyBuffer, items, capacity);
         }
 
         public void CopyTo(IGraphicsContext context, IBuffer buffer)

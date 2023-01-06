@@ -90,6 +90,9 @@
 	  <None Update="assets\shared\shaders\compute\occlusion\occlusion.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="assets\shared\shaders\compute\selection\shader.hlsl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="assets\shared\shaders\deferred\prepass2\defs.hlsl">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>

@@ -1,29 +1,35 @@
-#include "../../world.hlsl"
 #include "../../camera.hlsl"
 
 struct VertexInput
 {
-    uint vertex : SV_VertexID;
-    uint instance : SV_InstanceID;
-    float3 position : POSITION;
-    float2 tex : TEXCOORD0;
-    float3 normal : NORMAL;
-    float3 tangent : TANGENT;
+	float3 pos : POSITION;
+	float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
 };
 
 struct PixelInput
 {
-    float4 position : SV_POSITION;
-    nointerpolation float4 color : COLOR;
+	float4 pos : SV_POSITION;
+	nointerpolation uint4 color : COLOR;
 };
 
-PixelInput main(VertexInput input)
+cbuffer cb : register(b0)
 {
-    PixelInput output;
-    output.position = float4(input.position, 1);
-    output.position = mul(output.position, world);
-    output.position = mul(output.position, view);
-    output.position = mul(output.position, proj);
-    output.color = float4(input.vertex, 0, input.instance, 1);
+	uint typeId;
+}
+
+StructuredBuffer<float4x4> instances;
+StructuredBuffer<uint> offsets;
+
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
+{
+	PixelInput output;
+
+	float4x4 mat = instances[instanceId + offsets[typeId]];
+	output.pos = mul(float4(input.pos, 1), mat);
+	output.pos = mul(output.pos, view);
+	output.pos = mul(output.pos, proj);
+	output.color = uint4(instanceId + 1, typeId + 1, 0, 1);
 	return output;
 }

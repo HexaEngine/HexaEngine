@@ -5,6 +5,7 @@
     using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Numerics;
 
@@ -18,7 +19,9 @@
         private readonly StructuredUavBuffer<Matrix4x4> instanceBuffer;
         private readonly StructuredUavBuffer<uint> instanceOffsets;
         private readonly StructuredBuffer<Matrix4x4> frustumInstanceBuffer;
-        private readonly ConstantBuffer<uint> frustumIdBuffer;
+        private readonly StructuredBuffer<Matrix4x4> noCullInstanceBuffer;
+        private readonly StructuredBuffer<uint> noCullInstanceOffsets;
+        private readonly ConstantBuffer<uint> zeroIdBuffer;
         private readonly ConstantBuffer<uint> idBuffer;
         private uint argBufferOffset;
         private int idCounter;
@@ -27,7 +30,7 @@
         public readonly Mesh Mesh;
         public readonly Material Material;
 
-        public unsafe ModelInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, Mesh mesh, Material material)
+        public unsafe ModelInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> noCullInstanceBuffer, StructuredBuffer<uint> noCullInstanceOffsets, Mesh mesh, Material material)
         {
             Name = $"{mesh},{material}";
             Mesh = mesh;
@@ -35,8 +38,10 @@
             argBuffer = argsBuffer;
             this.instanceBuffer = instanceBuffer;
             this.instanceOffsets = instanceOffsets;
+            this.noCullInstanceBuffer = noCullInstanceBuffer;
+            this.noCullInstanceOffsets = noCullInstanceOffsets;
             frustumInstanceBuffer = new(device, CpuAccessFlags.Write);
-            frustumIdBuffer = new(device, 4, CpuAccessFlags.None);
+            zeroIdBuffer = new(device, 4, CpuAccessFlags.None);
             idBuffer = new(device, 4, CpuAccessFlags.Write);
         }
 
@@ -54,10 +59,12 @@
 
         public uint ArgBufferOffset => argBufferOffset;
 
-        public ModelInstance CreateInstance(IGraphicsDevice device, Transform node)
+        public IReadOnlyList<ModelInstance> Instances => instances;
+
+        public ModelInstance CreateInstance(IGraphicsDevice device, GameObject parent)
         {
             var value = Interlocked.Increment(ref idCounter);
-            ModelInstance instance = new(value, this, node);
+            ModelInstance instance = new(value, this, parent);
             addQueue.Enqueue(instance);
             return instance;
         }
@@ -70,13 +77,14 @@
             semaphore.Release();
         }
 
-        public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum, bool doCulling)
+        public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<Matrix4x4> noCullBuffer, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum, bool doCulling)
         {
             int count = 0;
 
             while (addQueue.TryDequeue(out var instance))
             {
                 instances.Add(instance);
+                noCullInstanceBuffer.Add(instance.Transform);
             }
 
             idBuffer[0] = id;
@@ -87,13 +95,14 @@
             for (int i = 0; i < instances.Count; i++)
             {
                 var instance = instances[i];
+                var transform = Matrix4x4.Transpose(instance.Transform);
+                noCullBuffer.Add(transform);
                 instance.GetBoundingBox(out var box);
                 instance.GetBoundingSphere(out var sphere);
                 if (!doCulling || frustum.Intersects(box))
                 {
-                    var world = Matrix4x4.Transpose(instance.Transform);
-                    buffer.Add(new(id, world, box.Min, box.Max, sphere.Center, sphere.Radius));
-                    frustumInstanceBuffer.Add(world);
+                    buffer.Add(new(id, transform, box.Min, box.Max, sphere.Center, sphere.Radius));
+                    frustumInstanceBuffer.Add(transform);
                 }
             }
 
@@ -157,7 +166,26 @@
             context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(frustumInstanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
-            context.VSSetConstantBuffer(frustumIdBuffer.Buffer, 0);
+            context.VSSetConstantBuffer(zeroIdBuffer.Buffer, 0);
+
+            return true;
+        }
+
+        public unsafe bool BeginDrawNoCulling(IGraphicsContext context)
+        {
+            if (Mesh.VB == null) return false;
+            if (Mesh.IB == null) return false;
+            if (Material == null) return false;
+            if (semaphore.CurrentCount == 0) return false;
+            if (!Material.Bind(context)) return false;
+
+            noCullInstanceBuffer.Update(context);
+            noCullInstanceOffsets.Update(context);
+            context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(noCullInstanceBuffer.SRV, 0);
+            context.VSSetShaderResource(noCullInstanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
 
             return true;
         }

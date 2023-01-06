@@ -1,10 +1,10 @@
 struct PixelInput
 {
-    float4 position : SV_POSITION;
-    nointerpolation float4 color : COLOR;
+	float4 pos : SV_POSITION;
+	nointerpolation uint4 color : COLOR;
 };
 
-float4 main(PixelInput input) : SV_Target
+uint4 main(PixelInput input) : SV_Target
 {
-    return input.color;
+	return input.color;
 }

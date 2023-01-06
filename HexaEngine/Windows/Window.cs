@@ -91,6 +91,7 @@
             ResourceManager.Initialize(device);
             PipelineManager.Initialize(device);
             CullingManager.Initialize(device);
+            ObjectPickerManager.Initialize(device, Width, Height);
 
             renderDispatcher = new(device);
             framebuffer = new(device);
@@ -134,6 +135,7 @@
                 {
                     device.SwapChain.Resize(Width, Height);
                     resize = false;
+                    ObjectPickerManager.Resize(Width, Height);
                 }
 
                 if (firstFrame)
@@ -155,7 +157,7 @@
                     WidgetManager.Draw(context);
                     ImGuiConsole.Draw();
                     framebuffer.SourceViewport = Viewport;
-                    framebuffer.Update(context);
+                    framebuffer.Update();
                     framebuffer.Draw();
                 }
 
@@ -198,6 +200,7 @@
                 initTask.Wait();
             deferredRenderer.Dispose();
             renderDispatcher.Dispose();
+            ObjectPickerManager.Release();
             CullingManager.Release();
             ResourceManager.Release();
             AudioManager.Release();

@@ -25,6 +25,9 @@
         private static StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
         private static DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
 
+        private static StructuredBuffer<uint> instanceOffsetsNoCull;
+        private static StructuredBuffer<Matrix4x4> instanceDataNoCull;
+
         private static ConstantBuffer<OcclusionParams> occlusionParamBuffer;
         private static ISamplerState sampler;
         private static unsafe void** occlusionSrvs;
@@ -34,13 +37,22 @@
 
         public static CullingFlags CullingFlags { get => cullingFlags; set => cullingFlags = value; }
 
+        public static StructuredBuffer<uint> InstanceOffsetsNoCull => instanceOffsetsNoCull;
+
+        public static StructuredBuffer<Matrix4x4> InstanceDataNoCull => instanceDataNoCull;
+
         public static ConstantBuffer<CBCamera> OcclusionCameraBuffer => occlusionCameraBuffer;
 
         public static StructuredUavBuffer<uint> InstanceCounts => instanceCounts;
+
         public static StructuredUavBuffer<uint> InstanceOffsets => instanceOffsets;
+
         public static StructuredUavBuffer<Matrix4x4> InstanceDataOutBuffer => instanceDataOutBuffer;
+
         public static StructuredBuffer<InstanceData> InstanceDataBuffer => instanceDataBuffer;
+
         public static StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> SwapBuffer => swapBuffer;
+
         public static DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> DrawIndirectArgs => drawIndirectArgs;
 
         internal static unsafe void Initialize(IGraphicsDevice device)
@@ -51,13 +63,16 @@
                 Path = "compute/occlusion/occlusion.hlsl",
             });
 
+            instanceDataNoCull = new(device, CpuAccessFlags.Write);
+            instanceOffsetsNoCull = new(device, CpuAccessFlags.Write);
+
             occlusionCameraBuffer = new(device, CpuAccessFlags.Write);
             occlusionParamBuffer = new(device, CpuAccessFlags.Write);
-            instanceCounts = new(device, false);
-            instanceOffsets = new(device, false);
-            instanceDataOutBuffer = new(device, false);
+            instanceCounts = new(device, false, false);
+            instanceOffsets = new(device, false, false);
+            instanceDataOutBuffer = new(device, false, false);
             instanceDataBuffer = new(device, CpuAccessFlags.Write);
-            swapBuffer = new(device, true);
+            swapBuffer = new(device, true, false);
             drawIndirectArgs = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.PointClamp);
             occlusionCbs = AllocArray(2);
@@ -88,13 +103,17 @@
             }
 
             instanceDataBuffer.ResetCounter();
-
+            instanceDataNoCull.ResetCounter();
+            instanceOffsetsNoCull.ResetCounter();
             swapBuffer.Clear();
 
+            uint offset = 0;
             for (int i = 0; i < manager.TypeCount; i++)
             {
                 var type = manager.Types[i];
-                type.UpdateInstanceBuffer((uint)i, instanceDataBuffer, swapBuffer, frustum, cullingFlags.HasFlag(CullingFlags.Frustum));
+                type.UpdateInstanceBuffer((uint)i, instanceDataNoCull, instanceDataBuffer, swapBuffer, frustum, cullingFlags.HasFlag(CullingFlags.Frustum));
+                instanceOffsetsNoCull.Add(offset);
+                offset += (uint)type.Count;
             }
 
             swapBuffer.Update(context);
@@ -153,6 +172,8 @@
 
         public static unsafe void Release()
         {
+            instanceDataNoCull.Dispose();
+            instanceOffsetsNoCull.Dispose();
             occlusionCameraBuffer.Dispose();
             occlusionParamBuffer.Dispose();
             occlusion.Dispose();

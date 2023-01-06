@@ -1,6 +1,6 @@
 namespace ImGuizmoNET
 {
-    public enum OPERATION
+    public enum ImGuizmoOperation
     {
         TRANSLATE_X = 1,
         TRANSLATE_Y = 2,

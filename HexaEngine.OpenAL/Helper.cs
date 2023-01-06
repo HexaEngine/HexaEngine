@@ -3,7 +3,7 @@
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
-    public static class Helper
+    internal static class Helper
     {
         public static readonly AL al = AL.GetApi(true);
         public static readonly ALContext alc = ALContext.GetApi(true);

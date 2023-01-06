@@ -14,15 +14,22 @@
 
         unsafe void Write<T>(IBuffer buffer, T* value, int size) where T : unmanaged;
 
+        unsafe void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged;
+
         public void Write<T>(IBuffer buffer, T value) where T : struct;
 
+        [Obsolete]
         public void Write<T>(IBuffer buffer, T[] values) where T : struct;
 
+        [Obsolete]
         public void Write<T>(IBuffer buffer, T[] values, int structSize) where T : unmanaged;
 
         public void Read<T>(IBuffer buffer, T value) where T : struct;
 
+        [Obsolete]
         public void Read<T>(IBuffer buffer, T[] values) where T : struct;
+
+        unsafe void Read<T>(IBuffer buffer, T* values, uint count) where T : unmanaged;
 
         public MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags);
 

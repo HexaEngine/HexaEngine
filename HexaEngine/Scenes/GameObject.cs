@@ -167,7 +167,7 @@
                 ((ICollection<GameObject>)_objects).Clear();
             }
 
-            public GameObject First() => _objects[0];
+            public GameObject? First() => _objects.Count == 0 ? null : _objects[0];
 
             public GameObject Last() => _objects[^1];
 

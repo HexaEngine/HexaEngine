@@ -8,6 +8,19 @@
 
     public static unsafe class Helper
     {
+        public static Silk.NET.Direct3D11.Map Convert(Map map)
+        {
+            return map switch
+            {
+                Map.None => Silk.NET.Direct3D11.Map.None,
+                Map.Read => Silk.NET.Direct3D11.Map.Read,
+                Map.Write => Silk.NET.Direct3D11.Map.Write,
+                Map.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
+                Map.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
+                Map.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
+            };
+        }
+
         public static Silk.NET.Direct3D11.Viewport Convert(Viewport viewport)
         {
             return new()

@@ -53,6 +53,7 @@
             while (running)
             {
                 audioDevice.ProcessAudio();
+                Thread.Sleep(10);
             }
         }
 

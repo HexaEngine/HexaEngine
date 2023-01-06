@@ -24,11 +24,6 @@ namespace HexaEngine.Editor.Widgets
     {
         private readonly List<EditorComponentAttribute> componentCache = new();
         private readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();
-        private OPERATION operation = OPERATION.TRANSLATE;
-        private MODE mode = MODE.LOCAL;
-        private bool gimbalGrabbed;
-        private Matrix4x4 gimbalBefore;
-        private int currentMesh;
 
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public PropertiesWidget()
@@ -99,30 +94,30 @@ namespace HexaEngine.Editor.Widgets
 
                 ImGui.Separator();
 
-                if (ImGui.RadioButton("Translate", operation == OPERATION.TRANSLATE))
+                if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.TRANSLATE))
                 {
-                    operation = OPERATION.TRANSLATE;
+                    Inspector.Operation = ImGuizmoOperation.TRANSLATE;
                 }
 
-                if (ImGui.RadioButton("Rotate", operation == OPERATION.ROTATE))
+                if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.ROTATE))
                 {
-                    operation = OPERATION.ROTATE;
+                    Inspector.Operation = ImGuizmoOperation.ROTATE;
                 }
 
-                if (ImGui.RadioButton("Scale", operation == OPERATION.SCALE))
+                if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.SCALE))
                 {
-                    operation = OPERATION.SCALE;
+                    Inspector.Operation = ImGuizmoOperation.SCALE;
                 }
 
-                if (ImGui.RadioButton("Local", mode == MODE.LOCAL))
+                if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.LOCAL))
                 {
-                    mode = MODE.LOCAL;
+                    Inspector.Mode = ImGuizmoNET.ImGuizmoMode.LOCAL;
                 }
 
                 ImGui.SameLine();
-                if (ImGui.RadioButton("World", mode == MODE.WORLD))
+                if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.WORLD))
                 {
-                    mode = MODE.WORLD;
+                    Inspector.Mode = ImGuizmoNET.ImGuizmoMode.WORLD;
                 }
             }
             ImGui.Separator();
@@ -210,32 +205,6 @@ namespace HexaEngine.Editor.Widgets
             }
 
             EndWindow();
-
-            ImGuizmo.Enable(true);
-            ImGuizmo.SetOrthographic(false);
-            if (camera == null) return;
-            Matrix4x4 view = camera.Transform.View;
-            Matrix4x4 proj = camera.Transform.Projection;
-            Matrix4x4 transform = element.Transform.Global;
-
-            if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
-            {
-                gimbalGrabbed = true;
-                if (element.Transform.Parent == null)
-                    element.Transform.Local = transform;
-                else
-                    element.Transform.Local = transform * element.Transform.Parent.GlobalInverse;
-            }
-            else if (!ImGuizmo.IsUsing())
-            {
-                if (gimbalGrabbed)
-                {
-                    var oldValue = gimbalBefore;
-                    Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
-                }
-                gimbalGrabbed = false;
-                gimbalBefore = element.Transform.Local;
-            }
         }
     }
 }

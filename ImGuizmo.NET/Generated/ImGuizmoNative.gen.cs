@@ -22,11 +22,11 @@ namespace ImGuizmoNET
         [DllImport("cimguizmo", CallingConvention = CallingConvention.Cdecl)]
         public static extern byte ImGuizmo_IsOverNil();
         [DllImport("cimguizmo", CallingConvention = CallingConvention.Cdecl)]
-        public static extern byte ImGuizmo_IsOverOPERATION(OPERATION op);
+        public static extern byte ImGuizmo_IsOverOPERATION(ImGuizmoOperation op);
         [DllImport("cimguizmo", CallingConvention = CallingConvention.Cdecl)]
         public static extern byte ImGuizmo_IsUsing();
         [DllImport("cimguizmo", CallingConvention = CallingConvention.Cdecl)]
-        public static extern byte ImGuizmo_Manipulate(float* view, float* projection, OPERATION operation, MODE mode, float* matrix, float* deltaMatrix, float* snap, float* localBounds, float* boundsSnap);
+        public static extern byte ImGuizmo_Manipulate(float* view, float* projection, ImGuizmoOperation operation, ImGuizmoMode mode, float* matrix, float* deltaMatrix, float* snap, float* localBounds, float* boundsSnap);
         [DllImport("cimguizmo", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ImGuizmo_RecomposeMatrixFromComponents(float* translation, float* rotation, float* scale, float* matrix);
         [DllImport("cimguizmo", CallingConvention = CallingConvention.Cdecl)]

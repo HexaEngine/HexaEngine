@@ -2,12 +2,15 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Input;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using ImGuizmoNET;
     using Silk.NET.DXGI;
+    using Silk.NET.OpenAL;
     using System;
     using System.Globalization;
     using System.Numerics;
@@ -38,7 +41,7 @@
             this.device = device;
         }
 
-        internal void Update(IGraphicsContext context)
+        internal void Update()
         {
             ImGuizmo.SetRect(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height);
         }
@@ -47,6 +50,22 @@
         {
             ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar);
             var scene = SceneManager.Current;
+            if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+            {
+                GameObject? gameObject = ObjectPickerManager.Select(device.Context, Mouse.Position, Viewport);
+                if (gameObject != null)
+                {
+                    if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                    {
+                        GameObject.Selected.AddSelection(gameObject);
+                    }
+                    else
+                    {
+                        GameObject.Selected.AddOverwriteSelection(gameObject);
+                    }
+                }
+            }
+
             if (scene != null && ImGui.BeginMenuBar())
             {
                 // Play "\xE769"

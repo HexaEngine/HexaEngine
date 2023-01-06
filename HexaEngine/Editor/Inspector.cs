@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Cameras;
+    using HexaEngine.Editor.Widgets;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
@@ -7,6 +9,7 @@
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
+    using ImGuizmoNET;
     using System.Numerics;
 
     public static class Inspector
@@ -19,6 +22,15 @@
         private static bool drawBoundingSpheres = false;
         private static bool drawColliders = true;
         private static bool enabled = true;
+
+        private static ImGuizmoOperation operation = ImGuizmoOperation.TRANSLATE;
+        private static ImGuizmoMode mode = ImGuizmoMode.LOCAL;
+        private static bool gimbalGrabbed;
+        private static Matrix4x4 gimbalBefore;
+
+        public static ImGuizmoOperation Operation { get => operation; set => operation = value; }
+
+        public static ImGuizmoMode Mode { get => mode; set => mode = value; }
 
         public static bool Enabled { get => enabled; set => enabled = value; }
 
@@ -156,6 +168,37 @@
                             DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
                         }
                     }
+                }
+            }
+
+            {
+                GameObject? element = GameObject.Selected.First();
+                Camera? camera = CameraManager.Current;
+                ImGuizmo.Enable(true);
+                ImGuizmo.SetOrthographic(false);
+                if (camera == null) return;
+                if (element == null) return;
+                Matrix4x4 view = camera.Transform.View;
+                Matrix4x4 proj = camera.Transform.Projection;
+                Matrix4x4 transform = element.Transform.Global;
+
+                if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
+                {
+                    gimbalGrabbed = true;
+                    if (element.Transform.Parent == null)
+                        element.Transform.Local = transform;
+                    else
+                        element.Transform.Local = transform * element.Transform.Parent.GlobalInverse;
+                }
+                else if (!ImGuizmo.IsUsing())
+                {
+                    if (gimbalGrabbed)
+                    {
+                        var oldValue = gimbalBefore;
+                        Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
+                    }
+                    gimbalGrabbed = false;
+                    gimbalBefore = element.Transform.Local;
                 }
             }
         }
