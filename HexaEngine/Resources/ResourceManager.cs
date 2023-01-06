@@ -308,13 +308,17 @@
 
         private static void SignalWaitHandle(string name)
         {
+#if VERBOSE
             Debug.WriteLine($"Signal {name}");
+#endif
             GetWaitHandle(name).SetResult();
         }
 
         private static void ResetWaitHandle(string name)
         {
+#if VERBOSE
             Debug.WriteLine($"Reset {name}");
+#endif
             lock (waitingHandles)
             {
                 waitingHandles.Remove(name);
@@ -324,7 +328,9 @@
 
         private static void WaitForWaitHandle(string name)
         {
+#if VERBOSE
             Debug.WriteLine($"Wait {name}");
+#endif
             GetWaitHandle(name).Task.Wait();
         }
 

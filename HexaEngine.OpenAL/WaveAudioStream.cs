@@ -2,7 +2,7 @@
 {
     using HexaEngine.IO;
 
-    public unsafe class AudioStream
+    public unsafe class WaveAudioStream : AudioStream
     {
         private readonly Stream stream;
         private readonly uint* buffers;
@@ -18,11 +18,12 @@
         private bool looping;
         private bool reachedEnd;
 
-        public AudioStream(Stream stream, int bufferCount = 4, int bufferSize = 65536)
+        public WaveAudioStream(Stream stream, int bufferCount = 4, int bufferSize = 65536)
         {
             Type = SourceType.Streaming;
             Header = new(stream);
             Format = Header.GetBufferFormat();
+            if (Header.AudioFormat != WaveFormatEncoding.Pcm) throw new NotSupportedException("Wav PCM only");
             this.stream = stream;
             this.bufferCount = bufferCount;
             this.bufferSize = bufferSize;
@@ -35,17 +36,17 @@
 
         public bool ReachedEnd => reachedEnd;
 
-        public bool Looping { get => looping; set => looping = value; }
+        public override bool Looping { get => looping; set => looping = value; }
 
-        public event Action? EndOfStream;
+        public override event Action? EndOfStream;
 
-        public void Reset()
+        public override void Reset()
         {
             reachedEnd = false;
             position = 0;
         }
 
-        public void FullCommit(uint source)
+        public override void FullCommit(uint source)
         {
             stream.Position = Header.DataBegin;
             var data = stream.Read(Header.DataSize);
@@ -54,7 +55,7 @@
             al.SetSourceProperty(source, SourceInteger.Buffer, buffers[0]);
         }
 
-        public void Initialize(uint source)
+        public override void Initialize(uint source)
         {
             for (int i = 0; i < bufferCount; i++)
             {
@@ -94,7 +95,7 @@
             }
         }
 
-        public void Update(uint source)
+        public override void Update(uint source)
         {
             if (reachedEnd) return;
             al.GetSourceProperty(source, GetSourceInteger.BuffersProcessed, out int buffersProcessed);

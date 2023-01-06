@@ -28,12 +28,12 @@
             streamThread.Start();
         }
 
-        public static AudioStream CreateStream(string path)
+        public static WaveAudioStream CreateStream(string path)
         {
-            return audioDevice.CreateAudioStream(FileSystem.Open(Paths.CurrentSoundPath + path));
+            return audioDevice.CreateWaveAudioStream(FileSystem.Open(Paths.CurrentSoundPath + path));
         }
 
-        public static SourceVoice CreateSourceVoice(AudioStream stream)
+        public static SourceVoice CreateSourceVoice(WaveAudioStream stream)
         {
             return audioDevice.CreateSourceVoice(stream);
         }

@@ -18,6 +18,7 @@
             Register<PropertiesWidget>();
             Register<MaterialsWidget>();
             Register<MeshesWidget>();
+            Register<MixerWidget>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()

@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Cameras;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
