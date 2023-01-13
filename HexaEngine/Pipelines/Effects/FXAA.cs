@@ -1,27 +1,28 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Resources;
-    using System.Diagnostics;
 
     public class FXAA : IEffect
     {
         private Quad quad;
-        private GraphicsPipeline pipeline;
+        private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
 
-        public IRenderTargetView? Output;
-        public IShaderResourceView? Source;
+        public IRenderTargetView Output;
+        public IShaderResourceView Source;
 
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             Source = ResourceManager.AddTextureSRV("FXAA", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
             quad = new Quad(device);
-            pipeline = new(device, new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/fxaa/vs.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl"

@@ -15,7 +15,7 @@
         private static CullingFlags cullingFlags;
         private static IGraphicsDevice device;
 
-        private static ComputePipeline occlusion;
+        private static IComputePipeline occlusion;
 
         private static ConstantBuffer<CBCamera> occlusionCameraBuffer;
         private static StructuredUavBuffer<uint> instanceCounts;
@@ -58,7 +58,7 @@
         internal static unsafe void Initialize(IGraphicsDevice device)
         {
             CullingManager.device = device;
-            occlusion = new(device, new()
+            occlusion = device.CreateComputePipeline(new()
             {
                 Path = "compute/occlusion/occlusion.hlsl",
             });

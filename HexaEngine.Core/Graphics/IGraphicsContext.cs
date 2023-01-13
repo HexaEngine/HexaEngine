@@ -2,7 +2,6 @@
 {
     using HexaEngine.Mathematics;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     public interface IGraphicsContext : IDeviceChild
     {
@@ -18,16 +17,7 @@
 
         public void Write<T>(IBuffer buffer, T value) where T : struct;
 
-        [Obsolete]
-        public void Write<T>(IBuffer buffer, T[] values) where T : struct;
-
-        [Obsolete]
-        public void Write<T>(IBuffer buffer, T[] values, int structSize) where T : unmanaged;
-
         public void Read<T>(IBuffer buffer, T value) where T : struct;
-
-        [Obsolete]
-        public void Read<T>(IBuffer buffer, T[] values) where T : struct;
 
         unsafe void Read<T>(IBuffer buffer, T* values, uint count) where T : unmanaged;
 
@@ -141,27 +131,7 @@
 
         void SetViewport(Viewport viewport);
 
-        void SetBlendState(IBlendState? blendState, Vector4? factor = null, uint sampleMask = uint.MaxValue);
-
-        void SetDepthStencilState(IDepthStencilState? depthStencilState, int stencilRef = 0);
-
-        void SetRasterizerState(IRasterizerState? rasterizerState);
-
         void SetPrimitiveTopology(PrimitiveTopology topology);
-
-        void VSSetShader(IVertexShader? vertexShader);
-
-        void PSSetShader(IPixelShader? pixelShader);
-
-        void GSSetShader(IGeometryShader? geometryShader);
-
-        void HSSetShader(IHullShader? hullShader);
-
-        void DSSetShader(IDomainShader? domainShader);
-
-        void CSSetShader(IComputeShader? computeShader);
-
-        void SetInputLayout(IInputLayout? inputLayout);
 
         void DrawInstanced(uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset);
 

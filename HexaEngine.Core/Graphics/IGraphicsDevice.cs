@@ -18,15 +18,6 @@
         public ISwapChain? SwapChain { get; }
 
         /// <summary>
-        /// Creates a <see cref="IBlendState"/> with the given <see cref="BlendDescription"/>
-        /// </summary>
-        /// <param name="blendDescription">The <see cref="BlendDescription"/> that describes the <see cref="IBlendState"/></param>
-        /// <returns>The created <see cref="IBlendState"/></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        public IBlendState CreateBlendState(BlendDescription blendDescription);
-
-        /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/>
         /// </summary>
         /// <param name="description">The <see cref="BufferDescription"/> that describes the <see cref="IBuffer"/></param>
@@ -66,13 +57,9 @@
 
         unsafe IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
 
-        public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description);
-
         public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description);
 
         public IDepthStencilView CreateDepthStencilView(IResource resource);
-
-        public IRasterizerState CreateRasterizerState(RasterizerDescription description);
 
         public IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport);
 
@@ -81,6 +68,8 @@
         public IShaderResourceView CreateShaderResourceView(IResource resource);
 
         public IShaderResourceView CreateShaderResourceView(IResource texture, ShaderResourceViewDescription description);
+
+        public IShaderResourceView CreateShaderResourceView(IBuffer buffer);
 
         public ISamplerState CreateSamplerState(SamplerDescription sampler);
 
@@ -132,45 +121,9 @@
 
         public void SaveTextureCube(ITexture2D texture, Format format, string path);
 
-        unsafe IVertexShader CreateVertexShader(Shader* shader);
-
-        unsafe IHullShader CreateHullShader(Shader* shader);
-
-        unsafe IDomainShader CreateDomainShader(Shader* shader);
-
-        unsafe IGeometryShader CreateGeometryShader(Shader* shader);
-
-        unsafe IPixelShader CreatePixelShader(Shader* shader);
-
-        unsafe IComputeShader CreateComputeShader(Shader* shader);
-
-        unsafe IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Shader* shader);
-
-        unsafe IInputLayout CreateInputLayout(Shader* shader);
-
-        unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob);
-
-        unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader);
-
-        unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob);
-
-        unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader);
-
-        unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob);
-
-        unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader);
-
-        unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob);
-
-        unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader);
-
         IQuery CreateQuery();
 
         IQuery CreateQuery(Query type);
-
-        unsafe ShaderInputBindDescription[] GetInputBindDescriptions(Shader* shader);
-
-        unsafe SignatureParameterDescription[] GetOutputBindDescriptions(Shader* shader);
 
         IGraphicsContext CreateDeferredContext();
 
@@ -182,14 +135,22 @@
 
         IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description);
 
-        Task<(Blob?, Blob?)> CompileAsync(string code, ShaderMacro[] macros, string entry, string sourceName, string profile);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc);
 
-        Task<(Blob?, Blob?)> CompileAsync(string code, string entry, string sourceName, string profile);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros);
 
-        Task<(Blob?, Blob?)> CompileFromFileAsync(string path, string entry, string profile);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions);
 
-        Task<(Blob?, Blob?)> CompileFromFileAsync(string path, ShaderMacro[] macros, string entry, string profile);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros);
 
-        IShaderResourceView CreateShaderResourceView(IBuffer buffer);
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state);
+
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros);
+
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions);
+
+        IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros);
+
+        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc);
     }
 }

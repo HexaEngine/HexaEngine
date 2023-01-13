@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -6,7 +8,6 @@
     using HexaEngine.Graphics.Buffers;
     using HexaEngine.Objects.Primitives;
     using System.Numerics;
-    using System.Reflection.Metadata;
 
     public class DDASSR : IEffect
     {
@@ -15,7 +16,7 @@
         private bool disposedValue;
         private bool enabled;
 
-        private readonly GraphicsPipeline ssrPipeline;
+        private readonly IGraphicsPipeline ssrPipeline;
         private readonly IBuffer cbSSR;
         private readonly ConstantBuffer<Vector4> cbRot;
         private DDASSRParams ssrParams = new();
@@ -26,26 +27,26 @@
         private ITexture2D ssrFramebuffer;
         private IShaderResourceView ssrFramebufferSRV;
 
-        private readonly GraphicsPipeline blurPipeline;
+        private readonly IGraphicsPipeline blurPipeline;
         private readonly IBuffer cbBlur;
         private BlurParams blurParams = new();
         private ITexture2D blurBuffer;
         private IRenderTargetView blurRTV;
         private IShaderResourceView blurSRV;
 
-        private readonly GraphicsPipeline mixPipeline;
+        private readonly IGraphicsPipeline mixPipeline;
         private readonly IBuffer cbMix;
         private MixParams mixParams = new();
 
         private readonly ISamplerState samplerPoint;
         private readonly ISamplerState samplerAnsio;
 
-        public IShaderResourceView? Color;
-        public IShaderResourceView? Position;
-        public IShaderResourceView? Normal;
-        public IShaderResourceView? Depth;
-        public IBuffer? Camera;
-        public IRenderTargetView? Output;
+        public IShaderResourceView Color;
+        public IShaderResourceView Position;
+        public IShaderResourceView Normal;
+        public IShaderResourceView Depth;
+        public IBuffer Camera;
+        public IRenderTargetView Output;
         private bool debug;
 
         #region Structs
@@ -119,7 +120,7 @@
         {
             quad = new(device);
 
-            ssrPipeline = new(device, new()
+            ssrPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/ddassr/vs.hlsl",
                 PixelShader = "effects/ddassr/ps.hlsl",
@@ -139,7 +140,7 @@
             ssrFramebuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrFramebufferSRV = device.CreateShaderResourceView(ssrFramebuffer);
 
-            blurPipeline = new(device, new()
+            blurPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
                 PixelShader = "effects/blur/box.hlsl",
@@ -149,7 +150,7 @@
             blurRTV = device.CreateRenderTargetView(blurBuffer, new(width, height));
             blurSRV = device.CreateShaderResourceView(blurBuffer);
 
-            mixPipeline = new(device, new()
+            mixPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/mix/vs.hlsl",
                 PixelShader = "effects/mix/ps.hlsl",
@@ -190,6 +191,21 @@
         public bool Debug { get => debug; set => debug = value; }
 
         #endregion Properties
+
+        public void BeginResize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndResize(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Resize(IGraphicsDevice device, int width, int height)
         {
@@ -308,21 +324,6 @@
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-
-        public void BeginResize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndResize(int width, int height)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
-        {
-            throw new NotImplementedException();
         }
     }
 }

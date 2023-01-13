@@ -1,24 +1,23 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Graphics;
     using System.Collections.Generic;
 
     public static class PipelineManager
     {
-        private static readonly List<GraphicsPipeline> graphicsPipelines = new();
-        private static readonly List<ComputePipeline> computePipelines = new();
+        private static readonly List<IGraphicsPipeline> graphicsPipelines = new();
+        private static readonly List<IComputePipeline> computePipelines = new();
 #nullable disable
         private static IGraphicsDevice device;
 #nullable enable
 
         public static event Action? OnRecompile;
 
-        public static IReadOnlyList<GraphicsPipeline> GraphicsPipelines => graphicsPipelines;
+        public static IReadOnlyList<IGraphicsPipeline> GraphicsPipelines => graphicsPipelines;
 
-        public static IReadOnlyList<ComputePipeline> ComputePipelines => computePipelines;
+        public static IReadOnlyList<IComputePipeline> ComputePipelines => computePipelines;
 
-        internal static void Initialize(IGraphicsDevice device)
+        public static void Initialize(IGraphicsDevice device)
         {
             PipelineManager.device = device;
         }
@@ -45,7 +44,7 @@
             }
         }
 
-        internal static void Register(GraphicsPipeline pipeline)
+        public static void Register(IGraphicsPipeline pipeline)
         {
             lock (graphicsPipelines)
             {
@@ -53,7 +52,7 @@
             }
         }
 
-        internal static void Register(ComputePipeline pipeline)
+        public static void Register(IComputePipeline pipeline)
         {
             lock (graphicsPipelines)
             {
@@ -61,7 +60,7 @@
             }
         }
 
-        internal static void Unregister(GraphicsPipeline pipeline)
+        public static void Unregister(IGraphicsPipeline pipeline)
         {
             lock (graphicsPipelines)
             {
@@ -69,7 +68,7 @@
             }
         }
 
-        internal static void Unregister(ComputePipeline pipeline)
+        public static void Unregister(IComputePipeline pipeline)
         {
             lock (graphicsPipelines)
             {

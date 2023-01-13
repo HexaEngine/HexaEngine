@@ -1,17 +1,18 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Direct3D11;
 
-    public class ComputePipeline : IDisposable
+    public unsafe class ComputePipeline : IComputePipeline
     {
         private bool valid;
         private bool initialized;
-        private IComputeShader? cs;
-        private readonly IGraphicsDevice device;
+        private ID3D11ComputeShader* cs;
+        private readonly D3D11GraphicsDevice device;
         private ComputePipelineDesc desc;
         private bool disposedValue;
 
-        public ComputePipeline(IGraphicsDevice device, ComputePipelineDesc desc)
+        public ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc)
         {
             Name = new FileInfo(desc.Path ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             PipelineManager.Register(this);
@@ -21,18 +22,20 @@
             initialized = true;
         }
 
-        public static Task<ComputePipeline> CreateAsync(IGraphicsDevice device, ComputePipelineDesc desc)
-        {
-            return Task.Factory.StartNew(() => new ComputePipeline(device, desc));
-        }
-
         public string Name { get; }
 
         public virtual void BeginDispatch(IGraphicsContext context)
         {
             if (!valid) return;
             if (!initialized) return;
-            context.CSSetShader(cs);
+            ((D3D11GraphicsContext)context).DeviceContext->CSSetShader(cs, null, 0);
+        }
+
+        public virtual void BeginDispatch(ID3D11DeviceContext1* context)
+        {
+            if (!valid) return;
+            if (!initialized) return;
+            context->CSSetShader(cs, null, 0);
         }
 
         public void Dispatch(IGraphicsContext context, int x, int y, int z)
@@ -44,6 +47,15 @@
             EndDispatch(context);
         }
 
+        public void Dispatch(ID3D11DeviceContext1* context, uint x, uint y, uint z)
+        {
+            if (!valid) return;
+            if (!initialized) return;
+            BeginDispatch(context);
+            context->Dispatch(x, y, z);
+            EndDispatch(context);
+        }
+
         public virtual void EndDispatch(IGraphicsContext context)
         {
             if (!valid) return;
@@ -51,11 +63,19 @@
             context.ClearState();
         }
 
+        public virtual void EndDispatch(ID3D11DeviceContext1* context)
+        {
+            if (!valid) return;
+            if (!initialized) return;
+            context->ClearState();
+        }
+
         public void Recompile()
         {
             initialized = false;
 
-            cs?.Dispose();
+            if (cs != null)
+                cs->Release();
             cs = null;
 
             Compile(true);
@@ -70,28 +90,19 @@
             if (desc.Path != null)
             {
                 Shader* shader;
-                ShaderCache.GetShaderOrCompileFile(device, desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
+                ShaderCompiler.GetShaderOrCompileFile(desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;
                     return;
                 }
-                cs = device.CreateComputeShader(shader);
-                cs.DebugName = GetType().Name + nameof(cs);
+                ID3D11ComputeShader* computeShader;
+                device.Device->CreateComputeShader(shader->Bytecode, shader->Length, null, &computeShader);
+                cs = computeShader;
+                //TODO: cs.DebugName = GetType().Name + nameof(cs);
                 Free(shader);
                 valid = true;
             }
-        }
-
-        public static IBuffer CreateRawBuffer(IGraphicsDevice device, int size)
-        {
-            BufferDescription description = new()
-            {
-                BindFlags = BindFlags.UnorderedAccess | BindFlags.ShaderResource | BindFlags.IndexBuffer | BindFlags.VertexBuffer,
-                ByteWidth = size,
-                MiscFlags = ResourceMiscFlag.BufferAllowRawViews
-            };
-            return device.CreateBuffer(description);
         }
 
         protected virtual ShaderMacro[] GetShaderMacros()
@@ -104,7 +115,8 @@
             if (!disposedValue)
             {
                 PipelineManager.Unregister(this);
-                cs?.Dispose();
+                if (cs != null)
+                    cs->Release();
                 disposedValue = true;
             }
         }

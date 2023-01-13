@@ -46,8 +46,7 @@
         private ConstantBuffer<CBWorld> skyboxBuffer;
         private IBuffer tesselationBuffer;
         private Geometry geometry;
-        private GeometryDepthBack materialDepthBackface;
-        private GeometryDepthFront materialDepthFrontface;
+
         private DeferredPrincipledBSDF deferred;
         private ForwardPrincipledBSDF forward;
         private Skybox skybox;
@@ -178,12 +177,9 @@
                 psmPipeline = new(device);
                 psmPipeline.View = psmBuffer;
 
-                geometry = new(device);
+                geometry = new();
                 geometry.Camera = cameraBuffer.Buffer;
-                materialDepthBackface = new(device);
-                materialDepthBackface.Camera = cameraBuffer.Buffer;
-                materialDepthFrontface = new(device);
-                materialDepthFrontface.Camera = cameraBuffer.Buffer;
+                effects.Add(geometry);
 
                 gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
                 depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
@@ -247,7 +243,8 @@
 
                 window.RenderDispatcher.InvokeBlocking(() =>
                 {
-                    brdfLUT = new(device);
+                    brdfLUT = new();
+                    brdfLUT.Initialize(device, 0, 0).Wait();
                     brdfLUT.Target = brdflut.RenderTargetView;
                     brdfLUT.Draw(context);
                     context.ClearState();
@@ -525,7 +522,7 @@
             {
                 depthbuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.Stencil | DepthStencilClearFlags.Depth);
                 depthbuffer.SetTarget(context);
-                materialDepthBackface.BeginDraw(context, depthbuffer.Viewport);
+                geometry.BeginDrawDepthBack(context, depthbuffer.Viewport);
                 for (int i = 0; i < types.Count; i++)
                 {
                     var type = types[i];
@@ -717,8 +714,6 @@
                 tesselationBuffer.Dispose();
                 quad.Dispose();
                 geometry.Dispose();
-                materialDepthBackface.Dispose();
-                materialDepthFrontface.Dispose();
                 deferred.Dispose();
                 forward.Dispose();
                 skybox.Dispose();

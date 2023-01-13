@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using System.Numerics;
+    using System.Runtime.InteropServices;
 
     public static unsafe class Helper
     {
@@ -18,6 +19,7 @@
                 Map.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
                 Map.WriteDiscard => Silk.NET.Direct3D11.Map.WriteDiscard,
                 Map.WriteNoOverwrite => Silk.NET.Direct3D11.Map.WriteNoOverwrite,
+                _ => throw new NotImplementedException(),
             };
         }
 
@@ -1068,6 +1070,14 @@
             for (int i = 0; i < inputElements.Length; i++)
             {
                 descs[i] = Convert(inputElements[i]);
+            }
+        }
+
+        public static void Free(Silk.NET.Direct3D11.InputElementDesc* descs, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                Marshal.FreeHGlobal((nint)descs[i].SemanticName);
             }
         }
 

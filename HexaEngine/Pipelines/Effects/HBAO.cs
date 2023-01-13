@@ -1,17 +1,18 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Resources;
     using System.Numerics;
-    using System.Runtime.InteropServices;
 
     public class HBAO : IEffect
     {
         private IGraphicsDevice device;
         private Quad quad;
-        private GraphicsPipeline hbaoPipeline;
+        private IGraphicsPipeline hbaoPipeline;
         private IBuffer cbHBAO;
         private HBAOParams hbaoParams = new();
         private ITexture2D hbaoBuffer;
@@ -20,7 +21,7 @@
         private IShaderResourceView hbaoSRV;
         private IRenderTargetView hbaoRTV;
 
-        private GraphicsPipeline blurPipeline;
+        private IGraphicsPipeline blurPipeline;
         private IBuffer cbBlur;
         private BlurParams blurParams = new();
         private unsafe void** blurSRVs;
@@ -28,10 +29,10 @@
 
         private ISamplerState samplerLinear;
 
-        public IRenderTargetView? Output;
-        public IBuffer? Camera;
-        public IShaderResourceView? Position;
-        public IShaderResourceView? Normal;
+        public IRenderTargetView Output;
+        public IBuffer Camera;
+        public IShaderResourceView Position;
+        public IShaderResourceView Normal;
 
         private bool isDirty = true;
         private bool disposedValue;
@@ -100,7 +101,7 @@
 
             quad = new Quad(device);
 
-            hbaoPipeline = new(device, new()
+            hbaoPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/hbao/vs.hlsl",
                 PixelShader = "effects/hbao/ps.hlsl",
@@ -124,7 +125,7 @@
                 hbaoCBs[1] = (void*)Camera.NativePointer;
             }
 
-            blurPipeline = new(device, new()
+            blurPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
                 PixelShader = "effects/blur/hbao.hlsl",

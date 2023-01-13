@@ -1,12 +1,12 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Resources;
-    using Silk.NET.Direct3D.Compilers;
     using System.Numerics;
-    using System.Security.Cryptography;
 
     public class DepthOfField : IEffect
     {
@@ -18,9 +18,9 @@
         private IBuffer cbBokeh;
         private IBuffer cbDof;
         private ISamplerState pointSampler;
-        private GraphicsPipeline pipelineBlur;
-        private GraphicsPipeline pipelineBokeh;
-        private GraphicsPipeline pipelineDof;
+        private IGraphicsPipeline pipelineBlur;
+        private IGraphicsPipeline pipelineBokeh;
+        private IGraphicsPipeline pipelineDof;
         private ITexture2D outOfFocusTex;
         private IShaderResourceView outOfFocusSRV;
         private IRenderTargetView outOfFocusRTV;
@@ -34,10 +34,10 @@
 
         private bool dirty;
 
-        public IRenderTargetView? Target;
-        public IShaderResourceView? Color;
-        public IShaderResourceView? Position;
-        public IBuffer? Camera;
+        public IRenderTargetView Target;
+        public IShaderResourceView Color;
+        public IShaderResourceView Position;
+        public IBuffer Camera;
 
         #region Structs
 
@@ -264,17 +264,17 @@
             blurParams = new BlurParams();
             bokehParams = new BokehParams();
             dofParams = new DofParams();
-            pipelineBlur = new(device, new()
+            pipelineBlur = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
                 PixelShader = "effects/blur/box.hlsl"
             });
-            pipelineBokeh = new(device, new()
+            pipelineBokeh = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/bokeh/vs.hlsl",
                 PixelShader = "effects/bokeh/ps.hlsl"
             });
-            pipelineDof = new(device, new()
+            pipelineDof = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/dof/vs.hlsl",
                 PixelShader = "effects/dof/ps.hlsl"

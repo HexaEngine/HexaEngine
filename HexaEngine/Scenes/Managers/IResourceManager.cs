@@ -18,8 +18,8 @@
 
         public Graphics.Texture CreateTexture(string name);
 
-        public Effect LoadEffect(string name);
+        public IEffect LoadEffect(string name);
 
-        public Effect CreateEffect(string name);
+        public IEffect CreateEffect(string name);
     }
 }

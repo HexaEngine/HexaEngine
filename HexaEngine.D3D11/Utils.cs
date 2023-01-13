@@ -92,13 +92,9 @@
             return (T2*)t;
         }
 
-        [Obsolete]
         public static byte* ToBytes(this string str)
         {
-            fixed (byte* ptr = Encoding.UTF8.GetBytes(str))
-            {
-                return ptr;
-            }
+            return (byte*)Marshal.StringToHGlobalAnsi(str);
         }
 
         [Obsolete]

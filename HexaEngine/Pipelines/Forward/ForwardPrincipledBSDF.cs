@@ -10,7 +10,7 @@
 
     public class ForwardPrincipledBSDF : IEffect
     {
-        private GraphicsPipeline brdf;
+        private IGraphicsPipeline brdf;
         private ISamplerState pointSampler;
         private ISamplerState anisoSampler;
         private unsafe void** cbs;
@@ -34,7 +34,7 @@
 
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
-            brdf = new(device, new()
+            brdf = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "deferred/bsdf/vs.hlsl",
                 PixelShader = "deferred/bsdf/ps.hlsl",

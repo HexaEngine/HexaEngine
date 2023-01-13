@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Pipelines.Effects.Filter
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
@@ -6,11 +8,16 @@
     using HexaEngine.Resources.Buffers;
     using System;
     using System.Numerics;
+    using System.Threading.Tasks;
 
-    public class IrradianceFilter : Effect
+    public class IrradianceFilter : IEffect
     {
-        private readonly IBuffer mvpBuffer;
-        private readonly ISamplerState sampler;
+        private Cube cube;
+        private IGraphicsPipeline pipeline;
+        private IBuffer mvpBuffer;
+        private ISamplerState sampler;
+
+        public RenderTargetViewArray Targets;
         public IShaderResourceView Source;
 
         public struct CubeFaceCamera
@@ -21,6 +28,7 @@
 
 #nullable disable
         private CubeFaceCamera[] Cameras;
+        private bool disposedValue;
 #nullable enable
 
         public void SetViewPoint(Vector3 camera)
@@ -56,27 +64,29 @@
             }
         }
 
-        public IrradianceFilter(IGraphicsDevice device) : base(device, new()
+        public Task Initialize(IGraphicsDevice device, int width, int height)
         {
-            VertexShader = "effects/irradiance/vs.hlsl",
-            PixelShader = "effects/irradiance/ps.hlsl"
-        })
-        {
-            AutoSetTarget = false;
-            SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write); //CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
-            Mesh = new Cube(device);
-            State = new()
+            cube = new(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/irradiance/vs.hlsl",
+                PixelShader = "effects/irradiance/ps.hlsl"
+            },
+            new GraphicsPipelineState()
             {
                 DepthStencil = DepthStencilDescription.None,
                 Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Solid) { ScissorEnable = true },
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
-            };
+            });
+
+            SetViewPoint(Vector3.Zero);
+            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write); //CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
+            return Task.CompletedTask;
         }
 
-        public override void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context)
         {
             if (Targets == null) return;
             int width = (int)Targets.Viewport.Width;
@@ -98,7 +108,7 @@
                         context.PSSetSampler(sampler, 0);
                         context.PSSetShaderResource(Source, 0);
                         Targets.SetTarget(context, i);
-                        base.DrawAuto(context, Targets.Viewport);
+                        cube.DrawAuto(context, pipeline, Targets.Viewport);
                     }
                     context.Flush();
                 }
@@ -115,7 +125,42 @@
             context.PSSetSampler(sampler, 0);
             context.PSSetShaderResource(Source, 0);
             Targets.SetTarget(context, i);
-            base.DrawAuto(context, Targets.Viewport);
+            cube.DrawAuto(context, pipeline, Targets.Viewport);
+        }
+
+        public void BeginResize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndResize(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                cube.Dispose();
+                pipeline.Dispose();
+                mvpBuffer.Dispose();
+                sampler.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~IrradianceFilter()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

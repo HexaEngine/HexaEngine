@@ -41,7 +41,8 @@
         public override void Init(IGraphicsDevice device)
         {
             samplerState = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-            irradianceFilter = new(device);
+            irradianceFilter = new();
+            irradianceFilter.Initialize(device, 0, 0).Wait();
         }
 
         public override void Dispose()
@@ -79,7 +80,8 @@
                     ImGuiConsole.Log(LogSeverity.Log, "Loaded environment ...");
 
                     ImGuiConsole.Log(LogSeverity.Log, "Converting environment to cubemap ...");
-                    EquiRectangularToCubeFilter filter = new(device);
+                    EquiRectangularToCubeFilter filter = new();
+                    filter.Initialize(device, 0, 0).Wait();
                     filter.Source = source.ShaderResourceView;
                     Texture cube1 = new(device, TextureDescription.CreateTextureCubeWithRTV(source.Description.Height, 1, Format.RGBA16Float));
                     var cu = cube1.CreateRTVArray(device);

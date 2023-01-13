@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
     using ImGuiNET;
     using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@
 
         protected override string Name => "Pipelines";
 
-        private void Recompile(GraphicsPipeline pipeline)
+        private void Recompile(IGraphicsPipeline pipeline)
         {
             if (task == null || task.IsCompleted)
             {
@@ -23,7 +22,7 @@
             }
         }
 
-        private void Recompile(ComputePipeline pipeline)
+        private void Recompile(IComputePipeline pipeline)
         {
             if (task == null || task.IsCompleted)
             {
@@ -36,7 +35,7 @@
             ImGui.Text("Graphics Pipelines");
             for (int i = 0; i < PipelineManager.GraphicsPipelines.Count; i++)
             {
-                GraphicsPipeline pipeline = PipelineManager.GraphicsPipelines[i];
+                IGraphicsPipeline pipeline = PipelineManager.GraphicsPipelines[i];
                 if (ImGui.Button(pipeline.Name))
                     Recompile(pipeline);
             }
@@ -44,7 +43,7 @@
             ImGui.Text("Compute Pipelines");
             for (int i = 0; i < PipelineManager.ComputePipelines.Count; i++)
             {
-                ComputePipeline pipeline = PipelineManager.ComputePipelines[i];
+                IComputePipeline pipeline = PipelineManager.ComputePipelines[i];
                 if (ImGui.Button(pipeline.Name))
                     Recompile(pipeline);
             }

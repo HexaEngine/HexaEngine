@@ -1,26 +1,69 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
+    using System.Threading.Tasks;
 
-    public class BRDFLUT : Effect
+    public class BRDFLUT : IEffect
     {
-        public BRDFLUT(IGraphicsDevice device) : base(device, new()
+        private Quad quad;
+        private IGraphicsPipeline pipeline;
+
+        public IRenderTargetView Target;
+        private bool disposedValue;
+
+        public void Draw(IGraphicsContext context)
         {
-            VertexShader = "effects/brdf/vs.hlsl",
-            PixelShader = "effects/brdf/ps.hlsl"
-        })
-        {
-            AutoClear = true;
-            Mesh = new Quad(device);
+            if (Target == null) return;
+            context.ClearRenderTargetView(Target, default);
+            context.SetRenderTarget(Target, null);
+            quad.DrawAuto(context, pipeline, Target.Viewport);
         }
 
-        public override void Draw(IGraphicsContext context)
+        public void BeginResize()
         {
-#nullable disable
-            DrawAuto(context, Target.Viewport);
-#nullable enable
+        }
+
+        public void EndResize(int width, int height)
+        {
+        }
+
+        public Task Initialize(IGraphicsDevice device, int width, int height)
+        {
+            quad = new Quad(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/brdf/vs.hlsl",
+                PixelShader = "effects/brdf/ps.hlsl"
+            });
+
+            return Task.CompletedTask;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                quad.Dispose();
+                pipeline.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~BRDFLUT()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

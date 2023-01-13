@@ -20,20 +20,15 @@ namespace HexaEngine.Rendering
 
         private IGraphicsDevice device;
         private IGraphicsContext context;
+        private IGraphicsPipeline pipeline;
         private ISwapChain swapChain;
         private ImGuiInputHandler inputHandler;
         private nint test;
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
-        private IVertexShader vertexShader;
-        private IInputLayout inputLayout;
         private IBuffer constantBuffer;
-        private IPixelShader pixelShader;
         private ISamplerState fontSampler;
         private IShaderResourceView fontTextureView;
-        private IRasterizerState rasterizerState;
-        private IBlendState blendState;
-        private IDepthStencilState depthStencilState;
         private int vertexBufferSize = 5000, indexBufferSize = 10000;
 
         public ImGuiRenderer(SdlWindow window, IGraphicsDevice device)
@@ -256,26 +251,15 @@ namespace HexaEngine.Rendering
         private void SetupRenderState(ImDrawDataPtr drawData, IGraphicsContext ctx)
         {
             var viewport = new Viewport(drawData.DisplaySize.X, drawData.DisplaySize.Y);
-            ctx.SetViewport(viewport);
 
             uint stride = (uint)sizeof(ImDrawVert);
             uint offset = 0;
-            ctx.SetInputLayout(inputLayout);
+            pipeline.BeginDraw(ctx, viewport);
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            ctx.VSSetShader(vertexShader);
             ctx.VSSetConstantBuffer(constantBuffer, 0);
-            ctx.PSSetShader(pixelShader);
             ctx.PSSetSampler(fontSampler, 0);
-            ctx.GSSetShader(null);
-            ctx.HSSetShader(null);
-            ctx.DSSetShader(null);
-            ctx.CSSetShader(null);
-
-            ctx.SetBlendState(blendState);
-            ctx.SetDepthStencilState(depthStencilState);
-            ctx.SetRasterizerState(rasterizerState);
         }
 
         private void CreateFontsTexture()
@@ -332,85 +316,6 @@ namespace HexaEngine.Rendering
 
         private void CreateDeviceObjects()
         {
-            var vertexShaderCode =
-    @"
-                    cbuffer vertexBuffer : register(b0)
-                    {
-                        float4x4 ProjectionMatrix;
-                    };
-
-                    struct VS_INPUT
-                    {
-                        float2 pos : POSITION;
-                        float2 uv  : TEXCOORD0;
-                        float4 col : COLOR0;
-                    };
-
-                    struct PS_INPUT
-                    {
-                        float4 pos : SV_POSITION;
-                        float4 col : COLOR0;
-                        float2 uv  : TEXCOORD0;
-                    };
-
-                    PS_INPUT main(VS_INPUT input)
-                    {
-                        PS_INPUT output;
-                        output.pos = mul(ProjectionMatrix, float4(input.pos.xy, 0.f, 1.f));
-                        output.col = input.col;
-                        output.uv  = input.uv;
-                        return output;
-                    }";
-
-            Shader* vsShader;
-            ShaderCache.GetShaderOrCompile(device, vertexShaderCode, "Internal:ImGui:VS", "vs_5_0", &vsShader);
-
-            vertexShader = device.CreateVertexShader(vsShader);
-
-            var inputElements = new[]
-            {
-                new InputElementDescription( "POSITION", 0, Format.RG32Float,   0, 0, InputClassification.PerVertexData, 0 ),
-                new InputElementDescription( "TEXCOORD", 0, Format.RG32Float,   8,  0, InputClassification.PerVertexData, 0 ),
-                new InputElementDescription( "COLOR",    0, Format.RGBA8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
-            };
-
-            inputLayout = device.CreateInputLayout(inputElements, vsShader);
-
-            Free(vsShader);
-
-            var constBufferDesc = new BufferDescription
-            {
-                ByteWidth = VertexConstantBufferSize,
-                Usage = Usage.Dynamic,
-                BindFlags = BindFlags.ConstantBuffer,
-                CPUAccessFlags = CpuAccessFlags.Write,
-            };
-            constantBuffer = device.CreateBuffer(constBufferDesc);
-
-            var pixelShaderCode =
-                @"struct PS_INPUT
-                    {
-                        float4 pos : SV_POSITION;
-                        float4 col : COLOR0;
-                        float2 uv  : TEXCOORD0;
-                    };
-
-                    sampler sampler0;
-                    Texture2D texture0;
-
-                    float4 main(PS_INPUT input) : SV_Target
-                    {
-                        float4 out_col = input.col * texture0.Sample(sampler0, input.uv);
-                        return out_col;
-                    }";
-
-            Shader* psShader;
-            ShaderCache.GetShaderOrCompile(device, pixelShaderCode, "Internal:ImGui:PS", "ps_5_0", &psShader);
-
-            pixelShader = device.CreatePixelShader(psShader);
-
-            Free(psShader);
-
             var blendDesc = new BlendDescription
             {
                 AlphaToCoverageEnable = false
@@ -428,8 +333,6 @@ namespace HexaEngine.Rendering
                 RenderTargetWriteMask = ColorWriteEnable.All
             };
 
-            blendState = device.CreateBlendState(blendDesc);
-
             var rasterDesc = new RasterizerDescription
             {
                 FillMode = FillMode.Solid,
@@ -437,8 +340,6 @@ namespace HexaEngine.Rendering
                 ScissorEnable = true,
                 DepthClipEnable = false,
             };
-
-            rasterizerState = device.CreateRasterizerState(rasterDesc);
 
             var stencilOpDesc = new DepthStencilOperationDescription(StencilOperation.Keep, StencilOperation.Keep, StencilOperation.Keep, ComparisonFunction.Never);
             var depthDesc = new DepthStencilDescription
@@ -451,24 +352,45 @@ namespace HexaEngine.Rendering
                 BackFace = stencilOpDesc
             };
 
-            depthStencilState = device.CreateDepthStencilState(depthDesc);
+            var inputElements = new[]
+          {
+                new InputElementDescription( "POSITION", 0, Format.RG32Float,   0, 0, InputClassification.PerVertexData, 0 ),
+                new InputElementDescription( "TEXCOORD", 0, Format.RG32Float,   8,  0, InputClassification.PerVertexData, 0 ),
+                new InputElementDescription( "COLOR",    0, Format.RGBA8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
+            };
+
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "internal/imgui/vs.hlsl",
+                PixelShader = "internal/imgui/ps.hlsl",
+            },
+           new GraphicsPipelineState()
+           {
+               Blend = blendDesc,
+               DepthStencil = depthDesc,
+               Rasterizer = rasterDesc,
+           }, inputElements);
+
+            var constBufferDesc = new BufferDescription
+            {
+                ByteWidth = VertexConstantBufferSize,
+                Usage = Usage.Dynamic,
+                BindFlags = BindFlags.ConstantBuffer,
+                CPUAccessFlags = CpuAccessFlags.Write,
+            };
+            constantBuffer = device.CreateBuffer(constBufferDesc);
 
             CreateFontsTexture();
         }
 
         private void InvalidateDeviceObjects()
         {
+            pipeline.Dispose();
             fontSampler.Dispose();
             fontTextureView.Dispose();
             indexBuffer.Dispose();
             vertexBuffer.Dispose();
-            blendState.Dispose();
-            depthStencilState.Dispose();
-            rasterizerState.Dispose();
-            pixelShader.Dispose();
             constantBuffer.Dispose();
-            inputLayout.Dispose();
-            vertexShader.Dispose();
         }
     }
 }

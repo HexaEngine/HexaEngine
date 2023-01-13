@@ -1,18 +1,19 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Resources;
-    using System.Diagnostics;
     using System.Numerics;
 
     public class Bloom : IEffect
     {
         private Quad quad;
-        private GraphicsPipeline downsample;
-        private GraphicsPipeline upsample;
+        private IGraphicsPipeline downsample;
+        private IGraphicsPipeline upsample;
         private IBuffer downsampleCB;
         private IBuffer upsampleCB;
         private ISamplerState sampler;
@@ -27,7 +28,7 @@
         private int width;
         private int height;
 
-        private IShaderResourceView? Source;
+        private IShaderResourceView Source;
         private bool disposedValue;
 
         private struct ParamsDownsample
@@ -69,19 +70,18 @@
 
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
-            
             quad = new(device);
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
-            downsample = new(device, new()
+            downsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/bloom/downsample/vs.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
             });
-            upsample = new(device, new()
+            upsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/bloom/upsample/vs.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",

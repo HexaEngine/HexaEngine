@@ -1,5 +1,10 @@
+#pragma once
+#pragma comment(lib, "d3d12.lib")
+
 #include "DirectXTex/DirectXTex.h"
 #include <dxgiformat.h>
+#include <d3d12.h>
+#include <d3d11_1.h>
 
 #define API __declspec(dllexport)
 
@@ -346,15 +351,15 @@ extern "C"
 #pragma region Direct3D 12 functions
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
-	API bool IsSupportedTexture(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept;
+	API bool IsSupportedTextureD3D12(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept;
 
-	API HRESULT CreateTexture(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _Outptr_ ID3D12Resource** ppResource) noexcept;
+	API HRESULT CreateTextureD3D12(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _Outptr_ ID3D12Resource** ppResource) noexcept;
 
-	API HRESULT CreateTextureEx(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _In_ D3D12_RESOURCE_FLAGS resFlags, _In_ bool forceSRGB, _Outptr_ ID3D12Resource** ppResource) noexcept;
+	API HRESULT CreateTextureExD3D12(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _In_ D3D12_RESOURCE_FLAGS resFlags, _In_ bool forceSRGB, _Outptr_ ID3D12Resource** ppResource) noexcept;
 
-	API HRESULT PrepareUpload(_In_ ID3D12Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, std::vector<D3D12_SUBRESOURCE_DATA>& subresources);
+	API HRESULT PrepareUpload(_In_ ID3D12Device* pDevice, _In_ const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, void** subresources, size_t* nSubresources);
 
-	API HRESULT CaptureTexture(_In_ ID3D12CommandQueue* pCommandQueue, _In_ ID3D12Resource* pSource, _In_ bool isCubeMap, _Out_ DirectX::ScratchImage& result, _In_ D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET, _In_ D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET) noexcept;
+	API HRESULT CaptureTextureD3D12(_In_ ID3D12CommandQueue* pCommandQueue, _In_ ID3D12Resource* pSource, _In_ bool isCubeMap, _Out_ DirectX::ScratchImage& result, _In_ D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET, _In_ D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET) noexcept;
 #endif
 
 #pragma endregion

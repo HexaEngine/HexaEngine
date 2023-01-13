@@ -99,6 +99,51 @@
 
         public ISwapChain? SwapChain { get; }
 
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc)
+        {
+            return new ComputePipeline(this, desc);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc)
+        {
+            return new GraphicsPipeline(this, desc);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros)
+        {
+            return new GraphicsPipeline(this, desc, macros);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions)
+        {
+            return new GraphicsPipeline(this, desc, elementDescriptions);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        {
+            return new GraphicsPipeline(this, desc, inputElements, macros);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state)
+        {
+            return new GraphicsPipeline(this, desc, state);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
+        {
+            return new GraphicsPipeline(this, desc, state, macros);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions)
+        {
+            return new GraphicsPipeline(this, desc, state, elementDescriptions);
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        {
+            return new GraphicsPipeline(this, desc, state, inputElements, macros);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer(BufferDescription description)
         {
@@ -157,24 +202,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBlendState CreateBlendState(BlendDescription description)
-        {
-            ID3D11BlendState* blend;
-            BlendDesc desc = Helper.Convert(description);
-            Device->CreateBlendState(ref desc, &blend).ThrowHResult();
-            return new D3D11BlendState(blend, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description)
-        {
-            ID3D11DepthStencilState* state;
-            DepthStencilDesc desc = Helper.Convert(description);
-            Device->CreateDepthStencilState(ref desc, &state).ThrowHResult();
-            return new D3D11DepthStencilState(state, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDepthStencilView CreateDepthStencilView(IResource resource)
         {
             DepthStencilViewDescription description;
@@ -211,15 +238,6 @@
             DepthStencilViewDesc desc = Helper.Convert(description);
             Device->CreateDepthStencilView((ID3D11Resource*)resource.NativePointer, ref desc, &view).ThrowHResult();
             return new D3D11DepthStencilView(view, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IRasterizerState CreateRasterizerState(RasterizerDescription description)
-        {
-            ID3D11RasterizerState* state;
-            RasterizerDesc desc = Helper.Convert(description);
-            Device->CreateRasterizerState(ref desc, &state).ThrowHResult();
-            return new D3D11RasterizerState(state, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -868,150 +886,6 @@
             image.Release();
         }
 
-        #region Unsafe
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IVertexShader CreateVertexShader(Shader* shader)
-        {
-            ID3D11VertexShader* vs;
-            Device->CreateVertexShader(shader->Bytecode, shader->Length, null, &vs).ThrowHResult();
-            return new D3D11VertexShader(vs);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IHullShader CreateHullShader(Shader* shader)
-        {
-            ID3D11HullShader* hs;
-            Device->CreateHullShader(shader->Bytecode, shader->Length, null, &hs).ThrowHResult();
-            return new D3D11HullShader(hs);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IDomainShader CreateDomainShader(Shader* shader)
-        {
-            ID3D11DomainShader* ds;
-            Device->CreateDomainShader(shader->Bytecode, shader->Length, null, &ds).ThrowHResult();
-            return new D3D11DomainShader(ds);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IGeometryShader CreateGeometryShader(Shader* shader)
-        {
-            ID3D11GeometryShader* gs;
-            Device->CreateGeometryShader(shader->Bytecode, shader->Length, null, &gs).ThrowHResult();
-            return new D3D11GeometryShader(gs);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IPixelShader CreatePixelShader(Shader* shader)
-        {
-            ID3D11PixelShader* ps;
-            Device->CreatePixelShader(shader->Bytecode, shader->Length, null, &ps).ThrowHResult();
-            return new D3D11PixelShader(ps);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IComputeShader CreateComputeShader(Shader* shader)
-        {
-            ID3D11ComputeShader* cs;
-            Device->CreateComputeShader(shader->Bytecode, shader->Length, null, &cs).ThrowHResult();
-            return new D3D11ComputeShader(cs);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
-        {
-            ShaderCompiler.Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out errorBlob);
-            if (shaderBlob != null)
-            {
-                Shader* pShader = Alloc<Shader>();
-                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                pShader->Length = shaderBlob.PointerSize;
-                *shader = pShader;
-            }
-
-            if (errorBlob != null)
-                ImGuiConsole.Log(errorBlob.AsString());
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
-        {
-            Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, shader, out errorBlob);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader)
-        {
-            Compile(code, macros, entry, sourceName, profile, shader, out _);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Compile(string code, string entry, string sourceName, string profile, Shader** shader)
-        {
-            Compile(code, entry, sourceName, profile, shader, out _);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob)
-        {
-            ShaderCompiler.Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out errorBlob);
-            if (shaderBlob != null)
-            {
-                Shader* pShader = Alloc<Shader>();
-                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
-                pShader->Length = shaderBlob.PointerSize;
-                *shader = pShader;
-            }
-            if (errorBlob != null)
-                ImGuiConsole.Log(errorBlob.AsString());
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob)
-        {
-            CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, shader, out errorBlob);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader)
-        {
-            CompileFromFile(path, macros, entry, profile, shader, out _);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CompileFromFile(string path, string entry, string profile, Shader** shader)
-        {
-            CompileFromFile(path, entry, profile, shader, out _);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Shader* shader)
-        {
-            ID3D11InputLayout* layout;
-            InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
-            Helper.Convert(inputElements, descs);
-            Device->CreateInputLayout(descs, (uint)inputElements.Length, shader->Bytecode, shader->Length, &layout).ThrowHResult();
-            Free(descs);
-            return new D3D11InputLayout(layout);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IInputLayout CreateInputLayout(Shader* shader)
-        {
-            ID3D11InputLayout* layout;
-            CreateInputLayoutFromSignature(shader, &layout);
-            return new D3D11InputLayout(layout);
-        }
-
-        #endregion Unsafe
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void CreateInputLayoutFromSignature(Shader* shader, ID3D11InputLayout** layout) => CreateInputLayoutFromSignature(shader, ShaderCompiler.GetInputSignature(shader), layout);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void CreateInputLayoutFromSignature(Blob shader, ID3D11InputLayout** layout) => CreateInputLayoutFromSignature(shader, ShaderCompiler.GetInputSignature(shader), layout);
-
         [Flags]
         public enum RegisterComponentMaskFlags : byte
         {
@@ -1021,45 +895,6 @@
             ComponentZ = 4,
             ComponentW = 8,
             All
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ShaderInputBindDescription[] GetInputBindDescriptions(Shader* shader)
-        {
-            ID3D11ShaderReflection* reflection;
-            ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
-            ShaderDesc desc;
-            reflection->GetDesc(&desc);
-
-            ShaderInputBindDescription[] descs = new ShaderInputBindDescription[desc.BoundResources];
-            for (uint i = 0; i < desc.BoundResources; i++)
-            {
-                ShaderInputBindDesc shaderInputDesc;
-                reflection->GetResourceBindingDesc(i, &shaderInputDesc);
-                descs[i] = Helper.Convert(shaderInputDesc);
-            }
-            reflection->Release();
-            return descs;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public SignatureParameterDescription[] GetOutputBindDescriptions(Shader* shader)
-        {
-            ID3D11ShaderReflection* reflection;
-            ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
-            ShaderDesc desc;
-            reflection->GetDesc(&desc);
-
-            SignatureParameterDescription[] descs = new SignatureParameterDescription[desc.BoundResources];
-            for (uint i = 0; i < desc.BoundResources; i++)
-            {
-                SignatureParameterDesc shaderInputDesc;
-                reflection->GetOutputParameterDesc(i, &shaderInputDesc);
-
-                descs[i] = Helper.Convert(shaderInputDesc);
-            }
-            reflection->Release();
-            return descs;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1139,7 +974,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void CreateInputLayoutFromSignature(Shader* shader, Blob signature, ID3D11InputLayout** layout)
+        internal void CreateInputLayoutFromSignature(Shader* shader, Blob signature, ID3D11InputLayout** layout)
         {
             ID3D11ShaderReflection* reflection;
             ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);

@@ -399,7 +399,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void DrawScene(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, BoundingBox box)
+        private unsafe void DrawScene(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, BoundingBox box)
         {
             pipeline.BeginDraw(context, viewport);
             for (int j = 0; j < instanceManager.TypeCount; j++)
@@ -411,7 +411,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void DrawScene(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, BoundingFrustum frustum)
+        private unsafe void DrawScene(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, BoundingFrustum frustum)
         {
             pipeline.BeginDraw(context, viewport);
             for (int j = 0; j < instanceManager.TypeCount; j++)

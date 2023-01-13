@@ -9,9 +9,9 @@
     public unsafe class DepthMipChain : IEffect
     {
         private readonly Quad quad;
-        private readonly ComputePipeline downsample;
+        private readonly IComputePipeline downsample;
         private readonly IBuffer cbDownsample;
-        private readonly GraphicsPipeline copy;
+        private readonly IGraphicsPipeline copy;
         public int Height;
         public int Width;
         private ITexture2D texture;
@@ -33,13 +33,13 @@
             Height = height;
             quad = new(device);
 
-            downsample = new(device, new()
+            downsample = device.CreateComputePipeline(new()
             {
                 Path = "compute/hiz/shader.hlsl",
             });
             cbDownsample = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
-            copy = new(device, new()
+            copy = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/copy/vs.hlsl",
                 PixelShader = "effects/copy/ps.hlsl"

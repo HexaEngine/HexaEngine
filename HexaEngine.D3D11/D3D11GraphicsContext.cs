@@ -155,15 +155,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetInputLayout(IInputLayout? inputLayout)
-        {
-#nullable disable
-            ID3D11InputLayout* layout = (ID3D11InputLayout*)inputLayout?.NativePointer;
-#nullable enable
-            DeviceContext->IASetInputLayout(layout);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetPrimitiveTopology(PrimitiveTopology topology)
         {
             DeviceContext->IASetPrimitiveTopology(Helper.Convert(topology));
@@ -177,12 +168,6 @@
             ID3D11DepthStencilView* dsv = (ID3D11DepthStencilView*)(depthStencilView?.NativePointer);
 #nullable enable
             DeviceContext->OMSetRenderTargets(1, &rtv, dsv);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetRenderTargets(IRenderTargetView[] views, IDepthStencilView? depthStencilView)
-        {
-            throw new NotImplementedException();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -200,35 +185,6 @@
         {
             Rectangle<int> rect = new(x, y, z, w);
             DeviceContext->RSSetScissorRects(1, &rect);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetRasterizerState(IRasterizerState? rasterizerState)
-        {
-#nullable disable
-            ID3D11RasterizerState* rs = (ID3D11RasterizerState*)(rasterizerState?.NativePointer);
-#nullable enable
-            DeviceContext->RSSetState(rs);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetDepthStencilState(IDepthStencilState? depthStencilState, int stencilRef = 0)
-        {
-#nullable disable
-            ID3D11DepthStencilState* ds = (ID3D11DepthStencilState*)(depthStencilState?.NativePointer);
-#nullable enable
-            DeviceContext->OMSetDepthStencilState(ds, (uint)stencilRef);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetBlendState(IBlendState? blendState, Vector4? factor, uint sampleMask = uint.MaxValue)
-        {
-#nullable disable
-            ID3D11BlendState* state = (ID3D11BlendState*)blendState?.NativePointer;
-#nullable enable
-            float* fac = (float*)&factor;
-
-            DeviceContext->OMSetBlendState(state, fac, sampleMask);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -282,60 +238,6 @@
         {
             var vp = Helper.Convert(viewport);
             DeviceContext->RSSetViewports(1, &vp);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void VSSetShader(IVertexShader? vertexShader)
-        {
-#nullable disable
-            ID3D11VertexShader* s = (ID3D11VertexShader*)vertexShader?.NativePointer;
-#nullable enable
-            DeviceContext->VSSetShader(s, null, 0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void HSSetShader(IHullShader? hullShader)
-        {
-#nullable disable
-            ID3D11HullShader* s = (ID3D11HullShader*)hullShader?.NativePointer;
-#nullable enable
-            DeviceContext->HSSetShader(s, null, 0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void DSSetShader(IDomainShader? domainShader)
-        {
-#nullable disable
-            ID3D11DomainShader* s = (ID3D11DomainShader*)domainShader?.NativePointer;
-#nullable enable
-            DeviceContext->DSSetShader(s, null, 0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void GSSetShader(IGeometryShader? geometryShader)
-        {
-#nullable disable
-            ID3D11GeometryShader* s = (ID3D11GeometryShader*)geometryShader?.NativePointer;
-#nullable enable
-            DeviceContext->GSSetShader(s, null, 0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void PSSetShader(IPixelShader? pixelShader)
-        {
-#nullable disable
-            ID3D11PixelShader* s = (ID3D11PixelShader*)pixelShader?.NativePointer;
-#nullable enable
-            DeviceContext->PSSetShader(s, null, 0);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CSSetShader(IComputeShader? computeShader)
-        {
-#nullable disable
-            ID3D11ComputeShader* s = (ID3D11ComputeShader*)computeShader?.NativePointer;
-#nullable enable
-            DeviceContext->CSSetShader(s, null, 0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

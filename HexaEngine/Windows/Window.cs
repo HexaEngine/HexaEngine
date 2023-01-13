@@ -79,6 +79,7 @@
             {
                 device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
                 context = device.Context;
+                renderDispatcher = new(device);
                 swapChain = device.SwapChain ?? throw new PlatformNotSupportedException();
                 swapChain.Active = true;
             }
@@ -93,7 +94,6 @@
             CullingManager.Initialize(device);
             ObjectPickerManager.Initialize(device, Width, Height);
 
-            renderDispatcher = new(device);
             framebuffer = new(device);
 
             bool sceneGraph = Flags.HasFlag(RendererFlags.SceneGraph);

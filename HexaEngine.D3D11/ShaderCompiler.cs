@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.IO;
@@ -7,6 +8,7 @@
     using Silk.NET.Direct3D.Compilers;
     using System.Collections.Concurrent;
     using System.Diagnostics;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
@@ -171,6 +173,140 @@
             {
                 D3DCompiler.Reflect(blob->Bytecode, blob->Length, Utils.Guid(guid), reflector);
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
+        {
+            Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out errorBlob);
+            if (shaderBlob != null)
+            {
+                Shader* pShader = Alloc<Shader>();
+                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
+                pShader->Length = shaderBlob.PointerSize;
+                *shader = pShader;
+            }
+
+            if (errorBlob != null)
+                ImGuiConsole.Log(errorBlob.AsString());
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
+        {
+            Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, shader, out errorBlob);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader)
+        {
+            Compile(code, macros, entry, sourceName, profile, shader, out _);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader)
+        {
+            Compile(code, entry, sourceName, profile, shader, out _);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob)
+        {
+            Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out errorBlob);
+            if (shaderBlob != null)
+            {
+                Shader* pShader = Alloc<Shader>();
+                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
+                pShader->Length = shaderBlob.PointerSize;
+                *shader = pShader;
+            }
+            if (errorBlob != null)
+                ImGuiConsole.Log(errorBlob.AsString());
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob)
+        {
+            CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, shader, out errorBlob);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader)
+        {
+            CompileFromFile(path, macros, entry, profile, shader, out _);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader)
+        {
+            CompileFromFile(path, entry, profile, shader, out _);
+        }
+
+        public static unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader))
+            {
+                Compile(code, entry, path, profile, &pShader);
+                ShaderCache.CacheShader(path, macros, pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader))
+            {
+                CompileFromFile(path, entry, profile, &pShader);
+                if (pShader == null) return;
+                ShaderCache.CacheShader(path, macros, pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                Compile(code, entry, path, profile, &pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompileFile(string entry, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                CompileFromFile(path, entry, profile, &pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompile(string code, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                Compile(code, "main", path, profile, &pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public static unsafe void GetShaderOrCompileFile(string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            {
+                CompileFromFile(path, "main", profile, &pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+            }
+            *shader = pShader;
         }
     }
 }

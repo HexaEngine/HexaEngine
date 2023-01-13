@@ -1,25 +1,26 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Resources;
-    using System.Diagnostics;
     using System.Numerics;
 
     public class Tonemap : IEffect
     {
         private Quad quad;
-        private GraphicsPipeline pipeline;
+        private IGraphicsPipeline pipeline;
         private IBuffer buffer;
         private ISamplerState sampler;
         private unsafe void** srvs;
         private float bloomStrength = 0.04f;
         private bool dirty;
 
-        private IRenderTargetView? Output;
-        private IShaderResourceView? HDR;
-        private IShaderResourceView? Bloom;
+        private IRenderTargetView Output;
+        private IShaderResourceView HDR;
+        private IShaderResourceView Bloom;
 
         private struct Params
         {
@@ -38,11 +39,10 @@
 
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
-            
             HDR = ResourceManager.AddTextureSRV("Tonemap", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
             quad = new(device);
-            pipeline = new(device, new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/tonemap/vs.hlsl",
                 PixelShader = "effects/tonemap/ps.hlsl",

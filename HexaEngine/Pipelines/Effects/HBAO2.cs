@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
@@ -15,7 +17,7 @@
         private int width;
         private int height;
         private Quad quad;
-        private GraphicsPipeline hbaoPipeline;
+        private IGraphicsPipeline hbaoPipeline;
         private IBuffer cbCamera;
         private IBuffer cbHBAO;
         private HBAOCamera hbaoCamera = new();
@@ -28,10 +30,10 @@
 
         private ISamplerState samplerLinear;
 
-        public IRenderTargetView? Output;
-        public IBuffer? Camera;
-        public IShaderResourceView? Depth;
-        public IShaderResourceView? Normal;
+        public IRenderTargetView Output;
+        public IBuffer Camera;
+        public IShaderResourceView Depth;
+        public IShaderResourceView Normal;
 
         private bool isDirty = true;
         private bool disposedValue;
@@ -141,7 +143,7 @@
 
             quad = new Quad(device);
 
-            hbaoPipeline = new(device, new()
+            hbaoPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/hbao2/vs.hlsl",
                 PixelShader = "effects/hbao2/ps.hlsl",

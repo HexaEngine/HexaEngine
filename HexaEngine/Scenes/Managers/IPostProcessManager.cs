@@ -4,9 +4,9 @@
 
     public interface IPostProcessManager
     {
-        public void AddEffect(Effect effect);
+        public void AddEffect(IEffect effect);
 
-        public void RemoveEffect(Effect effect);
+        public void RemoveEffect(IEffect effect);
 
         public void Draw();
     }

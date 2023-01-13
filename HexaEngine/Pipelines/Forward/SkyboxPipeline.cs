@@ -7,7 +7,7 @@
     public unsafe class Skybox : IEffect
     {
         private readonly UVSphere sphere;
-        private readonly GraphicsPipeline pipeline;
+        private readonly IGraphicsPipeline pipeline;
         private readonly ISamplerState sampler;
         private readonly void** cbs;
 
@@ -20,7 +20,7 @@
         public Skybox(IGraphicsDevice device)
         {
             sphere = new(device);
-            pipeline = new(device, new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/skybox/vs.hlsl",
                 PixelShader = "forward/skybox/ps.hlsl"

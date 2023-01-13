@@ -24,17 +24,17 @@
     public static class ObjectPickerManager
     {
         private static IGraphicsDevice device;
-        private static GraphicsPipeline pipeline;
+        private static IGraphicsPipeline pipeline;
         private static Texture texture;
 
-        private static ComputePipeline computePipeline;
+        private static IComputePipeline computePipeline;
         private static ConstantBuffer<Vector4> mouseBuffer;
         private static StructuredUavBuffer<SelectionData> outputBuffer;
 
         public static void Initialize(IGraphicsDevice device, int width, int height)
         {
             ObjectPickerManager.device = device;
-            pipeline = new(device, new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/selection/vs.hlsl",
                 PixelShader = "forward/selection/ps.hlsl",
@@ -48,7 +48,7 @@
             });
             texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.RGBA32UInt), DepthStencilDesc.Default);
 
-            computePipeline = new(device, new()
+            computePipeline = device.CreateComputePipeline(new()
             {
                 Path = "compute/selection/shader.hlsl",
             });

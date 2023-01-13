@@ -101,7 +101,7 @@
             return true;
         }
 
-        public unsafe void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
+        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport)
         {
             if (VB == null) return;
             if (IB == null) return;

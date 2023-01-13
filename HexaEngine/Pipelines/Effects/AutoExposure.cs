@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Pipelines.Effects
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -6,7 +8,6 @@
     using HexaEngine.Objects.Primitives;
     using HexaEngine.Resources;
     using System;
-    using System.Diagnostics;
     using System.Numerics;
 
     public class AutoExposure : IEffect
@@ -14,14 +15,14 @@
         private int width;
         private int height;
         private bool dirty;
-        private ComputePipeline lumaCompute;
+        private IComputePipeline lumaCompute;
         private unsafe LumaParams* lumaParams;
         private IBuffer cbLumaParams;
         private IBuffer histogram;
         private IUnorderedAccessView histogramUAV;
         private unsafe void** lumaUAVs;
 
-        private ComputePipeline lumaAvgCompute;
+        private IComputePipeline lumaAvgCompute;
         private unsafe LumaAvgParams* lumaAvgParams;
         private IBuffer cbLumaAvgParams;
         private ITexture2D luma;
@@ -29,14 +30,14 @@
         private IUnorderedAccessView lumaUAV;
         private unsafe void** lumaAvgUAVs;
 
-        private GraphicsPipeline exposurePipeline;
+        private IGraphicsPipeline exposurePipeline;
         private Quad quad;
         private unsafe ExposureParams* exposureParams;
         private IBuffer cbExposureParams;
         private ISamplerState samplerPoint;
 
-        public IShaderResourceView? Color;
-        public IRenderTargetView? Output;
+        public IShaderResourceView Color;
+        public IRenderTargetView Output;
         private bool enabled;
 
         public unsafe bool Enabled
@@ -106,16 +107,22 @@
 
             this.width = width;
             this.height = height;
-            lumaCompute = new(device, new("compute/luma/shader.hlsl"));
+            lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
 
-            histogram = ComputePipeline.CreateRawBuffer(device, 256 * sizeof(uint));
+            BufferDescription description = new()
+            {
+                BindFlags = BindFlags.UnorderedAccess | BindFlags.ShaderResource | BindFlags.IndexBuffer | BindFlags.VertexBuffer,
+                ByteWidth = 256 * sizeof(uint),
+                MiscFlags = ResourceMiscFlag.BufferAllowRawViews
+            };
+            histogram = device.CreateBuffer(description);
             histogramUAV = device.CreateUnorderedAccessView(histogram, new(histogram, Format.R32Typeless, 0, 256, BufferUnorderedAccessViewFlags.Raw));
 
             luma = device.CreateTexture2D(Format.R32Float, 1, 1, 1, 1, null, BindFlags.ShaderResource | BindFlags.UnorderedAccess, ResourceMiscFlag.None);
             lumaUAV = device.CreateUnorderedAccessView(luma, new(luma, UnorderedAccessViewDimension.Texture2D));
             lumaSRV = device.CreateShaderResourceView(luma);
 
-            exposurePipeline = new(device, new()
+            exposurePipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/exposure/vs.hlsl",
                 PixelShader = "effects/exposure/ps.hlsl",
@@ -139,7 +146,7 @@
             lumaUAVs = AllocArray(2);
             lumaUAVs[0] = (void*)histogramUAV.NativePointer;
 
-            lumaAvgCompute = new(device, new("compute/lumaAvg/shader.hlsl"));
+            lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));
             lumaAvgParams = Alloc<LumaAvgParams>();
             lumaAvgParams->PixelCount = (uint)(width * height);
             cbLumaAvgParams = device.CreateBuffer(lumaAvgParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);

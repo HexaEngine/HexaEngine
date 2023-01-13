@@ -19,7 +19,7 @@
 
         protected abstract (VertexBuffer<T>, IndexBuffer?) InitializeMesh(IGraphicsDevice device);
 
-        public void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport)
+        public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport)
         {
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)

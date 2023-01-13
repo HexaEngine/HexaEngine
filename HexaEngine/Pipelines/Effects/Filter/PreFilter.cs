@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Pipelines.Effects.Filter
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
@@ -6,16 +8,21 @@
     using HexaEngine.Resources.Buffers;
     using System;
     using System.Numerics;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Pre filter for the env map used in the brfd pipeline.
     /// </summary>
-    public class PreFilter : Effect
+    public class PreFilter : IEffect
     {
-        private readonly IBuffer mvpBuffer;
-        private readonly IBuffer rghbuffer;
-        private readonly ISamplerState sampler;
-        public IShaderResourceView? Source;
+        private Cube cube;
+        private IGraphicsPipeline pipeline;
+        private IBuffer mvpBuffer;
+        private IBuffer rghbuffer;
+        private ISamplerState sampler;
+
+        public RenderTargetViewArray Targets;
+        public IShaderResourceView Source;
 
         public struct CubeFaceCamera
         {
@@ -34,6 +41,7 @@
 #nullable enable
 
         public float Roughness;
+        private bool disposedValue;
 
         public void SetViewPoint(Vector3 camera)
         {
@@ -68,28 +76,30 @@
             }
         }
 
-        public PreFilter(IGraphicsDevice device) : base(device, new()
+        public Task Initialize(IGraphicsDevice device, int width, int height)
         {
-            VertexShader = "effects/prefilter/vs.hlsl",
-            PixelShader = "effects/prefilter/ps.hlsl"
-        })
-        {
-            AutoSetTarget = false;
-            SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            rghbuffer = device.CreateBuffer(new RoughnessBuffer(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
-            Mesh = new Cube(device);
-            State = new()
+            cube = new(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/prefilter/vs.hlsl",
+                PixelShader = "effects/prefilter/ps.hlsl"
+            },
+            new GraphicsPipelineState()
             {
                 DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = new(CullMode.None, FillMode.Solid) { ScissorEnable = true },
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
-            };
+            });
+
+            SetViewPoint(Vector3.Zero);
+            mvpBuffer = device.CreateBuffer(new ViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            rghbuffer = device.CreateBuffer(new RoughnessBuffer(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
+            return Task.CompletedTask;
         }
 
-        public override void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context)
         {
             if (Targets == null) return;
             context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
@@ -101,7 +111,7 @@
                 context.PSSetConstantBuffer(rghbuffer, 0);
                 context.PSSetShaderResource(Source, 0);
                 context.PSSetSampler(sampler, 0);
-                base.DrawAuto(context, Targets.Viewport);
+                cube.DrawAuto(context, pipeline, Targets.Viewport);
             }
         }
 
@@ -116,7 +126,43 @@
             context.PSSetConstantBuffer(rghbuffer, 0);
             context.PSSetShaderResource(Source, 0);
             context.PSSetSampler(sampler, 0);
-            base.DrawAuto(context, Targets.Viewport);
+            cube.DrawAuto(context, pipeline, Targets.Viewport);
+        }
+
+        public void BeginResize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EndResize(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                cube.Dispose();
+                pipeline.Dispose();
+                mvpBuffer.Dispose();
+                rghbuffer.Dispose();
+                sampler.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~PreFilter()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

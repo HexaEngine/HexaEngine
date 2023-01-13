@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Pipelines.Deferred
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
@@ -10,7 +12,7 @@
     public class DeferredPrincipledBSDF : IEffect
     {
         private Quad quad;
-        private GraphicsPipeline brdf;
+        private IGraphicsPipeline brdf;
         private ISamplerState pointSampler;
         private ISamplerState anisoSampler;
         private unsafe void** cbs;
@@ -19,24 +21,24 @@
         private const uint nsrvs = 8 + 4 + CBLight.MaxDirectionalLightSDs + CBLight.MaxPointLightSDs + CBLight.MaxSpotlightSDs;
         private bool disposedValue;
 
-        public IRenderTargetView? Output;
+        public IRenderTargetView Output;
 
-        public IShaderResourceView?[]? GBuffers;
-        public IShaderResourceView? Irraidance;
-        public IShaderResourceView? EnvPrefiltered;
-        public IShaderResourceView? LUT;
-        public IShaderResourceView? SSAO;
-        public IShaderResourceView? CSM;
-        public IShaderResourceView[]? OSMs;
-        public IShaderResourceView[]? PSMs;
-        public IBuffer? Camera;
-        public IBuffer? Lights;
+        public IShaderResourceView[] GBuffers;
+        public IShaderResourceView Irraidance;
+        public IShaderResourceView EnvPrefiltered;
+        public IShaderResourceView LUT;
+        public IShaderResourceView SSAO;
+        public IShaderResourceView CSM;
+        public IShaderResourceView[] OSMs;
+        public IShaderResourceView[] PSMs;
+        public IBuffer Camera;
+        public IBuffer Lights;
 
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             Output = ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             quad = new(device);
-            brdf = new(device, new()
+            brdf = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "deferred/bsdf/vs.hlsl",
                 PixelShader = "deferred/bsdf/ps.hlsl",

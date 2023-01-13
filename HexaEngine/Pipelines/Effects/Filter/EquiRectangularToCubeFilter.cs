@@ -8,12 +8,17 @@ namespace HexaEngine.Pipelines.Effects.Filter
     using HexaEngine.Resources.Buffers;
     using System;
     using System.Numerics;
+    using System.Threading.Tasks;
 
-    public class EquiRectangularToCubeFilter : Effect
+    public class EquiRectangularToCubeFilter : IEffect
     {
-        private readonly IBuffer mvpBuffer;
-        private readonly ISamplerState sampler;
+        private Cube cube;
+        private IGraphicsPipeline pipeline;
+        private IBuffer mvpBuffer;
+        private ISamplerState sampler;
+
         public IShaderResourceView Source;
+        public RenderTargetViewArray Targets;
 
         public struct CubeFaceCamera
         {
@@ -22,6 +27,7 @@ namespace HexaEngine.Pipelines.Effects.Filter
         }
 
         private CubeFaceCamera[] Cameras;
+        private bool disposedValue;
 
         public void SetViewPoint(Vector3 camera)
         {
@@ -56,27 +62,29 @@ namespace HexaEngine.Pipelines.Effects.Filter
             }
         }
 
-        public EquiRectangularToCubeFilter(IGraphicsDevice device) : base(device, new()
+        public Task Initialize(IGraphicsDevice device, int width, int height)
         {
-            VertexShader = "effects/equitocube/vs.hlsl",
-            PixelShader = "effects/equitocube/ps.hlsl"
-        })
-        {
-            AutoSetTarget = false;
-            SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
-            Mesh = new Cube(device);
-            State = new()
+            cube = new(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/equitocube/vs.hlsl",
+                PixelShader = "effects/equitocube/ps.hlsl"
+            },
+            new GraphicsPipelineState()
             {
                 DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = RasterizerDescription.CullNone,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.TriangleList,
-            };
+            });
+
+            SetViewPoint(Vector3.Zero);
+            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
+            return Task.CompletedTask;
         }
 
-        public override void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context)
         {
             for (int i = 0; i < 6; i++)
             {
@@ -85,8 +93,40 @@ namespace HexaEngine.Pipelines.Effects.Filter
                 context.PSSetSampler(sampler, 0);
                 context.PSSetShaderResource(Source, 0);
                 Targets.ClearAndSetTarget(context, i);
-                base.DrawAuto(context, Targets.Viewport);
+                cube.DrawAuto(context, pipeline, Targets.Viewport);
             }
+        }
+
+        public void BeginResize()
+        {
+        }
+
+        public void EndResize(int width, int height)
+        {
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                pipeline.Dispose();
+                mvpBuffer.Dispose();
+                sampler.Dispose();
+                disposedValue = true;
+            }
+        }
+
+        ~EquiRectangularToCubeFilter()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

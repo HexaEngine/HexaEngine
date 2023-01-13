@@ -1,33 +1,29 @@
-﻿namespace HexaEngine.Pipelines.Forward
+﻿#nullable disable
+
+namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
+    using System;
 
-    public class CSMPipeline : IGraphicsPipeline
+    public class Terrain : IGraphicsPipeline
     {
         private IGraphicsPipeline pipeline;
-        public IBuffer? View;
 
-        public GraphicsPipelineDesc Description => pipeline.Description;
-
-        public string Name => pipeline.Name;
-
-        public GraphicsPipelineState State { get => pipeline.State; set => pipeline.State = value; }
-
-        public CSMPipeline(IGraphicsDevice device)
+        public Terrain(IGraphicsDevice device)
         {
             pipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "forward/csm/vs.hlsl",
-                HullShader = "forward/csm/hs.hlsl",
-                DomainShader = "forward/csm/ds.hlsl",
-                GeometryShader = "forward/csm/gs.hlsl",
-                PixelShader = "forward/csm/ps.hlsl",
-            }, new GraphicsPipelineState()
+                VertexShader = "deferred/terrain/vs.hlsl",
+                HullShader = "deferred/terrain/hs.hlsl",
+                DomainShader = "deferred/terrain/ds.hlsl",
+                PixelShader = "deferred/terrain/ps.hlsl"
+            },
+            new GraphicsPipelineState()
             {
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullNone,
+                Rasterizer = RasterizerDescription.CullBack,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
             },
@@ -37,15 +33,20 @@
             });
         }
 
+        public GraphicsPipelineDesc Description => pipeline.Description;
+
+        public string Name => pipeline.Name;
+
+        public GraphicsPipelineState State { get => pipeline.State; set => pipeline.State = value; }
+
         public void BeginDraw(IGraphicsContext context, Viewport viewport)
         {
             pipeline.BeginDraw(context, viewport);
-            context.GSSetConstantBuffer(View, 0);
         }
 
-        public void EndDraw(IGraphicsContext context)
+        public void Dispose()
         {
-            pipeline.EndDraw(context);
+            pipeline.Dispose();
         }
 
         public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
@@ -68,14 +69,14 @@
             pipeline.DrawInstanced(context, viewport, vertexCount, instanceCount, vertexOffset, instanceOffset);
         }
 
+        public void EndDraw(IGraphicsContext context)
+        {
+            pipeline.EndDraw(context);
+        }
+
         public void Recompile()
         {
             pipeline.Recompile();
-        }
-
-        public void Dispose()
-        {
-            pipeline.Dispose();
         }
     }
 }

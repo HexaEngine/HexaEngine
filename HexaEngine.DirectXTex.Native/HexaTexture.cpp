@@ -740,27 +740,40 @@ HRESULT CaptureTexture(_In_ ID3D11Device* pDevice, _In_ ID3D11DeviceContext* pCo
 #pragma region Direct3D 12 functions
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
-bool IsSupportedTexture(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept
+
+bool IsSupportedTextureD3D12(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata) noexcept
 {
 	return DirectX::IsSupportedTexture(pDevice, metadata);
 }
 
-HRESULT CreateTexture(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _Outptr_ ID3D12Resource** ppResource) noexcept
+HRESULT CreateTextureD3D12(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _Outptr_ ID3D12Resource** ppResource) noexcept
 {
 	return DirectX::CreateTexture(pDevice, metadata, ppResource);
 }
 
-HRESULT CreateTextureEx(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _In_ D3D12_RESOURCE_FLAGS resFlags, _In_ bool forceSRGB, _Outptr_ ID3D12Resource** ppResource) noexcept
+HRESULT CreateTextureExD3D12(_In_ ID3D12Device* pDevice, _In_ const DirectX::TexMetadata& metadata, _In_ D3D12_RESOURCE_FLAGS resFlags, _In_ bool forceSRGB, _Outptr_ ID3D12Resource** ppResource) noexcept
 {
 	return DirectX::CreateTextureEx(pDevice, metadata, resFlags, forceSRGB, ppResource);
 }
 
-HRESULT PrepareUpload(_In_ ID3D12Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, std::vector<D3D12_SUBRESOURCE_DATA>& subresources)
+HRESULT PrepareUpload(_In_ ID3D12Device* pDevice, _In_reads_(nimages) const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata, void** subresources, size_t* nSubresources)
 {
-	return DirectX::PrepareUpload(pDevice, srcImages, nimages, metadata, subresources);
+	std::vector<D3D12_SUBRESOURCE_DATA> vec;
+	HRESULT result = DirectX::PrepareUpload(pDevice, srcImages, nimages, metadata, vec);
+	if (result == S_OK)
+	{
+		size_t width = vec.size() * sizeof(size_t);
+		void* output = CoTaskMemAlloc(width);
+		if (output == 0)
+			return S_FALSE;
+		memcpy(output, vec.data(), width);
+		*subresources = output;
+		*nSubresources = vec.size();
+	}
+	return result;
 }
 
-HRESULT CaptureTexture(_In_ ID3D12CommandQueue* pCommandQueue, _In_ ID3D12Resource* pSource, _In_ bool isCubeMap, _Out_ DirectX::ScratchImage& result, _In_ D3D12_RESOURCE_STATES beforeState, _In_ D3D12_RESOURCE_STATES afterState) noexcept
+HRESULT CaptureTextureD3D12(_In_ ID3D12CommandQueue* pCommandQueue, _In_ ID3D12Resource* pSource, _In_ bool isCubeMap, _Out_ DirectX::ScratchImage& result, _In_ D3D12_RESOURCE_STATES beforeState, _In_ D3D12_RESOURCE_STATES afterState) noexcept
 {
 	return DirectX::CaptureTexture(pCommandQueue, pSource, isCubeMap, result, beforeState, afterState);
 }

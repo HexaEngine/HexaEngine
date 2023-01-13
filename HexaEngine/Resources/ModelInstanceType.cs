@@ -235,7 +235,7 @@
             return true;
         }
 
-        public unsafe void DrawAuto(IGraphicsContext context, GraphicsPipeline pipeline, Viewport viewport, int indexCount)
+        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, int indexCount)
         {
             if (Material == null) return;
             if (semaphore.CurrentCount == 0) return;

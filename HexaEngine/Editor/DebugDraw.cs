@@ -23,12 +23,7 @@ namespace HexaEngine.Editor
     {
         private static IGraphicsDevice device;
         private static IGraphicsContext context;
-        private static IRasterizerState rs;
-        private static IDepthStencilState ds;
-        private static IBlendState bs;
-        private static IVertexShader vs;
-        private static IPixelShader ps;
-        private static IInputLayout il;
+        private static IGraphicsPipeline pipeline;
         private static IBuffer vb;
         private static IBuffer ib;
         private static IBuffer cb;
@@ -84,61 +79,20 @@ namespace HexaEngine.Editor
             var desc = RasterizerDescription.CullNone;
             desc.AntialiasedLineEnable = true;
             desc.MultisampleEnable = false;
-            rs = device.CreateRasterizerState(desc);
-            ds = device.CreateDepthStencilState(DepthStencilDescription.None);
-            bs = device.CreateBlendState(BlendDescription.NonPremultiplied);
-            string vsCode = @"
-struct VertexInputType
-{
-	float3 position : POSITION;
-    float4 color : COLOR;
-};
-struct GeometryInput
-{
-	float4 position : SV_POSITION;
-    float4 color : COLOR;
-};
-cbuffer MVPBuffer
-{
-    matrix view;
-    matrix proj;
-    matrix world;
-};
-GeometryInput main(VertexInputType input)
-{
-	GeometryInput output;
-    output.position = mul(float4(input.position, 1), world);
-    output.position = mul(output.position, view);
-    output.position = mul(output.position, proj);
-    output.color = input.color;
-	return output;
-}
-";
 
-            string psCode = @"
-struct PixelInputType
-{
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
-};
-float4 main(PixelInputType pixel) : SV_TARGET
-{
-    return pixel.color;
-}
-";
-            Shader* vsShader;
-            ShaderCache.GetShaderOrCompile(device, vsCode, "Internal:DebugDraw:VS", "vs_5_0", &vsShader);
-
-            vs = device.CreateVertexShader(vsShader);
-            il = device.CreateInputLayout(vsShader);
-            Free(vsShader);
-
-            Shader* psShader;
-            ShaderCache.GetShaderOrCompile(device, psCode, "Internal:DebugDraw:PS", "ps_5_0", &psShader);
-
-            ps = device.CreatePixelShader(psShader);
-
-            Free(psShader);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "internal/debugdraw/vs.hlsl",
+                PixelShader = "internal/debugdraw/ps.hlsl",
+            },
+            new GraphicsPipelineState()
+            {
+                DepthStencil = DepthStencilDescription.None,
+                Blend = BlendDescription.NonPremultiplied,
+                Rasterizer = desc,
+                BlendFactor = Vector4.One,
+                SampleMask = int.MaxValue,
+            });
 
             vb = device.CreateBuffer(new BufferDescription(vbCapacity * sizeof(VertexPositionColor), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             ib = device.CreateBuffer(new BufferDescription(ibCapacity * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
@@ -149,12 +103,7 @@ float4 main(PixelInputType pixel) : SV_TARGET
 
         public static void Dispose()
         {
-            rs.Dispose();
-            ds.Dispose();
-            bs.Dispose();
-            vs.Dispose();
-            ps.Dispose();
-            il.Dispose();
+            pipeline.Dispose();
             vb.Dispose();
             ib.Dispose();
             cb.Dispose();
@@ -253,16 +202,10 @@ float4 main(PixelInputType pixel) : SV_TARGET
                 view->View = Matrix4x4.Transpose(camera.Transform.View);
                 view->Proj = Matrix4x4.Transpose(camera.Transform.Projection);
 
-                context.SetBlendState(bs, Vector4.One);
-                context.SetRasterizerState(rs);
-                context.SetDepthStencilState(ds);
-                context.VSSetShader(vs);
-                context.PSSetShader(ps);
-                context.SetInputLayout(il);
                 context.VSSetConstantBuffer(cb, 0);
                 context.SetVertexBuffer(vb, (uint)sizeof(VertexPositionColor));
                 context.SetIndexBuffer(ib, Format.R32UInt, 0);
-                context.SetViewport(viewport);
+                pipeline.BeginDraw(context, viewport);
 
                 int voffset = 0;
                 uint ioffset = 0;
