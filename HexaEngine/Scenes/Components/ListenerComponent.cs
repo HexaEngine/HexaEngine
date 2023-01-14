@@ -1,8 +1,9 @@
-﻿namespace HexaEngine.Objects.Components
+﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Objects;
     using HexaEngine.OpenAL;
     using HexaEngine.Scenes;
 

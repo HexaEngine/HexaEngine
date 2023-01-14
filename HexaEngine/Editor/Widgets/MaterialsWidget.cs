@@ -20,6 +20,7 @@
         public override void DrawContent(IGraphicsContext context)
         {
             var scene = SceneManager.Current;
+
             if (scene is null)
             {
                 current = -1;
@@ -27,13 +28,13 @@
 
                 return;
             }
-
+            var manager = scene.MaterialManager;
             if (ImGui.Button("Create"))
             {
-                MaterialManager.Add(new() { Name = "New Material" });
+                manager.Add(new() { Name = "New Material" });
             }
 
-            if (MaterialManager.Count == 0)
+            if (manager.Count == 0)
             {
                 current = -1;
             }
@@ -47,18 +48,18 @@
 
             if (current != -1)
             {
-                var material = MaterialManager.Materials[current];
+                var material = manager.Materials[current];
 
                 var name = material.Name;
 
                 bool hasChanged = false;
                 if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
-                    if (MaterialManager.Materials.Any(x => x.Name != name))
+                    if (manager.Materials.Any(x => x.Name != name))
                     {
-                        MaterialManager.Remove(material);
+                        manager.Remove(material);
                         material.Name = name;
-                        MaterialManager.Add(material);
+                        manager.Add(material);
                     }
                 }
 
@@ -168,7 +169,7 @@
                 }
 
                 if (hasChanged)
-                    MaterialManager.Update(material);
+                    manager.Update(material);
             }
         }
     }

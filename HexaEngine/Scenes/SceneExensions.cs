@@ -3,7 +3,7 @@
     using HexaEngine.Objects;
     using System.Collections.Generic;
 
-    public static class SceneNodeExensions
+    public static class SceneExensions
     {
         public static bool AddIfIs<T>(this IList<T> list, GameObject obj)
         {

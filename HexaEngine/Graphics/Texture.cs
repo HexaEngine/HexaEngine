@@ -456,19 +456,20 @@
             fixed (byte* ptr = rawPixelData)
             {
                 subresourceData = new(ptr, rowPitch, slicePitch);
+
+                SubresourceData[] subresources = new SubresourceData[] { subresourceData };
+
+                Description = description;
+
+                resource = description.Dimension switch
+                {
+                    TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                    TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                    TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                    TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube),
+                    _ => throw new ArgumentOutOfRangeException(nameof(description)),
+                };
             }
-            SubresourceData[] subresources = new SubresourceData[] { subresourceData };
-
-            Description = description;
-
-            resource = description.Dimension switch
-            {
-                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube),
-                _ => throw new ArgumentOutOfRangeException(nameof(description)),
-            };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
@@ -483,17 +484,18 @@
             fixed (byte* ptr = rawPixelData)
             {
                 subresourceData = new(ptr, rowPitch, 0);
+
+                SubresourceData[] subresources = new SubresourceData[] { subresourceData };
+
+                Description = description;
+
+                resource = description.Dimension switch
+                {
+                    TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                    TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
+                    _ => throw new ArgumentOutOfRangeException(nameof(description)),
+                };
             }
-            SubresourceData[] subresources = new SubresourceData[] { subresourceData };
-
-            Description = description;
-
-            resource = description.Dimension switch
-            {
-                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
-                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.None),
-                _ => throw new ArgumentOutOfRangeException(nameof(description)),
-            };
             if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
@@ -532,30 +534,37 @@
             Viewport = Description.GetViewport();
         }
 
-        private unsafe IResource InitFallback(IGraphicsDevice device, TextureFileDescription description)
+        public Texture(IGraphicsDevice device, TextureDimension dimension, Vector4 color)
+        {
+            resource = InitFallback(device, dimension, color);
+            ShaderResourceView = device.CreateShaderResourceView(resource);
+        }
+
+        private unsafe IResource InitFallback(IGraphicsDevice device, TextureDimension dimension, Vector4 color)
         {
             SubresourceData fallback;
             Vector4[] values = new Vector4[16];
             for (int i = 0; i < 16; i++)
             {
-                values[i] = new(1f, 0.752941176f, 0.796078431f, 1f);
+                values[i] = color;
             }
             fixed (byte* ptr = MemoryMarshal.AsBytes(values.AsSpan()))
             {
                 fallback = new(ptr, sizeof(Vector4));
-            }
 
-            if (description.Dimension == TextureDimension.Texture1D)
-            {
-                return device.CreateTexture1D(Format.RGBA32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
-            }
-            if (description.Dimension == TextureDimension.Texture2D)
-            {
-                return device.CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
-            }
-            if (description.Dimension == TextureDimension.TextureCube)
-            {
-                return device.CreateTexture2D(Format.RGBA32Float, 4, 4, 6, 1, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback }, BindFlags.ShaderResource, Usage.Immutable, misc: ResourceMiscFlag.TextureCube);
+                if (dimension == TextureDimension.Texture1D)
+                {
+                    return device.CreateTexture1D(Format.RGBA32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
+                }
+                if (dimension == TextureDimension.Texture2D)
+                {
+                    return device.CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
+                }
+                if (dimension == TextureDimension.TextureCube)
+                {
+                    Texture2DDescription description = new(Format.RGBA32Float, 4, 4, 6, 1, BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, 1, 0, ResourceMiscFlag.TextureCube);
+                    return device.CreateTexture2D(description, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback });
+                }
             }
             throw new NotSupportedException();
         }

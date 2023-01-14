@@ -4,9 +4,9 @@
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
-    using HexaEngine.Objects.Components;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Components;
     using HexaEngine.Scenes.Managers;
     using ImGuizmoNET;
     using System.Numerics;
@@ -95,9 +95,9 @@
 
             if (drawSkeletons)
             {
-                for (int i = 0; i < MeshManager.Count; i++)
+                for (int i = 0; i < scene.MeshManager.Count; i++)
                 {
-                    var mesh = MeshManager.Meshes[i];
+                    var mesh = scene.MeshManager.Meshes[i];
                     if (mesh.Bones == null || mesh.Bones.Length == 0)
                         continue;
                     for (int j = 0; j < mesh.Bones.Length; j++)

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Objects.Components
+﻿namespace HexaEngine.Scenes.Components
 {
     using BepuPhysics;
     using BepuPhysics.Collidables;
@@ -6,6 +6,7 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Objects;
     using HexaEngine.Scenes;
     using System.Numerics;
 

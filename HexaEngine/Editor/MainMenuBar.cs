@@ -5,6 +5,7 @@
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Projects;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Serialization;
     using ImGuiNET;
 
     public static class MainMenuBar
@@ -59,6 +60,11 @@
                         {
                             SceneSerializer.Serialize(SceneManager.Current);
                         }
+                    }
+
+                    if (ImGui.MenuItem("Load"))
+                    {
+                        SceneManager.Load(SceneSerializer.Deserialize());
                     }
 
                     if (ImGui.MenuItem("Import"))

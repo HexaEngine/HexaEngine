@@ -10,7 +10,7 @@
         static ProjectHistory()
         {
             if (File.Exists("projectHistory.json"))
-                entries = JsonSerializer.Deserialize<List<HistoryEntry>>(File.ReadAllText("projectHistory.json")) ?? new();
+                entries = JsonConvert.DeserializeObject<List<HistoryEntry>>(File.ReadAllText("projectHistory.json")) ?? new();
             else
                 entries = new();
         }
@@ -44,7 +44,7 @@
 
         private static void Save()
         {
-            File.WriteAllText("projectHistory.json", JsonSerializer.Serialize(entries));
+            File.WriteAllText("projectHistory.json", JsonConvert.SerializeObject(entries));
         }
     }
 }

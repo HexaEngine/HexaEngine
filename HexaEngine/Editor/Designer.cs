@@ -3,7 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Projects;
-    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Importer;
     using ImGuiNET;
     using ImGuizmoNET;
     using ImNodesNET;

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Objects.Components
+﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;

@@ -22,20 +22,27 @@
         public BoundingBox BoundingBox;
         public BoundingSphere BoundingSphere;
 
-        public unsafe Mesh(IGraphicsDevice device, string name, MeshVertex* vertices, uint verticesCount, int* indices, uint indicesCount, BoundingBox box, BoundingSphere boundingSphere)
+        public unsafe Mesh(IGraphicsDevice device, string name, MeshVertex[] vertices, int[] indices, BoundingBox box, BoundingSphere boundingSphere)
         {
             this.name = name;
             BoundingBox = box;
             BoundingSphere = boundingSphere;
-            if (verticesCount != 0)
+            if (vertices.Length != 0)
             {
-                VB = device.CreateBuffer(vertices, verticesCount, BindFlags.VertexBuffer, Usage.Immutable);
-                VertexCount = (int)verticesCount;
+                fixed (MeshVertex* ptr = vertices)
+                {
+                    VB = device.CreateBuffer(ptr, (uint)vertices.Length, BindFlags.VertexBuffer, Usage.Immutable);
+                }
+
+                VertexCount = vertices.Length;
             }
-            if (indicesCount != 0)
+            if (indices.Length != 0)
             {
-                IB = device.CreateBuffer(indices, indicesCount, BindFlags.IndexBuffer, Usage.Immutable);
-                IndexCount = (int)indicesCount;
+                fixed (int* ptr = indices)
+                {
+                    IB = device.CreateBuffer(ptr, (uint)indices.Length, BindFlags.IndexBuffer, Usage.Immutable);
+                }
+                IndexCount = indices.Length;
             }
         }
 

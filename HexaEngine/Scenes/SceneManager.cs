@@ -4,11 +4,10 @@ namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
     using HexaEngine.Resources;
+    using HexaEngine.Scenes.Managers;
     using HexaEngine.Windows;
-    using Silk.NET.Assimp;
     using System;
     using System.Runtime.CompilerServices;
-    using System.Security.Cryptography;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -44,9 +43,9 @@ namespace HexaEngine.Scenes
 
             window.RenderDispatcher.InvokeBlocking(() =>
             {
-                scene.Initialize(window.Device);
                 if (Current == null)
                 {
+                    scene.Initialize(window.Device);
                     Current = scene;
                     SceneChanged?.Invoke(null, new(null, scene));
                     return;
@@ -54,18 +53,19 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     var old = Current;
+                    Current = null;
                     if (scene == null)
                     {
-                        Current?.Uninitialize();
-                        Current = null;
+                        old?.Uninitialize();
                         ResourceManager.Release();
+                        Current = null;
                     }
                     else
                     {
-                        ResourceManager.BeginPauseCleanup();
-                        Current?.Uninitialize();
+                        old?.Uninitialize();
+                        ResourceManager.Release();
+                        scene.Initialize(window.Device);
                         Current = scene;
-                        ResourceManager.EndPauseCleanup();
                     }
 
                     SceneChanged?.Invoke(null, new(old, scene));
@@ -138,9 +138,9 @@ namespace HexaEngine.Scenes
 
             await window.RenderDispatcher.InvokeAsync(() =>
             {
-                scene.Initialize(window.Device);
                 if (Current == null)
                 {
+                    scene.Initialize(window.Device);
                     Current = scene;
                     SceneChanged?.Invoke(null, new(null, scene));
                     return;
@@ -148,8 +148,21 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     var old = Current;
-                    Current?.Uninitialize();
-                    Current = scene;
+                    Current = null;
+                    if (scene == null)
+                    {
+                        old?.Uninitialize();
+                        ResourceManager.Release();
+                        Current = null;
+                    }
+                    else
+                    {
+                        old?.Uninitialize();
+                        ResourceManager.Release();
+                        scene.Initialize(window.Device);
+                        Current = scene;
+                    }
+
                     SceneChanged?.Invoke(null, new(old, scene));
                 }
                 GC.WaitForPendingFinalizers();

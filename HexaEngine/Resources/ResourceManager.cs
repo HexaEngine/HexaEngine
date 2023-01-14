@@ -9,6 +9,7 @@
     using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Numerics;
 
     public static class ResourceManager
     {
@@ -81,7 +82,7 @@
             {
                 if (meshes.TryGetValue(mesh.Name, out var value))
                     return value;
-                Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.VerticesCount, mesh.Indices, mesh.IndicesCount, mesh.BoundingBox, mesh.BoundingSphere);
+                Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.BoundingBox, mesh.BoundingSphere);
                 meshes.TryAdd(mesh.Name, model);
                 return model;
             }
@@ -665,6 +666,26 @@
             }
         }
 
+        public static Graphics.Texture AddTexture(string name, TextureDescription description, Span<byte> rawPixelData, int rowPitch)
+        {
+            lock (sharedResources)
+            {
+                Graphics.Texture texture = new(device, rawPixelData, rowPitch, description);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
+        public static Graphics.Texture AddTexture(string name, TextureDescription description, Span<byte> rawPixelData, int rowPitch, int slicePitch)
+        {
+            lock (sharedResources)
+            {
+                Graphics.Texture texture = new(device, rawPixelData, rowPitch, slicePitch, description);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
         public static IRenderTargetView? AddTextureRTV(string name, TextureDescription description)
         {
             lock (sharedResources)
@@ -700,6 +721,16 @@
             lock (sharedResources)
             {
                 Graphics.Texture texture = new(device, description);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
+        public static Graphics.Texture AddTextureColor(string name, TextureDimension dimension, Vector4 color)
+        {
+            lock (sharedResources)
+            {
+                Graphics.Texture texture = new(device, dimension, color);
                 AddResource(name, texture);
                 return texture;
             }

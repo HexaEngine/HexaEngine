@@ -18,7 +18,6 @@
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
-    using System.Text.Json.Serialization;
 
     public struct NodePtr
     {
@@ -36,10 +35,9 @@
         private readonly List<Light> lights = new();
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
+        private MaterialManager materialManager;
+        private MeshManager meshManager;
         private readonly SemaphoreSlim semaphore = new(1);
-
-        [JsonIgnore]
-        public readonly ConcurrentQueue<SceneCommand> CommandQueue = new();
 
         [JsonIgnore]
         public Simulation Simulation;
@@ -64,20 +62,25 @@
         [JsonIgnore]
         public SceneDispatcher Dispatcher { get; } = new();
 
-        public IReadOnlyList<Camera> Cameras => cameras;
-
-        public string[] CameraNames => cameraNames;
-
-        public IReadOnlyList<Light> Lights => lights;
+        public List<Camera> Cameras => cameras;
 
         [JsonIgnore]
-        public IReadOnlyList<GameObject> Nodes => nodes;
+        public string[] CameraNames => cameraNames;
+
+        public List<Light> Lights => lights;
+
+        [JsonIgnore]
+        public List<GameObject> Nodes => nodes;
 
         [JsonIgnore]
         public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
 
         [JsonIgnore]
         public InstanceManager InstanceManager => instanceManager;
+
+        public MaterialManager MaterialManager => materialManager;
+
+        public MeshManager MeshManager => meshManager;
 
         public GameObject Root => root;
 
@@ -86,6 +89,8 @@
         public void Initialize(IGraphicsDevice device)
         {
             instanceManager = new(device);
+            materialManager = new();
+            meshManager = new();
             semaphore.Wait();
 
             BufferPool = new BufferPool();
@@ -254,6 +259,11 @@
             semaphore.Wait();
             root.Merge(node);
             semaphore.Release();
+        }
+
+        public void BuildTree()
+        {
+            root.BuildTree();
         }
 
         public void Uninitialize()

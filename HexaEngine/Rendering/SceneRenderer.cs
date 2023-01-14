@@ -24,6 +24,7 @@
     using ImGuiNET;
     using System;
     using System.Numerics;
+    using System.Runtime.InteropServices;
     using Texture = Graphics.Texture;
 
     // TODO: Cleanup and specialization
@@ -224,18 +225,12 @@
                 forward.PSMs = psmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
                 effects.Add(forward);
 
-                if (FileSystem.Exists(Paths.CurrentTexturePath + "env_o.dds"))
-                    env = ResourceManager.AddTextureFile("Environment", new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
-                else
-                    env = ResourceManager.AddTexture("Environment", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
-                if (FileSystem.Exists(Paths.CurrentTexturePath + "irradiance_o.dds"))
-                    envirr = ResourceManager.AddTextureFile("EnvironmentIrradiance", new TextureFileDescription(Paths.CurrentTexturePath + "irradiance_o.dds", TextureDimension.TextureCube));
-                else
-                    envirr = ResourceManager.AddTexture("EnvironmentIrradiance", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
-                if (FileSystem.Exists(Paths.CurrentTexturePath + "prefilter_o.dds"))
-                    envfilter = ResourceManager.AddTextureFile("EnvironmentPrefilter", new TextureFileDescription(Paths.CurrentTexturePath + "prefilter_o.dds", TextureDimension.TextureCube));
-                else
-                    envfilter = ResourceManager.AddTexture("EnvironmentPrefilter", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
+                Vector4 solidColor = new(0.0001f, 0.0001f, 0.0001f, 1);
+                Vector4 ambient = new(0.01f, 0.01f, 0.01f, 1);
+
+                env = ResourceManager.AddTextureColor("Environment", TextureDimension.TextureCube, solidColor);
+                envirr = ResourceManager.AddTextureColor("EnvironmentIrradiance", TextureDimension.TextureCube, ambient);
+                envfilter = ResourceManager.AddTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, solidColor);
 
                 envsmp = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
 
@@ -461,11 +456,31 @@
             ssr.Depth = depthbuffer.ShaderResourceView;
         }
 
+        public unsafe void LoadScene()
+        {
+            env.Dispose();
+            if (FileSystem.Exists(Paths.CurrentTexturePath + "env_o.dds"))
+                env = ResourceManager.AddTextureFile("Environment", new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
+            else
+                env = ResourceManager.AddTexture("Environment", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
+            envirr.Dispose();
+            if (FileSystem.Exists(Paths.CurrentTexturePath + "irradiance_o.dds"))
+                envirr = ResourceManager.AddTextureFile("EnvironmentIrradiance", new TextureFileDescription(Paths.CurrentTexturePath + "irradiance_o.dds", TextureDimension.TextureCube));
+            else
+                envirr = ResourceManager.AddTexture("EnvironmentIrradiance", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
+            envfilter.Dispose();
+            if (FileSystem.Exists(Paths.CurrentTexturePath + "prefilter_o.dds"))
+                envfilter = ResourceManager.AddTextureFile("EnvironmentPrefilter", new TextureFileDescription(Paths.CurrentTexturePath + "prefilter_o.dds", TextureDimension.TextureCube));
+            else
+                envfilter = ResourceManager.AddTexture("EnvironmentPrefilter", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
+        }
+
         public unsafe void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera? camera)
         {
             if (!initialized) return;
             if (camera == null) return;
 
+            var mm = scene.MeshManager;
             var types = scene.InstanceManager.Types;
 
             // Note the "new" doesn't apply any gc pressure, because the buffer as an array in the background that is already allocated on the unmanaged heap.
@@ -637,13 +652,16 @@
             // Light Pass
             if (forwardMode)
             {
-                for (int i = 0; i < MeshManager.Count; i++)
+                forward.Draw(context);
+                for (int i = 0; i < types.Count; i++)
                 {
-                    if (ResourceManager.GetMesh(MeshManager.Meshes[i], out var mesh))
+                    var type = types[i];
+                    if (type.BeginDraw(context))
                     {
-                        mesh.DrawAuto(context, forward);
+                        context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
                     }
                 }
+                context.ClearState();
             }
             else
             {

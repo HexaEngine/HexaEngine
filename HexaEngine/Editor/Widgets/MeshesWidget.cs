@@ -21,22 +21,24 @@
                 return;
             }
 
-            bool selected = ImGui.Combo("Mesh", ref current, MeshManager.Meshes.Select(x => x.Name).ToArray(), MeshManager.Count);
+            var manager = scene.MeshManager;
+
+            bool selected = ImGui.Combo("Mesh", ref current, manager.Meshes.Select(x => x.Name).ToArray(), manager.Count);
 
             ImGui.Separator();
 
             if (current != -1)
             {
-                MeshData mesh = MeshManager.Meshes[current];
+                MeshData mesh = manager.Meshes[current];
                 {
                     string name = mesh.Name;
                     if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                     {
-                        if (MeshManager.Meshes.All(x => x.Name != name))
+                        if (manager.Meshes.All(x => x.Name != name))
                         {
-                            MeshManager.Remove(mesh);
+                            manager.Remove(mesh);
                             mesh.Name = name;
-                            MeshManager.Add(mesh);
+                            manager.Add(mesh);
                         }
                     }
                 }

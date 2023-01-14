@@ -1,9 +1,11 @@
-﻿namespace HexaEngine.Objects.Components
+﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Objects;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using System;
 
@@ -19,7 +21,7 @@
             ObjectEditorFactory.RegisterEditor(typeof(RendererComponent), new RendererComponentEditor());
         }
 
-        public IReadOnlyList<Model> Meshes => models;
+        public List<Model> Meshes => models;
 
         public void Awake(IGraphicsDevice device, GameObject node)
         {

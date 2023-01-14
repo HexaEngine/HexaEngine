@@ -5,18 +5,27 @@
     using System;
     using System.Collections.Generic;
 
-    public static class MaterialManager
+    public class MaterialManager
     {
-        private static readonly List<MaterialDesc> materials = new();
-        private static string[] names = Array.Empty<string>();
+        private readonly List<MaterialDesc> materials = new();
+        private string[] names = Array.Empty<string>();
 
-        public static string[] Names => names;
+        public MaterialManager()
+        {
+        }
 
-        public static IReadOnlyList<MaterialDesc> Materials => materials;
+        public MaterialManager(IEnumerable<MaterialDesc> materials)
+        {
+            this.materials.AddRange(materials);
+        }
 
-        public static int Count => materials.Count;
+        public string[] Names => names;
 
-        public static void Clear()
+        public IReadOnlyList<MaterialDesc> Materials => materials;
+
+        public int Count => materials.Count;
+
+        public void Clear()
         {
             lock (materials)
             {
@@ -24,7 +33,7 @@
             }
         }
 
-        public static void Add(MaterialDesc desc)
+        public void Add(MaterialDesc desc)
         {
             lock (materials)
             {
@@ -56,7 +65,7 @@
             }
         }
 
-        public static async void Update(MaterialDesc desc)
+        public async void Update(MaterialDesc desc)
         {
             lock (materials)
             {
@@ -72,7 +81,7 @@
             await ResourceManager.AsyncUpdateMaterial(desc);
         }
 
-        public static void Remove(MaterialDesc desc)
+        public void Remove(MaterialDesc desc)
         {
             lock (materials)
             {

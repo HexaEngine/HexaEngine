@@ -6,6 +6,7 @@
     [EditorNode<PointLight>("Point Light")]
     public class PointLight : Light
     {
+        [JsonIgnore]
         public readonly unsafe BoundingBox* ShadowBox;
 
         public unsafe PointLight()
@@ -20,6 +21,7 @@
         [EditorProperty("Strength")]
         public float Strength { get; set; } = 1000;
 
+        [JsonIgnore]
         public override LightType Type => LightType.Point;
 
         public override unsafe void Uninitialize()

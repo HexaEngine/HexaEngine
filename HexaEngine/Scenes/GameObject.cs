@@ -9,7 +9,6 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
-    using System.Text.Json.Serialization;
 
     public class GameObject
     {
@@ -195,11 +194,9 @@
 
         #endregion Sele
 
-        [JsonInclude]
-        public virtual IReadOnlyList<GameObject> Children => children;
+        public virtual List<GameObject> Children => children;
 
-        [JsonInclude]
-        public virtual IReadOnlyList<IComponent> Components => components;
+        public virtual List<IComponent> Components => components;
 
         [JsonIgnore]
         public bool Initialized => initialized;
@@ -314,7 +311,7 @@
             Transform.Parent = parent?.Transform;
             scene = GetScene();
             scene.RegisterChild(this);
-            GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Load, this));
+
             Device = device;
             initialized = true;
             for (int i = 0; i < components.Count; i++)
@@ -340,7 +337,6 @@
             }
             scene?.UnregisterChild(this);
             initialized = false;
-            GetScene().CommandQueue.Enqueue(new SceneCommand(CommandType.Unload, this));
         }
 
         public virtual Scene GetScene()
@@ -348,6 +344,16 @@
             if (scene != null)
                 return scene;
             return parent?.GetScene() ?? throw new("Node tree invalid");
+        }
+
+        public virtual void BuildTree()
+        {
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+                child.parent = this;
+                child.BuildTree();
+            }
         }
 
         public virtual void GetDepth(ref int depth)

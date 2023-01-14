@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Scenes.Importer
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
@@ -6,8 +6,9 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Objects;
-    using HexaEngine.Objects.Components;
     using HexaEngine.Resources;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Components;
     using HexaEngine.Scenes.Managers;
     using Silk.NET.Assimp;
     using System.Diagnostics;
@@ -15,6 +16,7 @@
     using System.Runtime.InteropServices;
     using System.Text;
     using AssimpScene = Silk.NET.Assimp.Scene;
+    using Scene = Scene;
 
     public class AssimpSceneLoader
     {
@@ -306,8 +308,8 @@
             {
                 Silk.NET.Assimp.Mesh* msh = scene->MMeshes[i];
 
-                MeshVertex* vertices = Alloc<MeshVertex>(msh->MNumVertices);
-                int* indices = Alloc<int>(msh->MNumFaces * 3);
+                MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
+                int[] indices = new int[msh->MNumFaces * 3];
                 for (int j = 0; j < msh->MNumFaces; j++)
                 {
                     var face = msh->MFaces[j];
@@ -369,7 +371,7 @@
                 float radius = box.Extent.Length();
                 BoundingSphere sphere = new(center, radius);
 
-                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, IndicesCount = msh->MNumFaces * 3, Vertices = vertices, VerticesCount = msh->MNumVertices, BoundingBox = box, BoundingSphere = sphere, Bones = bones, Animature = animature };
+                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, Vertices = vertices, BoundingBox = box, BoundingSphere = sphere, Bones = bones, Animature = animature };
                 models[i] = new(meshes[i], materials[(int)msh->MMaterialIndex]);
 
                 meshesT.Add(msh, meshes[i]);
@@ -498,11 +500,11 @@
 
             for (int i = 0; i < materials.Length; i++)
             {
-                MaterialManager.Add(materials[i]);
+                scene.MaterialManager.Add(materials[i]);
             }
             for (int i = 0; i < meshes.Length; i++)
             {
-                MeshManager.Add(meshes[i]);
+                scene.MeshManager.Add(meshes[i]);
             }
         }
 

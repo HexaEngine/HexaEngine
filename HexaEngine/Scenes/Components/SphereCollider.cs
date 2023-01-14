@@ -1,15 +1,15 @@
-﻿namespace HexaEngine.Objects.Components
+﻿namespace HexaEngine.Scenes.Components
 {
     using BepuPhysics;
     using BepuPhysics.Collidables;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
+    using HexaEngine.Objects;
     using HexaEngine.Scenes;
 
-    [EditorComponent<CylinderCollider>("Cylinder Collider")]
-    public class CylinderCollider : IComponent
+    [EditorComponent<SphereCollider>("Sphere Collider")]
+    public class SphereCollider : IComponent
     {
         private bool init = false;
         private bool update = true;
@@ -22,7 +22,6 @@
         private ColliderType type;
         private float mass = 1;
         private float radius = 1;
-        private float length = 1;
         private float sleepThreshold = 0.01f;
 
         [EditorProperty<ColliderType>("Type")]
@@ -32,10 +31,6 @@
         [EditorProperty("Radius")]
         public float Radius
         { get => radius; set { radius = value; update = true; } }
-
-        [EditorProperty("Length")]
-        public float Length
-        { get => length; set { length = value; update = true; } }
 
         [EditorProperty("Mass")]
         public float Mass
@@ -57,16 +52,16 @@
             Uninit();
             update = false;
             init = true;
-            Cylinder cylinder = new(radius, length * 2);
+            Sphere sphere = new(radius);
             RigidPose pose = new(node.Transform.GlobalPosition, node.Transform.GlobalOrientation);
-            index = scene.Simulation.Shapes.Add(cylinder);
+            index = scene.Simulation.Shapes.Add(sphere);
             if (Type == ColliderType.Static)
             {
                 staticHandle = scene.Simulation.Statics.Add(new(pose, index));
             }
             if (Type == ColliderType.Dynamic)
             {
-                var inertia = cylinder.ComputeInertia(mass);
+                var inertia = sphere.ComputeInertia(mass);
                 bodyHandle = scene.Simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, new BodyVelocity(), inertia, new CollidableDescription(index), new(sleepThreshold)));
                 bodyReference = scene.Simulation.Bodies.GetBodyReference(bodyHandle);
             }
