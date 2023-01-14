@@ -5,12 +5,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Scenes;
 
-#if GenericAttributes
     [EditorComponent<CylinderCollider>("Cylinder Collider")]
-#endif
-
     public class CylinderCollider : IComponent
     {
         private bool init = false;
@@ -27,16 +25,7 @@
         private float length = 1;
         private float sleepThreshold = 0.01f;
 
-        public CylinderCollider()
-        {
-            Editor = new PropertyEditor<CylinderCollider>(this);
-        }
-
-        public IPropertyEditor? Editor { get; }
-#if GenericAttributes
         [EditorProperty<ColliderType>("Type")]
-#endif
-
         public ColliderType Type
         { get => type; set { type = value; update = true; } }
 

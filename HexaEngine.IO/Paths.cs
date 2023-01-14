@@ -18,8 +18,6 @@
 
         public static string CurrentScriptFolder { get; set; } = "assets/scripts/";
 
-        public static string CurrentConsoleScriptFolder { get; set; } = "assets/console/";
-
         public static string CurrentProjectFolder { get; set; } = Path.GetFullPath(CurrentAssetsPath);
     }
 }

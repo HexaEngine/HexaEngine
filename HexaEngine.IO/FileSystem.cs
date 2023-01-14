@@ -11,6 +11,7 @@
     {
         private static readonly List<Asset> assetBundles = new();
         private static readonly Dictionary<string, string> fileIndices = new();
+        private static readonly List<string> sources = new();
 
         static FileSystem()
         {
@@ -36,6 +37,80 @@
                     }
                 }
             }
+        }
+
+        public static void Refresh()
+        {
+            fileIndices.Clear();
+            foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
+            {
+                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                {
+                    var abs = Path.GetFullPath(file);
+                    var rel = Path.GetRelativePath(dir, abs);
+                    var log = Path.Combine("assets\\", rel);
+
+                    if (fileIndices.ContainsKey(log))
+                    {
+                        fileIndices[log] = abs;
+                    }
+                    else
+                    {
+                        fileIndices.Add(log, abs);
+                    }
+                }
+            }
+
+            foreach (var source in sources)
+            {
+                foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
+                {
+                    foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                    {
+                        var abs = Path.GetFullPath(file);
+                        var rel = Path.GetRelativePath(source, abs);
+                        var log = Path.Combine("assets\\", rel);
+
+                        if (fileIndices.ContainsKey(log))
+                        {
+                            fileIndices[log] = abs;
+                        }
+                        else
+                        {
+                            fileIndices.Add(log, abs);
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void AddSource(string source)
+        {
+            sources.Add(source);
+            foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
+            {
+                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                {
+                    var abs = Path.GetFullPath(file);
+                    var rel = Path.GetRelativePath(source, abs);
+                    var log = Path.Combine("assets\\", rel);
+
+                    if (fileIndices.ContainsKey(log))
+                    {
+                        fileIndices[log] = abs;
+                    }
+                    else
+                    {
+                        fileIndices.Add(log, abs);
+                    }
+                }
+            }
+        }
+
+        public static void RemoveSource(string source)
+        {
+            sources.Remove(source);
+            Refresh();
         }
 
         public static bool Exists(string? path)
@@ -81,7 +156,6 @@
 
                 return asset.GetStream();
             }
-            
 
             throw new FileNotFoundException(realPath);
         }
@@ -116,7 +190,7 @@
                 stream = asset.GetStream();
                 return true;
             }
-            
+
             stream = default;
             return false;
         }

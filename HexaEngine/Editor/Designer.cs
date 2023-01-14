@@ -33,8 +33,6 @@
 
         public static History History { get; } = new();
 
-        public static HexaProject? CurrentProject { get; set; }
-
         static Designer()
         {
             Keyboard.Released += (s, e) =>

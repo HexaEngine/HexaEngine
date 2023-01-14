@@ -239,9 +239,9 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 
 	float3 V = normalize(GetCameraPos() - position);
 
-	float IOR = 1.5;
-	float3 F0 = float3(pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0));
-	//float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
+	//float IOR = 1.5;
+	//float3 F0 = float3(pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0));
+	float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
 
 	float3 Lo = attrs.emission;
 

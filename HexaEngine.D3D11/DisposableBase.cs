@@ -18,10 +18,11 @@
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
                 if (child == null) return null;
                 uint len;
-                child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, null);
+                Guid guid = D3DDebugObjectName;
+                child->GetPrivateData(&guid, &len, null);
                 byte* pName = Alloc<byte>(len);
-                child->GetPrivateData(Utils.Guid(D3DDebugObjectName), &len, pName);
-                string str = Utils.ToStr(pName);
+                child->GetPrivateData(&guid, &len, pName);
+                string str = Utils.ToStr(pName, len);
                 Free(pName);
                 return str;
             }
@@ -29,15 +30,16 @@
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
                 if (child == null) return;
+                Guid guid = D3DDebugObjectName;
                 if (value != null)
                 {
                     byte* pName = value.ToUTF8();
-                    child->SetPrivateData(Utils.Guid(D3DDebugObjectName), (uint)value.Length, pName);
+                    child->SetPrivateData(&guid, (uint)value.Length, pName);
                     Free(pName);
                 }
                 else
                 {
-                    child->SetPrivateData(Utils.Guid(D3DDebugObjectName), 0, null);
+                    child->SetPrivateData(&guid, 0, null);
                 }
             }
         }

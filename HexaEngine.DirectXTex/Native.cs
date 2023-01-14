@@ -1,4 +1,5 @@
 ﻿using Silk.NET.Direct3D11;
+using Silk.NET.Direct3D12;
 using Silk.NET.DXGI;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -605,18 +606,26 @@ namespace HexaEngine.DirectXTex
 
         #region Direct3D 12 functions
 
-#if D3D12
-    [DllImport(LibName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-    internal static unsafe extern bool IsSupportedTexture( ID3D12Device* pDevice,  TexMetadata* metadata);
-    [DllImport(LibName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-    internal static unsafe extern int CreateTexture( ID3D12Device* pDevice,  TexMetadata* metadata, ID3D12Resource** ppResource);
-    [DllImport(LibName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-    internal static unsafe extern int CreateTextureEx( ID3D12Device* pDevice,  TexMetadata* metadata,  D3D12_RESOURCE_FLAGS resFlags,  bool forceSRGB, ID3D12Resource** ppResource);
-    [DllImport(LibName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-    internal static unsafe extern int PrepareUpload( ID3D12Device* pDevice, Image* srcImages,  ulong nimages,  TexMetadata* metadata, std::vector<D3D12_SUBRESOURCE_DATA> &subresources);
-    [DllImport(LibName, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-    internal static unsafe extern int CaptureTexture( ID3D12CommandQueue* pCommandQueue,  ID3D12Resource* pSource,  bool isCubeMap, void* result,  D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET,  D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET);
-#endif
+        [LibraryImport(LibName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static unsafe partial bool IsSupportedTextureD3D12(ID3D12Device* pDevice, TexMetadata* metadata);
+
+        [LibraryImport(LibName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static unsafe partial int CreateTextureD3D12(ID3D12Device* pDevice, TexMetadata* metadata, ID3D12Resource** ppResource);
+
+        [LibraryImport(LibName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static unsafe partial int CreateTextureExD3D12(ID3D12Device* pDevice, TexMetadata* metadata, ResourceFlags resFlags, [MarshalAs(UnmanagedType.Bool)] bool forceSRGB, ID3D12Resource** ppResource);
+
+        [LibraryImport(LibName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static unsafe partial int PrepareUpload(ID3D12Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Silk.NET.Direct3D12.SubresourceData** subresources, int* count);
+
+        [LibraryImport(LibName)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        internal static unsafe partial int CaptureTextureD3D12(ID3D12CommandQueue* pCommandQueue, ID3D12Resource* pSource, [MarshalAs(UnmanagedType.Bool)] bool isCubeMap, void* result, ResourceStates beforeState = ResourceStates.RenderTarget, ResourceStates afterState = ResourceStates.RenderTarget);
 
         #endregion Direct3D 12 functions
     }

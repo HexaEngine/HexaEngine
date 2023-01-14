@@ -6,7 +6,7 @@
     {
         GraphicsPipelineDesc Description { get; }
 
-        string Name { get; }
+        string DebugName { get; }
 
         GraphicsPipelineState State { get; set; }
 

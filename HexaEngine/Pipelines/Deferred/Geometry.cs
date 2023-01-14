@@ -150,6 +150,8 @@ namespace HexaEngine.Pipelines.Deferred
             {
                 pipeline.Dispose();
                 depthOnly.Dispose();
+                depthFront.Dispose();
+                depthBack.Dispose();
                 disposedValue = true;
             }
         }

@@ -104,44 +104,44 @@
             return new ComputePipeline(this, desc);
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc);
+            return new GraphicsPipeline(this, desc, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, macros);
+            return new GraphicsPipeline(this, desc, macros, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, elementDescriptions);
+            return new GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, inputElements, macros);
+            return new GraphicsPipeline(this, desc, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state);
+            return new GraphicsPipeline(this, desc, state, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, macros);
+            return new GraphicsPipeline(this, desc, state, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, elementDescriptions);
+            return new GraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
         }
 
-        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, inputElements, macros);
+            return new GraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

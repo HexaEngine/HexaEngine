@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Objects.Components
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using ImGuiNET;
@@ -14,12 +14,10 @@
         private GameObject? gameObject;
         private bool initialized;
 
-        public RendererComponent()
+        static RendererComponent()
         {
-            Editor = new RendererComponentEditor(this);
+            ObjectEditorFactory.RegisterEditor(typeof(RendererComponent), new RendererComponentEditor());
         }
-
-        public IPropertyEditor? Editor { get; }
 
         public IReadOnlyList<Model> Meshes => models;
 
@@ -70,25 +68,25 @@
             }
         }
 
-        private class RendererComponentEditor : IPropertyEditor
+        private class RendererComponentEditor : IObjectEditor
         {
-            private readonly RendererComponent component;
-            private int currentMesh;
+            private object? instance;
 
-            public RendererComponentEditor(RendererComponent component)
+            public RendererComponentEditor()
             {
                 Type = typeof(RendererComponent);
                 Name = "Renderer";
-                this.component = component;
             }
 
             public Type Type { get; }
 
             public string Name { get; }
+            public object? Instance { get => instance; set => instance = value; }
 
             public void Draw()
             {
-                var scene = SceneManager.Current;
+                if (instance == null) return;
+                RendererComponent component = (RendererComponent)instance;
                 for (int i = 0; i < component.models.Count; i++)
                 {
                     Model model = component.models[i];

@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.IO
 {
+    using K4os.Compression.LZ4;
+    using K4os.Compression.LZ4.Streams;
     using System;
     using System.Buffers.Binary;
     using System.IO;
@@ -10,6 +12,7 @@
     {
         None = 0,
         Deflate,
+        LZ4,
     }
 
     public struct AssetArchiveHeaderEntry
@@ -198,9 +201,13 @@
                         break;
 
                     case Compression.Deflate:
-                        MemoryStream ms = new(new byte[entry.ActualLength]);
-                        DeflateDecompress(new VirtualStream(fs, entry.Start + contentOffset, entry.Length, false), ms);
-                        assets[i] = new Asset(entry.Type, 0, entry.ActualLength, entry.Path, ms);
+                        var st = DeflateDecompress(new VirtualStream(fs, entry.Start + contentOffset, entry.Length, false));
+                        assets[i] = new Asset(entry.Type, 0, entry.ActualLength, entry.Path, new VirtualCompressedStream(st));
+                        break;
+
+                    case Compression.LZ4:
+                        var lz = LZ4Decompress(new VirtualStream(fs, entry.Start + contentOffset, entry.Length, false));
+                        assets[i] = new Asset(entry.Type, 0, entry.ActualLength, entry.Path, new VirtualCompressedStream(lz));
                         break;
                 }
             }
@@ -235,10 +242,21 @@
                         break;
 
                     case Compression.Deflate:
-                        var buffer = DeflateCompress(asset.GetStream(), level);
-                        entry.Length = buffer.Length;
-                        entry.ActualLength = asset.Length;
-                        fs.Write(buffer);
+                        {
+                            var buffer = DeflateCompress(asset.GetStream(), level);
+                            entry.Length = buffer.Length;
+                            entry.ActualLength = asset.Length;
+                            fs.Write(buffer);
+                        }
+                        break;
+
+                    case Compression.LZ4:
+                        {
+                            var buffer = LZ4Compress(asset.GetStream(), level);
+                            entry.Length = buffer.Length;
+                            entry.ActualLength = asset.Length;
+                            fs.Write(buffer);
+                        }
                         break;
                 }
 
@@ -321,10 +339,21 @@
                             break;
 
                         case Compression.Deflate:
-                            var buffer = DeflateCompress(ts, level);
-                            entry.ActualLength = ts.Length;
-                            entry.Length = buffer.Length;
-                            fs.Write(buffer);
+                            {
+                                var buffer = DeflateCompress(ts, level);
+                                entry.ActualLength = ts.Length;
+                                entry.Length = buffer.Length;
+                                fs.Write(buffer);
+                            }
+                            break;
+
+                        case Compression.LZ4:
+                            {
+                                var buffer = LZ4Compress(ts, level);
+                                entry.ActualLength = ts.Length;
+                                entry.Length = buffer.Length;
+                                fs.Write(buffer);
+                            }
                             break;
                     }
 
@@ -397,10 +426,21 @@
                             break;
 
                         case Compression.Deflate:
-                            var buffer = DeflateCompress(ts, level);
-                            entry.ActualLength = ts.Length;
-                            entry.Length = buffer.Length;
-                            fs.Write(buffer);
+                            {
+                                var buffer = DeflateCompress(ts, level);
+                                entry.ActualLength = ts.Length;
+                                entry.Length = buffer.Length;
+                                fs.Write(buffer);
+                            }
+                            break;
+
+                        case Compression.LZ4:
+                            {
+                                var buffer = LZ4Compress(ts, level);
+                                entry.ActualLength = ts.Length;
+                                entry.Length = buffer.Length;
+                                fs.Write(buffer);
+                            }
                             break;
                     }
 
@@ -476,6 +516,33 @@
             using var decompressor = new DeflateStream(input, CompressionMode.Decompress);
             decompressor.CopyTo(output);
             decompressor.Close();
+        }
+
+        private static Stream DeflateDecompress(Stream input)
+        {
+            return new DeflateStream(input, CompressionMode.Decompress);
+        }
+
+        private static byte[] LZ4Compress(Stream input, CompressionLevel level)
+        {
+            LZ4Level lzlevel = level switch
+            {
+                CompressionLevel.Optimal => LZ4Level.L11_OPT,
+                CompressionLevel.Fastest => LZ4Level.L00_FAST,
+                CompressionLevel.NoCompression => throw new NotImplementedException(),
+                CompressionLevel.SmallestSize => LZ4Level.L12_MAX,
+                _ => default,
+            };
+            using var compressStream = new MemoryStream();
+            using var compressor = LZ4Stream.Encode(compressStream, lzlevel, 0);
+            input.CopyTo(compressor);
+            compressor.Close();
+            return compressStream.ToArray();
+        }
+
+        private static Stream LZ4Decompress(Stream input)
+        {
+            return LZ4Stream.Decode(input);
         }
     }
 }

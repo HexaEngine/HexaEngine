@@ -2,7 +2,6 @@
 {
     using HexaEngine.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.OpenAL;
     using HexaEngine.Scenes;
@@ -14,16 +13,9 @@
         private Listener listener;
         private GameObject gameObject;
 
-        public ListenerComponent()
-        {
-            Editor = new PropertyEditor<ListenerComponent>(this);
-        }
-
         [EditorProperty("Is Active")]
         public bool IsActive
         { get => isActive; set { listener.IsActive = value; isActive = value; } }
-
-        public IPropertyEditor? Editor { get; }
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {

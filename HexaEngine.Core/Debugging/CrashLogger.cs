@@ -1,31 +1,26 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    using HexaEngine.Core.Logging;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using System.Diagnostics;
+    using System.IO;
 
     public static class CrashLogger
     {
-        private static StreamWriter? writer;
-
-        public static void Start()
+        public static void Initialize()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-            writer = new(File.Create("app.log"));
-        }
-
-        private static void CurrentDomain_ProcessExit(object? sender, EventArgs e)
-        {
-            writer?.Close();
+            Trace.Listeners.Add(new DebugListener($"logs/app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log"));
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            writer?.WriteLine(e.ExceptionObject.ToString());
-            writer?.Close();
+            if (e.IsTerminating)
+            {
+                var fileInfo = new FileInfo($"logs/crash-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log");
+                fileInfo.Directory?.Create();
+                File.AppendAllText(fileInfo.FullName, e.ExceptionObject.ToString());
+            }
         }
     }
 }

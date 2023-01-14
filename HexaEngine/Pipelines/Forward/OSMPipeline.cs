@@ -36,7 +36,7 @@
 
         public GraphicsPipelineDesc Description => pipeline.Description;
 
-        public string Name => pipeline.Name;
+        public string DebugName => pipeline.DebugName;
 
         public GraphicsPipelineState State { get => pipeline.State; set => pipeline.State = value; }
 

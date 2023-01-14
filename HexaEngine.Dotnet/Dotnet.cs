@@ -15,7 +15,9 @@
             Process? p = Process.Start(psi);
             string? output = p?.StandardOutput.ReadToEnd();
             p?.WaitForExit();
-            return "dotnet " + parameters + Environment.NewLine + output;
+            string result = "dotnet " + parameters + Environment.NewLine + output;
+            Debug.WriteLine(result);
+            return result;
         }
 
         public static string New(DotnetTemplate template, string outputPath)
@@ -42,7 +44,7 @@
             document.LoadXml(File.ReadAllText(projectPath));
             XmlNode? root = document?.DocumentElement;
 
-            ItemGroup group = new ItemGroup();
+            ItemGroup group = new();
             foreach (string dll in dllsPaths)
             {
                 Reference reference = new();

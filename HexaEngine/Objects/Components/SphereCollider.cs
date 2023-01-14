@@ -7,10 +7,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
-#if GenericAttributes
     [EditorComponent<SphereCollider>("Sphere Collider")]
-#endif
-
     public class SphereCollider : IComponent
     {
         private bool init = false;
@@ -26,16 +23,7 @@
         private float radius = 1;
         private float sleepThreshold = 0.01f;
 
-        public SphereCollider()
-        {
-            Editor = new PropertyEditor<SphereCollider>(this);
-        }
-
-        public IPropertyEditor? Editor { get; }
-#if GenericAttributes
         [EditorProperty<ColliderType>("Type")]
-#endif
-
         public ColliderType Type
         { get => type; set { type = value; update = true; } }
 

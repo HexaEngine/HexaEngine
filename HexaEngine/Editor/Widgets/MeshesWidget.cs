@@ -30,7 +30,7 @@
                 MeshData mesh = MeshManager.Meshes[current];
                 {
                     string name = mesh.Name;
-                    if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+                    if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                     {
                         if (MeshManager.Meshes.All(x => x.Name != name))
                         {

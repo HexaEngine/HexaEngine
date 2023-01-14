@@ -3,9 +3,11 @@
 namespace HexaEngine.Graphics.Buffers
 {
     using System;
+    using System.Runtime.CompilerServices;
 
     public unsafe class ConstantBuffer<T> : IConstantBuffer, IConstantBuffer<T> where T : unmanaged
     {
+        private readonly string dbgName;
         private readonly IGraphicsDevice device;
         private readonly BufferDescription description;
         private IBuffer buffer;
@@ -18,8 +20,9 @@ namespace HexaEngine.Graphics.Buffers
         /// <param name="device">The device.</param>
         /// <param name="length">The length.</param>
         /// <param name="accessFlags">The access flags.</param>
-        public ConstantBuffer(IGraphicsDevice device, uint length, CpuAccessFlags accessFlags)
+        public ConstantBuffer(IGraphicsDevice device, uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = length;
@@ -35,6 +38,7 @@ namespace HexaEngine.Graphics.Buffers
                 _ => throw new ArgumentException("Invalid CpuAccessFlags", nameof(accessFlags)),
             };
             buffer = device.CreateBuffer(items, length, description);
+            buffer.DebugName = dbgName;
         }
 
         /// <summary>
@@ -43,8 +47,9 @@ namespace HexaEngine.Graphics.Buffers
         /// <param name="device">The device.</param>
         /// <param name="values">The values.</param>
         /// <param name="accessFlags">The access flags.</param>
-        public ConstantBuffer(IGraphicsDevice device, T[] values, CpuAccessFlags accessFlags)
+        public ConstantBuffer(IGraphicsDevice device, T[] values, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = (uint)values.Length;
@@ -65,6 +70,7 @@ namespace HexaEngine.Graphics.Buffers
                 _ => throw new ArgumentException("Invalid CpuAccessFlags", nameof(accessFlags)),
             };
             buffer = device.CreateBuffer(items, count, description);
+            buffer.DebugName = dbgName;
         }
 
         /// <summary>
@@ -72,8 +78,9 @@ namespace HexaEngine.Graphics.Buffers
         /// </summary>
         /// <param name="device">The device.</param>
         /// <param name="accessFlags">The access flags.</param>
-        public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags)
+        public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = 1;
@@ -89,6 +96,7 @@ namespace HexaEngine.Graphics.Buffers
                 _ => throw new ArgumentException("Invalid CpuAccessFlags", nameof(accessFlags)),
             };
             buffer = device.CreateBuffer(items, 1, description);
+            buffer.DebugName = dbgName;
         }
 
         /// <summary>
@@ -138,6 +146,7 @@ namespace HexaEngine.Graphics.Buffers
 
             buffer.Dispose();
             buffer = device.CreateBuffer(items, 1, description);
+            buffer.DebugName = dbgName;
         }
 
         public void Update(IGraphicsContext context)

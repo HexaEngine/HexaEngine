@@ -30,13 +30,6 @@
         private float width = 1;
         private float sleepThreshold = 0.01f;
 
-        public BoxCollider()
-        {
-            Editor = new PropertyEditor<BoxCollider>(this);
-        }
-
-        public IPropertyEditor? Editor { get; }
-
         [EditorProperty<ColliderType>("Type")]
         public ColliderType Type
         { get => type; set { type = value; update = true; } }

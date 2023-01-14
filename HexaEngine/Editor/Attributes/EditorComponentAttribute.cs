@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Attributes
 {
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Objects;
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -15,6 +16,7 @@
             Constructor = () => ((IComponent?)Activator.CreateInstance(type)) ?? throw new();
             Name = name;
             IsType = x => type.IsAssignableFrom(x.GetType());
+            //Editor = new PropertyEditor(type);
         }
 
         public EditorComponentAttribute([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, string name, bool isHidden) : this(type, name)
@@ -54,6 +56,8 @@
         public Type[]? AllowedTypes { get; }
 
         public Type[]? DisallowedTypes { get; }
+
+        public IObjectEditor Editor { get; }
     }
 
 #if GenericAttributes

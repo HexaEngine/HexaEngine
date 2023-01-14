@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core
 {
+    using System.Collections.Concurrent;
+
 #if TRACELEAK
 
     using System.Diagnostics;
@@ -9,20 +11,20 @@
     public static class LeakTracer
     {
 #if TRACELEAK
-        private static readonly Dictionary<object, StackTrace> Instances = new();
+        private static readonly ConcurrentDictionary<object, StackTrace> Instances = new();
 #endif
 
         public static void Allocate(object obj)
         {
 #if TRACELEAK
-            Instances.Add(obj, new(1));
+            Instances.TryAdd(obj, new(1));
 #endif
         }
 
         public static void Release(object obj)
         {
 #if TRACELEAK
-            Instances.Remove(obj);
+            Instances.Remove(obj, out _);
 #endif
         }
 
@@ -31,7 +33,7 @@
 #if TRACELEAK
             foreach (var pair in Instances)
             {
-                File.AppendAllText("leak.log", $"******LIVE INSTANCE: \n{pair}");
+                Debug.WriteLine($"******LIVE INSTANCE: \n{pair}");
             }
 #endif
         }

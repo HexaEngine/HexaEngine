@@ -2,8 +2,10 @@
 {
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
+    using Silk.NET.Direct3D12;
     using Silk.NET.DXGI;
     using System;
+    using System.Runtime.InteropServices;
 
     public static unsafe class DirectXTex
     {
@@ -794,5 +796,34 @@
         }
 
         #endregion Direct3D 11 functions
+
+        #region Direct3D 12 functions
+
+        public static unsafe bool IsSupportedTexture(ID3D12Device* pDevice, TexMetadata* metadata)
+        {
+            return Native.IsSupportedTextureD3D12(pDevice, metadata);
+        }
+
+        public static unsafe void CreateTexture(ID3D12Device* pDevice, TexMetadata* metadata, ID3D12Resource** ppResource)
+        {
+            Native.CreateTextureD3D12(pDevice, metadata, ppResource).ThrowIf();
+        }
+
+        public static unsafe void CreateTextureEx(ID3D12Device* pDevice, TexMetadata* metadata, ResourceFlags resFlags, bool forceSRGB, ID3D12Resource** ppResource)
+        {
+            Native.CreateTextureExD3D12(pDevice, metadata, resFlags, forceSRGB, ppResource).ThrowIf();
+        }
+
+        public static unsafe void PrepareUpload(ID3D12Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Silk.NET.Direct3D12.SubresourceData** subresources, int* count)
+        {
+            Native.PrepareUpload(pDevice, srcImages, nimages, metadata, subresources, count).ThrowIf();
+        }
+
+        public static unsafe void CaptureTexture(ID3D12CommandQueue* pCommandQueue, ID3D12Resource* pSource, bool isCubeMap, void* result, ResourceStates beforeState = ResourceStates.RenderTarget, ResourceStates afterState = ResourceStates.RenderTarget)
+        {
+            Native.CaptureTextureD3D12(pCommandQueue, pSource, isCubeMap, result, beforeState, afterState).ThrowIf();
+        }
+
+        #endregion Direct3D 12 functions
     }
 }

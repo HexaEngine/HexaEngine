@@ -36,7 +36,7 @@
             for (int i = 0; i < PipelineManager.GraphicsPipelines.Count; i++)
             {
                 IGraphicsPipeline pipeline = PipelineManager.GraphicsPipelines[i];
-                if (ImGui.Button(pipeline.Name))
+                if (ImGui.Button(pipeline.DebugName))
                     Recompile(pipeline);
             }
 

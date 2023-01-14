@@ -187,11 +187,11 @@
                 for (int i = 0; i < pipeline.output.Length; i++)
                 {
                     var output = pipeline.output[i];
-                    if (output.Register != register || i == 0)
+                    if (output.Load != register || i == 0)
                     {
-                        if (output.SystemValueType == Name.Undefined) continue;
-                        node.CreatePin($"{output.SemanticName} : {output.Register}", PinKind.Output, GetPinType(output), PinShape.Circle);
-                        register = output.Register;
+                        if (output.SystemValueType == DebugName.Undefined) continue;
+                        node.CreatePin($"{output.SemanticName} : {output.Load}", PinKind.Output, GetPinType(output), PinShape.Circle);
+                        register = output.Load;
                     }
                 }
             for (int i = 0; i < pipeline.inputs.Count; i++)
@@ -201,7 +201,7 @@
                 {
                     var input = pipeline.inputs[key][j];
                     if (input.Dimension == SrvDimension.Unknown) continue;
-                    node.CreatePin(input.Name, PinKind.Input, GetPinType(input), PinShape.Circle);
+                    node.CreatePin(input.DebugName, PinKind.Input, GetPinType(input), PinShape.Circle);
                 }
             }
 
@@ -219,11 +219,11 @@
                 for (int i = 0; i < pipeline.output.Length; i++)
                 {
                     var output = pipeline.output[i];
-                    if (output.Register != register || i == 0)
+                    if (output.Load != register || i == 0)
                     {
-                        if (output.SystemValueType == Name.Undefined) continue;
-                        node.CreatePin($"{output.SemanticName} : {output.Register}", PinKind.Output, GetPinType(output), PinShape.Circle);
-                        register = output.Register;
+                        if (output.SystemValueType == DebugName.Undefined) continue;
+                        node.CreatePin($"{output.SemanticName} : {output.Load}", PinKind.Output, GetPinType(output), PinShape.Circle);
+                        register = output.Load;
                     }
                 }
             if (pipeline.inputs != null)
@@ -234,7 +234,7 @@
                     {
                         var input = pipeline.inputs[key][j];
                         if (input.Dimension == SrvDimension.Unknown) continue;
-                        node.CreatePin(input.Name, PinKind.Input, GetPinType(input), PinShape.Circle);
+                        node.CreatePin(input.DebugName, PinKind.Input, GetPinType(input), PinShape.Circle);
                     }
                 }
 

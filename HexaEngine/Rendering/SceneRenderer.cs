@@ -44,7 +44,7 @@
         private ConstantBuffer<CBCamera> cameraBuffer;
         private ConstantBuffer<CBLight> lightBuffer;
         private ConstantBuffer<CBWorld> skyboxBuffer;
-        private IBuffer tesselationBuffer;
+        private ConstantBuffer<CBTessellation> tesselationBuffer;
         private Geometry geometry;
 
         private DeferredPrincipledBSDF deferred;
@@ -142,9 +142,9 @@
                 linearSampler = ResourceManager.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp);
 
                 cameraBuffer = ResourceManager.AddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
-                lightBuffer = ResourceManager.AddConstantBuffer<CBLight>("CBLight", CpuAccessFlags.Write); //device.CreateBuffer(new CBLight(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+                lightBuffer = ResourceManager.AddConstantBuffer<CBLight>("CBLight", CpuAccessFlags.Write);
                 skyboxBuffer = new(device, CpuAccessFlags.Write);
-                tesselationBuffer = device.CreateBuffer(new CBTessellation(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+                tesselationBuffer = new(device, CpuAccessFlags.Write);
 
                 csmDepthBuffer = new(device, TextureDescription.CreateTexture2DArrayWithRTV(4096, 4096, 4, 1, Format.R32Float), DepthStencilDesc.Default);
                 csmMvpBuffer = new(device, 16, CpuAccessFlags.Write);

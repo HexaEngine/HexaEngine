@@ -6,10 +6,12 @@
 
     public static class AudioManager
     {
+#nullable disable
         private static AudioContext audioContext;
         private static AudioDevice audioDevice;
         private static MasteringVoice master;
         private static Thread streamThread;
+#nullable enable
         private static bool running;
 
         public static AudioDevice Device => audioDevice;

@@ -52,7 +52,7 @@
                 var name = material.Name;
 
                 bool hasChanged = false;
-                if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+                if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
                     if (MaterialManager.Materials.Any(x => x.Name != name))
                     {

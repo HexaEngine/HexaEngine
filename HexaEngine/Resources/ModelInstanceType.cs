@@ -253,6 +253,10 @@
         {
             if (!disposedValue)
             {
+                argBuffer.Dispose();
+                frustumInstanceBuffer.Dispose();
+                zeroIdBuffer.Dispose();
+                idBuffer.Dispose();
                 disposedValue = true;
             }
         }

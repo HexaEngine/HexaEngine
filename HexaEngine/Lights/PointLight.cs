@@ -10,7 +10,6 @@
 
         public unsafe PointLight()
         {
-            CreatePropertyEditor<PointLight>();
             Transform.Updated += (s, e) => { Updated = true; };
             ShadowBox = Alloc<BoundingBox>();
         }
@@ -22,5 +21,11 @@
         public float Strength { get; set; } = 1000;
 
         public override LightType Type => LightType.Point;
+
+        public override unsafe void Uninitialize()
+        {
+            base.Uninitialize();
+            Free(ShadowBox);
+        }
     }
 }

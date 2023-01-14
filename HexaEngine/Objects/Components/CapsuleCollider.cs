@@ -7,10 +7,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
-#if GenericAttributes
     [EditorComponent<CapsuleCollider>("Capsule Collider")]
-#endif
-
     public class CapsuleCollider : IComponent
     {
         private bool init = false;
@@ -27,16 +24,7 @@
         private float length = 2;
         private float sleepThreshold = 0.01f;
 
-        public CapsuleCollider()
-        {
-            Editor = new PropertyEditor<CapsuleCollider>(this);
-        }
-
-        public IPropertyEditor? Editor { get; }
-#if GenericAttributes
         [EditorProperty<ColliderType>("Type")]
-#endif
-
         public ColliderType Type
         { get => type; set { type = value; update = true; } }
 

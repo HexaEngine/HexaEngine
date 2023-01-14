@@ -3,19 +3,20 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.IO;
+    using HexaEngine.Projects;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Numerics;
 
     public class AssetExplorer : ImGuiWindow
     {
-        private DirectoryInfo currentDir;
+        private DirectoryInfo? currentDir;
         private DirectoryInfo? parentDir;
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
-        private string CurrentFolder = Paths.CurrentProjectFolder;
+        private string? CurrentFolder = null;
 
         private struct Item
         {
@@ -33,8 +34,14 @@
         {
             IsShown = true;
             Refresh();
-            currentDir = new(CurrentFolder);
+            currentDir = null;
             parentDir = currentDir?.Parent;
+            ProjectManager.ProjectLoaded += ProjectManager_ProjectLoaded;
+        }
+
+        private void ProjectManager_ProjectLoaded(Projects.HexaProject obj)
+        {
+            SetFolder(ProjectManager.CurrentProjectAssetsFolder);
         }
 
         public string? SelectedFile { get; private set; }
@@ -43,10 +50,12 @@
 
         public void Refresh()
         {
-            currentDir = new(CurrentFolder);
-            parentDir = currentDir?.Parent;
+            FileSystem.Refresh();
             files.Clear();
             dirs.Clear();
+            if (CurrentFolder == null) return;
+            currentDir = new(CurrentFolder);
+            parentDir = currentDir?.Parent;
 
             foreach (var fse in Directory.GetFileSystemEntries(CurrentFolder, string.Empty))
             {
@@ -67,9 +76,10 @@
             }
         }
 
-        public void SetFolder(string path)
+        public void SetFolder(string? path)
         {
-            backHistory.Push(CurrentFolder);
+            if (CurrentFolder != null)
+                backHistory.Push(CurrentFolder);
             CurrentFolder = path;
             forwardHistory.Clear();
             Refresh();
@@ -77,7 +87,7 @@
 
         public void GoHome()
         {
-            CurrentFolder = Paths.CurrentAssetsPath;
+            CurrentFolder = Paths.CurrentProjectFolder;
             Refresh();
         }
 
@@ -85,7 +95,8 @@
         {
             if (backHistory.TryPop(out var historyItem))
             {
-                forwardHistory.Push(CurrentFolder);
+                if (CurrentFolder != null)
+                    forwardHistory.Push(CurrentFolder);
                 CurrentFolder = historyItem;
                 Refresh();
             }
@@ -95,7 +106,8 @@
         {
             if (forwardHistory.TryPop(out var historyItem))
             {
-                backHistory.Push(CurrentFolder);
+                if (CurrentFolder != null)
+                    backHistory.Push(CurrentFolder);
                 CurrentFolder = historyItem;
                 Refresh();
             }
@@ -204,12 +216,18 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
+            if (currentDir == null) return;
             if (currentDir.Exists)
             {
                 ImGui.BeginChild("AssetExplorerContent");
 
                 if (ImGui.BeginPopupContextWindow("AssetExplorerContextMenu"))
                 {
+                    if (ImGui.MenuItem("Home"))
+                    {
+                        GoHome();
+                    }
+
                     if (ImGui.MenuItem("Refresh"))
                     {
                         Refresh();

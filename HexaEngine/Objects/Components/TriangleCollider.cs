@@ -5,13 +5,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Scenes;
     using System.Numerics;
 
-#if GenericAttributes
     [EditorComponent<TriangleCollider>("Triangle Collider")]
-#endif
-
     public class TriangleCollider : IComponent
     {
         private bool init = false;
@@ -29,16 +27,7 @@
         private Vector3 pos3;
         private float sleepThreshold = 0.01f;
 
-        public TriangleCollider()
-        {
-            Editor = new PropertyEditor<TriangleCollider>(this);
-        }
-
-        public IPropertyEditor? Editor { get; }
-#if GenericAttributes
         [EditorProperty<ColliderType>("Type")]
-#endif
-
         public ColliderType Type
         { get => type; set { type = value; update = true; } }
 

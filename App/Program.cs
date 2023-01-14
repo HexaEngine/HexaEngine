@@ -13,7 +13,7 @@
         /// </summary>
         private static void Main()
         {
-            CrashLogger.Start();
+            CrashLogger.Initialize();
             Designer.InDesignMode = false;
             Application.Run(new Window() { Flags = RendererFlags.SceneGraph });
         }

@@ -20,7 +20,6 @@
         public Camera()
         {
             base.Transform = Transform = new();
-            CreatePropertyEditor<Camera>();
         }
 
         [EditorProperty<ProjectionType>("Type")]

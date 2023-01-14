@@ -1,9 +1,7 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Debugging.Collections;
-    using HexaEngine.Core.Scripting;
     using ImGuiNET;
-    using KeraLua;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -37,7 +35,6 @@
 
     public static class ImGuiConsole
     {
-        private static readonly Dictionary<IScript, Task> tasks = new();
         private static readonly List<LogMessage> messages = new();
         private static readonly List<string> history = new();
         private static readonly ConsoleTraceListener traceListener;
@@ -480,41 +477,6 @@
                     ImGui.TextUnformatted("Background");
                     ImGui.SliderFloat("Transparency##", ref m_WindowAlpha, 0.1f, 1.0f);
 
-                    ImGui.EndMenu();
-                }
-
-                // TODO: Reimplement console scripts.
-                // All scripts.
-
-                if (ImGui.BeginMenu("Scripts"))
-                {
-                    // Show registered scripts.
-                    foreach (var script in ScriptManager.Scripts)
-                    {
-                        if (!tasks.ContainsKey(script))
-                        {
-                            if (ImGui.MenuItem(script.Name))
-                            {
-                                tasks.Add(script, script.RunAsync().ContinueWith(x => tasks.Remove(script)));
-                            }
-                        }
-                        else
-                        {
-                            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(0.98f, 0.26f, 0.95f, 0.40f));
-                            if (ImGui.MenuItem($"> {script.Name}"))
-                            {
-                                //tasks[script].St
-                            }
-                            ImGui.PopStyleColor();
-                        }
-                    }
-
-                    // Reload scripts.
-                    ImGui.Separator();
-                    if (ImGui.Button("Reload Scripts", new(ImGui.GetColumnWidth(), 0)))
-                    {
-                        ScriptManager.Reload();
-                    }
                     ImGui.EndMenu();
                 }
 

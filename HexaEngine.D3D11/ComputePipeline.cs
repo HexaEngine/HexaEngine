@@ -99,7 +99,7 @@
                 ID3D11ComputeShader* computeShader;
                 device.Device->CreateComputeShader(shader->Bytecode, shader->Length, null, &computeShader);
                 cs = computeShader;
-                //TODO: cs.DebugName = GetType().Name + nameof(cs);
+                //TODO: cs.DebugName = GetType().DebugName + nameof(cs);
                 Free(shader);
                 valid = true;
             }

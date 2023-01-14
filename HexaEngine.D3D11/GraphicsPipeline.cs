@@ -7,6 +7,12 @@
 
     public unsafe class GraphicsPipeline : IGraphicsPipeline
     {
+        private readonly string dbgName;
+        private bool disposedValue;
+        protected readonly D3D11GraphicsDevice device;
+        protected readonly InputElementDescription[]? inputElements;
+        protected readonly GraphicsPipelineDesc desc;
+        protected readonly ShaderMacro[] macros = Array.Empty<ShaderMacro>();
         protected ID3D11VertexShader* vs;
         protected ID3D11HullShader* hs;
         protected ID3D11DomainShader* ds;
@@ -16,152 +22,103 @@
         protected ID3D11RasterizerState* rasterizerState;
         protected ID3D11DepthStencilState* depthStencilState;
         protected ID3D11BlendState* blendState;
-        protected readonly GraphicsPipelineDesc desc;
-        protected readonly ShaderMacro[] macros;
         protected GraphicsPipelineState state = GraphicsPipelineState.Default;
-        protected volatile bool initialized;
         protected bool valid;
-        private bool disposedValue;
-        protected readonly D3D11GraphicsDevice device;
-        protected readonly InputElementDescription[]? inputElements;
+        protected volatile bool initialized;
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
-            macros = Array.Empty<ShaderMacro>();
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.macros = macros;
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
-            macros = Array.Empty<ShaderMacro>();
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             this.macros = macros;
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             State = state;
-            macros = Array.Empty<ShaderMacro>();
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             State = state;
             this.macros = macros;
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             State = state;
-            macros = Array.Empty<ShaderMacro>();
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
+        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
         {
-            Name = new FileInfo(desc.VertexShader ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             this.device = device;
             this.desc = desc;
             this.inputElements = inputElements;
             State = state;
             this.macros = macros;
+            this.dbgName = dbgName;
             Compile();
             PipelineManager.Register(this);
             initialized = true;
         }
 
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, macros));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, inputElements));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, inputElements, macros));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state, macros));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state, inputElements));
-        }
-
-        public static Task<GraphicsPipeline> CreateAsync(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros)
-        {
-            return Task.Factory.StartNew(() => new GraphicsPipeline(device, desc, state, inputElements, macros));
-        }
-
-        public string Name { get; }
+        public string DebugName => dbgName;
 
         public GraphicsPipelineDesc Description => desc;
 
@@ -185,16 +142,19 @@
                 var rsDesc = Helper.Convert(value.Rasterizer);
                 device.Device->CreateRasterizerState(&rsDesc, &rs);
                 rasterizerState = rs;
+                Utils.SetDebugName(rasterizerState, $"{dbgName}.{nameof(rasterizerState)}");
 
                 ID3D11DepthStencilState* ds;
                 var dsDesc = Helper.Convert(value.DepthStencil);
                 device.Device->CreateDepthStencilState(&dsDesc, &ds);
                 depthStencilState = ds;
+                Utils.SetDebugName(depthStencilState, $"{dbgName}.{nameof(depthStencilState)}");
 
                 ID3D11BlendState* bs;
                 var bsDesc = Helper.Convert(value.Blend);
                 device.Device->CreateBlendState(&bsDesc, &bs);
                 blendState = bs;
+                Utils.SetDebugName(blendState, $"{dbgName}.{nameof(blendState)}");
             }
         }
 
@@ -238,7 +198,7 @@
                 ID3D11VertexShader* vertexShader;
                 device.Device->CreateVertexShader(shader->Bytecode, shader->Length, null, &vertexShader);
                 vs = vertexShader;
-                // TODO: vs.DebugName = GetType().Name + nameof(vs);
+                Utils.SetDebugName(vs, $"{dbgName}.{nameof(vs)}");
 
                 if (inputElements == null)
                 {
@@ -258,8 +218,7 @@
                     Free(descs);
                     layout = il;
                 }
-
-                // TODO: layout.DebugName = GetType().Name + nameof(layout);
+                Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");
 
                 Free(shader);
             }
@@ -277,7 +236,7 @@
                 ID3D11HullShader* hullShader;
                 device.Device->CreateHullShader(shader->Bytecode, shader->Length, null, &hullShader);
                 hs = hullShader;
-                // TODO: hs.DebugName = GetType().Name + nameof(hs);
+                Utils.SetDebugName(hs, $"{dbgName}.{nameof(hs)}");
 
                 Free(shader);
             }
@@ -295,7 +254,7 @@
                 ID3D11DomainShader* domainShader;
                 device.Device->CreateDomainShader(shader->Bytecode, shader->Length, null, &domainShader);
                 ds = domainShader;
-                // TODO: ds.DebugName = GetType().Name + nameof(hs);
+                Utils.SetDebugName(ds, $"{dbgName}.{nameof(hs)}");
 
                 Free(shader);
             }
@@ -313,7 +272,7 @@
                 ID3D11GeometryShader* geometryShader;
                 device.Device->CreateGeometryShader(shader->Bytecode, shader->Length, null, &geometryShader);
                 gs = geometryShader;
-                // TODO: gs.DebugName = GetType().Name + nameof(gs);
+                Utils.SetDebugName(gs, $"{dbgName}.{nameof(gs)}");
 
                 Free(shader);
             }
@@ -331,7 +290,7 @@
                 ID3D11PixelShader* pixelShader;
                 device.Device->CreatePixelShader(shader->Bytecode, shader->Length, null, &pixelShader);
                 ps = pixelShader;
-                // TODO: ps.DebugName = GetType().Name + nameof(ps);
+                Utils.SetDebugName(ps, $"{dbgName}.{nameof(ps)}");
 
                 Free(shader);
             }
@@ -365,7 +324,7 @@
             ctx->IASetPrimitiveTopology(Helper.Convert(state.Topology));
         }
 
-        public virtual void BeginDraw(ID3D11DeviceContext1* context, Viewport viewport)
+        public virtual void SetGraphicsPipeline(ID3D11DeviceContext1* context, Viewport viewport)
         {
             if (!initialized) return;
             if (!valid) return;
@@ -449,7 +408,8 @@
                     gs->Release();
                 if (ps != null)
                     ps->Release();
-                layout->Release();
+                if (layout != null)
+                    layout->Release();
                 if (rasterizerState != null)
                     rasterizerState->Release();
                 if (rasterizerState != null)

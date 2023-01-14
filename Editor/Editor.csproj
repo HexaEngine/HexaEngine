@@ -11,11 +11,11 @@
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
@@ -23,11 +23,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
@@ -57,12 +57,9 @@
 </ItemGroup>
 
 	<Target Name="PublishPackAssets" AfterTargets="Publish">
-		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c 1 -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
+		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c 2 -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
 	</Target>
   <ItemGroup>
-    <None Update="assets\editor\sounds\piano2.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="imgui.ini">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

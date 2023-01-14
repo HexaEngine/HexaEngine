@@ -42,6 +42,11 @@
 
         public event EventHandler? OnDisposed;
 
+        public void SetGraphicsPipeline(IGraphicsPipeline pipeline, Viewport viewport)
+        {
+            ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext, viewport);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
         {

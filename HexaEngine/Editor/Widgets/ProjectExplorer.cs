@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Projects;
+    using HexaEngine.Projects;
     using ImGuiNET;
 
     public class ProjectExplorer : ImGuiWindow
@@ -115,7 +116,7 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
-            HexaProject? project = Designer.CurrentProject;
+            HexaProject? project = ProjectManager.Project;
             if (project == null) return;
 
             for (int i = 0; i < project.Items.Count; i++)

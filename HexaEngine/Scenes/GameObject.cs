@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using System.Collections;
@@ -414,26 +415,19 @@
             }
         }
 
-        private IPropertyEditor? editor;
         private bool isVisible;
+        private Type? type;
 
-        [JsonIgnore]
-        public virtual IPropertyEditor Editor
+        public Type Type
         {
             get
             {
-                editor ??= new PropertyEditor<GameObject>(this);
-                return editor;
+                if (type == null)
+                {
+                    type = GetType();
+                }
+                return type;
             }
-            protected set
-            {
-                editor = value;
-            }
-        }
-
-        protected void CreatePropertyEditor<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>() where T : GameObject
-        {
-            editor = new PropertyEditor<T>((T)this);
         }
     }
 }

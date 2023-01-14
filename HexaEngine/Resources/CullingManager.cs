@@ -172,17 +172,20 @@
 
         public static unsafe void Release()
         {
-            instanceDataNoCull.Dispose();
-            instanceOffsetsNoCull.Dispose();
             occlusionCameraBuffer.Dispose();
-            occlusionParamBuffer.Dispose();
-            occlusion.Dispose();
             instanceCounts.Dispose();
             instanceOffsets.Dispose();
             instanceDataOutBuffer.Dispose();
             instanceDataBuffer.Dispose();
             swapBuffer.Dispose();
             drawIndirectArgs.Dispose();
+
+            instanceOffsetsNoCull.Dispose();
+            instanceDataNoCull.Dispose();
+
+            occlusionParamBuffer.Dispose();
+            occlusion.Dispose();
+
             sampler.Dispose();
             Free(occlusionSrvs);
             Free(occlusionUavs);

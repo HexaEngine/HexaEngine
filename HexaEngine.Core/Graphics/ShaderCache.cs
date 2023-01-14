@@ -250,11 +250,13 @@
             if (Macros.Length != (other.Macros?.Length ?? 0)) return false;
             for (int i = 0; i < Macros.Length; i++)
             {
+#nullable disable
                 if (Macros[i].Name != other.Macros[i].Name ||
                     Macros[i].Definition != other.Macros[i].Definition)
                 {
                     return false;
                 }
+#nullable enable
             }
             return true;
         }

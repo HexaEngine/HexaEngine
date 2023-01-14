@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Projects;
     using HexaEngine.Scenes;
     using ImGuiNET;
 
@@ -48,37 +48,6 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("New Project"))
-                    {
-                        fileSaverIsOpen = true;
-                        fileSaverCallback = (e, r) =>
-                        {
-                            if (e == FilePickerResult.Ok)
-                            {
-                                Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
-                                Designer.CurrentProject = HexaProject.Create(Path.Combine(r.CurrentFolder, r.SelectedFile, r.SelectedFile + ".hexproj"));
-                            }
-                            fileSaverIsOpen = false;
-                        };
-                    }
-
-                    if (ImGui.MenuItem("Load Project"))
-                    {
-                        filePickerIsOpen = true;
-                        filePicker.AllowedExtensions.Add(".hexproj");
-                        filePicker.OnlyAllowFilteredExtensions = true;
-                        filePickerCallback = (e, r) =>
-                        {
-                            if (e == FilePickerResult.Ok)
-                            {
-                                Designer.CurrentProject = HexaProject.Load(r);
-                            }
-                            filePickerIsOpen = false;
-                            filePicker.AllowedExtensions.Clear();
-                            filePicker.OnlyAllowFilteredExtensions = false;
-                        };
-                    }
-
                     if (ImGui.MenuItem("New Scene"))
                     {
                         SceneManager.Load(new());
@@ -134,6 +103,62 @@
 
                     ImGui.EndMenu();
                 }
+                if (ImGui.BeginMenu("Project"))
+                {
+                    if (ImGui.MenuItem("Load Project"))
+                    {
+                        filePickerIsOpen = true;
+                        filePicker.AllowedExtensions.Add(".hexproj");
+                        filePicker.OnlyAllowFilteredExtensions = true;
+                        filePickerCallback = (e, r) =>
+                        {
+                            if (e == FilePickerResult.Ok)
+                            {
+                                ProjectManager.Load(r);
+                            }
+                            filePickerIsOpen = false;
+                            filePicker.AllowedExtensions.Clear();
+                            filePicker.OnlyAllowFilteredExtensions = false;
+                        };
+                    }
+
+                    if (ImGui.MenuItem("New Project"))
+                    {
+                        fileSaverIsOpen = true;
+                        fileSaverCallback = (e, r) =>
+                        {
+                            if (e == FilePickerResult.Ok)
+                            {
+                                Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
+                                ProjectManager.Create(Path.Combine(r.CurrentFolder, r.SelectedFile));
+                            }
+                            fileSaverIsOpen = false;
+                        };
+                    }
+
+                    if (ImGui.BeginMenu("Open Recent"))
+                    {
+                        var entries = ProjectHistory.Entries;
+                        for (int i = 0; i < entries.Count; i++)
+                        {
+                            var entry = entries[i];
+                            if (ImGui.MenuItem(entry.Fullname))
+                            {
+                                ProjectManager.Load(entry.Path);
+                            }
+                        }
+                        ImGui.EndMenu();
+                    }
+
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Open Visual Studio"))
+                    {
+                        ProjectManager.OpenVisualStudio();
+                    }
+
+                    ImGui.EndMenu();
+                }
                 if (ImGui.BeginMenu("Inspector"))
                 {
                     var enabled = Inspector.Enabled;
@@ -167,7 +192,7 @@
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))
                     {/*
-                        ShaderCache.Clear();
+                        ShaderCache.Unload();
                         Pipeline.ReloadShaders();
                         ComputePipeline.ReloadShaders();*/
                         //TODO: Fix async recompile

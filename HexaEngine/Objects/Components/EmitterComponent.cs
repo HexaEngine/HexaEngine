@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.OpenAL;
     using HexaEngine.Scenes;
 
@@ -12,13 +13,6 @@
     {
         private GameObject gameObject;
         private Emitter emitter;
-
-        public EmitterComponent()
-        {
-            Editor = new PropertyEditor<EmitterComponent>(this);
-        }
-
-        public IPropertyEditor? Editor { get; }
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {

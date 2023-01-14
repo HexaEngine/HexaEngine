@@ -31,7 +31,6 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
     <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
     <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
     <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />

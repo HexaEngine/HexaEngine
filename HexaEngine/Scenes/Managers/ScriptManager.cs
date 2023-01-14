@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
+    using HexaEngine.Objects;
     using HexaEngine.Scripting;
     using System.Collections.Generic;
 
     public class ScriptManager
     {
-        private readonly List<IScript> scripts = new();
+        private readonly List<IScriptComponent> scripts = new();
 
-        public IReadOnlyList<IScript> Scripts => scripts;
+        public IReadOnlyList<IScriptComponent> Scripts => scripts;
 
         public void Register(GameObject gameObject)
         {

@@ -1,12 +1,11 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
@@ -17,7 +16,6 @@ namespace HexaEngine.Editor.Widgets
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Numerics;
     using System.Reflection;
 
     public class PropertiesWidget : ImGuiWindow
@@ -53,7 +51,7 @@ namespace HexaEngine.Editor.Widgets
             Camera camera = CameraManager.Current;
 
             string name = element.Name;
-            if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 element.Name = name;
             }
@@ -122,11 +120,15 @@ namespace HexaEngine.Editor.Widgets
             }
             ImGui.Separator();
 
-            Type type = element.Editor.Type;
+            var type = element.Type;
 
-            if (ImGui.CollapsingHeader(type.Name))
             {
-                element.Editor?.Draw();
+                var editor = ObjectEditorFactory.CreateEditor(type);
+                editor.Instance = element;
+                if (ImGui.CollapsingHeader(editor.Name))
+                {
+                    editor.Draw();
+                }
             }
 
             ImGui.Separator();
@@ -193,13 +195,15 @@ namespace HexaEngine.Editor.Widgets
                 for (int i = 0; i < element.Components.Count; i++)
                 {
                     var component = element.Components[i];
-                    if (ImGui.CollapsingHeader(component.Editor.Name))
+                    var editor = ObjectEditorFactory.CreateEditor(component.GetType());
+                    editor.Instance = component;
+                    if (ImGui.CollapsingHeader(editor.Name))
                     {
                         if (ImGui.Button("Delete"))
                         {
                             scene.Dispatcher.Invoke(() => element.RemoveComponent(component));
                         }
-                        component.Editor?.Draw();
+                        editor?.Draw();
                     }
                 }
             }
