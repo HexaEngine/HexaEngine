@@ -3,8 +3,10 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Editor;
+    using HexaEngine.Graphics;
+    using HexaEngine.IO;
     using HexaEngine.Plugins;
-    using Window = HexaEngine.Windows.Window;
+    using HexaEngine.Windows;
 
     public class Program
     {
@@ -17,10 +19,9 @@
             PluginManager.Load();
 
             Designer.InDesignMode = true;
+            FileSystem.Initialize();
 
-            var window = new Window() { Flags = HexaEngine.Windows.RendererFlags.All };
-
-            Application.Run(window);
+            Application.Run(new Window() { Flags = RendererFlags.All });
 
             PluginManager.Unload();
         }

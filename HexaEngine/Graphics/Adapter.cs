@@ -1,5 +1,4 @@
-﻿using HexaEngine.Core;
-using HexaEngine.Core.Graphics;
+﻿using HexaEngine.Core.Graphics;
 
 namespace HexaEngine.Graphics
 {
@@ -21,10 +20,10 @@ namespace HexaEngine.Graphics
             adapters = adapterList.ToArray();
         }
 
-        public static IGraphicsDevice CreateGraphics(RenderBackend backend, SdlWindow window)
+        public static IGraphicsDevice CreateGraphics(RenderBackend backend)
         {
             var adapter = adapters.FirstOrDefault(x => x.Backend == backend) ?? throw new PlatformNotSupportedException();
-            return adapter.CreateGraphics(window);
+            return adapter.CreateGraphics();
         }
     }
 }

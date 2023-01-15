@@ -132,9 +132,9 @@
 
         private bool disposedValue;
 
-        public RenderDispatcher(IGraphicsDevice device)
+        public RenderDispatcher(IGraphicsDevice device, Thread thread)
         {
-            DispatcherThread = Thread.CurrentThread;
+            DispatcherThread = thread;
             this.device = device;
             context = device.CreateDeferredContext();
         }

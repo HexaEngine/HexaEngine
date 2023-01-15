@@ -11,10 +11,7 @@
         /// </summary>
         public IGraphicsContext Context { get; }
 
-        /// <summary>
-        /// The SwapChain of the associated window
-        /// </summary>
-        public ISwapChain? SwapChain { get; }
+        public ISwapChain CreateSwapChain(SdlWindow window);
 
         /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/>

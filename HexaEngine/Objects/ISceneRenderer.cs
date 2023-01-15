@@ -11,7 +11,7 @@ namespace HexaEngine.Objects
 
     public interface ISceneRenderer : IDisposable
     {
-        Task Initialize(IGraphicsDevice device, Window window);
+        Task Initialize(IGraphicsDevice device, ISwapChain swapChain, Window window);
 
         void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera camera);
 

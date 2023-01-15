@@ -64,7 +64,7 @@
         }
     }
 
-    public unsafe class MeshData
+    public unsafe struct MeshData
     {
         public string Name = string.Empty;
 

@@ -5,9 +5,10 @@
         Binary = 0,
         Texture,
         Mesh,
-        Shader,
         Font,
         Sound,
         Script,
+        ShaderSource,
+        ShaderBytecode,
     }
 }

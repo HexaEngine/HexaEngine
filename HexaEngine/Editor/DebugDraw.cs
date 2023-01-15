@@ -112,6 +112,7 @@ namespace HexaEngine.Editor
 
         public static void Render(Camera camera, Viewport viewport)
         {
+            if (!Designer.IsShown) return;
             if (camera == null) return;
 
             for (int i = 0; i < clearqueue.Count; i++)

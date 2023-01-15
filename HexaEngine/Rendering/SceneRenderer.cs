@@ -120,7 +120,7 @@
         /// <param name="device">The device.</param>
         /// <param name="window">The window.</param>
         /// <returns></returns>
-        public Task Initialize(IGraphicsDevice device, Window window)
+        public Task Initialize(IGraphicsDevice device, ISwapChain swapChain, Window window)
         {
             return
             Task.Factory.StartNew(async () =>
@@ -130,7 +130,7 @@
 
                 this.device = device;
                 context = device.Context;
-                swapChain = device.SwapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
+                this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
                 swapChain.Resized += OnWindowResizeEnd;
                 ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
 
@@ -225,8 +225,8 @@
                 forward.PSMs = psmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
                 effects.Add(forward);
 
-                Vector4 solidColor = new(0.0001f, 0.0001f, 0.0001f, 1);
-                Vector4 ambient = new(0.01f, 0.01f, 0.01f, 1);
+                Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
+                Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
 
                 env = ResourceManager.AddTextureColor("Environment", TextureDimension.TextureCube, solidColor);
                 envirr = ResourceManager.AddTextureColor("EnvironmentIrradiance", TextureDimension.TextureCube, ambient);

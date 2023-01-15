@@ -3,7 +3,9 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Projects;
+    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Importer;
+    using HexaEngine.Scenes.Serialization;
     using ImGuiNET;
     using ImGuizmoNET;
     using ImNodesNET;
@@ -65,19 +67,23 @@
                 var extension = Path.GetExtension(path);
                 if (extension == ".glb")
                 {
-                    task = loader.OpenAsync(path).ContinueWith(ImGuiConsole.HandleError);
+                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
                 }
                 if (extension == ".gltf")
                 {
-                    task = loader.OpenAsync(path).ContinueWith(ImGuiConsole.HandleError);
+                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
                 }
                 if (extension == ".dae")
                 {
-                    task = loader.OpenAsync(path).ContinueWith(ImGuiConsole.HandleError);
+                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
                 }
                 if (extension == ".obj")
                 {
-                    task = loader.OpenAsync(path).ContinueWith(ImGuiConsole.HandleError);
+                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
+                }
+                if (extension == ".hexlvl")
+                {
+                    task = SceneManager.AsyncLoad(SceneSerializer.Deserialize(path)).ContinueWith(ImGuiConsole.HandleError);
                 }
             }
         }

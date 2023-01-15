@@ -2,26 +2,9 @@
 {
     using System.Collections.Specialized;
     using System.IO;
-    using System.Text.Json.Serialization;
+    using System.Text.RegularExpressions;
     using System.Xml;
     using System.Xml.Serialization;
-
-    [JsonSourceGenerationOptions(
-        DefaultIgnoreCondition = JsonIgnoreCondition.Never,
-        GenerationMode = JsonSourceGenerationMode.Default,
-        IgnoreReadOnlyFields = true,
-        IgnoreReadOnlyProperties = true,
-        IncludeFields = false,
-        PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-        WriteIndented = true)]
-    [JsonSerializable(typeof(HexaProject), GenerationMode = JsonSourceGenerationMode.Default)]
-    [JsonSerializable(typeof(HexaFile), GenerationMode = JsonSourceGenerationMode.Default)]
-    [JsonSerializable(typeof(HexaDirectory), GenerationMode = JsonSourceGenerationMode.Default)]
-    [JsonSerializable(typeof(HexaItem), GenerationMode = JsonSourceGenerationMode.Default)]
-    [JsonSerializable(typeof(HexaParent), GenerationMode = JsonSourceGenerationMode.Default)]
-    internal partial class SourceGenerationContext : JsonSerializerContext
-    {
-    }
 
     [XmlRoot]
     [XmlInclude(typeof(HexaProject))]
@@ -32,7 +15,6 @@
     {
         private static XmlSerializer serializer = new(typeof(HexaProject));
         private HexaItem? selectedItem;
-        private bool isSelected;
 
         public HexaProject()
         {

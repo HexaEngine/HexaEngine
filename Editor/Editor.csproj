@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Platforms>AnyCPU;x64</Platforms>
-	  <Configurations>Debug;Release;TraceLeak</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;TraceLeak</Configurations>
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes;TraceLeak</DefineConstants>
@@ -33,35 +33,18 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|x64'">
 		<DefineConstants>$(DefineConstants)TRACE;GenericAttributes</DefineConstants>
 	</PropertyGroup>
-  <ItemGroup>
-    <None Remove="assets\editor\textures\env_o.dds" />
-    <None Remove="assets\editor\textures\irradiance_o.dds" />
-    <None Remove="assets\editor\textures\prefilter_o.dds" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="assets\editor\textures\env_o.dds">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\editor\textures\irradiance_o.dds">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\editor\textures\prefilter_o.dds">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
-    <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
-</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
+		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+	</ItemGroup>
 
 	<Target Name="PublishPackAssets" AfterTargets="Publish">
 		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -c 2 -l 3 -p $(ProjectDir)$(PublishDir)assets\" />
 	</Target>
-  <ItemGroup>
-    <None Update="imgui.ini">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="imgui.ini">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

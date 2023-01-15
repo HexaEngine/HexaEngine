@@ -11,8 +11,26 @@
     using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
+    using System.IO.Compression;
     using System.Linq;
     using System.Reflection;
+
+    public class PublishSettings
+    {
+        public string? StartupScene { get; set; }
+
+        public List<string> Scenes { get; set; } = new();
+
+        public string? RuntimeIdentifier { get; set; }
+
+        public string Profile { get; set; } = "Release";
+
+        public bool StripDebugInfo { get; set; } = false;
+
+        public bool SingleFile { get; set; } = true;
+
+        public bool ReadyToRun { get; set; } = true;
+    }
 
     public static class ProjectManager
     {
@@ -41,7 +59,7 @@
 
         public static HexaProject? Project { get; set; }
 
-        public static event Action<HexaProject> ProjectLoaded;
+        public static event Action<HexaProject>? ProjectLoaded;
 
         public static void Load(string path)
         {
@@ -109,14 +127,15 @@
             Process.Start(psi);
         }
 
-        public static void Update()
+        public static Task UpdateAssemblies()
         {
             AssemblyManager.Unload();
-            if (CurrentFolder == null) return;
+            if (CurrentFolder == null) return Task.CompletedTask;
             string solutionName = Path.GetFileName(CurrentFolder);
             Build();
             string outputFilePath = Path.Combine(CurrentFolder, "bin", $"{solutionName}.dll");
             AssemblyManager.Load(outputFilePath);
+            return Task.CompletedTask;
         }
 
         private static void Build()
@@ -125,6 +144,230 @@
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
             Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, "bin"));
         }
+
+        public static Task Publish(PublishSettings settings)
+        {
+            var debugType = settings.StripDebugInfo ? DebugType.None : DebugType.Full;
+            if (settings.StartupScene == null) return Task.CompletedTask;
+            if (CurrentFolder == null) return Task.CompletedTask;
+            if (CurrentProjectPath == null) return Task.CompletedTask;
+            if (CurrentProjectAssetsFolder == null) return Task.CompletedTask;
+
+            for (int i = 0; i < settings.Scenes.Count; i++)
+            {
+                var scene = settings.Scenes[i];
+                var path = Path.Combine(CurrentProjectAssetsFolder, scene);
+                if (!File.Exists(path)) return Task.CompletedTask;
+            }
+
+            Debug.WriteLine("Publishing Project");
+            string buildPath = Path.Combine(CurrentFolder, "build");
+            if (Directory.Exists(buildPath))
+            {
+                Directory.Delete(buildPath, true);
+            }
+            Directory.CreateDirectory(buildPath);
+            string assetsBuildPath = Path.Combine(buildPath, "assets");
+            Directory.CreateDirectory(assetsBuildPath);
+
+            // copy scenes to assets
+            for (int i = 0; i < settings.Scenes.Count; i++)
+            {
+                var scene = settings.Scenes[i];
+                var path = Path.Combine(CurrentProjectAssetsFolder, scene);
+                File.Copy(path, Path.Combine(assetsBuildPath, scene));
+            }
+
+            // publish script assembly
+            string solutionName = Path.GetFileName(CurrentFolder);
+            string scriptProjPath = Path.Combine(CurrentFolder, solutionName);
+            string scriptPublishPath = Path.Combine(scriptProjPath, "publish");
+            PublishOptions scriptPublishOptions = new()
+            {
+                Framework = "net7.0",
+                Profile = settings.Profile,
+                RuntimeIdentifer = settings.RuntimeIdentifier,
+                PublishReadyToRun = false,
+                PublishSingleFile = false,
+                SelfContained = false,
+                DebugSymbols = !settings.StripDebugInfo,
+                DebugType = debugType,
+            };
+            Dotnet.Publish(scriptProjPath, scriptPublishPath, scriptPublishOptions);
+
+            // copy script assembly
+            string assemblyPath = Path.Combine(CurrentFolder, solutionName, "publish", $"{solutionName}.dll");
+            string assemblyPdbPath = Path.Combine(CurrentFolder, solutionName, "publish", $"{solutionName}.pdb");
+            string assemblyBuildPath = Path.Combine(assetsBuildPath, Path.GetFileName(assemblyPath));
+            string assemblyPdbBuildPath = Path.Combine(assetsBuildPath, Path.GetFileName(assemblyPdbPath));
+            string assemblyPathRelative = Path.GetRelativePath(buildPath, assemblyBuildPath);
+            File.Copy(assemblyPath, assemblyBuildPath);
+            if (!settings.StripDebugInfo)
+                File.Copy(assemblyPdbPath, assemblyPdbBuildPath);
+
+            // app assets
+            string assetsPackagePath = Path.Combine(assetsBuildPath, $"{solutionName}.assets");
+            AssetArchive.CreateFrom(CurrentProjectAssetsFolder, assetsPackagePath, Compression.LZ4, CompressionLevel.SmallestSize);
+
+            // shared assets
+            string assetsPath = Paths.CurrentAssetsPath;
+            string sharedAssetsPath = Path.Combine(assetsPath, "shared");
+            string sharedAssetPackagePath = Path.Combine(assetsPath, "shared.assets");
+            string sharedAssetPackageBuildPath = Path.Combine(assetsBuildPath, "shared.assets");
+            if (File.Exists(sharedAssetPackagePath))
+            {
+                File.Copy(sharedAssetPackagePath, sharedAssetPackageBuildPath);
+            }
+            else
+            {
+                AssetArchive.CreateFrom(sharedAssetsPath, sharedAssetPackageBuildPath, Compression.LZ4, CompressionLevel.SmallestSize);
+            }
+
+            // app config
+            string configBuildPath = Path.Combine(buildPath, "app.config");
+            AppConfig config = new()
+            {
+                StartupScene = Path.Combine("assets", settings.StartupScene),
+                ScriptAssembly = assemblyPathRelative,
+            };
+            config.Save(configBuildPath);
+
+            // build app
+            string appTempPath = Path.Combine(CurrentFolder, ".build");
+            string appTempPublishPath = Path.Combine(appTempPath, "publish");
+            string appTempProjPath = Path.Combine(appTempPath, $"{solutionName}.csproj");
+            string appTempProgramPath = Path.Combine(appTempPath, "Program.cs");
+            if (Directory.Exists(appTempPath))
+            {
+                Directory.Delete(appTempPath, true);
+            }
+            Directory.CreateDirectory(appTempPath);
+            Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName);
+            Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.IO.dll"));
+            File.WriteAllText(appTempProgramPath, PublishProgram);
+            PublishOptions appPublishOptions = new()
+            {
+                Framework = "net7.0",
+                Profile = settings.Profile,
+                RuntimeIdentifer = settings.RuntimeIdentifier,
+                PublishReadyToRun = settings.ReadyToRun,
+                PublishSingleFile = settings.SingleFile,
+                SelfContained = true,
+                DebugSymbols = !settings.StripDebugInfo,
+                DebugType = debugType,
+            };
+            Dotnet.Publish(appTempPath, appTempPublishPath, appPublishOptions);
+
+            // copy native runtimes
+            string localRuntimesPath = Path.GetFullPath("runtimes");
+            string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier, "native");
+            CopyDirectory(targetRuntimePath, appTempPublishPath, true);
+
+            // copy binaries to build folder
+            CopyDirectory(appTempPublishPath, buildPath, true);
+
+            Debug.WriteLine("Published Project");
+
+            return Task.CompletedTask;
+        }
+
+        private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
+        {
+            // Get information about the source directory
+            var dir = new DirectoryInfo(sourceDir);
+
+            // Check if the source directory exists
+            if (!dir.Exists)
+                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+            // Cache directories before we start copying
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // Create the destination directory
+            Directory.CreateDirectory(destinationDir);
+
+            // Get the files in the source directory and copy to the destination directory
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                string targetFilePath = Path.Combine(destinationDir, file.Name);
+                file.CopyTo(targetFilePath);
+            }
+
+            // If recursive and copying subdirectories, recursively call this method
+            if (recursive)
+            {
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                    CopyDirectory(subDir.FullName, newDestinationDir, true);
+                }
+            }
+        }
+
+        private static void CopyDirectory(string sourceDir, string destinationDir, string filter, bool recursive)
+        {
+            // Get information about the source directory
+            var dir = new DirectoryInfo(sourceDir);
+
+            // Check if the source directory exists
+            if (!dir.Exists)
+                throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+
+            // Cache directories before we start copying
+            DirectoryInfo[] dirs = dir.GetDirectories();
+
+            // Create the destination directory
+            Directory.CreateDirectory(destinationDir);
+
+            // Get the files in the source directory and copy to the destination directory
+            foreach (FileInfo file in dir.GetFiles())
+            {
+                if (file.Extension != filter) continue;
+                string targetFilePath = Path.Combine(destinationDir, file.Name);
+                file.CopyTo(targetFilePath);
+            }
+
+            // If recursive and copying subdirectories, recursively call this method
+            if (recursive)
+            {
+                foreach (DirectoryInfo subDir in dirs)
+                {
+                    string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
+                    CopyDirectory(subDir.FullName, newDestinationDir, true);
+                }
+            }
+        }
+
+        private const string PublishProgram =
+@"
+namespace App
+{
+    using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Editor;
+    using HexaEngine.IO;
+    using HexaEngine.Projects;
+    using HexaEngine.Scripting;
+    using HexaEngine.Windows;
+
+    public static class Program
+    {
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        public static void Main()
+        {
+            CrashLogger.Initialize();
+            AppConfig config = AppConfig.Load();
+            Designer.InDesignMode = false;
+            Designer.IsShown = false;
+            FileSystem.Initialize();
+            AssemblyManager.Load(config.ScriptAssembly);
+            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = config.StartupScene });
+        }
+    }
+}
+";
     }
 
     public static class ComponentRegistry

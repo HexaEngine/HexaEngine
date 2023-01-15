@@ -7,8 +7,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
-    using HexaEngine.IO;
-    using HexaEngine.OpenAL;
     using HexaEngine.Rendering;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
@@ -30,7 +28,7 @@
     public class Window : SdlWindow
     {
         private RenderDispatcher renderDispatcher;
-        private Thread? renderThread;
+        private Thread renderThread;
         private bool isRunning = true;
         private bool firstFrame;
         private IGraphicsDevice device;
@@ -49,6 +47,12 @@
         public IGraphicsDevice Device => device;
 
         public IGraphicsContext Context => context;
+
+        public string? StartupScene;
+
+        public Window()
+        {
+        }
 
         protected override void OnShown(ShownEventArgs args)
         {
@@ -77,11 +81,11 @@
         {
             if (OperatingSystem.IsWindows())
             {
-                device = Adapter.CreateGraphics(RenderBackend.D3D11, this);
+                device = Adapter.CreateGraphics(RenderBackend.D3D11);
                 context = device.Context;
-                renderDispatcher = new(device);
-                swapChain = device.SwapChain ?? throw new PlatformNotSupportedException();
+                swapChain = device.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
                 swapChain.Active = true;
+                renderDispatcher = new(device, renderThread);
             }
             else
             {
@@ -101,7 +105,7 @@
 
             if (Flags.HasFlag(RendererFlags.ImGui))
             {
-                renderer = new(this, device);
+                renderer = new(this, device, swapChain);
                 DebugDraw.Init(device);
             }
 
@@ -116,7 +120,7 @@
             OnRendererInitialize(device);
 
             deferredRenderer = new();
-            Task initTask = deferredRenderer.Initialize(device, this);
+            Task initTask = deferredRenderer.Initialize(device, swapChain, this);
             initTask.ContinueWith(x =>
             {
                 if (x.IsCompletedSuccessfully)
@@ -129,11 +133,17 @@
                     ImGuiConsole.Log(x.Exception);
                 }
             });
+
+            if (StartupScene != null)
+            {
+                Task.Run(() => SceneManager.AsyncLoad(StartupScene)).ContinueWith(x => SceneManager.Current.IsSimulating = true);
+            }
+
             while (isRunning)
             {
                 if (resize)
                 {
-                    device.SwapChain.Resize(Width, Height);
+                    swapChain.Resize(Width, Height);
                     resize = false;
                     ObjectPickerManager.Resize(Width, Height);
                 }
@@ -204,6 +214,7 @@
             CullingManager.Release();
             ResourceManager.Release();
             AudioManager.Release();
+            swapChain.Dispose();
             context.Dispose();
             device.Dispose();
         }

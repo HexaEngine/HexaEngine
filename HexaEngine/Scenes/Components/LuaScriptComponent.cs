@@ -5,11 +5,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
     using HexaEngine.IO;
     using HexaEngine.Objects;
     using HexaEngine.Scenes;
-    using HexaEngine.Scripting;
     using NLua;
 
     [EditorComponent<LuaScriptComponent>("Lua Script")]
@@ -52,7 +50,7 @@
                     context["component"] = this;
                     context["node"] = node;
                     context["scene"] = node.GetScene();
-                    UpdateFunc = context["Update"] as LuaFunction;
+                    UpdateFunc = context["UpdateAssemblies"] as LuaFunction;
                     FixedUpdateFunc = context["FixedUpdate"] as LuaFunction;
                     AwakeFunc = context["Awake"] as LuaFunction;
                     DestroyFunc = context["Destroy"] as LuaFunction;

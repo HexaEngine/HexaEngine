@@ -26,6 +26,7 @@
     public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
         internal readonly D3D11 D3D11;
+        private readonly DXGIAdapter adapter;
         private bool disposedValue;
 
         public ID3D11Device1* Device;
@@ -35,8 +36,9 @@
 #endif
 
         [SupportedOSPlatform("windows")]
-        public D3D11GraphicsDevice(DXGIAdapter adapter, SdlWindow? window)
+        public D3D11GraphicsDevice(DXGIAdapter adapter)
         {
+            this.adapter = adapter;
             D3D11 = D3D11.GetApi();
 
 #if D3D11On12
@@ -81,10 +83,6 @@
 #endif
 #endif
             Context = new D3D11GraphicsContext(this);
-
-            if (window == null) return;
-
-            SwapChain = adapter.CreateSwapChainForWindow(this, window);
         }
 
         public IGraphicsContext Context { get; }
@@ -98,6 +96,12 @@
         public event EventHandler? OnDisposed;
 
         public ISwapChain? SwapChain { get; }
+
+        [SupportedOSPlatform("windows")]
+        public ISwapChain CreateSwapChain(SdlWindow window)
+        {
+            return adapter.CreateSwapChainForWindow(this, window);
+        }
 
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc)
         {

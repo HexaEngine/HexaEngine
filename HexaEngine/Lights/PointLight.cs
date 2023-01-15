@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Lights
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
 
@@ -7,12 +8,11 @@
     public class PointLight : Light
     {
         [JsonIgnore]
-        public readonly unsafe BoundingBox* ShadowBox;
+        public unsafe BoundingBox* ShadowBox;
 
         public unsafe PointLight()
         {
             Transform.Updated += (s, e) => { Updated = true; };
-            ShadowBox = Alloc<BoundingBox>();
         }
 
         [EditorProperty("Shadow Range")]
@@ -23,6 +23,12 @@
 
         [JsonIgnore]
         public override LightType Type => LightType.Point;
+
+        public override unsafe void Initialize(IGraphicsDevice device)
+        {
+            ShadowBox = Alloc<BoundingBox>();
+            base.Initialize(device);
+        }
 
         public override unsafe void Uninitialize()
         {

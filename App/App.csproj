@@ -1,62 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      <DebugType>embedded</DebugType>
-	  <StripSymbols>true</StripSymbols>
-	  <AnalysisLevel>latest-all</AnalysisLevel>
-	  <Platforms>AnyCPU;x64</Platforms>
-	  <Configurations>Debug;Release;TraceLeak</Configurations>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="assets\app\scripts\test.lua" />
-    <None Remove="assets\app\textures\env_o.dds" />
-    <None Remove="assets\app\textures\irradiance_o.dds" />
-    <None Remove="assets\app\textures\prefilter_o.dds" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="assets\app\scripts\test.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\app\textures\env_o.dds">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\app\textures\irradiance_o.dds">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\app\textures\prefilter_o.dds">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugType>embedded</DebugType>
+		<StripSymbols>true</StripSymbols>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;TraceLeak</Configurations>
+	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
 	</ItemGroup>
-
-
-	<ItemGroup>
-	  <None Update="assets\app\textures\layer0.dds">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\app\textures\layer1.dds">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="assets\app\textures\layer2.dds">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-
-    <Target Name="BuildPackAssets1" AfterTargets="AfterBuild">
-		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -p $(TargetDir)assets\" />
-	</Target>
-	<Target Name="PublishPackAssets" AfterTargets="Publish">
-		<Exec Command="$(SolutionDir)AssetsBundler\bin\x64\Debug\net7.0\AssetsBundler.exe -m gen -p $(ProjectDir)$(PublishDir)assets\" />
-	</Target>
 </Project>

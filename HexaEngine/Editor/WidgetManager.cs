@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
+    using ImGuiNET;
 
     public static class WidgetManager
     {
@@ -19,6 +20,8 @@
             Register<MaterialsWidget>();
             Register<MeshesWidget>();
             Register<MixerWidget>();
+            Register<OpenProjectWindow>();
+            Register<PublishProjectWindow>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()

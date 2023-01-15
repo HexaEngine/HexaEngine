@@ -15,6 +15,7 @@
     {
         private const string file = "cache/shadercache.bin";
         private static readonly List<ShaderCacheEntry> entries = new();
+        private static readonly SemaphoreSlim s = new(1);
 
         static ShaderCache()
         {
@@ -42,6 +43,7 @@
                 var entry = new ShaderCacheEntry(path, macros, shader->Clone());
                 entries.RemoveAll(x => x.Equals(entry));
                 entries.Add(entry);
+                SaveAsync();
             }
         }
 
@@ -117,6 +119,7 @@
 
         private static void Save()
         {
+            s.Wait();
             lock (entries)
             {
                 var encoder = Encoding.UTF8.GetEncoder();
@@ -134,6 +137,33 @@
 
                 File.WriteAllBytes(file, span.ToArray());
             }
+            s.Release();
+        }
+
+        private static Task SaveAsync()
+        {
+            return Task.Run(() =>
+            {
+                s.Wait();
+                lock (entries)
+                {
+                    var encoder = Encoding.UTF8.GetEncoder();
+                    var size = 4 + entries.Sum(x => x.SizeOf(encoder));
+                    var span = size < 2048 ? stackalloc byte[size] : new byte[size];
+
+                    BinaryPrimitives.WriteInt32LittleEndian(span, entries.Count);
+
+                    int idx = 4;
+                    for (var i = 0; i < entries.Count; i++)
+                    {
+                        var entry = entries[i];
+                        idx += entry.Write(span[idx..], encoder);
+                    }
+
+                    File.WriteAllBytes(file, span.ToArray());
+                }
+                s.Release();
+            });
         }
     }
 

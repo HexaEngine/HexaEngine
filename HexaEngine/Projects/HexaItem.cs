@@ -2,7 +2,6 @@
 {
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
-    using System.Text.Json.Serialization;
     using System.Xml.Serialization;
 
     public abstract class HexaItem : INotifyCollectionChanged
@@ -13,8 +12,11 @@
         [XmlIgnore]
         public HexaParent? Parent { get; set; }
 
-        [JsonInclude]
+        [XmlAttribute]
         public string Name { get; set; } = string.Empty;
+
+        [XmlAnyElement]
+        public List<object> Properties { get; set; } = new();
 
         [XmlIgnore]
         public virtual IntPtr Icon { get; }

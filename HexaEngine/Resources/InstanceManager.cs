@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using System;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
     public class InstanceManager : IInstanceManager
@@ -78,8 +79,9 @@
                     OnInstanceCreated?.Invoke(instance);
                 }
             }
-
-            ImGuiConsole.Log(instance.ToString());
+#if VERBOSE
+            Debug.WriteLine(instance.ToString());
+#endif
             semaphore.Release();
             return instance;
         }
@@ -108,8 +110,9 @@
                     OnInstanceCreated?.Invoke(instance);
                 }
             }
-
-            ImGuiConsole.Log(instance.ToString());
+#if VERBOSE
+            Debug.WriteLine(instance.ToString());
+#endif
             semaphore.Release();
             return instance;
         }

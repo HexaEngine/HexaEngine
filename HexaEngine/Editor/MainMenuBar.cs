@@ -49,24 +49,6 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
-                    if (ImGui.MenuItem("New Scene"))
-                    {
-                        SceneManager.Load(new());
-                    }
-
-                    if (ImGui.MenuItem("Export"))
-                    {
-                        if (SceneManager.Current != null)
-                        {
-                            SceneSerializer.Serialize(SceneManager.Current);
-                        }
-                    }
-
-                    if (ImGui.MenuItem("Load"))
-                    {
-                        SceneManager.Load(SceneSerializer.Deserialize());
-                    }
-
                     if (ImGui.MenuItem("Import"))
                     {
                         filePickerIsOpen = true;
@@ -163,8 +145,23 @@
                         ProjectManager.OpenVisualStudio();
                     }
 
+                    if (ImGui.MenuItem("Rebuild project"))
+                    {
+                        Task.Run(ProjectManager.UpdateAssemblies);
+                    }
+
                     ImGui.EndMenu();
                 }
+
+                if (ImGui.BeginMenu("Scene"))
+                {
+                    if (ImGui.MenuItem("Save Scene"))
+                    {
+                        SceneManager.Save();
+                    }
+                    ImGui.EndMenu();
+                }
+
                 if (ImGui.BeginMenu("Inspector"))
                 {
                     var enabled = Inspector.Enabled;

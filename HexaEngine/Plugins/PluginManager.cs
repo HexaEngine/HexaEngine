@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Plugins
 {
     using HexaEngine.Core;
-    using Microsoft.Extensions.DependencyInjection;
     using System;
     using System.Collections.Generic;
 
@@ -29,18 +28,17 @@
             loader.Load();
 
             List<IPlugin> instances = new();
-            ServiceCollection services = new();
+
             foreach (var type in loader.GetAssignableTypes<IPlugin>())
             {
                 IPlugin? instance = (IPlugin?)Activator.CreateInstance(type);
                 if (instance is null) continue;
                 instances.Add(instance);
-                services.AddSingleton(instance);
             }
 
             foreach (var instance in instances)
             {
-                Plugin plugin = new(services.BuildServiceProvider(), instance);
+                Plugin plugin = new(null, instance);
                 plugins.Add(plugin);
                 config.GenerateSubKeyAuto(plugin, plugin.GetName());
             }

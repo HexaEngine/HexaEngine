@@ -18,10 +18,10 @@
             [Option('p', "path", Required = true, HelpText = "path to dir")]
             public string Path { get; set; }
 
-            [Option('c', "compression", Required = false, HelpText = "compression 0 = none, 1 = deflate")]
+            [Option('c', "Compression", Required = false, HelpText = "Compression 0 = none, 1 = deflate")]
             public int Compress { get; set; } = 0;
 
-            [Option('l', "Compression level", Required = false, HelpText = "compression level")]
+            [Option('l', "Compression level", Required = false, HelpText = "Compression level")]
             public int CompressionLevel { get; set; } = 0;
         }
 

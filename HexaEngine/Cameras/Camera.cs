@@ -12,7 +12,6 @@
     public class Camera : GameObject, IView
     {
         public new CameraTransform Transform;
-        private bool autoSize = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Camera"/> class.
@@ -34,9 +33,6 @@
         [EditorProperty(nameof(Near))]
         public float Near { get => Transform.Near; set => Transform.Near = value; }
 
-        [EditorProperty("Auto Size")]
-        public bool AutoSize { get => autoSize; set => autoSize = value; }
-
         [EditorProperty(nameof(Width))]
         public float Width { get => Transform.Width; set => Transform.Width = value; }
 
@@ -57,26 +53,12 @@
 
         public override void Initialize(IGraphicsDevice device)
         {
-            if (device.SwapChain != null)
-                device.SwapChain.Resized += Resized;
             base.Initialize(device);
-            if (!autoSize || device.SwapChain == null) return;
-            Transform.Width = device.SwapChain.BackbufferRTV.Viewport.Width;
-            Transform.Height = device.SwapChain.BackbufferRTV.Viewport.Height;
         }
 
         public override void Uninitialize()
         {
-            if (Device.SwapChain != null)
-                Device.SwapChain.Resized -= Resized;
             base.Uninitialize();
-        }
-
-        private void Resized(object? sender, ResizedEventArgs e)
-        {
-            if (!autoSize) return;
-            Transform.Width = e.NewWidth;
-            Transform.Height = e.NewHeight;
         }
 
         public static implicit operator CameraTransform(Camera camera) => camera.Transform;

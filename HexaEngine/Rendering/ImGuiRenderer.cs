@@ -31,7 +31,7 @@ namespace HexaEngine.Rendering
         private IShaderResourceView fontTextureView;
         private int vertexBufferSize = 5000, indexBufferSize = 10000;
 
-        public ImGuiRenderer(SdlWindow window, IGraphicsDevice device)
+        public ImGuiRenderer(SdlWindow window, IGraphicsDevice device, ISwapChain swapChain)
         {
             IntPtr igContext = ImGui.CreateContext();
             ImGui.SetCurrentContext(igContext);
@@ -41,8 +41,8 @@ namespace HexaEngine.Rendering
             ImNodes.Initialize();
 
             this.device = device;
+            this.swapChain = swapChain;
             context = device.Context;
-            swapChain = device.SwapChain;
 
             var io = ImGui.GetIO();
             var config = new ImFontConfigPtr(ImGuiNative.ImFontConfig_ImFontConfig());

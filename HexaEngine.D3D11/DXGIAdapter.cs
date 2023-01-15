@@ -30,9 +30,9 @@
         public RenderBackend Backend => RenderBackend.D3D11;
 
         [SupportedOSPlatform("windows")]
-        public IGraphicsDevice CreateGraphics(SdlWindow window)
+        public IGraphicsDevice CreateGraphics()
         {
-            return new D3D11GraphicsDevice(this, window);
+            return new D3D11GraphicsDevice(this);
         }
 
         [SupportedOSPlatform("windows")]

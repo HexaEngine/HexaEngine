@@ -13,7 +13,7 @@
         private static readonly Dictionary<string, string> fileIndices = new();
         private static readonly List<string> sources = new();
 
-        static FileSystem()
+        public static void Initialize()
         {
             foreach (string file in Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly))
             {
@@ -135,13 +135,13 @@
             {
                 var fs = File.OpenRead(value);
 
-                return new(fs, 0, fs.Length, true);
+                return new(fs, 0, fs.Length);
             }
             else if (File.Exists(path))
             {
                 var fs = File.OpenRead(path);
 
-                return new(fs, 0, fs.Length, true);
+                return new(fs, 0, fs.Length);
             }
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
@@ -166,13 +166,13 @@
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenRead(value);
-                stream = new(fs, 0, fs.Length, true);
+                stream = new(fs, 0, fs.Length);
                 return true;
             }
             else if (File.Exists(path))
             {
                 var fs = File.OpenRead(path);
-                stream = new(fs, 0, fs.Length, true);
+                stream = new(fs, 0, fs.Length);
                 return true;
             }
             else if (!string.IsNullOrWhiteSpace(realPath))
@@ -252,6 +252,13 @@
             }
             text = null;
             return false;
+        }
+
+        public static StreamReader OpenRead(string path)
+        {
+            var fs = Open(path);
+            var reader = new StreamReader(fs);
+            return reader;
         }
     }
 }

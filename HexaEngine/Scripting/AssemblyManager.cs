@@ -48,6 +48,37 @@
             assemblies.Add(assembly);
             AssemblyLoaded?.Invoke(null, assembly);
 
+            _typeCache.Clear();
+            _typeNameCache.Clear();
+
+            return assembly;
+        }
+
+        public static async Task<Assembly?> LoadAsync(string path)
+        {
+            string? folder = Path.GetDirectoryName(path);
+            if (folder == null) return null;
+            string filename = Path.GetFileName(path);
+            string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
+            Assembly assembly;
+            if (File.Exists(pdb))
+            {
+                using MemoryStream ms = new(await File.ReadAllBytesAsync(path));
+                using MemoryStream ms2 = new(await File.ReadAllBytesAsync(pdb));
+                assembly = assemblyLoadContext.LoadFromStream(ms, ms2);
+            }
+            else
+            {
+                using MemoryStream ms = new(await File.ReadAllBytesAsync(path));
+                assembly = assemblyLoadContext.LoadFromStream(ms);
+            }
+
+            assemblies.Add(assembly);
+            AssemblyLoaded?.Invoke(null, assembly);
+
+            _typeCache.Clear();
+            _typeNameCache.Clear();
+
             return assembly;
         }
 
@@ -125,7 +156,7 @@
         {
             foreach (Assembly assembly in Assemblies)
             {
-                Type? type = assembly.GetTypes().FirstOrDefault(x => x.AssemblyQualifiedName == name);
+                Type? type = assembly.GetType(name, false, false);
                 if (type != null)
                     return type;
             }

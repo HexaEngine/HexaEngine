@@ -4,6 +4,7 @@
     using HexaEngine.Core.Unsafes;
     using HexaEngine.IO;
     using HexaEngine.Projects;
+    using HexaEngine.Scenes.Serialization;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Numerics;
@@ -17,6 +18,8 @@
         private readonly Stack<string> backHistory = new();
         private readonly Stack<string> forwardHistory = new();
         private string? CurrentFolder = null;
+
+        private Item? renameItem;
 
         private struct Item
         {
@@ -231,6 +234,11 @@
                     if (ImGui.MenuItem("Refresh"))
                     {
                         Refresh();
+                    }
+
+                    if (ImGui.MenuItem("New Scene"))
+                    {
+                        SceneSerializer.Serialize(new(), Path.Combine(currentDir.FullName, "scene.hexlvl"));
                     }
 
                     ImGui.EndPopup();

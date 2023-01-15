@@ -1,7 +1,11 @@
 ﻿namespace HexaEngine.Scripting
 {
+    using HexaEngine.Scenes;
+
     public interface IScript
     {
+        public GameObject GameObject { get; set; }
+
         public void Awake()
         {
         }

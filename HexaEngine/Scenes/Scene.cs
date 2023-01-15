@@ -26,9 +26,6 @@
 
     public class Scene
     {
-#nullable disable
-        private IGraphicsDevice device;
-#nullable enable
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
         private string[] cameraNames = Array.Empty<string>();
@@ -38,6 +35,7 @@
         private MaterialManager materialManager;
         private MeshManager meshManager;
         private readonly SemaphoreSlim semaphore = new(1);
+        private string? path;
 
         [JsonIgnore]
         public Simulation Simulation;
@@ -60,13 +58,18 @@
         public string Name { get; }
 
         [JsonIgnore]
+        public string? Path { get => path; set => path = value; }
+
+        [JsonIgnore]
         public SceneDispatcher Dispatcher { get; } = new();
 
+        [JsonIgnore]
         public List<Camera> Cameras => cameras;
 
         [JsonIgnore]
         public string[] CameraNames => cameraNames;
 
+        [JsonIgnore]
         public List<Light> Lights => lights;
 
         [JsonIgnore]
@@ -102,7 +105,6 @@
             callbacks.Events = new(ThreadDispatcher, BufferPool);
             Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -10, 0)), new SolveDescription(8, 1));
 
-            this.device = device;
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
 

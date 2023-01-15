@@ -4,6 +4,6 @@
     {
         RenderBackend Backend { get; }
 
-        IGraphicsDevice CreateGraphics(SdlWindow window);
+        IGraphicsDevice CreateGraphics();
     }
 }
