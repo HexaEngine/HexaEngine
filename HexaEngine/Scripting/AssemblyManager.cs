@@ -106,7 +106,7 @@
         {
             if (!_typeNameCache.TryGetValue(type, out var result))
             {
-                result = Assemblies.SelectMany(assembly => assembly.GetTypes().AsParallel().Where(x => x.IsAssignableTo(type))).Select(x => x.Name).ToArray();
+                result = GetAssignableTypes(type).Select(x => x.Name).ToArray();
                 _typeNameCache.Add(type, result);
             }
             return result;

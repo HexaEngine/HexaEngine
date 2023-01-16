@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
     using System;
     using System.Runtime.CompilerServices;

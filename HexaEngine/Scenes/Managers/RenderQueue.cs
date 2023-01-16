@@ -30,7 +30,7 @@
         /// <summary>
         /// Issues the IDrawable to be rerecorded
         /// </summary>
-        /// <param name="drawable"></param>
+        /// <param dbgName="drawable"></param>
         public virtual void Update(IDrawable drawable)
         {
             updateQueue.Enqueue(drawable);

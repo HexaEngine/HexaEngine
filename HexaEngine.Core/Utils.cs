@@ -24,6 +24,24 @@
         }
 
         /// <summary>
+        /// Converts an array to an native pointer.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="values">The values.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* ToPtr<T>(this T[] values) where T : unmanaged
+        {
+            uint bytesToCopy = (uint)values.Length * (uint)sizeof(T);
+            T* result = (T*)Alloc(bytesToCopy);
+            fixed (T* src = values)
+            {
+                MemoryCopy(src, result, bytesToCopy, bytesToCopy);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Converts to utf8 pointer.
         /// </summary>
         /// <param name="str">The string.</param>
@@ -58,6 +76,30 @@
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
         public static void MemoryCopy(void* src, void* dst, int dstLength, int srcLength)
+        {
+            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy(void* src, void* dst, long dstLength, long srcLength)
+        {
+            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy(void* src, void* dst, ulong dstLength, ulong srcLength)
         {
             Buffer.MemoryCopy(src, dst, dstLength, srcLength);
         }

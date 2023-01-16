@@ -1,9 +1,8 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
+    using HexaEngine.Core.Windows;
     using HexaEngine.DirectXTex;
     using HexaEngine.IO;
     using Silk.NET.Core.Native;
@@ -14,14 +13,13 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
+    using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
     using Format = Core.Graphics.Format;
     using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using SubresourceData = Core.Graphics.SubresourceData;
-    using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
     using Usage = Core.Graphics.Usage;
     using Viewport = Mathematics.Viewport;
-    using BepuPhysics.Trees;
 
     public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
@@ -29,14 +27,22 @@
         private readonly DXGIAdapter adapter;
         private bool disposedValue;
 
+        public static readonly ShaderCompiler Compiler;
+
         public ID3D11Device1* Device;
         public ID3D11DeviceContext1* DeviceContext;
 #if DEBUG
-        internal ID3D11Debug* Debug;
+        internal ID3D11Debug* DebugDevice;
 #endif
 
+        static D3D11GraphicsDevice()
+        {
+            Compiler = new();
+            ShaderCompilers.Register(RenderBackend.D3D11, Compiler);
+        }
+
         [SupportedOSPlatform("windows")]
-        public D3D11GraphicsDevice(DXGIAdapter adapter)
+        public D3D11GraphicsDevice(DXGIAdapter adapter, bool debug)
         {
             this.adapter = adapter;
             D3D11 = D3D11.GetApi();
@@ -46,24 +52,22 @@
 #else
             D3DFeatureLevel[] levelsArr = new D3DFeatureLevel[]
             {
-                D3DFeatureLevel.Level121,
-                D3DFeatureLevel.Level120,
                 D3DFeatureLevel.Level111,
                 D3DFeatureLevel.Level110
             };
 
             CreateDeviceFlag flags = CreateDeviceFlag.BgraSupport;
 
-#if DEBUG
-            flags |= CreateDeviceFlag.Debug;
-#endif
+            if (debug)
+                flags |= CreateDeviceFlag.Debug;
+
             ID3D11Device* tempDevice;
             ID3D11DeviceContext* tempContext;
 
             D3DFeatureLevel level = 0;
             D3DFeatureLevel* levels = (D3DFeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
 
-            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 4, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
+            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 2, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
 
             ID3D11Device1* device;
             ID3D11DeviceContext1* context;
@@ -77,9 +81,12 @@
             NativePointer = new(device);
 
 #if DEBUG
-            ID3D11Debug* debug;
-            Device->QueryInterface(Utils.Guid(ID3D11Debug.Guid), (void**)&debug);
-            Debug = debug;
+            if (debug)
+            {
+                ID3D11Debug* debugDevice;
+                Device->QueryInterface(Utils.Guid(ID3D11Debug.Guid), (void**)&debugDevice);
+                DebugDevice = debugDevice;
+            }
 #endif
 #endif
             Context = new D3D11GraphicsContext(this);
@@ -750,7 +757,7 @@
                 return default;
 
             ScratchImage image = new();
-            var data = fs.GetBytes();
+            var data = fs.ReadBytes();
             string extension = Path.GetExtension(path);
             switch (extension)
             {
@@ -905,7 +912,7 @@
         private void CreateInputLayoutFromSignature(Blob shader, Blob signature, ID3D11InputLayout** layout)
         {
             ID3D11ShaderReflection* reflection;
-            ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
+            Compiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
             ShaderDesc desc;
             reflection->GetDesc(&desc);
 
@@ -981,7 +988,7 @@
         internal void CreateInputLayoutFromSignature(Shader* shader, Blob signature, ID3D11InputLayout** layout)
         {
             ID3D11ShaderReflection* reflection;
-            ShaderCompiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
+            Compiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
             ShaderDesc desc;
             reflection->GetDesc(&desc);
 
@@ -1064,10 +1071,11 @@
 
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
 
-#if DEBUG
-                Debug->ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
-                Debug->Release();
-#endif
+                if (DebugDevice != null)
+                {
+                    DebugDevice->ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
+                    DebugDevice->Release();
+                }
 
                 LeakTracer.ReportLiveInstances();
 

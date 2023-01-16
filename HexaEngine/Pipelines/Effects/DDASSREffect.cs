@@ -132,7 +132,7 @@ namespace HexaEngine.Pipelines.Effects
                 Topology = PrimitiveTopology.TriangleList
             });
             cbSSR = device.CreateBuffer(ssrParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            cbRot = new(device, CpuAccessFlags.Write); //device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            cbRot = new(device, CpuAccessFlags.Write); //device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Save);
             ssrBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
             ssrSRV = device.CreateShaderResourceView(ssrBuffer);

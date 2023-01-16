@@ -38,22 +38,13 @@
 	<ItemGroup>
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
 		<Compile Remove="assets\shared\shaders\deferred\toon\**" />
-		<Compile Remove="Physics\Actors\**" />
-		<Compile Remove="Physics\Shapes\**" />
 		<Compile Remove="Pipelines\Compute\**" />
-		<Compile Remove="Windows\Events\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
-		<EmbeddedResource Remove="Physics\Actors\**" />
-		<EmbeddedResource Remove="Physics\Shapes\**" />
 		<EmbeddedResource Remove="Pipelines\Compute\**" />
-		<EmbeddedResource Remove="Windows\Events\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
 		<None Remove="assets\shared\shaders\deferred\toon\**" />
-		<None Remove="Physics\Actors\**" />
-		<None Remove="Physics\Shapes\**" />
 		<None Remove="Pipelines\Compute\**" />
-		<None Remove="Windows\Events\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -470,7 +461,6 @@
 		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 		<ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
 		<ProjectReference Include="..\HexaEngine.Dotnet\HexaEngine.Dotnet.csproj" />
-		<ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
 		<ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
 	</ItemGroup>

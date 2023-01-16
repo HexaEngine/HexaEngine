@@ -4,6 +4,6 @@
     {
         RenderBackend Backend { get; }
 
-        IGraphicsDevice CreateGraphics();
+        IGraphicsDevice CreateGraphics(bool debug);
     }
 }

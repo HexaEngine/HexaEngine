@@ -190,7 +190,7 @@
 
                     ImGui.EndMenu();
                 }
-                if (ImGui.BeginMenu("Debug"))
+                if (ImGui.BeginMenu("DebugDevice"))
                 {
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))

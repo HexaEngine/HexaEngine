@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Pipelines.Forward
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Graphics;
     using HexaEngine.Objects.Primitives;
-    using HexaEngine.Rendering.ConstantBuffers;
     using HexaEngine.Resources;
     using System;
     using System.Security.Cryptography;

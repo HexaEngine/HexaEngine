@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Cameras;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Objects;
-    using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Components;
     using HexaEngine.Scenes.Managers;
@@ -95,6 +95,8 @@
 
             if (drawSkeletons)
             {
+                //TODO: Implement skeleton debug view.
+                /*
                 for (int i = 0; i < scene.MeshManager.Count; i++)
                 {
                     var mesh = scene.MeshManager.Meshes[i];
@@ -113,6 +115,7 @@
                         DebugDraw.DrawLine(bone.Name, origin, dest - origin, false, Vector4.One);
                     }
                 }
+                */
             }
 
             if (drawBoundingBoxes)

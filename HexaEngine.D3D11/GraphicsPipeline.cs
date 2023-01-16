@@ -10,7 +10,7 @@
         private readonly string dbgName;
         private bool disposedValue;
         protected readonly D3D11GraphicsDevice device;
-        protected readonly InputElementDescription[]? inputElements;
+        protected InputElementDescription[]? inputElements;
         protected readonly GraphicsPipelineDesc desc;
         protected readonly ShaderMacro[] macros = Array.Empty<ShaderMacro>();
         protected ID3D11VertexShader* vs;
@@ -188,8 +188,8 @@
             if (desc.VertexShader != null)
             {
                 Shader* shader;
-                ShaderCompiler.GetShaderOrCompileFile(desc.VertexShaderEntrypoint, desc.VertexShader, "vs_5_0", macros, &shader, bypassCache);
-                if (shader == null)
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFileWithInputSignature(desc.VertexShaderEntrypoint, desc.VertexShader, "vs_5_0", macros, &shader, out var elements, out var signature, bypassCache);
+                if (shader == null || signature == null || inputElements == null && elements == null)
                 {
                     valid = false;
                     return;
@@ -200,24 +200,16 @@
                 vs = vertexShader;
                 Utils.SetDebugName(vs, $"{dbgName}.{nameof(vs)}");
 
-                if (inputElements == null)
-                {
-                    var signature = ShaderCompiler.GetInputSignature(shader);
-                    ID3D11InputLayout* il;
-                    device.CreateInputLayoutFromSignature(shader, signature, &il);
-                    layout = il;
-                }
-                else
-                {
-                    var signature = ShaderCompiler.GetInputSignature(shader);
-                    ID3D11InputLayout* il;
-                    InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
-                    Helper.Convert(inputElements, descs);
-                    device.Device->CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il);
-                    Helper.Free(descs, inputElements.Length);
-                    Free(descs);
-                    layout = il;
-                }
+                inputElements ??= elements;
+
+                ID3D11InputLayout* il;
+                InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
+                Helper.Convert(inputElements, descs);
+                device.Device->CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il);
+                Helper.Free(descs, inputElements.Length);
+                Free(descs);
+                layout = il;
+
                 Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");
 
                 Free(shader);
@@ -226,7 +218,7 @@
             if (desc.HullShader != null)
             {
                 Shader* shader;
-                ShaderCompiler.GetShaderOrCompileFile(desc.HullShaderEntrypoint, desc.HullShader, "hs_5_0", macros, &shader, bypassCache);
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.HullShaderEntrypoint, desc.HullShader, "hs_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;
@@ -244,7 +236,7 @@
             if (desc.DomainShader != null)
             {
                 Shader* shader;
-                ShaderCompiler.GetShaderOrCompileFile(desc.DomainShaderEntrypoint, desc.DomainShader, "ds_5_0", macros, &shader, bypassCache);
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.DomainShaderEntrypoint, desc.DomainShader, "ds_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;
@@ -262,7 +254,7 @@
             if (desc.GeometryShader != null)
             {
                 Shader* shader;
-                ShaderCompiler.GetShaderOrCompileFile(desc.GeometryShaderEntrypoint, desc.GeometryShader, "gs_5_0", macros, &shader, bypassCache);
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.GeometryShaderEntrypoint, desc.GeometryShader, "gs_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;
@@ -280,7 +272,7 @@
             if (desc.PixelShader != null)
             {
                 Shader* shader;
-                ShaderCompiler.GetShaderOrCompileFile(desc.PixelShaderEntrypoint, desc.PixelShader, "ps_5_0", macros, &shader, bypassCache);
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.PixelShaderEntrypoint, desc.PixelShader, "ps_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;

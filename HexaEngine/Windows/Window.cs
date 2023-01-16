@@ -5,6 +5,8 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using HexaEngine.Graphics;
     using HexaEngine.Rendering;
@@ -25,7 +27,7 @@
         All = SceneGraph | ImGui | ImGuizmo | ImGuiWidgets,
     }
 
-    public class Window : SdlWindow
+    public class Window : SdlWindow, IRenderWindow
     {
         private RenderDispatcher renderDispatcher;
         private Thread renderThread;
@@ -42,13 +44,17 @@
 
         public RendererFlags Flags;
 
-        public RenderDispatcher RenderDispatcher => renderDispatcher;
+        public RenderDispatcher Dispatcher => renderDispatcher;
 
         public IGraphicsDevice Device => device;
 
         public IGraphicsContext Context => context;
 
+        public ISwapChain SwapChain => swapChain;
+
         public string? StartupScene;
+
+        public bool DebugGraphics { get; set; }
 
         public Window()
         {
@@ -62,26 +68,12 @@
             base.OnShown(args);
         }
 
-        protected override void OnFocusGained(FocusGainedEventArgs args)
-        {
-            if (swapChain != null)
-                renderDispatcher.Invoke(() => swapChain.Active = true);
-            base.OnFocusGained(args);
-        }
-
-        protected override void OnFocusLost(FocusLostEventArgs args)
-        {
-            if (swapChain != null)
-                renderDispatcher.Invoke(() => swapChain.Active = false);
-            base.OnFocusLost(args);
-        }
-
         [STAThread]
         private void RenderVoid()
         {
             if (OperatingSystem.IsWindows())
             {
-                device = Adapter.CreateGraphics(RenderBackend.D3D11);
+                device = Adapter.CreateGraphics(RenderBackend.D3D11, DebugGraphics);
                 context = device.Context;
                 swapChain = device.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
                 swapChain.Active = true;
@@ -161,7 +153,7 @@
 
                 renderer?.BeginDraw();
 
-                if (imGuiWidgets && Designer.IsShown)
+                if (imGuiWidgets && Application.InEditorMode)
                 {
                     Designer.Draw();
                     WidgetManager.Draw(context);
@@ -180,7 +172,7 @@
                             Time.Initialize();
                             firstFrame = false;
                         }
-                        if (Designer.IsShown)
+                        if (Application.InEditorMode)
                             deferredRenderer.Render(context, this, framebuffer.Viewport, SceneManager.Current, CameraManager.Current);
                         else
                             deferredRenderer.Render(context, this, Viewport, SceneManager.Current, CameraManager.Current);

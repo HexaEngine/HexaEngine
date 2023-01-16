@@ -54,7 +54,7 @@
                     FixedUpdateFunc = context["FixedUpdate"] as LuaFunction;
                     AwakeFunc = context["Awake"] as LuaFunction;
                     DestroyFunc = context["Destroy"] as LuaFunction;
-                    if (Designer.InDesignMode) return;
+                    if (Application.InDesignMode) return;
                     AwakeFunc?.Call();
                 }
                 catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
@@ -25,7 +26,7 @@
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
             if (ScriptType == null) return;
-            if (!Designer.InDesignMode)
+            if (!Application.InDesignMode)
             {
                 Debug.WriteLine($"Loading script: {ScriptType}");
                 Type? type = AssemblyManager.GetType(ScriptType);
@@ -61,7 +62,7 @@
 
         public void Update()
         {
-            if (Designer.InDesignMode || instance == null)
+            if (Application.InDesignMode || instance == null)
             {
                 return;
             }
@@ -78,7 +79,7 @@
 
         public void FixedUpdate()
         {
-            if (Designer.InDesignMode || instance == null)
+            if (Application.InDesignMode || instance == null)
             {
                 return;
             }
@@ -95,7 +96,7 @@
 
         public void Destory()
         {
-            if (Designer.InDesignMode || instance == null)
+            if (Application.InDesignMode || instance == null)
             {
                 return;
             }

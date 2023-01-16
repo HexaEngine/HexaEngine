@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Events
 {
-    using HexaEngine.Core;
+    using HexaEngine.Core.Windows;
 
     public class MaximizedEventArgs : RoutedEventArgs
     {

@@ -120,7 +120,7 @@
         }
     }
 
-    public class RenderDispatcher : IDisposable
+    public class RenderDispatcher : IDisposable, IRenderDispatcher
     {
         protected ConcurrentQueue<Action> queue = new();
         protected ConcurrentQueue<ICommandList> drawQueue = new();

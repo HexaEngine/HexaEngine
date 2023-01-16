@@ -2,6 +2,7 @@
 {
     using BepuPhysics;
     using BepuPhysics.Collidables;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
@@ -54,7 +55,7 @@
 
         private void Init()
         {
-            if (Designer.InDesignMode || node == null || scene == null) return;
+            if (Application.InDesignMode || node == null || scene == null) return;
             Uninit();
             update = false;
             init = true;
@@ -80,7 +81,7 @@
 
         private void Uninit()
         {
-            if (Designer.InDesignMode || node == null || scene == null) return;
+            if (Application.InDesignMode || node == null || scene == null) return;
             if (!init) return;
             init = false;
             if (Type == ColliderType.Static)
@@ -104,7 +105,7 @@
 
         public void Update()
         {
-            if (Designer.InDesignMode) return;
+            if (Application.InDesignMode) return;
             if (update)
                 Init();
             if (type != ColliderType.Static && node != null)

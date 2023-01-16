@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Windows;
+    using HexaEngine.Graphics;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;
     using System.Diagnostics;
@@ -27,12 +28,20 @@
             IDXGIAdapter = GetHardwareAdapter();
         }
 
+        public static void Init()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                Adapter.Adapters.Add(new DXGIAdapter());
+            }
+        }
+
         public RenderBackend Backend => RenderBackend.D3D11;
 
         [SupportedOSPlatform("windows")]
-        public IGraphicsDevice CreateGraphics()
+        public IGraphicsDevice CreateGraphics(bool debug)
         {
-            return new D3D11GraphicsDevice(this);
+            return new D3D11GraphicsDevice(this, debug);
         }
 
         [SupportedOSPlatform("windows")]

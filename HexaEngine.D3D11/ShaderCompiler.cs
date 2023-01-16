@@ -1,32 +1,27 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.IO;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D.Compilers;
+    using Silk.NET.Direct3D11;
     using System.Collections.Concurrent;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
+    using static HexaEngine.D3D11.D3D11GraphicsDevice;
 
-    public static class ShaderCompiler
+    public class ShaderCompiler : IShaderCompiler
     {
         private static readonly SemaphoreSlim semaphore = new(1);
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
         private static readonly ConcurrentDictionary<Pointer<ID3DInclude>, string> paths = new();
 
-        public static async Task<(bool, Blob?, Blob?)> CompileAsync(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile)
-        {
-            await semaphore.WaitAsync();
-            var result = CompileInternal(source, macros, entryPoint, sourceName, profile, out var shaderBlob, out var errorBlob);
-            semaphore.Release();
-            return (result, shaderBlob, errorBlob);
-        }
-
-        public static bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        public bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             semaphore.Wait();
             var result = CompileInternal(source, macros, entryPoint, sourceName, profile, out shaderBlob, out errorBlob);
@@ -34,7 +29,7 @@
             return result;
         }
 
-        private static unsafe bool CompileInternal(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        private unsafe bool CompileInternal(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
         {
             Debug.WriteLine($"Compiling: {sourceName}");
             shaderBlob = null;
@@ -135,7 +130,7 @@
             return 0;
         }
 
-        public static unsafe Blob GetInputSignature(Blob shader)
+        public unsafe Blob GetInputSignature(Blob shader)
         {
             lock (D3DCompiler)
             {
@@ -147,7 +142,7 @@
             }
         }
 
-        public static unsafe Blob GetInputSignature(Shader* shader)
+        public unsafe Blob GetInputSignature(Shader* shader)
         {
             lock (D3DCompiler)
             {
@@ -159,7 +154,7 @@
             }
         }
 
-        public static unsafe void Reflect(Blob blob, Guid guid, void** reflector)
+        public unsafe void Reflect(Blob blob, Guid guid, void** reflector)
         {
             lock (D3DCompiler)
             {
@@ -167,7 +162,7 @@
             }
         }
 
-        public static unsafe void Reflect(Shader* blob, Guid guid, void** reflector)
+        public unsafe void Reflect(Shader* blob, Guid guid, void** reflector)
         {
             lock (D3DCompiler)
             {
@@ -176,7 +171,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
         {
             Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out errorBlob);
             if (shaderBlob != null)
@@ -192,25 +187,25 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
         {
             Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, shader, out errorBlob);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader)
+        public unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader)
         {
             Compile(code, macros, entry, sourceName, profile, shader, out _);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader)
+        public unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader)
         {
             Compile(code, entry, sourceName, profile, shader, out _);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob)
         {
             Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out errorBlob);
             if (shaderBlob != null)
@@ -225,88 +220,180 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob)
         {
             CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, shader, out errorBlob);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader)
+        public unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader)
         {
             CompileFromFile(path, macros, entry, profile, shader, out _);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader)
+        public unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader)
         {
             CompileFromFile(path, entry, profile, shader, out _);
         }
 
-        public static unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader))
+            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
             {
                 Compile(code, entry, path, profile, &pShader);
-                ShaderCache.CacheShader(path, macros, pShader);
+                ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
 
-        public static unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader))
+            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
             {
                 CompileFromFile(path, entry, profile, &pShader);
                 if (pShader == null) return;
-                ShaderCache.CacheShader(path, macros, pShader);
+                ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
 
-        public static unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
-            {
-                Compile(code, entry, path, profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
-            }
-            *shader = pShader;
-        }
-
-        public static unsafe void GetShaderOrCompileFile(string entry, string path, string profile, Shader** shader, bool bypassCache = false)
-        {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out inputElements))
             {
                 CompileFromFile(path, entry, profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+                signature = null;
+                inputElements = null;
+                if (pShader == null) return;
+                signature = GetInputSignature(pShader);
+                inputElements = GetInputElementsFromSignature(pShader, signature);
+                ShaderCache.CacheShader(path, macros, inputElements, pShader);
+            }
+            *shader = pShader;
+            signature = GetInputSignature(pShader);
+        }
+
+        public unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
+            {
+                Compile(code, entry, path, profile, &pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
 
-        public static unsafe void GetShaderOrCompile(string code, string path, string profile, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
+            {
+                CompileFromFile(path, entry, profile, &pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
+            }
+            *shader = pShader;
+        }
+
+        public unsafe void GetShaderOrCompile(string code, string path, string profile, Shader** shader, bool bypassCache = false)
+        {
+            Shader* pShader;
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
             {
                 Compile(code, "main", path, profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
 
-        public static unsafe void GetShaderOrCompileFile(string path, string profile, Shader** shader, bool bypassCache = false)
+        public unsafe void GetShaderOrCompileFile(string path, string profile, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader))
+            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
             {
                 CompileFromFile(path, "main", profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), pShader);
+                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal unsafe InputElementDescription[] GetInputElementsFromSignature(Shader* shader, Blob signature)
+        {
+            ID3D11ShaderReflection* reflection;
+            Compiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
+            ShaderDesc desc;
+            reflection->GetDesc(&desc);
+
+            var inputElements = new InputElementDescription[desc.InputParameters];
+            for (uint i = 0; i < desc.InputParameters; i++)
+            {
+                SignatureParameterDesc parameterDesc;
+                reflection->GetInputParameterDesc(i, &parameterDesc);
+
+                InputElementDescription inputElement = new()
+                {
+                    SemanticName = Utils.ToStr(parameterDesc.SemanticName),
+                    SemanticIndex = (int)parameterDesc.SemanticIndex,
+                    Slot = 0,
+                    AlignedByteOffset = -1,
+                    Classification = Core.Graphics.InputClassification.PerVertexData,
+                    InstanceDataStepRate = 0
+                };
+
+                if (parameterDesc.Mask == (byte)RegisterComponentMaskFlags.ComponentX)
+                {
+                    inputElement.Format = parameterDesc.ComponentType switch
+                    {
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32Float,
+                        _ => Format.Unknown,
+                    };
+                }
+
+                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY))
+                {
+                    inputElement.Format = parameterDesc.ComponentType switch
+                    {
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.RG32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.RG32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.RG32Float,
+                        _ => Format.Unknown,
+                    };
+                }
+
+                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY | RegisterComponentMaskFlags.ComponentZ))
+                {
+                    inputElement.Format = parameterDesc.ComponentType switch
+                    {
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.RGB32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.RGB32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.RGB32Float,
+                        _ => Format.Unknown,
+                    };
+                }
+
+                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY | RegisterComponentMaskFlags.ComponentZ | RegisterComponentMaskFlags.ComponentW))
+                {
+                    inputElement.Format = parameterDesc.ComponentType switch
+                    {
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.RGBA32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.RGBA32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.RGBA32Float,
+                        _ => Format.Unknown,
+                    };
+                }
+
+                inputElements[i] = inputElement;
+            }
+
+            reflection->Release();
+            return inputElements;
         }
     }
 }

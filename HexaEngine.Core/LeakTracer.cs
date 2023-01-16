@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Graphics;
     using System.Collections.Concurrent;
 
 #if TRACELEAK
@@ -33,7 +34,14 @@
 #if TRACELEAK
             foreach (var pair in Instances)
             {
-                Debug.WriteLine($"******LIVE INSTANCE: \n{pair}");
+                if (pair.Key is IDeviceChild child)
+                {
+                    Debug.WriteLine($"******LIVE INSTANCE: {child.DebugName} \n{pair}");
+                }
+                else
+                {
+                    Debug.WriteLine($"******LIVE INSTANCE: \n{pair}");
+                }
             }
 #endif
         }

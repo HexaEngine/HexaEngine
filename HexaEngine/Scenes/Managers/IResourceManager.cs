@@ -1,14 +1,15 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Graphics;
-    using HexaEngine.Objects;
+    using HexaEngine.IO;
     using HexaEngine.Resources;
 
     public interface IResourceManager
     {
-        public MeshData LoadMesh(string name);
+        public Core.Meshes.MeshData LoadMesh(string name);
 
-        public MeshData CreateMesh(string name);
+        public Core.Meshes.MeshData CreateMesh(string name);
 
         public Material LoadMaterial(string name);
 

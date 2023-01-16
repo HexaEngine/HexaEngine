@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Audio;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
@@ -19,7 +20,7 @@
         {
             emitter = AudioManager.CreateEmitter();
             this.gameObject = gameObject;
-            if (!Designer.InDesignMode)
+            if (!Application.InDesignMode)
             {
                 WaveAudioStream stream = AudioManager.CreateStream("piano2.wav");
                 SourceVoice voice = AudioManager.CreateSourceVoice(stream);

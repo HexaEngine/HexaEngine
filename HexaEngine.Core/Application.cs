@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core
 {
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Windows;
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -26,6 +27,10 @@
             Textures,
             Scenes,
         }
+
+        public static bool InDesignMode { get; set; }
+
+        public static bool InEditorMode { get; set; }
 
         public static string GetFolder(SpecialFolder folder)
         {

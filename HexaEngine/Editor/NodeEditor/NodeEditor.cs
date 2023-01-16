@@ -176,9 +176,9 @@
         }
 
         /*
-        public Node CreateFromPipeline<T>(T pipeline, string name, bool removable = true, bool isStatic = false) where T : Pipeline
+        public Node CreateFromPipeline<T>(T pipeline, string dbgName, bool removable = true, bool isStatic = false) where T : Pipeline
         {
-            Node node = new(this, name, removable, isStatic);
+            Node node = new(this, dbgName, removable, isStatic);
             nodes.Add(node);
             NodeAdded?.Invoke(this, node);
 
@@ -208,9 +208,9 @@
             return node;
         }
 
-        public Node CreateFromEffect<T>(T pipeline, string name, bool removable = true, bool isStatic = false) where T : Effect
+        public Node CreateFromEffect<T>(T pipeline, string dbgName, bool removable = true, bool isStatic = false) where T : Effect
         {
-            Node node = new(this, name, removable, isStatic);
+            Node node = new(this, dbgName, removable, isStatic);
             nodes.Add(node);
             NodeAdded?.Invoke(this, node);
 

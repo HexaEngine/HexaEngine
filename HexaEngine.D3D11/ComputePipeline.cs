@@ -90,7 +90,7 @@
             if (desc.Path != null)
             {
                 Shader* shader;
-                ShaderCompiler.GetShaderOrCompileFile(desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
+                D3D11GraphicsDevice.Compiler.GetShaderOrCompileFile(desc.Entry, desc.Path, "cs_5_0", macros, &shader, bypassCache);
                 if (shader == null)
                 {
                     valid = false;

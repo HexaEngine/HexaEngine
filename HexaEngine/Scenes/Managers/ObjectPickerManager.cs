@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Graphics;
     using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;

@@ -4,6 +4,10 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Graphics;
@@ -107,6 +111,7 @@
         private int rendererHeight;
         private int windowWidth;
         private int windowHeight;
+        private bool windowResized;
 
 #nullable enable
 
@@ -117,23 +122,23 @@
         /// <summary>
         /// Initializes the renderer.
         /// </summary>
-        /// <param name="device">The device.</param>
-        /// <param name="window">The window.</param>
+        /// <param dbgName="device">The device.</param>
+        /// <param dbgName="window">The window.</param>
         /// <returns></returns>
-        public Task Initialize(IGraphicsDevice device, ISwapChain swapChain, Window window)
+        public Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window)
         {
+            this.device = device;
+            context = device.Context;
+            this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
+            swapChain.Resized += OnWindowResizeEnd;
+            ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+
+            configKey = Config.Global.GetOrCreateKey("Renderer");
+            renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
+
             return
             Task.Factory.StartNew(async () =>
             {
-                configKey = Config.Global.GetOrCreateKey("Renderer");
-                renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
-
-                this.device = device;
-                context = device.Context;
-                this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
-                swapChain.Resized += OnWindowResizeEnd;
-                ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
-
                 InitializeSettings();
 
                 quad = new(device);
@@ -236,7 +241,7 @@
 
                 brdflut = ResourceManager.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RGBA32Float));
 
-                window.RenderDispatcher.InvokeBlocking(() =>
+                window.Dispatcher.InvokeBlocking(() =>
                 {
                     brdfLUT = new();
                     brdfLUT.Initialize(device, 0, 0).Wait();
@@ -268,7 +273,7 @@
                 deferredContext = device.CreateDeferredContext();
 
                 initialized = true;
-                window.RenderDispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
+                window.Dispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
 
                 configKey.GenerateSubKeyAuto(bloom, "Bloom");
                 configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
@@ -378,7 +383,7 @@
 
         private void OnWindowResizeEnd(object? sender, ResizedEventArgs args)
         {
-            fxaa.Output = swapChain.BackbufferRTV;
+            windowResized = true;
         }
 
         private void OnRendererResizeBegin()
@@ -409,7 +414,7 @@
         private async void OnRendererResizeEnd(int width, int height)
         {
             if (!initialized) return;
-            ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+
             dirty = true;
             gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
             depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
@@ -475,8 +480,16 @@
                 envfilter = ResourceManager.AddTexture("EnvironmentPrefilter", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
         }
 
-        public unsafe void Render(IGraphicsContext context, SdlWindow window, Viewport viewport, Scene scene, Camera? camera)
+        public unsafe void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera? camera)
         {
+            if (windowResized)
+            {
+                ResourceManager.RequireUpdate("SwapChain.RTV");
+                windowResized = false;
+                fxaa.Output = swapChain.BackbufferRTV;
+                ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+            }
+
             if (!initialized) return;
             if (camera == null) return;
 

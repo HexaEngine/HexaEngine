@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
     <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
-    <ProjectReference Include="..\HexaEngine.IO\HexaEngine.IO.csproj" />
   </ItemGroup>
 
 </Project>

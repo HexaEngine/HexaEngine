@@ -24,13 +24,15 @@
         public LayoutWidget()
         {
             IsShown = true;
-            foreach (var type in Assembly.GetExecutingAssembly()
+
+            foreach (var type in AppDomain.CurrentDomain.GetAssemblies()
+                    .SelectMany(x => x
                     .GetTypes()
                     .AsParallel()
                     .Where(x =>
                     x.IsAssignableTo(typeof(GameObject)) &&
                     x.GetCustomAttribute<EditorNodeAttribute>() != null &&
-                    !x.IsAbstract))
+                    !x.IsAbstract)))
             {
                 var attr = type.GetCustomAttribute<EditorNodeAttribute>();
                 if (attr == null) continue;

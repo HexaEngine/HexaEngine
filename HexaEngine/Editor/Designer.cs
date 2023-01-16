@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Projects;
@@ -15,23 +16,6 @@
     {
         private static Task? task;
         private static readonly AssimpSceneLoader loader = new();
-        private static bool inDesignMode = true;
-        private static bool isShown = true;
-
-        public static bool InDesignMode
-        {
-            get => inDesignMode;
-            set
-            {
-                inDesignMode = value;
-            }
-        }
-
-        public static bool IsShown
-        {
-            get => isShown;
-            set => isShown = value;
-        }
 
         public static History History { get; } = new();
 
@@ -55,7 +39,7 @@
 
         internal static void Draw()
         {
-            if (!isShown) return;
+            if (!Application.InEditorMode) return;
             MainMenuBar.Draw();
             Inspector.Draw();
         }

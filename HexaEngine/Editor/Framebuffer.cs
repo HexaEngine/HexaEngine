@@ -73,17 +73,17 @@
                 // Stop "xE71A"
                 {
                     bool modeSwitched = false;
-                    if (!Designer.InDesignMode && scene.IsSimulating)
+                    if (!Application.InDesignMode && scene.IsSimulating)
                         ImGui.BeginDisabled(true);
 
                     if (ImGui.Button("\xE768"))
                     {
-                        if (Designer.InDesignMode)
+                        if (Application.InDesignMode)
                         {
                             scene.IsSimulating = false;
                             SceneManager.BeginReload();
                             scene.SaveState();
-                            Designer.InDesignMode = false;
+                            Application.InDesignMode = false;
                             scene.IsSimulating = true;
                             SceneManager.EndReload();
                         }
@@ -94,13 +94,13 @@
                         modeSwitched = true;
                     }
 
-                    if (!Designer.InDesignMode && scene.IsSimulating && !modeSwitched)
+                    if (!Application.InDesignMode && scene.IsSimulating && !modeSwitched)
                         ImGui.EndDisabled();
                 }
 
                 {
                     bool modeSwitched = false;
-                    if (Designer.InDesignMode || !scene.IsSimulating)
+                    if (Application.InDesignMode || !scene.IsSimulating)
                         ImGui.BeginDisabled(true);
 
                     if (ImGui.Button("\xE769"))
@@ -109,13 +109,13 @@
                         modeSwitched = true;
                     }
 
-                    if ((Designer.InDesignMode || !scene.IsSimulating) && !modeSwitched)
+                    if ((Application.InDesignMode || !scene.IsSimulating) && !modeSwitched)
                         ImGui.EndDisabled();
                 }
 
                 {
                     bool modeSwitched = false;
-                    if (Designer.InDesignMode)
+                    if (Application.InDesignMode)
                         ImGui.BeginDisabled(true);
 
                     if (ImGui.Button("\xE71A"))
@@ -123,12 +123,12 @@
                         scene.IsSimulating = false;
                         SceneManager.BeginReload();
                         scene.RestoreState();
-                        Designer.InDesignMode = true;
+                        Application.InDesignMode = true;
                         SceneManager.EndReload();
                         modeSwitched = true;
                     }
 
-                    if (Designer.InDesignMode && !modeSwitched)
+                    if (Application.InDesignMode && !modeSwitched)
                         ImGui.EndDisabled();
                 }
 

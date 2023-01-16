@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Projects
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Projects;
     using HexaEngine.IO;
@@ -42,7 +43,6 @@
         {
             ReferencedAssemblyNames.Add("HexaEngine.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-            ReferencedAssemblyNames.Add("HexaEngine.IO, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             foreach (string name in ReferencedAssemblyNames)
             {
@@ -145,6 +145,15 @@
             Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, "bin"));
         }
 
+        private static void BuildShaders(string output)
+        {
+            var entries = ShaderCache.Entries;
+            foreach (var entry in entries)
+            {
+                string path = Path.Combine(output, entry.Name);
+            }
+        }
+
         public static Task Publish(PublishSettings settings)
         {
             var debugType = settings.StripDebugInfo ? DebugType.None : DebugType.Full;
@@ -181,7 +190,7 @@
             // publish script assembly
             string solutionName = Path.GetFileName(CurrentFolder);
             string scriptProjPath = Path.Combine(CurrentFolder, solutionName);
-            string scriptPublishPath = Path.Combine(scriptProjPath, "publish");
+            string scriptPublishPath = Path.Combine(scriptProjPath, "bin", "Publish");
             PublishOptions scriptPublishOptions = new()
             {
                 Framework = "net7.0",
@@ -196,8 +205,8 @@
             Dotnet.Publish(scriptProjPath, scriptPublishPath, scriptPublishOptions);
 
             // copy script assembly
-            string assemblyPath = Path.Combine(CurrentFolder, solutionName, "publish", $"{solutionName}.dll");
-            string assemblyPdbPath = Path.Combine(CurrentFolder, solutionName, "publish", $"{solutionName}.pdb");
+            string assemblyPath = Path.Combine(scriptPublishPath, $"{solutionName}.dll");
+            string assemblyPdbPath = Path.Combine(scriptPublishPath, $"{solutionName}.pdb");
             string assemblyBuildPath = Path.Combine(assetsBuildPath, Path.GetFileName(assemblyPath));
             string assemblyPdbBuildPath = Path.Combine(assetsBuildPath, Path.GetFileName(assemblyPdbPath));
             string assemblyPathRelative = Path.GetRelativePath(buildPath, assemblyBuildPath);
@@ -243,7 +252,7 @@
             }
             Directory.CreateDirectory(appTempPath);
             Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName);
-            Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.IO.dll"));
+            Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.D3D11.dll"));
             File.WriteAllText(appTempProgramPath, PublishProgram);
             PublishOptions appPublishOptions = new()
             {
@@ -344,7 +353,7 @@ namespace App
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Editor;
+    using HexaEngine.D3D11;
     using HexaEngine.IO;
     using HexaEngine.Projects;
     using HexaEngine.Scripting;
@@ -358,9 +367,8 @@ namespace App
         public static void Main()
         {
             CrashLogger.Initialize();
+            DXGIAdapter.Init();
             AppConfig config = AppConfig.Load();
-            Designer.InDesignMode = false;
-            Designer.IsShown = false;
             FileSystem.Initialize();
             AssemblyManager.Load(config.ScriptAssembly);
             Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = config.StartupScene });

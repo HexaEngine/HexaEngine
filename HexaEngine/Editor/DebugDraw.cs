@@ -3,6 +3,7 @@
 namespace HexaEngine.Editor
 {
     using HexaEngine.Cameras;
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System;
@@ -112,7 +113,7 @@ namespace HexaEngine.Editor
 
         public static void Render(Camera camera, Viewport viewport)
         {
-            if (!Designer.IsShown) return;
+            if (!Application.InEditorMode) return;
             if (camera == null) return;
 
             for (int i = 0; i < clearqueue.Count; i++)

@@ -4,6 +4,7 @@
     using System;
     using System.Buffers.Binary;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -35,29 +36,33 @@
 
         public static bool DisableCache { get; set; } = false;
 
-        public static unsafe void CacheShader(string path, ShaderMacro[] macros, Shader* shader)
+        public static IReadOnlyList<ShaderCacheEntry> Entries => entries;
+
+        public static unsafe void CacheShader(string path, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)
         {
             lock (entries)
             {
                 if (DisableCache) return;
-                var entry = new ShaderCacheEntry(path, macros, shader->Clone());
+                var entry = new ShaderCacheEntry(path, macros, inputElements, shader->Clone());
                 entries.RemoveAll(x => x.Equals(entry));
                 entries.Add(entry);
                 SaveAsync();
             }
         }
 
-        public static unsafe bool GetShader(string path, ShaderMacro[] macros, Shader** shader)
+        public static unsafe bool GetShader(string path, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {
             lock (entries)
             {
                 *shader = default;
+                inputElements = null;
                 if (DisableCache) return false;
 
-                var ventry = new ShaderCacheEntry(path, macros, null);
+                var ventry = new ShaderCacheEntry(path, macros, null, null);
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
                 {
+                    inputElements = entry.InputElements;
                     *shader = entry.Shader->Clone();
                     return true;
                 }
@@ -79,17 +84,19 @@
             }
         }
 
-        private static unsafe bool GetShaderInternal(string path, ShaderMacro[] macros, Shader** shader)
+        private static unsafe bool GetShaderInternal(string path, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {
             lock (entries)
             {
                 *shader = null;
+                inputElements = null;
                 if (DisableCache) return false;
 
-                var ventry = new ShaderCacheEntry(path, macros, null);
+                var ventry = new ShaderCacheEntry(path, macros, null, null);
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
                 {
+                    inputElements = entry.InputElements;
                     *shader = entry.Shader;
                     return true;
                 }
@@ -171,12 +178,14 @@
     {
         public string Name;
         public ShaderMacro[] Macros;
+        public InputElementDescription[] InputElements;
         public Shader* Shader;
 
-        public ShaderCacheEntry(string name, ShaderMacro[] macros, Shader* bytecode)
+        public ShaderCacheEntry(string name, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* bytecode)
         {
             Name = name;
             Macros = macros;
+            InputElements = inputElements;
             Shader = bytecode;
         }
 
@@ -191,6 +200,19 @@
                 var macro = Macros[i];
                 idx += WriteString(dest[idx..], macro.Name, encoder);
                 idx += WriteString(dest[idx..], macro.Definition, encoder);
+            }
+            BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], InputElements.Length);
+            idx += 4;
+            for (int i = 0; i < InputElements.Length; i++)
+            {
+                var element = InputElements[i];
+                idx += WriteString(dest[idx..], element.SemanticName, encoder);
+                idx += WriteInt32(dest[idx..], element.SemanticIndex);
+                idx += WriteInt32(dest[idx..], (int)element.Format);
+                idx += WriteInt32(dest[idx..], element.Slot);
+                idx += WriteInt32(dest[idx..], element.AlignedByteOffset);
+                idx += WriteInt32(dest[idx..], (int)element.Classification);
+                idx += WriteInt32(dest[idx..], element.InstanceDataStepRate);
             }
             if (Shader != null)
                 BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], (int)Shader->Length);
@@ -215,6 +237,8 @@
         {
             int idx = 0;
             idx += ReadString(src, out Name, decoder);
+
+            // read macros
             int count = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
             Macros = new ShaderMacro[count];
@@ -224,10 +248,26 @@
                 idx += ReadString(src[idx..], out string definition, decoder);
                 Macros[i] = new ShaderMacro(name, definition);
             }
+
+            int countElements = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
+            idx += 4;
+            InputElements = new InputElementDescription[countElements];
+            for (var i = 0; i < countElements; i++)
+            {
+                idx += ReadString(src[idx..], out string semanticName, decoder);
+                idx += ReadInt32(src[idx..], out int semanticIndex);
+                idx += ReadInt32(src[idx..], out int format);
+                idx += ReadInt32(src[idx..], out int slot);
+                idx += ReadInt32(src[idx..], out int alignedByteOffset);
+                idx += ReadInt32(src[idx..], out int classification);
+                idx += ReadInt32(src[idx..], out int instanceDataStepRate);
+                InputElements[i] = new(semanticName, semanticIndex, (Format)format, alignedByteOffset, slot, (InputClassification)classification, instanceDataStepRate);
+            }
+
             int len = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
-            Shader = Utils.Alloc<Shader>();
-            Shader->Bytecode = Utils.Alloc<byte>(len);
+            Shader = Alloc<Shader>();
+            Shader->Bytecode = Alloc<byte>(len);
             Shader->Length = (nuint)len;
             fixed (void* ptr = src.Slice(idx, len))
             {
@@ -254,6 +294,18 @@
             return len + 4;
         }
 
+        private static int WriteInt32(Span<byte> dest, int value)
+        {
+            BinaryPrimitives.WriteInt32LittleEndian(dest, value);
+            return 4;
+        }
+
+        private static int ReadInt32(ReadOnlySpan<byte> src, out int value)
+        {
+            value = BinaryPrimitives.ReadInt32LittleEndian(src);
+            return 4;
+        }
+
         private static int SizeOf(string str, Encoder encoder)
         {
             return 4 + encoder.GetByteCount(str, true);
@@ -262,9 +314,16 @@
         public int SizeOf(Encoder encoder)
         {
             if (Shader != null)
-                return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) + (int)Shader->Length;
+                return 20 +
+                    SizeOf(Name, encoder) +
+                    Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
+                    InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24) +
+                    (int)Shader->Length;
             else
-                return 16 + SizeOf(Name, encoder) + Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder));
+                return 20 +
+                    SizeOf(Name, encoder) +
+                    Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
+                    InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24);
         }
 
         public void Free()

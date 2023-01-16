@@ -92,7 +92,7 @@
                 for (int i = 0; i < component.models.Count; i++)
                 {
                     Model model = component.models[i];
-                    ImGui.Text($"{model.Mesh.Name}, {model.Material.Name}");
+                    ImGui.Text($"{model.Mesh}, {model.Material.Name}");
                 }
             }
         }

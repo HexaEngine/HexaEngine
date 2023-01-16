@@ -1,21 +1,25 @@
-﻿namespace HexaEngine.Scenes.Importer
+﻿using HexaEngine.IO.Meshes;
+
+namespace HexaEngine.Scenes.Importer
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.IO;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Objects;
+    using HexaEngine.Projects;
     using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Components;
-    using HexaEngine.Scenes.Managers;
     using Silk.NET.Assimp;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
     using AssimpScene = Silk.NET.Assimp.Scene;
+    using MeshSource = MeshSource;
     using Scene = Scene;
 
     public class AssimpSceneLoader
@@ -24,12 +28,12 @@
 
         private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
         private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
-        private readonly Dictionary<Pointer<Node>, Animature> animatureT = new();
-        private readonly Dictionary<Pointer<Silk.NET.Assimp.Mesh>, MeshData> meshesT = new();
+        private readonly Dictionary<Pointer<Node>, Objects.Animature> animatureT = new();
+        private readonly Dictionary<Pointer<Silk.NET.Assimp.Mesh>, MeshSource> meshesT = new();
         private readonly Dictionary<string, Cameras.Camera> camerasT = new();
         private readonly Dictionary<string, Lights.Light> lightsT = new();
         private List<GameObject> nodes;
-        private MeshData[] meshes;
+        private MeshSource[] meshes;
         private Model[] models;
         private MaterialDesc[] materials;
         private Cameras.Camera[] cameras;
@@ -302,20 +306,20 @@
 
         private unsafe void LoadMeshes(AssimpScene* scene)
         {
-            meshes = new MeshData[scene->MNumMeshes];
+            meshes = new MeshSource[scene->MNumMeshes];
             models = new Model[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Silk.NET.Assimp.Mesh* msh = scene->MMeshes[i];
 
                 MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
-                int[] indices = new int[msh->MNumFaces * 3];
+                uint[] indices = new uint[msh->MNumFaces * 3];
                 for (int j = 0; j < msh->MNumFaces; j++)
                 {
                     var face = msh->MFaces[j];
                     for (int k = 0; k < 3; k++)
                     {
-                        indices[j * 3 + k] = (int)face.MIndices[k];
+                        indices[j * 3 + k] = face.MIndices[k];
                     }
                 }
 
@@ -343,7 +347,7 @@
                     min = Vector3.Min(min, pos);
                 }
 
-                Animature? animature = null;
+                Objects.Animature? animature = null;
 
                 MeshBone[]? bones = new MeshBone[msh->MNumBones];
                 if (msh->MNumBones > 0)
@@ -360,7 +364,7 @@
                             weights[x] = new() { VertexId = bn->MWeights[x].MVertexId, Weight = bn->MWeights[x].MWeight };
                         }
 
-                        bones[j] = new MeshBone(bn->MName, animature, nodesT[bn->MNode], weights, bn->MOffsetMatrix);
+                        bones[j] = new MeshBone(bn->MName, null, nodesT[bn->MNode], weights, bn->MOffsetMatrix);
                         animature.AddBone(bones[j]);
                     }
                 }
@@ -371,11 +375,15 @@
                 float radius = box.Extent.Length();
                 BoundingSphere sphere = new(center, radius);
 
-                meshes[i] = new MeshData() { Name = msh->MName, Indices = indices, Vertices = vertices, BoundingBox = box, BoundingSphere = sphere, Bones = bones, Animature = animature };
-                models[i] = new(meshes[i], materials[(int)msh->MMaterialIndex]);
+                meshes[i] = new MeshSource(msh->MName, vertices, indices, box, sphere);
+                models[i] = new(msh->MName, materials[(int)msh->MMaterialIndex]);
+
+                meshes[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
 
                 meshesT.Add(msh, meshes[i]);
             }
+
+            FileSystem.Refresh();
         }
 
         private unsafe void LoadCameras(AssimpScene* scene)
