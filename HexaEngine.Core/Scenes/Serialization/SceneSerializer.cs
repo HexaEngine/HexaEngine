@@ -1,5 +1,6 @@
-﻿namespace HexaEngine.Scenes.Serialization
+﻿namespace HexaEngine.Core.Scenes.Serialization
 {
+    using HexaEngine.Core.Scenes;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Bson;
 

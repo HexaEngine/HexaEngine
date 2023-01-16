@@ -1,12 +1,11 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.Objects;
-    using HexaEngine.Scenes;
     using HexaEngine.Scripting;
     using ImGuiNET;
     using System.Diagnostics;

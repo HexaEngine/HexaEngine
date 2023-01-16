@@ -2,12 +2,11 @@
 using BepuPhysics.Constraints;
 using BepuUtilities;
 using BepuUtilities.Memory;
-using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using static BepuUtilities.GatherScatter;
 
-namespace HexaEngine.Physics.Characters
+namespace HexaEngine.Core.Physics.Characters
 {
     public struct CharacterMotionAccumulatedImpulse
     {

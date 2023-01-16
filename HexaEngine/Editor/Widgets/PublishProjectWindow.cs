@@ -9,7 +9,7 @@
     public class PublishProjectWindow : ImGuiWindow
     {
         private readonly PublishSettings options = new();
-        private static readonly string[] profiles = { "Release", "DebugDevice" };
+        private static readonly string[] profiles = { "Release", "Debug" };
         private static readonly string[] rids = { "win-x64" };
         private Task task;
         private readonly FilePicker filePicker = new("", "*.hexlvl");
@@ -68,7 +68,7 @@
 
             {
                 bool value = options.StripDebugInfo;
-                if (ImGui.Checkbox("Strip DebugDevice Info", ref value))
+                if (ImGui.Checkbox("Strip Debug Info", ref value))
                 {
                     options.StripDebugInfo = value;
                 }

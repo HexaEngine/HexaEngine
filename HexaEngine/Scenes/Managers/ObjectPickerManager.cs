@@ -1,15 +1,15 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿using HexaEngine.Core.Graphics;
+
+namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Input;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
-    using HexaEngine.Resources;
-    using ImGuiNET;
     using System.Numerics;
-    using Texture = Graphics.Texture;
+    using Texture = Texture;
 
     public struct SelectionData
     {

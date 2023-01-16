@@ -2,12 +2,10 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.IO;
-    using HexaEngine.Objects;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Core.Scenes;
     using NLua;
 
     [EditorComponent<LuaScriptComponent>("Lua Script")]

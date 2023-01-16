@@ -1,11 +1,9 @@
-﻿namespace HexaEngine.Objects.Primitives
+﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
-    using HexaEngine.Objects;
     using System;
 
     public class UVSphere : Primitive<Vertex>

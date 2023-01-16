@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.IO.Meshes
+﻿namespace HexaEngine.Core.Meshes.IO
 {
     public enum MeshType
     {

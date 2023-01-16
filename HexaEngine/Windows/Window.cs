@@ -5,13 +5,12 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
-    using HexaEngine.Graphics;
     using HexaEngine.Rendering;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
@@ -54,7 +53,7 @@
 
         public string? StartupScene;
 
-        public bool DebugGraphics { get; set; }
+        public bool DebugGraphics { get; set; } = true;
 
         public Window()
         {

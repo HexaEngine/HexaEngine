@@ -1,8 +1,6 @@
-﻿namespace HexaEngine.Graphics.Buffers
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
-    using BepuPhysics;
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -170,7 +168,7 @@
                 Zero(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
-                System.Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
+                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
                 Free(items);
                 items = tmp;
                 capacity = value;
@@ -284,7 +282,7 @@
         public void Remove(int index)
         {
             var size = (count - index) * sizeof(T);
-            System.Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
+            Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
             isDirty = true;
         }
 

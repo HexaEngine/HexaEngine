@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Pipelines.Forward
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
+    using HexaEngine.Core.Graphics.Primitives;
 
     public unsafe class Skybox : IEffect
     {

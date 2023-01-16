@@ -1,6 +1,6 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Objects;
+    using HexaEngine.Core.Scenes;
     using System.Collections.Generic;
 
     public class ScriptManager

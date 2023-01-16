@@ -12,10 +12,10 @@
         private static readonly Dictionary<uint, SdlWindow> windows = new();
         private static readonly Sdl sdl = Sdl.GetApi();
         private static readonly List<Action<Event>> hooks = new();
-        private static SdlWindow? mainWindow;
+        private static IRenderWindow? mainWindow;
 
 #nullable disable
-        public static SdlWindow MainWindow => mainWindow;
+        public static IRenderWindow MainWindow => mainWindow;
 #nullable enable
 
         public enum SpecialFolder
@@ -46,7 +46,7 @@
             };
         }
 
-        public static void Run(SdlWindow mainWindow)
+        public static void Run(IRenderWindow mainWindow)
         {
             sdl.Init(Sdl.InitEvents);
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");

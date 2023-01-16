@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Lights;
+    using HexaEngine.Core.Lights;
     using System.Collections.Generic;
 
     public interface ILightManager

@@ -18,7 +18,7 @@ PixelInputType main(VertexInputType input)
 {
 	PixelInputType output;
 
-    output.position = mul(float4(input.position, 1), world);
+	output.position = mul(float4(input.position, 1), world);
 	output.position = mul(output.position, view);
 	output.position = mul(output.position, proj);
 

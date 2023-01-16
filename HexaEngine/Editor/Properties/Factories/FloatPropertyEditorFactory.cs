@@ -2,7 +2,8 @@
 
 namespace HexaEngine.Editor.Properties.Factories
 {
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Editor.Properties;
     using System.Reflection;
 
     public class FloatPropertyEditorFactory : IPropertyEditorFactory

@@ -1,4 +1,3 @@
-﻿namespace HexaEngine.IO.Meshes
+﻿namespace HexaEngine.Core.Meshes.IO
 {
-    using System.Runtime.InteropServices;
 }

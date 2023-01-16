@@ -1,10 +1,8 @@
-﻿namespace HexaEngine.Objects.Primitives
+﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using System.Numerics;
 
     public class Grid : Primitive<VertexPositionColor>

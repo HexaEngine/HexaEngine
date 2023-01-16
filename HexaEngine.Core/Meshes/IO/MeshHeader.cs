@@ -1,5 +1,6 @@
-﻿namespace HexaEngine.IO.Meshes
+﻿namespace HexaEngine.Core.Meshes.IO
 {
+    using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
     using System.Buffers.Binary;
     using System.IO;

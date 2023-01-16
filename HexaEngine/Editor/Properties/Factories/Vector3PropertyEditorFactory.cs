@@ -2,7 +2,8 @@
 
 namespace HexaEngine.Editor.Properties.Factories
 {
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Editor.Properties;
     using System.Numerics;
     using System.Reflection;
 

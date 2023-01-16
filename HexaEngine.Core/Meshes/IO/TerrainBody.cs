@@ -1,6 +1,6 @@
-﻿namespace HexaEngine.IO.Meshes
+﻿namespace HexaEngine.Core.Meshes.IO
 {
-    using HexaEngine.Meshes;
+    using HexaEngine.Core.Meshes;
 
     public unsafe struct TerrainBody
     {

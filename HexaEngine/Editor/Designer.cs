@@ -3,13 +3,9 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Input;
-    using HexaEngine.Editor.Projects;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Serialization;
     using HexaEngine.Scenes.Importer;
-    using HexaEngine.Scenes.Serialization;
-    using ImGuiNET;
-    using ImGuizmoNET;
-    using ImNodesNET;
     using System.Threading.Tasks;
 
     public static class Designer

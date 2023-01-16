@@ -1,35 +1,29 @@
-﻿namespace HexaEngine.Rendering
+﻿using HexaEngine.Core.Graphics;
+
+namespace HexaEngine.Rendering
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
-    using HexaEngine.IO;
-    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Objects;
-    using HexaEngine.Objects.Primitives;
     using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
-    using HexaEngine.Rendering.ConstantBuffers;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
-    using HexaEngine.Windows;
     using ImGuiNET;
     using System;
     using System.Numerics;
-    using System.Runtime.InteropServices;
-    using Texture = Graphics.Texture;
+    using Texture = Texture;
 
     // TODO: Cleanup and specialization
     public class SceneRenderer : ISceneRenderer
@@ -112,6 +106,8 @@
         private int windowWidth;
         private int windowHeight;
         private bool windowResized;
+        private bool sceneChanged;
+        private bool sceneVariablesChanged;
 
 #nullable enable
 
@@ -132,6 +128,7 @@
             this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
             swapChain.Resized += OnWindowResizeEnd;
             ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+            SceneManager.SceneChanged += SceneChanged;
 
             configKey = Config.Global.GetOrCreateKey("Renderer");
             renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
@@ -282,6 +279,15 @@
                 configKey.GenerateSubKeyAuto(ssr, "SSR");
                 configKey.GenerateSubKeyAuto(dof, "Dof");
             });
+        }
+
+        private void SceneChanged(object? sender, SceneChangedEventArgs e)
+        {
+            sceneChanged = true;
+        }
+
+        private void VariablesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
         }
 
         private void InitializeSettings()
@@ -461,27 +467,54 @@
             ssr.Depth = depthbuffer.ShaderResourceView;
         }
 
-        public unsafe void LoadScene()
+        public unsafe void LoadScene(Scene scene)
         {
-            env.Dispose();
-            if (FileSystem.Exists(Paths.CurrentTexturePath + "env_o.dds"))
-                env = ResourceManager.AddTextureFile("Environment", new TextureFileDescription(Paths.CurrentTexturePath + "env_o.dds", TextureDimension.TextureCube));
+            Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
+            Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
+
+            SceneVariables variables = scene.Variables;
+
+            if (variables.TryGetValue("Environment", out string? envp) && FileSystem.Exists(Paths.CurrentTexturePath + envp))
+            {
+                env = ResourceManager.AddOrUpdateTextureFile("Environment", new TextureFileDescription(Paths.CurrentTexturePath + envp, TextureDimension.TextureCube));
+                skybox.Env = env.ShaderResourceView;
+            }
             else
-                env = ResourceManager.AddTexture("Environment", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
-            envirr.Dispose();
-            if (FileSystem.Exists(Paths.CurrentTexturePath + "irradiance_o.dds"))
-                envirr = ResourceManager.AddTextureFile("EnvironmentIrradiance", new TextureFileDescription(Paths.CurrentTexturePath + "irradiance_o.dds", TextureDimension.TextureCube));
+            {
+                env = ResourceManager.AddOrUpdateTextureColor("Environment", TextureDimension.TextureCube, solidColor);
+                skybox.Env = env.ShaderResourceView;
+            }
+
+            if (variables.TryGetValue("EnvironmentIrradiance", out string? envirrp) && FileSystem.Exists(Paths.CurrentTexturePath + envirrp))
+            {
+                envirr = ResourceManager.AddOrUpdateTextureFile("EnvironmentIrradiance", new TextureFileDescription(Paths.CurrentTexturePath + envirrp, TextureDimension.TextureCube));
+            }
             else
-                envirr = ResourceManager.AddTexture("EnvironmentIrradiance", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
-            envfilter.Dispose();
-            if (FileSystem.Exists(Paths.CurrentTexturePath + "prefilter_o.dds"))
-                envfilter = ResourceManager.AddTextureFile("EnvironmentPrefilter", new TextureFileDescription(Paths.CurrentTexturePath + "prefilter_o.dds", TextureDimension.TextureCube));
+            {
+                envirr = ResourceManager.AddOrUpdateTextureColor("EnvironmentIrradiance", TextureDimension.TextureCube, ambient);
+            }
+
+            if (variables.TryGetValue("Environment", out string? envfilterp) && FileSystem.Exists(Paths.CurrentTexturePath + envfilterp))
+            {
+                envfilter = ResourceManager.AddOrUpdateTextureFile("EnvironmentPrefilter", new TextureFileDescription(Paths.CurrentTexturePath + envfilterp, TextureDimension.TextureCube));
+            }
             else
-                envfilter = ResourceManager.AddTexture("EnvironmentPrefilter", new TextureDescription(TextureDimension.TextureCube, 1, 1, 1, 1));
+            {
+                envfilter = ResourceManager.AddOrUpdateTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, solidColor);
+            }
+
+            deferred.UpdateTextures();
+            forward.UpdateTextures();
         }
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera? camera)
         {
+            if (sceneChanged)
+            {
+                LoadScene(scene);
+                sceneChanged = false;
+            }
+
             if (windowResized)
             {
                 ResourceManager.RequireUpdate("SwapChain.RTV");

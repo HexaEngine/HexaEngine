@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Projects
 {
-    using Silk.NET.Core.Native;
     using System.Xml.Serialization;
 
     public class AppConfig

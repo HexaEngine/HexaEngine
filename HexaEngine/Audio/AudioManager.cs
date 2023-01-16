@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Audio
 {
-    using HexaEngine.IO;
+    using HexaEngine.Core;
+    using HexaEngine.Core.IO;
     using HexaEngine.OpenAL;
-    using System;
 
     public static class AudioManager
     {

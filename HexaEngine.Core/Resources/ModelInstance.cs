@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Core.Resources
 {
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
 
     public class ModelInstance
     {

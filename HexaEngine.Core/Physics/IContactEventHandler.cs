@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Physics
+﻿namespace HexaEngine.Core.Physics
 {
     using BepuPhysics.Collidables;
     using BepuPhysics.CollisionDetection;

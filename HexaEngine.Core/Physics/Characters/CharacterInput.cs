@@ -1,13 +1,12 @@
 ﻿using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuUtilities;
-using HexaEngine.Cameras;
 using HexaEngine.Core.Input;
-using System;
+using HexaEngine.Core.Scenes;
 using System.Diagnostics;
 using System.Numerics;
 
-namespace HexaEngine.Physics.Characters
+namespace HexaEngine.Core.Physics.Characters
 {
     /// <summary>
     /// Convenience structure that wraps a CharacterController reference and its associated body.

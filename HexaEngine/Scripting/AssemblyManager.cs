@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Scripting
 {
-    using System.Collections;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Runtime.Loader;

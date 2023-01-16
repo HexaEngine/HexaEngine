@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Lights
 {
-    using HexaEngine.Lights;
     using System.Numerics;
 
     public struct CBPointLight

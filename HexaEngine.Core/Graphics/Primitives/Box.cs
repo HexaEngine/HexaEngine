@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Objects.Primitives
+﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Buffers;
     using System.Numerics;
 
     public class Cube : Primitive<Vector3>

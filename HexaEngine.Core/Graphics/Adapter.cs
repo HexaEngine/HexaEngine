@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Graphics;
-
-namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
     using System;
     using System.Linq;

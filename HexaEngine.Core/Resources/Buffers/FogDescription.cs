@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Resources.Buffers
+﻿namespace HexaEngine.Core.Resources.Buffers
 {
     using System.Numerics;
     using System.Runtime.InteropServices;

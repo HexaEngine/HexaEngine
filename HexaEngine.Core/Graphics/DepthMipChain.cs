@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
-    using HexaEngine.Objects.Primitives;
     using System;
     using System.Numerics;
 
@@ -71,8 +70,8 @@
 
         public void Resize(IGraphicsDevice device, int width, int height)
         {
-            this.Width = width;
-            this.Height = height;
+            Width = width;
+            Height = height;
             for (int i = 0; i < Mips; i++)
             {
                 srvs[i].Dispose();

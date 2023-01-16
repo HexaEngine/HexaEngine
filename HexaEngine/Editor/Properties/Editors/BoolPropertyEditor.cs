@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
+    using HexaEngine.Core.Editor.Properties;
     using ImGuiNET;
-    using System;
 
     public class BoolPropertyEditor : IPropertyEditor
     {

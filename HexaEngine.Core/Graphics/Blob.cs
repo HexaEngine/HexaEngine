@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
     public unsafe class Blob : IDisposable

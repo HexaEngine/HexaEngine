@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Attributes
+﻿namespace HexaEngine.Core.Editor.Attributes
 {
     using System;
     using System.Linq;

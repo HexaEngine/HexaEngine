@@ -1,6 +1,5 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System;
 
@@ -185,7 +184,7 @@
         /// Initializes a new instance of the <see cref="TextureDescription"/> struct.
         /// </summary>
         /// <param dbgName="resource">The resource.</param>
-        /// <exception cref="System.ArgumentException">
+        /// <exception cref="ArgumentException">
         /// Unknown ressource type - resource
         /// or
         /// Buffers cannot be used as a texture - resource

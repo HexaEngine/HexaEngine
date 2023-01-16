@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Properties.Factories
 {
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
+    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Editor.Properties.Editors;
     using System;
     using System.Reflection;

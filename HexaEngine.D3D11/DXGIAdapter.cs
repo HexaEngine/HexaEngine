@@ -3,7 +3,6 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Graphics;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;
     using System.Diagnostics;

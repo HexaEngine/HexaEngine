@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Editor.Attributes
+﻿namespace HexaEngine.Core.Editor.Attributes
 {
-    using HexaEngine.Editor.Properties;
-    using HexaEngine.Objects;
+    using HexaEngine.Core.Editor.Properties;
+    using HexaEngine.Core.Scenes;
     using System;
     using System.Diagnostics.CodeAnalysis;
 
@@ -13,7 +13,7 @@
         public EditorComponentAttribute([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, string name)
         {
             Type = type;
-            Constructor = () => ((IComponent?)Activator.CreateInstance(type)) ?? throw new();
+            Constructor = () => (IComponent?)Activator.CreateInstance(type) ?? throw new();
             Name = name;
             IsType = x => type.IsAssignableFrom(x.GetType());
             //Editor = new PropertyEditor(type);

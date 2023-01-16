@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.IO
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.IO;
     using System;
     using System.Buffers.Binary;
     using System.Linq;
@@ -15,7 +14,7 @@
 
         public ShaderBytecodeFile(string path)
         {
-            Read(FileSystem.ReadAllBytes(path));
+            Read(FileSystem.ReadAllBytes(path), Encoding.UTF8.GetDecoder());
         }
 
         public ShaderBytecodeFile(ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)

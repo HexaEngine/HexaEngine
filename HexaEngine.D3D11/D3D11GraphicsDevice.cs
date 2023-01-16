@@ -2,9 +2,9 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.Windows;
     using HexaEngine.DirectXTex;
-    using HexaEngine.IO;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
@@ -31,9 +31,8 @@
 
         public ID3D11Device1* Device;
         public ID3D11DeviceContext1* DeviceContext;
-#if DEBUG
+
         internal ID3D11Debug* DebugDevice;
-#endif
 
         static D3D11GraphicsDevice()
         {

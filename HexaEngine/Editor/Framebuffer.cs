@@ -3,16 +3,13 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using ImGuizmoNET;
-    using Silk.NET.DXGI;
-    using Silk.NET.OpenAL;
     using System;
-    using System.Globalization;
     using System.Numerics;
 
     public class Framebuffer

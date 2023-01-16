@@ -3,11 +3,9 @@
     using BepuPhysics;
     using BepuPhysics.Collidables;
     using HexaEngine.Core;
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.Objects;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
 
     [EditorComponent<CapsuleCollider>("Capsule Collider")]
     public class CapsuleCollider : IComponent

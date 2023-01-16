@@ -1,9 +1,8 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core;
     using HexaEngine.Core.Input;
-    using HexaEngine.Editor;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;

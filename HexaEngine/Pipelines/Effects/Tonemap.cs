@@ -3,9 +3,8 @@
 namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
-    using HexaEngine.Resources;
+    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Resources;
     using System.Numerics;
 
     public class Tonemap : IEffect

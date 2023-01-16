@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Editor.Properties;
     using ImGuiNET;
     using System.Numerics;
 

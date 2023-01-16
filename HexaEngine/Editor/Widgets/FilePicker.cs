@@ -421,7 +421,6 @@ namespace HexaEngine.Editor.Widgets
 
         public FileSaver(string startingPath)
         {
-
             if (File.Exists(startingPath))
             {
                 startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
@@ -579,7 +578,6 @@ namespace HexaEngine.Editor.Widgets
 
                 if (ImGui.InputText("Selected", ref SelectedFile, 1024))
                 {
-                    
                 }
 
                 ImGui.SameLine();
@@ -613,7 +611,6 @@ namespace HexaEngine.Editor.Widgets
                 }
             }
 
-          
             ImGui.End();
             return false;
         }

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scripting
 {
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
 
     public interface IScript
     {

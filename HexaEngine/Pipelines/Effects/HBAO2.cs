@@ -2,13 +2,11 @@
 
 namespace HexaEngine.Pipelines.Effects
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
-    using HexaEngine.Rendering.ConstantBuffers;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes.Managers;
+    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using System.Numerics;
 
     public class HBAO2 : IEffect

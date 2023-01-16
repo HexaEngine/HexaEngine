@@ -3,10 +3,9 @@
 namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Lights;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
-    using HexaEngine.Resources;
+    using HexaEngine.Core.Resources;
     using System;
 
     public class DeferredPrincipledBSDF : IEffect
@@ -84,6 +83,13 @@ namespace HexaEngine.Pipelines.Deferred
             LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
             SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
 
+            UpdateResources();
+        }
+
+        public void UpdateTextures()
+        {
+            Irraidance = ResourceManager.GetTextureSRV("EnvironmentIrradiance");
+            EnvPrefiltered = ResourceManager.GetTextureSRV("EnvironmentPrefilter");
             UpdateResources();
         }
 

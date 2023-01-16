@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Graphics.Buffers
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
     using HexaEngine.Core.Graphics;
 

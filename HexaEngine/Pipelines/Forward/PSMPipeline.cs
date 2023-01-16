@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Pipelines.Forward
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
 
     public class PSMPipeline : IGraphicsPipeline

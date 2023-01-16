@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Projects
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Dotnet;
     using HexaEngine.Editor.Projects;
-    using HexaEngine.IO;
-    using HexaEngine.Objects;
     using HexaEngine.Scripting;
     using HexaEngine.Windows;
     using System;
@@ -215,22 +216,25 @@
                 File.Copy(assemblyPdbPath, assemblyPdbBuildPath);
 
             // app assets
+            List<AssetDesc> assets = new();
             string assetsPackagePath = Path.Combine(assetsBuildPath, $"{solutionName}.assets");
-            AssetArchive.CreateFrom(CurrentProjectAssetsFolder, assetsPackagePath, Compression.LZ4, CompressionLevel.SmallestSize);
+            assets.AddRange(AssetDesc.CreateFromDir(CurrentProjectAssetsFolder));
 
             // shared assets
             string assetsPath = Paths.CurrentAssetsPath;
             string sharedAssetsPath = Path.Combine(assetsPath, "shared");
             string sharedAssetPackagePath = Path.Combine(assetsPath, "shared.assets");
-            string sharedAssetPackageBuildPath = Path.Combine(assetsBuildPath, "shared.assets");
             if (File.Exists(sharedAssetPackagePath))
             {
-                File.Copy(sharedAssetPackagePath, sharedAssetPackageBuildPath);
+                AssetArchive archive = new(sharedAssetPackagePath);
+                assets.AddRange(archive.Assets.Cast<AssetDesc>());
             }
             else
             {
-                AssetArchive.CreateFrom(sharedAssetsPath, sharedAssetPackageBuildPath, Compression.LZ4, CompressionLevel.SmallestSize);
+                assets.AddRange(AssetDesc.CreateFromDir(sharedAssetsPath));
             }
+
+            AssetArchive.CreateFrom(assets.ToArray(), assetsPackagePath, Compression.LZ4, CompressionLevel.SmallestSize);
 
             // app config
             string configBuildPath = Path.Combine(buildPath, "app.config");
@@ -253,6 +257,8 @@
             Directory.CreateDirectory(appTempPath);
             Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName);
             Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.D3D11.dll"));
+            if (settings.RuntimeIdentifier?.Contains("win") ?? false)
+                Dotnet.ChangeOutputType(appTempProjPath, "WinExe");
             File.WriteAllText(appTempProgramPath, PublishProgram);
             PublishOptions appPublishOptions = new()
             {
@@ -275,9 +281,29 @@
             // copy binaries to build folder
             CopyDirectory(appTempPublishPath, buildPath, true);
 
+            if (settings.StripDebugInfo)
+                DeleteFile(buildPath, "*.pdb", true);
+
             Debug.WriteLine("Published Project");
 
             return Task.CompletedTask;
+        }
+
+        private static void DeleteFile(string dir, string filter, bool recursive)
+        {
+            string[] files;
+            if (recursive)
+            {
+                files = Directory.GetFiles(dir, filter, SearchOption.AllDirectories);
+            }
+            else
+            {
+                files = Directory.GetFiles(dir, filter, SearchOption.TopDirectoryOnly);
+            }
+            for (int i = 0; i < files.Length; i++)
+            {
+                File.Delete(files[i]);
+            }
         }
 
         private static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
@@ -353,8 +379,8 @@ namespace App
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO;
     using HexaEngine.D3D11;
-    using HexaEngine.IO;
     using HexaEngine.Projects;
     using HexaEngine.Scripting;
     using HexaEngine.Windows;

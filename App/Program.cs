@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO;
     using HexaEngine.D3D11;
-    using HexaEngine.IO;
     using HexaEngine.Projects;
     using HexaEngine.Scripting;
     using HexaEngine.Windows;

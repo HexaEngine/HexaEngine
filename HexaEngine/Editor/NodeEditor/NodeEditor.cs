@@ -1,11 +1,8 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
     using HexaEngine.Core.Graphics.Reflection;
-    using HexaEngine.Editor.NodeEditor.Nodes;
-    using HexaEngine.Graphics;
     using ImGuiNET;
     using ImNodesNET;
-    using System.Collections;
     using System.Collections.Generic;
 
     public class NodeEditor

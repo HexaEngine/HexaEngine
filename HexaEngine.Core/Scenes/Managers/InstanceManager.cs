@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using System;
     using System.Runtime.CompilerServices;
 

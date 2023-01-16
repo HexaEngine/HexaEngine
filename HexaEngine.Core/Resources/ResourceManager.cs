@@ -1,15 +1,11 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Core.Resources
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
-    using HexaEngine.IO;
-    using HexaEngine.IO.Meshes;
-    using HexaEngine.Objects;
-    using HexaEngine.Rendering.ConstantBuffers;
+    using HexaEngine.Core.Meshes.IO;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
 
@@ -489,6 +485,21 @@
             }
         }
 
+        public static void TryRemoveResource(string name)
+        {
+            lock (sharedResources)
+            {
+                if (sharedResources.TryGetValue(name, out IDisposable? value))
+                {
+                    var resource = value;
+                    resources.Remove(resource);
+                    sharedResources.Remove(name);
+                    waitingHandles.Remove(name);
+                    resource.Dispose();
+                }
+            }
+        }
+
         private static TaskCompletionSource GetWaitHandle(string name)
         {
             // Create an wait handle if there is none
@@ -734,10 +745,32 @@
             }
         }
 
+        public static Graphics.Texture AddOrUpdateTextureFile(string name, TextureFileDescription description)
+        {
+            lock (sharedResources)
+            {
+                TryRemoveResource(name);
+                Graphics.Texture texture = new(device, description);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
         public static Graphics.Texture AddTextureColor(string name, TextureDimension dimension, Vector4 color)
         {
             lock (sharedResources)
             {
+                Graphics.Texture texture = new(device, dimension, color);
+                AddResource(name, texture);
+                return texture;
+            }
+        }
+
+        public static Graphics.Texture AddOrUpdateTextureColor(string name, TextureDimension dimension, Vector4 color)
+        {
+            lock (sharedResources)
+            {
+                TryRemoveResource(name);
                 Graphics.Texture texture = new(device, dimension, color);
                 AddResource(name, texture);
                 return texture;

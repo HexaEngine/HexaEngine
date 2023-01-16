@@ -97,8 +97,6 @@ float3 BRDF(
 	float FV = F_Schlick(1, Fd90, NdotV);
 	float Fd = FL * FV;
 
-
-
 	// Based on Hanrahan-Krueger brdf approximation of isotropic bssrdf
 	// 1.25 scale is used to (roughly) preserve albedo
 	// Fss90 used to "flatten" retroreflection based on roughness
@@ -119,15 +117,13 @@ float3 BRDF(
 
 	// sheen
 	float3 Fsheen = FH * sheen * Csheen;
-	
+
 	// clearcoat (ior = 1.5 -> F0 = 0.04)
 	float Dr = GTR1(NdotH, lerp(.1, .001, clearcoatGloss));
 	float Fr = lerp(.04, 1.0, FH);
 	float Gr = smithG_GGX(NdotL, .25) * smithG_GGX(NdotV, .25);
 
-
-
-	return ((1 / PI) * (lerp(Fd * Cdlin, ss * float3(1,0,0), subsurface)) + Fsheen)
+	return ((1 / PI) * (lerp(Fd * Cdlin, ss * float3(1, 0, 0), subsurface)) + Fsheen)
 		* (1 - metallic)
 		+ Gs * Fs * Ds + .25 * clearcoat * Gr * Fr * Dr;
 }
@@ -136,7 +132,6 @@ float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
 {
 	return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
-
 
 float3 BRDFIndirect(
 	SamplerState samplerState,

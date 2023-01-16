@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Core.Scenes
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
-    using HexaEngine.Objects;
     using Newtonsoft.Json;
     using System.Collections;
     using System.Collections.Generic;

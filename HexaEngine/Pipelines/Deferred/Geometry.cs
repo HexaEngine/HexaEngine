@@ -3,7 +3,6 @@
 namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
     using HexaEngine.Mathematics;
     using System.Threading.Tasks;
 

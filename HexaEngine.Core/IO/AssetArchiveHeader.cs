@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.IO
+﻿namespace HexaEngine.Core.IO
 {
     using K4os.Compression.LZ4.Streams;
     using System;

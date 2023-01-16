@@ -1,11 +1,11 @@
-﻿namespace HexaEngine.Physics
+﻿namespace HexaEngine.Core.Physics
 {
     using BepuPhysics;
     using BepuPhysics.Collidables;
     using BepuPhysics.CollisionDetection;
     using BepuPhysics.Constraints;
     using BepuUtilities;
-    using HexaEngine.Physics.Characters;
+    using HexaEngine.Core.Physics.Characters;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

@@ -1,8 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
+    using HexaEngine.Core.Scenes;
     using ImGuiNET;
     using System.Linq;
 

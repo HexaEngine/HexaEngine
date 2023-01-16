@@ -1,10 +1,7 @@
 ﻿namespace HexaEngine.Editor.NodeEditor.Nodes
 {
-    using BepuPhysics;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Rendering;
     using ImGuiNET;
-    using System;
     using System.Numerics;
 
     public class ImageNode : Node

@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Audio;
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.Objects;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.OpenAL;
-    using HexaEngine.Scenes;
 
     [EditorComponent<ListenerComponent>("Listener")]
     public class ListenerComponent : IComponent

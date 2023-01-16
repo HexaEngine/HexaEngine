@@ -3,7 +3,6 @@ using HexaEngine.Core.Input;
 using HexaEngine.Core.Windows;
 using ImGuiNET;
 using Silk.NET.SDL;
-using System.Numerics;
 using KeyCode = HexaEngine.Core.Input.KeyCode;
 
 namespace HexaEngine.Rendering

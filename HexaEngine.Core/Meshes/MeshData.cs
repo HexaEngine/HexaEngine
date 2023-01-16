@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Json;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using Newtonsoft.Json;
 
     public unsafe struct MeshData

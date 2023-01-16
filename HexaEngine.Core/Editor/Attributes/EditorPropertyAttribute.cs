@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Editor.Attributes
+﻿namespace HexaEngine.Core.Editor.Attributes
 {
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
     using System;
-    using System.Xml.Linq;
 
     [AttributeUsage(AttributeTargets.Property)]
     public class EditorPropertyAttribute : Attribute
@@ -113,7 +112,7 @@
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class EditorNodeAttribute<T> : EditorNodeAttribute where T : GameObject, new()
     {
-        public EditorNodeAttribute(string name) : base(name, typeof(T), () => new T(), (GameObject other) => other is T)
+        public EditorNodeAttribute(string name) : base(name, typeof(T), () => new T(), (other) => other is T)
         {
         }
     }

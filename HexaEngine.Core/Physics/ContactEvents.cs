@@ -1,6 +1,6 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Physics
+namespace HexaEngine.Core.Physics
 {
     using BepuPhysics;
     using BepuPhysics.Collidables;

@@ -1,7 +1,5 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
-    using BepuPhysics.Trees;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
 
     public class DepthBuffer : IDisposable

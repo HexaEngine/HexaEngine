@@ -1,7 +1,9 @@
-﻿namespace HexaEngine.IO.Meshes
+﻿namespace HexaEngine.Core.Meshes.IO
 {
+    using HexaEngine.Core;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using System.IO;
     using System.Text;
 

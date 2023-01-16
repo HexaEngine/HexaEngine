@@ -4,9 +4,8 @@ namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
-    using HexaEngine.Objects.Primitives;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Primitives;
     using System.Numerics;
 
     public class DDASSR : IEffect

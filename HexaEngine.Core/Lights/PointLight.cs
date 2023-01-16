@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Lights
+﻿namespace HexaEngine.Core.Lights
 {
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
 

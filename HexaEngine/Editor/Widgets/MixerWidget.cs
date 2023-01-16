@@ -2,10 +2,7 @@
 {
     using HexaEngine.Audio;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.OpenAL;
     using ImGuiNET;
-    using System;
-    using System.Drawing;
     using System.Numerics;
 
     public class MixerWidget : ImGuiWindow

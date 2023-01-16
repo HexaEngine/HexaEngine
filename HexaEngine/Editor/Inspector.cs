@@ -1,13 +1,10 @@
 ﻿namespace HexaEngine.Editor
 {
-    using HexaEngine.Cameras;
+    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Objects;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Components;
-    using HexaEngine.Scenes.Managers;
     using ImGuizmoNET;
     using System.Numerics;
 

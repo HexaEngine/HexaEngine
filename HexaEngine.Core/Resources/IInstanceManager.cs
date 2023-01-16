@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Core.Resources
 {
-    using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;

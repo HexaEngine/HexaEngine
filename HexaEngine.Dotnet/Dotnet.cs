@@ -109,6 +109,46 @@
             return string.Empty;
         }
 
+        public static void ChangeOutputType(string projectPath, string outputType)
+        {
+            XmlDocument document = new();
+            document.LoadXml(File.ReadAllText(projectPath));
+
+            XmlNode? root = document.DocumentElement;
+
+            if (root is null)
+                throw new InvalidDataException();
+
+            XmlNode? target = null;
+            Stack<XmlNode> stack = new();
+            stack.Push(root);
+            while (stack.Count != 0)
+            {
+                XmlNode node = stack.Pop();
+                if (node.Name == "OutputType")
+                {
+                    target = node;
+                }
+                else
+                {
+                    for (int i = 0; i < node.ChildNodes.Count; i++)
+                    {
+                        XmlNode? childNode = node.ChildNodes[i];
+                        if (childNode == null) continue;
+                        stack.Push(childNode);
+                    }
+                }
+            }
+
+            if (target is null)
+                throw new InvalidDataException();
+            if (target.FirstChild is null)
+                throw new InvalidDataException();
+            target.FirstChild.Value = outputType;
+
+            document.Save(projectPath);
+        }
+
         public static string Build(string path)
         {
             return Execute($"build \"{path}\"");

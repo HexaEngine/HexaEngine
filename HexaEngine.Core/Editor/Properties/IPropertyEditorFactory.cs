@@ -1,6 +1,6 @@
-﻿namespace HexaEngine.Editor.Properties
+﻿namespace HexaEngine.Core.Editor.Properties
 {
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Editor.Attributes;
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;

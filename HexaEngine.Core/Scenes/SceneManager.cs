@@ -1,11 +1,11 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Scenes
+namespace HexaEngine.Core.Scenes
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes.Serialization;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes.Serialization;
     using System;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;

@@ -1,12 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public struct FxDependency
     {

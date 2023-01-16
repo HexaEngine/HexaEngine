@@ -2,10 +2,9 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Projects;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Serialization;
     using ImGuiNET;
 
     public static class MainMenuBar
@@ -190,7 +189,7 @@
 
                     ImGui.EndMenu();
                 }
-                if (ImGui.BeginMenu("DebugDevice"))
+                if (ImGui.BeginMenu("Debug"))
                 {
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))

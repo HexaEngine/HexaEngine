@@ -1,10 +1,9 @@
 ﻿//based on https://github.com/ocornut/imgui/blob/master/examples/imgui_impl_dx11.cpp
 #nullable disable
 
-using HexaEngine.Core;
 using HexaEngine.Core.Graphics;
+using HexaEngine.Core.IO;
 using HexaEngine.Core.Windows;
-using HexaEngine.IO;
 using HexaEngine.Mathematics;
 using ImGuiNET;
 using ImGuizmoNET;

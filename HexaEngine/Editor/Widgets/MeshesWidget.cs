@@ -1,11 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Meshes;
-    using HexaEngine.IO;
-    using HexaEngine.IO.Meshes;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
+    using HexaEngine.Core.Scenes;
     using ImGuiNET;
 
     public class MeshesWidget : ImGuiWindow

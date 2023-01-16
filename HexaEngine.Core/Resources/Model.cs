@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Core.Resources
 {
-    using HexaEngine.IO.Meshes;
-    using HexaEngine.Objects;
+    using HexaEngine.Core.Meshes;
 
     public class Model
     {

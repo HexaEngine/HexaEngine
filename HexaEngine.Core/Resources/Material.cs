@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Objects;
-    using HexaEngine.Rendering.ConstantBuffers;
+    using HexaEngine.Core.Meshes;
 
     public unsafe class Material : IDisposable
     {

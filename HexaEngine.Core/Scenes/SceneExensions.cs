@@ -1,6 +1,5 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Objects;
     using System.Collections.Generic;
 
     public static class SceneExensions

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.IO
+﻿namespace HexaEngine.Core.IO
 {
     using HexaEngine.Core.Debugging;
     using System;

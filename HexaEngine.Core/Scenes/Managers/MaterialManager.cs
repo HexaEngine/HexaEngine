@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Objects;
-    using HexaEngine.Resources;
+    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Resources;
     using System;
     using System.Collections.Generic;
 

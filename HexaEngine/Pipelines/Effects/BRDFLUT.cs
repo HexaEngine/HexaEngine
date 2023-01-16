@@ -3,8 +3,7 @@
 namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
+    using HexaEngine.Core.Graphics.Primitives;
     using System.Threading.Tasks;
 
     public class BRDFLUT : IEffect

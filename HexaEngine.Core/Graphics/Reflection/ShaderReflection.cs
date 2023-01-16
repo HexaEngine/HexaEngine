@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics.Reflection
 {
-    using Silk.NET.Core.Attributes;
-    using Silk.NET.Core.Native;
     using System;
 
     public struct ShaderReflection

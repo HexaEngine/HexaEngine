@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
     using System.Runtime.CompilerServices;
 
     public unsafe class IndexBuffer : IBuffer
@@ -25,7 +24,7 @@
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.dbgName = dbgName;
+            dbgName = dbgName;
 
             items = Alloc<uint>(DefaultCapacity);
             ZeroRange(items, DefaultCapacity);
@@ -51,7 +50,7 @@
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint[] indices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.dbgName = dbgName;
+            dbgName = dbgName;
 
             capacity = (uint)indices.Length;
             items = Alloc<uint>(capacity);
@@ -131,7 +130,7 @@
                 var tmp = Alloc<uint>((int)value);
                 var oldsize = count * sizeof(uint);
                 var newsize = value * sizeof(uint);
-                System.Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
+                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
                 Free(items);
                 items = tmp;
                 capacity = value;
@@ -211,7 +210,7 @@
         public void Remove(int index)
         {
             var size = (count - index) * sizeof(uint);
-            System.Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
+            Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
             isDirty = true;
         }
 

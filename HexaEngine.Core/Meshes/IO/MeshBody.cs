@@ -1,6 +1,6 @@
-﻿namespace HexaEngine.IO.Meshes
+﻿namespace HexaEngine.Core.Meshes.IO
 {
-    using HexaEngine.Meshes;
+    using HexaEngine.Core.Meshes;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Text;

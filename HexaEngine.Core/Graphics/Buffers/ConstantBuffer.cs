@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Graphics;
-
-namespace HexaEngine.Graphics.Buffers
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
     using System;
     using System.Runtime.CompilerServices;

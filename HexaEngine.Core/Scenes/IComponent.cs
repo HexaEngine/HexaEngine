@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Objects
+﻿namespace HexaEngine.Core.Scenes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Scenes;
 
     public interface IComponent
     {

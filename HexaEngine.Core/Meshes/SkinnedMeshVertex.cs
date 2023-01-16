@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Meshes
+﻿namespace HexaEngine.Core.Meshes
 {
     using System;
     using System.Numerics;

@@ -3,9 +3,8 @@
 namespace HexaEngine.Pipelines.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
-    using HexaEngine.Resources.Buffers;
+    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Resources.Buffers;
     using System;
     using System.Numerics;
     using System.Threading.Tasks;

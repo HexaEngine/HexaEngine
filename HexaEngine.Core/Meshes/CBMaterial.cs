@@ -1,6 +1,4 @@
-﻿using HexaEngine.Objects;
-
-namespace HexaEngine.Rendering.ConstantBuffers
+﻿namespace HexaEngine.Core.Meshes
 {
     using System.Numerics;
 

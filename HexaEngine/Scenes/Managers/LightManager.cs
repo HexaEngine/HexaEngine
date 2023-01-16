@@ -1,18 +1,18 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿using HexaEngine.Core.Graphics;
+
+namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Lights;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
-    using HexaEngine.Lights;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using HexaEngine.Pipelines.Forward;
-    using HexaEngine.Resources;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using Texture = Graphics.Texture;
+    using Texture = Texture;
 
     public struct DirectionalLightData
     {

@@ -2,13 +2,10 @@
 {
     using HexaEngine.Audio;
     using HexaEngine.Core;
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor;
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.Editor.Properties;
-    using HexaEngine.Objects;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.OpenAL;
-    using HexaEngine.Scenes;
 
     [EditorComponent<EmitterComponent>("Emitter")]
     public class EmitterComponent : IComponent

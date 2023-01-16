@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Lights
+﻿namespace HexaEngine.Core.Lights
 {
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Scenes;
     using System.Numerics;
 
     public abstract class Light : GameObject

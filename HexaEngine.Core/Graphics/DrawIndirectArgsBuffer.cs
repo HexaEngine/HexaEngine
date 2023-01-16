@@ -1,7 +1,5 @@
-﻿namespace HexaEngine.Graphics
+﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
     using System;
     using System.Runtime.CompilerServices;
 

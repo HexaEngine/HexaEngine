@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Meshes;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Scenes;
     using System.Numerics;
 
     public class Animature

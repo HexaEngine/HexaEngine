@@ -1,11 +1,9 @@
-﻿namespace HexaEngine.Cameras
+﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Core.Events;
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     [EditorNode<Camera>("Camera")]

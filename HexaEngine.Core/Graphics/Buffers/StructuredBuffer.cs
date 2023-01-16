@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Graphics.Buffers
+﻿namespace HexaEngine.Core.Graphics.Buffers
 {
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core.Native;
     using System.Runtime.CompilerServices;
 
     public unsafe class StructuredBuffer<T> : IBuffer where T : unmanaged
@@ -70,7 +69,7 @@
                 var tmp = Alloc<T>((int)value);
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
-                System.Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
+                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
                 Free(items);
                 items = tmp;
                 capacity = value;
@@ -145,7 +144,7 @@
         public void Remove(int index)
         {
             var size = (count - index) * sizeof(T);
-            System.Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
+            Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
             isDirty = true;
         }
 

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Properties
 {
+    using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Editor.Properties.Factories;
     using System;
     using System.Collections.Generic;

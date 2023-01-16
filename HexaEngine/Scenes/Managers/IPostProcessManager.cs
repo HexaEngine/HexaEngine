@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Graphics;
+    using HexaEngine.Core.Graphics;
 
     public interface IPostProcessManager
     {

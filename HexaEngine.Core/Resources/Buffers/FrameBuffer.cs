@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Resources.Buffers
+﻿namespace HexaEngine.Core.Resources.Buffers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
     using System.Numerics;
     using System.Runtime.InteropServices;
 

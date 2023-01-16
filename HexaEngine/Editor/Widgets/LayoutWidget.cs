@@ -1,19 +1,17 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Editor.Attributes;
-    using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
-    using Silk.NET.Assimp;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
-    using System.Xml.Linq;
 
     public class LayoutWidget : ImGuiWindow
     {

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Meshes;
+    using HexaEngine.Core.Meshes;
     using System.Numerics;
 
     public class DynamicTerrain

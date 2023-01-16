@@ -3,10 +3,9 @@
 namespace HexaEngine.Pipelines.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
+    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
-    using HexaEngine.Objects.Primitives;
-    using HexaEngine.Resources;
 
     public class FXAA : IEffect
     {

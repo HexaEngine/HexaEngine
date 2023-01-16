@@ -1,12 +1,10 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public static class CullingManager

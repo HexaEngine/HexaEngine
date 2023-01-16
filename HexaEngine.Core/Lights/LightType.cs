@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Lights
+﻿namespace HexaEngine.Core.Lights
 {
     public enum LightType
     {

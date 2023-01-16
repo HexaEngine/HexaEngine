@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Pipelines.Forward
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using System.Numerics;
 

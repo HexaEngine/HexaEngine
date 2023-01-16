@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Objects
+﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;

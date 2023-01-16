@@ -17,4 +17,3 @@ VSOut main(VSIn input)
 	output.Tex = input.Tex;
 	return output;
 }
-

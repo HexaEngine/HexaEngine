@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System;
-
     public unsafe interface IResource : IDeviceChild
     {
         public ResourceDimension Dimension { get; }

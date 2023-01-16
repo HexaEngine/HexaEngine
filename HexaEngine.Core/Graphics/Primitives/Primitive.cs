@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Objects
+﻿namespace HexaEngine.Core.Graphics.Primitives
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using System;
 
@@ -30,7 +29,7 @@
             }
             else
             {
-                pipeline.DrawInstanced(context, viewport, (uint)vertexBuffer.Count, 1, 0, 0);
+                pipeline.DrawInstanced(context, viewport, vertexBuffer.Count, 1, 0, 0);
             }
         }
 

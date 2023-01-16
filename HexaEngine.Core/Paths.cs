@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.IO
+﻿namespace HexaEngine.Core
 {
     public static class Paths
     {

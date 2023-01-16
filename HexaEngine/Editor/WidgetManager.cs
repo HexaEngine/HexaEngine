@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
-    using ImGuiNET;
 
     public static class WidgetManager
     {
@@ -22,6 +21,7 @@
             Register<MixerWidget>();
             Register<OpenProjectWindow>();
             Register<PublishProjectWindow>();
+            Register<SceneVariablesWindow>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()

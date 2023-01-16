@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Core.Scenes
 {
     using System;
 

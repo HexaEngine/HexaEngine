@@ -1,6 +1,6 @@
-﻿namespace HexaEngine.Lights
+﻿namespace HexaEngine.Core.Lights
 {
-    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Mathematics;
 
     [EditorNode<DirectionalLight>("Directional Light")]

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.IO
+﻿namespace HexaEngine.Core.IO
 {
     using K4os.Compression.LZ4.Streams;
     using System.IO;
@@ -29,6 +29,40 @@
                 descs[i] = new(path, type, fs);
             }
             return descs;
+        }
+
+        public static AssetDesc[] CreateFromDir(string root)
+        {
+            var dir = new DirectoryInfo(root);
+            List<string> files = new();
+            foreach (var file in dir.GetFiles("*.*", SearchOption.AllDirectories))
+            {
+                if (file.Extension == ".assets")
+                    continue;
+                if (file.Extension == ".dll")
+                    continue;
+                if (file.Extension == ".hexlvl")
+                    continue;
+                files.Add(file.FullName);
+            }
+
+            AssetDesc[] descs = new AssetDesc[files.Count];
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                var file = files[i];
+                var path = System.IO.Path.GetRelativePath(root, file);
+                var type = AssetArchive.GetAssetType(path, out string _);
+                var fs = File.OpenRead(file);
+                descs[i] = new(path, type, fs);
+            }
+
+            return descs;
+        }
+
+        public static implicit operator AssetDesc(Asset asset)
+        {
+            return new(asset.Path, asset.Type, asset.GetStream());
         }
     }
 

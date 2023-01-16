@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Properties
+﻿namespace HexaEngine.Core.Editor.Properties
 {
     using System;
 

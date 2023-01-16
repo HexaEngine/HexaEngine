@@ -2,11 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Lights;
-    using HexaEngine.Graphics;
-    using HexaEngine.Objects.Primitives;
-    using HexaEngine.Resources;
+    using HexaEngine.Core.Resources;
     using System;
-    using System.Security.Cryptography;
 
     public class ForwardPrincipledBSDF : IEffect
     {
@@ -84,6 +81,13 @@
             EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
             LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
             SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+        }
+
+        public void UpdateTextures()
+        {
+            Irraidance = ResourceManager.GetTextureSRV("EnvironmentIrradiance");
+            EnvPrefiltered = ResourceManager.GetTextureSRV("EnvironmentPrefilter");
+            UpdateResources();
         }
 
         public unsafe void UpdateResources()

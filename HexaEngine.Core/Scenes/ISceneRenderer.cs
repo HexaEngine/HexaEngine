@@ -1,10 +1,8 @@
-﻿namespace HexaEngine.Objects
+﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes;
     using System;
 
     public interface ISceneRenderer : IDisposable

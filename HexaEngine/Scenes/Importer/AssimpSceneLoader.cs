@@ -1,17 +1,16 @@
-﻿using HexaEngine.IO.Meshes;
+﻿using HexaEngine.Core.Meshes.IO;
+using HexaEngine.Core.Scenes;
 
 namespace HexaEngine.Scenes.Importer
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO;
+    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.IO;
-    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
-    using HexaEngine.Objects;
     using HexaEngine.Projects;
-    using HexaEngine.Resources;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Components;
     using Silk.NET.Assimp;
     using System.Diagnostics;
@@ -30,14 +29,14 @@ namespace HexaEngine.Scenes.Importer
         private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
         private readonly Dictionary<Pointer<Node>, Objects.Animature> animatureT = new();
         private readonly Dictionary<Pointer<Silk.NET.Assimp.Mesh>, MeshSource> meshesT = new();
-        private readonly Dictionary<string, Cameras.Camera> camerasT = new();
-        private readonly Dictionary<string, Lights.Light> lightsT = new();
+        private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
+        private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
         private List<GameObject> nodes;
         private MeshSource[] meshes;
         private Model[] models;
         private MaterialDesc[] materials;
-        private Cameras.Camera[] cameras;
-        private Lights.Light[] lights;
+        private Core.Scenes.Camera[] cameras;
+        private Core.Lights.Light[] lights;
         private GameObject root;
 
         public Task ImportAsync(string path, Scene scene)
@@ -388,7 +387,7 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void LoadCameras(AssimpScene* scene)
         {
-            cameras = new Cameras.Camera[scene->MNumCameras];
+            cameras = new Core.Scenes.Camera[scene->MNumCameras];
 
             for (int i = 0; i < scene->MNumCameras; i++)
             {
@@ -408,11 +407,11 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void LoadLights(AssimpScene* scene)
         {
-            lights = new Lights.Light[scene->MNumLights];
+            lights = new Core.Lights.Light[scene->MNumLights];
             for (int i = 0; i < scene->MNumLights; i++)
             {
                 var lig = scene->MLights[i];
-                Lights.Light light;
+                Core.Lights.Light light;
                 switch (lig->MType)
                 {
                     case LightSourceType.Undefined:

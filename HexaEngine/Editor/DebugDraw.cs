@@ -2,9 +2,9 @@
 
 namespace HexaEngine.Editor
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;

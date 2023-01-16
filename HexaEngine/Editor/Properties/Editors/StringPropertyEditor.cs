@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
+    using HexaEngine.Core.Editor.Properties;
     using ImGuiNET;
 
     public class StringPropertyEditor : IPropertyEditor

@@ -1,12 +1,11 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Graphics;
-    using HexaEngine.Graphics.Buffers;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
-    using HexaEngine.Scenes;
     using System.Collections.Concurrent;
     using System.Numerics;
 

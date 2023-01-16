@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Rendering.ConstantBuffers
+﻿namespace HexaEngine.Core.Meshes
 {
-    using HexaEngine.Objects;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
     using System.Numerics;
 
     public struct CBWorld

@@ -1,29 +1,18 @@
-﻿namespace HexaEngine.Scenes
+﻿namespace HexaEngine.Core.Scenes
 {
     using BepuPhysics;
     using BepuUtilities;
     using BepuUtilities.Memory;
-    using HexaEngine.Cameras;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Editor;
-    using HexaEngine.Lights;
-    using HexaEngine.Objects;
-    using HexaEngine.Physics;
-    using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Numerics;
-    using System.Reflection;
-
-    public struct NodePtr
-    {
-        public int Index;
-    }
 
     public class Scene
     {
@@ -77,7 +66,7 @@
         public List<GameObject> Nodes => nodes;
 
         [JsonIgnore]
-        public Camera? CurrentCamera => (ActiveCamera >= 0 && ActiveCamera < cameras.Count) ? cameras[ActiveCamera] : null;
+        public Camera? CurrentCamera => ActiveCamera >= 0 && ActiveCamera < cameras.Count ? cameras[ActiveCamera] : null;
 
         [JsonIgnore]
         public InstanceManager InstanceManager => instanceManager;
@@ -87,6 +76,8 @@
 
         [JsonIgnore]
         public MeshManager MeshManager { get => meshManager; set => meshManager = value; }
+
+        public SceneVariables Variables { get; } = new();
 
         public GameObject Root => root;
 

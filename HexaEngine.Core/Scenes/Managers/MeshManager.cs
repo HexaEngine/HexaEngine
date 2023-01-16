@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Core.Meshes;
-    using HexaEngine.IO.Meshes;
+    using HexaEngine.Core.Meshes.IO;
     using System.Collections.Generic;
 
     public class MeshManager

@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace HexaEngine.Physics.Characters
+namespace HexaEngine.Core.Physics.Characters
 {
     /// <summary>
     /// Raw data for a dynamic character controller instance.

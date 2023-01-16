@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Lights
 {
-    using HexaEngine.Lights;
     using System.Collections.Generic;
     using System.Numerics;
 

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Cameras;
     using HexaEngine.Mathematics;
     using System.Numerics;
 

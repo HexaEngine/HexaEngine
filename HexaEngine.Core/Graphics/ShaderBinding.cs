@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using System.Reflection.Metadata;
-
     public struct ShaderBinding
     {
         public ShaderBinding(ShaderStage stage, int slot)

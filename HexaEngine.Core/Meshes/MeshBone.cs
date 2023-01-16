@@ -1,7 +1,6 @@
-﻿namespace HexaEngine.Meshes
+﻿namespace HexaEngine.Core.Meshes
 {
-    using HexaEngine.Core.Meshes;
-    using HexaEngine.Scenes;
+    using HexaEngine.Core.Scenes;
     using System.Numerics;
 
     public unsafe struct MeshBone
