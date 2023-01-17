@@ -181,7 +181,7 @@
 
         public string GetAvailableName(GameObject node, string name)
         {
-            if (!string.IsNullOrEmpty(name)) return node.Name;
+            if (string.IsNullOrEmpty(name)) return node.Name;
             if (Find(name) != null) return node.Name;
             return name;
         }

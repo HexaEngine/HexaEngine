@@ -12,22 +12,18 @@
         private static readonly string[] profiles = { "Release", "Debug" };
         private static readonly string[] rids = { "win-x64" };
         private Task task;
-        private readonly FilePicker filePicker = new("", "*.hexlvl");
-        private bool filePickerShown = false;
+        private readonly OpenFileDialog filePicker = new("", "*.hexlvl");
 
         protected override string Name => "Publish";
 
         public override void DrawContent(IGraphicsContext context)
         {
-            if (filePickerShown)
+            if (filePicker.Draw())
             {
-                if (filePicker.Draw())
-                {
-                    if (filePicker.Result == FilePickerResult.Ok)
-                        options.Scenes.Add(Path.GetFileName(filePicker.SelectedFile));
-                    filePickerShown = false;
-                }
+                if (filePicker.Result == OpenFileResult.Ok)
+                    options.Scenes.Add(Path.GetFileName(filePicker.SelectedFile));
             }
+
             bool disable = task != null && !task.IsCompleted;
             if (disable)
             {
@@ -95,7 +91,7 @@
                 if (ImGui.Button("Add"))
                 {
                     filePicker.SetFolder(ProjectManager.CurrentProjectAssetsFolder ?? string.Empty);
-                    filePickerShown = true;
+                    filePicker.Show();
                 }
             }
 

@@ -2,14 +2,12 @@
 {
     public class Plugin
     {
-        private readonly IServiceProvider provider;
         private readonly IPlugin plugin;
         private bool isEnabled;
         private bool isInitialized;
 
-        public Plugin(IServiceProvider provider, IPlugin plugin)
+        public Plugin( IPlugin plugin)
         {
-            this.provider = provider;
             this.plugin = plugin;
         }
 
@@ -61,7 +59,7 @@
 
                 if (value)
                 {
-                    plugin.OnInitialize(provider);
+                    plugin.OnInitialize();
                 }
                 else
                 {

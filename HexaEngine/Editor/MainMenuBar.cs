@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Projects;
     using ImGuiNET;
@@ -11,13 +12,11 @@
     {
         private static float height;
         private static bool isShown = true;
-        private static readonly FilePicker filePicker = new(Environment.CurrentDirectory);
-        private static readonly FileSaver fileSaver = new(Environment.CurrentDirectory);
-        private static bool filePickerIsOpen = false;
-        private static bool fileSaverIsOpen = false;
-        private static Action<FilePickerResult, string>? filePickerCallback;
-        private static Action<FilePickerResult, FileSaver>? fileSaverCallback;
-        private static Task recompileShadersTask;
+        private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
+        private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
+        private static Action<OpenFileResult, string>? filePickerCallback;
+        private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
+        private static Task? recompileShadersTask;
         private static bool recompileShadersTaskIsComplete = true;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
@@ -26,20 +25,14 @@
 
         internal static void Draw()
         {
-            if (filePickerIsOpen)
+            if (filePicker.Draw())
             {
-                if (filePicker.Draw())
-                {
-                    filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
-                }
+                filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
             }
 
-            if (fileSaverIsOpen)
+            if (fileSaver.Draw())
             {
-                if (fileSaver.Draw())
-                {
-                    fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
-                }
+                fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
             if (!isShown) return;
@@ -50,15 +43,14 @@
                 {
                     if (ImGui.MenuItem("Import"))
                     {
-                        filePickerIsOpen = true;
                         filePickerCallback = (r, path) =>
                         {
-                            if (r == FilePickerResult.Ok)
+                            if (r == OpenFileResult.Ok)
                             {
                                 Designer.OpenFile(filePicker.SelectedFile);
                             }
-                            filePickerIsOpen = false;
                         };
+                        filePicker.Show();
                     }
 
                     ImGui.EndMenu();
@@ -94,32 +86,31 @@
                 {
                     if (ImGui.MenuItem("Load Project"))
                     {
-                        filePickerIsOpen = true;
                         filePicker.AllowedExtensions.Add(".hexproj");
                         filePicker.OnlyAllowFilteredExtensions = true;
                         filePickerCallback = (e, r) =>
                         {
-                            if (e == FilePickerResult.Ok)
+                            if (e == OpenFileResult.Ok)
                             {
                                 ProjectManager.Load(r);
                             }
-                            filePickerIsOpen = false;
+
                             filePicker.AllowedExtensions.Clear();
                             filePicker.OnlyAllowFilteredExtensions = false;
                         };
+                        filePicker.Show();
                     }
 
                     if (ImGui.MenuItem("New Project"))
                     {
-                        fileSaverIsOpen = true;
                         fileSaverCallback = (e, r) =>
                         {
-                            if (e == FilePickerResult.Ok)
+                            if (e == SaveFileResult.Ok)
                             {
                                 Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
                                 ProjectManager.Create(Path.Combine(r.CurrentFolder, r.SelectedFile));
                             }
-                            fileSaverIsOpen = false;
+                            fileSaver.Show();
                         };
                     }
 
@@ -146,7 +137,7 @@
 
                     if (ImGui.MenuItem("Rebuild project"))
                     {
-                        Task.Run(ProjectManager.UpdateAssemblies);
+                        Task.Run(ProjectManager.UpdateScripts);
                     }
 
                     ImGui.EndMenu();
@@ -193,11 +184,7 @@
                 {
                     ImGui.TextDisabled("Shaders");
                     if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))
-                    {/*
-                        ShaderCache.Unload();
-                        Pipeline.ReloadShaders();
-                        ComputePipeline.ReloadShaders();*/
-                        //TODO: Fix async recompile
+                    {
                         recompileShadersTaskIsComplete = false;
                         recompileShadersTask = Task.Run(() =>
                         {

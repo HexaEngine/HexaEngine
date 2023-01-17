@@ -24,7 +24,7 @@
             new GraphicsPipelineState()
             {
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullFront,
+                Rasterizer = RasterizerDescription.CullBack,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
             },

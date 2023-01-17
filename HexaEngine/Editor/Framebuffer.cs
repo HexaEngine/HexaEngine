@@ -6,6 +6,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
+    using HexaEngine.Projects;
     using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using ImGuizmoNET;
@@ -77,6 +78,11 @@
                     {
                         if (Application.InDesignMode)
                         {
+                            if (ProjectManager.ScriptProjectChanged)
+                            {
+                                ProjectManager.UpdateScripts().Wait();
+                            }
+                            SceneManager.Save();
                             scene.IsSimulating = false;
                             SceneManager.BeginReload();
                             scene.SaveState();

@@ -7,6 +7,7 @@
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Projects;
     using ImGuiNET;
+    using Silk.NET.Core.Native;
     using System.Collections.Generic;
     using System.Numerics;
 
@@ -14,6 +15,7 @@
     {
         private DirectoryInfo? currentDir;
         private DirectoryInfo? parentDir;
+        private readonly RenameFileDialog dialog = new(true);
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         private readonly Stack<string> backHistory = new();
@@ -40,7 +42,7 @@
             Refresh();
             currentDir = null;
             parentDir = currentDir?.Parent;
-            ProjectManager.ProjectLoaded += ProjectManager_ProjectLoaded;
+            ProjectManager.ProjectChanged += ProjectManager_ProjectLoaded;
         }
 
         private void ProjectManager_ProjectLoaded(Projects.HexaProject obj)
@@ -192,9 +194,16 @@
                     SelectedFile = file.Path;
                     Designer.OpenFile(SelectedFile);
                 }
+                if (ImGui.MenuItem("Rename"))
+                {
+                    dialog.File = file.Path;
+                    dialog.Show();
+                }
+
                 if (ImGui.MenuItem("Delete"))
                 {
                     File.Delete(file.Path);
+                    Refresh();
                 }
 
                 ImGui.EndPopup();
@@ -218,32 +227,67 @@
             }
         }
 
+        private void DisplayContextMenu()
+        {
+            if (currentDir == null) return;
+            if (ImGui.BeginPopupContextWindow("AssetExplorerContextMenu"))
+            {
+                if (ImGui.MenuItem("Home"))
+                {
+                    GoHome();
+                }
+
+                if (ImGui.MenuItem("Refresh"))
+                {
+                    Refresh();
+                }
+                if (ImGui.BeginMenu("New"))
+                {
+                    if (ImGui.MenuItem("Scene"))
+                    {
+                        SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
+                        Refresh();
+                    }
+                    ImGui.EndMenu();
+                }
+
+                ImGui.EndPopup();
+            }
+        }
+
+        private static string GetNewFilename(string filename)
+        {
+            if (!File.Exists(filename))
+                return filename;
+
+            string result = filename;
+
+            int i = 0;
+            string name = Path.GetFileNameWithoutExtension(result);
+            string extension = Path.GetExtension(filename);
+            string dir = new(Path.GetDirectoryName(filename));
+
+            while (File.Exists(result))
+            {
+                i++;
+                result = Path.Combine(dir, $"{name} {i}{extension}");
+            }
+
+            return result;
+        }
+
         public override void DrawContent(IGraphicsContext context)
         {
             if (currentDir == null) return;
+            if (dialog.Draw())
+            {
+                Refresh();
+            }
             if (currentDir.Exists)
             {
                 ImGui.BeginChild("AssetExplorerContent");
 
-                if (ImGui.BeginPopupContextWindow("AssetExplorerContextMenu"))
-                {
-                    if (ImGui.MenuItem("Home"))
-                    {
-                        GoHome();
-                    }
-
-                    if (ImGui.MenuItem("Refresh"))
-                    {
-                        Refresh();
-                    }
-
-                    if (ImGui.MenuItem("New Scene"))
-                    {
-                        SceneSerializer.Serialize(new(), Path.Combine(currentDir.FullName, "scene.hexlvl"));
-                    }
-
-                    ImGui.EndPopup();
-                }
+                DisplayContextMenu();
 
                 if (parentDir != null && CurrentFolder != Paths.CurrentProjectFolder)
                 {

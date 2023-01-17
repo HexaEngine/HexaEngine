@@ -19,6 +19,10 @@
             };
             var serializer = JsonSerializer.Create(settings);
 
+            if (File.Exists(path))
+            {
+                File.Copy(path, path + ".bak", true);
+            }
             BsonDataWriter writer = new(File.Create(path));
 
             serializer.Serialize(writer, scene);

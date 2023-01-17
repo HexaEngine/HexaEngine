@@ -83,7 +83,7 @@ float3 BRDF(
 	float NdotH = dot(N, H);
 	float LdotH = dot(L, H);
 
-	float3 Cdlin = baseColor; //mon2lin(baseColor);
+	float3 Cdlin = mon2lin(baseColor);
 	float Cdlum = .3 * Cdlin[0] + .6 * Cdlin[1] + .1 * Cdlin[2]; // luminance approx.
 
 	float3 Ctint = Cdlum > 0 ? Cdlin / Cdlum : float3(1, 1, 1); // normalize lum. to isolate hue+sat

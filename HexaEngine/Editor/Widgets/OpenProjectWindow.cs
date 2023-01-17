@@ -1,43 +1,36 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
     using System;
 
     public class OpenProjectWindow : ImGuiWindow
     {
-        private static bool filePickerIsOpen = false;
-        private static bool fileSaverIsOpen = false;
-        private static readonly FilePicker filePicker = new(Environment.CurrentDirectory);
-        private static readonly FileSaver fileSaver = new(Environment.CurrentDirectory);
-        private static Action<FilePickerResult, string>? filePickerCallback;
-        private static Action<FilePickerResult, FileSaver>? fileSaverCallback;
+        private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
+        private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
+        private static Action<OpenFileResult, string>? filePickerCallback;
+        private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
 
         public OpenProjectWindow()
         {
             IsShown = true;
-            Flags = ImGuiWindowFlags.Modal | ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration;
+            Flags = ImGuiWindowFlags.Modal | ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking;
         }
 
         protected override string Name => "Open Project";
 
         public override void DrawWindow(IGraphicsContext context)
         {
-            if (filePickerIsOpen)
+            if (filePicker.Draw())
             {
-                if (filePicker.Draw())
-                {
-                    filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
-                }
+                filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
             }
 
-            if (fileSaverIsOpen)
+            if (fileSaver.Draw())
             {
-                if (fileSaver.Draw())
-                {
-                    fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
-                }
+                fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
             base.DrawWindow(context);
@@ -51,35 +44,34 @@
             {
                 if (ImGui.MenuItem("Open"))
                 {
-                    filePickerIsOpen = true;
                     filePicker.AllowedExtensions.Add(".hexproj");
                     filePicker.OnlyAllowFilteredExtensions = true;
                     filePickerCallback = (e, r) =>
                     {
-                        if (e == FilePickerResult.Ok)
+                        if (e == OpenFileResult.Ok)
                         {
                             ProjectManager.Load(r);
                             IsShown = false;
                         }
-                        filePickerIsOpen = false;
+
                         filePicker.AllowedExtensions.Clear();
                         filePicker.OnlyAllowFilteredExtensions = false;
                     };
+                    filePicker.Show();
                 }
 
                 if (ImGui.MenuItem("New"))
                 {
-                    fileSaverIsOpen = true;
                     fileSaverCallback = (e, r) =>
                     {
-                        if (e == FilePickerResult.Ok)
+                        if (e == SaveFileResult.Ok)
                         {
                             Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
                             ProjectManager.Create(Path.Combine(r.CurrentFolder, r.SelectedFile));
                             IsShown = false;
                         }
-                        fileSaverIsOpen = false;
                     };
+                    filePicker.Show();
                 }
 
                 ImGui.EndMenuBar();

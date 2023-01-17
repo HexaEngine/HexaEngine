@@ -469,10 +469,19 @@ namespace HexaEngine.Rendering
 
         public unsafe void LoadScene(Scene scene)
         {
+            SceneVariables variables = scene.Variables;
+
             Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
+
             Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
 
-            SceneVariables variables = scene.Variables;
+            if (variables.TryGetValue("AmbientLight", out string? vl))
+            {
+                if (float.TryParse(vl, out float value))
+                {
+                    ambient = new(value);
+                }
+            }
 
             if (variables.TryGetValue("Environment", out string? envp) && FileSystem.Exists(Paths.CurrentTexturePath + envp))
             {

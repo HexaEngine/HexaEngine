@@ -3,8 +3,8 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Core.Meshes.IO;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
@@ -69,7 +69,7 @@
             }
         }
 
-        public static bool GetMesh(MeshData mesh, [NotNullWhen(true)] out Mesh? model)
+        public static bool GetMesh(Meshes.MeshData mesh, [NotNullWhen(true)] out Mesh? model)
         {
             return meshes.TryGetValue(mesh.Name, out model);
         }

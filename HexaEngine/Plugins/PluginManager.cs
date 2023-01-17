@@ -38,7 +38,7 @@
 
             foreach (var instance in instances)
             {
-                Plugin plugin = new(null, instance);
+                Plugin plugin = new(instance);
                 plugins.Add(plugin);
                 config.GenerateSubKeyAuto(plugin, plugin.GetName());
             }

@@ -8,8 +8,7 @@
 
     public class IrradianceWidget : ImGuiWindow, IDisposable
     {
-        private FilePicker picker = new(Environment.CurrentDirectory);
-        private bool searchPathEnvironment;
+        private OpenFileDialog picker = new(Environment.CurrentDirectory);
         private string pathEnvironment = string.Empty;
 
         private Mode[] modes = Enum.GetValues<Mode>();
@@ -108,15 +107,13 @@
             Flags = ImGuiWindowFlags.None;
             if (irradianceTex != null)
                 Flags |= ImGuiWindowFlags.UnsavedDocument;
-            if (searchPathEnvironment)
-                Flags |= ImGuiWindowFlags.NoInputs;
 
             if (compute)
                 ImGui.BeginDisabled(true);
 
             if (ImGui.Button("..."))
             {
-                searchPathEnvironment = true;
+                picker.Show();
             }
             ImGui.SameLine();
             if (ImGui.InputText("Environment", ref pathEnvironment, 1000))
@@ -212,10 +209,10 @@
 
             EndWindow();
 
-            if (searchPathEnvironment && picker.Draw())
+            if (picker.Draw())
             {
-                pathEnvironment = picker.SelectedFile;
-                searchPathEnvironment = false;
+                if (picker.Result == OpenFileResult.Ok)
+                    pathEnvironment = picker.SelectedFile;
             }
 
             if (compute)

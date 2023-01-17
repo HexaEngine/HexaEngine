@@ -29,6 +29,8 @@
             if (obj is T t)
             {
                 index = list.IndexOf(t);
+                if (index == -1)
+                    return false;
                 list.RemoveAt(index);
                 return true;
             }

@@ -37,11 +37,11 @@
             {
                 current = -1;
             }
-            /*
-            lock (MaterialManager.Names)
+
+            lock (manager.Names)
             {
-                bool selected = ImGui.Combo("Material", ref current, MaterialManager.Names, MaterialManager.Count);
-            }*/
+                bool selected = ImGui.Combo("Material", ref current, manager.Names, manager.Count);
+            }
 
             ImGui.Separator();
 

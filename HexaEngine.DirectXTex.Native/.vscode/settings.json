@@ -47,5 +47,6 @@
         "xlocale": "cpp",
         "xlocinfo": "cpp",
         "xlocnum": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": true
 }

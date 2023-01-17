@@ -715,7 +715,7 @@ new Vector3(+1, +1, +1),
 
             cmd.Transform = Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
 
-            for (int i = 0; i < 24; i++)
+            for (int i = 0; i < 8; i++)
             {
                 cmd.Vertices[i].Color = color;
             }

@@ -17,25 +17,11 @@
     using System.Linq;
     using System.Reflection;
 
-    public class PublishSettings
-    {
-        public string? StartupScene { get; set; }
-
-        public List<string> Scenes { get; set; } = new();
-
-        public string? RuntimeIdentifier { get; set; }
-
-        public string Profile { get; set; } = "Release";
-
-        public bool StripDebugInfo { get; set; } = false;
-
-        public bool SingleFile { get; set; } = true;
-
-        public bool ReadyToRun { get; set; } = true;
-    }
-
     public static class ProjectManager
     {
+        private static FileSystemWatcher? watcher;
+        private static bool scriptProjectChanged;
+
         public static readonly List<string> ReferencedAssemblyNames = new();
 
         public static readonly List<Assembly> ReferencedAssemblies = new();
@@ -58,11 +44,13 @@
 
         public static string? CurrentProjectAssetsFolder { get; private set; }
 
+        public static bool ScriptProjectChanged => scriptProjectChanged;
+
         public static HexaProject? Project { get; set; }
 
-        public static event Action<HexaProject>? ProjectLoaded;
+        public static event Action<HexaProject?>? ProjectChanged;
 
-        public static void Load(string path)
+        public static async void Load(string path)
         {
             CurrentProjectPath = path;
             Project = HexaProject.Load(CurrentProjectPath) ?? throw new Exception();
@@ -77,7 +65,19 @@
             FileSystem.AddSource(CurrentProjectAssetsFolder);
             Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
             ProjectHistory.AddEntry(Project.Name, CurrentProjectPath);
-            ProjectLoaded?.Invoke(Project);
+            ProjectChanged?.Invoke(Project);
+            string solutionName = Path.GetFileName(CurrentFolder);
+            string projectPath = Path.Combine(CurrentFolder, solutionName);
+            watcher = new(projectPath);
+            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
+            watcher.Changed += Watcher_Changed;
+            watcher.EnableRaisingEvents = true;
+            await UpdateScripts();
+        }
+
+        private static void Watcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            scriptProjectChanged = true;
         }
 
         public static void Create(string path)
@@ -99,7 +99,7 @@
             FileSystem.AddSource(CurrentProjectAssetsFolder);
             Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
             ProjectHistory.AddEntry(Project.Name, CurrentProjectPath);
-            ProjectLoaded?.Invoke(Project);
+            ProjectChanged?.Invoke(Project);
         }
 
         private static void GenerateSolution()
@@ -128,7 +128,7 @@
             Process.Start(psi);
         }
 
-        public static Task UpdateAssemblies()
+        public static Task UpdateScripts()
         {
             AssemblyManager.Unload();
             if (CurrentFolder == null) return Task.CompletedTask;
@@ -144,6 +144,7 @@
             string solutionName = Path.GetFileName(CurrentFolder);
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
             Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, "bin"));
+            scriptProjectChanged = false;
         }
 
         private static void BuildShaders(string output)

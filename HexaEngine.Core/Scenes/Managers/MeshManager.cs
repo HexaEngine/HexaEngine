@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Core.Meshes.IO;
+    using HexaEngine.Core.IO.Meshes;
     using System.Collections.Generic;
 
     public class MeshManager
     {
+        private readonly Dictionary<string, MeshSource> pathToMeshes = new();
         private readonly List<MeshSource> meshes = new();
 
         public IReadOnlyList<MeshSource> Meshes => meshes;
@@ -16,22 +17,33 @@
             lock (meshes)
             {
                 meshes.Clear();
+                pathToMeshes.Clear();
             }
         }
 
-        public void Add(MeshSource data)
+        public MeshSource Load(string path)
         {
             lock (meshes)
             {
-                meshes.Add(data);
+                if (!pathToMeshes.TryGetValue(path, out var value))
+                {
+                    value = new(path);
+                    pathToMeshes.Add(path, value);
+                    meshes.Add(value);
+                }
+                return value;
             }
         }
 
-        public void Remove(MeshSource data)
+        public void Unload(MeshSource source)
         {
             lock (meshes)
             {
-                meshes.Remove(data);
+                if (meshes.Contains(source))
+                {
+                    meshes.Remove(source);
+                    pathToMeshes.Remove(source.Path);
+                }
             }
         }
     }

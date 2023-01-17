@@ -10,7 +10,7 @@
 
         void OnEnable();
 
-        void OnInitialize(IServiceProvider provider);
+        void OnInitialize();
 
         void OnUninitialize();
 

@@ -1,4 +1,4 @@
-﻿using HexaEngine.Core.Meshes.IO;
+﻿using HexaEngine.Core.IO.Meshes;
 using HexaEngine.Core.Scenes;
 
 namespace HexaEngine.Scenes.Importer
@@ -11,7 +11,7 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
-    using HexaEngine.Scenes.Components;
+    using HexaEngine.Scenes.Components.Renderer;
     using Silk.NET.Assimp;
     using System.Diagnostics;
     using System.Numerics;
@@ -508,10 +508,6 @@ namespace HexaEngine.Scenes.Importer
             for (int i = 0; i < materials.Length; i++)
             {
                 scene.MaterialManager.Add(materials[i]);
-            }
-            for (int i = 0; i < meshes.Length; i++)
-            {
-                scene.MeshManager.Add(meshes[i]);
             }
         }
 

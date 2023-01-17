@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Core.Meshes.IO;
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
     using System.Numerics;

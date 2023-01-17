@@ -49,7 +49,7 @@ namespace HexaEngine.Editor.Widgets
             Camera camera = CameraManager.Current;
 
             string name = element.Name;
-            if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 element.Name = name;
             }

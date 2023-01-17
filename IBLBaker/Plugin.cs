@@ -25,7 +25,7 @@
             WidgetManager.Unregister<PrefilterWidget>();
         }
 
-        public void OnInitialize(IServiceProvider provider)
+        public void OnInitialize()
         {
         }
 

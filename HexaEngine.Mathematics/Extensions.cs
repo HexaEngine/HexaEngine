@@ -385,5 +385,29 @@
         {
             return (a << 24) + (r << 16) + (g << 8) + b;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void LockQuaternionAxis(Quaternion r, Quaternion q, Vector3 mask)
+        {
+            float x = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y)) * mask.X;
+            float y = MathF.Asin(2.0f * (r.X * r.W - r.Y * r.Z)) * mask.Y;
+            float z = MathF.Atan2(2.0f * (r.X * r.Y + r.Z * r.W), 1.0f - 2.0f * (r.X * r.X + r.Z * r.Z)) * mask.Z;
+
+            float xHalf = x * 0.5f;
+            float yHalf = y * 0.5f;
+            float zHalf = z * 0.5f;
+
+            float cx = MathF.Cos(xHalf);
+            float cy = MathF.Cos(yHalf);
+            float cz = MathF.Cos(zHalf);
+            float sx = MathF.Sin(xHalf);
+            float sy = MathF.Sin(yHalf);
+            float sz = MathF.Sin(zHalf);
+
+            q.W = (cz * cx * cy) + (sz * sx * sy);
+            q.X = (cz * sx * cy) - (sz * cx * sy);
+            q.Y = (cz * cx * sy) + (sz * sx * cy);
+            q.Z = (sz * cx * cy) - (cz * sx * sy);
+        }
     }
 }

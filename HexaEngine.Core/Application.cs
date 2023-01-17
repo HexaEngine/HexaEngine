@@ -13,6 +13,8 @@
         private static readonly Sdl sdl = Sdl.GetApi();
         private static readonly List<Action<Event>> hooks = new();
         private static IRenderWindow? mainWindow;
+        private static bool inDesignMode;
+        private static bool inEditorMode;
 
 #nullable disable
         public static IRenderWindow MainWindow => mainWindow;
@@ -28,9 +30,27 @@
             Scenes,
         }
 
-        public static bool InDesignMode { get; set; }
+        public static bool InDesignMode
+        {
+            get => inDesignMode; set
+            {
+                inDesignMode = value;
+                OnDesignModeChanged?.Invoke(value);
+            }
+        }
 
-        public static bool InEditorMode { get; set; }
+        public static bool InEditorMode
+        {
+            get => inEditorMode; set
+            {
+                inEditorMode = value;
+                OnEditorModeChanged?.Invoke(value);
+            }
+        }
+
+        public static event Action<bool>? OnDesignModeChanged;
+
+        public static event Action<bool>? OnEditorModeChanged;
 
         public static string GetFolder(SpecialFolder folder)
         {

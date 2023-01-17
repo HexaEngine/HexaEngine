@@ -15,6 +15,7 @@
         IGraphicsContext Context { get; }
 
         ISwapChain SwapChain { get; }
+        Viewport RenderViewport { get; }
     }
 
     public interface IWindow

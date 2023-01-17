@@ -10,8 +10,7 @@
 
     public class PrefilterWidget : ImGuiWindow, IDisposable
     {
-        private readonly FilePicker picker = new(Environment.CurrentDirectory);
-        private bool searchPathEnvironment;
+        private readonly OpenFileDialog picker = new(Environment.CurrentDirectory);
         private string pathEnvironment = string.Empty;
 
         private readonly Mode[] modes = Enum.GetValues<Mode>();
@@ -116,8 +115,6 @@
                 Flags |= ImGuiWindowFlags.NoBringToFrontOnFocus;
             if (prefilterTex != null)
                 Flags |= ImGuiWindowFlags.UnsavedDocument;
-            if (searchPathEnvironment)
-                Flags |= ImGuiWindowFlags.NoInputs;
 
             if (!ImGui.Begin("Pre-Filter", ref IsShown, Flags))
             {
@@ -132,7 +129,7 @@
 
             if (ImGui.Button("..."))
             {
-                searchPathEnvironment = true;
+                picker.Show();
             }
             ImGui.SameLine();
             if (ImGui.InputText("Environment", ref pathEnvironment, 1000))
@@ -234,10 +231,9 @@
 
             ImGui.End();
 
-            if (searchPathEnvironment && picker.Draw())
+            if (picker.Draw())
             {
                 pathEnvironment = picker.SelectedFile;
-                searchPathEnvironment = false;
             }
 
             if (compute)
