@@ -4,6 +4,7 @@ using HexaEngine.Core.Scenes;
 namespace HexaEngine.Scenes.Importer
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
@@ -13,20 +14,18 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Components.Renderer;
     using Silk.NET.Assimp;
+    using Silk.NET.Core.Native;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
-    using System.Security.Cryptography;
     using System.Text;
     using AssimpScene = Silk.NET.Assimp.Scene;
-    using MeshSource = MeshSource;
     using Scene = Scene;
 
-    public class AssimpSceneLoader
+    public class AssimpSceneImporter
     {
-        public static Assimp assimp = Assimp.GetApi();
+        private static readonly Assimp assimp = Assimp.GetApi();
 
-        private readonly Dictionary<string, string> alias = new();
         private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
         private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
         private readonly Dictionary<Pointer<Node>, Objects.Animature> animatureT = new();
@@ -40,15 +39,123 @@ namespace HexaEngine.Scenes.Importer
         private Core.Scenes.Camera[] cameras;
         private Core.Lights.Light[] lights;
         private GameObject root;
+        private unsafe AssimpScene* scene;
 
-        public Task ImportAsync(string path, Scene scene)
+        public Model[] Models => models;
+
+        public MeshSource[] Meshes => meshes;
+
+        public MaterialDesc[] Materials => materials;
+
+        public Task LoadAsync(string path)
         {
-            return Task.Run(() => Import(path, scene));
+            return Task.Run(() => Load(path));
         }
 
-        public Task ImportAsync(string path)
+        public Task ImportAsync(Scene scene)
         {
-            return Task.Run(() => Import(path, SceneManager.Current));
+            return Task.Run(() => Import(scene));
+        }
+
+        public Task ImportAsync()
+        {
+            return Task.Run(() => Import(SceneManager.Current));
+        }
+
+        public unsafe void Load(string path)
+        {
+            var name = "HexaEngine".ToUTF8();
+            LogStream stream = new(new(Log), name);
+            assimp.AttachLogStream(&stream);
+            assimp.EnableVerboseLogging(Assimp.True);
+
+            scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
+            assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData | PostProcessSteps.OptimizeGraph | PostProcessSteps.OptimizeMeshes));
+
+            LoadSceneGraph(scene);
+
+            LoadMaterials(scene);
+
+            LoadMeshes(scene);
+
+            LoadCameras(scene);
+
+            LoadLights(scene);
+
+            Free(name);
+        }
+
+        public bool CheckForProblems()
+        {
+            for (int i = 0; i < models.Length; i++)
+            {
+                Model model = models[i];
+                if (model.Mesh.Length > 255)
+                {
+                    return true;
+                }
+                if (model.Material.Name.Length > 255)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool ChangeNameOfMesh(MeshSource source, string newName)
+        {
+            if (meshes.Any(x => x.Path == newName))
+                return false;
+            string oldName = source.Path;
+            for (int i = 0; i < models.Length; i++)
+            {
+                Model model = models[i];
+                if (model.Mesh == oldName)
+                {
+                    model.Mesh = newName;
+                }
+            }
+            source.Path = newName;
+            return true;
+        }
+
+        public bool ChangeNameOfMaterial(MaterialDesc material, string newName)
+        {
+            if (materials.Any(x => x.Name == newName))
+                return false;
+            string oldName = material.Name;
+            for (int i = 0; i < models.Length; i++)
+            {
+                Model source = models[i];
+                if (source.Material.Name == oldName)
+                {
+                    // TODO: Do not store material as instance in model
+                    //source.Material = newName;
+                }
+            }
+            material.Name = newName;
+            return true;
+        }
+
+        public unsafe void Import(Scene scene)
+        {
+            InjectResources(scene);
+
+            if (root.Name == "ROOT")
+                scene.Merge(root);
+            else
+                scene.AddChild(root);
+        }
+
+        public unsafe void Clear()
+        {
+            nodesT.Clear();
+            nodesP.Clear();
+            meshesT.Clear();
+            camerasT.Clear();
+            lightsT.Clear();
+
+            assimp.ReleaseImport(scene);
         }
 
         private unsafe void LoadTextures(AssimpScene* scene)
@@ -378,30 +485,13 @@ namespace HexaEngine.Scenes.Importer
                 float radius = box.Extent.Length();
                 BoundingSphere sphere = new(center, radius);
 
-                meshes[i] = new MeshSource(GetHashString(msh->MName), vertices, indices, box, sphere);
-                models[i] = new(GetHashString(msh->MName), materials[(int)msh->MMaterialIndex]);
-
-                meshes[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
+                meshes[i] = new MeshSource(msh->MName, vertices, indices, box, sphere);
+                models[i] = new(msh->MName, materials[(int)msh->MMaterialIndex]);
 
                 meshesT.Add(msh, meshes[i]);
             }
 
             FileSystem.Refresh();
-        }
-
-        public static byte[] GetHash(string inputString)
-        {
-            using (HashAlgorithm algorithm = SHA256.Create())
-                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
-        }
-
-        public static string GetHashString(string inputString)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in GetHash(inputString))
-                sb.Append(b.ToString("X2"));
-
-            return sb.ToString();
         }
 
         private unsafe void LoadCameras(AssimpScene* scene)
@@ -512,6 +602,16 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void InjectResources(Scene scene)
         {
+            for (int i = 0; i < meshes.Length; i++)
+            {
+                meshes[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
+            }
+            for (int i = 0; i < materials.Length; i++)
+            {
+                scene.MaterialManager.Add(materials[i]);
+            }
+            FileSystem.Refresh();
+
             for (int x = 0; x < nodes.Count; x++)
             {
                 GameObject node = nodes[x];
@@ -523,76 +623,13 @@ namespace HexaEngine.Scenes.Importer
                     renderer.AddMesh(model);
                 }
             }
-
-            for (int i = 0; i < materials.Length; i++)
-            {
-                scene.MaterialManager.Add(materials[i]);
-            }
         }
 
-        public static unsafe void Log(byte* a, byte* b)
+        private static unsafe void Log(byte* a, byte* b)
         {
             string user = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(b));
             string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(a));
             ImGuiConsole.Log(msg);
-        }
-
-        public unsafe void Import(string path, Scene sceneTarget)
-        {
-            var name = "HexaEngine".ToUTF8();
-            LogStream stream = new(new(Log), name);
-            assimp.AttachLogStream(&stream);
-            assimp.EnableVerboseLogging(Assimp.True);
-
-            var scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
-            var scene1 = assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData | PostProcessSteps.OptimizeGraph | PostProcessSteps.OptimizeMeshes));
-
-            if (scene1 != scene)
-            {
-                Trace.Fail("");
-            }
-
-            LoadSceneGraph(scene);
-
-            LoadMaterials(scene);
-
-            LoadMeshes(scene);
-
-            LoadCameras(scene);
-
-            LoadLights(scene);
-
-            InjectResources(sceneTarget);
-
-            if (root.Name == "ROOT")
-                sceneTarget.Merge(root);
-            else
-                sceneTarget.AddChild(root);
-
-            nodesT.Clear();
-            nodesP.Clear();
-            meshesT.Clear();
-            camerasT.Clear();
-            lightsT.Clear();
-            alias.Clear();
-
-            assimp.ReleaseImport(scene);
-
-            Free(name);
-        }
-
-        public unsafe void Open(string path)
-        {
-            Scene scene = new();
-            Import(path, scene);
-            SceneManager.Load(scene);
-        }
-
-        public async Task OpenAsync(string path)
-        {
-            Scene scene = new();
-            await SceneManager.AsyncLoad(scene);
-            await ImportAsync(path, scene);
         }
 
         public struct AssimpMaterial

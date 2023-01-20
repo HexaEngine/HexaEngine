@@ -15,6 +15,7 @@
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
+    using CullingManager = Core.Scenes.Managers.CullingManager;
 
     public enum RendererFlags
     {

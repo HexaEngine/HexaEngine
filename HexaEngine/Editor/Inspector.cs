@@ -61,7 +61,7 @@
                 for (int i = 0; i < scene.Lights.Count; i++)
                 {
                     Light light = scene.Lights[i];
-                    if (light.Type == LightType.Directional)
+                    if (light.LightType == LightType.Directional)
                     {
                         DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
                         DebugDraw.DrawSphere(light.Name + "1", light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
@@ -74,7 +74,7 @@
                         DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
                         DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
                     }
-                    if (light.Type == LightType.Point)
+                    if (light.LightType == LightType.Point)
                     {
                         DebugDraw.DrawSphere(light.Name, light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
                     }

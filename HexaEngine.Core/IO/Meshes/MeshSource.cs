@@ -14,7 +14,7 @@
 
         public readonly MeshHeader Header;
         private MeshData Body;
-        public readonly string Path;
+        public string Path;
 
         public MeshSource(string path)
         {

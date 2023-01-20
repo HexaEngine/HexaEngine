@@ -72,7 +72,7 @@
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
             watcher.Changed += Watcher_Changed;
             watcher.EnableRaisingEvents = true;
-            await UpdateScripts();
+            _ = Task.Factory.StartNew(UpdateScripts);
         }
 
         private static void Watcher_Changed(object sender, FileSystemEventArgs e)

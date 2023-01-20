@@ -16,6 +16,6 @@
         [EditorProperty("Cast Shadows")]
         public bool CastShadows { get; set; }
 
-        public abstract LightType Type { get; }
+        public abstract LightType LightType { get; }
     }
 }

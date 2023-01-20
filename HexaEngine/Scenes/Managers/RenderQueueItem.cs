@@ -1,18 +1,13 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Core.Graphics;
-    using System.Collections.Generic;
-
-    public class RenderQueueItem
+    public readonly struct RenderQueueItem
     {
-        public List<RenderQueueIndex> Indices;
-        public IDrawable Drawable;
-        public ICommandList? CommandList;
-        public bool IsEnabled;
+        public readonly RenderQueueIndex Index;
+        public readonly IDrawable Drawable;
 
         public RenderQueueItem(RenderQueueIndex index, IDrawable drawable)
         {
-            Indices = new() { index };
+            Index = index;
             Drawable = drawable;
         }
     }

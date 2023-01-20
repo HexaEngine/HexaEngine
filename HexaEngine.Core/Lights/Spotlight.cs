@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Lights
 {
     using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -12,7 +13,7 @@
         private float coneAngle;
         private float blend;
 
-        public override LightType Type => LightType.Spot;
+        public override LightType LightType => LightType.Spot;
 
         public Spotlight()
         {
@@ -57,6 +58,18 @@
             major = Vector3.Transform(major, Transform.Orientation);
             minor = Vector3.Transform(minor, Transform.Orientation);
             return (major, minor);
+        }
+
+        public unsafe void InsertLightData(StructuredUavBuffer<SpotlightData> l, StructuredUavBuffer<ShadowSpotlightData> sl)
+        {
+            if (CastShadows)
+            {
+                l.Add(new(this));
+            }
+            else
+            {
+                sl.Add(new(this));
+            }
         }
     }
 }

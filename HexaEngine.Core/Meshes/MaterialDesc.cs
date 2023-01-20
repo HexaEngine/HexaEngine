@@ -2,7 +2,7 @@
 {
     using System.Numerics;
 
-    public struct MaterialDesc
+    public class MaterialDesc
     {
         public string NormalTextureMap = string.Empty;
         public string DisplacementTextureMap = string.Empty;

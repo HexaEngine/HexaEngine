@@ -2,8 +2,10 @@
 {
     using System.Runtime.InteropServices;
 
-    public struct Allocator : IAllocator
+    public readonly struct Allocator : IAllocator
     {
+        public static readonly unsafe Allocator* Default = Alloc<Allocator>();
+
         public unsafe void* Allocate(nint width)
         {
             byte* result = (byte*)Marshal.AllocHGlobal(width);

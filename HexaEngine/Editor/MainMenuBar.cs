@@ -12,6 +12,7 @@
     {
         private static float height;
         private static bool isShown = true;
+        private static readonly ImportDialog importDialog = new();
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
         private static Action<OpenFileResult, string>? filePickerCallback;
@@ -35,6 +36,8 @@
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
+            importDialog.Draw();
+
             if (!isShown) return;
 
             if (ImGui.BeginMainMenuBar())
@@ -43,14 +46,20 @@
                 {
                     if (ImGui.MenuItem("Import"))
                     {
-                        filePickerCallback = (r, path) =>
+                        if (!importDialog.Shown)
+                        {
+                            importDialog.Reset();
+                            importDialog.Show();
+                        }
+
+                        /*filePickerCallback = (r, path) =>
                         {
                             if (r == OpenFileResult.Ok)
                             {
                                 Designer.OpenFile(filePicker.SelectedFile);
                             }
                         };
-                        filePicker.Show();
+                        filePicker.Show();*/
                     }
 
                     ImGui.EndMenu();

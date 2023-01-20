@@ -1,6 +1,5 @@
-﻿namespace HexaEngine.Editor.Attributes
+﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Core.Scenes;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
 

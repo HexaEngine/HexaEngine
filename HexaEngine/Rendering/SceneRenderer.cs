@@ -614,7 +614,7 @@ namespace HexaEngine.Rendering
             {
                 Light light = scene.Lights[i];
 
-                switch (light.Type)
+                switch (light.LightType)
                 {
                     case LightType.Directional:
                         if (!light.CastShadows) continue;
@@ -639,7 +639,7 @@ namespace HexaEngine.Rendering
                         break;
 
                     case LightType.Point:
-                        if (!light.CastShadows)// || !light.Updated
+                        if (!light.CastShadows || !light.Updated)//
                         {
                             if (light.CastShadows)
                                 pointsd++;

@@ -96,6 +96,12 @@
             set { items[index] = value; isDirty = true; }
         }
 
+        public T this[uint index]
+        {
+            get { return items[index]; }
+            set { items[index] = value; isDirty = true; }
+        }
+
         public T* Local => items;
 
         public event EventHandler? OnDisposed
@@ -269,13 +275,14 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Add(T args)
+        public ref T Add(T args)
         {
             var index = count;
             count++;
             EnsureCapacity(count);
             items[index] = args;
             isDirty = true;
+            return ref items[index];
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

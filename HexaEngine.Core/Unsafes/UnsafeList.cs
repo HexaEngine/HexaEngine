@@ -11,6 +11,16 @@
         private uint count;
         private uint capacity;
 
+        public UnsafeList()
+        {
+            allocator = Allocator.Default;
+        }
+
+        public UnsafeList(Allocator* customAllocator)
+        {
+            allocator = customAllocator;
+        }
+
         public uint Count => count;
 
         public uint Capacity

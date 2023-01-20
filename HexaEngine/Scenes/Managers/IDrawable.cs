@@ -7,5 +7,7 @@
         void Update(IGraphicsContext context);
 
         void Draw(IGraphicsContext context, RenderQueueIndex index);
+
+        void DrawDepth(IGraphicsContext context);
     }
 }
