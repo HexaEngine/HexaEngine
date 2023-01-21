@@ -73,18 +73,26 @@ namespace HexaEngine.Pipelines.Deferred
                 VertexShader = "deferred/prepass/vs.hlsl",
                 HullShader = "deferred/prepass/hs.hlsl",
                 DomainShader = "deferred/prepass/ds.hlsl",
+                PixelShader = "deferred/prepass/ps.hlsl"
             },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullFront,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.PatchListWith3ControlPoints,
-            },
-            new ShaderMacro[]
-            {
-                new("DEPTH", 1), new("INSTANCED", 1)
-            });
+                     new GraphicsPipelineState()
+                     {
+                         DepthStencil = DepthStencilDescription.Default,
+                         Rasterizer = RasterizerDescription.CullFront,
+                         Blend = BlendDescription.Opaque,
+                         Topology = PrimitiveTopology.PatchListWith3ControlPoints,
+                     },
+                     new InputElementDescription[]
+                     {
+                new("POSITION", 0, Format.RGB32Float, 0),
+                new("TEXCOORD", 0, Format.RG32Float, 0),
+                new("NORMAL", 0, Format.RGB32Float, 0),
+                new("TANGENT", 0, Format.RGB32Float, 0),
+                     },
+                     new ShaderMacro[]
+                     {
+                new("INSTANCED", 1), new("DEPTH", 1)
+                     });
 
             depthFront = device.CreateGraphicsPipeline(new()
             {
@@ -101,7 +109,7 @@ namespace HexaEngine.Pipelines.Deferred
             },
             new ShaderMacro[]
             {
-                new("DEPTH", 1), new("INSTANCED", 1)
+                 new("INSTANCED", 1)
             });
 
             return Task.CompletedTask;
@@ -121,14 +129,14 @@ namespace HexaEngine.Pipelines.Deferred
 
         public void BeginDrawDepthFront(IGraphicsContext context, Viewport viewport)
         {
-            depthFront.BeginDraw(context, viewport);
             context.DSSetConstantBuffer(Camera, 1);
+            depthFront.BeginDraw(context, viewport);
         }
 
         public void BeginDrawDepthBack(IGraphicsContext context, Viewport viewport)
         {
-            depthBack.BeginDraw(context, viewport);
             context.DSSetConstantBuffer(Camera, 1);
+            depthBack.BeginDraw(context, viewport);
         }
 
         public void Draw(IGraphicsContext context)

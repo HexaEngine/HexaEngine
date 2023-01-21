@@ -19,6 +19,9 @@
         private Scene? scene;
         private GameObject? parent;
         private bool initialized;
+        private bool isEditorVisible;
+        private Type? type;
+        private bool isEnabled = true;
 
         public Transform Transform = new();
         private string name = string.Empty;
@@ -119,7 +122,7 @@
             transform.Updated += TransformUpdated;
         }
 
-        private void TransformUpdated(object? sender, EventArgs e)
+        protected virtual void TransformUpdated(object? sender, EventArgs e)
         {
             Transformed?.Invoke(this);
         }
@@ -379,10 +382,6 @@
                     yield return t;
             }
         }
-
-        private bool isEditorVisible;
-        private Type? type;
-        private bool isEnabled;
 
         public Type Type
         {

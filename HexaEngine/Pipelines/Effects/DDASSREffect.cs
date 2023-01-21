@@ -17,14 +17,10 @@ namespace HexaEngine.Pipelines.Effects
 
         private readonly IGraphicsPipeline ssrPipeline;
         private readonly IBuffer cbSSR;
-        private readonly ConstantBuffer<Vector4> cbRot;
         private DDASSRParams ssrParams = new();
         private ITexture2D ssrBuffer;
         private IRenderTargetView ssrRTV;
         public IShaderResourceView ssrSRV;
-
-        private ITexture2D ssrFramebuffer;
-        private IShaderResourceView ssrFramebufferSRV;
 
         private readonly IGraphicsPipeline blurPipeline;
         private readonly IBuffer cbBlur;
@@ -38,12 +34,12 @@ namespace HexaEngine.Pipelines.Effects
         private MixParams mixParams = new();
 
         private readonly ISamplerState samplerPoint;
-        private readonly ISamplerState samplerAnsio;
+        private readonly ISamplerState samplerLinear;
 
         public IShaderResourceView Color;
         public IShaderResourceView Position;
         public IShaderResourceView Normal;
-        public IShaderResourceView Depth;
+        public IShaderResourceView Backdepth;
         public IBuffer Camera;
         public IRenderTargetView Output;
         private bool debug;
@@ -131,18 +127,14 @@ namespace HexaEngine.Pipelines.Effects
                 Topology = PrimitiveTopology.TriangleList
             });
             cbSSR = device.CreateBuffer(ssrParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            cbRot = new(device, CpuAccessFlags.Write); //device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Save);
             ssrBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
             ssrSRV = device.CreateShaderResourceView(ssrBuffer);
 
-            ssrFramebuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            ssrFramebufferSRV = device.CreateShaderResourceView(ssrFramebuffer);
-
             blurPipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/blur/vs.hlsl",
-                PixelShader = "effects/blur/box.hlsl",
+                VertexShader = "effects/ddassr/vs.hlsl",
+                PixelShader = "effects/ddassr/box.hlsl",
             });
             cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             blurBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
@@ -151,13 +143,13 @@ namespace HexaEngine.Pipelines.Effects
 
             mixPipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/mix/vs.hlsl",
-                PixelShader = "effects/mix/ps.hlsl",
+                VertexShader = "effects/ddassr/vs.hlsl",
+                PixelShader = "effects/ddassr/blend.hlsl",
             });
             cbMix = device.CreateBuffer(mixParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
-            samplerPoint = device.CreateSamplerState(SamplerDescription.LinearClamp);
-            samplerAnsio = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+            samplerPoint = device.CreateSamplerState(SamplerDescription.PointClamp);
+            samplerLinear = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
             ssrParams.TargetSize = new(width, height);
             isDirty = true;
@@ -211,14 +203,9 @@ namespace HexaEngine.Pipelines.Effects
             ssrBuffer.Dispose();
             ssrRTV.Dispose();
             ssrSRV.Dispose();
-            ssrBuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
+            ssrBuffer = device.CreateTexture2D(Format.RGBA32Float, width / 8, height / 8, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width / 8, height / 8));
             ssrSRV = device.CreateShaderResourceView(ssrBuffer);
-
-            ssrFramebuffer.Dispose();
-            ssrFramebufferSRV.Dispose();
-            ssrFramebuffer = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            ssrFramebufferSRV = device.CreateShaderResourceView(ssrFramebuffer);
 
             blurBuffer.Dispose();
             blurRTV.Dispose();
@@ -227,7 +214,7 @@ namespace HexaEngine.Pipelines.Effects
             blurRTV = device.CreateRenderTargetView(blurBuffer, new(width, height));
             blurSRV = device.CreateShaderResourceView(blurBuffer);
 
-            ssrParams.TargetSize = new(width / 2, height / 2);
+            ssrParams.TargetSize = new(width / 8, height / 8);
             isDirty = true;
         }
 
@@ -246,41 +233,31 @@ namespace HexaEngine.Pipelines.Effects
 
             if (enabled)
             {
-                cbRot[0] = new Vector4(MathF.Cos(Time.CumulativeFrameTime), MathF.Sin(Time.CumulativeFrameTime), 0, 0);
-                cbRot.Update(context);
                 context.SetRenderTarget(ssrRTV, null);
                 context.PSSetConstantBuffer(cbSSR, 0);
                 context.PSSetConstantBuffer(Camera, 1);
-                context.PSSetConstantBuffer(cbRot.Buffer, 2);
                 context.PSSetShaderResource(Color, 0);
                 context.PSSetShaderResource(Position, 1);
                 context.PSSetShaderResource(Normal, 2);
-                context.PSSetShaderResource(Depth, 3);
-                context.PSSetShaderResource(ssrFramebufferSRV, 4);
-                context.PSSetSampler(samplerPoint, 0);
+                context.PSSetShaderResource(Backdepth, 3);
+                context.PSSetSampler(samplerLinear, 0);
                 quad.DrawAuto(context, ssrPipeline, ssrRTV.Viewport);
 
-                context.CopyResource(ssrFramebuffer, ssrBuffer);
-
-                if (!debug)
-                {
-                    context.SetRenderTarget(blurRTV, null);
-                    context.PSSetConstantBuffer(cbBlur, 0);
-                    context.PSSetShaderResource(ssrSRV, 0);
-                    context.PSSetSampler(samplerAnsio, 0);
-                    quad.DrawAuto(context, blurPipeline, blurRTV.Viewport);
-                }
+                context.SetRenderTarget(blurRTV, null);
+                context.PSSetConstantBuffer(cbBlur, 0);
+                context.PSSetShaderResource(ssrSRV, 0);
+                context.PSSetShaderResource(Normal, 1);
+                context.PSSetSampler(samplerLinear, 0);
+                quad.DrawAuto(context, blurPipeline, blurRTV.Viewport);
             }
 
             context.SetRenderTarget(Output, null);
             context.PSSetConstantBuffer(cbMix, 0);
             context.PSSetShaderResource(Color, 0);
-            context.PSSetShaderResource(ssrSRV, 1);
             if (!debug)
-                context.PSSetShaderResource(blurSRV, 2);
+                context.PSSetShaderResource(blurSRV, 1);
             else
-                context.PSSetShaderResource(ssrSRV, 2);
-            context.PSSetShaderResource(Normal, 3);
+                context.PSSetShaderResource(ssrSRV, 1);
             context.PSSetSampler(samplerPoint, 0);
             quad.DrawAuto(context, mixPipeline, Output.Viewport);
         }
@@ -292,12 +269,9 @@ namespace HexaEngine.Pipelines.Effects
                 quad.Dispose();
                 ssrPipeline.Dispose();
                 cbSSR.Dispose();
-                cbRot.Dispose();
                 ssrBuffer.Dispose();
                 ssrRTV.Dispose();
                 ssrSRV.Dispose();
-                ssrFramebuffer.Dispose();
-                ssrFramebufferSRV.Dispose();
                 blurPipeline.Dispose();
                 cbBlur.Dispose();
                 blurBuffer.Dispose();
@@ -306,7 +280,7 @@ namespace HexaEngine.Pipelines.Effects
                 mixPipeline.Dispose();
                 cbMix.Dispose();
                 samplerPoint.Dispose();
-                samplerAnsio.Dispose();
+                samplerLinear.Dispose();
 
                 disposedValue = true;
             }

@@ -92,7 +92,7 @@
 		  <EntryPointName>main</EntryPointName>
 		  <ShaderProfile>hs_5_0</ShaderProfile>
 		</None>
-		<None Update="assets\shared\shaders\deferred\brdf\shadows.hlsl">
+		<None Update="assets\shared\shaders\deferred\brdf\shadow.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		  <EntryPointName>main</EntryPointName>
 		  <ShaderProfile>hs_5_0</ShaderProfile>
@@ -143,6 +143,12 @@
 		</None>
 		<None Update="assets\shared\shaders\compute\hiz\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ddassr\blend.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ddassr\box.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\dof\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

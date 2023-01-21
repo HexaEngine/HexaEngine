@@ -6,7 +6,6 @@
     {
         public Vector4 Color;
         public Vector3 Direction;
-        public float Padd;
 
         public DirectionalLightData(DirectionalLight light)
         {

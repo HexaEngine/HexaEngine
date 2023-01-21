@@ -295,7 +295,7 @@ namespace HexaEngine.Pipelines.Effects
 
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
             Target = await ResourceManager.GetTextureRTVAsync("AutoExposure");
-            Position = await ResourceManager.GetTextureSRVAsync("GBuffer.Position");
+            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
         }
 
         public void BeginResize()
@@ -321,7 +321,7 @@ namespace HexaEngine.Pipelines.Effects
             Color = ResourceManager.UpdateTextureSRV("DepthOfField", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
             Target = await ResourceManager.GetTextureRTVAsync("AutoExposure");
-            Position = await ResourceManager.GetTextureSRVAsync("GBuffer.Position");
+            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
         }
 
         public void Dispose()

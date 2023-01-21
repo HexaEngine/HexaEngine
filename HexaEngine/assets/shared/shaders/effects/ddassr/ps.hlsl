@@ -124,7 +124,7 @@ float4 main(VSOut input) : SV_TARGET
 	if (gpos.w == 0)
 		return float4(0, 0, 0, 0);
 
-	if (gnormal.w > 0.4f)
+	if (gnormal.w > 0.3f)
 		return float4(0, 0, 0, 0);
 
 	float4 pos = float4(gpos.xyz, 1);

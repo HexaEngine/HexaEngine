@@ -41,13 +41,10 @@ namespace HexaEngine.Rendering
         private Quad quad;
 
         private ConstantBuffer<CBCamera> cameraBuffer;
-        private ConstantBuffer<CBLight> lightBuffer;
         private ConstantBuffer<CBWorld> skyboxBuffer;
         private ConstantBuffer<CBTessellation> tesselationBuffer;
         private Geometry geometry;
 
-        private DeferredPrincipledBSDF deferred;
-        private ForwardPrincipledBSDF forward;
         private Skybox skybox;
 
         private DepthBuffer depthStencil;
@@ -59,21 +56,6 @@ namespace HexaEngine.Rendering
 
         private Texture ssrBuffer;
         private Texture depthbuffer;
-
-        private CSMPipeline csmPipeline;
-        private Texture csmDepthBuffer;
-        private ConstantBuffer<Matrix4x4> csmMvpBuffer;
-
-        private OSMPipeline osmPipeline;
-        private ConstantBuffer<Matrix4x4> osmBuffer;
-        private IBuffer osmParamBuffer;
-        private Texture[] osmDepthBuffers;
-        private IShaderResourceView[] osmSRVs;
-
-        private PSMPipeline psmPipeline;
-        private IBuffer psmBuffer;
-        private Texture[] psmDepthBuffers;
-        private IShaderResourceView[] psmSRVs;
 
         private ISamplerState pointSampler;
         private ISamplerState anisoSampler;
@@ -145,40 +127,8 @@ namespace HexaEngine.Rendering
                 linearSampler = ResourceManager.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp);
 
                 cameraBuffer = ResourceManager.AddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
-                lightBuffer = ResourceManager.AddConstantBuffer<CBLight>("CBLight", CpuAccessFlags.Write);
                 skyboxBuffer = new(device, CpuAccessFlags.Write);
                 tesselationBuffer = new(device, CpuAccessFlags.Write);
-
-                csmDepthBuffer = new(device, TextureDescription.CreateTexture2DArrayWithRTV(4096, 4096, 4, 1, Format.R32Float), DepthStencilDesc.Default);
-                csmMvpBuffer = new(device, 16, CpuAccessFlags.Write);
-                csmPipeline = new(device);
-                csmPipeline.View = csmMvpBuffer.Buffer;
-
-                osmDepthBuffers = new Texture[8];
-                osmSRVs = new IShaderResourceView[8];
-                for (int i = 0; i < 8; i++)
-                {
-                    osmDepthBuffers[i] = new(device, TextureDescription.CreateTextureCubeWithRTV(2048, 1, Format.R32Float), DepthStencilDesc.Default);
-                    osmSRVs[i] = osmDepthBuffers[i].ShaderResourceView;
-                }
-
-                osmBuffer = new(device, 6, CpuAccessFlags.Write);
-                osmParamBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                osmPipeline = new(device);
-                osmPipeline.View = osmBuffer;
-                osmPipeline.Light = osmParamBuffer;
-
-                psmDepthBuffers = new Texture[8];
-                psmSRVs = new IShaderResourceView[8];
-                for (int i = 0; i < 8; i++)
-                {
-                    psmDepthBuffers[i] = new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
-                    psmSRVs[i] = psmDepthBuffers[i].ShaderResourceView;
-                }
-
-                psmBuffer = device.CreateBuffer(new Matrix4x4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                psmPipeline = new(device);
-                psmPipeline.View = psmBuffer;
 
                 geometry = new();
                 geometry.Camera = cameraBuffer.Buffer;
@@ -196,8 +146,10 @@ namespace HexaEngine.Rendering
                 ResourceManager.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[2]);
                 ResourceManager.AddDepthStencilView("SwapChain.DSV", depthStencil.DSV);
                 ResourceManager.AddShaderResourceView("SwapChain.SRV", depthStencil.SRV);
+                ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
-                depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource), DepthStencilDesc.Default);
+                depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget), DepthStencilDesc.Default);
+                //depthbuffer = new(device, width, height, Format.Depth32Float);
 
                 fxaa = new();
                 effects.Add(fxaa);
@@ -216,16 +168,6 @@ namespace HexaEngine.Rendering
 
                 ssao = new();
                 effects.Add(ssao);
-
-                deferred = new();
-                deferred.OSMs = osmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-                deferred.PSMs = psmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-                effects.Add(deferred);
-
-                forward = new();
-                forward.OSMs = osmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-                forward.PSMs = psmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-                effects.Add(forward);
 
                 Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
                 Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
@@ -263,9 +205,9 @@ namespace HexaEngine.Rendering
                 ssr.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
                 ssr.Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
                 ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
-                ssr.Position = ResourceManager.GetTextureSRV("GBuffer.Position");
-                ssr.Normal = ResourceManager.GetTextureSRV("GBuffer.Normal");
-                ssr.Depth = depthbuffer.ShaderResourceView;
+                ssr.Position = gbuffer.SRVs[1];
+                ssr.Normal = gbuffer.SRVs[2];
+                ssr.Backdepth = depthbuffer.ShaderResourceView;
 
                 deferredContext = device.CreateDeferredContext();
 
@@ -406,6 +348,7 @@ namespace HexaEngine.Rendering
             ResourceManager.RequireUpdate("GBuffer.Position");
             ResourceManager.RequireUpdate("GBuffer.Normal");
             ResourceManager.RequireUpdate("SwapChain.DSV");
+            ResourceManager.RequireUpdate("LightBuffer");
 
             fxaa.BeginResize();
             bloom.BeginResize();
@@ -413,8 +356,6 @@ namespace HexaEngine.Rendering
             autoExposure.BeginResize();
             dof.BeginResize();
             ssao.BeginResize();
-            deferred.BeginResize();
-            forward.BeginResize();
         }
 
         private void OnRendererResizeEnd(int width, int height)
@@ -427,13 +368,14 @@ namespace HexaEngine.Rendering
             occlusionStencil = new(device, width, height, Format.Depth32Float);
             dsv = depthStencil.DSV;
 
+            ResourceManager.UpdateTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
             ResourceManager.SetOrAddResource("GBuffer", gbuffer);
             ResourceManager.SetOrAddResource("GBuffer.Color", gbuffer.SRVs[0]);
             ResourceManager.SetOrAddResource("GBuffer.Position", gbuffer.SRVs[1]);
             ResourceManager.SetOrAddResource("GBuffer.Normal", gbuffer.SRVs[2]);
             ResourceManager.SetOrAddResource("SwapChain.DSV", depthStencil.DSV);
 
-            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float), DepthStencilDesc.Default);
+            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource), DepthStencilDesc.Default);
             hizBuffer.Resize(device, width, height);
 
             fxaa.EndResize(width, height);
@@ -442,16 +384,6 @@ namespace HexaEngine.Rendering
             autoExposure.EndResize(width, height);
             dof.EndResize(width, height);
             ssao.EndResize(width, height);
-            deferred.CSM = csmDepthBuffer.ShaderResourceView;
-            deferred.OSMs = osmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-            deferred.PSMs = psmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-            deferred.EndResize(width, height);
-
-            forward.Output = ResourceManager.GetTextureRTV("LightBuffer");
-            forward.CSM = csmDepthBuffer.ShaderResourceView;
-            forward.OSMs = osmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-            forward.PSMs = psmDepthBuffers.Select(x => x.ShaderResourceView).ToArray();
-            forward.EndResize(width, height);
 
             skybox.Output = ResourceManager.GetTextureRTV("DepthOfField");
             skybox.DSV = dsv;
@@ -464,7 +396,7 @@ namespace HexaEngine.Rendering
             ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
             ssr.Position = gbuffer.SRVs[1];
             ssr.Normal = gbuffer.SRVs[2];
-            ssr.Depth = depthbuffer.ShaderResourceView;
+            ssr.Backdepth = depthbuffer.ShaderResourceView;
 
             var scene = SceneManager.Current;
             if (scene == null) return;
@@ -477,15 +409,27 @@ namespace HexaEngine.Rendering
         {
             SceneVariables variables = scene.Variables;
 
-            Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
+            Vector4 skyColor = new(0.001f, 0.001f, 0.001f, 1);
+
+            {
+                if (variables.TryGetValue("SkyColor", out string? vl))
+                {
+                    if (float.TryParse(vl, out float value))
+                    {
+                        skyColor = new(value);
+                    }
+                }
+            }
 
             Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
 
-            if (variables.TryGetValue("AmbientLight", out string? vl))
             {
-                if (float.TryParse(vl, out float value))
+                if (variables.TryGetValue("AmbientLight", out string? vl))
                 {
-                    ambient = new(value);
+                    if (float.TryParse(vl, out float value))
+                    {
+                        ambient = new(value);
+                    }
                 }
             }
 
@@ -496,7 +440,7 @@ namespace HexaEngine.Rendering
             }
             else
             {
-                env = ResourceManager.AddOrUpdateTextureColor("Environment", TextureDimension.TextureCube, solidColor);
+                env = ResourceManager.AddOrUpdateTextureColor("Environment", TextureDimension.TextureCube, skyColor);
                 skybox.Env = env.ShaderResourceView;
             }
 
@@ -515,11 +459,9 @@ namespace HexaEngine.Rendering
             }
             else
             {
-                envfilter = ResourceManager.AddOrUpdateTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, solidColor);
+                envfilter = ResourceManager.AddOrUpdateTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, skyColor);
             }
 
-            deferred.UpdateTextures();
-            forward.UpdateTextures();
             scene.LightManager.BeginResize();
             scene.LightManager.EndResize(width, height);
         }
@@ -598,8 +540,7 @@ namespace HexaEngine.Rendering
             // Draw backface depth
             if (ssr.Enabled)
             {
-                depthbuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.Stencil | DepthStencilClearFlags.Depth);
-                depthbuffer.SetTarget(context);
+                depthbuffer.ClearAndSetTarget(context, default, DepthStencilClearFlags.All);
                 geometry.BeginDrawDepthBack(context, depthbuffer.Viewport);
                 for (int i = 0; i < types.Count; i++)
                 {
@@ -612,110 +553,12 @@ namespace HexaEngine.Rendering
                 context.ClearState();
             }
 
-            CBLight.Update(lightBuffer.Local, scene.Lights);
-
-            uint pointsd = 0;
-            uint spotsd = 0;
-
-            // Draw light depth
-            for (int i = 0; i < scene.Lights.Count; i++)
-            {
-                Light light = scene.Lights[i];
-
-                switch (light.LightType)
-                {
-                    case LightType.Directional:
-                        if (!light.CastShadows) continue;
-                        Matrix4x4* views = (Matrix4x4*)&lightBuffer.Local->DirectionalLightSD1;
-                        float* cascades = (float*)((byte*)&lightBuffer.Local->DirectionalLightSD1 + CBDirectionalLightSD.CascadePointerOffset);
-                        var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, light.Transform, views, cascades);
-                        context.Write(csmMvpBuffer.Buffer, mtxs, sizeof(Matrix4x4) * 16);
-
-                        csmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-                        context.SetRenderTarget(csmDepthBuffer.RenderTargetView, csmDepthBuffer.DepthStencilView);
-                        csmPipeline.BeginDraw(context, csmDepthBuffer.Viewport);
-                        for (int j = 0; j < types.Count; j++)
-                        {
-                            var type = types[j];
-                            if (type.BeginDrawNoOcculusion(context))
-                            {
-                                context.DrawIndexedInstanced((uint)type.IndexCount, (uint)type.Visible, 0, 0, 0);
-                            }
-                        }
-                        context.ClearState();
-
-                        break;
-
-                    case LightType.Point:
-                        if (!light.CastShadows || !light.Updated)//
-                        {
-                            if (light.CastShadows)
-                                pointsd++;
-                            continue;
-                        }
-                        light.Updated = false;
-                        var pointLight = (PointLight)light;
-                        OSMHelper.GetLightSpaceMatrices(light.Transform, pointLight.ShadowRange, osmBuffer.Local, pointLight.ShadowBox);
-                        osmBuffer.Update(context);
-                        context.Write(osmParamBuffer, new Vector4(light.Transform.GlobalPosition, pointLight.ShadowRange));
-
-                        osmDepthBuffers[pointsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-                        context.SetRenderTarget(osmDepthBuffers[pointsd].RenderTargetView, osmDepthBuffers[pointsd].DepthStencilView);
-                        osmPipeline.BeginDraw(context, osmDepthBuffers[pointsd].Viewport);
-
-                        for (int j = 0; j < types.Count; j++)
-                        {
-                            var type = types[j];
-                            type.UpdateFrustumInstanceBuffer(*pointLight.ShadowBox);
-                            if (type.BeginDrawNoOcculusion(context))
-                            {
-                                context.DrawIndexedInstanced((uint)type.IndexCount, (uint)type.Visible, 0, 0, 0);
-                            }
-                        }
-                        context.ClearState();
-
-                        pointsd++;
-                        break;
-
-                    case LightType.Spot:
-                        if (!light.CastShadows)//|| !light.Updated
-                        {
-                            if (light.CastShadows)
-                                spotsd++;
-                            continue;
-                        }
-                        light.Updated = false;
-                        CBSpotlightSD* spotlights = lightBuffer.Local->GetSpotlightSDs();
-                        context.Write(psmBuffer, spotlights[spotsd].View);
-
-                        psmDepthBuffers[spotsd].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-                        context.SetRenderTarget(psmDepthBuffers[spotsd].RenderTargetView, psmDepthBuffers[spotsd].DepthStencilView);
-                        psmPipeline.BeginDraw(context, psmDepthBuffers[spotsd].Viewport);
-
-                        for (int j = 0; j < types.Count; j++)
-                        {
-                            var type = types[j];
-                            if (type.BeginDrawNoOcculusion(context))
-                            {
-                                context.DrawIndexedInstanced((uint)type.IndexCount, (uint)type.Visible, 0, 0, 0);
-                            }
-                        }
-                        context.ClearState();
-
-                        spotsd++;
-                        break;
-                }
-            }
-
-            lightBuffer.Update(context);
-
             // SSAO Pass
             ssao.Draw(context);
 
             // Light Pass
             if (forwardMode)
             {
-                forward.Draw(context);
                 for (int i = 0; i < types.Count; i++)
                 {
                     var type = types[i];
@@ -728,7 +571,7 @@ namespace HexaEngine.Rendering
             }
             else
             {
-                scene.LightManager.DeferredPass(context);
+                scene.LightManager.DeferredPass(context, camera);
                 context.ClearState();
             }
 
@@ -790,31 +633,13 @@ namespace HexaEngine.Rendering
 
                 hizBuffer.Dispose();
                 deferredContext.Dispose();
-                lightBuffer.Dispose();
                 cameraBuffer.Dispose();
                 skyboxBuffer.Dispose();
                 tesselationBuffer.Dispose();
                 quad.Dispose();
                 geometry.Dispose();
-                deferred.Dispose();
-                forward.Dispose();
                 skybox.Dispose();
                 gbuffer.Dispose();
-
-                csmPipeline.Dispose();
-                csmMvpBuffer.Dispose();
-                csmDepthBuffer.Dispose();
-
-                osmPipeline.Dispose();
-                osmBuffer.Dispose();
-                osmParamBuffer.Dispose();
-                foreach (var buffer in osmDepthBuffers)
-                    buffer.Dispose();
-
-                psmPipeline.Dispose();
-                psmBuffer.Dispose();
-                foreach (var buffer in psmDepthBuffers)
-                    buffer.Dispose();
 
                 ssrBuffer.Dispose();
                 depthbuffer.Dispose();

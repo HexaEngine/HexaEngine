@@ -1,13 +1,16 @@
 ﻿namespace HexaEngine.Core.Lights
 {
     using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public abstract class Light : GameObject
     {
         public bool Updated;
+        internal uint QueueIndex;
         protected const float DegToRadFactor = 0.0174532925f;
         protected Vector4 color = Vector4.One;
         private bool castShadows;
@@ -21,5 +24,13 @@
         public bool CastShadows { get => castShadows; set => SetAndNotifyWithEqualsTest(ref castShadows, value); }
 
         public abstract bool IntersectFrustum(BoundingBox box);
+
+        public abstract IShaderResourceView? GetShadowMap();
+
+        public abstract void CreateShadowMap(IGraphicsDevice device);
+
+        public abstract void DestroyShadowMap();
+
+        public uint GetQueueIndex() => QueueIndex;
     }
 }

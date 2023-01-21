@@ -21,7 +21,7 @@
             {
                 var light = lightManager.Lights[i];
 
-                ImGui.Text($"{light.Name}");
+                ImGui.Text($"{light.Name}:{light.GetQueueIndex()}");
             }
             ImGui.EndListBox();
         }

@@ -930,6 +930,16 @@
             return null;
         }
 
+        public static async Task<IShaderResourceView?> GetSRVAsync(string name)
+        {
+            var result = await TryGetResourceAsync<IShaderResourceView>(name, false);
+            if (result.Item1)
+            {
+                return result.Item2;
+            }
+            return null;
+        }
+
         public static async Task<IDepthStencilView?> GetTextureDSVAsync(string name)
         {
             var result = await TryGetResourceAsync<Graphics.Texture>(name, false);

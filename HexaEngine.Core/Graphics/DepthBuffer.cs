@@ -92,6 +92,22 @@
             }
         }
 
+        public DepthBuffer(IGraphicsDevice device, int width, int height, int array, Format format, ResourceMiscFlag miscFlag, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
+        {
+            Format resourceFormat = GetDepthResourceFormat(format);
+            Format srvFormat = GetDepthSRVFormat(format);
+            Texture2DDescription depthStencilDesc = new(resourceFormat, width, height, array, 1, flags, miscFlags: miscFlag);
+
+            Viewport = new(width, height);
+
+            Resource = device.CreateTexture2D(depthStencilDesc);
+            DSV = device.CreateDepthStencilView(Resource, new((ITexture2D)Resource, DepthStencilViewDimension.Texture2DArray, format));
+            if (flags.HasFlag(BindFlags.ShaderResource))
+            {
+                SRV = device.CreateShaderResourceView(Resource, new((ITexture2D)Resource, ShaderResourceViewDimension.TextureCube, srvFormat));
+            }
+        }
+
         private static Format GetDepthResourceFormat(Format depthformat)
         {
             Format resformat = Format.Unknown;

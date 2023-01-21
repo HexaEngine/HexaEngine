@@ -10,6 +10,7 @@
     public class ImportDialog : DialogBase, IDialog
     {
         private AssimpSceneImporter importer = new();
+        private string path;
         private OpenFileDialog dialog = new();
         private bool loaded = false;
         private Task? loadTask;
@@ -26,17 +27,25 @@
 
         protected override void DrawContent()
         {
+            if (dialog.Draw())
+            {
+                if (dialog.Result != OpenFileResult.Ok)
+                {
+                    Hide();
+                    return;
+                }
+            }
+
             if (!loaded)
             {
-                if (dialog.Draw())
+                if (ImGui.InputText("Path", ref path, 2048))
                 {
-                    if (dialog.Result != OpenFileResult.Ok)
-                    {
-                        Hide();
-                        return;
-                    }
-
-                    loadTask = importer.LoadAsync(dialog.SelectedFile).ContinueWith(LoadTaskDone);
+                    dialog.SelectedFile = path;
+                }
+                ImGui.SameLine();
+                if (ImGui.Button("..."))
+                {
+                    dialog.Show();
                 }
             }
             else

@@ -4,14 +4,12 @@ struct DirectionalLightSD
 	float4 cascades[4];
 	float4 color;
 	float3 dir;
-	int padd;
 };
 
 struct DirectionalLight
 {
 	float4 color;
 	float3 dir;
-	int padd;
 };
 
 struct PointLightSD
@@ -25,13 +23,11 @@ struct PointLight
 {
 	float4 color;
 	float3 position;
-	int padd;
 };
 
 struct SpotlightSD
 {
 	matrix view;
-	matrix proj;
 	float4 color;
 	float3 pos;
 	float cutOff;

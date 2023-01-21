@@ -54,6 +54,12 @@ namespace HexaEngine.Editor.Widgets
                 element.Name = name;
             }
 
+            bool isEnabled = element.IsEnabled;
+            if (ImGui.Checkbox("Enabled", ref isEnabled))
+            {
+                element.IsEnabled = isEnabled;
+            }
+
             ImGui.Separator();
             if (ImGui.CollapsingHeader(nameof(Transform)))
             {

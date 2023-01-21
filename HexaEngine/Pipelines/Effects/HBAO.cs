@@ -167,8 +167,8 @@ namespace HexaEngine.Pipelines.Effects
             hbaoParams.Res = new(width, height);
             hbaoParams.ResInv = new(1 / width, 1 / height);
 
-            Position = await ResourceManager.GetTextureSRVAsync("GBuffer.Position");
-            Normal = await ResourceManager.GetTextureSRVAsync("GBuffer.Normal");
+            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
+            Normal = await ResourceManager.GetSRVAsync("GBuffer.Normal");
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
 
             unsafe

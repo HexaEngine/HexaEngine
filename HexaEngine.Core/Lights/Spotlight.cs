@@ -1,15 +1,25 @@
 ﻿namespace HexaEngine.Core.Lights
 {
     using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
+    using HexaEngine.Pipelines.Forward;
     using System;
     using System.Numerics;
+    using Texture = Graphics.Texture;
 
     [EditorNode<Spotlight>("Spotlight")]
     public class Spotlight : Light
     {
         public new CameraTransform Transform;
 
+        private static ulong instances;
+        private static PSMPipeline? psmPipeline;
+        private static IBuffer? psmBuffer;
+
+        private Texture? psmDepthBuffer;
         private float strength = 1;
         private float coneAngle;
         private float blend;
@@ -46,6 +56,60 @@
 
         [EditorProperty("Blend", 0f, 1f, EditorPropertyMode.Slider)]
         public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
+
+        public override IShaderResourceView? GetShadowMap()
+        {
+            return psmDepthBuffer?.ShaderResourceView;
+        }
+
+        public override void CreateShadowMap(IGraphicsDevice device)
+        {
+            if (psmDepthBuffer != null) return;
+            psmDepthBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
+
+            if (Interlocked.Increment(ref instances) == 1)
+            {
+                psmBuffer = device.CreateBuffer(new Matrix4x4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+                psmPipeline = new(device);
+                psmPipeline.View = psmBuffer;
+            }
+        }
+
+        public override void DestroyShadowMap()
+        {
+            if (psmDepthBuffer == null) return;
+            psmDepthBuffer?.Dispose();
+            psmDepthBuffer = null;
+            if (Interlocked.Decrement(ref instances) == 0)
+            {
+                psmBuffer?.Dispose();
+                psmPipeline?.Dispose();
+            }
+        }
+
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowSpotlightData> buffer, IInstanceManager manager)
+        {
+            if (psmDepthBuffer == null) return;
+#nullable disable
+            ShadowSpotlightData data = buffer.Local[QueueIndex];
+            context.Write(psmBuffer, data.View);
+
+            psmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
+            context.SetRenderTarget(psmDepthBuffer.RenderTargetView, psmDepthBuffer.DepthStencilView);
+            psmPipeline.BeginDraw(context, psmDepthBuffer.Viewport);
+
+            var types = manager.Types;
+            for (int j = 0; j < types.Count; j++)
+            {
+                var type = types[j];
+                if (type.BeginDrawNoOcculusion(context))
+                {
+                    context.DrawIndexedInstanced((uint)type.IndexCount, (uint)type.Visible, 0, 0, 0);
+                }
+            }
+            context.ClearState();
+#nullable enable
+        }
 
         public float GetConeRadius(float z)
         {

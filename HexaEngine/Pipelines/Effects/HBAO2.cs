@@ -189,8 +189,8 @@ namespace HexaEngine.Pipelines.Effects
 
             hbaoParams.DitherScale = 0.5f;
 
-            Depth = await ResourceManager.GetTextureSRVAsync("SwapChain.SRV");
-            Normal = await ResourceManager.GetTextureSRVAsync("GBuffer.Normal");
+            Depth = await ResourceManager.GetSRVAsync("SwapChain.SRV");
+            Normal = await ResourceManager.GetSRVAsync("GBuffer.Normal");
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
 
             unsafe

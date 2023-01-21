@@ -42,13 +42,19 @@
 #endif
             byte* pSource = (byte*)Marshal.StringToCoTaskMemUTF8(source);
 
-            var pMacros = macros.Length > 0 ? Alloc<D3DShaderMacro>(macros.Length) : null;
+            var pMacros = macros.Length > 0 ? Alloc<D3DShaderMacro>(macros.Length + 1) : null;
+
             for (int i = 0; i < macros.Length; i++)
             {
                 var macro = macros[i];
                 var pName = Marshal.StringToCoTaskMemUTF8(macro.Name);
                 var pDef = Marshal.StringToCoTaskMemUTF8(macro.Definition);
                 pMacros[i] = new((byte*)pName, (byte*)pDef);
+            }
+            if (pMacros != null)
+            {
+                pMacros[macros.Length].Name = null;
+                pMacros[macros.Length].Definition = null;
             }
 
             byte* pEntryPoint = (byte*)Marshal.StringToCoTaskMemUTF8(entryPoint);
@@ -242,7 +248,7 @@
             Shader* pShader;
             if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
             {
-                Compile(code, entry, path, profile, &pShader);
+                Compile(code, macros, entry, path, profile, &pShader);
                 ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
@@ -253,7 +259,7 @@
             Shader* pShader;
             if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
             {
-                CompileFromFile(path, entry, profile, &pShader);
+                CompileFromFile(path, macros, entry, profile, &pShader);
                 if (pShader == null) return;
                 ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
             }
@@ -265,7 +271,7 @@
             Shader* pShader;
             if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out inputElements))
             {
-                CompileFromFile(path, entry, profile, &pShader);
+                CompileFromFile(path, macros, entry, profile, &pShader);
                 signature = null;
                 inputElements = null;
                 if (pShader == null) return;

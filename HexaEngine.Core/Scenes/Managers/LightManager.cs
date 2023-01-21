@@ -11,10 +11,11 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    public class LightManager
+    public partial class LightManager
     {
         private readonly List<Light> lights = new();
         private readonly List<Light> activeLights = new();
+        private readonly IGraphicsDevice device;
         private readonly IInstanceManager instanceManager;
         private readonly ConcurrentQueue<Light> updateQueue = new();
         private readonly ConcurrentQueue<ModelInstance> modelUpdateQueue = new();
@@ -30,19 +31,26 @@
         private readonly ConstantBuffer<LightBufferParams> paramsBuffer;
 
         private readonly Quad quad;
-        private ISamplerState pointSampler;
-        private ISamplerState anisoSampler;
+        private readonly ISamplerState pointSampler;
+        private readonly ISamplerState anisoSampler;
+        private readonly unsafe void** cbs;
+        private readonly unsafe void** smps;
 
         private readonly IGraphicsPipeline deferredDirect;
-        private unsafe void** cbs;
-        private unsafe void** smps;
-        private unsafe void** directSrvs;
+        private readonly unsafe void** directSrvs;
         private const uint ndirectSrvs = 8 + 3;
-        private const uint nsrvs = 8 + 4 + CBLight.MaxDirectionalLightSDs + CBLight.MaxPointLightSDs + CBLight.MaxSpotlightSDs;
 
         private readonly IGraphicsPipeline deferredIndirect;
-        private unsafe void** indirectSrvs;
+        private readonly unsafe void** indirectSrvs;
         private const uint nindirectSrvs = 8 + 4;
+
+        private readonly IGraphicsPipeline deferredShadow;
+        private readonly unsafe void** shadowSrvs;
+        private const uint nShadowSrvs = 8 + 3 + MaxDirectionalLightSDs + MaxPointLightSDs + MaxSpotlightSDs;
+
+        public const int MaxDirectionalLightSDs = 1;
+        public const int MaxPointLightSDs = 32;
+        public const int MaxSpotlightSDs = 32;
 
         public IRenderTargetView Output;
 
@@ -53,32 +61,18 @@
         public IShaderResourceView LUT;
         public IShaderResourceView SSAO;
 
-        public IShaderResourceView CSM;
+        public IShaderResourceView[] CSMs;
         public IShaderResourceView[] OSMs;
         public IShaderResourceView[] PSMs;
         public IBuffer Camera;
 
-        /*
-        private CSMPipeline csmPipeline;
-        private Texture csmDepthBuffer;
-        private ConstantBuffer<Matrix4x4> csmMvpBuffer;
-
-        private OSMPipeline osmPipeline;
-        private ConstantBuffer<Matrix4x4> osmBuffer;
-        private IBuffer osmParamBuffer;
-        private Texture[] osmDepthBuffers;
-        private IShaderResourceView[] osmSRVs;
-
-        private PSMPipeline psmPipeline;
-        private IBuffer psmBuffer;
-        private Texture[] psmDepthBuffers;
-        private IShaderResourceView[] psmSRVs;
-        */
-
         public LightManager(IGraphicsDevice device, IInstanceManager instanceManager)
         {
+            this.device = device;
             this.instanceManager = instanceManager;
-            instanceManager.Updated += InstanceManagerUpdated;
+            instanceManager.Updated += InstanceUpdated;
+            instanceManager.InstanceCreated += InstanceCreated;
+            instanceManager.InstanceDestroyed += InstanceDestroyed;
             paramsBuffer = new(device, CpuAccessFlags.Write);
             directionalLights = new(device, true, false);
             pointLights = new(device, true, false);
@@ -115,12 +109,28 @@
                 cbs = AllocArray(2);
 
                 indirectSrvs = AllocArray(nindirectSrvs);
+                shadowSrvs = AllocArray(nShadowSrvs);
+                Zero(shadowSrvs, (uint)(nShadowSrvs * sizeof(nint)));
             }
 
             deferredIndirect = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "deferred/brdf/vs.hlsl",
                 PixelShader = "deferred/brdf/indirect.hlsl",
+            },
+            new GraphicsPipelineState()
+            {
+                Blend = BlendDescription.Additive,
+                BlendFactor = Vector4.One,
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullBack,
+                Topology = PrimitiveTopology.TriangleList
+            });
+
+            deferredShadow = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "deferred/brdf/vs.hlsl",
+                PixelShader = "deferred/brdf/shadow.hlsl",
             },
             new GraphicsPipelineState()
             {
@@ -140,9 +150,24 @@
 
         public int ActiveCount => activeLights.Count;
 
-        private void InstanceManagerUpdated(ModelInstanceType type, ModelInstance instance)
+        private void InstanceUpdated(ModelInstanceType type, ModelInstance instance)
         {
             modelUpdateQueue.Enqueue(instance);
+        }
+
+        private void InstanceDestroyed(ModelInstance instance)
+        {
+            modelUpdateQueue.Enqueue(instance);
+        }
+
+        private void InstanceCreated(ModelInstance instance)
+        {
+            modelUpdateQueue.Enqueue(instance);
+        }
+
+        private void LightTransformed(GameObject light)
+        {
+            updateQueue.Enqueue((Light)light);
         }
 
         private void LightPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -171,6 +196,7 @@
         {
             if (gameObject is Light light)
             {
+                light.DestroyShadowMap();
                 RemoveLight(light);
             }
         }
@@ -180,8 +206,8 @@
             lock (lights)
             {
                 lights.Add(light);
-                if (light.IsEnabled)
-                    activeLights.Add(light);
+                updateQueue.Enqueue(light);
+                light.Transformed += LightTransformed;
                 light.PropertyChanged += LightPropertyChanged;
             }
         }
@@ -191,6 +217,7 @@
             lock (lights)
             {
                 light.PropertyChanged -= LightPropertyChanged;
+                light.Transformed -= LightTransformed;
                 lights.Remove(light);
                 activeLights.Remove(light);
             }
@@ -198,19 +225,35 @@
 
         public unsafe void Update(IGraphicsContext context, Camera camera)
         {
+            Queue<Light> updateShadowLightQueue = new();
             while (updateQueue.TryDequeue(out var light))
             {
                 if (light.IsEnabled)
                 {
                     if (!activeLights.Contains(light))
+                    {
                         activeLights.Add(light);
+                    }
+
+                    if (light.CastShadows)
+                    {
+                        light.CreateShadowMap(context.Device);
+                    }
+                    else
+                    {
+                        light.DestroyShadowMap();
+                    }
+
+                    updateShadowLightQueue.Enqueue(light);
                 }
                 else
                 {
                     activeLights.Remove(light);
                 }
             }
-            Queue<Light> updateShadowLightQueue = new();
+
+            UpdateDirectLights(context);
+
             while (modelUpdateQueue.TryDequeue(out var instance))
             {
                 instance.GetBoundingBox(out BoundingBox box);
@@ -226,7 +269,7 @@
                 }
             }
 
-            //UpdateShadowMaps(context, camera, lights);
+            UpdateShadowMaps(context, camera, updateShadowLightQueue);
         }
 
         public void BeginResize()
@@ -264,12 +307,16 @@
                 {
                     if (i < GBuffers.Length)
                     {
-                        indirectSrvs[i] = directSrvs[i] = (void*)GBuffers[i]?.NativePointer;
+                        shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = (void*)GBuffers[i]?.NativePointer;
                     }
                 }
             directSrvs[8] = (void*)directionalLights.SRV.NativePointer;
             directSrvs[9] = (void*)pointLights.SRV.NativePointer;
             directSrvs[10] = (void*)spotlights.SRV.NativePointer;
+
+            shadowSrvs[8] = (void*)shadowDirectionalLights.SRV.NativePointer;
+            shadowSrvs[9] = (void*)shadowPointLights.SRV.NativePointer;
+            shadowSrvs[10] = (void*)shadowSpotlights.SRV.NativePointer;
 
             indirectSrvs[8] = (void*)Irraidance?.NativePointer;
             indirectSrvs[9] = (void*)EnvPrefiltered?.NativePointer;
@@ -282,45 +329,99 @@
             directionalLights.ResetCounter();
             pointLights.ResetCounter();
             spotlights.ResetCounter();
+            shadowDirectionalLights.ResetCounter();
+            shadowPointLights.ResetCounter();
+            shadowSpotlights.ResetCounter();
+            uint csmCount = 0;
+            uint osmCount = 0;
+            uint psmCount = 0;
 
-            for (int i = 0; i < lights.Count; i++)
+            for (int i = 0; i < activeLights.Count; i++)
             {
-                var light = lights[i];
-                switch (light.LightType)
+                var light = activeLights[i];
+                if (light.CastShadows)
                 {
-                    case LightType.Directional:
-                        directionalLights.Add(new((DirectionalLight)light));
-                        break;
+                    switch (light.LightType)
+                    {
+                        case LightType.Directional:
+                            if (csmCount == MaxDirectionalLightSDs)
+                                continue;
+                            light.QueueIndex = csmCount;
+                            shadowDirectionalLights.Add(new((DirectionalLight)light));
+                            shadowSrvs[ndirectSrvs + csmCount] = (void*)light.GetShadowMap()?.NativePointer;
+                            csmCount++;
+                            break;
 
-                    case LightType.Point:
-                        pointLights.Add(new((PointLight)light));
-                        break;
+                        case LightType.Point:
+                            if (osmCount == MaxPointLightSDs)
+                                continue;
+                            light.QueueIndex = osmCount;
+                            shadowPointLights.Add(new((PointLight)light));
+                            shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + osmCount] = (void*)light.GetShadowMap()?.NativePointer;
+                            osmCount++;
+                            break;
 
-                    case LightType.Spot:
-                        spotlights.Add(new((Spotlight)light));
-                        break;
+                        case LightType.Spot:
+                            if (psmCount == MaxSpotlightSDs)
+                                continue;
+                            light.QueueIndex = psmCount;
+                            shadowSpotlights.Add(new((Spotlight)light));
+                            shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + +MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;
+                            psmCount++;
+                            break;
+                    }
                 }
+                else
+                {
+                    switch (light.LightType)
+                    {
+                        case LightType.Directional:
+                            light.QueueIndex = directionalLights.Count;
+                            directionalLights.Add(new((DirectionalLight)light));
+                            break;
+
+                        case LightType.Point:
+                            light.QueueIndex = pointLights.Count;
+                            pointLights.Add(new((PointLight)light));
+                            break;
+
+                        case LightType.Spot:
+                            light.QueueIndex = spotlights.Count;
+                            spotlights.Add(new((Spotlight)light));
+                            break;
+                    }
+                }
+            }
+
+            for (uint i = csmCount; i < MaxDirectionalLightSDs; i++)
+            {
+                shadowSrvs[ndirectSrvs + i] = null;
+            }
+            for (uint i = osmCount; i < MaxPointLightSDs; i++)
+            {
+                shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + i] = null;
+            }
+            for (uint i = psmCount; i < MaxSpotlightSDs; i++)
+            {
+                shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + i] = null;
             }
 
             directionalLights.Update(context);
             pointLights.Update(context);
             spotlights.Update(context);
 
+            shadowDirectionalLights.Update(context);
+            shadowPointLights.Update(context);
+            shadowSpotlights.Update(context);
+
             directSrvs[8] = (void*)directionalLights.SRV.NativePointer;
             directSrvs[9] = (void*)pointLights.SRV.NativePointer;
             directSrvs[10] = (void*)spotlights.SRV.NativePointer;
-
-            var lightParams = paramsBuffer.Local;
-            lightParams->DirectionalLights = directionalLights.Count;
-            lightParams->PointLights = pointLights.Count;
-            lightParams->Spotlights = spotlights.Count;
-            paramsBuffer.Update(context);
         }
 
-        public unsafe void DeferredPass(IGraphicsContext context)
+        public unsafe void DeferredPass(IGraphicsContext context, Camera camera)
         {
-            UpdateDirectLights(context);
-
+            Update(context, camera);
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.PSSetConstantBuffers(cbs, 2, 0);
@@ -331,15 +432,31 @@
             // Indirect light pass
             quad.DrawAuto(context, deferredIndirect, Output.Viewport);
 
+            var lightParams = paramsBuffer.Local;
+            lightParams->DirectionalLights = directionalLights.Count;
+            lightParams->PointLights = pointLights.Count;
+            lightParams->Spotlights = spotlights.Count;
+            paramsBuffer.Update(context);
+
             context.PSSetShaderResources(directSrvs, ndirectSrvs, 0);
 
             // Direct light pass
             quad.DrawAuto(context, deferredDirect, Output.Viewport);
+
+            lightParams->DirectionalLights = shadowDirectionalLights.Count;
+            lightParams->PointLights = shadowPointLights.Count;
+            lightParams->Spotlights = shadowSpotlights.Count;
+            paramsBuffer.Update(context);
+
+            context.PSSetShaderResources(shadowSrvs, nShadowSrvs, 0);
+
+            // Shadow light pass
+            quad.DrawAuto(context, deferredShadow, Output.Viewport);
         }
 
         public unsafe void Dispose()
         {
-            instanceManager.Updated -= InstanceManagerUpdated;
+            instanceManager.Updated -= InstanceUpdated;
 
             directionalLights.Dispose();
             pointLights.Dispose();
@@ -353,124 +470,33 @@
             quad.Dispose();
             deferredDirect.Dispose();
             deferredIndirect.Dispose();
+            deferredShadow.Dispose();
             Free(directSrvs);
             Free(indirectSrvs);
+            Free(shadowSrvs);
             Free(smps);
             Free(cbs);
         }
 
-        /*
-        public unsafe void UpdateShadowMaps(IGraphicsContext context, Camera camera, CBLight* lights)
+        public unsafe void UpdateShadowMaps(IGraphicsContext context, Camera camera, Queue<Light> lights)
         {
-            uint directsd = 0;
-            uint pointsd = 0;
-            uint spotsd = 0;
-
-            // Draw light depth
-            for (int i = 0; i < activeLights.Count; i++)
+            while (lights.TryDequeue(out var light))
             {
-                Light light = activeLights[i];
-
                 switch (light.LightType)
                 {
                     case LightType.Directional:
-                        if (!light.CastShadows || !light.Updated)
-                        {
-                            if (light.CastShadows)
-                                directsd++;
-                            continue;
-                        }
-                        light.Updated = false;
-                        UpdateDirectionalLight(context, directsd, camera, (DirectionalLight)light, lights);
-                        directsd++;
+                        ((DirectionalLight)light).UpdateShadowMap(context, shadowDirectionalLights, camera, instanceManager);
                         break;
 
                     case LightType.Point:
-                        if (!light.CastShadows || !light.Updated)
-                        {
-                            if (light.CastShadows)
-                                pointsd++;
-                            continue;
-                        }
-                        light.Updated = false;
-                        UpdatePointLight(context, pointsd, (PointLight)light);
-                        pointsd++;
+                        ((PointLight)light).UpdateShadowMap(context, shadowPointLights, instanceManager);
                         break;
 
                     case LightType.Spot:
-                        if (!light.CastShadows || !light.Updated)
-                        {
-                            if (light.CastShadows)
-                                spotsd++;
-                            continue;
-                        }
-                        light.Updated = false;
-                        UpdateSpotlight(context, spotsd, (Spotlight)light, lights);
-                        spotsd++;
+                        ((Spotlight)light).UpdateShadowMap(context, shadowSpotlights, instanceManager);
                         break;
                 }
             }
-        }*/
-        /*
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void UpdateDirectionalLight(IGraphicsContext context, uint index, Camera camera, DirectionalLight light, CBLight* lights)
-        {
-            CBDirectionalLightSD* directionalLight = lights->GetDirectionalLightSDs();
-            Matrix4x4* views = directionalLight->GetViews();
-            float* cascades = directionalLight->GetCascades();
-            var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, light.Transform, views, cascades);
-            context.Write(csmMvpBuffer.Buffer, mtxs, sizeof(Matrix4x4) * 16);
-
-            csmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-            context.SetRenderTarget(csmDepthBuffer.RenderTargetView, csmDepthBuffer.DepthStencilView);
-            DrawScene(context, csmPipeline, csmDepthBuffer.Viewport, light.Transform.Frustum);
         }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void UpdatePointLight(IGraphicsContext context, uint index, PointLight light)
-        {
-            OSMHelper.GetLightSpaceMatrices(light.Transform, light.ShadowRange, osmBuffer.Local, light.ShadowBox);
-            osmBuffer.Update(context);
-            context.Write(osmParamBuffer, new Vector4(light.Transform.GlobalPosition, light.ShadowRange));
-
-            osmDepthBuffers[index].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-            context.SetRenderTarget(osmDepthBuffers[index].RenderTargetView, osmDepthBuffers[index].DepthStencilView);
-            DrawScene(context, osmPipeline, osmDepthBuffers[index].Viewport, *light.ShadowBox);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void UpdateSpotlight(IGraphicsContext context, uint index, Spotlight light, CBLight* lights)
-        {
-            CBSpotlightSD* spotlights = lights->GetSpotlightSDs();
-            context.Write(psmBuffer, spotlights[index].View);
-
-            psmDepthBuffers[index].ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-            context.SetRenderTarget(psmDepthBuffers[index].RenderTargetView, psmDepthBuffers[index].DepthStencilView);
-            DrawScene(context, psmPipeline, psmDepthBuffers[index].Viewport, light.Transform.Frustum);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void DrawScene(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, BoundingBox box)
-        {
-            pipeline.BeginDraw(context, viewport);
-            for (int j = 0; j < instanceManager.TypeCount; j++)
-            {
-                instanceManager.Types[j].UpdateFrustumInstanceBuffer(box);
-                instanceManager.Types[j].DrawNoOcclusion(context);
-            }
-            context.ClearState();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe void DrawScene(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, BoundingFrustum frustum)
-        {
-            pipeline.BeginDraw(context, viewport);
-            for (int j = 0; j < instanceManager.TypeCount; j++)
-            {
-                instanceManager.Types[j].UpdateFrustumInstanceBuffer(frustum);
-                instanceManager.Types[j].DrawNoOcclusion(context);
-            }
-            context.ClearState();
-        }*/
     }
 }
