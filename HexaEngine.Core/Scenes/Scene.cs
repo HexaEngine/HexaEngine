@@ -8,6 +8,7 @@
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -24,6 +25,7 @@
         private InstanceManager instanceManager;
         private MaterialManager materialManager;
         private MeshManager meshManager;
+        private LightManager lightManager;
         private readonly SemaphoreSlim semaphore = new(1);
         private string? path;
 
@@ -59,6 +61,10 @@
         [JsonIgnore]
         public string[] CameraNames => cameraNames;
 
+        // TODO: Rename to lights later
+        [JsonIgnore]
+        public LightManager LightManager => lightManager;
+
         [JsonIgnore]
         public List<Light> Lights => lights;
 
@@ -86,8 +92,10 @@
         public void Initialize(IGraphicsDevice device)
         {
             instanceManager = new(device);
+            lightManager = new(device, instanceManager);
             materialManager ??= new();
             meshManager ??= new();
+
             semaphore.Wait();
 
             BufferPool = new BufferPool();
@@ -201,6 +209,7 @@
             }
 
             lights.AddIfIs(node);
+            lightManager.Register(node);
             scriptManager.Register(node);
         }
 
@@ -213,6 +222,7 @@
             }
 
             lights.RemoveIfIs(node);
+            lightManager.Unregister(node);
             scriptManager.Unregister(node);
         }
 
@@ -269,6 +279,7 @@
             root.Uninitialize();
             Simulation.Dispose();
             ThreadDispatcher.Dispose();
+            lightManager.Dispose();
             semaphore.Release();
         }
 
@@ -290,7 +301,7 @@
                         break;
                     }
                 }
-                if (collect && current.IsVisible)
+                if (collect && current.IsEditorVisible)
                     yield return current;
             }
         }

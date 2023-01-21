@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Lights
 {
     using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -10,25 +9,43 @@
     public class Spotlight : Light
     {
         public new CameraTransform Transform;
+
+        private float strength = 1;
         private float coneAngle;
         private float blend;
+        private float falloff = 100;
 
         public override LightType LightType => LightType.Spot;
 
         public Spotlight()
         {
             base.Transform = Transform = new();
-            Transform.Updated += (s, e) => { Updated = true; };
+            OverwriteTransform(Transform);
         }
 
         [EditorProperty("Strength")]
-        public float Strength { get; set; } = 1000;
+        public float Strength { get => strength; set => SetAndNotifyWithEqualsTest(ref strength, value); }
+
+        [EditorProperty("Shadow Range")]
+        public float ShadowRange
+        {
+            get => Transform.Far;
+            set
+            {
+                var target = Transform.Far;
+                if (SetAndNotifyWithEqualsTest(ref target, value))
+                    Transform.Far = target;
+            }
+        }
+
+        [EditorProperty("Falloff")]
+        public float Falloff { get => falloff; set => SetAndNotifyWithEqualsTest(ref falloff, value); }
 
         [EditorProperty("Cone Angle", 1f, 180f, EditorPropertyMode.Slider)]
-        public float ConeAngle { get => coneAngle; set => coneAngle = value; }
+        public float ConeAngle { get => coneAngle; set => SetAndNotifyWithEqualsTest(ref coneAngle, value); }
 
         [EditorProperty("Blend", 0f, 1f, EditorPropertyMode.Slider)]
-        public float Blend { get => blend; set => blend = value; }
+        public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
 
         public float GetConeRadius(float z)
         {
@@ -60,16 +77,9 @@
             return (major, minor);
         }
 
-        public unsafe void InsertLightData(StructuredUavBuffer<SpotlightData> l, StructuredUavBuffer<ShadowSpotlightData> sl)
+        public override bool IntersectFrustum(BoundingBox box)
         {
-            if (CastShadows)
-            {
-                l.Add(new(this));
-            }
-            else
-            {
-                sl.Add(new(this));
-            }
+            return Transform.Frustum.Intersects(box);
         }
     }
 }

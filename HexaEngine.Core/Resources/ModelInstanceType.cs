@@ -14,6 +14,7 @@
         private readonly SemaphoreSlim semaphore = new(1);
         private readonly List<ModelInstance> instances = new();
         private readonly ConcurrentQueue<ModelInstance> addQueue = new();
+        private readonly ConcurrentQueue<ModelInstance> removeQueue = new();
         private bool disposedValue;
         private readonly DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argBuffer;
         private readonly StructuredUavBuffer<Matrix4x4> instanceBuffer;
@@ -61,7 +62,9 @@
 
         public IReadOnlyList<ModelInstance> Instances => instances;
 
-        public ModelInstance CreateInstance(IGraphicsDevice device, GameObject parent)
+        public event Action<ModelInstanceType, ModelInstance> Updated;
+
+        public ModelInstance CreateInstance(GameObject parent)
         {
             var value = Interlocked.Increment(ref idCounter);
             ModelInstance instance = new(value, this, parent);
@@ -69,12 +72,9 @@
             return instance;
         }
 
-        public void DestroyInstance(IGraphicsDevice device, ModelInstance instance)
+        public void DestroyInstance(ModelInstance instance)
         {
-            semaphore.Wait();
-            instances.Remove(instance);
-
-            semaphore.Release();
+            removeQueue.Enqueue(instance);
         }
 
         public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<Matrix4x4> noCullBuffer, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum, bool doCulling)
@@ -83,8 +83,14 @@
 
             while (addQueue.TryDequeue(out var instance))
             {
+                instance.Updated += InstanceUpdated;
                 instances.Add(instance);
-                noCullInstanceBuffer.Add(instance.Transform);
+            }
+
+            while (removeQueue.TryDequeue(out var instance))
+            {
+                instance.Updated -= InstanceUpdated;
+                instances.Remove(instance);
             }
 
             idBuffer[0] = id;
@@ -109,6 +115,11 @@
             drawArgs.Add(new() { IndexCountPerInstance = (uint)Mesh.IndexCount });
 
             return count;
+        }
+
+        private void InstanceUpdated(ModelInstance obj)
+        {
+            Updated?.Invoke(this, obj);
         }
 
         public unsafe int UpdateFrustumInstanceBuffer(BoundingFrustum frustum)

@@ -3,13 +3,14 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.InteropServices;
 
-    public class GameObject
+    public partial class GameObject : EntityNotifyBase
     {
+        private static readonly GameObjectSelection selected = new();
+
 #nullable disable
         protected IGraphicsDevice Device;
 #nullable enable
@@ -21,8 +22,8 @@
 
         public Transform Transform = new();
         private string name = string.Empty;
-        private bool isSelected;
-        private static GameObjectSelection selected = new();
+        private bool isEditorSelected;
+
         private GCHandle gcHandle;
 
         [JsonIgnore]
@@ -32,6 +33,7 @@
         {
             gcHandle = GCHandle.Alloc(this, GCHandleType.WeakTrackResurrection);
             Pointer = GCHandle.ToIntPtr(gcHandle);
+            Transform.Updated += TransformUpdated;
         }
 
         ~GameObject()
@@ -51,6 +53,20 @@
             }
         }
 
+        public bool IsEnabled
+        {
+            get => isEnabled;
+            set
+            {
+                if (isEnabled == value) return;
+                SetAndNotify(ref isEnabled, value);
+                for (int i = 0; i < Children.Count; i++)
+                {
+                    Children[i].IsEnabled = value;
+                }
+            }
+        }
+
         [JsonIgnore]
         public virtual GameObject? Parent
         {
@@ -62,142 +78,51 @@
         }
 
         [JsonIgnore]
+        public bool Initialized => initialized;
+
+        [JsonIgnore]
         public static GameObjectSelection Selected => selected;
 
         [JsonIgnore]
-        public bool IsSelected => isSelected;
+        public bool IsEditorSelected => isEditorSelected;
 
         [JsonIgnore]
-        public bool IsOpen { get; set; }
+        public bool IsEditorOpen { get; set; }
 
         [JsonIgnore]
-        public bool IsVisible
+        public bool IsEditorVisible
         {
-            get => isVisible;
+            get => isEditorVisible;
             set
             {
-                if (isVisible == value) return;
+                if (isEditorVisible == value) return;
+                isEditorVisible = value;
                 if (!value)
                 {
                     for (int i = 0; i < Children.Count; i++)
                     {
-                        Children[i].IsVisible = false;
+                        Children[i].IsEditorVisible = false;
                     }
                 }
-                isVisible = value;
             }
         }
-
-        #region Sele
-
-        public class GameObjectSelection : IEnumerable
-        {
-            private readonly List<GameObject> _objects = new();
-
-            public GameObject this[int index] { get => ((IList<GameObject>)_objects)[index]; set => ((IList<GameObject>)_objects)[index] = value; }
-
-            public int Count => ((ICollection<GameObject>)_objects).Count;
-
-            public bool IsReadOnly => ((ICollection<GameObject>)_objects).IsReadOnly;
-
-            public void PurgeSelection()
-            {
-                foreach (GameObject gameObject in _objects)
-                {
-                    gameObject.Parent?.RemoveChild(gameObject);
-                }
-                ClearSelection();
-            }
-
-            public void MoveSelection(GameObject parent)
-            {
-                foreach (GameObject gameObject in _objects)
-                {
-                    gameObject.Uninitialize();
-                }
-                foreach (GameObject gameObject in _objects)
-                {
-                    parent.AddChild(gameObject);
-                }
-            }
-
-            public void AddSelection(GameObject gameObject)
-            {
-                gameObject.isSelected = true;
-                _objects.Add(gameObject);
-            }
-
-            public void AddOverwriteSelection(GameObject gameObject)
-            {
-                ClearSelection();
-                gameObject.isSelected = true;
-                _objects.Add(gameObject);
-            }
-
-            public void AddMultipleSelection(IEnumerable<GameObject> gameObjects)
-            {
-                foreach (GameObject gameObject in gameObjects)
-                {
-                    AddSelection(gameObject);
-                }
-            }
-
-            public void RemoveSelection(GameObject item)
-            {
-                item.isSelected = false;
-                _objects.Remove(item);
-            }
-
-            public void RemoveMultipleSelection(IEnumerable<GameObject> gameObjects)
-            {
-                foreach (GameObject gameObject in gameObjects)
-                {
-                    RemoveSelection(gameObject);
-                }
-            }
-
-            public void ClearSelection()
-            {
-                foreach (GameObject gameObject in _objects)
-                {
-                    gameObject.isSelected = false;
-                }
-                ((ICollection<GameObject>)_objects).Clear();
-            }
-
-            public GameObject? First() => _objects.Count == 0 ? null : _objects[0];
-
-            public GameObject Last() => _objects[^1];
-
-            public bool Contains(GameObject item)
-            {
-                return ((ICollection<GameObject>)_objects).Contains(item);
-            }
-
-            public void CopyTo(GameObject[] array, int arrayIndex)
-            {
-                ((ICollection<GameObject>)_objects).CopyTo(array, arrayIndex);
-            }
-
-            public IEnumerator<GameObject> GetEnumerator()
-            {
-                return ((IEnumerable<GameObject>)_objects).GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return ((IEnumerable)_objects).GetEnumerator();
-            }
-        }
-
-        #endregion Sele
 
         public virtual List<GameObject> Children => children;
 
         public virtual List<IComponent> Components => components;
 
-        [JsonIgnore]
-        public bool Initialized => initialized;
+        public event Action<GameObject>? Transformed;
+
+        protected void OverwriteTransform(Transform transform)
+        {
+            Transform.Updated -= TransformUpdated;
+            transform.Updated += TransformUpdated;
+        }
+
+        private void TransformUpdated(object? sender, EventArgs e)
+        {
+            Transformed?.Invoke(this);
+        }
 
         public void SaveState()
         {
@@ -419,8 +344,45 @@
             }
         }
 
-        private bool isVisible;
+        public virtual T? GetChild<T>() where T : GameObject
+        {
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+                if (child is T t)
+                    return t;
+            }
+            return null;
+        }
+
+        public virtual bool TryGetChild<T>([NotNullWhen(true)] out T? child) where T : GameObject
+        {
+            for (int i = 0; i < children.Count; i++)
+            {
+                var item = children[i];
+                if (item is T t)
+                {
+                    child = t;
+                    return true;
+                }
+            }
+            child = default;
+            return false;
+        }
+
+        public virtual IEnumerable<T> GetChildren<T>() where T : GameObject
+        {
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+                if (child is T t)
+                    yield return t;
+            }
+        }
+
+        private bool isEditorVisible;
         private Type? type;
+        private bool isEnabled;
 
         public Type Type
         {

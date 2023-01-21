@@ -22,6 +22,7 @@
             Register<OpenProjectWindow>();
             Register<PublishProjectWindow>();
             Register<SceneVariablesWindow>();
+            Register<DebugWindow>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()

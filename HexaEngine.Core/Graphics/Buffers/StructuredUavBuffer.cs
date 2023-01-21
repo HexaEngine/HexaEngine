@@ -218,6 +218,11 @@
         public int Length => buffer.Length;
 
         /// <summary>
+        /// Get the item count / counter of the buffer.
+        /// </summary>
+        public uint Count => count;
+
+        /// <summary>
         /// Gets the dimension.
         /// </summary>
         /// <value>
@@ -287,6 +292,14 @@
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(int index)
+        {
+            var size = (count - index) * sizeof(T);
+            Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
+            isDirty = true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Remove(uint index)
         {
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);

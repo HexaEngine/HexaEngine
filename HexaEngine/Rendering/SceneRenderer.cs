@@ -417,7 +417,7 @@ namespace HexaEngine.Rendering
             forward.BeginResize();
         }
 
-        private async void OnRendererResizeEnd(int width, int height)
+        private void OnRendererResizeEnd(int width, int height)
         {
             if (!initialized) return;
 
@@ -465,6 +465,12 @@ namespace HexaEngine.Rendering
             ssr.Position = gbuffer.SRVs[1];
             ssr.Normal = gbuffer.SRVs[2];
             ssr.Depth = depthbuffer.ShaderResourceView;
+
+            var scene = SceneManager.Current;
+            if (scene == null) return;
+
+            scene.LightManager.BeginResize();
+            scene.LightManager.EndResize(width, height);
         }
 
         public unsafe void LoadScene(Scene scene)
@@ -514,6 +520,8 @@ namespace HexaEngine.Rendering
 
             deferred.UpdateTextures();
             forward.UpdateTextures();
+            scene.LightManager.BeginResize();
+            scene.LightManager.EndResize(width, height);
         }
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera? camera)
@@ -720,7 +728,8 @@ namespace HexaEngine.Rendering
             }
             else
             {
-                deferred.Draw(context);
+                scene.LightManager.DeferredPass(context);
+                context.ClearState();
             }
 
             // Screen Space Reflections

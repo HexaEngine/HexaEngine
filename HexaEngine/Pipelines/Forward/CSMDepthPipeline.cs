@@ -29,10 +29,6 @@
                 Rasterizer = RasterizerDescription.CullNone,
                 Blend = BlendDescription.Opaque,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints,
-            },
-            new ShaderMacro[]
-            {
-                new("INSTANCED", 1)
             });
         }
 

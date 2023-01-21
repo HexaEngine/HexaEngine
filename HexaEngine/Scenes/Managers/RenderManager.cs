@@ -33,7 +33,7 @@
                 item.Drawable.Draw(context, RenderQueueIndex.Opaque);
             }
 
-            LightManager.DeferredPass(context);
+            // LightManager.DeferredPass(context);
         }
     }
 }

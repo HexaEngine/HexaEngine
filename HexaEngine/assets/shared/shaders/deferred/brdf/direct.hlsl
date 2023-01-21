@@ -14,10 +14,10 @@ Texture2D emissionTexture : register(t4);
 Texture2D misc0Texture : register(t5);
 Texture2D misc1Texture : register(t6);
 Texture2D misc2Texture : register(t7);
-TextureCube irradianceTexture : register(t8);
-TextureCube prefilterTexture : register(t9);
-Texture2D brdfLUT : register(t10);
-Texture2D ssao : register(t11);
+
+StructuredBuffer<DirectionalLight> directionalLights : register(t8);
+StructuredBuffer<PointLight> pointLights : register(t9);
+StructuredBuffer<Spotlight> spotlights : register(t10);
 
 Texture2DArray depthCSM : register(t12);
 TextureCube depthOSM[8] : register(t13);
@@ -26,31 +26,12 @@ Texture2D depthPSM[8] : register(t21);
 SamplerState SampleTypePoint : register(s0);
 SamplerState SampleTypeAnsio : register(s1);
 
-cbuffer LightBuffer : register(b0)
+cbuffer constants : register(b0)
 {
-	DirectionalLightSD directionalLightSDs[1];
-	uint directionalLightSDCount;
-	float3 padd1;
-
-	PointLightSD pointLightSDs[8];
-	uint pointLightSDCount;
-	float3 padd2;
-
-	SpotlightSD spotlightSDs[8];
-	uint spotlightSDCount;
-	float3 padd5;
-
-	DirectionalLight directionalLights[4];
 	uint directionalLightCount;
-	float3 padd3;
-
-	PointLight pointLights[32];
 	uint pointLightCount;
-	float3 padd4;
-
-	Spotlight spotlights[32];
 	uint spotlightCount;
-	float3 padd6;
+	uint PaddLight;
 };
 
 //////////////
@@ -279,7 +260,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 		float3 radiance = light.color.rgb;
 		Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 	}
-
+#ifdef SHADOWS
 	for (uint y = 0; y < directionalLightSDCount; y++)
 	{
 		DirectionalLightSD light = directionalLightSDs[y];
@@ -289,7 +270,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 		float3 radiance = light.color.rgb;
 		Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 	}
-
+#endif
 	for (uint z = 0; z < pointLightCount; z++)
 	{
 		PointLight light = pointLights[z];
@@ -302,7 +283,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 
 		Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 	}
-
+#ifdef SHADOWS
 	for (uint zd = 0; zd < pointLightSDCount; zd++)
 	{
 		PointLightSD light = pointLightSDs[zd];
@@ -315,7 +296,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 		float shadow = ShadowCalculation(light, attrs.pos, V, depthOSM[zd], SampleTypeAnsio);
 		Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 	}
-
+#endif
 	for (uint w = 0; w < spotlightCount; w++)
 	{
 		Spotlight light = spotlights[w];
@@ -335,7 +316,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 			Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 		}
 	}
-
+#ifdef SHADOWS
 	for (uint wd = 0; wd < spotlightSDCount; wd++)
 	{
 		SpotlightSD light = spotlightSDs[wd];
@@ -359,13 +340,9 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 			Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 		}
 	}
+#endif
 
-	float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
-	float3 ambient = BRDFIndirect(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao, anisotropic);
-
-	float3 color = ambient + Lo;
-
-	return float4(color, 1);
+	return float4(Lo, 1);
 }
 
 float4 main(VSOut pixel) : SV_TARGET

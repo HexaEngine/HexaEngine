@@ -12,6 +12,8 @@
         public readonly Transform Transform;
         public readonly GameObject Parent;
 
+        public event Action<ModelInstance>? Updated;
+
         public void GetBoundingBox(out BoundingBox box)
         {
             box = BoundingBox.Transform(Mesh.BoundingBox, Transform);
@@ -35,6 +37,17 @@
             Mesh = type.Mesh;
             Transform = gameObject.Transform;
             Parent = gameObject;
+            Transform.Updated += TransformUpdated;
+        }
+
+        ~ModelInstance()
+        {
+            Transform.Updated -= TransformUpdated;
+        }
+
+        private void TransformUpdated(object? sender, EventArgs e)
+        {
+            Updated?.Invoke(this);
         }
 
         public override string ToString()

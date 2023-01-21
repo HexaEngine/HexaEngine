@@ -36,12 +36,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Remove="assets\shared\shaders\compute\light\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
 		<Compile Remove="assets\shared\shaders\deferred\toon\**" />
 		<Compile Remove="Pipelines\Compute\**" />
+		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
 		<EmbeddedResource Remove="Pipelines\Compute\**" />
+		<None Remove="assets\shared\shaders\compute\light\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
 		<None Remove="assets\shared\shaders\deferred\toon\**" />
 		<None Remove="Pipelines\Compute\**" />
@@ -83,6 +86,24 @@
 		</None>
 		<None Update="assets\shared\shaders\compute\selection\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\brdf\indirect.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <EntryPointName>main</EntryPointName>
+		  <ShaderProfile>hs_5_0</ShaderProfile>
+		</None>
+		<None Update="assets\shared\shaders\deferred\brdf\shadows.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <EntryPointName>main</EntryPointName>
+		  <ShaderProfile>hs_5_0</ShaderProfile>
+		</None>
+		<None Update="assets\shared\shaders\deferred\brdf\direct.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <EntryPointName>main</EntryPointName>
+		  <ShaderProfile>hs_5_0</ShaderProfile>
+		</None>
+		<None Update="assets\shared\shaders\deferred\brdf\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\deferred\prepass2\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -471,11 +492,5 @@
 		<PixelShader Include="assets\shaders\point\PixelShader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</PixelShader>
-	</ItemGroup>
-
-
-
-	<ItemGroup>
-		<Folder Include="assets\shared\shaders\compute\light\" />
 	</ItemGroup>
 </Project>

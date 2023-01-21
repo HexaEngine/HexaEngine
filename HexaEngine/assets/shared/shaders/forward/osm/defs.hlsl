@@ -1,16 +1,3 @@
-#if (INSTANCED == 1)
-struct VertexInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float4 instance : INSTANCED_MATS0;
-	float4 instance1 : INSTANCED_MATS1;
-	float4 instance2 : INSTANCED_MATS2;
-	float4 instance3 : INSTANCED_MATS3;
-};
-#else
 struct VertexInput
 {
 	float3 pos : POSITION;
@@ -18,7 +5,6 @@ struct VertexInput
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
 };
-#endif
 
 struct HullInput
 {

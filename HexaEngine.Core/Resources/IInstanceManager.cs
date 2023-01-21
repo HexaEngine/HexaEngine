@@ -15,13 +15,15 @@
 
         IReadOnlyList<ModelInstanceType> Types { get; }
 
-        event Action<ModelInstance>? OnInstanceCreated;
+        event Action<ModelInstance>? InstanceCreated;
 
-        event Action<ModelInstance>? OnInstanceDestroyed;
+        event Action<ModelInstance>? InstanceDestroyed;
 
-        event Action<ModelInstanceType>? OnTypeCreated;
+        event Action<ModelInstanceType>? TypeCreated;
 
-        event Action<ModelInstanceType>? OnTypeDestroyed;
+        event Action<ModelInstanceType>? TypeDestroyed;
+
+        event Action<ModelInstanceType, ModelInstance>? Updated;
 
         ModelInstance CreateInstance(Mesh mesh, Material material, GameObject parent);
 
