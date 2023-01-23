@@ -32,6 +32,7 @@
 
         private readonly Quad quad;
         private readonly ISamplerState pointSampler;
+        private readonly ISamplerState linearSampler;
         private readonly ISamplerState anisoSampler;
         private readonly unsafe void** cbs;
         private readonly unsafe void** smps;
@@ -98,13 +99,14 @@
             });
 
             pointSampler = ResourceManager.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp);
+            linearSampler = ResourceManager.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp);
             anisoSampler = ResourceManager.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp);
 
             unsafe
             {
                 smps = AllocArray(2);
                 smps[0] = (void*)pointSampler.NativePointer;
-                smps[1] = (void*)anisoSampler.NativePointer;
+                smps[1] = (void*)linearSampler.NativePointer;
                 directSrvs = AllocArray(ndirectSrvs);
                 cbs = AllocArray(2);
 
@@ -269,7 +271,22 @@
                 }
             }
 
+            for (int i = 0; i < activeLights.Count; i++)
+            {
+                var light = activeLights[i];
+                if (light.CastShadows && light is DirectionalLight && !updateShadowLightQueue.Contains(light))
+                    updateShadowLightQueue.Enqueue(light);
+            }
+
             UpdateShadowMaps(context, camera, updateShadowLightQueue);
+
+            directionalLights.Update(context);
+            pointLights.Update(context);
+            spotlights.Update(context);
+
+            shadowDirectionalLights.Update(context);
+            shadowPointLights.Update(context);
+            shadowSpotlights.Update(context);
         }
 
         public void BeginResize()
@@ -279,6 +296,7 @@
 
         public async void EndResize(int width, int height)
         {
+#nullable disable
             Output = ResourceManager.UpdateTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
@@ -287,18 +305,22 @@
             EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
             LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
             SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+#nullable enable
             UpdateResources();
         }
 
         public void UpdateTextures()
         {
+#nullable disable
             Irraidance = ResourceManager.GetTextureSRV("EnvironmentIrradiance");
             EnvPrefiltered = ResourceManager.GetTextureSRV("EnvironmentPrefilter");
+#nullable enable
             UpdateResources();
         }
 
         private unsafe void UpdateResources()
         {
+#nullable disable
             cbs[0] = (void*)paramsBuffer.Buffer?.NativePointer;
             cbs[1] = (void*)Camera?.NativePointer;
 
@@ -322,6 +344,7 @@
             indirectSrvs[9] = (void*)EnvPrefiltered?.NativePointer;
             indirectSrvs[10] = (void*)LUT?.NativePointer;
             indirectSrvs[11] = (void*)SSAO?.NativePointer;
+#nullable enable
         }
 
         private unsafe void UpdateDirectLights(IGraphicsContext context)
@@ -406,14 +429,6 @@
                 shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + i] = null;
             }
 
-            directionalLights.Update(context);
-            pointLights.Update(context);
-            spotlights.Update(context);
-
-            shadowDirectionalLights.Update(context);
-            shadowPointLights.Update(context);
-            shadowSpotlights.Update(context);
-
             directSrvs[8] = (void*)directionalLights.SRV.NativePointer;
             directSrvs[9] = (void*)pointLights.SRV.NativePointer;
             directSrvs[10] = (void*)spotlights.SRV.NativePointer;
@@ -421,7 +436,6 @@
 
         public unsafe void DeferredPass(IGraphicsContext context, Camera camera)
         {
-            Update(context, camera);
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.PSSetConstantBuffers(cbs, 2, 0);

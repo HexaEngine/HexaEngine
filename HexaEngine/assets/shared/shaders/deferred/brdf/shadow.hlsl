@@ -99,10 +99,10 @@ float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D
 float3 gridSamplingDisk[20] =
 {
 	float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
-   float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-   float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
-   float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
-   float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
+	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
+	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
+	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
+	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
 float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCube depthTex, SamplerState state)
@@ -261,6 +261,8 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 		float shadow = ShadowCalculation(light, attrs.pos, N, depthCSM, SampleTypeAnsio);
 		float3 L = normalize(-light.dir);
 		float3 radiance = light.color.rgb;
+		if (shadow == 1)
+			continue;
 		Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 	}
 
@@ -275,6 +277,8 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 		float attenuation = 1.0 / (distance * distance);
 		float3 radiance = light.color.rgb * attenuation;
 		float shadow = ShadowCalculation(light, attrs.pos, V, depthOSM[zd], SampleTypeAnsio);
+		if (shadow == 1)
+			continue;
 		Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 	}
 
@@ -298,7 +302,8 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 			float cosTheta = dot(N, -L);
 			float bias = max(0.00025f * (1.0f - cosTheta), 0.000005f);
 			float shadow = ShadowCalculation(light, attrs.pos, bias, depthPSM[wd], SampleTypeAnsio);
-
+			if (shadow == 1)
+				continue;
 			Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
 		}
 	}

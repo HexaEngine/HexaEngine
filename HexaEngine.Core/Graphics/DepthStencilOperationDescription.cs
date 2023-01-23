@@ -13,6 +13,16 @@
         public static readonly DepthStencilOperationDescription Default = new(StencilOperation.Keep, StencilOperation.Keep, StencilOperation.Keep, ComparisonFunction.Always);
 
         /// <summary>
+        /// A built-in description with default values.
+        /// </summary>
+        public static readonly DepthStencilOperationDescription DefaultFront = new(StencilOperation.Keep, StencilOperation.Increment, StencilOperation.Keep, ComparisonFunction.Always);
+
+        /// <summary>
+        /// A built-in description with default values.
+        /// </summary>
+        public static readonly DepthStencilOperationDescription DefaultBack = new(StencilOperation.Keep, StencilOperation.Decrement, StencilOperation.Keep, ComparisonFunction.Always);
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DepthStencilOperationDescription"/> struct.
         /// </summary>
         /// <param name="stencilFailOp">A <see cref="StencilOperation"/> value that identifies the stencil operation to perform when stencil testing fails.</param>

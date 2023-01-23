@@ -2,7 +2,7 @@
 {
     using HexaEngine.Mathematics;
 
-    public class DepthBuffer : IDisposable
+    public class DepthStencil : IDisposable
     {
         public readonly IResource Resource;
         public readonly IDepthStencilView DSV;
@@ -10,7 +10,7 @@
         public readonly Viewport Viewport;
         private bool disposedValue;
 
-        public DepthBuffer(IGraphicsDevice device, DepthStencilBufferDesc desc)
+        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc)
         {
             Format format = desc.Format;
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
@@ -43,7 +43,7 @@
             }
         }
 
-        public DepthBuffer(IGraphicsDevice device, DepthStencilBufferDesc desc, int mips)
+        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc, int mips)
         {
             Format format = desc.Format;
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
@@ -76,7 +76,7 @@
             }
         }
 
-        public DepthBuffer(IGraphicsDevice device, int width, int height, Format format, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
+        public DepthStencil(IGraphicsDevice device, int width, int height, Format format, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
         {
             Format resourceFormat = GetDepthResourceFormat(format);
             Format srvFormat = GetDepthSRVFormat(format);
@@ -92,19 +92,19 @@
             }
         }
 
-        public DepthBuffer(IGraphicsDevice device, int width, int height, int array, Format format, ResourceMiscFlag miscFlag, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
+        public DepthStencil(IGraphicsDevice device, int width, int height, int array, Format format, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
         {
             Format resourceFormat = GetDepthResourceFormat(format);
             Format srvFormat = GetDepthSRVFormat(format);
             Texture2DDescription depthStencilDesc = new(resourceFormat, width, height, array, 1, flags, miscFlags: miscFlag);
 
             Viewport = new(width, height);
-
+            ShaderResourceViewDimension srvD = miscFlag == ResourceMiscFlag.TextureCube ? ShaderResourceViewDimension.TextureCube : ShaderResourceViewDimension.Texture2DArray;
             Resource = device.CreateTexture2D(depthStencilDesc);
             DSV = device.CreateDepthStencilView(Resource, new((ITexture2D)Resource, DepthStencilViewDimension.Texture2DArray, format));
             if (flags.HasFlag(BindFlags.ShaderResource))
             {
-                SRV = device.CreateShaderResourceView(Resource, new((ITexture2D)Resource, ShaderResourceViewDimension.TextureCube, srvFormat));
+                SRV = device.CreateShaderResourceView(Resource, new((ITexture2D)Resource, srvD, srvFormat));
             }
         }
 
@@ -169,7 +169,7 @@
             }
         }
 
-        ~DepthBuffer()
+        ~DepthStencil()
         {
             Dispose(disposing: false);
         }

@@ -65,7 +65,7 @@
 
                     // Rotate the camera up and down
                     // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta, -1.5f, 1.5f);
+                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta, -MathF.PI / 2, MathF.PI / 2);
 
                     first = false;
 

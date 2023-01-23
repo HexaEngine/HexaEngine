@@ -175,6 +175,10 @@
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
                         Inspector.DrawLights = drawLights;
 
+                    var drawLightBounds = Inspector.DrawLightBounds;
+                    if (ImGui.Checkbox("Draw Light Bounds", ref drawLightBounds))
+                        Inspector.DrawLightBounds = drawLightBounds;
+
                     var drawSkeletons = Inspector.DrawSkeletons;
                     if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
                         Inspector.DrawSkeletons = drawSkeletons;

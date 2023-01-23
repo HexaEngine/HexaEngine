@@ -6,6 +6,7 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using HexaEngine.Pipelines.Forward;
+    using Newtonsoft.Json;
     using System;
     using System.Numerics;
     using Texture = Graphics.Texture;
@@ -19,11 +20,14 @@
         private static PSMPipeline? psmPipeline;
         private static IBuffer? psmBuffer;
 
-        private Texture? psmDepthBuffer;
+        private DepthStencil? psmDepthBuffer;
         private float strength = 1;
         private float coneAngle;
         private float blend;
         private float falloff = 100;
+
+        [JsonIgnore]
+        public readonly BoundingFrustum ShadowFrustum = new();
 
         public override LightType LightType => LightType.Spot;
 
@@ -57,15 +61,20 @@
         [EditorProperty("Blend", 0f, 1f, EditorPropertyMode.Slider)]
         public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
 
+        public override void Initialize(IGraphicsDevice device)
+        {
+            base.Initialize(device);
+        }
+
         public override IShaderResourceView? GetShadowMap()
         {
-            return psmDepthBuffer?.ShaderResourceView;
+            return psmDepthBuffer?.SRV;
         }
 
         public override void CreateShadowMap(IGraphicsDevice device)
         {
             if (psmDepthBuffer != null) return;
-            psmDepthBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
+            psmDepthBuffer = new(device, 2048, 2048, Format.Depth32Float); //new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -92,10 +101,10 @@
             if (psmDepthBuffer == null) return;
 #nullable disable
             ShadowSpotlightData data = buffer.Local[QueueIndex];
+            PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);
             context.Write(psmBuffer, data.View);
-
-            psmDepthBuffer.ClearTarget(context, Vector4.Zero, DepthStencilClearFlags.All);
-            context.SetRenderTarget(psmDepthBuffer.RenderTargetView, psmDepthBuffer.DepthStencilView);
+            context.ClearDepthStencilView(psmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
+            context.SetRenderTarget(null, psmDepthBuffer.DSV);
             psmPipeline.BeginDraw(context, psmDepthBuffer.Viewport);
 
             var types = manager.Types;
@@ -141,9 +150,9 @@
             return (major, minor);
         }
 
-        public override bool IntersectFrustum(BoundingBox box)
+        public override unsafe bool IntersectFrustum(BoundingBox box)
         {
-            return Transform.Frustum.Intersects(box);
+            return ShadowFrustum.Intersects(box);
         }
     }
 }

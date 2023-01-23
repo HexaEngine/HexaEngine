@@ -1,16 +1,16 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Scenes.Importer;
     using ImGuiNET;
+    using Silk.NET.Assimp;
     using System.Numerics;
 
     public class ImportDialog : DialogBase, IDialog
     {
         private AssimpSceneImporter importer = new();
-        private string path;
+        private string path = string.Empty;
         private OpenFileDialog dialog = new();
         private bool loaded = false;
         private Task? loadTask;
@@ -22,17 +22,15 @@
         public override void Reset()
         {
             importer.Clear();
-            dialog.Show();
         }
 
         protected override void DrawContent()
         {
             if (dialog.Draw())
             {
-                if (dialog.Result != OpenFileResult.Ok)
+                if (dialog.Result == OpenFileResult.Ok)
                 {
-                    Hide();
-                    return;
+                    path = dialog.SelectedFile;
                 }
             }
 
@@ -47,12 +45,26 @@
                 {
                     dialog.Show();
                 }
+                var flags = (int)importer.PostProcessSteps;
+                ImGui.CheckboxFlags("Join Identical Vertices", ref flags, (int)PostProcessSteps.JoinIdenticalVertices);
+                ImGui.CheckboxFlags("Optimize Meshes", ref flags, (int)PostProcessSteps.OptimizeMeshes);
+                ImGui.CheckboxFlags("Optimize Graph", ref flags, (int)PostProcessSteps.OptimizeGraph);
+                ImGui.CheckboxFlags("Improve Cache Locality", ref flags, (int)PostProcessSteps.ImproveCacheLocality);
+                ImGui.CheckboxFlags("Find Degenerates", ref flags, (int)PostProcessSteps.FindDegenerates);
+                ImGui.CheckboxFlags("Find Invalid Data", ref flags, (int)PostProcessSteps.FindInvalidData);
+                ImGui.CheckboxFlags("Find Instances", ref flags, (int)PostProcessSteps.FindInstances);
+                importer.PostProcessSteps = (PostProcessSteps)flags;
+
+                if (ImGui.Button("Load"))
+                {
+                    Task.Factory.StartNew(() => importer.LoadAsync(path).ContinueWith(x => { loaded = true; }));
+                }
             }
             else
             {
                 if (ImGui.Button("Import"))
                 {
-                    if (!importer.CheckForProblems())
+                    if (!importer.CheckForProblems() && SceneManager.Current != null)
                     {
                         importer.Import(SceneManager.Current);
 
@@ -78,6 +90,30 @@
                             if (invalid)
                                 ImGui.PopStyleColor();
                         }
+                        ImGui.EndTabItem();
+                    }
+
+                    if (ImGui.BeginTabItem("Materials"))
+                    {
+                        for (int i = 0; i < importer.Materials.Length; i++)
+                        {
+                            var material = importer.Materials[i];
+                            var value = material.Name;
+                            var invalid = value.Length > 255;
+                            if (invalid)
+                                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1, 0, 0, 1));
+                            if (ImGui.InputText($"Material {i}", ref value, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
+                            {
+                                importer.ChangeNameOfMaterial(material, value);
+                            }
+                            if (invalid)
+                                ImGui.PopStyleColor();
+                        }
+                        ImGui.EndTabItem();
+                    }
+
+                    if (ImGui.BeginTabItem("Textures"))
+                    {
                         ImGui.EndTabItem();
                     }
 

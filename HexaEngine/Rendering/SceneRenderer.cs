@@ -47,8 +47,8 @@ namespace HexaEngine.Rendering
 
         private Skybox skybox;
 
-        private DepthBuffer depthStencil;
-        private DepthBuffer occlusionStencil;
+        private DepthStencil depthStencil;
+        private DepthStencil occlusionStencil;
         private IDepthStencilView dsv;
         private TextureArray gbuffer;
 
@@ -416,7 +416,7 @@ namespace HexaEngine.Rendering
                 {
                     if (float.TryParse(vl, out float value))
                     {
-                        skyColor = new(value);
+                        skyColor = new(value, value, value, 1);
                     }
                 }
             }
@@ -472,6 +472,7 @@ namespace HexaEngine.Rendering
             {
                 LoadScene(scene);
                 sceneChanged = false;
+                dirty = true;
             }
 
             if (windowResized)
@@ -571,8 +572,9 @@ namespace HexaEngine.Rendering
             }
             else
             {
+                scene.LightManager.Update(context, camera);
+
                 scene.LightManager.DeferredPass(context, camera);
-                context.ClearState();
             }
 
             // Screen Space Reflections
@@ -598,6 +600,8 @@ namespace HexaEngine.Rendering
 
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             DebugDraw.Render(camera, viewport);
+
+            dirty = false;
         }
 
         private float zoom = 1;

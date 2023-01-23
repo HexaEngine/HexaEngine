@@ -8,7 +8,7 @@
     public class PrepassManager
     {
         private readonly IGraphicsDevice device;
-        private readonly DepthBuffer depthBuffer;
+        private readonly DepthStencil depthBuffer;
         private readonly DepthMipChain depthMipChain;
 
         public PrepassManager(IGraphicsDevice device, int width, int height)
@@ -18,7 +18,7 @@
             depthMipChain = new(device, width, height);
         }
 
-        public DepthBuffer DepthBuffer => depthBuffer;
+        public DepthStencil DepthBuffer => depthBuffer;
 
         public DepthMipChain DepthMipChain => depthMipChain;
 

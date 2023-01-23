@@ -31,5 +31,14 @@
             Matrix4x4 proj = GetProjectionMatrix(fov);
             return Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj);
         }
+
+        public static unsafe Matrix4x4 GetLightSpaceMatrix(Transform light, float fov, float far, BoundingFrustum frustum)
+        {
+            Vector3 pos = light.GlobalPosition;
+            Matrix4x4 proj = MathUtil.PerspectiveFovLH(fov, 1, 0.01f, far);
+            Matrix4x4 viewproj = MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj;
+            frustum.Initialize(viewproj);
+            return Matrix4x4.Transpose(viewproj);
+        }
     }
 }

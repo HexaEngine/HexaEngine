@@ -9,7 +9,7 @@
             return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 0.001f, far);
         }
 
-        public static unsafe void GetLightSpaceMatrices(Transform light, float far, Matrix4x4* matrices, BoundingBox* box)
+        public static unsafe void GetLightSpaceMatrices(Transform light, float far, Matrix4x4* matrices, ref BoundingBox box)
         {
             Vector3 pos = light.GlobalPosition;
             Matrix4x4 proj = GetProjectionMatrix(far);
@@ -19,9 +19,8 @@
             matrices[3] = Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos - Vector3.UnitY, Vector3.UnitZ) * proj);
             matrices[4] = Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos + Vector3.UnitZ, Vector3.UnitY) * proj);
             matrices[5] = Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos - Vector3.UnitZ, Vector3.UnitY) * proj);
-            var _min = new Vector3(pos.X - far, pos.Y - far, pos.Z - far);
-            var _max = new Vector3(pos.X + far, pos.Y + far, pos.Z + far);
-            *box = new(_min, _max);
+            box.Min = new Vector3(pos.X - far, pos.Y - far, pos.Z - far);
+            box.Max = new Vector3(pos.X + far, pos.Y + far, pos.Z + far);
         }
     }
 }

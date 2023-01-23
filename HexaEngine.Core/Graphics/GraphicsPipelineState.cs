@@ -10,6 +10,7 @@
         public PrimitiveTopology Topology;
         public Vector4 BlendFactor;
         public uint SampleMask;
+        public uint StencilRef;
 
         public static GraphicsPipelineState Default => new() { DepthStencil = DepthStencilDescription.Default, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleList, BlendFactor = default, SampleMask = int.MaxValue };
     }

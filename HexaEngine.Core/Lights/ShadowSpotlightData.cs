@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Graphics;
-
-namespace HexaEngine.Core.Lights
+﻿namespace HexaEngine.Core.Lights
 {
     using HexaEngine.Mathematics;
     using System.Numerics;
@@ -16,7 +14,6 @@ namespace HexaEngine.Core.Lights
 
         public ShadowSpotlightData(Spotlight spotlight)
         {
-            View = PSMHelper.GetLightSpaceMatrix(spotlight.Transform, spotlight.ConeAngle.ToRad());
             Color = spotlight.Color * spotlight.Strength;
             Position = spotlight.Transform.GlobalPosition;
             CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());
@@ -26,7 +23,6 @@ namespace HexaEngine.Core.Lights
 
         public void Update(Spotlight spotlight)
         {
-            View = PSMHelper.GetLightSpaceMatrix(spotlight.Transform, spotlight.ConeAngle.ToRad());
             Color = spotlight.Color * spotlight.Strength;
             Position = spotlight.Transform.GlobalPosition;
             CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());

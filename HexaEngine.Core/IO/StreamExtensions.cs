@@ -10,6 +10,40 @@
 
     public static class StreamExtensions
     {
+        public static int WriteString(this Span<byte> dest, string str, Encoder encoder)
+        {
+            BinaryPrimitives.WriteInt32LittleEndian(dest, encoder.GetByteCount(str, true));
+            return encoder.GetBytes(str, dest[4..], true) + 4;
+        }
+
+        public static int ReadString(this ReadOnlySpan<byte> src, out string str, Decoder decoder)
+        {
+            int len = BinaryPrimitives.ReadInt32LittleEndian(src);
+            ReadOnlySpan<byte> bytes = src.Slice(4, len);
+            int charCount = decoder.GetCharCount(bytes, true);
+            Span<char> chars = charCount < 2048 ? stackalloc char[charCount] : new char[charCount];
+            decoder.GetChars(bytes, chars, true);
+            str = new(chars);
+            return len + 4;
+        }
+
+        public static int SizeOf(this string str, Encoder encoder)
+        {
+            return 4 + encoder.GetByteCount(str, true);
+        }
+
+        public static int WriteInt32(this Span<byte> dest, int value)
+        {
+            BinaryPrimitives.WriteInt32LittleEndian(dest, value);
+            return 4;
+        }
+
+        public static int ReadInt32(this ReadOnlySpan<byte> src, out int value)
+        {
+            value = BinaryPrimitives.ReadInt32LittleEndian(src);
+            return 4;
+        }
+
         public static void WriteString(this Stream stream, string str, Encoding encoder)
         {
             var count = encoder.GetByteCount(str);

@@ -36,6 +36,7 @@ namespace HexaEngine.Scenes.Importer
         private MeshSource[] meshes;
         private Model[] models;
         private MaterialDesc[] materials;
+
         private Core.Scenes.Camera[] cameras;
         private Core.Lights.Light[] lights;
         private GameObject root;
@@ -46,6 +47,8 @@ namespace HexaEngine.Scenes.Importer
         public MeshSource[] Meshes => meshes;
 
         public MaterialDesc[] Materials => materials;
+
+        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData;
 
         public Task LoadAsync(string path)
         {
@@ -70,7 +73,7 @@ namespace HexaEngine.Scenes.Importer
             assimp.EnableVerboseLogging(Assimp.True);
 
             scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
-            assimp.ApplyPostProcessing(scene, (uint)(PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData | PostProcessSteps.OptimizeGraph | PostProcessSteps.OptimizeMeshes));
+            assimp.ApplyPostProcessing(scene, (uint)PostProcessSteps);
 
             LoadSceneGraph(scene);
 
@@ -155,7 +158,11 @@ namespace HexaEngine.Scenes.Importer
             camerasT.Clear();
             lightsT.Clear();
 
-            assimp.ReleaseImport(scene);
+            if (scene != null)
+            {
+                assimp.ReleaseImport(scene);
+                scene = null;
+            }
         }
 
         private unsafe void LoadTextures(AssimpScene* scene)

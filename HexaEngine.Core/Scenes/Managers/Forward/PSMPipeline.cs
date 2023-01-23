@@ -21,7 +21,6 @@
                 VertexShader = "forward/psm/vs.hlsl",
                 HullShader = "forward/psm/hs.hlsl",
                 DomainShader = "forward/psm/ds.hlsl",
-                PixelShader = "forward/psm/ps.hlsl",
             },
             new GraphicsPipelineState()
             {

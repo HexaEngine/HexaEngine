@@ -30,7 +30,9 @@ float4 main(VSOut vs) : SV_Target
 	float4 result = 0.0;
 	float count = 0.0;
 	float roughness = normalTexture.SampleLevel(state, vs.Tex, 0).w;
-	int r_size = size * roughness;
+
+	int r_size = size * roughness + 2;
+
 	[loop]
 	for (int x = -r_size; x < r_size; ++x)
 	{

@@ -22,7 +22,6 @@
                 HullShader = "forward/csm/hs.hlsl",
                 DomainShader = "forward/csm/ds.hlsl",
                 GeometryShader = "forward/csm/gs.hlsl",
-                PixelShader = "forward/csm/ps.hlsl",
             }, new GraphicsPipelineState()
             {
                 DepthStencil = DepthStencilDescription.Default,

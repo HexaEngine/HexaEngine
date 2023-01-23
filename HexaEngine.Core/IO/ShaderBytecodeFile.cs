@@ -8,9 +8,10 @@
 
     public unsafe class ShaderBytecodeFile
     {
-        public ShaderMacro[] Macros;
+        public ShaderBytecodeHeader header;
+        public byte[] Bytecode;
         public InputElementDescription[] InputElements;
-        public byte[] Shader;
+        public ShaderMacro[] Macros;
 
         public ShaderBytecodeFile(string path)
         {
@@ -19,9 +20,9 @@
 
         public ShaderBytecodeFile(ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)
         {
-            Macros = macros;
+            Bytecode = shader->GetBytes();
             InputElements = inputElements;
-            Shader = shader->GetBytes();
+            Macros = macros;
         }
 
         public int Write(Span<byte> dest, Encoder encoder)
@@ -48,15 +49,15 @@
                 idx += WriteInt32(dest[idx..], (int)element.Classification);
                 idx += WriteInt32(dest[idx..], element.InstanceDataStepRate);
             }
-            if (Shader != null)
-                BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], (int)Shader.Length);
+            if (Bytecode != null)
+                BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], (int)Bytecode.Length);
             else
                 BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], 0);
             idx += 4;
 
-            if (Shader != null)
+            if (Bytecode != null)
             {
-                Shader.CopyTo(dest[idx..]);
+                Bytecode.CopyTo(dest[idx..]);
             }
             else
             {
@@ -98,8 +99,8 @@
 
             int len = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
-            Shader = new byte[len];
-            fixed (void* dst = Shader)
+            Bytecode = new byte[len];
+            fixed (void* dst = Bytecode)
             {
                 fixed (void* ptr = src.Slice(idx, len))
                 {
@@ -147,11 +148,11 @@
 
         public int SizeOf(Encoder encoder)
         {
-            if (Shader != null)
+            if (Bytecode != null)
                 return 20 +
                     Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
                     InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24) +
-                    Shader.Length;
+                    Bytecode.Length;
             else
                 return 20 +
                     Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +

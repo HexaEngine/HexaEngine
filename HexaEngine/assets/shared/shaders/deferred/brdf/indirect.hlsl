@@ -57,7 +57,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
 	float3 ambient = BRDFIndirect(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao, anisotropic);
 
-	return float4(ambient, 1);
+	return float4(ambient + attrs.emission, 1);
 }
 
 float4 main(VSOut pixel) : SV_TARGET

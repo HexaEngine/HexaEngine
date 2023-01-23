@@ -142,6 +142,30 @@
             return count;
         }
 
+        public unsafe int UpdateFrustumInstanceBuffer(BoundingFrustum[] frusta)
+        {
+            frustumInstanceBuffer.ResetCounter();
+
+            int count = 0;
+
+            for (int i = 0; i < instances.Count; i++)
+            {
+                var instance = instances[i];
+                instance.GetBoundingBox(out var box);
+                for (int j = 0; j < frusta.Length; j++)
+                {
+                    if (frusta[j].Intersects(box))
+                    {
+                        var world = Matrix4x4.Transpose(instance.Transform);
+                        frustumInstanceBuffer.Add(world);
+                        break;
+                    }
+                }
+            }
+
+            return count;
+        }
+
         public unsafe int UpdateFrustumInstanceBuffer(BoundingBox viewBox)
         {
             frustumInstanceBuffer.ResetCounter();
@@ -157,7 +181,6 @@
                 {
                     var world = Matrix4x4.Transpose(instance.Transform);
                     frustumInstanceBuffer.Add(world);
-                    break;
                 }
             }
 

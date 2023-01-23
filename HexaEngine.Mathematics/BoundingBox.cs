@@ -56,6 +56,20 @@
             _max = new Vector3(sphere.Center.X + sphere.Radius, sphere.Center.Y + sphere.Radius, sphere.Center.Z + sphere.Radius);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Initialize(Vector3 min, Vector3 max)
+        {
+            _min = min;
+            _max = max;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Initialize(BoundingBox box)
+        {
+            _min = box._min;
+            _max = box._max;
+        }
+
         /// <summary>
         /// The minimum point of the box.
         /// </summary>

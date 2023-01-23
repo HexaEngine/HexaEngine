@@ -137,6 +137,7 @@
 
             while (isRunning)
             {
+                ProcessInput();
                 if (resize)
                 {
                     swapChain.Resize(Width, Height);
@@ -184,7 +185,7 @@
 
                 renderer?.EndDraw();
                 swapChain.Present();
-                ProcessInput();
+
                 Time.FrameUpdate();
             }
 
