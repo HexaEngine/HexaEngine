@@ -1,5 +1,5 @@
 ﻿#nullable disable
-
+/*
 namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
@@ -162,4 +162,4 @@ namespace HexaEngine.Pipelines.Deferred
             GC.SuppressFinalize(this);
         }
     }
-}
+}*/

@@ -1,4 +1,5 @@
-﻿namespace HexaEngine.Pipelines.Forward
+﻿/*
+namespace HexaEngine.Pipelines.Forward
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Lights;
@@ -152,4 +153,4 @@
             GC.SuppressFinalize(this);
         }
     }
-}
+}*/
