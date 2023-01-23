@@ -16,7 +16,7 @@
         {
             string? val = (string?)value;
             if (val == null || val.Length == 0) return false;
-            if (ImGui.InputText(name, ref val, 256))
+            if (ImGui.InputText(name, ref val, 2048))
             {
                 value = val;
                 return true;

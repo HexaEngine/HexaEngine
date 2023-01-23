@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
     public abstract class Light : GameObject
@@ -23,6 +22,11 @@
         [EditorProperty("Cast Shadows")]
         public bool CastShadows { get => castShadows; set => SetAndNotifyWithEqualsTest(ref castShadows, value); }
 
+        /// <summary>
+        /// Tests if an object that moved affects the shadow volume
+        /// </summary>
+        /// <param name="box"></param>
+        /// <returns></returns>
         public abstract bool IntersectFrustum(BoundingBox box);
 
         public abstract IShaderResourceView? GetShadowMap();

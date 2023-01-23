@@ -5,6 +5,7 @@
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System.IO;
+    using System.Numerics;
     using System.Text;
 
     public class MeshSource
@@ -75,6 +76,17 @@
         {
             Cache();
             return Body;
+        }
+
+        public Vector3[] GetPoints()
+        {
+            var data = ReadMesh();
+            Vector3[] points = new Vector3[data.Vertices.Length];
+            for (int i = 0; i < data.Vertices.Length; i++)
+            {
+                points[i] = data.Vertices[i].Position;
+            }
+            return points;
         }
     }
 }
