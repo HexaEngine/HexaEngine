@@ -19,10 +19,6 @@ StructuredBuffer<DirectionalLight> directionalLights : register(t8);
 StructuredBuffer<PointLight> pointLights : register(t9);
 StructuredBuffer<Spotlight> spotlights : register(t10);
 
-Texture2DArray depthCSM : register(t12);
-TextureCube depthOSM[8] : register(t13);
-Texture2D depthPSM[8] : register(t21);
-
 SamplerState SampleTypePoint : register(s0);
 SamplerState SampleTypeAnsio : register(s1);
 

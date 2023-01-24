@@ -56,7 +56,7 @@
         public string? StartupScene;
         private Viewport renderViewport;
 
-        public bool DebugGraphics { get; set; } = true;
+        public bool DebugGraphics { get; set; } = false;
 
         public Viewport RenderViewport => renderViewport;
 

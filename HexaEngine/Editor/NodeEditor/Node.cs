@@ -8,6 +8,7 @@
     {
         public readonly int Id;
         public string Name;
+        private bool isEditing;
         public readonly NodeEditor Graph;
         private readonly List<Pin> Pins = new();
         private readonly List<Link> links = new();
@@ -32,6 +33,16 @@
         public event EventHandler<Link>? LinkRemoved;
 
         public IReadOnlyList<Link> Links => links;
+
+        public bool IsEditing 
+        { 
+            get => isEditing;
+            set
+            { 
+                isEditing = value; 
+                
+            }
+        }
 
         public Pin GetInput(int id)
         {
@@ -91,7 +102,26 @@
         {
             ImNodes.BeginNode(Id);
             ImNodes.BeginNodeTitleBar();
-            ImGui.Text(Name);
+            if (isEditing)
+            {
+                string name = Name;
+                if (ImGui.InputText("Name", ref name, 0, ImGuiInputTextFlags.EnterReturnsTrue))
+                {
+                    Name = name;
+                    isEditing = false;
+                }
+            }
+            else
+            {
+                ImGui.Text(Name);
+                ImGui.SameLine();
+                if (ImGui.Button("Edit")) // TODO: Replace with icon
+                {
+                    isEditing = true;
+                }
+            }
+            //if (ImGui.InputText("Name"))
+            
             ImNodes.EndNodeTitleBar();
 
             for (int i = 0; i < Pins.Count; i++)

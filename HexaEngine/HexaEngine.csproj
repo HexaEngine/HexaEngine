@@ -499,4 +499,10 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</PixelShader>
 	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <Folder Include="assets\shared\shaders\deferred\blinn\" />
+	</ItemGroup>
 </Project>

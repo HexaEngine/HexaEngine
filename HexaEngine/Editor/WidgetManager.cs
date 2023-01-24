@@ -22,6 +22,7 @@
             Register<OpenProjectWindow>();
             Register<PublishProjectWindow>();
             Register<SceneVariablesWindow>();
+            Register<PipelineEditor>();
             Register<DebugWindow>();
         }
 

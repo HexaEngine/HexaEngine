@@ -98,6 +98,8 @@
 #nullable enable
         }
 
+ 
+
         public override bool IntersectFrustum(BoundingBox box)
         {
             return true;
