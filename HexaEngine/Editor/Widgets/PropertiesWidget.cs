@@ -61,7 +61,8 @@ namespace HexaEngine.Editor.Widgets
             }
 
             ImGui.Separator();
-            if (ImGui.CollapsingHeader(nameof(Transform)))
+
+            if (ImGui.CollapsingHeader(nameof(Transform), ImGuiTreeNodeFlags.DefaultOpen))
             {
                 {
                     var val = element.Transform.Position;
@@ -90,12 +91,6 @@ namespace HexaEngine.Editor.Widgets
 
                 ImGui.Separator();
 
-                ImGui.Text($"Global Position: {element.Transform.GlobalPosition}");
-                ImGui.Text($"Global Rotation: {element.Transform.GlobalOrientation.GetRotation().ToDeg()}");
-                ImGui.Text($"Global Scale: {element.Transform.GlobalScale}");
-
-                ImGui.Separator();
-
                 if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.TRANSLATE))
                 {
                     Inspector.Operation = ImGuizmoOperation.TRANSLATE;
@@ -119,7 +114,7 @@ namespace HexaEngine.Editor.Widgets
                 ImGui.SameLine();
                 if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.WORLD))
                 {
-                    Inspector.Mode = ImGuizmoNET.ImGuizmoMode.WORLD;
+                    Inspector.Mode = ImGuizmoMode.WORLD;
                 }
             }
             ImGui.Separator();
@@ -129,14 +124,15 @@ namespace HexaEngine.Editor.Widgets
             {
                 var editor = ObjectEditorFactory.CreateEditor(type);
                 editor.Instance = element;
-                if (ImGui.CollapsingHeader(editor.Name))
+
+                if (!editor.IsEmpty && ImGui.CollapsingHeader(editor.Name))
                 {
                     editor.Draw();
                 }
             }
 
             ImGui.Separator();
-            if (ImGui.CollapsingHeader("Components"))
+            if (ImGui.CollapsingHeader("Components", ImGuiTreeNodeFlags.DefaultOpen))
             {
                 if (typeFilterComponentCache.TryGetValue(type, out EditorComponentAttribute[] editorComponents))
                 {

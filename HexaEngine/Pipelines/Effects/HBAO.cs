@@ -29,6 +29,7 @@ namespace HexaEngine.Pipelines.Effects
         private ISamplerState samplerLinear;
 
         public IRenderTargetView Output;
+        public IShaderResourceView OutputView;
         public IBuffer Camera;
         public IShaderResourceView Position;
         public IShaderResourceView Normal;
@@ -62,13 +63,12 @@ namespace HexaEngine.Pipelines.Effects
 
         private struct BlurParams
         {
-            public float Sharpness;
-            public Vector2 InvResolutionDirection;
-            public float padd;
+            public int Radius;
+            public Vector3 Padding;
 
             public BlurParams()
             {
-                Sharpness = 3;
+                Radius = 2;
             }
         }
 
@@ -97,6 +97,7 @@ namespace HexaEngine.Pipelines.Effects
         {
             this.device = device;
             Output = ResourceManager.AddTextureRTV("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
+            OutputView = ResourceManager.GetTextureSRV("SSAOBuffer");
 
             quad = new Quad(device);
 
@@ -110,7 +111,7 @@ namespace HexaEngine.Pipelines.Effects
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
 
-            Position = await ResourceManager.GetResourceAsync<IShaderResourceView>("GBuffer.Position");
+            Position = await ResourceManager.GetResourceAsync<IShaderResourceView>("SwapChain.SRV");
             Normal = await ResourceManager.GetResourceAsync<IShaderResourceView>("GBuffer.Normal");
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
 
@@ -127,7 +128,7 @@ namespace HexaEngine.Pipelines.Effects
             blurPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
-                PixelShader = "effects/blur/hbao.hlsl",
+                PixelShader = "effects/blur/box.hlsl",
             });
             cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
 
@@ -150,6 +151,7 @@ namespace HexaEngine.Pipelines.Effects
         public async void EndResize(int width, int height)
         {
             Output = ResourceManager.UpdateTextureRTV("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
+            OutputView = ResourceManager.GetTextureSRV("SSAOBuffer");
 
             hbaoBuffer.Dispose();
             hbaoRTV.Dispose();
@@ -157,7 +159,6 @@ namespace HexaEngine.Pipelines.Effects
             hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
-            blurParams.InvResolutionDirection = new(1 / width, 1 / height);
 
             unsafe
             {
@@ -167,7 +168,7 @@ namespace HexaEngine.Pipelines.Effects
             hbaoParams.Res = new(width, height);
             hbaoParams.ResInv = new(1 / width, 1 / height);
 
-            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
+            Position = await ResourceManager.GetSRVAsync("SwapChain.SRV");
             Normal = await ResourceManager.GetSRVAsync("GBuffer.Normal");
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
 

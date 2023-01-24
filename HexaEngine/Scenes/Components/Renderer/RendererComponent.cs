@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Scenes.Components.Renderer
 {
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Resources;
@@ -8,6 +9,7 @@
     using ImGuiNET;
     using System;
 
+    [EditorComponent(typeof(RendererComponent), "Mesh Renderer")]
     public class RendererComponent : IComponent
     {
         private readonly List<Model> models = new();
@@ -76,13 +78,15 @@
             public RendererComponentEditor()
             {
                 Type = typeof(RendererComponent);
-                Name = "Renderer";
+                Name = "Mesh Renderer";
             }
 
             public Type Type { get; }
 
             public string Name { get; }
             public object? Instance { get => instance; set => instance = value; }
+
+            public bool IsEmpty => false;
 
             public void Draw()
             {

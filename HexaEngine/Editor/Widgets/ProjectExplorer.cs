@@ -22,7 +22,7 @@
 
         public ProjectExplorer()
         {
-            IsShown = true;
+            IsShown = false;
         }
 
         protected override string Name => "Project";

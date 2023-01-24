@@ -47,6 +47,7 @@
             if (!editors.TryGetValue(type, out IObjectEditor? editor))
             {
                 editor = new ObjectEditor(type, factories);
+                editors.Add(type, editor);
             }
             return editor;
         }

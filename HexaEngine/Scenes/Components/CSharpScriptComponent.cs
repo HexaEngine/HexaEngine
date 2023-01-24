@@ -118,6 +118,7 @@
         public Type Type => typeof(CSharpScriptComponent);
 
         public object? Instance { get; set; }
+        public bool IsEmpty => false;
 
         public void Draw()
         {

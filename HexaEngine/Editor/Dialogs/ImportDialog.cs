@@ -17,7 +17,7 @@
 
         public override string Name => "Import Scene";
 
-        protected override ImGuiWindowFlags Flags { get; }
+        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.None;
 
         public override void Reset()
         {

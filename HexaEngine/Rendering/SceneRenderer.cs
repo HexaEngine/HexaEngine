@@ -149,7 +149,6 @@ namespace HexaEngine.Rendering
                 ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
                 depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget), DepthStencilDesc.Default);
-                //depthbuffer = new(device, width, height, Format.Depth32Float);
 
                 fxaa = new();
                 effects.Add(fxaa);
@@ -323,10 +322,6 @@ namespace HexaEngine.Rendering
             height = rendererHeight;
 
             Config.Global.Save();
-        }
-
-        private void OnWindowResizeBegin()
-        {
         }
 
         private void OnWindowResizeEnd(object? sender, ResizedEventArgs args)
@@ -620,6 +615,9 @@ namespace HexaEngine.Rendering
 
             if (ImGui.CollapsingHeader("Normals"))
                 ImGui.Image(gbuffer.SRVs[2].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+
+            if (ImGui.CollapsingHeader("SSAO"))
+                ImGui.Image(ssao.OutputView.NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
 
             if (ImGui.CollapsingHeader("SSR"))
                 ImGui.Image(ssr.ssrSRV.NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);

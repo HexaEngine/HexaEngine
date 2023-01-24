@@ -90,6 +90,7 @@
         public Type Type => type;
 
         public object? Instance { get => instance; set => instance = value; }
+        public bool IsEmpty => editors.Count == 0 && buttons.Count == 0;
 
         public void Draw()
         {

@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Editor
 {
+    using BepuPhysics.Collidables;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
@@ -1387,6 +1388,48 @@ new Vector3(-0.195090f,-1.000000f,0.980785f),
             cmd.Vertices[1] = new(Vector3.Transform(b, orientation) + origin, color);
             cmd.Vertices[2] = new(Vector3.Transform(c, orientation) + origin, color);
             cmd.Vertices[3] = cmd.Vertices[0];
+        }
+
+        public static void DrawConvexHull(string id, Vector3 origin, Quaternion orientation, HullData hull, Vector3[] points, Vector4 color)
+        {
+            uint indis = (uint)hull.FaceVertexIndices.Length + 1;
+            uint verts = (uint)points.Length;
+
+            if (Draw(id, PrimitiveTopology.LineStrip, indis, verts, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[verts];
+                cmd.Indices = new int[indis];
+                for (int i = 0; i < verts; i++)
+                {
+                    cmd.Vertices[i] = new(points[i], color);
+                }
+                uint n = 0;
+                for (int i = 0; i < hull.FaceStartIndices.Length; i++)
+                {
+                    hull.GetFace(i, out var face);
+                    for (int j = 0; j < face.VertexCount; j++)
+                    {
+                        cmd.Indices[n++] = face.OriginalVertexMapping[face.VertexIndices[j]];
+                    }
+                }
+                cmd.Indices[indis - 1] = cmd.Indices[0];
+            }
+
+            if (cmd.Vertices.Length != verts || cmd.Indices.Length != indis)
+            {
+                cmd.Vertices = new VertexPositionColor[verts];
+                cmd.Indices = new int[indis];
+                for (int i = 0; i < verts; i++)
+                {
+                    cmd.Vertices[i] = new(points[i], color);
+                }
+                for (int i = 0; i < indis; i++)
+                {
+                    cmd.Indices[i] = hull.OriginalVertexMapping[i];
+                }
+            }
+
+            cmd.Transform = Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
         }
     }
 }

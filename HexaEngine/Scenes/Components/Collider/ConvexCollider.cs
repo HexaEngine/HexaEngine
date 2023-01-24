@@ -14,6 +14,8 @@
     using System.IO;
     using HexaEngine.Core.IO;
     using System.Numerics;
+    using BepuPhysics.CollisionDetection;
+    using BepuPhysics.CollisionDetection.CollisionTasks;
 
     [EditorComponent(typeof(ConvexCollider), "Convex Collider")]
     public class ConvexCollider : IComponent
@@ -35,6 +37,10 @@
         private float mass = 1;
         private string mesh = string.Empty;
         private float sleepThreshold = 0.01f;
+        private ConvexHull? convexHull;
+        private HullData? hullData;
+        private Vector3 hullCenter;
+        private Vector3[] points;
 
         [EditorProperty<ColliderType>("Type")]
         public ColliderType Type
@@ -53,6 +59,18 @@
         { get => sleepThreshold; set { sleepThreshold = value; update = true; } }
 
         [JsonIgnore]
+        public ConvexHull? ConvexHull => convexHull;
+
+        [JsonIgnore]
+        public HullData? HullData => hullData;
+
+        [JsonIgnore]
+        public Vector3[] Points => points;
+
+        [JsonIgnore]
+        public Vector3 HullCenter => hullCenter;
+
+        [JsonIgnore]
         public TypedIndex ShapeIndex => index;
 
         [JsonIgnore]
@@ -60,6 +78,19 @@
 
         [JsonIgnore]
         public BodyHandle BodyHandle => bodyHandle;
+
+        [EditorButton("Bake shape")]
+        public void BakeShape()
+        {
+            if (scene == null) return;
+            convexHull?.Dispose(scene.BufferPool);
+            var data = scene.MeshManager.Load(mesh);
+            points = data.GetPoints();
+
+            ConvexHullHelper.CreateShape(points, scene.BufferPool, out var dat, out hullCenter, out var ull);
+            hullData = dat;
+            convexHull = ull;
+        }
 
         private void Init()
         {
@@ -70,27 +101,26 @@
             update = false;
             init = true;
 
-            var data = scene.MeshManager.Load(mesh);
-
-            var points = data.GetPoints();
-            ConvexHullHelper.ComputeHull(points, scene.BufferPool, out HullData hulldata);
-            ConvexHullHelper.CreateShape(points, scene.BufferPool, out Vector3 center, out ConvexHull hull);
-            RigidPose pose = new(node.Transform.GlobalPosition, node.Transform.GlobalOrientation);
-            index = scene.Simulation.Shapes.Add(hull);
-            if (Type == ColliderType.Static)
+            if (convexHull != null)
             {
-                staticHandle = scene.Simulation.Statics.Add(new(pose, index));
-            }
-            if (Type == ColliderType.Dynamic)
-            {
-                var inertia = hull.ComputeInertia(mass);
-                bodyHandle = scene.Simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, new BodyVelocity(), inertia, new CollidableDescription(index), new(sleepThreshold)));
-                bodyReference = scene.Simulation.Bodies.GetBodyReference(bodyHandle);
-            }
-            if (Type == ColliderType.Kinematic)
-            {
-                bodyHandle = scene.Simulation.Bodies.Add(BodyDescription.CreateKinematic(pose, new BodyVelocity(), new CollidableDescription(index), new(sleepThreshold)));
-                bodyReference = scene.Simulation.Bodies.GetBodyReference(bodyHandle);
+                var ull = convexHull.Value;
+                RigidPose pose = new(node.Transform.GlobalPosition, node.Transform.GlobalOrientation);
+                index = scene.Simulation.Shapes.Add(ull);
+                if (Type == ColliderType.Static)
+                {
+                    staticHandle = scene.Simulation.Statics.Add(new(pose, index));
+                }
+                if (Type == ColliderType.Dynamic)
+                {
+                    var inertia = ull.ComputeInertia(mass);
+                    bodyHandle = scene.Simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, new BodyVelocity(), inertia, new CollidableDescription(index), new(sleepThreshold)));
+                    bodyReference = scene.Simulation.Bodies.GetBodyReference(bodyHandle);
+                }
+                if (Type == ColliderType.Kinematic)
+                {
+                    bodyHandle = scene.Simulation.Bodies.Add(BodyDescription.CreateKinematic(pose, new BodyVelocity(), new CollidableDescription(index), new(sleepThreshold)));
+                    bodyReference = scene.Simulation.Bodies.GetBodyReference(bodyHandle);
+                }
             }
         }
 

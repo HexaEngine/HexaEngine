@@ -18,7 +18,7 @@
         {
             if (!shown) return;
             windowEnded = false;
-            if (ImGui.Begin(Name, Flags))
+            if (ImGui.Begin(Name, ref shown, Flags))
             {
                 DrawContent();
             }

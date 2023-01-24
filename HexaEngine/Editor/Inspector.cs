@@ -5,6 +5,7 @@
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Components;
+    using HexaEngine.Scenes.Components.Collider;
     using ImGuizmoNET;
     using System.Numerics;
 
@@ -189,6 +190,11 @@
                         if (component is TriangleCollider triangle)
                         {
                             DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
+                        }
+                        if (component is ConvexCollider convex)
+                        {
+                            if (convex.HullData.HasValue)
+                                DebugDraw.DrawConvexHull(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, convex.HullData.Value, convex.Points, Vector4.One);
                         }
                     }
                 }
