@@ -44,6 +44,11 @@
             {
                 if (ImGui.BeginMenu("File"))
                 {
+                    if (ImGui.MenuItem("Save Scene"))
+                    {
+                        SceneManager.Save();
+                    }
+
                     if (ImGui.MenuItem("Import"))
                     {
                         if (!importDialog.Shown)
@@ -51,15 +56,6 @@
                             importDialog.Reset();
                             importDialog.Show();
                         }
-
-                        /*filePickerCallback = (r, path) =>
-                        {
-                            if (r == OpenFileResult.Ok)
-                            {
-                                Designer.OpenFile(filePicker.SelectedFile);
-                            }
-                        };
-                        filePicker.Show();*/
                     }
 
                     ImGui.EndMenu();
@@ -81,13 +77,6 @@
                 if (ImGui.BeginMenu("View"))
                 {
                     WidgetManager.DrawMenu();
-
-                    ImGui.Separator();
-
-                    if (ImGui.MenuItem("Fullframe"))
-                    {
-                        Framebuffer.Fullframe = !Framebuffer.Fullframe;
-                    }
 
                     ImGui.EndMenu();
                 }
@@ -149,15 +138,6 @@
                         Task.Run(ProjectManager.UpdateScripts);
                     }
 
-                    ImGui.EndMenu();
-                }
-
-                if (ImGui.BeginMenu("Scene"))
-                {
-                    if (ImGui.MenuItem("Save Scene"))
-                    {
-                        SceneManager.Save();
-                    }
                     ImGui.EndMenu();
                 }
 

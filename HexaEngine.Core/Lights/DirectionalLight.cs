@@ -7,9 +7,8 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using HexaEngine.Pipelines.Forward;
+    using Newtonsoft.Json;
     using System.Numerics;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
-    using Texture = Graphics.Texture;
 
     [EditorNode<DirectionalLight>("Directional Light")]
     public class DirectionalLight : Light
@@ -21,6 +20,7 @@
         private DepthStencil? csmDepthBuffer;
         public new CameraTransform Transform = new();
 
+        [JsonIgnore]
         public BoundingFrustum[] ShadowFrustra = new BoundingFrustum[16];
 
         public DirectionalLight()
@@ -33,6 +33,7 @@
             OverwriteTransform(Transform);
         }
 
+        [JsonIgnore]
         public override LightType LightType => LightType.Directional;
 
         public override IShaderResourceView? GetShadowMap()
@@ -97,8 +98,6 @@
             context.ClearState();
 #nullable enable
         }
-
- 
 
         public override bool IntersectFrustum(BoundingBox box)
         {

@@ -88,34 +88,6 @@ namespace HexaEngine.Editor.Widgets
                         Designer.History.Do(() => element.Transform.Scale = val, () => element.Transform.Scale = oldVal);
                     }
                 }
-
-                ImGui.Separator();
-
-                if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.TRANSLATE))
-                {
-                    Inspector.Operation = ImGuizmoOperation.TRANSLATE;
-                }
-
-                if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.ROTATE))
-                {
-                    Inspector.Operation = ImGuizmoOperation.ROTATE;
-                }
-
-                if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.SCALE))
-                {
-                    Inspector.Operation = ImGuizmoOperation.SCALE;
-                }
-
-                if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.LOCAL))
-                {
-                    Inspector.Mode = ImGuizmoNET.ImGuizmoMode.LOCAL;
-                }
-
-                ImGui.SameLine();
-                if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.WORLD))
-                {
-                    Inspector.Mode = ImGuizmoMode.WORLD;
-                }
             }
             ImGui.Separator();
 
@@ -125,86 +97,89 @@ namespace HexaEngine.Editor.Widgets
                 var editor = ObjectEditorFactory.CreateEditor(type);
                 editor.Instance = element;
 
-                if (!editor.IsEmpty && ImGui.CollapsingHeader(editor.Name))
+                if (!editor.IsEmpty)
                 {
                     editor.Draw();
                 }
             }
 
             ImGui.Separator();
-            if (ImGui.CollapsingHeader("Components", ImGuiTreeNodeFlags.DefaultOpen))
+
+            if (typeFilterComponentCache.TryGetValue(type, out EditorComponentAttribute[] editorComponents))
             {
-                if (typeFilterComponentCache.TryGetValue(type, out EditorComponentAttribute[] editorComponents))
+                if (ImGui.BeginMenu("+"))
                 {
-                    if (ImGui.BeginMenu("+"))
+                    for (int i = 0; i < editorComponents.Length; i++)
                     {
-                        for (int i = 0; i < editorComponents.Length; i++)
+                        EditorComponentAttribute editorComponent = editorComponents[i];
+                        if (ImGui.MenuItem(editorComponent.Name))
                         {
-                            EditorComponentAttribute editorComponent = editorComponents[i];
-                            if (ImGui.MenuItem(editorComponent.Name))
-                            {
-                                IComponent component = editorComponent.Constructor();
-                                element.AddComponent(component);
-                            }
-                        }
-                        ImGui.EndMenu();
-                    }
-
-                    ImGui.Separator();
-                }
-                else
-                {
-                    List<EditorComponentAttribute> allowedComponents = new();
-                    foreach (var editorComponent in componentCache)
-                    {
-                        if (editorComponent.IsHidden)
-                        {
-                            continue;
-                        }
-
-                        if (editorComponent.IsInternal)
-                        {
-                            continue;
-                        }
-
-                        if (editorComponent.AllowedTypes == null)
-                        {
-                            allowedComponents.Add(editorComponent);
-                            continue;
-                        }
-                        else if (editorComponent.AllowedTypes.Length != 0 && !editorComponent.AllowedTypes.Any(x => x == type))
-                        {
-                            continue;
-                        }
-
-                        if (editorComponent.DisallowedTypes == null)
-                        {
-                            allowedComponents.Add(editorComponent);
-                            continue;
-                        }
-                        else if (!editorComponent.DisallowedTypes.Any(x => x == type))
-                        {
-                            allowedComponents.Add(editorComponent);
-                            continue;
+                            IComponent component = editorComponent.Constructor();
+                            element.AddComponent(component);
                         }
                     }
-
-                    typeFilterComponentCache.Add(type, allowedComponents.ToArray());
+                    ImGui.EndMenu();
                 }
 
-                for (int i = 0; i < element.Components.Count; i++)
+                ImGui.Separator();
+            }
+            else
+            {
+                List<EditorComponentAttribute> allowedComponents = new();
+                foreach (var editorComponent in componentCache)
                 {
-                    var component = element.Components[i];
-                    var editor = ObjectEditorFactory.CreateEditor(component.GetType());
-                    editor.Instance = component;
-                    if (ImGui.CollapsingHeader(editor.Name))
+                    if (editorComponent.IsHidden)
                     {
-                        if (ImGui.Button("Delete"))
+                        continue;
+                    }
+
+                    if (editorComponent.IsInternal)
+                    {
+                        continue;
+                    }
+
+                    if (editorComponent.AllowedTypes == null)
+                    {
+                        allowedComponents.Add(editorComponent);
+                        continue;
+                    }
+                    else if (editorComponent.AllowedTypes.Length != 0 && !editorComponent.AllowedTypes.Any(x => x == type))
+                    {
+                        continue;
+                    }
+
+                    if (editorComponent.DisallowedTypes == null)
+                    {
+                        allowedComponents.Add(editorComponent);
+                        continue;
+                    }
+                    else if (!editorComponent.DisallowedTypes.Any(x => x == type))
+                    {
+                        allowedComponents.Add(editorComponent);
+                        continue;
+                    }
+                }
+
+                typeFilterComponentCache.Add(type, allowedComponents.ToArray());
+            }
+
+            for (int i = 0; i < element.Components.Count; i++)
+            {
+                var component = element.Components[i];
+                var editor = ObjectEditorFactory.CreateEditor(component.GetType());
+                editor.Instance = component;
+                if (ImGui.CollapsingHeader(editor.Name))
+                {
+                    if (ImGui.BeginPopupContextWindow(editor.Name))
+                    {
+                        if (ImGui.MenuItem("Delete"))
                         {
                             scene.Dispatcher.Invoke(() => element.RemoveComponent(component));
                         }
-                        editor?.Draw();
+                        ImGui.EndPopup();
                     }
+
+                    editor?.Draw();
                 }
             }
 

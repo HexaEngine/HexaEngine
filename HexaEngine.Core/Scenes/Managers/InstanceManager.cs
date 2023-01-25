@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System;
@@ -41,7 +42,7 @@
 
         public ModelInstance CreateInstance(Model model, GameObject parent)
         {
-            var material = ResourceManager.LoadMaterial(model.Material);
+            var material = ResourceManager.LoadMaterial(parent.GetScene().MaterialManager.GetMaterial(model.Material) ?? MaterialDesc.Default);
             var mesh = ResourceManager.LoadMesh(model.Mesh);
             var instance = CreateInstance(mesh, material, parent);
             return instance;
@@ -49,7 +50,7 @@
 
         public async Task<ModelInstance> CreateInstanceAsync(Model model, GameObject parent)
         {
-            var material = await ResourceManager.LoadMaterialAsync(model.Material);
+            var material = await ResourceManager.LoadMaterialAsync(parent.GetScene().MaterialManager.GetMaterial(model.Material) ?? MaterialDesc.Default);
             var mesh = await ResourceManager.LoadMeshAsync(model.Mesh);
             var instance = await CreateInstanceAsync(mesh, material, parent);
             return instance;

@@ -191,10 +191,14 @@
                         {
                             DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
                         }
-                        if (component is ConvexCollider convex)
+                        if (component is ConvexHullCollider convex)
                         {
                             if (convex.HullData.HasValue)
                                 DebugDraw.DrawConvexHull(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, convex.HullData.Value, convex.Points, Vector4.One);
+                        }
+                        if (component is CompoundCollider compound)
+                        {
+                            DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition + compound.Center, Quaternion.Identity, 0.1f, new(1, 1, 0, 1));
                         }
                     }
                 }

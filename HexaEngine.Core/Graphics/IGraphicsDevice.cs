@@ -68,6 +68,8 @@
 
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer);
 
+        public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description);
+
         public ISamplerState CreateSamplerState(SamplerDescription sampler);
 
         public ITexture1D CreateTexture1D(Texture1DDescription description);

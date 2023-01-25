@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class ConstantBuffer<T> : IConstantBuffer, IConstantBuffer<T> where T : unmanaged
+    public unsafe class ConstantBuffer<T> : IConstantBuffer, IConstantBuffer<T>, IBuffer where T : unmanaged
     {
         private readonly string dbgName;
         private readonly IGraphicsDevice device;
@@ -15,9 +15,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
         /// </summary>
-        /// <param dbgName="device">The device.</param>
-        /// <param dbgName="length">The length.</param>
-        /// <param dbgName="accessFlags">The access flags.</param>
+        /// <param name="device">The device.</param>
+        /// <param name="length">The length.</param>
+        /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"CB: {filename}, Line:{lineNumber}";
@@ -42,9 +42,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
         /// </summary>
-        /// <param dbgName="device">The device.</param>
-        /// <param dbgName="values">The values.</param>
-        /// <param dbgName="accessFlags">The access flags.</param>
+        /// <param name="device">The device.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, T[] values, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"CB: {filename}, Line:{lineNumber}";
@@ -97,6 +97,19 @@
             buffer.DebugName = dbgName;
         }
 
+        public event EventHandler? OnDisposed
+        {
+            add
+            {
+                buffer.OnDisposed += value;
+            }
+
+            remove
+            {
+                buffer.OnDisposed -= value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the <see cref="T"/> at the specified index.
         /// </summary>
@@ -129,6 +142,18 @@
         /// The local buffer.
         /// </value>
         public T* Local => items;
+
+        public BufferDescription Description => buffer.Description;
+
+        public int Length => buffer.Length;
+
+        public ResourceDimension Dimension => buffer.Dimension;
+
+        public nint NativePointer => buffer.NativePointer;
+
+        public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
+
+        public bool IsDisposed => buffer.IsDisposed;
 
         /// <summary>
         /// Resizes the buffer.

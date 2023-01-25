@@ -36,8 +36,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Silk.NET.SDL" Version="2.16.0" />
-		<PackageReference Include="BepuPhysics" Version="2.5.0-beta.8" />
-		<PackageReference Include="BepuUtilities" Version="2.5.0-beta.8" />
+		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="NLua" Version="1.6.0" />
 		<PackageReference Include="System.Text.Json" Version="7.0.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />

@@ -13,13 +13,15 @@
 
         unsafe void Write(IBuffer buffer, void* value, int size);
 
+        unsafe void Write(IBuffer buffer, void* value, int size, Map flags);
+
         unsafe void Write<T>(IBuffer buffer, T* value, int size) where T : unmanaged;
 
         unsafe void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged;
 
         public void Write<T>(IBuffer buffer, T value) where T : struct;
 
-        public void Read<T>(IBuffer buffer, T value) where T : struct;
+        unsafe void Read(IBuffer buffer, void* value, int size);
 
         unsafe void Read<T>(IBuffer buffer, T* values, uint count) where T : unmanaged;
 

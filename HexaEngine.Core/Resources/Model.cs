@@ -1,15 +1,11 @@
 ﻿namespace HexaEngine.Core.Resources
 {
-    using HexaEngine.Core.Meshes;
-
     public class Model
     {
         public string Mesh;
+        public string Material;
 
-        // TODO: Do not store material as instance in model
-        public MaterialDesc Material;
-
-        public Model(string mesh, MaterialDesc material)
+        public Model(string mesh, string material)
         {
             Mesh = mesh;
             Material = material;

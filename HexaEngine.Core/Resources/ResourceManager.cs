@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Scenes.Managers;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
@@ -203,6 +204,17 @@
             UpdateTexture(ref modelMaterial.RoughnessMetalnessTexture, desc.RoughnessMetalnessTextureMap);
             UpdateTexture(ref modelMaterial.AoTexture, desc.AoTextureMap);
             modelMaterial.EndUpdate();
+        }
+
+        internal static void RenameMaterial(string oldName, string newName)
+        {
+            lock (materials)
+            {
+                if (materials.Remove(oldName, out var material))
+                {
+                    materials.TryAdd(newName, material);
+                }
+            }
         }
 
         public static async Task AsyncUpdateMaterial(MaterialDesc desc)

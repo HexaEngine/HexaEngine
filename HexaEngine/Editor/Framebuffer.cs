@@ -136,10 +136,44 @@
                 }
 
                 int cameraIndex = scene.ActiveCamera;
-                if (ImGui.Combo("Current Camera", ref cameraIndex, scene.CameraNames, scene.Cameras.Count))
+                if (ImGui.Combo("##ActiveCamCmbo", ref cameraIndex, scene.CameraNames, scene.Cameras.Count))
                 {
                     scene.ActiveCamera = cameraIndex;
                 }
+
+                ImGui.Separator();
+
+                if (ImGui.BeginMenu("options"))
+                {
+                    if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.TRANSLATE))
+                    {
+                        Inspector.Operation = ImGuizmoOperation.TRANSLATE;
+                    }
+
+                    if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.ROTATE))
+                    {
+                        Inspector.Operation = ImGuizmoOperation.ROTATE;
+                    }
+
+                    if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.SCALE))
+                    {
+                        Inspector.Operation = ImGuizmoOperation.SCALE;
+                    }
+
+                    if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoMode.LOCAL))
+                    {
+                        Inspector.Mode = ImGuizmoMode.LOCAL;
+                    }
+
+                    ImGui.SameLine();
+                    if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoMode.WORLD))
+                    {
+                        Inspector.Mode = ImGuizmoMode.WORLD;
+                    }
+
+                    ImGui.EndMenu();
+                }
+
                 ImGui.EndMenuBar();
             }
             position = ImGui.GetWindowPos();

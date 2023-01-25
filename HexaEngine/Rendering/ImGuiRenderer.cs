@@ -8,6 +8,7 @@ using HexaEngine.Mathematics;
 using ImGuiNET;
 using ImGuizmoNET;
 using ImNodesNET;
+using ImPlotNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImDrawIdx = System.UInt16;
@@ -36,9 +37,14 @@ namespace HexaEngine.Rendering
             IntPtr igContext = ImGui.CreateContext();
             ImGui.SetCurrentContext(igContext);
             ImGuizmo.SetImGuiContext(igContext);
+            ImPlot.SetImGuiContext(igContext);
 
             ImNodes.SetImGuiContext(igContext);
             ImNodes.Initialize();
+
+            nint plotContext = ImPlot.CreateContext();
+            ImPlot.SetCurrentContext(plotContext);
+            ImPlot.StyleColorsDark();
 
             this.device = device;
             this.swapChain = swapChain;
@@ -169,6 +175,7 @@ namespace HexaEngine.Rendering
             inputHandler.Update();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();
+
             ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
             ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode);
             ImGui.PopStyleColor();

@@ -9,11 +9,6 @@
     {
         private int current = -1;
 
-        public MaterialsWidget()
-        {
-            IsShown = true;
-        }
-
         protected override string Name => "Materials";
 
         public override void DrawContent(IGraphicsContext context)
@@ -30,7 +25,8 @@
             var manager = scene.MaterialManager;
             if (ImGui.Button("Create"))
             {
-                manager.Add(new() { Name = "New Material" });
+                var name = manager.GetFreeName("New Material");
+                manager.Add(new() { Name = name });
             }
 
             if (manager.Count == 0)
@@ -38,13 +34,25 @@
                 current = -1;
             }
 
-            lock (manager.Names)
+            lock (manager.Materials)
             {
-                bool selected = ImGui.Combo("Material", ref current, manager.Names, manager.Count);
+                ImGui.PushItemWidth(200);
+                if (ImGui.BeginListBox("##Materials"))
+                {
+                    for (int i = 0; i < manager.Count; i++)
+                    {
+                        var material = manager.Materials[i];
+                        if (ImGui.MenuItem(material.Name))
+                        {
+                            current = i;
+                        }
+                    }
+                    ImGui.EndListBox();
+                }
+                ImGui.PopItemWidth();
             }
-
-            ImGui.Separator();
-
+            ImGui.SameLine();
+            ImGui.BeginChild("MaterialEditor");
             if (current != -1)
             {
                 var material = manager.Materials[current];
@@ -52,14 +60,9 @@
                 var name = material.Name;
 
                 bool hasChanged = false;
-                if (ImGui.InputText("DebugName", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+                if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
-                    if (manager.Materials.Any(x => x.Name != name))
-                    {
-                        manager.Remove(material);
-                        material.Name = name;
-                        manager.Add(material);
-                    }
+                    manager.Rename(material.Name, name);
                 }
 
                 var color = material.BaseColor;
@@ -170,6 +173,7 @@
                 if (hasChanged)
                     manager.Update(material);
             }
+            ImGui.EndChild();
         }
     }
 }

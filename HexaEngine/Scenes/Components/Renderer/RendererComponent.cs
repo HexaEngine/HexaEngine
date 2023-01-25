@@ -3,6 +3,7 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Properties;
@@ -15,6 +16,7 @@
         private readonly List<Model> models = new();
         private readonly List<ModelInstance> instances = new();
         private GameObject? gameObject;
+        private Scene scene;
         private bool initialized;
 
         static RendererComponent()
@@ -24,22 +26,38 @@
 
         public List<Model> Meshes => models;
 
-        public void Awake(IGraphicsDevice device, GameObject node)
+        public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
-            gameObject = node;
+            this.gameObject = gameObject;
+            scene = gameObject.GetScene();
+            scene.MaterialManager.Renamed += MaterialRenamed;
+
             initialized = true;
             for (int i = 0; i < models.Count; i++)
             {
                 var model = models[i];
-                node.GetScene().InstanceManager.CreateInstanceAsync(model, node).ContinueWith(t =>
+                scene.InstanceManager.CreateInstanceAsync(model, gameObject).ContinueWith(t =>
                 {
                     instances.Add(t.Result);
                 });
             }
         }
 
+        private void MaterialRenamed(MaterialDesc material, string oldName, string newName)
+        {
+            for (int i = 0; i < models.Count; i++)
+            {
+                var model = models[i];
+                if (model.Material == oldName)
+                {
+                    model.Material = newName;
+                }
+            }
+        }
+
         public void Destory()
         {
+            scene.MaterialManager.Renamed -= MaterialRenamed;
             initialized = false;
             for (int i = 0; i < instances.Count; i++)
             {
@@ -84,6 +102,7 @@
             public Type Type { get; }
 
             public string Name { get; }
+
             public object? Instance { get => instance; set => instance = value; }
 
             public bool IsEmpty => false;
@@ -95,7 +114,7 @@
                 for (int i = 0; i < component.models.Count; i++)
                 {
                     Model model = component.models[i];
-                    ImGui.Text($"{model.Mesh}, {model.Material.Name}");
+                    ImGui.Text($"{model.Mesh}, {model.Material}");
                 }
             }
         }

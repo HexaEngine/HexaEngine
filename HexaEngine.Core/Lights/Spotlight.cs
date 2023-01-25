@@ -9,7 +9,6 @@
     using Newtonsoft.Json;
     using System;
     using System.Numerics;
-    using Texture = Graphics.Texture;
 
     [EditorNode<Spotlight>("Spotlight")]
     public class Spotlight : Light
@@ -29,6 +28,7 @@
         [JsonIgnore]
         public readonly BoundingFrustum ShadowFrustum = new();
 
+        [JsonIgnore]
         public override LightType LightType => LightType.Spot;
 
         public Spotlight()

@@ -40,6 +40,8 @@
         public Vector3 Emissive;
         public string Name = string.Empty;
 
+        public static MaterialDesc Default => new() { Name = "Default", Opacity = 1 };
+
         public MaterialDesc()
         {
         }

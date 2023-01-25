@@ -77,7 +77,6 @@
         [JsonIgnore]
         public InstanceManager InstanceManager => instanceManager;
 
-        [JsonIgnore]
         public MaterialManager MaterialManager { get => materialManager; set => materialManager = value; }
 
         [JsonIgnore]
@@ -105,7 +104,7 @@
             NarrowphaseCallbacks callbacks = new();
             callbacks.Characters = new(BufferPool);
             callbacks.Events = new(ThreadDispatcher, BufferPool);
-            Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -10, 0)), new SolveDescription(8, 1));
+            Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
 
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();

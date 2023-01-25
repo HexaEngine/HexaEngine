@@ -347,6 +347,18 @@
             }
         }
 
+        public virtual IEnumerable<T> GetComponentsFromChilds<T>() where T : IComponent
+        {
+            List<T> components = new();
+            for (int i = 0; i < children.Count; i++)
+            {
+                var child = children[i];
+                components.AddRange(child.GetComponents<T>());
+                components.AddRange(child.GetComponentsFromChilds<T>());
+            }
+            return components;
+        }
+
         public virtual T? GetChild<T>() where T : GameObject
         {
             for (int i = 0; i < children.Count; i++)

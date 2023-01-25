@@ -1,12 +1,10 @@
-﻿/*
-namespace HexaEngine.Rendering
+﻿/*namespace HexaEngine.Rendering
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
-    using Silk.NET.Direct3D11;
     using System;
-    using System.Drawing;
     using System.Numerics;
 
     public class MeshBaker
@@ -19,6 +17,8 @@ namespace HexaEngine.Rendering
             public Vector3 Binormal;
         }
 
+        private const uint NumSHTargets = 3;
+
         public const float NearClip = 0.01f;
         public const float FarClip = 100.0f;
         public const float FOV = MathF.PI / 2;
@@ -30,11 +30,48 @@ namespace HexaEngine.Rendering
         private const uint NumIterations = NumBounces + 1;
 
         private Texture initialRadiance;
-        private StructuredUavBuffer reductionBuffer;
-        private readonly DepthBuffer dsBuffer;
+        private UavBuffer reductionBuffer;
+        private DepthStencil dsBuffer;
+
+        private IComputePipeline integrateCS;
+        private IComputePipeline reductionCS;
+        private IComputePipeline sumBouncesCS;
+
+        private unsafe struct IntegrateConstants
+        {
+            public Matrix4x4 ToTangentSpace0;
+            public Matrix4x4 ToTangentSpace1;
+            public Matrix4x4 ToTangentSpace2;
+            public Matrix4x4 ToTangentSpace3;
+            public Matrix4x4 ToTangentSpace4;
+            public float FinalWeight;
+            public uint VertexIndex;
+            public uint NumElements;
+            public float Reserved;
+        };
+
+        private ConstantBuffer<IntegrateConstants> integrateConstants;
+
+        private CameraTransform camera;
+
+        private const uint NumTimeDeltaSamples = 64;
+
+        private float[] timeDeltaBuffer = new float[NumTimeDeltaSamples];
+        private uint currentTimeDeltaSample;
+
+        private readonly List<UavBuffer> currentMeshBuffers = new();
+        private readonly List<UavBuffer>[] summedMeshBuffers = { new(), new() };
+        private readonly List<IShaderResourceView> meshBakeData = new();
 
         public MeshBaker()
         {
+            camera = new();
+            camera.Width = 1;
+            camera.Height = 1;
+            camera.Fov = FOV;
+            camera.Near = NearClip;
+            camera.Far = FarClip;
+            currentTimeDeltaSample = 0;
             for (uint i = 0; i < NumTimeDeltaSamples; ++i)
                 timeDeltaBuffer[i] = 0;
         }
@@ -145,68 +182,113 @@ namespace HexaEngine.Rendering
             return rect;
         }
 
-        private void MeshBaker::Initialize(ID3D11Device* device)
+        private unsafe void Initialize(IGraphicsDevice device)
         {
-            initialRadiance.Initialize(device, RTSize, RTSize, DXGI_FORMAT_R16G16B16A16_FLOAT, 1, 1, 0, false, false, NumFaces);
-            reductionBuffer.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, RTSize * NumSHTargets * NumFaces);
-            dsBuffer.Initialize(device, RTSize, RTSize, DXGI_FORMAT_D24_UNORM_S8_UINT);
+            initialRadiance = new(device, TextureDescription.CreateTexture2DWithRTV((int)RTSize, (int)RTSize, 1, Format.RGBA16Float));
+            reductionBuffer = new(device, 16, RTSize * NumSHTargets * NumFaces, Format.RGBA32Float, false, false);
+            dsBuffer = new(device, (int)RTSize, (int)RTSize, Format.Depth24UNormStencil8);
 
-            integrateConstants.Initialize(device);
-
-            blendStates.Initialize(device);
-            rasterizerStates.Initialize(device);
-            depthStencilStates.Initialize(device);
-            samplerStates.Initialize(device);
+            integrateConstants = new(device, CpuAccessFlags.Write);
 
             // Load the integration shaders
-            char facesString[2] = { 0 };
-            facesString[0] = static_cast<char>(NumFaces + '0');
+            string facesString = NumFaces + "0";
 
-            std::wstring rtSizeString = ToString(RTSize);
-            char rtSizeStringChar[16] = { 0 };
-            for (size_t i = 0; i < rtSizeString.size(); ++i)
-                rtSizeStringChar[i] = static_cast<char>(rtSizeString[i]);
+            string rtSizeString = RTSize.ToString();
 
-            std::wstring numThreadsString = ToString(NumBounceSumThreads);
-            char numThreadsStringChar[16] = { 0 };
-            for (size_t i = 0; i < numThreadsString.size(); ++i)
-                numThreadsStringChar[i] = static_cast<char>(numThreadsString[i]);
+            string numThreadsString = NumBounceSumThreads.ToString();
 
-            D3D10_SHADER_MACRO defines[4];
+            ShaderMacro[] defines = new ShaderMacro[3];
             defines[0].Name = "NumFaces_";
             defines[0].Definition = facesString;
             defines[1].Name = "RTSize_";
-            defines[1].Definition = rtSizeStringChar;
+            defines[1].Definition = rtSizeString;
             defines[2].Name = "NumBounceSumThreads_";
-            defines[2].Definition = numThreadsStringChar;
-            defines[3].Name = NULL;
-            defines[3].Definition = NULL;
+            defines[2].Definition = numThreadsString;
 
-            integrateCS.Attach(CompileCSFromFile(device, L"IntegrateCS.hlsl", "IntegrateCS", "cs_5_0", defines));
-            reductionCS.Attach(CompileCSFromFile(device, L"IntegrateCS.hlsl", "ReductionCS", "cs_5_0", defines));
-            sumBouncesCS.Attach(CompileCSFromFile(device, L"IntegrateCS.hlsl", "SumBouncesCS", "cs_5_0", defines));
+            integrateCS = device.CreateComputePipeline(new() { Entry = "IntegrateCS", Path = "IntegrateCS.hlsl" });
+            reductionCS = device.CreateComputePipeline(new() { Entry = "ReductionCS", Path = "IntegrateCS.hlsl" });
+            sumBouncesCS = device.CreateComputePipeline(new() { Entry = "SumBouncesCS", Path = "IntegrateCS.hlsl" });
 
             // Compute the final weight for integration
             float weightSum = 0.0f;
-            for (UINT y = 0; y < RTSize; ++y)
+            for (uint y = 0; y < RTSize; ++y)
             {
-                for (UINT x = 0; x < RTSize; ++x)
+                for (uint x = 0; x < RTSize; ++x)
                 {
-                    const float u = (float(x) / float(RTSize)) * 2.0f - 1.0f;
-                    const float v = (float(y) / float(RTSize)) * 2.0f - 1.0f;
+                    float u = (float)x / RTSize * 2.0f - 1.0f;
+                    float v = (float)y / RTSize * 2.0f - 1.0f;
 
-                    const float temp = 1.0f + u * u + v * v;
-                    const float weight = 4.0f / (sqrtf(temp) * temp);
+                    float temp = 1.0f + u * u + v * v;
+                    float weight = 4.0f / (MathF.Sqrt(temp) * temp);
 
                     weightSum += weight;
                 }
             }
 
             weightSum *= 6.0f;
-            integrateConstants.Data.FinalWeight = (4.0f * 3.14159f) / weightSum;
+            integrateConstants.Local->FinalWeight = (4.0f * 3.14159f) / weightSum;
+        }
 
-            font.Initialize(L"Arial", 18, SpriteFont::Regular, true, device);
-            spriteRenderer.Initialize(device);
+        // Bakes an entire model
+        private void Bake(
+            Window& window,
+            ID3D11Device* device,
+            ID3D11DeviceContext* context,
+            Model model,
+            Skybox& skybox,
+            XMFLOAT3& sunDirection,
+            XMMATRIX& world,
+            MeshRenderer& meshRenderer)
+        {
+            for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+            {
+                // Create an input layout for each mesh
+                Mesh mesh = model.Meshes()[meshIdx];
+
+                // Create bake data for each mesh
+                UavBuffer meshData, summedMeshData, summedMeshData2;
+                meshData.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, mesh.NumVertices() * NumSHTargets);
+                summedMeshData.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, mesh.NumVertices() * NumSHTargets);
+                summedMeshData2.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, mesh.NumVertices() * NumSHTargets);
+
+                currentMeshBuffers.Add(meshData);
+                summedMeshBuffers[0].Add(summedMeshData);
+                summedMeshBuffers[1].Add(summedMeshData2);
+            }
+
+            // Iterate through the bounces
+            for (uint bounce = 0; bounce < NumIterations; ++bounce)
+            {
+                //PIXEvent bounceEvent((L"Bounce " + ToString(bounce)).c_str());
+
+                // Bake one mesh at a time
+                for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+                {
+                    Mesh & mesh = model.Meshes()[meshIdx];
+
+                    BakeMesh(deviceManager, window, device, context, model, skybox, sunDirection,
+                                        world, mesh, meshIdx, bounce, meshRenderer);
+                }
+
+                if (bounce == 0)
+                {
+                    // We don't need to sum bounces, so just copy to the output buffers
+                    for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+                    {
+                        context->CopyResource(summedMeshBuffers[0][meshIdx].Buffer, currentMeshBuffers[meshIdx].Buffer);
+                        meshBakeData.Add(summedMeshBuffers[0][meshIdx].SRView);
+                    }
+                }
+                else
+                {
+                    // Sum together this bounce with the previous bounces
+                    SumBounces(context, bounce);
+
+                    meshBakeData.Clear();
+                    for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+                        meshBakeData.Add(summedMeshBuffers[bounce % 2][meshIdx].SRView);
+                }
+            }
         }
     }
 }*/

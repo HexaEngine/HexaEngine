@@ -81,10 +81,10 @@
         public Vector3[] GetPoints()
         {
             var data = ReadMesh();
-            Vector3[] points = new Vector3[data.Vertices.Length];
-            for (int i = 0; i < data.Vertices.Length; i++)
+            Vector3[] points = new Vector3[data.Indices.Length];
+            for (int i = 0; i < data.Indices.Length; i++)
             {
-                points[i] = data.Vertices[i].Position;
+                points[i] = data.Vertices[data.Indices[i]].Position;
             }
             return points;
         }

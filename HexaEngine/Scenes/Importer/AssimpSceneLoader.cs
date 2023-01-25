@@ -379,7 +379,7 @@ namespace HexaEngine.Scenes.Importer
                 BoundingSphere sphere = new(center, radius);
 
                 meshes[i] = new MeshSource(GetHashString(msh->MName), vertices, indices, box, sphere);
-                models[i] = new(GetHashString(msh->MName), materials[(int)msh->MMaterialIndex]);
+                models[i] = new(GetHashString(msh->MName), materials[(int)msh->MMaterialIndex].Name);
 
                 meshes[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
 

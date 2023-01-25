@@ -97,7 +97,7 @@ namespace HexaEngine.Scenes.Importer
                 {
                     return true;
                 }
-                if (model.Material.Name.Length > 255)
+                if (model.Material.Length > 255)
                 {
                     return true;
                 }
@@ -130,10 +130,9 @@ namespace HexaEngine.Scenes.Importer
             for (int i = 0; i < models.Length; i++)
             {
                 Model source = models[i];
-                if (source.Material.Name == oldName)
+                if (source.Material == oldName)
                 {
-                    // TODO: Do not store material as instance in model
-                    //source.Material = newName;
+                    source.Material = newName;
                 }
             }
             material.Name = newName;
@@ -493,7 +492,7 @@ namespace HexaEngine.Scenes.Importer
                 BoundingSphere sphere = new(center, radius);
 
                 meshes[i] = new MeshSource(msh->MName, vertices, indices, box, sphere);
-                models[i] = new(msh->MName, materials[(int)msh->MMaterialIndex]);
+                models[i] = new(msh->MName, materials[(int)msh->MMaterialIndex].Name);
 
                 meshesT.Add(msh, meshes[i]);
             }

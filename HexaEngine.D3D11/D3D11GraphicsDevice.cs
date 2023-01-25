@@ -372,6 +372,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)
+        {
+            ID3D11ShaderResourceView* srv;
+            ShaderResourceViewDesc desc = Helper.Convert(description);
+            Device->CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv).ThrowHResult();
+            return new D3D11ShaderResourceView(srv, default);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Texture1DDescription description)
         {
             ID3D11Texture1D* texture;
