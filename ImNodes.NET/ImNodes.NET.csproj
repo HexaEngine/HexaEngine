@@ -32,10 +32,5 @@
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\deps\cimgui\linux-x64\cimnodes.so">
-			<PackagePath>runtimes/linux-x64/native</PackagePath>
-			<Pack>true</Pack>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 </Project>

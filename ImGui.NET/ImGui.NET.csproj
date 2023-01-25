@@ -37,11 +37,6 @@
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\deps\cimgui\linux-x64\cimgui.so">
-			<PackagePath>runtimes/linux-x64/native/libcimgui.so</PackagePath>
-			<Pack>true</Pack>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Generated\" />
