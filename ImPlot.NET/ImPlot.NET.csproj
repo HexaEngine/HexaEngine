@@ -20,9 +20,16 @@
 		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="..\deps\cimgui\win-x64\cimplot.dll">
-			<PackagePath>runtimes/win-x64/native</PackagePath>
-			<Pack>true</Pack>
+		<Content Include="..\cimplot\build\Debug\cimplot.dll" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimplot\build\Debug\cimplot.pdb" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimplot\build\bin\CMake\Release\cimplot.dll" Condition="'$(Configuration)'=='RELEASE'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="..\deps\cimgui\linux-x64\cimplot.so">

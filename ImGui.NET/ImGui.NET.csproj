@@ -25,9 +25,16 @@
 		</AssemblyAttribute>
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="..\deps\cimgui\win-x64\cimgui.dll">
-			<PackagePath>runtimes/win-x64/native</PackagePath>
-			<Pack>true</Pack>
+		<Content Include="..\cimgui\build\Debug\cimgui.dll" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimgui\build\Debug\cimgui.pdb" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimgui\build\bin\CMake\Release\cimgui.dll" Condition="'$(Configuration)'=='RELEASE'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="..\deps\cimgui\linux-x64\cimgui.so">

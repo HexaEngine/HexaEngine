@@ -20,9 +20,16 @@
 		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="..\deps\cimgui\win-x64\cimguizmo.dll">
-			<PackagePath>runtimes/win-x64/native</PackagePath>
-			<Pack>true</Pack>
+		<Content Include="..\cimguizmo\build\Debug\cimguizmo.dll" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimguizmo\build\Debug\cimguizmo.pdb" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimguizmo\build\bin\CMake\Release\cimguizmo.dll" Condition="'$(Configuration)'=='RELEASE'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="..\deps\cimgui\linux-x64\cimguizmo.so">

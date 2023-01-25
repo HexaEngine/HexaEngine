@@ -20,9 +20,16 @@
 		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<Content Include="..\deps\cimgui\win-x64\cimnodes.dll">
-			<PackagePath>runtimes/win-x64/native</PackagePath>
-			<Pack>true</Pack>
+		<Content Include="..\cimnodes\build\Debug\cimnodes.dll" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimnodes\build\Debug\cimnodes.pdb" Condition="'$(Configuration)'=='DEBUG'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\cimnodes\build\bin\CMake\Release\cimnodes.dll" Condition="'$(Configuration)'=='RELEASE'">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="..\deps\cimgui\linux-x64\cimnodes.so">

@@ -59,6 +59,8 @@
 
         public object? Instance { get => instance; set => instance = value; }
 
+        public bool IsEmpty => editors.Count == 0;
+
         public void Draw()
         {
             if (instance == null) return;
