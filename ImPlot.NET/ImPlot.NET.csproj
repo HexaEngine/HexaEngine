@@ -1,35 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Description>A .NET wrapper for the ImPlot library.</Description>
-    <AssemblyVersion>0.8.0</AssemblyVersion>
-    <Authors>Eric Mellino</Authors>
-    <TargetFrameworks>net7.0</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>portable</DebugType>
-    <AssemblyName>ImPlot.NET</AssemblyName>
-    <PackageId>ImPlot.NET</PackageId>
-    <PackagePrereleaseIdentifier></PackagePrereleaseIdentifier>
-    <PackageVersion>$(AssemblyVersion)$(PackagePrereleaseIdentifier)</PackageVersion>
-    <PackageTags>ImPlot ImGui ImGui.NET Immediate Mode GUI</PackageTags>
-    <PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
-    <RootNamespace>ImPlotNET</RootNamespace>
-	  <Platforms>AnyCPU;x64</Platforms>
-	  <Configurations>Debug;Release;TraceLeak</Configurations>
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="build\net40" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="build\net40\ImPlot.NET.targets" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\deps\cimgui\win-x64\cimplot.dll">
-      <PackagePath>runtimes/win-x64/native</PackagePath>
-      <Pack>true</Pack>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+	<PropertyGroup>
+		<Description>A .NET wrapper for the ImPlot library.</Description>
+		<AssemblyVersion>0.8.0</AssemblyVersion>
+		<Authors>Eric Mellino</Authors>
+		<TargetFrameworks>net7.0</TargetFrameworks>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugType>portable</DebugType>
+		<AssemblyName>ImPlot.NET</AssemblyName>
+		<PackageId>ImPlot.NET</PackageId>
+		<PackagePrereleaseIdentifier></PackagePrereleaseIdentifier>
+		<PackageVersion>$(AssemblyVersion)$(PackagePrereleaseIdentifier)</PackageVersion>
+		<PackageTags>ImPlot ImGui ImGui.NET Immediate Mode GUI</PackageTags>
+		<PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
+		<RootNamespace>ImPlotNET</RootNamespace>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;TraceLeak</Configurations>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\deps\cimgui\win-x64\cimplot.dll">
+			<PackagePath>runtimes/win-x64/native</PackagePath>
+			<Pack>true</Pack>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="..\deps\cimgui\linux-x64\cimplot.so">
+			<PackagePath>runtimes/linux-x64/native</PackagePath>
+			<Pack>true</Pack>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 </Project>

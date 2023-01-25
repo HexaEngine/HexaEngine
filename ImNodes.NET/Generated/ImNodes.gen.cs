@@ -66,6 +66,28 @@ namespace ImNodesNET
             return ret;
         }
 
+        public static IntPtr CreateContext()
+        {
+            IntPtr ret = ImNodesNative.imnodes_CreateContext();
+            return ret;
+        }
+
+        public static void DestroyContext(IntPtr ctx)
+        {
+            ImNodesNative.imnodes_DestroyContext(ctx);
+        }
+
+        public static IntPtr GetCurrentContext()
+        {
+            IntPtr ret = ImNodesNative.imnodes_GetCurrentContext();
+            return ret;
+        }
+
+        public static void SetCurrentContext(IntPtr ctx)
+        {
+            ImNodesNative.imnodes_SetCurrentContext(ctx);
+        }
+
         public static void EditorContextFree(IntPtr noname1)
         {
             ImNodesNative.imnodes_EditorContextFree(noname1);

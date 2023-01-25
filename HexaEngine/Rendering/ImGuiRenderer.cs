@@ -40,7 +40,9 @@ namespace HexaEngine.Rendering
             ImPlot.SetImGuiContext(igContext);
 
             ImNodes.SetImGuiContext(igContext);
-            ImNodes.Initialize();
+            nint nodesContext = ImNodes.CreateContext();
+            ImNodes.SetCurrentContext(nodesContext);
+            //ImNodes.Initialize();
 
             nint plotContext = ImPlot.CreateContext();
             ImPlot.SetCurrentContext(plotContext);
@@ -51,6 +53,7 @@ namespace HexaEngine.Rendering
             context = device.Context;
 
             var io = ImGui.GetIO();
+
             var config = new ImFontConfigPtr(ImGuiNative.ImFontConfig_ImFontConfig());
 
             io.Fonts.AddFontDefault(config);
@@ -153,7 +156,7 @@ namespace HexaEngine.Rendering
             style.LogSliderDeadzone = 4;
             style.TabRounding = 4;
 
-            ImNodes.StyleColorsDark();
+            //ImNodes.StyleColorsDark();
             var ncolors = ImNodes.GetStyle()->colors;
             ncolors[(int)ColorStyle.NodeBackground] = new Vector4(0.06f, 0.06f, 0.06f, 0.94f).Pack();
             ncolors[(int)ColorStyle.NodeBackgroundHovered] = new Vector4(0.12f, 0.12f, 0.12f, 0.94f).Pack();
