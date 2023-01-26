@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Pipelines.Forward
+﻿namespace HexaEngine.Core.Scenes.Managers.Forward
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;

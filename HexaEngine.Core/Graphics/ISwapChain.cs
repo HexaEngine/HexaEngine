@@ -9,6 +9,8 @@
 
         void Present();
 
+        void Wait();
+
         void Resize(int width, int height);
 
         event EventHandler? Resizing;

@@ -49,12 +49,38 @@
             }
         }
 
+        public static void AddComponentIfIs<T>(this IList<T> list, GameObject obj, bool awake) where T : IComponent
+        {
+            for (int i = 0; i < obj.Components.Count; i++)
+            {
+                if (obj.Components[i] is T t)
+                {
+                    if (awake)
+                        t.Awake(null, obj);
+                    list.Add(t);
+                }
+            }
+        }
+
         public static void RemoveComponentIfIs<T>(this IList<T> list, GameObject obj) where T : IComponent
         {
             for (int i = 0; i < obj.Components.Count; i++)
             {
                 if (obj.Components[i] is T t)
                 {
+                    list.Remove(t);
+                }
+            }
+        }
+
+        public static void RemoveComponentIfIs<T>(this IList<T> list, GameObject obj, bool destroy) where T : IComponent
+        {
+            for (int i = 0; i < obj.Components.Count; i++)
+            {
+                if (obj.Components[i] is T t)
+                {
+                    if (destroy)
+                        t.Destory();
                     list.Remove(t);
                 }
             }

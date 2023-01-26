@@ -90,6 +90,9 @@ namespace HexaEngine.Rendering
         private bool windowResized;
         private bool sceneChanged;
         private bool sceneVariablesChanged;
+        private readonly RendererProfiler profiler = new(10);
+
+        public RendererProfiler Profiler => profiler;
 
 #nullable enable
 
@@ -396,8 +399,8 @@ namespace HexaEngine.Rendering
             var scene = SceneManager.Current;
             if (scene == null) return;
 
-            scene.LightManager.BeginResize();
-            scene.LightManager.EndResize(width, height);
+            scene.Lights.BeginResize();
+            scene.Lights.EndResize(width, height);
         }
 
         public unsafe void LoadScene(Scene scene)
@@ -457,8 +460,8 @@ namespace HexaEngine.Rendering
                 envfilter = ResourceManager.AddOrUpdateTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, skyColor);
             }
 
-            scene.LightManager.BeginResize();
-            scene.LightManager.EndResize(width, height);
+            scene.Lights.BeginResize();
+            scene.Lights.EndResize(width, height);
         }
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera? camera)
@@ -567,9 +570,8 @@ namespace HexaEngine.Rendering
             }
             else
             {
-                scene.LightManager.Update(context, camera);
-
-                scene.LightManager.DeferredPass(context, camera);
+                scene.Lights.Update(context, camera);
+                scene.Lights.DeferredPass(context, camera);
             }
 
             // Screen Space Reflections

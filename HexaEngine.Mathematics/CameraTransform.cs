@@ -32,7 +32,7 @@
             {
                 if (value == projectionType) return;
                 projectionType = value;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -43,7 +43,7 @@
             {
                 if (value == width) return;
                 width = value;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -54,7 +54,7 @@
             {
                 if (value == height) return;
                 height = value;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -68,7 +68,7 @@
                 if (value == fov) return;
                 fov = value;
                 if (projectionType == ProjectionType.Othro) return;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -79,7 +79,7 @@
             {
                 if (value == near) return;
                 near = value;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -90,7 +90,7 @@
             {
                 if (value == far) return;
                 far = value;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -98,8 +98,9 @@
 
         public Matrix4x4 ViewProjection => viewProjection;
 
-        protected override void Recalculate()
+        public override bool Recalculate()
         {
+            if (!dirty) return false;
             base.Recalculate();
             aspectRatio = width / height;
             switch (projectionType)
@@ -115,6 +116,8 @@
             Matrix4x4.Invert(projection, out projectionInv);
 
             OnUpdated();
+            dirty = false;
+            return true;
         }
 
         protected override void OnUpdated()

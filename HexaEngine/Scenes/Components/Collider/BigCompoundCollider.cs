@@ -4,6 +4,8 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Core.Physics;
+    using HexaEngine.Core.Scenes.Systems;
     using System.Linq;
 
     [EditorComponent(typeof(BigCompoundCollider), "Big Compound Collider")]
@@ -14,7 +16,7 @@
         public override void CreateShape()
         {
             if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape) return;
-            colliderChildren = parent.GetComponentsFromChilds<BaseCollider>().ToList();
+            colliderChildren = parent.GetComponentsFromChilds<IBaseCollider>().ToList();
             CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
             for (int i = 0; i < colliderChildren.Count; i++)
             {

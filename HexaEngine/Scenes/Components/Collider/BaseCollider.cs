@@ -6,10 +6,11 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Scenes.Components.Collider;
+    using HexaEngine.Core.Scenes.Systems;
 
-    public abstract class BaseCollider : IComponent
+    public abstract class BaseCollider : IBaseCollider
     {
         protected bool hasBody = false;
         protected bool hasShape = false;
@@ -29,7 +30,7 @@
         protected BufferPool? bufferPool;
         protected ColliderType type;
 
-        protected CompoundCollider? parentCollider;
+        protected ICompoundCollider? parentCollider;
         protected CompoundChild? compoundChild;
 
         private float mass = 1;
@@ -57,7 +58,7 @@
         public BodyHandle BodyHandle => bodyHandle;
 
         [JsonIgnore]
-        public CompoundCollider? ParentCollider => parentCollider;
+        public ICompoundCollider? ParentCollider => parentCollider;
 
         [JsonIgnore]
         public CompoundChild? CompoundChild => compoundChild;
@@ -156,7 +157,7 @@
             inCompound = true;
         }
 
-        public virtual void SetCompoundData(CompoundCollider parentCollider, CompoundChild compoundChild)
+        public virtual void SetCompoundData(ICompoundCollider parentCollider, CompoundChild compoundChild)
         {
             this.parentCollider = parentCollider;
             this.compoundChild = compoundChild;

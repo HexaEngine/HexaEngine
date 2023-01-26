@@ -20,7 +20,7 @@
             if (scene == null)
                 return;
 
-            var lightManager = scene.LightManager;
+            var lightManager = scene.Lights;
 
             ImGui.BeginListBox("Lights");
             for (int i = 0; i < lightManager.Count; i++)

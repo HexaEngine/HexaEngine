@@ -64,7 +64,7 @@
             {
                 for (int i = 0; i < scene.Lights.Count; i++)
                 {
-                    Light light = scene.Lights[i];
+                    Light light = scene.Lights.Lights[i];
                     if (light is DirectionalLight directional)
                     {
                         DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);

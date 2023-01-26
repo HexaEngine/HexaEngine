@@ -33,7 +33,7 @@
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\cimgui\build\bin\CMake\Release\cimgui.dll" Condition="'$(Configuration)'=='RELEASE'">
+		<Content Include="..\cimgui\build\Release\cimgui.dll" Condition="'$(Configuration)'=='RELEASE'">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

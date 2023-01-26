@@ -32,8 +32,6 @@
 
         public static bool Fullframe;
 
-        private static readonly Profiler fpsProfiler = new("latency", () => Time.Delta, (x, sb) => { }, 100);
-
         public Framebuffer(IGraphicsDevice device)
         {
             this.device = device;
@@ -194,8 +192,6 @@
                 var y = (size.Y - h) / 2;
                 Viewport = new(position.X + x, position.Y + y, w, h);
             }
-
-            fpsProfiler.Draw();
 
             ImGui.End();
         }

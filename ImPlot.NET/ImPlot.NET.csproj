@@ -28,7 +28,7 @@
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\cimplot\build\bin\CMake\Release\cimplot.dll" Condition="'$(Configuration)'=='RELEASE'">
+		<Content Include="..\cimplot\build\Release\cimplot.dll" Condition="'$(Configuration)'=='RELEASE'">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

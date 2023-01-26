@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Windows;
 
     public class RenderManager

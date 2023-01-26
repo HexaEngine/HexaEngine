@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes.Components.Collider
+﻿namespace HexaEngine.Core.Physics
 {
     public enum ColliderType
     {

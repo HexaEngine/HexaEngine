@@ -28,7 +28,7 @@
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\cimguizmo\build\bin\CMake\Release\cimguizmo.dll" Condition="'$(Configuration)'=='RELEASE'">
+		<Content Include="..\cimguizmo\build\Release\cimguizmo.dll" Condition="'$(Configuration)'=='RELEASE'">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

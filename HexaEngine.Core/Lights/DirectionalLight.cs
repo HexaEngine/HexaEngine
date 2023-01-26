@@ -5,8 +5,8 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers.Forward;
     using HexaEngine.Mathematics;
-    using HexaEngine.Pipelines.Forward;
     using Newtonsoft.Json;
     using System.Numerics;
 

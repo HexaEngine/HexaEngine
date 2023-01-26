@@ -12,7 +12,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;SEPA</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
@@ -37,8 +37,6 @@
 	<ItemGroup>
 		<PackageReference Include="Silk.NET.SDL" Version="2.16.0" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
-		<PackageReference Include="NLua" Version="1.6.0" />
-		<PackageReference Include="System.Text.Json" Version="7.0.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.5" />
 		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />

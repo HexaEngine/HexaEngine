@@ -58,6 +58,7 @@
         protected Matrix4x4 viewInv;
         protected Vector3 velocity;
         protected Vector3 oldpos;
+        protected bool dirty = true;
 
         public Transform()
         {
@@ -74,13 +75,13 @@
                 parent = value;
                 if (parent != null)
                     parent.Updated += ParentUpdated;
-                Recalculate();
+                dirty = true;
             }
         }
 
         private void ParentUpdated(object? sender, EventArgs e)
         {
-            Recalculate();
+            dirty = true;
         }
 
         /// <summary>
@@ -91,49 +92,11 @@
             get => position;
             set
             {
+                if (position == value) return;
                 oldpos = position;
                 position = value;
                 velocity = position - oldpos;
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float PositionX
-        {
-            get => position.X;
-            set
-            {
-                oldpos = position;
-                position.X = value;
-                velocity = position - oldpos;
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float PositionY
-        {
-            get => position.Y;
-            set
-            {
-                oldpos = position;
-                position.Y = value;
-                velocity = position - oldpos;
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float PositionZ
-        {
-            get => position.Z;
-            set
-            {
-                oldpos = position;
-                position.Z = value;
-                velocity = position - oldpos;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -146,45 +109,10 @@
             get => rotation;
             set
             {
+                if (rotation == value) return;
                 rotation = value;
                 orientation = value.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float RotationX
-        {
-            get => rotation.X;
-            set
-            {
-                rotation.X = value;
-                orientation = rotation.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float RotationY
-        {
-            get => rotation.Y;
-            set
-            {
-                rotation.Y = value;
-                orientation = rotation.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float RotationZ
-        {
-            get => rotation.Z;
-            set
-            {
-                rotation.Z = value;
-                orientation = rotation.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -196,41 +124,9 @@
             get => scale;
             set
             {
+                if (scale == value) return;
                 scale = value;
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float ScaleX
-        {
-            get => scale.X;
-            set
-            {
-                scale.X = value;
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float ScaleY
-        {
-            get => scale.Y;
-            set
-            {
-                scale.Y = value;
-                Recalculate();
-            }
-        }
-
-        [JsonIgnore]
-        public float ScaleZ
-        {
-            get => scale.Z;
-            set
-            {
-                scale.Z = value;
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -243,9 +139,10 @@
             get => orientation;
             set
             {
+                if (orientation == value) return;
                 orientation = value;
                 rotation = value.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -258,13 +155,14 @@
             get => globalPosition;
             set
             {
+                if (globalPosition == value) return;
                 if (parent == null)
                     position = value;
                 else
                     // Transform because the rotation could modify the position of the child.
                     position = Vector3.Transform(value, parent.globalInverse);
 
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -277,13 +175,14 @@
             get => globalOrientation;
             set
             {
+                if (globalOrientation == value) return;
                 if (parent == null)
                     orientation = value;
                 else
                     // Divide because quaternions are like matrices.
                     orientation = value / parent.globalOrientation;
 
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -296,13 +195,14 @@
             get => globalScale;
             set
             {
+                if (globalScale == value) return;
                 if (parent == null)
                     scale = value;
                 else
                     // divide because scale is a factor.
                     scale = value / parent.globalScale;
 
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -315,11 +215,12 @@
             get => (position, orientation);
             set
             {
+                if ((position, orientation) == value) return;
                 oldpos = position;
                 (position, orientation) = value;
                 velocity = position - oldpos;
                 rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -332,11 +233,12 @@
             get => (position, orientation, scale);
             set
             {
+                if ((position, orientation, scale) == value) return;
                 oldpos = position;
                 (position, orientation, scale) = value;
                 velocity = position - oldpos;
                 rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
-                Recalculate();
+                dirty = true;
             }
         }
 
@@ -434,8 +336,9 @@
         /// <summary>
         /// Recalculates all values of the <see cref="Transform"/>.
         /// </summary>
-        protected virtual void Recalculate()
+        public virtual bool Recalculate()
         {
+            if (!dirty) return false;
             local = Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(position);
             Matrix4x4.Invert(local, out localInverse);
             if (parent == null)
@@ -455,6 +358,8 @@
             view = MathUtil.LookAtLH(globalPosition, forward + globalPosition, up);
             Matrix4x4.Invert(view, out viewInv);
             OnUpdated();
+            dirty = false;
+            return true;
         }
 
         /// <summary>
@@ -467,23 +372,7 @@
             Matrix4x4.Invert(local, out localInverse);
             Matrix4x4.Decompose(local, out scale, out orientation, out position);
             rotation = orientation.GetRotation().ToDeg();
-            if (parent == null)
-                global = local;
-            else
-                global = local * parent.global;
-            Matrix4x4.Invert(global, out globalInverse);
-            Matrix4x4.Decompose(global, out globalScale, out globalOrientation, out globalPosition);
-
-            forward = Vector3.Transform(Vector3.UnitZ, globalOrientation);
-            backward = Vector3.Transform(-Vector3.UnitZ, globalOrientation);
-            right = Vector3.Transform(Vector3.UnitX, globalOrientation);
-            left = Vector3.Transform(-Vector3.UnitX, globalOrientation);
-            up = Vector3.Transform(Vector3.UnitY, globalOrientation);
-            down = Vector3.Transform(-Vector3.UnitY, globalOrientation);
-            view = MathUtil.LookAtLH(globalPosition, forward + globalPosition, up);
-            Matrix4x4.Invert(view, out viewInv);
-
-            OnUpdated();
+            dirty = true;
         }
 
         /// <summary>

@@ -10,6 +10,7 @@
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
@@ -59,6 +60,8 @@
         public bool DebugGraphics { get; set; } = false;
 
         public Viewport RenderViewport => renderViewport;
+
+        public ISceneRenderer Renderer => deferredRenderer;
 
         public Window()
         {
@@ -168,7 +171,9 @@
                     framebuffer.Draw();
                 }
 
-                if (initTask.IsCompleted && sceneGraph && SceneManager.Current is not null)
+                var drawing = initTask.IsCompleted && sceneGraph && SceneManager.Current is not null;
+
+                if (drawing)
                     lock (SceneManager.Current)
                     {
                         SceneManager.Current.Tick();
@@ -177,6 +182,8 @@
                             Time.Initialize();
                             firstFrame = false;
                         }
+                        deferredRenderer.Profiler.Clear();
+                        deferredRenderer.Profiler.Start(deferredRenderer);
                         renderViewport = Application.InEditorMode ? framebuffer.Viewport : Viewport;
                         deferredRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
                     }
@@ -184,7 +191,11 @@
                 OnRender(context);
 
                 renderer?.EndDraw();
+
                 swapChain.Present();
+                if (drawing)
+                    deferredRenderer.Profiler.End(deferredRenderer);
+                swapChain.Wait();
 
                 Time.FrameUpdate();
             }

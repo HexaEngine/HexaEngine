@@ -91,14 +91,17 @@
             {
                 swapChain->Present(1, 0);
             }
-            else if (limitFPS)
-            {
-                swapChain->Present(0, DXGI.PresentAllowTearing);
-                LimitFrameRate();
-            }
             else
             {
                 swapChain->Present(0, DXGI.PresentAllowTearing);
+            }
+        }
+
+        public void Wait()
+        {
+            if (!vSync && limitFPS)
+            {
+                LimitFrameRate();
             }
         }
 

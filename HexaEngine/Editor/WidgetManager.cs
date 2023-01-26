@@ -24,6 +24,7 @@
             Register<SceneVariablesWindow>();
             Register<PipelineEditor>();
             Register<DebugWindow>();
+            Register<ProfilerWindow>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()

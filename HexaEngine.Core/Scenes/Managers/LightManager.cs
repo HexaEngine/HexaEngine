@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Core.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -10,8 +10,9 @@
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
-    public partial class LightManager
+    public partial class LightManager : ISystem
     {
         private readonly List<Light> lights = new();
         private readonly List<Light> activeLights = new();
@@ -511,6 +512,26 @@
                         break;
                 }
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public void Awake(BepuUtilities.ThreadDispatcher dispatcher)
+        {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public void Update(BepuUtilities.ThreadDispatcher dispatcher)
+        {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public void FixedUpdate(BepuUtilities.ThreadDispatcher dispatcher)
+        {
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        public void Destroy(BepuUtilities.ThreadDispatcher dispatcher)
+        {
         }
     }
 }

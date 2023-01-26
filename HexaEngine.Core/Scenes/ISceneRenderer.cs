@@ -7,6 +7,8 @@
 
     public interface ISceneRenderer : IDisposable
     {
+        RendererProfiler Profiler { get; }
+
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window);
 
         void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera camera);

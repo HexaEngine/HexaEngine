@@ -73,6 +73,7 @@
                     Vector3 pos = SphereHelper.GetCartesianCoordinates(sc) + center;
                     var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
                     camera.Transform.PositionRotation = (pos, orientation);
+                    camera.Transform.Recalculate();
                 }
             }
             if (mode == CameraEditorMode.Free)
@@ -143,6 +144,7 @@
                     else
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * Time.Delta;
                 }
+                camera.Transform.Recalculate();
             }
         }
     }

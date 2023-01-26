@@ -28,7 +28,7 @@
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\cimnodes\build\bin\CMake\Release\cimnodes.dll" Condition="'$(Configuration)'=='RELEASE'">
+		<Content Include="..\cimnodes\build\Release\cimnodes.dll" Condition="'$(Configuration)'=='RELEASE'">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
