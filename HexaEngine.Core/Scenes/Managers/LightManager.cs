@@ -83,7 +83,7 @@
         public IShaderResourceView[] PSMs;
         public IBuffer Camera;
 
-        public ViewportShading Viewport = ViewportShading.Solid;
+        public ViewportShading Viewport = Application.InDesignMode ? ViewportShading.Solid : ViewportShading.Rendered;
 
         public LightManager(IGraphicsDevice device, IInstanceManager instanceManager)
         {

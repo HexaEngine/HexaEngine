@@ -24,13 +24,14 @@
             var data = scene.MeshManager.Load(meshPath);
             var meh = data.ReadMesh();
             bufferPool.Take(meh.Indices.Length, out Buffer<Triangle> buffer);
+            int j = 0;
             for (int i = 0; i < meh.Indices.Length; i += 3)
             {
                 // Note verts are loaded counter-clockwise because the engine operates in LH mode
                 MeshVertex a = meh.Vertices[meh.Indices[i + 2]];
                 MeshVertex b = meh.Vertices[meh.Indices[i + 1]];
                 MeshVertex c = meh.Vertices[meh.Indices[i]];
-                buffer[i] = new(a.Position, b.Position, c.Position);
+                buffer[j++] = new(a.Position, b.Position, c.Position);
             }
             mesh = new(buffer, Vector3.One, bufferPool);
             inertia = mesh.ComputeClosedInertia(Mass);

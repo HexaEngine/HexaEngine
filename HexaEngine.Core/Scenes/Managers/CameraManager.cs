@@ -83,7 +83,7 @@
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
-                    var re = new Vector3(delta.X, delta.Y, 0) * AngluarSpeed * Time.Delta;
+                    var re = new Vector3(delta.X, delta.Y, 0) * AngluarSpeed;
                     camera.Transform.Rotation += re;
                     if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
                     {
