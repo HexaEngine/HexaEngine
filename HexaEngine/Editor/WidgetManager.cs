@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
+    using ImPlotNET;
 
     public static class WidgetManager
     {
