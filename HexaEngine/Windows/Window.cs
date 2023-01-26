@@ -38,7 +38,7 @@
         private IGraphicsDevice device;
         private IGraphicsContext context;
         private ISwapChain swapChain;
-        private Framebuffer framebuffer;
+        private Frameviewer frameviewer;
         private SceneRenderer deferredRenderer;
 
         private bool resize = false;
@@ -55,11 +55,11 @@
         public ISwapChain SwapChain => swapChain;
 
         public string? StartupScene;
-        private Viewport renderViewport;
+        private Mathematics.Viewport renderViewport;
 
         public bool DebugGraphics { get; set; } = false;
 
-        public Viewport RenderViewport => renderViewport;
+        public Mathematics.Viewport RenderViewport => renderViewport;
 
         public ISceneRenderer Renderer => deferredRenderer;
 
@@ -97,7 +97,7 @@
             CullingManager.Initialize(device);
             ObjectPickerManager.Initialize(device, Width, Height);
 
-            framebuffer = new(device);
+            frameviewer = new(device);
 
             bool sceneGraph = Flags.HasFlag(RendererFlags.SceneGraph);
             bool imGuiWidgets = Flags.HasFlag(RendererFlags.ImGuiWidgets);
@@ -166,9 +166,9 @@
                     Designer.Draw();
                     WidgetManager.Draw(context);
                     ImGuiConsole.Draw();
-                    framebuffer.SourceViewport = Viewport;
-                    framebuffer.Update();
-                    framebuffer.Draw();
+                    frameviewer.SourceViewport = Viewport;
+                    frameviewer.Update();
+                    frameviewer.Draw();
                 }
 
                 var drawing = initTask.IsCompleted && sceneGraph && SceneManager.Current is not null;
@@ -184,7 +184,7 @@
                         }
                         deferredRenderer.Profiler.Clear();
                         deferredRenderer.Profiler.Start(deferredRenderer);
-                        renderViewport = Application.InEditorMode ? framebuffer.Viewport : Viewport;
+                        renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
                         deferredRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
                     }
 

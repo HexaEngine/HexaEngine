@@ -30,7 +30,6 @@ namespace HexaEngine.Rendering
     {
 #nullable disable
         private bool initialized;
-        private bool dirty = true;
         private bool disposedValue;
         private IGraphicsDevice device;
         private IGraphicsContext context;
@@ -360,7 +359,6 @@ namespace HexaEngine.Rendering
         {
             if (!initialized) return;
 
-            dirty = true;
             gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
             depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
             occlusionStencil = new(device, width, height, Format.Depth32Float);
@@ -464,13 +462,12 @@ namespace HexaEngine.Rendering
             scene.Lights.EndResize(width, height);
         }
 
-        public unsafe void Render(IGraphicsContext context, IRenderWindow window, Viewport viewport, Scene scene, Camera? camera)
+        public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera? camera)
         {
             if (sceneChanged)
             {
                 LoadScene(scene);
                 sceneChanged = false;
-                dirty = true;
             }
 
             if (windowResized)
@@ -484,7 +481,6 @@ namespace HexaEngine.Rendering
             if (!initialized) return;
             if (camera == null) return;
 
-            var mm = scene.MeshManager;
             var types = scene.InstanceManager.Types;
 
             // Note the "new" doesn't apply any gc pressure, because the buffer as an array in the background that is already allocated on the unmanaged heap.
@@ -519,7 +515,8 @@ namespace HexaEngine.Rendering
 
             context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
 
-            if (!forwardMode)
+            var lights = scene.Lights;
+            if (lights.Viewport == ViewportShading.Rendered)
             {
                 // Fill Geometry Buffer
                 context.ClearRenderTargetViews(gbuffer.PRTVs, gbuffer.Count, Vector4.Zero);
@@ -556,22 +553,14 @@ namespace HexaEngine.Rendering
             ssao.Draw(context);
 
             // Light Pass
-            if (forwardMode)
-            {
-                for (int i = 0; i < types.Count; i++)
-                {
-                    var type = types[i];
-                    if (type.BeginDraw(context))
-                    {
-                        context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
-                    }
-                }
-                context.ClearState();
-            }
-            else
+            if (lights.Viewport == ViewportShading.Rendered)
             {
                 scene.Lights.Update(context, camera);
                 scene.Lights.DeferredPass(context, camera);
+            }
+            else
+            {
+                scene.Lights.ForwardPass(context, camera);
             }
 
             // Screen Space Reflections
@@ -597,8 +586,6 @@ namespace HexaEngine.Rendering
 
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             DebugDraw.Render(camera, viewport);
-
-            dirty = false;
         }
 
         private float zoom = 1;

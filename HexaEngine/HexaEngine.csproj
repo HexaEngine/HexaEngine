@@ -37,14 +37,17 @@
 
 	<ItemGroup>
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
+		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
 		<Compile Remove="assets\shared\shaders\deferred\toon\**" />
 		<Compile Remove="Pipelines\Compute\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
+		<EmbeddedResource Remove="assets\shared\shaders\deferred\blinn\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
 		<EmbeddedResource Remove="Pipelines\Compute\**" />
 		<None Remove="assets\shared\shaders\compute\light\**" />
+		<None Remove="assets\shared\shaders\deferred\blinn\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
 		<None Remove="assets\shared\shaders\deferred\toon\**" />
 		<None Remove="Pipelines\Compute\**" />
@@ -104,21 +107,6 @@
 		</None>
 		<None Update="assets\shared\shaders\deferred\brdf\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\prepass2\defs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\prepass2\ds.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\prepass2\hs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\prepass2\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\prepass2\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\assao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -198,6 +186,36 @@
 		<None Update="assets\shared\shaders\forward\bsdf\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\forward\solid\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\solid\ds.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\solid\hs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\solid\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\solid\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\wireframe\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\wireframe\ds.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\wireframe\hs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\wireframe\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\wireframe\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\internal\debugdraw\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -219,12 +237,6 @@
 		<None Update="assets\shared\shaders\compute\irradiance\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\flat\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\flat\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\shared\shaders\deferred\terrain\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -239,11 +251,6 @@
 		</None>
 		<None Update="assets\shared\shaders\deferred\terrain\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\bsdf\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-			<ShaderProfile>hs_5_0</ShaderProfile>
-			<EntryPointName>main</EntryPointName>
 		</None>
 		<None Update="assets\shared\shaders\deferred\grid\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -305,12 +312,6 @@
 		<None Update="assets\shared\shaders\deferred\prepass\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\solid\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\solid\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\shared\shaders\effects\bloom\downsample\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -360,9 +361,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\light.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\deferred\bsdf\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\world.hlsl">
@@ -498,11 +496,5 @@
 		<PixelShader Include="assets\shaders\point\PixelShader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</PixelShader>
-	</ItemGroup>
-
-
-
-	<ItemGroup>
-	  <Folder Include="assets\shared\shaders\deferred\blinn\" />
 	</ItemGroup>
 </Project>

@@ -14,7 +14,7 @@
 
     public unsafe class SdlWindow : IWindow
     {
-        private readonly Sdl Sdl = Sdl.GetApi();
+        protected readonly Sdl Sdl = Sdl.GetApi();
         private readonly ShownEventArgs shownEventArgs = new();
         private readonly HiddenEventArgs hiddenEventArgs = new();
         private readonly ExposedEventArgs exposedEventArgs = new();

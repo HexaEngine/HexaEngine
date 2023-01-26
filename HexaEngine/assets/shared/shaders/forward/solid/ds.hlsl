@@ -1,11 +1,14 @@
 #include "defs.hlsl"
-#include "../../world.hlsl"
 #include "../../camera.hlsl"
+#include "../../material.hlsl"
 
-#if (DISPLACEMENT_TEX)
 Texture2D displacmentTexture : register(t0);
 SamplerState displacmentSampler : register(s0);
-#endif
+
+cbuffer MaterialBuffer : register(b2)
+{
+	Material material;
+}
 
 [domain("tri")]
 PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const OutputPatch<DomainInput, 3> tri)
@@ -25,32 +28,25 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 
 	// Calculate the normal vector against the world matrix only.
 #if (DEPTH != 1)
-#if (INSTANCED != 1)
-	output.normal = mul(output.normal, (float3x3) world);
-#endif
 	output.normal = normalize(output.normal);
 #endif
 
-#if (INSTANCED != 1)
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	output.position = mul(output.position, world);
-#endif
-
-#if (DISPLACEMENT_TEX)
+	if (material.DANR.r)
+	{
 #if (DEPTH != 1)
-	float h = displacmentTexture.SampleLevel(displacmentSampler, (float2) output.tex, 0).r;
-	output.position += float4((h - 1.0) * (output.normal * 0.05f), 0);
+		float h = displacmentTexture.SampleLevel(displacmentSampler, (float2) output.tex, 0).r;
+		output.position += float4((h - 1.0) * (output.normal * 0.05f), 0);
 #else
-	float h = displacmentTexture.SampleLevel(displacmentSampler, (float2)tex, 0).r;
-	output.position += float4((h - 1.0) * (normal * 0.05f), 0);
+		float h = displacmentTexture.SampleLevel(displacmentSampler, (float2)tex, 0).r;
+		output.position += float4((h - 1.0) * (normal * 0.05f), 0);
 #endif
-#endif
+	}
 
 #if (DEPTH != 1)
 	output.pos = output.position;
 #endif
 	output.position = mul(output.position, view);
-	output.depth = output.position.z / 100;
+	output.depth = output.position.z / cam_far;
 	output.position = mul(output.position, proj);
 
 #if (DEPTH != 1)
@@ -59,9 +55,6 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 #endif
 
 #if (DEPTH != 1)
-#if (INSTANCED != 1)
-	output.tangent = mul(output.tangent, (float3x3)world);
-#endif
 	output.tangent = normalize(output.tangent);
 #endif
 

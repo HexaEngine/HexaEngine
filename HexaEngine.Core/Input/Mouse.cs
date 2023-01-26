@@ -3,6 +3,8 @@
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using Point = Mathematics.Point;
@@ -18,6 +20,7 @@
         private static readonly ConcurrentQueue<MouseWheelEvent> wheelEvents = new();
         private static readonly Dictionary<MouseButton, ButtonState> states = new();
         private static readonly MouseMotionEventArgs mouseMotionEventArgs = new();
+        private static long last;
 
         private static Point pos;
         private static Vector2 delta;
@@ -94,9 +97,11 @@
             sdl.GetMouseState(ref pos.X, ref pos.Y);
 
             Vector2 del = new();
+
             while (motionEvents.TryDequeue(out var evnt))
             {
-                del += new Vector2(evnt.Xrel, evnt.Yrel);
+                double deltaTime = ((double)sdl.GetTicks() - evnt.Timestamp) / 1000;
+                del += new Vector2(evnt.Xrel, evnt.Yrel) * (float)deltaTime;
             }
             delta = del;
 

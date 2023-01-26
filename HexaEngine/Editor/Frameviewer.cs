@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Managers;
@@ -13,7 +12,7 @@
     using System;
     using System.Numerics;
 
-    public class Framebuffer
+    public class Frameviewer
     {
         private readonly IGraphicsDevice device;
 
@@ -32,7 +31,7 @@
 
         public static bool Fullframe;
 
-        public Framebuffer(IGraphicsDevice device)
+        public Frameviewer(IGraphicsDevice device)
         {
             this.device = device;
         }
@@ -167,6 +166,20 @@
                     if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoMode.WORLD))
                     {
                         Inspector.Mode = ImGuizmoMode.WORLD;
+                    }
+                    ImGui.Separator();
+                    ImGui.Text("Shading Mode");
+                    if (ImGui.RadioButton("Wireframe", scene.Lights.Viewport == Core.Scenes.Managers.ViewportShading.Wireframe))
+                    {
+                        scene.Lights.Viewport = Core.Scenes.Managers.ViewportShading.Wireframe;
+                    }
+                    if (ImGui.RadioButton("Solid", scene.Lights.Viewport == Core.Scenes.Managers.ViewportShading.Solid))
+                    {
+                        scene.Lights.Viewport = Core.Scenes.Managers.ViewportShading.Solid;
+                    }
+                    if (ImGui.RadioButton("Rendered", scene.Lights.Viewport == Core.Scenes.Managers.ViewportShading.Rendered))
+                    {
+                        scene.Lights.Viewport = Core.Scenes.Managers.ViewportShading.Rendered;
                     }
 
                     ImGui.EndMenu();

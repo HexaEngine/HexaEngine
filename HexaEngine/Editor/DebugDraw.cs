@@ -65,6 +65,13 @@ namespace HexaEngine.Editor
                 return true;
             }
 
+            if (command.nIndices != nIndex || command.nVertices != nVertex)
+            {
+                command.nIndices = nIndex;
+                command.nVertices = nVertex;
+                return true;
+            }
+
             return false;
         }
 

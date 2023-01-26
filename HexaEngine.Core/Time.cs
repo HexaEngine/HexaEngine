@@ -5,8 +5,7 @@
 
     public static class Time
     {
-        private static Stopwatch stopwatch = new();
-        private static long lastTicks;
+        private static long last;
         private static float fixedTime;
         private static float cumulativeFrameTime;
 
@@ -24,30 +23,32 @@
         // Public Methods
         public static void Initialize()
         {
-            stopwatch.Start();
-            lastTicks = Stopwatch.GetTimestamp();
+            last = Stopwatch.GetTimestamp();
             fixedTime = 0;
             cumulativeFrameTime = 0;
         }
 
         public static void FrameUpdate()
         {
-            float deltaTime = (float)stopwatch.Elapsed.TotalSeconds;
-            stopwatch.Restart();
+            long now = Stopwatch.GetTimestamp();
+            double deltaTime = ((double)now - last) / Stopwatch.Frequency;
+
             // Calculate the frame time by the time difference over the timer speed resolution.
-            Delta = deltaTime;
+            Delta = (float)deltaTime;
             cumulativeFrameTime += Delta;
             fixedTime += Delta;
             if (deltaTime == 0 || deltaTime < 0)
             {
                 throw new InvalidOperationException();
             }
-            //Trace.WriteLine(Delta);
+
             while (fixedTime > FixedUpdatePerSecond)
             {
                 fixedTime -= FixedUpdatePerSecond;
                 FixedUpdate?.Invoke(null, EventArgs.Empty);
             }
+
+            last = now;
         }
     }
 }
