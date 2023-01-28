@@ -18,7 +18,7 @@
 
         public const float DegToRadFactor = 0.0174532925f;
         public const float Speed = 10F;
-        public const float AngluarSpeed = 5F;
+        public const float AngluarSpeed = 20F;
 
         public static Vector3 Center { get => center; set => center = value; }
 
@@ -60,11 +60,11 @@
                     sc.X += sc.X / 2 * -wheel;
 
                     // Rotate the camera left and right
-                    sc.Y += -delta.X * AngluarSpeed;
+                    sc.Y += -delta.X * Time.Delta * 2;
 
                     // Rotate the camera up and down
                     // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                    sc.Z = Math.Clamp(sc.Z + delta.Y * AngluarSpeed, -MathF.PI / 2, MathF.PI / 2);
+                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta * 2, -MathF.PI / 2, MathF.PI / 2);
 
                     first = false;
 
@@ -83,7 +83,7 @@
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
-                    var re = new Vector3(delta.X, delta.Y, 0) * AngluarSpeed;
+                    var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngluarSpeed;
                     camera.Transform.Rotation += re;
                     if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
                     {

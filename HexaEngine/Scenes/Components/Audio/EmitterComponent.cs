@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Scenes.Components.Audio
+﻿#nullable disable
+
+namespace HexaEngine.Scenes.Components.Audio
 {
     using HexaEngine.Audio;
     using HexaEngine.Core;

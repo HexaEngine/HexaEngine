@@ -14,6 +14,7 @@
 
         public ShadowSpotlightData(Spotlight spotlight)
         {
+            View = spotlight.View;
             Color = spotlight.Color * spotlight.Strength;
             Position = spotlight.Transform.GlobalPosition;
             CutOff = MathF.Cos((spotlight.ConeAngle / 2).ToRad());

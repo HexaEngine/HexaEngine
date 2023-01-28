@@ -11,7 +11,7 @@
     using System.Diagnostics;
 
     [EditorComponent<CSharpScriptComponent>("C# Script")]
-    public class CSharpScriptComponent : IComponent
+    public class CSharpScriptComponent : IScriptComponent
     {
         private IScript? instance;
 
@@ -108,6 +108,8 @@
             {
                 Debug.WriteLine(e);
             }
+
+            instance = null;
         }
     }
 

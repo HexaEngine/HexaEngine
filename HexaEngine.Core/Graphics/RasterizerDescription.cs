@@ -1,21 +1,41 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+
     public struct RasterizerDescription
     {
         public const int DefaultDepthBias = unchecked(0);
         public const float DefaultDepthBiasClamp = unchecked((float)0.0F);
         public const float DefaultSlopeScaledDepthBias = unchecked((float)0.0F);
+
+        [DefaultValue(FillMode.Solid)]
         public FillMode FillMode;
+
+        [DefaultValue(CullMode.Back)]
         public CullMode CullMode;
+
+        [DefaultValue(false)]
         public bool FrontCounterClockwise;
 
+        [DefaultValue(DefaultDepthBias)]
         public int DepthBias;
 
+        [DefaultValue(DefaultDepthBiasClamp)]
         public float DepthBiasClamp;
+
+        [DefaultValue(DefaultSlopeScaledDepthBias)]
         public float SlopeScaledDepthBias;
+
+        [DefaultValue(true)]
         public bool DepthClipEnable;
+
+        [DefaultValue(false)]
         public bool ScissorEnable;
+
+        [DefaultValue(true)]
         public bool MultisampleEnable;
+
+        [DefaultValue(false)]
         public bool AntialiasedLineEnable;
 
         /// <summary>

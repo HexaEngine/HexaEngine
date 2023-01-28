@@ -1,15 +1,30 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+
     public struct DepthStencilDescription
     {
         public const int DefaultStencilReadMask = unchecked(255);
         public const int DefaultStencilWriteMask = unchecked(255);
+
+        [DefaultValue(true)]
         public bool DepthEnable;
+
+        [DefaultValue(DepthWriteMask.All)]
         public DepthWriteMask DepthWriteMask;
+
+        [DefaultValue(ComparisonFunction.LessEqual)]
         public ComparisonFunction DepthFunc;
+
+        [DefaultValue(false)]
         public bool StencilEnable;
+
+        [DefaultValue(DefaultStencilReadMask)]
         public byte StencilReadMask;
+
+        [DefaultValue(DefaultStencilWriteMask)]
         public byte StencilWriteMask;
+
         public DepthStencilOperationDescription FrontFace;
         public DepthStencilOperationDescription BackFace;
 

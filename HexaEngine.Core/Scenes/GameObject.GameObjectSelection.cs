@@ -11,9 +11,7 @@
 
             public GameObject this[int index] { get => ((IList<GameObject>)_objects)[index]; set => ((IList<GameObject>)_objects)[index] = value; }
 
-            public int Count => ((ICollection<GameObject>)_objects).Count;
-
-            public bool IsReadOnly => ((ICollection<GameObject>)_objects).IsReadOnly;
+            public int Count => _objects.Count;
 
             public void PurgeSelection()
             {

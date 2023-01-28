@@ -118,7 +118,7 @@
                     if (Application.InDesignMode)
                         ImGui.BeginDisabled(true);
 
-                    if (ImGui.Button("\xE71A"))
+                    if (ImGui.Button("\xE71A") || ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InDesignMode)
                     {
                         scene.IsSimulating = false;
                         SceneManager.BeginReload();

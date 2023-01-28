@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Effects;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes.Serialization;
@@ -246,6 +247,11 @@
                     if (ImGui.MenuItem("Scene"))
                     {
                         SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
+                        Refresh();
+                    }
+                    if (ImGui.MenuItem("Effect"))
+                    {
+                        EffectDescriptionFile.Create(GetNewFilename(Path.Combine(currentDir.FullName, "New Effect.hexef")));
                         Refresh();
                     }
                     ImGui.EndMenu();

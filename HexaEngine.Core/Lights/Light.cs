@@ -8,7 +8,7 @@
 
     public abstract class Light : GameObject
     {
-        public bool Updated;
+        internal bool InUpdateQueue;
         internal uint QueueIndex;
         protected const float DegToRadFactor = 0.0174532925f;
         protected Vector4 color = Vector4.One;

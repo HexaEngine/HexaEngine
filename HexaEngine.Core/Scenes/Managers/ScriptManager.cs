@@ -10,6 +10,8 @@
 
         public IReadOnlyList<IScriptComponent> Scripts => scripts;
 
+        public string Name => "Scripts";
+
         public void Register(GameObject gameObject)
         {
             scripts.AddComponentIfIs(gameObject);
@@ -20,22 +22,14 @@
             scripts.RemoveComponentIfIs(gameObject);
         }
 
-        public void Update()
+        public void Update(ThreadDispatcher dispatcher)
         {
+            if (Application.InDesignMode) return;
             for (int i = 0; i < scripts.Count; i++)
             {
                 scripts[i].Update();
             }
-        }
-
-        public void Update(ThreadDispatcher dispatcher)
-        {
-            dispatcher.DispatchWorkers(Update, scripts.Count);
-        }
-
-        private void Update(int i)
-        {
-            scripts[i].Update();
+            //dispatcher.DispatchWorkers(Update, scripts.Count);
         }
 
         public void FixedUpdate()
@@ -48,7 +42,13 @@
 
         public void FixedUpdate(ThreadDispatcher dispatcher)
         {
-            dispatcher.DispatchWorkers(i => scripts[i].FixedUpdate(), scripts.Count);
+            if (Application.InDesignMode) return;
+            dispatcher.DispatchWorkers(FixedUpdate, scripts.Count);
+        }
+
+        private void FixedUpdate(int i)
+        {
+            scripts[i].FixedUpdate();
         }
 
         public void Awake(ThreadDispatcher dispatcher)

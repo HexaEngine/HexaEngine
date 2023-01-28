@@ -287,16 +287,14 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write<T>(IBuffer buffer, T value) where T : struct
+        public void Write<T>(IBuffer buffer, T value) where T : unmanaged
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
             DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data).ThrowHResult();
-            var size = Marshal.SizeOf<T>();
-            var ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(value, ptr, true);
-            Buffer.MemoryCopy((void*)ptr, data.PData, data.RowPitch, size);
-            Marshal.FreeHGlobal(ptr);
+
+            Buffer.MemoryCopy(&value, data.PData, data.RowPitch, sizeof(T));
+
             DeviceContext->Unmap(resource, 0);
         }
 

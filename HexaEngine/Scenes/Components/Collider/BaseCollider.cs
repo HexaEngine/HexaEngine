@@ -10,7 +10,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Systems;
 
-    public abstract class BaseCollider : IBaseCollider
+    public abstract class BaseCollider : ICollider
     {
         protected bool hasBody = false;
         protected bool hasShape = false;
@@ -35,6 +35,7 @@
 
         private float mass = 1;
         private float sleepThreshold = 0.01f;
+        private bool lockRotation;
 
         [EditorProperty<ColliderType>("Type")]
         public ColliderType Type
@@ -47,6 +48,10 @@
         [EditorProperty("Sleep threshold")]
         public float SleepThreshold
         { get => sleepThreshold; set { sleepThreshold = value; update = true; } }
+
+        [EditorProperty("Lock Rotation")]
+        public bool LockRotation
+        { get => lockRotation; set { lockRotation = value; update = true; } }
 
         [JsonIgnore]
         public TypedIndex ShapeIndex => index;
@@ -111,6 +116,12 @@
             if (Application.InDesignMode || parent == null || simulation == null || inCompound || hasBody) return;
             DestroyBody();
             CreateShape();
+
+            if (lockRotation)
+            {
+                inertia = default;
+            }
+
             if (Type == ColliderType.Static)
             {
                 staticHandle = simulation.Statics.Add(new(pose, index));

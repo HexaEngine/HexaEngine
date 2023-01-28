@@ -1,10 +1,19 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+
     public struct DepthStencilOperationDescription
     {
+        [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilFailOp;
+
+        [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilDepthFailOp;
+
+        [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilPassOp;
+
+        [DefaultValue(ComparisonFunction.Always)]
         public ComparisonFunction StencilFunc;
 
         /// <summary>

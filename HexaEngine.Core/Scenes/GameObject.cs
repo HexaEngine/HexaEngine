@@ -210,10 +210,6 @@
 
         internal void Update()
         {
-            for (int i = 0; i < components.Count; i++)
-            {
-                components[i].Update();
-            }
             for (int i = 0; i < children.Count; i++)
             {
                 children[i].Update();

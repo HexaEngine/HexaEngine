@@ -55,7 +55,7 @@
 
         public void Initialize(Simulation simulation)
         {
-            //Characters.Initialize(simulation); // TODO: FIX
+            Characters.Initialize(simulation);
             Events.Initialize(simulation);
         }
     }
@@ -82,7 +82,7 @@
         /// <summary>
         /// Gets how the pose integrator should handle angular velocity integration.
         /// </summary>
-        public AngularIntegrationMode AngularIntegrationMode => AngularIntegrationMode.Nonconserving; //Don't care about fidelity in this demo!
+        public AngularIntegrationMode AngularIntegrationMode => AngularIntegrationMode.ConserveMomentum;
 
         public bool AllowSubstepsForUnconstrainedBodies { get; }
         public bool IntegrateVelocityForKinematics { get; }

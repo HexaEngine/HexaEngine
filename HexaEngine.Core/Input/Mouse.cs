@@ -20,7 +20,6 @@
         private static readonly ConcurrentQueue<MouseWheelEvent> wheelEvents = new();
         private static readonly Dictionary<MouseButton, ButtonState> states = new();
         private static readonly MouseMotionEventArgs mouseMotionEventArgs = new();
-        private static long last;
 
         private static Point pos;
         private static Vector2 delta;
@@ -100,8 +99,7 @@
 
             while (motionEvents.TryDequeue(out var evnt))
             {
-                double deltaTime = ((double)sdl.GetTicks() - evnt.Timestamp) / 1000;
-                del += new Vector2(evnt.Xrel, evnt.Yrel) * (float)deltaTime;
+                del += new Vector2(evnt.Xrel, evnt.Yrel);
             }
             delta = del;
 

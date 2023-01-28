@@ -5,7 +5,7 @@
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes;
 
-    public interface IBaseCollider : IComponent
+    public interface ICollider : IComponent
     {
         BodyHandle BodyHandle { get; }
 

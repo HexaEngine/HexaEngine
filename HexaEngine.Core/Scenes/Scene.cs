@@ -5,8 +5,8 @@
     using BepuUtilities.Memory;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
+    using HexaEngine.Core.Physics.Characters;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Scenes.Systems;
     using Newtonsoft.Json;
@@ -92,6 +92,12 @@
         [JsonIgnore]
         public SceneProfiler Profiler { get; } = new(10);
 
+        [JsonIgnore]
+        public CharacterControllers CharacterControllers => characterControllers;
+
+        [JsonIgnore]
+        public ContactEvents ContactEvents => contactEvents;
+
         public SceneVariables Variables { get; } = new();
 
         public GameObject Root => root;
@@ -105,6 +111,7 @@
             materialManager ??= new();
             meshManager ??= new();
 
+            systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(scriptManager);
             systems.Add(lightManager);
@@ -115,11 +122,14 @@
             var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
             ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
 
-            NarrowphaseCallbacks callbacks = new();
+            characterControllers = new(BufferPool);
+            contactEvents = new(ThreadDispatcher, BufferPool);
+
+            NarrowphaseCallbacks callbacks = new(characterControllers, contactEvents);
             callbacks.Characters = new(BufferPool);
             callbacks.Events = new(ThreadDispatcher, BufferPool);
             Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
-
+            characterControllers.Initialize(Simulation);
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
 
@@ -222,6 +232,8 @@
 
         private const float stepsize = 0.016f;
         private float interpol;
+        private CharacterControllers characterControllers;
+        private ContactEvents contactEvents;
 
         public void Simulate(float delta)
         {
@@ -340,6 +352,7 @@
             Simulation.Dispose();
             ThreadDispatcher.Dispose();
             lightManager.Dispose();
+            systems.Clear();
             semaphore.Release();
         }
 

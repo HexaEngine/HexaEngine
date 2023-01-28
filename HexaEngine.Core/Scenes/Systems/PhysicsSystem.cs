@@ -1,12 +1,13 @@
 ﻿namespace HexaEngine.Core.Scenes.Systems
 {
     using BepuUtilities;
-    using System;
     using System.Collections.Generic;
 
     public class PhysicsSystem : ISystem
     {
-        private readonly List<IBaseCollider> colliders = new();
+        private readonly List<ICollider> colliders = new();
+
+        public string Name => "PhysicsUpdate";
 
         public void Register(GameObject gameObject)
         {
@@ -24,7 +25,16 @@
 
         public void Update(ThreadDispatcher dispatcher)
         {
-            dispatcher.DispatchWorkers(i => colliders[i].Update());
+            if (Application.InDesignMode) return;
+            for (int i = 0; i < colliders.Count; i++)
+            {
+                colliders[i].Update();
+            }
+        }
+
+        public void Update(int i)
+        {
+            colliders[i].Update();
         }
 
         public void FixedUpdate(ThreadDispatcher dispatcher)

@@ -16,7 +16,7 @@
         public override void CreateShape()
         {
             if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape) return;
-            colliderChildren = parent.GetComponentsFromChilds<IBaseCollider>().ToList();
+            colliderChildren = parent.GetComponentsFromChilds<ICollider>().ToList();
             CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
             for (int i = 0; i < colliderChildren.Count; i++)
             {

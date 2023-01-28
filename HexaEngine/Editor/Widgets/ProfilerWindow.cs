@@ -58,7 +58,9 @@
         public RingBuffer<double> Frame = new(512);
         public RingBuffer<double> Graphics = new(512);
         public RingBuffer<double> Updates = new(512);
+
         public RingBuffer<double> Systems = new(512);
+        private readonly Dictionary<object, RingBuffer<double>> systems = new();
 
         public RingBuffer<double> Simulation = new(512);
         public RingBuffer<double> PoseIntegrator = new(512);
@@ -84,6 +86,7 @@
             Frame.Add(Time.Delta * 1000);
             Graphics.Add(renderer.Profiler[renderer] * 1000);
             Updates.Add(scene.Profiler[scene.UpdateCallbacks] * 1000);
+
             Systems.Add(scene.Profiler[scene.Systems] * 1000);
 
             Simulation.Add(simulation.Profiler[simulation] * 1000);
@@ -111,6 +114,36 @@
                 ImPlot.PlotLine("Physics", ref Simulation.Values[0], Simulation.Length, 1, 0, ImPlotLineFlags.None, Simulation.Head);
                 ImPlot.PlotLine("Updates", ref Updates.Values[0], Updates.Length, 1, 0, ImPlotLineFlags.None, Updates.Head);
                 ImPlot.PlotLine("Systems", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
+                ImPlot.EndPlot();
+            }
+
+            ImPlot.SetNextAxesToFit();
+
+            if (ImPlot.BeginPlot("Systems", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+            {
+                ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                ImPlot.PlotShaded("Total", ref Systems.Values[0], Systems.Length, fill, 1, 0, ImPlotShadedFlags.None, Systems.Head);
+                ImPlot.PopStyleVar();
+                ImPlot.PlotLine("Total", ref Systems.Values[0], Systems.Length, 1, 0, ImPlotLineFlags.None, Systems.Head);
+                for (int i = 0; i < scene.Systems.Count; i++)
+                {
+                    var system = scene.Systems[i];
+                    var value = scene.Profiler[system];
+                    if (!systems.TryGetValue(system, out var buffer))
+                    {
+                        buffer = new RingBuffer<double>(512);
+                        systems.Add(system, buffer);
+                    }
+                    buffer.Add(value * 1000);
+                    systems[system] = buffer;
+
+                    ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                    ImPlot.PlotShaded(system.Name, ref buffer.Values[0], buffer.Length, fill, 1, 0, ImPlotShadedFlags.None, buffer.Head);
+                    ImPlot.PopStyleVar();
+
+                    ImPlot.PlotLine(system.Name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
+                }
+
                 ImPlot.EndPlot();
             }
 

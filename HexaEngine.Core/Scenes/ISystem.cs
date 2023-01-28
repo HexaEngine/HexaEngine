@@ -4,6 +4,8 @@
 
     public interface ISystem
     {
+        public string Name { get; }
+
         public void Register(GameObject gameObject);
 
         public void Unregister(GameObject gameObject);

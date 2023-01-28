@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using Newtonsoft.Json.Linq;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Numerics;
@@ -15,12 +16,12 @@
 
         public ConfigKey? GetKey(string path)
         {
-            return Keys.Find(x => x.Name == path);
+            return ConfigKey.Find(Keys, path);
         }
 
         public ConfigKey GetOrCreateKey(string path)
         {
-            ConfigKey? key = Keys.Find(x => x.Name == path);
+            ConfigKey? key = ConfigKey.Find(Keys, path);
             if (key is null)
             {
                 key = new ConfigKey(path);
@@ -58,8 +59,12 @@
 
     public class ConfigValue
     {
+        private object? instance;
+        private PropertyInfo? property;
+
         private string? value;
 
+        [JsonConstructor]
         public ConfigValue(string name, DataType dataType, string? value, bool isReadOnly)
         {
             Name = name;
@@ -67,6 +72,22 @@
             Value = value;
             IsReadOnly = isReadOnly;
         }
+
+        public ConfigValue(object instanceObject, PropertyInfo propertyInfo, DataType dataType, string? value, bool isReadOnly)
+        {
+            instance = instanceObject;
+            property = propertyInfo;
+            Name = propertyInfo.Name;
+            DataType = dataType;
+            Value = value;
+            IsReadOnly = isReadOnly;
+        }
+
+        [JsonIgnore]
+        public object? Instance { get => instance; internal set => instance = value; }
+
+        [JsonIgnore]
+        public PropertyInfo? Property { get => property; internal set => property = value; }
 
         public DataType DataType { get; set; }
 
@@ -258,7 +279,7 @@
 
         public ConfigKey GetOrCreateKey(string path)
         {
-            ConfigKey? key = Keys.Find(x => x.Name == path);
+            ConfigKey? key = Find(Keys, path);
             if (key is null)
             {
                 key = new ConfigKey(path);
@@ -269,19 +290,19 @@
 
         public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
         {
-            value = Values.Find(x => x.Name == key)?.Value;
+            value = Find(Values, key)?.Value;
             return value != null;
         }
 
         public bool TryGetKeyValue(string key, [NotNullWhen(true)] out ConfigValue? value)
         {
-            value = Values.Find(x => x.Name == key);
+            value = Find(Values, key);
             return value != null;
         }
 
-        public void TryGetOrAddKeyValue(string key, string defaultValue, DataType type, bool isReadOnly, out ConfigValue value)
+        public void TryGetOrAddKeyValue(string key, string? defaultValue, DataType type, bool isReadOnly, out ConfigValue value)
         {
-            var val = Values.Find(x => x.Name == key);
+            var val = Find(Values, key);
             if (val == null)
             {
                 val = new ConfigValue(key, type, defaultValue, isReadOnly);
@@ -292,7 +313,24 @@
 
         public bool ContainsKey(string key)
         {
-            return Values.Any(x => x.Name == key);
+            for (int i = 0; i < Values.Count; i++)
+            {
+                var val = Values[i];
+                if (val.Name == key)
+                    return true;
+            }
+            return false;
+        }
+
+        public static ConfigValue? Find(List<ConfigValue> values, string key)
+        {
+            for (int i = 0; i < values.Count; i++)
+            {
+                var val = values[i];
+                if (val.Name == key)
+                    return val;
+            }
+            return null;
         }
 
         public void AddValue(string key, DataType type, string? value, bool isReadOnly)
@@ -390,7 +428,7 @@
 
         public void GenerateSubKeyAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, string name)
         {
-            ConfigKey? key = Keys.Find(x => x.Name == name);
+            ConfigKey? key = Find(Keys, name);
             bool isNew = key == null;
             key ??= new(name);
             key.InitAuto(t);
@@ -400,8 +438,341 @@
             }
         }
 
+        public static ConfigKey? Find(List<ConfigKey> keys, string name)
+        {
+            for (int i = 0; i < keys.Count; i++)
+            {
+                if (keys[i].Name == name)
+                    return keys[i];
+            }
+            return null;
+        }
+
+        private static void StringValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+            property.SetValue(t, e);
+#nullable enable
+        }
+
+        private static void BoolValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, bool.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(bool));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void ByteValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, byte.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(byte));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void SByteValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, sbyte.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(sbyte));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void UShortValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, ushort.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(ushort));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void ShortValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, short.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(short));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void UIntValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, uint.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(uint));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void IntValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, int.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(int));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void ULongValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, ulong.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(ulong));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void LongValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, long.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(long));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void FloatValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, float.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(float));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void DoubleValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, double.Parse(e));
+            }
+            else
+            {
+                property.SetValue(t, default(double));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void Vector2ValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, configValue.GetVector2());
+            }
+            else
+            {
+                property.SetValue(t, default(Vector2));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void Vector3ValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, configValue.GetVector3());
+            }
+            else
+            {
+                property.SetValue(t, default(Vector3));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
+        private static void Vector4ValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var t = configValue.Instance;
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
+            if (e != null)
+            {
+                property.SetValue(t, configValue.GetVector4());
+            }
+            else
+            {
+                property.SetValue(t, default(Vector4));
+            }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
+        }
+
         public void GenerateAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t)
         {
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
             Type type = typeof(T);
             PropertyInfo[] properties = type.GetProperties();
             for (int i = 0; i < properties.Length; i++)
@@ -410,250 +781,107 @@
                 ConfigValue? val = null;
                 if (property.PropertyType == typeof(string))
                 {
-                    val = new(property.Name, DataType.String, property.GetValue(t) as string, !property.CanWrite);
+                    val = new(t, property, DataType.String, property.GetValue(t) as string, !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        property.SetValue(t, e);
-                    };
+                        val.ValueChanged += StringValueChanged;
                 }
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    val = new(property.Name, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, bool.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(bool));
-                        }
-                    };
+                        val.ValueChanged += BoolValueChanged;
                 }
 
                 if (property.PropertyType == typeof(byte))
                 {
-                    val = new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, byte.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(byte));
-                        }
-                    };
+                        val.ValueChanged += ByteValueChanged;
                 }
 
                 if (property.PropertyType == typeof(sbyte))
                 {
-                    val = new(property.Name, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, sbyte.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(sbyte));
-                        }
-                    };
+                        val.ValueChanged += SByteValueChanged;
                 }
 
                 if (property.PropertyType == typeof(ushort))
                 {
-                    val = new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, ushort.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(ushort));
-                        }
-                    };
+                        val.ValueChanged += UShortValueChanged;
                 }
 
                 if (property.PropertyType == typeof(short))
                 {
                     val = new(property.Name, DataType.Int16, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, short.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(short));
-                        }
-                    };
+                        val.ValueChanged += ShortValueChanged;
                 }
 
                 if (property.PropertyType == typeof(uint))
                 {
-                    val = new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, uint.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(uint));
-                        }
-                    };
+                        val.ValueChanged += UIntValueChanged;
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
-                    val = new(property.Name, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, int.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(int));
-                        }
-                    };
+                        val.ValueChanged += IntValueChanged;
                 }
 
                 if (property.PropertyType == typeof(ulong))
                 {
-                    val = new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, ulong.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(ulong));
-                        }
-                    };
+                        val.ValueChanged += ULongValueChanged;
                 }
 
                 if (property.PropertyType == typeof(long))
                 {
-                    val = new(property.Name, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, long.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(long));
-                        }
-                    };
+                        val.ValueChanged += LongValueChanged;
                 }
 
                 if (property.PropertyType == typeof(float))
                 {
-                    val = new(property.Name, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, float.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(float));
-                        }
-                    };
+                        val.ValueChanged += FloatValueChanged;
                 }
 
                 if (property.PropertyType == typeof(double))
                 {
-                    val = new(property.Name, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, double.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(double));
-                        }
-                    };
+                        val.ValueChanged += DoubleValueChanged;
                 }
 
                 if (property.PropertyType == typeof(Vector2))
                 {
-                    val = new(property.Name, DataType.Float2, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Float2, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, s.GetVector2());
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(Vector2));
-                        }
-                    };
+                        val.ValueChanged += Vector2ValueChanged;
                 }
 
                 if (property.PropertyType == typeof(Vector3))
                 {
-                    val = new(property.Name, DataType.Float3, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Float3, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, s.GetVector3());
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(Vector3));
-                        }
-                    };
+                        val.ValueChanged += Vector3ValueChanged;
                 }
 
                 if (property.PropertyType == typeof(Vector4))
                 {
-                    val = new(property.Name, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val = new(t, property, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, s.GetVector4());
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(Vector4));
-                        }
-                    };
+                        val.ValueChanged += Vector4ValueChanged;
                 }
 
                 if (val == null)
@@ -663,292 +891,155 @@
 
                 Values.Add(val);
             }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
         }
 
         public void InitAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t)
         {
+#nullable disable
+#pragma warning disable HAA0601 // Value type to reference type conversion causing boxing allocation
             Type type = typeof(T);
             PropertyInfo[] properties = type.GetProperties();
             for (int i = 0; i < properties.Length; i++)
             {
                 PropertyInfo property = properties[i];
-                TryGetKeyValue(property.Name, out ConfigValue? val);
+                TryGetKeyValue(property.Name, out ConfigValue val);
+
                 bool isNew = val == null;
                 if (property.PropertyType == typeof(string))
                 {
-                    val ??= new(property.Name, DataType.String, property.GetValue(t) as string, !property.CanWrite);
+                    val ??= new(t, property, DataType.String, property.GetValue(t) as string, !property.CanWrite);
+
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                        {
-                            property.SetValue(t, e);
-                        };
+                        val.ValueChanged += StringValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(bool))
                 {
-                    val ??= new(property.Name, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, bool.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(bool));
-                        }
-                    };
+                        val.ValueChanged += BoolValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(byte))
                 {
-                    val ??= new(property.Name, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, byte.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(byte));
-                        }
-                    };
+                        val.ValueChanged += ByteValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(sbyte))
                 {
-                    val ??= new(property.Name, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, sbyte.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(sbyte));
-                        }
-                    };
+                        val.ValueChanged += SByteValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(ushort))
                 {
-                    val ??= new(property.Name, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, ushort.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(ushort));
-                        }
-                    };
+                        val.ValueChanged += UShortValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(short))
                 {
-                    val ??= new(property.Name, DataType.Int16, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Int16, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, short.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(short));
-                        }
-                    };
+                        val.ValueChanged += ShortValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(uint))
                 {
-                    val ??= new(property.Name, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, uint.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(uint));
-                        }
-                    };
+                        val.ValueChanged += UIntValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
-                    val ??= new(property.Name, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, int.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(int));
-                        }
-                    };
+                        val.ValueChanged += IntValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(ulong))
                 {
-                    val ??= new(property.Name, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, ulong.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(ulong));
-                        }
-                    };
+                        val.ValueChanged += ULongValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(long))
                 {
-                    val ??= new(property.Name, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, long.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(long));
-                        }
-                    };
+                        val.ValueChanged += LongValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(float))
                 {
-                    val ??= new(property.Name, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, float.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(float));
-                        }
-                    };
+                        val.ValueChanged += FloatValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(double))
                 {
-                    val ??= new(property.Name, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, double.Parse(e));
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(double));
-                        }
-                    };
+                        val.ValueChanged += DoubleValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(Vector2))
                 {
-                    val ??= new(property.Name, DataType.Float2, ((Vector2)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture), !property.CanWrite);
+                    val ??= new(t, property, DataType.Float2, ((Vector2)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, s.GetVector2());
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(Vector2));
-                        }
-                    };
+                        val.ValueChanged += Vector2ValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(Vector3))
                 {
-                    val ??= new(property.Name, DataType.Float3, ((Vector3)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture), !property.CanWrite);
+                    val ??= new(t, property, DataType.Float3, ((Vector3)property.GetValue(t)).ToString("G", CultureInfo.InvariantCulture), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, s.GetVector3());
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(Vector3));
-                        }
-                    };
+                        val.ValueChanged += Vector3ValueChanged;
                     }
                 }
 
                 if (property.PropertyType == typeof(Vector4))
                 {
-                    val ??= new(property.Name, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
+                    val ??= new(t, property, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
                     {
-                        val.ValueChanged += (s, e) =>
-                    {
-                        if (e != null)
-                        {
-                            property.SetValue(t, s.GetVector4());
-                        }
-                        else
-                        {
-                            property.SetValue(t, default(Vector4));
-                        }
-                    };
+                        val.ValueChanged += Vector4ValueChanged;
                     }
                 }
 
@@ -956,13 +1047,18 @@
                 {
                     continue;
                 }
+                val.Instance = t;
+                val.Property = property;
                 val.IsReadOnly = !property.CanWrite;
                 val.Value = val.Value;
+
                 if (isNew)
                 {
                     Values.Add(val);
                 }
             }
+#pragma warning restore HAA0601 // Value type to reference type conversion causing boxing allocation
+#nullable enable
         }
     }
 

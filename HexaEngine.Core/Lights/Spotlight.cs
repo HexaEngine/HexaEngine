@@ -24,9 +24,13 @@
         private float coneAngle;
         private float blend;
         private float falloff = 100;
+        private Matrix4x4 view;
 
         [JsonIgnore]
         public readonly BoundingFrustum ShadowFrustum = new();
+
+        [JsonIgnore]
+        public Matrix4x4 View => view;
 
         [JsonIgnore]
         public override LightType LightType => LightType.Spot;
@@ -100,9 +104,9 @@
         {
             if (psmDepthBuffer == null) return;
 #nullable disable
-            ShadowSpotlightData data = buffer.Local[QueueIndex];
-            PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);
-            context.Write(psmBuffer, data.View);
+            ShadowSpotlightData* data = &buffer.Local[QueueIndex];
+            data->View = view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);
+            context.Write(psmBuffer, view);
             context.ClearDepthStencilView(psmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, psmDepthBuffer.DSV);
             psmPipeline.BeginDraw(context, psmDepthBuffer.Viewport);

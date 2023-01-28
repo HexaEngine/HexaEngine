@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
-    using ImPlotNET;
 
     public static class WidgetManager
     {
@@ -26,6 +25,7 @@
             Register<PipelineEditor>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
+            Register<EffectWindow>();
         }
 
         public static bool Register<T>() where T : ImGuiWindow, new()
@@ -92,7 +92,7 @@
             }
         }
 
-        public static void DrawMenu()
+        public static unsafe void DrawMenu()
         {
             for (int i = 0; i < widgets.Count; i++)
             {

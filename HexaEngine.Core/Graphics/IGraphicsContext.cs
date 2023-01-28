@@ -19,7 +19,7 @@
 
         unsafe void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged;
 
-        public void Write<T>(IBuffer buffer, T value) where T : struct;
+        public void Write<T>(IBuffer buffer, T value) where T : unmanaged;
 
         unsafe void Read(IBuffer buffer, void* value, int size);
 

@@ -204,6 +204,8 @@
 
         public int ActiveCount => activeLights.Count;
 
+        public string Name => "Lights";
+
         private void InstanceUpdated(ModelInstanceType type, ModelInstance instance)
         {
             modelUpdateQueue.Enqueue(instance);
@@ -298,7 +300,11 @@
                         light.DestroyShadowMap();
                     }
 
-                    updateShadowLightQueue.Enqueue(light);
+                    if (!light.InUpdateQueue)
+                    {
+                        light.InUpdateQueue = true;
+                        updateShadowLightQueue.Enqueue(light);
+                    }
                 }
                 else
                 {
@@ -316,8 +322,9 @@
                     var light = activeLights[i];
                     if (!light.CastShadows)
                         continue;
-                    if (light.IntersectFrustum(box) && !updateShadowLightQueue.Contains(light))
+                    if (light.IntersectFrustum(box) && !light.InUpdateQueue)
                     {
+                        light.InUpdateQueue = true;
                         updateShadowLightQueue.Enqueue(light);
                     }
                 }
@@ -326,8 +333,11 @@
             for (int i = 0; i < activeLights.Count; i++)
             {
                 var light = activeLights[i];
-                if (light.CastShadows && light is DirectionalLight && !updateShadowLightQueue.Contains(light))
+                if (light.CastShadows && light is DirectionalLight && !light.InUpdateQueue)
+                {
+                    light.InUpdateQueue = true;
                     updateShadowLightQueue.Enqueue(light);
+                }
             }
 
             UpdateShadowMaps(context, camera, updateShadowLightQueue);
@@ -442,7 +452,7 @@
                                 continue;
                             light.QueueIndex = psmCount;
                             shadowSpotlights.Add(new((Spotlight)light));
-                            shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + +MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;
+                            shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;
                             psmCount++;
                             break;
                     }
@@ -574,6 +584,8 @@
         public unsafe void Dispose()
         {
             instanceManager.Updated -= InstanceUpdated;
+            instanceManager.InstanceCreated -= InstanceCreated;
+            instanceManager.InstanceDestroyed -= InstanceDestroyed;
 
             directionalLights.Dispose();
             pointLights.Dispose();
@@ -615,6 +627,7 @@
                         ((Spotlight)light).UpdateShadowMap(context, shadowSpotlights, instanceManager);
                         break;
                 }
+                light.InUpdateQueue = false;
             }
         }
 

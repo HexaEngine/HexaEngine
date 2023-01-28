@@ -58,6 +58,7 @@
                 if (state == KeyState.Released)
                 {
                     Released?.Invoke(null, keyboardEventArgs);
+                    pushed.Add(keyCode);
                 }
                 else if (state == KeyState.Pressed)
                 {

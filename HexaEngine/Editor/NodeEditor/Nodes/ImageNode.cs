@@ -7,7 +7,6 @@
     public class ImageNode : Node
     {
         private IShaderResourceView? image;
-        private nint imgId;
 
         public ImageNode(NodeEditor graph, string name, bool removable, bool isStatic) : base(graph, name, removable, isStatic)
         {
@@ -35,7 +34,7 @@
 
         protected override void DrawContent()
         {
-            ImGui.Image(imgId, Size);
+            ImGui.Image(image?.NativePointer ?? 0, Size);
         }
 
         public override void Destroy()
@@ -47,7 +46,6 @@
     public class ImageCubeNode : Node
     {
         private IShaderResourceView? image;
-        private nint imgId;
 
         public ImageCubeNode(NodeEditor graph, string name, bool removable, bool isStatic) : base(graph, name, removable, isStatic)
         {

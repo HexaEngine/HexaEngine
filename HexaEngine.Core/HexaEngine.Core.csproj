@@ -6,7 +6,6 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DebugType>embedded</DebugType>
-		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<Platforms>AnyCPU;x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
@@ -28,13 +27,14 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="ClrHeapAllocationAnalyzer" Version="3.0.0" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.16.0" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
@@ -50,7 +50,6 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Folder Include="AI\Pathfinding\" />
-	  <Folder Include="Effects\" />
 	  <Folder Include="Particles\" />
 	</ItemGroup>
 </Project>

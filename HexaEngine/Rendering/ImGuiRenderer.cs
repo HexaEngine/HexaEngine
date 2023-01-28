@@ -131,7 +131,7 @@ namespace HexaEngine.Rendering
             colors[(int)ImGuiCol.NavHighlight] = new Vector4(1.00f, 0.00f, 0.00f, 1.00f);
             colors[(int)ImGuiCol.NavWindowingHighlight] = new Vector4(1.00f, 0.00f, 0.00f, 0.70f);
             colors[(int)ImGuiCol.NavWindowingDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.20f);
-            colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(1.00f, 0.00f, 0.00f, 0.35f);
+            colors[(int)ImGuiCol.ModalWindowDimBg] = new Vector4(0.10f, 0.10f, 0.10f, 0.00f);
 
             style.WindowPadding = new Vector2(8.00f, 8.00f);
             style.FramePadding = new Vector2(5.00f, 2.00f);
@@ -156,19 +156,19 @@ namespace HexaEngine.Rendering
             style.LogSliderDeadzone = 4;
             style.TabRounding = 4;
 
-            //ImNodes.StyleColorsDark();
-            var ncolors = ImNodes.GetStyle()->colors;
-            ncolors[(int)ColorStyle.NodeBackground] = new Vector4(0.06f, 0.06f, 0.06f, 0.94f).Pack();
-            ncolors[(int)ColorStyle.NodeBackgroundHovered] = new Vector4(0.12f, 0.12f, 0.12f, 0.94f).Pack();
-            ncolors[(int)ColorStyle.NodeBackgroundSelected] = new Vector4(0.16f, 0.16f, 0.16f, 0.94f).Pack();
-            ncolors[(int)ColorStyle.TitleBar] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
-            ncolors[(int)ColorStyle.TitleBarHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();
-            ncolors[(int)ColorStyle.TitleBarSelected] = new Vector4(0.70f, 0.10f, 0.75f, 1.00f).Pack();
+            ImNodes.StyleColorsDark();
+            /*var ncolors = ImNodes.GetStyle()->colors;
+            ncolors[(int)ColorStyle.NodeBackground] = new Vector4(0.10f, 0.10f, 0.10f, 1.00f).Pack();
+            ncolors[(int)ColorStyle.NodeBackgroundHovered] = new Vector4(0.00f, 0.00f, 0.00f, 0.36f).Pack();
+            ncolors[(int)ColorStyle.NodeBackgroundSelected] = new Vector4(0.20f, 0.22f, 0.23f, 0.33f).Pack();
+            ncolors[(int)ColorStyle.TitleBar] = new Vector4(0.00f, 0.00f, 0.00f, 0.52f).Pack();
+            ncolors[(int)ColorStyle.TitleBarHovered] = new Vector4(0.00f, 0.00f, 0.00f, 0.36f).Pack();
+            ncolors[(int)ColorStyle.TitleBarSelected] = new Vector4(0.20f, 0.22f, 0.23f, 0.33f).Pack();
             ncolors[(int)ColorStyle.Link] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
             ncolors[(int)ColorStyle.LinkHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();
             ncolors[(int)ColorStyle.LinkSelected] = new Vector4(0.70f, 0.10f, 0.75f, 1.00f).Pack();
             ncolors[(int)ColorStyle.Pin] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
-            ncolors[(int)ColorStyle.PinHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();
+            ncolors[(int)ColorStyle.PinHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();*/
 
             inputHandler = new(window);
         }
@@ -178,7 +178,7 @@ namespace HexaEngine.Rendering
             inputHandler.Update();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();
-          
+
             ImGui.PushStyleColor(ImGuiCol.WindowBg, Vector4.Zero);
             ImGui.DockSpaceOverViewport(null, ImGuiDockNodeFlags.PassthruCentralNode);
             ImGui.PopStyleColor();

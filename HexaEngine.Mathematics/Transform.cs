@@ -33,7 +33,7 @@
     /// <summary>
     /// <see cref="Transform"/> is used for hierachical matrix calculation.
     /// </summary>
-    public class Transform
+    public class Transform : ITransform
     {
         protected TransformSnapshot initial;
         protected Transform? parent;
@@ -75,13 +75,14 @@
                 parent = value;
                 if (parent != null)
                     parent.Updated += ParentUpdated;
-                dirty = true;
+                OnChanged();
             }
         }
 
         private void ParentUpdated(object? sender, EventArgs e)
         {
             dirty = true;
+            Recalculate();
         }
 
         /// <summary>
@@ -96,7 +97,7 @@
                 oldpos = position;
                 position = value;
                 velocity = position - oldpos;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -112,7 +113,7 @@
                 if (rotation == value) return;
                 rotation = value;
                 orientation = value.NormalizeEulerAngleDegrees().ToRad().GetQuaternion();
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -126,7 +127,7 @@
             {
                 if (scale == value) return;
                 scale = value;
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -142,7 +143,7 @@
                 if (orientation == value) return;
                 orientation = value;
                 rotation = value.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -162,7 +163,7 @@
                     // Transform because the rotation could modify the position of the child.
                     position = Vector3.Transform(value, parent.globalInverse);
 
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -182,7 +183,7 @@
                     // Divide because quaternions are like matrices.
                     orientation = value / parent.globalOrientation;
 
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -202,7 +203,7 @@
                     // divide because scale is a factor.
                     scale = value / parent.globalScale;
 
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -220,7 +221,7 @@
                 (position, orientation) = value;
                 velocity = position - oldpos;
                 rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -238,7 +239,7 @@
                 (position, orientation, scale) = value;
                 velocity = position - oldpos;
                 rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
-                dirty = true;
+                OnChanged();
             }
         }
 
@@ -325,6 +326,8 @@
         /// </summary>
         public event EventHandler? Updated;
 
+        public event EventHandler? Changed;
+
         /// <summary>
         /// Invokes the <see cref="Updated"/> event.
         /// </summary>
@@ -333,12 +336,19 @@
             Updated?.Invoke(this, EventArgs.Empty);
         }
 
+        protected void OnChanged()
+        {
+            dirty = true;
+            Changed?.Invoke(this, EventArgs.Empty);
+        }
+
         /// <summary>
         /// Recalculates all values of the <see cref="Transform"/>.
         /// </summary>
         public virtual bool Recalculate()
         {
             if (!dirty) return false;
+
             local = Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(position);
             Matrix4x4.Invert(local, out localInverse);
             if (parent == null)
@@ -372,7 +382,7 @@
             Matrix4x4.Invert(local, out localInverse);
             Matrix4x4.Decompose(local, out scale, out orientation, out position);
             rotation = orientation.GetRotation().ToDeg();
-            dirty = true;
+            OnChanged();
         }
 
         /// <summary>

@@ -34,13 +34,12 @@
 
         public IReadOnlyList<Link> Links => links;
 
-        public bool IsEditing 
-        { 
+        public bool IsEditing
+        {
             get => isEditing;
             set
-            { 
-                isEditing = value; 
-                
+            {
+                isEditing = value;
             }
         }
 
@@ -105,23 +104,25 @@
             if (isEditing)
             {
                 string name = Name;
-                if (ImGui.InputText("Name", ref name, 0, ImGuiInputTextFlags.EnterReturnsTrue))
+                ImGui.PushItemWidth(100);
+                if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
                     Name = name;
                     isEditing = false;
                 }
+                ImGui.PopItemWidth();
             }
             else
             {
                 ImGui.Text(Name);
                 ImGui.SameLine();
-                if (ImGui.Button("Edit")) // TODO: Replace with icon
+                if (ImGui.SmallButton("Edit")) // TODO: Replace with icon
                 {
                     isEditing = true;
                 }
             }
             //if (ImGui.InputText("Name"))
-            
+
             ImNodes.EndNodeTitleBar();
 
             for (int i = 0; i < Pins.Count; i++)
