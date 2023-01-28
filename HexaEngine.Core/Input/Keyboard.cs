@@ -3,7 +3,6 @@
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
     using System.Text;
@@ -13,8 +12,7 @@
 #nullable disable
         private static Sdl sdl;
 #nullable enable
-        private static readonly ConcurrentQueue<KeyboardEvent> events = new();
-        private static readonly ConcurrentQueue<TextInputEvent> eventsText = new();
+
         private static readonly Dictionary<KeyCode, KeyState> states = new();
         private static readonly List<KeyCode> pushed = new();
         private static readonly KeyboardEventArgs keyboardEventArgs = new();
@@ -35,45 +33,36 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Enqueue(KeyboardEvent keyboardEvent)
         {
-            events.Enqueue(keyboardEvent);
+            KeyState state = (KeyState)keyboardEvent.State;
+            KeyCode keyCode = (KeyCode)sdl.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
+            states[keyCode] = state;
+            keyboardEventArgs.KeyState = state;
+            keyboardEventArgs.KeyCode = keyCode;
+            if (state == KeyState.Released)
+            {
+                Released?.Invoke(null, keyboardEventArgs);
+                pushed.Add(keyCode);
+            }
+            else if (state == KeyState.Pressed)
+            {
+                Pressed?.Invoke(null, keyboardEventArgs);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void Enqueue(TextInputEvent textInputEvent)
         {
-            eventsText.Enqueue(textInputEvent);
+            unsafe
+            {
+                keyboardCharEventArgs.Char = Encoding.UTF8.GetString(textInputEvent.Text, 1)[0];
+            }
+            Text?.Invoke(null, keyboardCharEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void ProcessInput()
+        internal static void ClearState()
         {
             pushed.Clear();
-            while (events.TryDequeue(out var evnt))
-            {
-                KeyState state = (KeyState)evnt.State;
-                KeyCode keyCode = (KeyCode)sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
-                states[keyCode] = state;
-                keyboardEventArgs.KeyState = state;
-                keyboardEventArgs.KeyCode = keyCode;
-                if (state == KeyState.Released)
-                {
-                    Released?.Invoke(null, keyboardEventArgs);
-                    pushed.Add(keyCode);
-                }
-                else if (state == KeyState.Pressed)
-                {
-                    Pressed?.Invoke(null, keyboardEventArgs);
-                }
-            }
-
-            while (eventsText.TryDequeue(out var evnt))
-            {
-                unsafe
-                {
-                    keyboardCharEventArgs.Char = Encoding.UTF8.GetString(evnt.Text, 1)[0];
-                    Text?.Invoke(null, keyboardCharEventArgs);
-                }
-            }
         }
 
         public static event EventHandler<KeyboardEventArgs>? Pressed;

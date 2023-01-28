@@ -9,7 +9,4 @@
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="ClrHeapAllocationAnalyzer" Version="3.0.0" />
-	</ItemGroup>
 </Project>

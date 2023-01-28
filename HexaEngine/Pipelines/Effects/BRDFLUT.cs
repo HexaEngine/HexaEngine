@@ -48,6 +48,9 @@ namespace HexaEngine.Pipelines.Effects
             {
                 quad.Dispose();
                 pipeline.Dispose();
+                Target = null;
+                quad = null;
+                pipeline = null;
                 disposedValue = true;
             }
         }

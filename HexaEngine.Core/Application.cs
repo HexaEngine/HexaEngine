@@ -97,10 +97,11 @@
         private static void PlatformRun()
         {
             Event evnt;
-
+            mainWindow.RenderInitialize();
             while (!exiting)
             {
-                if (sdl.WaitEvent(&evnt) == (int)SdlBool.True)
+                sdl.PumpEvents();
+                while (sdl.PollEvent(&evnt) == (int)SdlBool.True)
                 {
                     EventType type = (EventType)evnt.Type;
                     switch (type)
@@ -343,12 +344,12 @@
                     for (int i = 0; i < hooks.Count; i++)
                         hooks[i](evnt);
                 }
-                else
-                {
-                    Trace.WriteLine(sdl.GetErrorS());
-                    exiting = true;
-                }
+
+                mainWindow.Render();
+
+                mainWindow.ClearState();
             }
+            mainWindow.RenderDispose();
 
             sdl.Quit();
         }

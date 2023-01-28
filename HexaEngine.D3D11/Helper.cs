@@ -192,25 +192,25 @@
         private static ResourceMiscFlag ConvertBack(Silk.NET.Direct3D11.ResourceMiscFlag flags)
         {
             ResourceMiscFlag result = 0;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips)) result |= ResourceMiscFlag.GenerateMips;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Shared)) result |= ResourceMiscFlag.Shared;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube)) result |= ResourceMiscFlag.TextureCube;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs)) result |= ResourceMiscFlag.DrawIndirectArguments;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews)) result |= ResourceMiscFlag.BufferAllowRawViews;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured)) result |= ResourceMiscFlag.BufferStructured;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp)) result |= ResourceMiscFlag.ResourceClamp;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex)) result |= ResourceMiscFlag.SharedKeyedMutex;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible)) result |= ResourceMiscFlag.GdiCompatible;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle)) result |= ResourceMiscFlag.SharedNTHandle;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent)) result |= ResourceMiscFlag.RestrictedContent;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource)) result |= ResourceMiscFlag.RestrictSharedResource;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver)) result |= ResourceMiscFlag.RestrictSharedResourceDriver;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Guarded)) result |= ResourceMiscFlag.Guarded;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.TilePool)) result |= ResourceMiscFlag.TilePool;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.Tiled)) result |= ResourceMiscFlag.Tiled;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected)) result |= ResourceMiscFlag.HardwareProtected;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable)) result |= ResourceMiscFlag.SharedDisplayable;
-            if (flags.HasFlag(Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter)) result |= ResourceMiscFlag.SharedExclusiveWriter;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips) != 0) result |= ResourceMiscFlag.GenerateMips;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Shared) != 0) result |= ResourceMiscFlag.Shared;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube) != 0) result |= ResourceMiscFlag.TextureCube;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs) != 0) result |= ResourceMiscFlag.DrawIndirectArguments;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews) != 0) result |= ResourceMiscFlag.BufferAllowRawViews;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured) != 0) result |= ResourceMiscFlag.BufferStructured;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp) != 0) result |= ResourceMiscFlag.ResourceClamp;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex) != 0) result |= ResourceMiscFlag.SharedKeyedMutex;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible) != 0) result |= ResourceMiscFlag.GdiCompatible;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle) != 0) result |= ResourceMiscFlag.SharedNTHandle;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent) != 0) result |= ResourceMiscFlag.RestrictedContent;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource) != 0) result |= ResourceMiscFlag.RestrictSharedResource;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver) != 0) result |= ResourceMiscFlag.RestrictSharedResourceDriver;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Guarded) != 0) result |= ResourceMiscFlag.Guarded;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.TilePool) != 0) result |= ResourceMiscFlag.TilePool;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.Tiled) != 0) result |= ResourceMiscFlag.Tiled;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected) != 0) result |= ResourceMiscFlag.HardwareProtected;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable) != 0) result |= ResourceMiscFlag.SharedDisplayable;
+            if ((flags & Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter) != 0) result |= ResourceMiscFlag.SharedExclusiveWriter;
             return result;
         }
 
@@ -238,25 +238,25 @@
         private static BindFlags ConvertBack(Silk.NET.Direct3D11.BindFlag flags)
         {
             BindFlags result = 0;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.VertexBuffer))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.VertexBuffer) != 0)
                 result |= BindFlags.VertexBuffer;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.IndexBuffer))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.IndexBuffer) != 0)
                 result |= BindFlags.IndexBuffer;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.ConstantBuffer))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.ConstantBuffer) != 0)
                 result |= BindFlags.ConstantBuffer;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.ShaderResource))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.ShaderResource) != 0)
                 result |= BindFlags.ShaderResource;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.StreamOutput))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.StreamOutput) != 0)
                 result |= BindFlags.StreamOutput;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.RenderTarget))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.RenderTarget) != 0)
                 result |= BindFlags.RenderTarget;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.UnorderedAccess))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.UnorderedAccess) != 0)
                 result |= BindFlags.UnorderedAccess;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.DepthStencil))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.DepthStencil) != 0)
                 result |= BindFlags.DepthStencil;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.Decoder))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.Decoder) != 0)
                 result |= BindFlags.Decoder;
-            if (flags.HasFlag(Silk.NET.Direct3D11.BindFlag.VideoEncoder))
+            if ((flags & Silk.NET.Direct3D11.BindFlag.VideoEncoder) != 0)
                 result |= BindFlags.VideoEncoder;
             return result;
         }
@@ -460,9 +460,9 @@
             Silk.NET.Direct3D11.DsvFlag result = 0;
             if (flags == DepthStencilViewFlags.None)
                 return 0;
-            if (flags.HasFlag(DepthStencilViewFlags.ReadOnlyDepth))
+            if ((flags & DepthStencilViewFlags.ReadOnlyDepth) != 0)
                 result |= Silk.NET.Direct3D11.DsvFlag.Depth;
-            if (flags.HasFlag(DepthStencilViewFlags.ReadOnlyStencil))
+            if ((flags & DepthStencilViewFlags.ReadOnlyStencil) != 0)
                 result |= Silk.NET.Direct3D11.DsvFlag.Stencil;
             return result;
         }
@@ -547,7 +547,7 @@
 
         public static Silk.NET.Direct3D11.BufferexSrvFlag Convert(BufferExtendedShaderResourceViewFlags flags)
         {
-            if (flags.HasFlag(BufferExtendedShaderResourceViewFlags.Raw))
+            if ((flags & BufferExtendedShaderResourceViewFlags.Raw) != 0)
                 return Silk.NET.Direct3D11.BufferexSrvFlag.Raw;
             else
                 return 0;
@@ -909,13 +909,13 @@
             Silk.NET.Direct3D11.ColorWriteEnable result = 0;
             if (flags == ColorWriteEnable.All)
                 return Silk.NET.Direct3D11.ColorWriteEnable.All;
-            if (flags.HasFlag(ColorWriteEnable.Red))
+            if ((flags & ColorWriteEnable.Red) != 0)
                 result |= Silk.NET.Direct3D11.ColorWriteEnable.Red;
-            if (flags.HasFlag(ColorWriteEnable.Green))
+            if ((flags & ColorWriteEnable.Green) != 0)
                 result |= Silk.NET.Direct3D11.ColorWriteEnable.Green;
-            if (flags.HasFlag(ColorWriteEnable.Blue))
+            if ((flags & ColorWriteEnable.Blue) != 0)
                 result |= Silk.NET.Direct3D11.ColorWriteEnable.Blue;
-            if (flags.HasFlag(ColorWriteEnable.Alpha))
+            if ((flags & ColorWriteEnable.Alpha) != 0)
                 result |= Silk.NET.Direct3D11.ColorWriteEnable.Alpha;
             return result;
         }
@@ -974,9 +974,9 @@
         public static Silk.NET.Direct3D11.CpuAccessFlag Convert(CpuAccessFlags flags)
         {
             Silk.NET.Direct3D11.CpuAccessFlag result = 0;
-            if (flags.HasFlag(CpuAccessFlags.Write))
+            if ((flags & CpuAccessFlags.Write) != 0)
                 result |= Silk.NET.Direct3D11.CpuAccessFlag.Write;
-            if (flags.HasFlag(CpuAccessFlags.Read))
+            if ((flags & CpuAccessFlags.Read) != 0)
                 result |= Silk.NET.Direct3D11.CpuAccessFlag.Read;
             return result;
         }
@@ -984,45 +984,45 @@
         public static Silk.NET.Direct3D11.ResourceMiscFlag Convert(ResourceMiscFlag flags)
         {
             Silk.NET.Direct3D11.ResourceMiscFlag result = 0;
-            if (flags.HasFlag(ResourceMiscFlag.GenerateMips))
+            if ((flags & ResourceMiscFlag.GenerateMips) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.GenerateMips;
-            if (flags.HasFlag(ResourceMiscFlag.Shared))
+            if ((flags & ResourceMiscFlag.Shared) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.Shared;
-            if (flags.HasFlag(ResourceMiscFlag.TextureCube))
+            if ((flags & ResourceMiscFlag.TextureCube) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.Texturecube;
-            if (flags.HasFlag(ResourceMiscFlag.DrawIndirectArguments))
+            if ((flags & ResourceMiscFlag.DrawIndirectArguments) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.DrawindirectArgs;
-            if (flags.HasFlag(ResourceMiscFlag.BufferAllowRawViews))
+            if ((flags & ResourceMiscFlag.BufferAllowRawViews) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.BufferAllowRawViews;
-            if (flags.HasFlag(ResourceMiscFlag.BufferStructured))
+            if ((flags & ResourceMiscFlag.BufferStructured) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.BufferStructured;
-            if (flags.HasFlag(ResourceMiscFlag.ResourceClamp))
+            if ((flags & ResourceMiscFlag.ResourceClamp) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.ResourceClamp;
-            if (flags.HasFlag(ResourceMiscFlag.SharedKeyedMutex))
+            if ((flags & ResourceMiscFlag.SharedKeyedMutex) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedKeyedmutex;
-            if (flags.HasFlag(ResourceMiscFlag.GdiCompatible))
+            if ((flags & ResourceMiscFlag.GdiCompatible) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.GdiCompatible;
-            if (flags.HasFlag(ResourceMiscFlag.SharedNTHandle))
+            if ((flags & ResourceMiscFlag.SharedNTHandle) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedNthandle;
-            if (flags.HasFlag(ResourceMiscFlag.RestrictedContent))
+            if ((flags & ResourceMiscFlag.RestrictedContent) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictedContent;
-            if (flags.HasFlag(ResourceMiscFlag.RestrictSharedResource))
+            if ((flags & ResourceMiscFlag.RestrictSharedResource) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResource;
-            if (flags.HasFlag(ResourceMiscFlag.RestrictSharedResourceDriver))
+            if ((flags & ResourceMiscFlag.RestrictSharedResourceDriver) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.RestrictSharedResourceDriver;
-            if (flags.HasFlag(ResourceMiscFlag.Guarded))
+            if ((flags & ResourceMiscFlag.Guarded) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.Guarded;
-            if (flags.HasFlag(ResourceMiscFlag.TilePool))
+            if ((flags & ResourceMiscFlag.TilePool) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.TilePool;
-            if (flags.HasFlag(ResourceMiscFlag.Tiled))
+            if ((flags & ResourceMiscFlag.Tiled) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.Tiled;
-            if (flags.HasFlag(ResourceMiscFlag.HardwareProtected))
+            if ((flags & ResourceMiscFlag.HardwareProtected) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.HWProtected;
-            if (flags.HasFlag(ResourceMiscFlag.SharedDisplayable))
+            if ((flags & ResourceMiscFlag.SharedDisplayable) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedDisplayable;
-            if (flags.HasFlag(ResourceMiscFlag.SharedExclusiveWriter))
+            if ((flags & ResourceMiscFlag.SharedExclusiveWriter) != 0)
                 result |= Silk.NET.Direct3D11.ResourceMiscFlag.SharedExclusiveWriter;
-            if (flags.HasFlag(ResourceMiscFlag.None))
+            if ((flags & ResourceMiscFlag.None) != 0)
                 result |= 0;
             return result;
         }
@@ -1042,25 +1042,25 @@
         public static Silk.NET.Direct3D11.BindFlag Convert(BindFlags flags)
         {
             Silk.NET.Direct3D11.BindFlag result = 0;
-            if (flags.HasFlag(BindFlags.VertexBuffer))
+            if ((flags & BindFlags.VertexBuffer) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.VertexBuffer;
-            if (flags.HasFlag(BindFlags.IndexBuffer))
+            if ((flags & BindFlags.IndexBuffer) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.IndexBuffer;
-            if (flags.HasFlag(BindFlags.ConstantBuffer))
+            if ((flags & BindFlags.ConstantBuffer) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.ConstantBuffer;
-            if (flags.HasFlag(BindFlags.ShaderResource))
+            if ((flags & BindFlags.ShaderResource) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.ShaderResource;
-            if (flags.HasFlag(BindFlags.StreamOutput))
+            if ((flags & BindFlags.StreamOutput) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.StreamOutput;
-            if (flags.HasFlag(BindFlags.RenderTarget))
+            if ((flags & BindFlags.RenderTarget) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.RenderTarget;
-            if (flags.HasFlag(BindFlags.DepthStencil))
+            if ((flags & BindFlags.DepthStencil) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.DepthStencil;
-            if (flags.HasFlag(BindFlags.UnorderedAccess))
+            if ((flags & BindFlags.UnorderedAccess) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.UnorderedAccess;
-            if (flags.HasFlag(BindFlags.Decoder))
+            if ((flags & BindFlags.Decoder) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.Decoder;
-            if (flags.HasFlag(BindFlags.VideoEncoder))
+            if ((flags & BindFlags.VideoEncoder) != 0)
                 result |= Silk.NET.Direct3D11.BindFlag.VideoEncoder;
             return result;
         }

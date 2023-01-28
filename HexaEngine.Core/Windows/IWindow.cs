@@ -20,6 +20,12 @@
         ISceneRenderer Renderer { get; }
 
         Viewport RenderViewport { get; }
+
+        void RenderInitialize();
+
+        void Render();
+
+        void RenderDispose();
     }
 
     public interface IWindow
@@ -95,5 +101,7 @@
         void Show();
 
         void ShowHidden();
+
+        internal void ClearState();
     }
 }

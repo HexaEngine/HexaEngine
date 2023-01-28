@@ -232,12 +232,24 @@
                     if (gimbalGrabbed)
                     {
                         var oldValue = gimbalBefore;
-                        Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
+                        Designer.History.Push(element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
                     }
                     gimbalGrabbed = false;
                     gimbalBefore = element.Transform.Local;
                 }
             }
+        }
+
+        private static void SetMatrix(object context)
+        {
+            var ctx = (HistoryContext<Transform, Matrix4x4>)context;
+            ctx.Target.Local = ctx.NewValue;
+        }
+
+        private static void RestoreMatrix(object context)
+        {
+            var ctx = (HistoryContext<Transform, Matrix4x4>)context;
+            ctx.Target.Local = ctx.OldValue;
         }
     }
 }

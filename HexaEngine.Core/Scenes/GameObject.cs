@@ -402,5 +402,15 @@
                 return type;
             }
         }
+
+        public static void RemoveComponent(GameObject gameObject, IComponent component)
+        {
+            gameObject.RemoveComponent(component);
+        }
+
+        public static void RemoveComponent(ValueTuple<GameObject, IComponent> values)
+        {
+            values.Item1.RemoveComponent(values.Item2);
+        }
     }
 }

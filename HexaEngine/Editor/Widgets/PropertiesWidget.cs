@@ -14,6 +14,7 @@ namespace HexaEngine.Editor.Widgets
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
 
     public class PropertiesWidget : ImGuiWindow
@@ -35,6 +36,42 @@ namespace HexaEngine.Editor.Widgets
         }
 
         protected override string Name => "Properties";
+
+        private static void SetPosition(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Position = ctx.NewValue;
+        }
+
+        private static void RestorePosition(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Position = ctx.OldValue;
+        }
+
+        private static void SetRotation(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Rotation = ctx.NewValue;
+        }
+
+        private static void RestoreRotation(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Rotation = ctx.OldValue;
+        }
+
+        private static void SetScale(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Scale = ctx.NewValue;
+        }
+
+        private static void RestoreScale(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Scale = ctx.OldValue;
+        }
 
         public override void DrawContent(IGraphicsContext context)
         {
@@ -69,7 +106,7 @@ namespace HexaEngine.Editor.Widgets
                     var oldVal = val;
                     if (ImGui.InputFloat3("Position", ref val))
                     {
-                        Designer.History.Do(() => element.Transform.Position = val, () => element.Transform.Position = oldVal);
+                        Designer.History.Do(element.Transform, oldVal, val, SetPosition, RestorePosition);
                     }
                 }
                 {
@@ -77,7 +114,7 @@ namespace HexaEngine.Editor.Widgets
                     var oldVal = val;
                     if (ImGui.InputFloat3("Rotation", ref val))
                     {
-                        Designer.History.Do(() => element.Transform.Rotation = val, () => element.Transform.Rotation = oldVal);
+                        Designer.History.Do(element.Transform, oldVal, val, SetRotation, RestoreRotation);
                     }
                 }
                 {
@@ -85,7 +122,7 @@ namespace HexaEngine.Editor.Widgets
                     var oldVal = val;
                     if (ImGui.InputFloat3("Scale", ref val))
                     {
-                        Designer.History.Do(() => element.Transform.Scale = val, () => element.Transform.Scale = oldVal);
+                        Designer.History.Do(element.Transform, oldVal, val, SetScale, RestoreScale);
                     }
                 }
             }
@@ -143,7 +180,7 @@ namespace HexaEngine.Editor.Widgets
                         allowedComponents.Add(editorComponent);
                         continue;
                     }
-                    else if (editorComponent.AllowedTypes.Length != 0 && !editorComponent.AllowedTypes.Any(x => x == type))
+                    else if (editorComponent.AllowedTypes.Length != 0 && !editorComponent.AllowedTypes.Contains(type))
                     {
                         continue;
                     }
@@ -153,7 +190,7 @@ namespace HexaEngine.Editor.Widgets
                         allowedComponents.Add(editorComponent);
                         continue;
                     }
-                    else if (!editorComponent.DisallowedTypes.Any(x => x == type))
+                    else if (!editorComponent.DisallowedTypes.Contains(type))
                     {
                         allowedComponents.Add(editorComponent);
                         continue;
@@ -174,7 +211,7 @@ namespace HexaEngine.Editor.Widgets
                     {
                         if (ImGui.MenuItem("Delete"))
                         {
-                            scene.Dispatcher.Invoke(() => element.RemoveComponent(component));
+                            scene.Dispatcher.Invoke((element, component), GameObject.RemoveComponent);
                         }
                         ImGui.EndPopup();
                     }

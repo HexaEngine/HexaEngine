@@ -64,7 +64,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ClrHeapAllocationAnalyzer" Version="3.0.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="Silk.NET.Assimp" Version="2.16.0" />
 	</ItemGroup>

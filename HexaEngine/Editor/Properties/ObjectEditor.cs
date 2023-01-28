@@ -104,15 +104,25 @@
 
                 if (editor.Item2.Draw(instance, ref value))
                 {
-                    Designer.History.Do(
-                        () => editor.Item1.SetValue(instance, value),
-                        () => editor.Item1.SetValue(instance, oldValue));
+                    Designer.History.Do((instance, editor.Item1), oldValue, value, DoAction, UndoAction);
                 }
             }
             for (int i = 0; i < buttons.Count; i++)
             {
                 buttons[i].Draw(instance);
             }
+        }
+
+        private static void DoAction(object context)
+        {
+            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
+            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.NewValue);
+        }
+
+        private static void UndoAction(object context)
+        {
+            var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
+            ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.OldValue);
         }
     }
 }

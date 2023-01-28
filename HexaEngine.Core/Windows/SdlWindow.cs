@@ -615,10 +615,10 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static void ProcessInput()
+        public void ClearState()
         {
-            Keyboard.ProcessInput();
-            Mouse.ProcessInput();
+            Keyboard.ClearState();
+            Mouse.ClearState();
         }
     }
 }

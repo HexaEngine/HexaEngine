@@ -34,7 +34,6 @@
 		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="ClrHeapAllocationAnalyzer" Version="3.0.0" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.16.0" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />

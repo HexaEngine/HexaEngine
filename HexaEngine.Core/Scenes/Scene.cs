@@ -126,10 +126,9 @@
             contactEvents = new(ThreadDispatcher, BufferPool);
 
             NarrowphaseCallbacks callbacks = new(characterControllers, contactEvents);
-            callbacks.Characters = new(BufferPool);
-            callbacks.Events = new(ThreadDispatcher, BufferPool);
             Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
-            characterControllers.Initialize(Simulation);
+            characterControllers = callbacks.Characters;
+            contactEvents = callbacks.Events;
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
 

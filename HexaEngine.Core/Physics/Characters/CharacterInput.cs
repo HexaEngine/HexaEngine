@@ -91,12 +91,9 @@ namespace HexaEngine.Core.Physics.Characters
             //Modifying the character's raw data does not automatically wake the character up, so we do so explicitly if necessary.
             //If you don't explicitly wake the character up, it won't respond to the changed motion goals.
             //(You can also specify a negative deactivation threshold in the BodyActivityDescription to prevent the character from sleeping at all.)
-            if (!characterBody.Awake &&
-                ((character.TryJump && character.Supported) ||
-                newTargetVelocity != character.TargetVelocity ||
-                (newTargetVelocity != Vector2.Zero && character.ViewDirection != viewDirection)))
+            if (!characterBody.Awake && (character.TryJump || newTargetVelocity != Vector2.Zero && character.ViewDirection != viewDirection))
             {
-                characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
+                 characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
             }
             character.TargetVelocity = newTargetVelocity;
             character.ViewDirection = viewDirection;
@@ -128,6 +125,10 @@ namespace HexaEngine.Core.Physics.Characters
                     //While we shouldn't allow the character to continue accelerating in the air indefinitely, trying to move in a given direction should never slow us down in that direction.
                     var velocityChangeAlongMovementDirection = MathF.Max(0, targetVelocity - currentVelocity);
                     characterBody.Velocity.Linear += worldMovementDirection * velocityChangeAlongMovementDirection;
+                    if (!characterBody.Awake)
+                    {
+                        characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
+                    }
                     Debug.Assert(characterBody.Awake, "Velocity changes don't automatically update objects; the character should have already been woken up before applying air control.");
                 }
             }

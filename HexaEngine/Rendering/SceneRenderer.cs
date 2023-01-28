@@ -189,6 +189,7 @@ namespace HexaEngine.Rendering
                     brdfLUT.Draw(context);
                     context.ClearState();
                     brdfLUT.Dispose();
+                    brdfLUT = null;
                 });
 
                 effects.ParallelForEachAsync(x => x.Initialize(device, width, height)).Wait();
@@ -646,8 +647,6 @@ namespace HexaEngine.Rendering
                 dof.Dispose();
                 autoExposure.Dispose();
                 bloom.Dispose();
-
-                brdfLUT.Dispose();
 
                 envsmp.Dispose();
                 env.Dispose();

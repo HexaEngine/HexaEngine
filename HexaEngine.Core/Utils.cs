@@ -174,6 +174,18 @@
         }
 
         /// <summary>
+        /// Zeroes the specified pointer.
+        /// </summary>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="size">The size.</param>
+        public static void Zero(void* pointer, nint size)
+        {
+            byte* pointerCopy = (byte*)pointer;
+            for (nint i = 0; i < size; i++)
+                pointerCopy[i] = 0;
+        }
+
+        /// <summary>
         /// Allocates the specified struct.
         /// </summary>
         /// <typeparam name="T"></typeparam>

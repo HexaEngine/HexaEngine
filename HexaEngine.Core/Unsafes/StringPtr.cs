@@ -4,6 +4,7 @@
     using System.Buffers.Binary;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
+    using System.Text;
 
     public enum Endianness : byte
     {
@@ -25,6 +26,12 @@
         public UnsafeString(char* ptr, int length)
         {
             Ptr = ptr;
+            Length = length;
+        }
+
+        public UnsafeString(int length)
+        {
+            Ptr = (char*)Marshal.AllocHGlobal(length * sizeof(char));
             Length = length;
         }
 
@@ -151,6 +158,157 @@
         public static implicit operator UnsafeArray<T>(T[] str)
         {
             return new(str);
+        }
+    }
+
+    public unsafe struct U16String : IFreeable
+    {
+        public U16String(string str)
+        {
+            int sizeInBytes = (str.Length + 1) * sizeof(char);
+            Ptr = (char*)Marshal.AllocHGlobal(sizeInBytes);
+            fixed (char* strPtr = str)
+            {
+                MemoryCopy(strPtr, Ptr, sizeInBytes, sizeInBytes);
+            }
+            Length = str.Length;
+        }
+
+        public U16String(char* ptr, nint length)
+        {
+            Ptr = ptr;
+            Length = length;
+        }
+
+        public U16String(nint length)
+        {
+            nint sizeInBytes = length * sizeof(char);
+            Ptr = (char*)Marshal.AllocHGlobal(sizeInBytes);
+            Length = length;
+            Zero(Ptr, sizeInBytes);
+        }
+
+        public char* Ptr;
+        public nint Length;
+
+        public char this[int index] { get => Ptr[index]; set => Ptr[index] = value; }
+
+        public bool Compare(U16String* other)
+        {
+            if (Length != other->Length) return false;
+            for (uint i = 0; i < Length; i++)
+            {
+                if (Ptr[i] != other->Ptr[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public void Resize(int newSize)
+        {
+            int sizeInBytes = newSize * sizeof(char);
+            var newPtr = (char*)Marshal.AllocHGlobal(sizeInBytes);
+            MemoryCopy(Ptr, newPtr, sizeInBytes, sizeInBytes);
+            Marshal.FreeHGlobal((nint)Ptr);
+            Ptr = newPtr;
+        }
+
+        public void Free()
+        {
+            Utils.Free(Ptr);
+        }
+
+        public static implicit operator string(U16String ptr)
+        {
+            return new(ptr.Ptr);
+        }
+
+        public static implicit operator U16String(string str)
+        {
+            return new(str);
+        }
+
+        public override string ToString()
+        {
+            return this;
+        }
+    }
+
+    public unsafe struct U8String : IFreeable
+    {
+        public U8String(string str)
+        {
+            int sizeInBytes = (str.Length + 1) * sizeof(byte);
+            Ptr = (byte*)Marshal.AllocHGlobal(sizeInBytes);
+            fixed (char* strPtr = str)
+            {
+                MemoryCopy(strPtr, Ptr, sizeInBytes, sizeInBytes);
+            }
+            Length = str.Length;
+        }
+
+        public U8String(byte* ptr, nint length)
+        {
+            Ptr = ptr;
+            Length = length;
+        }
+
+        public U8String(nint length)
+        {
+            nint sizeInBytes = length * sizeof(byte);
+            Ptr = (byte*)Marshal.AllocHGlobal(sizeInBytes);
+            Length = length;
+            Zero(Ptr, sizeInBytes);
+        }
+
+        public byte* Ptr;
+        public nint Length;
+
+        public byte this[int index] { get => Ptr[index]; set => Ptr[index] = value; }
+
+        public bool Compare(U8String* other)
+        {
+            if (Length != other->Length) return false;
+            for (uint i = 0; i < Length; i++)
+            {
+                if (Ptr[i] != other->Ptr[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public void Resize(int newSize)
+        {
+            int sizeInBytes = newSize * sizeof(byte);
+            var newPtr = (byte*)Marshal.AllocHGlobal(sizeInBytes);
+            MemoryCopy(Ptr, newPtr, sizeInBytes, sizeInBytes);
+            Marshal.FreeHGlobal((nint)Ptr);
+            Ptr = newPtr;
+        }
+
+        public void Free()
+        {
+            Utils.Free(Ptr);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator string(U8String ptr)
+        {
+            return Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(ptr.Ptr));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator U8String(string str)
+        {
+            return new(str);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator byte*(U8String str) => str.Ptr;
+
+        public override string ToString()
+        {
+            return this;
         }
     }
 }
