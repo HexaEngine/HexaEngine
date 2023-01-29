@@ -97,7 +97,9 @@
         private static void PlatformRun()
         {
             Event evnt;
+            Time.Initialize();
             mainWindow.RenderInitialize();
+
             while (!exiting)
             {
                 sdl.PumpEvents();
@@ -348,6 +350,8 @@
                 mainWindow.Render();
 
                 mainWindow.ClearState();
+
+                Time.FrameUpdate();
             }
             mainWindow.RenderDispose();
 

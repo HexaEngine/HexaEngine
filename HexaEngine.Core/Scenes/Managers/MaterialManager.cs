@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using System;
@@ -8,22 +9,22 @@
 
     public class MaterialManager
     {
-        private readonly List<MaterialDesc> materials = new();
+        private readonly List<MaterialData> materials = new();
 
         public MaterialManager()
         {
         }
 
-        public MaterialManager(IEnumerable<MaterialDesc> materials)
+        public MaterialManager(IEnumerable<MaterialData> materials)
         {
             this.materials.AddRange(materials);
         }
 
-        public IReadOnlyList<MaterialDesc> Materials => materials;
+        public IReadOnlyList<MaterialData> Materials => materials;
 
         public int Count => materials.Count;
 
-        public event Action<MaterialDesc, string, string>? Renamed;
+        public event Action<MaterialData, string, string>? Renamed;
 
         public void Clear()
         {
@@ -56,7 +57,7 @@
             return false;
         }
 
-        public void Add(MaterialDesc desc)
+        public void Add(MaterialData desc)
         {
             lock (materials)
             {
@@ -77,7 +78,7 @@
             }
         }
 
-        public MaterialDesc? GetMaterial(string name)
+        public MaterialData? GetMaterial(string name)
         {
             lock (materials)
             {
@@ -85,7 +86,23 @@
             }
         }
 
-        public bool TryGetMaterial(string name, [NotNullWhen(true)] out MaterialDesc? material)
+        public MaterialData TryAddMaterial(MaterialData material)
+        {
+            lock (materials)
+            {
+                for (int i = 0; i < materials.Count; i++)
+                {
+                    if (materials[i].Name == material.Name)
+                    {
+                        return materials[i];
+                    }
+                }
+                materials.Add(material);
+                return material;
+            }
+        }
+
+        public bool TryGetMaterial(string name, [NotNullWhen(true)] out MaterialData? material)
         {
             lock (materials)
             {
@@ -99,13 +116,16 @@
         {
             lock (materials)
             {
-                if (TryGetMaterial(oldName, out MaterialDesc? desc))
+                if (TryGetMaterial(oldName, out MaterialData? desc))
                 {
                     if (!Exists(newName))
                     {
-                        desc.Name = newName;
+                        var mat = desc.Value;
+                        int index = materials.IndexOf(mat);
+                        mat.Name = newName;
                         ResourceManager.RenameMaterial(oldName, newName);
-                        Renamed?.Invoke(desc, oldName, newName);
+                        Renamed?.Invoke(mat, oldName, newName);
+                        materials[index] = mat;
                         return true;
                     }
                 }
@@ -114,7 +134,7 @@
             return false;
         }
 
-        public async void Update(MaterialDesc desc)
+        public async void Update(MaterialData desc)
         {
             lock (materials)
             {
@@ -130,7 +150,7 @@
             await ResourceManager.AsyncUpdateMaterial(desc);
         }
 
-        public void Remove(MaterialDesc desc)
+        public void Remove(MaterialData desc)
         {
             lock (materials)
             {

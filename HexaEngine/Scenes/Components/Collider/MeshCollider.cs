@@ -22,7 +22,7 @@
         {
             if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape) return;
             var data = scene.MeshManager.Load(meshPath);
-            var meh = data.ReadMesh();
+            var meh = data.GetMesh();
             bufferPool.Take(meh.Indices.Length, out Buffer<Triangle> buffer);
             int j = 0;
             for (int i = 0; i < meh.Indices.Length; i += 3)

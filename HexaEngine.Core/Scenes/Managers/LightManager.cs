@@ -338,6 +338,11 @@
                     light.InUpdateQueue = true;
                     updateShadowLightQueue.Enqueue(light);
                 }
+                if (light.CastShadows && light is Spotlight && !light.InUpdateQueue)
+                {
+                    light.InUpdateQueue = true;
+                    updateShadowLightQueue.Enqueue(light);
+                }
             }
 
             UpdateShadowMaps(context, camera, updateShadowLightQueue);

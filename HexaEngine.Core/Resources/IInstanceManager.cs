@@ -27,11 +27,11 @@
 
         ModelInstance CreateInstance(Mesh mesh, Material material, GameObject parent);
 
-        ModelInstance CreateInstance(Model model, GameObject parent);
+        ModelInstance CreateInstance(string model, GameObject parent);
 
         Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, GameObject parent);
 
-        Task<ModelInstance> CreateInstanceAsync(Model model, GameObject parent);
+        Task<ModelInstance> CreateInstanceAsync(string model, GameObject parent);
 
         void DestroyInstance(ModelInstance instance);
 

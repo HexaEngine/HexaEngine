@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Projects;
     using ImGuiNET;
 

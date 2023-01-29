@@ -1,11 +1,11 @@
-﻿namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Core.Rendering
 {
     public readonly struct RenderQueueItem
     {
         public readonly RenderQueueIndex Index;
-        public readonly IDrawable Drawable;
+        public readonly IRenderer Drawable;
 
-        public RenderQueueItem(RenderQueueIndex index, IDrawable drawable)
+        public RenderQueueItem(RenderQueueIndex index, IRenderer drawable)
         {
             Index = index;
             Drawable = drawable;

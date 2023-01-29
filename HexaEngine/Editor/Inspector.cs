@@ -4,7 +4,6 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes.Components;
     using HexaEngine.Scenes.Components.Collider;
     using ImGuizmoNET;
     using System.Numerics;

@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Projects;
     using ImGuiNET;
 

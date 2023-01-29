@@ -1,26 +1,35 @@
 ﻿using HexaEngine.Core.IO.Meshes;
 using HexaEngine.Core.Scenes;
+using Silk.NET.Assimp;
 
 namespace HexaEngine.Scenes.Importer
 {
+    using HexaEngine.Core.Animations;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Components.Renderer;
     using Silk.NET.Assimp;
-    using Silk.NET.Core.Native;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
+    using Animation = Core.Animations.Animation;
     using AssimpScene = Silk.NET.Assimp.Scene;
-    using Scene = Scene;
+    using Scene = Core.Scenes.Scene;
+
+    public struct BoneInfo
+    {
+        /*id is index in finalBoneMatrices*/
+        public int Id;
+
+        /*offset matrix transforms vertex from model space to bone space*/
+        public Matrix4x4 Offset;
+    }
 
     public class AssimpSceneImporter
     {
@@ -32,21 +41,20 @@ namespace HexaEngine.Scenes.Importer
         private readonly Dictionary<Pointer<Silk.NET.Assimp.Mesh>, MeshSource> meshesT = new();
         private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
         private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
+        private readonly Dictionary<string, Animation> animationsT = new();
         private List<GameObject> nodes;
         private MeshSource[] meshes;
-        private Model[] models;
-        private MaterialDesc[] materials;
+        private MaterialData[] materials;
 
+        private Animation[] animations;
         private Core.Scenes.Camera[] cameras;
         private Core.Lights.Light[] lights;
         private GameObject root;
         private unsafe AssimpScene* scene;
 
-        public Model[] Models => models;
-
         public MeshSource[] Meshes => meshes;
 
-        public MaterialDesc[] Materials => materials;
+        public MaterialData[] Materials => materials;
 
         public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData;
 
@@ -81,6 +89,8 @@ namespace HexaEngine.Scenes.Importer
 
             LoadMeshes(scene);
 
+            LoadAnimations(scene);
+
             LoadCameras(scene);
 
             LoadLights(scene);
@@ -90,14 +100,10 @@ namespace HexaEngine.Scenes.Importer
 
         public bool CheckForProblems()
         {
-            for (int i = 0; i < models.Length; i++)
+            for (int i = 0; i < meshes.Length; i++)
             {
-                Model model = models[i];
-                if (model.Mesh.Length > 255)
-                {
-                    return true;
-                }
-                if (model.Material.Length > 255)
+                MeshSource model = meshes[i];
+                if (model.Name.Length > 255)
                 {
                     return true;
                 }
@@ -107,32 +113,26 @@ namespace HexaEngine.Scenes.Importer
 
         public bool ChangeNameOfMesh(MeshSource source, string newName)
         {
-            if (meshes.Any(x => x.Path == newName))
+            if (meshes.Any(x => x.Name == newName))
                 return false;
-            string oldName = source.Path;
-            for (int i = 0; i < models.Length; i++)
-            {
-                Model model = models[i];
-                if (model.Mesh == oldName)
-                {
-                    model.Mesh = newName;
-                }
-            }
-            source.Path = newName;
+
+            source.Name = newName;
             return true;
         }
 
-        public bool ChangeNameOfMaterial(MaterialDesc material, string newName)
+        public bool ChangeNameOfMaterial(MaterialData material, string newName)
         {
             if (materials.Any(x => x.Name == newName))
                 return false;
             string oldName = material.Name;
-            for (int i = 0; i < models.Length; i++)
+            for (int i = 0; i < meshes.Length; i++)
             {
-                Model source = models[i];
-                if (source.Material == oldName)
+                MeshSource source = meshes[i];
+                MaterialData mat = source.GetMaterial();
+                if (source.GetMaterial().Name == oldName)
                 {
-                    source.Material = newName;
+                    mat.Name = newName;
+                    source.SetMaterial(mat);
                 }
             }
             material.Name = newName;
@@ -182,7 +182,7 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void LoadMaterials(AssimpScene* scene)
         {
-            materials = new MaterialDesc[scene->MNumMaterials];
+            materials = new MaterialData[scene->MNumMaterials];
             for (int i = 0; i < scene->MNumMaterials; i++)
             {
                 Silk.NET.Assimp.Material* mat = scene->MMaterials[i];
@@ -399,7 +399,7 @@ namespace HexaEngine.Scenes.Importer
                     material.Name = i.ToString();
 
                 material.Textures = texs;
-                materials[i] = new MaterialDesc()
+                materials[i] = new MaterialData()
                 {
                     BaseColor = material.BaseColor,
                     Ao = 1,
@@ -420,10 +420,95 @@ namespace HexaEngine.Scenes.Importer
             }
         }
 
+        private unsafe void LoadAnimations(AssimpScene* scene)
+        {
+            animations = new Animation[scene->MNumAnimations];
+            for (int i = 0; i < scene->MNumAnimations; i++)
+            {
+                var anim = scene->MAnimations[i];
+                Animation animation = new(anim->MName, anim->MDuration, anim->MTicksPerSecond);
+                for (int j = 0; j < anim->MNumChannels; j++)
+                {
+                    var chan = anim->MChannels[j];
+                    NodeChannel channel = new(chan->MNodeName);
+                    channel.PreState = (AnimationBehavior)chan->MPreState;
+                    channel.PostState = (AnimationBehavior)chan->MPostState;
+                    for (int x = 0; x < chan->MNumPositionKeys; x++)
+                    {
+                        var key = chan->MPositionKeys[x];
+                        channel.PositionKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
+                    }
+                    for (int x = 0; x < chan->MNumRotationKeys; x++)
+                    {
+                        var key = chan->MRotationKeys[x];
+                        channel.RotationKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
+                    }
+                    for (int x = 0; x < chan->MNumScalingKeys; x++)
+                    {
+                        var key = chan->MScalingKeys[x];
+                        channel.ScaleKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
+                    }
+                    animation.NodeChannels.Add(channel);
+                }
+
+                animations[i] = animation;
+                animationsT.Add(animation.Name, animation);
+            }
+        }
+
+        private unsafe void ExtractBoneWeightForVertices(SkinnedMeshVertex[] vertices, Mesh* mesh, AssimpScene* scene)
+        {
+            Dictionary<AssimpString, BoneInfo> boneInfoMap = new();
+            int boneCount = 0;
+
+            for (int boneIndex = 0; boneIndex < mesh->MNumBones; ++boneIndex)
+            {
+                int boneID = -1;
+                var boneName = mesh->MBones[boneIndex]->MName;
+                if (!boneInfoMap.ContainsKey(boneName))
+                {
+                    BoneInfo newBoneInfo;
+                    newBoneInfo.Id = boneCount;
+                    newBoneInfo.Offset = mesh->MBones[boneIndex]->MOffsetMatrix;
+                    boneInfoMap[boneName] = newBoneInfo;
+                    boneID = boneCount;
+                    boneCount++;
+                }
+                else
+                {
+                    boneID = boneInfoMap[boneName].Id;
+                }
+                Trace.Assert(boneID != -1);
+                var weights = mesh->MBones[boneIndex]->MWeights;
+                uint numWeights = mesh->MBones[boneIndex]->MNumWeights;
+
+                fixed (SkinnedMeshVertex* pVertices = &vertices[0])
+                    for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
+                    {
+                        uint vertexId = weights[weightIndex].MVertexId;
+                        float weight = weights[weightIndex].MWeight;
+                        Trace.Assert(vertexId <= vertices.Length);
+                        SetVertexBoneData(&pVertices[vertexId], boneID, weight);
+                    }
+            }
+        }
+
+        private unsafe void SetVertexBoneData(SkinnedMeshVertex* vertex, int boneID, float weight)
+        {
+            for (int i = 0; i < 4; ++i)
+            {
+                if (vertex->BoneIds[i] < 0)
+                {
+                    vertex->Weights[i] = weight;
+                    vertex->BoneIds[i] = boneID;
+                    break;
+                }
+            }
+        }
+
         private unsafe void LoadMeshes(AssimpScene* scene)
         {
             meshes = new MeshSource[scene->MNumMeshes];
-            models = new Model[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Silk.NET.Assimp.Mesh* msh = scene->MMeshes[i];
@@ -465,22 +550,27 @@ namespace HexaEngine.Scenes.Importer
 
                 Objects.Animature? animature = null;
 
-                MeshBone[]? bones = new MeshBone[msh->MNumBones];
+                MeshBone[] bones = new MeshBone[msh->MNumBones];
+
                 if (msh->MNumBones > 0)
                 {
-                    var node = msh->MBones[0]->MArmature;
-                    animature = new(node->MName);
-                    animatureT.Add(node, animature);
+                    Queue<GameObject> queue = new();
+
+                    animature = new(msh->MName);
+                    Stack<Pointer<Node>> walkstack = new();
+
                     for (int j = 0; j < bones.Length; j++)
                     {
                         var bn = msh->MBones[j];
+                        var node = FindNode(scene, bn->MName);
+
                         MeshWeight[] weights = new MeshWeight[bn->MNumWeights];
                         for (int x = 0; x < weights.Length; x++)
                         {
-                            weights[x] = new() { VertexId = bn->MWeights[x].MVertexId, Weight = bn->MWeights[x].MWeight };
+                            weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
                         }
 
-                        bones[j] = new MeshBone(bn->MName, null, nodesT[bn->MNode], weights, bn->MOffsetMatrix);
+                        bones[j] = new MeshBone(bn->MName, weights, bn->MOffsetMatrix);
                         animature.AddBone(bones[j]);
                     }
                 }
@@ -491,8 +581,7 @@ namespace HexaEngine.Scenes.Importer
                 float radius = box.Extent.Length();
                 BoundingSphere sphere = new(center, radius);
 
-                meshes[i] = new MeshSource(msh->MName, vertices, indices, box, sphere);
-                models[i] = new(msh->MName, materials[(int)msh->MMaterialIndex].Name);
+                meshes[i] = new MeshSource(msh->MName, materials[(int)msh->MMaterialIndex], vertices, indices, bones, box, sphere);
 
                 meshesT.Add(msh, meshes[i]);
             }
@@ -575,6 +664,34 @@ namespace HexaEngine.Scenes.Importer
             root = WalkNode(scene->MRootNode, null);
         }
 
+        private readonly Stack<Pointer<Node>> findWalkStack = new();
+
+        private unsafe void Collect(List<Pointer<Node>> pointers, AssimpScene* scene, Node* start, Silk.NET.Assimp.Mesh* mesh)
+        {
+        }
+
+        private unsafe Node* FindNode(AssimpScene* scene, string name)
+        {
+            findWalkStack.Clear();
+            findWalkStack.Push(scene->MRootNode);
+            while (findWalkStack.Count > 0)
+            {
+                Node* node = findWalkStack.Pop();
+                if (node->MName == name)
+                {
+                    return node;
+                }
+                else
+                {
+                    for (int i = 0; i < node->MNumChildren; i++)
+                    {
+                        findWalkStack.Push(node->MChildren[i]);
+                    }
+                }
+            }
+            return null;
+        }
+
         private unsafe GameObject WalkNode(Node* node, GameObject? parent)
         {
             string name = node->MName;
@@ -612,10 +729,12 @@ namespace HexaEngine.Scenes.Importer
             {
                 meshes[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
             }
-            for (int i = 0; i < materials.Length; i++)
+
+            for (int i = 0; i < animations.Length; i++)
             {
-                scene.MaterialManager.Add(materials[i]);
+                animations[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "animations"));
             }
+
             FileSystem.Refresh();
 
             for (int x = 0; x < nodes.Count; x++)
@@ -625,8 +744,8 @@ namespace HexaEngine.Scenes.Importer
                 for (int i = 0; i < p->MNumMeshes; i++)
                 {
                     var renderer = node.GetOrCreateComponent<RendererComponent>();
-                    var model = models[(int)p->MMeshes[i]];
-                    renderer.AddMesh(model);
+                    var model = meshes[(int)p->MMeshes[i]];
+                    renderer.AddMesh(model.Name);
                 }
             }
         }

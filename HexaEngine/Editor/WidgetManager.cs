@@ -6,7 +6,7 @@
     public static class WidgetManager
     {
         private static IGraphicsDevice? device;
-        private static readonly List<ImGuiWindow> widgets = new();
+        private static readonly List<IImGuiWindow> widgets = new();
 
         static WidgetManager()
         {
@@ -28,26 +28,26 @@
             Register<EffectWindow>();
         }
 
-        public static bool Register<T>() where T : ImGuiWindow, new()
+        public static bool Register<T>() where T : IImGuiWindow, new()
         {
             if (device == null)
             {
-                ImGuiWindow widget = new T();
+                IImGuiWindow widget = new T();
                 widgets.Add(widget);
                 return false;
             }
             else
             {
-                ImGuiWindow widget = new T();
+                IImGuiWindow widget = new T();
                 widget.Init(device);
                 widgets.Add(widget);
                 return true;
             }
         }
 
-        public static void Unregister<T>() where T : ImGuiWindow, new()
+        public static void Unregister<T>() where T : IImGuiWindow, new()
         {
-            ImGuiWindow? window = widgets.FirstOrDefault(x => x is T);
+            IImGuiWindow? window = widgets.FirstOrDefault(x => x is T);
             if (window != null)
             {
                 if (device != null)
@@ -59,7 +59,7 @@
             }
         }
 
-        public static bool Register(ImGuiWindow widget)
+        public static bool Register(IImGuiWindow widget)
         {
             if (device == null)
             {

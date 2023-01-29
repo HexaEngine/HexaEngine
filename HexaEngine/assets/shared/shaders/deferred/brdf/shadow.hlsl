@@ -299,9 +299,8 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 			if (epsilon != 0)
 				falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
 			float3 radiance = light.color.rgb * attenuation * falloff;
-			float cosTheta = dot(N, -L);
-			float bias = max(0.00025f * (1.0f - cosTheta), 0.000005f);
-			float shadow = ShadowCalculation(light, attrs.pos, bias, depthPSM[wd], SampleTypeAnsio);
+            float bias = max(0.00025f * (1.0f - dot(N, L)), 0.000005f);
+            float shadow = ShadowCalculation(light, attrs.pos, bias, depthPSM[wd], SampleTypeAnsio);
 			if (shadow == 1)
 				continue;
 			Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;

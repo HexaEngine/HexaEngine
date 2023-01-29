@@ -8,6 +8,8 @@
 
         public static string CurrentMeshesPath { get; set; } = "assets/meshes/";
 
+        public static string CurrentAnimationsPath { get; set; } = "assets/animations/";
+
         public static string CurrentShaderPath { get; set; } = "assets/shaders/";
 
         public static string CurrentPDBShaderPath { get; set; } = "assets/pdbs";

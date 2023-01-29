@@ -1,13 +1,12 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Scenes.Importer;
     using ImGuiNET;
     using Silk.NET.Assimp;
     using System.Numerics;
 
-    public class ImportDialog : DialogBase, IDialog
+    public class ImportDialog : Modal, IDialog
     {
         private AssimpSceneImporter importer = new();
         private string path = string.Empty;
@@ -16,6 +15,8 @@
         private Task? loadTask;
 
         public override string Name => "Import Scene";
+
+        public bool Shown { get; }
 
         protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.None;
 
@@ -59,6 +60,10 @@
                 {
                     Task.Factory.StartNew(() => importer.LoadAsync(path).ContinueWith(x => { loaded = true; }));
                 }
+                if (ImGui.Button("Cancel"))
+                {
+                    Hide();
+                }
             }
             else
             {
@@ -79,7 +84,7 @@
                         for (int i = 0; i < importer.Meshes.Length; i++)
                         {
                             var mesh = importer.Meshes[i];
-                            var value = mesh.Path;
+                            var value = mesh.Name;
                             var invalid = value.Length > 255;
                             if (invalid)
                                 ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1, 0, 0, 1));

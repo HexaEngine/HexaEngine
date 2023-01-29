@@ -47,7 +47,8 @@
         public static void WriteString(this Stream stream, string str, Encoding encoder)
         {
             var count = encoder.GetByteCount(str);
-            Span<byte> dst = count < 2048 ? stackalloc byte[count] : new byte[count];
+            var bytes = count + 4;
+            Span<byte> dst = bytes < 2048 ? stackalloc byte[bytes] : new byte[bytes];
             BinaryPrimitives.WriteInt32LittleEndian(dst, count);
             encoder.GetBytes(str, dst[4..]);
             stream.Write(dst);

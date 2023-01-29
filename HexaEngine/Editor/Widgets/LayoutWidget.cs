@@ -18,6 +18,8 @@
         private readonly Dictionary<string, EditorNodeAttribute> cache = new();
         private readonly Dictionary<string, int> newInstances = new();
 
+        public static bool ShowHidden;
+
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public LayoutWidget()
         {
@@ -96,6 +98,10 @@
                 {
                     GameObject.Selected.PurgeSelection();
                 }
+                if (ImGui.MenuItem("Show Hidden"))
+                {
+                    ShowHidden = !ShowHidden;
+                }
                 ImGui.EndPopup();
             }
             ImGui.PopID();
@@ -103,6 +109,15 @@
 
         private void DisplayNode(GameObject element)
         {
+            if (element.IsHidden && !ShowHidden)
+            {
+                return;
+            }
+            else if (element.IsHidden)
+            {
+                ImGui.BeginDisabled(true);
+            }
+
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
             if (element.IsEditorSelected)
                 flags |= ImGuiTreeNodeFlags.Selected;
@@ -186,6 +201,11 @@
                 {
                     element.Children[j].IsEditorVisible = false;
                 }
+            }
+
+            if (element.IsHidden)
+            {
+                ImGui.EndDisabled();
             }
         }
 

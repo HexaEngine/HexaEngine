@@ -22,6 +22,7 @@
         private bool isEditorVisible;
         private Type? type;
         private bool isEnabled = true;
+        private bool isHidden = false;
 
         public Transform Transform = new();
         private string name = string.Empty;
@@ -70,8 +71,15 @@
             }
         }
 
+        public bool IsHidden
+        {
+            get => isHidden;
+            set => SetAndNotify(ref isHidden, value);
+        }
+
         [JsonIgnore]
         public virtual GameObject? Parent
+
         {
             get => parent;
             set

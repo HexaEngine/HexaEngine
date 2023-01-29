@@ -105,8 +105,6 @@
             if (Flags.HasFlag(RendererFlags.SceneGraph))
                 SceneManager.SceneChanged += (_, _) => { firstFrame = true; };
 
-            Time.Initialize();
-
             OnRendererInitialize(device);
 
             deferredRenderer = new();
@@ -187,8 +185,6 @@
             if (drawing)
                 deferredRenderer.Profiler.End(deferredRenderer);
             swapChain.Wait();
-
-            Time.FrameUpdate();
         }
 
         public void RenderDispose()

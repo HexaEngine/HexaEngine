@@ -1,7 +1,7 @@
 ﻿using ImGuiNET;
 using System.Numerics;
 
-namespace HexaEngine.Editor.Widgets
+namespace HexaEngine.Editor.Dialogs
 {
     public class OpenFileDialog
     {

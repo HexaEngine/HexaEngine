@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes.Components
+﻿namespace HexaEngine.Scenes.Components.Collider
 {
     using BepuPhysics.Collidables;
     using HexaEngine.Core;

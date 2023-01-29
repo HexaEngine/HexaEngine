@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Rendering;
 
     public static class GraphicsManager
     {

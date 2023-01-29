@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Meshes
 {
+    using HexaEngine.Core.IO.Meshes;
     using System.Numerics;
 
     public struct CBMaterial
@@ -18,7 +19,7 @@
         public int HasAoMap;
         public int HasRoughnessMetalnessMap;
 
-        public CBMaterial(MaterialDesc material)
+        public CBMaterial(MaterialData material)
         {
             Color = new(material.BaseColor, 1);
             Emissive = new(material.Emissive, 1);
@@ -37,7 +38,7 @@
             HasRoughnessMetalnessMap = string.IsNullOrEmpty(material.RoughnessMetalnessTextureMap) ? 0 : 1;
         }
 
-        public static implicit operator CBMaterial(MaterialDesc material)
+        public static implicit operator CBMaterial(MaterialData material)
         {
             return new(material);
         }

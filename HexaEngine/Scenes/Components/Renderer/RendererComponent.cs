@@ -3,6 +3,7 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
@@ -13,7 +14,7 @@
     [EditorComponent(typeof(RendererComponent), "Mesh Renderer")]
     public class RendererComponent : IComponent
     {
-        private readonly List<Model> models = new();
+        private readonly List<string> models = new();
         private readonly List<ModelInstance> instances = new();
         private GameObject? gameObject;
         private Scene scene;
@@ -24,13 +25,12 @@
             ObjectEditorFactory.RegisterEditor(typeof(RendererComponent), new RendererComponentEditor());
         }
 
-        public List<Model> Meshes => models;
+        public List<string> Meshes => models;
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
             this.gameObject = gameObject;
             scene = gameObject.GetScene();
-            scene.MaterialManager.Renamed += MaterialRenamed;
 
             initialized = true;
             for (int i = 0; i < models.Count; i++)
@@ -43,21 +43,8 @@
             }
         }
 
-        private void MaterialRenamed(MaterialDesc material, string oldName, string newName)
-        {
-            for (int i = 0; i < models.Count; i++)
-            {
-                var model = models[i];
-                if (model.Material == oldName)
-                {
-                    model.Material = newName;
-                }
-            }
-        }
-
         public void Destory()
         {
-            scene.MaterialManager.Renamed -= MaterialRenamed;
             initialized = false;
             for (int i = 0; i < instances.Count; i++)
             {
@@ -66,7 +53,7 @@
             instances.Clear();
         }
 
-        public void AddMesh(Model model)
+        public void AddMesh(string model)
         {
             models.Add(model);
             if (initialized)
@@ -75,17 +62,18 @@
             }
         }
 
-        public void UpdateModel(Model model)
+        public void UpdateModel(string model)
         {
             instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
         }
 
-        public void RemoveMesh(Model model)
+        public void RemoveMesh(string model)
         {
             models.Remove(model);
             if (initialized)
             {
-                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
+                throw new NotImplementedException();
+                // instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
             }
         }
 
@@ -113,8 +101,8 @@
                 RendererComponent component = (RendererComponent)instance;
                 for (int i = 0; i < component.models.Count; i++)
                 {
-                    Model model = component.models[i];
-                    ImGui.Text($"{model.Mesh}, {model.Material}");
+                    string model = component.models[i];
+                    ImGui.Text($"{model}, {model}");
                 }
             }
         }

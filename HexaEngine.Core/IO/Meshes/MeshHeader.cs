@@ -9,7 +9,7 @@
     public struct MeshHeader : IBinarySerializable
     {
         public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6e, 0x73, 0x4d, 0x65, 0x73, 0x68, 0x00 };
-        public const ulong Version = 1;
+        public const ulong Version = 2;
 
         public Compression Compression;
         public MeshType Type;
@@ -17,6 +17,7 @@
         public BoundingSphere BoundingSphere;
         public ulong VerticesCount;
         public ulong IndicesCount;
+        public ulong BonesCount;
         public ulong BodyStart;
 
         public void Read(Stream stream, Encoding encoding)
@@ -32,6 +33,7 @@
             BoundingSphere = stream.ReadStruct<BoundingSphere>();
             VerticesCount = stream.ReadUInt64();
             IndicesCount = stream.ReadUInt64();
+            BonesCount = stream.ReadUInt64();
             BodyStart = (ulong)stream.Position;
         }
 
@@ -50,6 +52,8 @@
             idx += 8;
             IndicesCount = BinaryPrimitives.ReadUInt64LittleEndian(src[idx..]);
             idx += 8;
+            BonesCount = BinaryPrimitives.ReadUInt64LittleEndian(src[idx..]);
+            idx += 8;
             BodyStart = (ulong)idx;
 
             return idx;
@@ -65,6 +69,7 @@
             stream.WriteStruct(BoundingSphere);
             stream.WriteUInt64(VerticesCount);
             stream.WriteUInt64(IndicesCount);
+            stream.WriteUInt64(BonesCount);
         }
 
         public int Write(Span<byte> dst, Encoding encoding)
@@ -80,13 +85,14 @@
             idx += 8;
             BinaryPrimitives.WriteUInt64LittleEndian(dst[idx..], IndicesCount);
             idx += 8;
-
+            BinaryPrimitives.WriteUInt64LittleEndian(dst[idx..], BonesCount);
+            idx += 8;
             return idx;
         }
 
         public int Size(Encoding encoding)
         {
-            return MagicNumber.Length + 8 + 4 + 4 + 8 + 8;
+            return MagicNumber.Length + 8 + 4 + 4 + 8 + 8 + 8;
         }
     }
 }

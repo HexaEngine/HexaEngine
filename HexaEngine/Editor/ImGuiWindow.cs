@@ -3,18 +3,7 @@
     using HexaEngine.Core.Graphics;
     using ImGuiNET;
 
-    public interface IPopupWindow
-    {
-        public event EventHandler<EventArgs> Closed;
-
-        void Show();
-
-        void Draw();
-
-        void Close();
-    }
-
-    public abstract class ImGuiWindow
+    public abstract class ImGuiWindow : IImGuiWindow
     {
         protected bool IsShown;
         protected bool IsDocked;

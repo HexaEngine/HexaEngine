@@ -26,6 +26,7 @@
         private MaterialManager materialManager;
         private MeshManager meshManager;
         private LightManager lightManager;
+        private AnimationManager animationManager = new();
         private readonly SemaphoreSlim semaphore = new(1);
         private ISceneUpdateCallbacks sceneUpdateCallbacks;
         private string? path;
@@ -75,6 +76,7 @@
         [JsonIgnore]
         public InstanceManager InstanceManager => instanceManager;
 
+        [JsonIgnore]
         public MaterialManager MaterialManager { get => materialManager; set => materialManager = value; }
 
         [JsonIgnore]
@@ -88,6 +90,9 @@
 
         [JsonIgnore]
         public MeshManager MeshManager { get => meshManager; set => meshManager = value; }
+
+        [JsonIgnore]
+        public AnimationManager AnimationManager { get => animationManager; set => animationManager = value; }
 
         [JsonIgnore]
         public SceneProfiler Profiler { get; } = new(10);
@@ -112,9 +117,10 @@
             meshManager ??= new();
 
             systems.Add(new PhysicsSystem());
-            systems.Add(new TransformSystem());
+            systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
+            systems.Add(new TransformSystem());
 
             semaphore.Wait();
 
@@ -125,10 +131,8 @@
             characterControllers = new(BufferPool);
             contactEvents = new(ThreadDispatcher, BufferPool);
 
-            NarrowphaseCallbacks callbacks = new(characterControllers, contactEvents);
-            Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
-            characterControllers = callbacks.Characters;
-            contactEvents = callbacks.Events;
+            Simulation = Simulation.Create(BufferPool, new NarrowphaseCallbacks(characterControllers, contactEvents), new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
+
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
 
@@ -251,9 +255,16 @@
         {
             if (string.IsNullOrEmpty(name)) return null;
             semaphore.Wait();
-            var result = nodes.FirstOrDefault(x => x.Name == name);
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Name == name)
+                {
+                    semaphore.Release();
+                    return nodes[i];
+                }
+            }
             semaphore.Release();
-            return result;
+            return null;
         }
 
         public string GetAvailableName(GameObject node, string name)

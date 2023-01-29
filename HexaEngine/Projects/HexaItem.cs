@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Projects
+﻿namespace HexaEngine.Projects
 {
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;

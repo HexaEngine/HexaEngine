@@ -11,7 +11,6 @@
     public static class Designer
     {
         private static Task? task;
-        private static readonly AssimpSceneLoader loader = new();
 
         public static History History { get; } = new();
 
@@ -45,22 +44,7 @@
             if ((task == null || task.IsCompleted) && path != null)
             {
                 var extension = Path.GetExtension(path);
-                if (extension == ".glb")
-                {
-                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
-                }
-                if (extension == ".gltf")
-                {
-                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
-                }
-                if (extension == ".dae")
-                {
-                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
-                }
-                if (extension == ".obj")
-                {
-                    task = loader.ImportAsync(path).ContinueWith(ImGuiConsole.HandleError);
-                }
+
                 if (extension == ".hexlvl")
                 {
                     task = SceneManager.AsyncLoad(SceneSerializer.Deserialize(path)).ContinueWith(ImGuiConsole.HandleError);

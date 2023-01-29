@@ -79,11 +79,11 @@
         {
             lock (meshes)
             {
-                if (meshes.TryGetValue(mesh.Path, out var value))
+                if (meshes.TryGetValue(mesh.Name, out var value))
                     return value;
-                var source = mesh.ReadMesh();
-                Mesh model = new(device, mesh.Path, source.Vertices, source.Indices, mesh.Header.BoundingBox, mesh.Header.BoundingSphere);
-                meshes.TryAdd(mesh.Path, model);
+                var source = mesh.GetMesh();
+                Mesh model = new(device, mesh.Name, source.Vertices, source.Indices, mesh.Header.BoundingBox, mesh.Header.BoundingSphere);
+                meshes.TryAdd(mesh.Name, model);
                 return model;
             }
         }
@@ -120,7 +120,7 @@
             }
         }
 
-        public static Material LoadMaterial(MaterialDesc material)
+        public static Material LoadMaterial(MaterialData material)
         {
             Material? modelMaterial;
             lock (materials)
@@ -151,7 +151,7 @@
             return modelMaterial;
         }
 
-        public static async Task<Material> LoadMaterialAsync(MaterialDesc material)
+        public static async Task<Material> LoadMaterialAsync(MaterialData material)
         {
             Material? modelMaterial;
             lock (materials)
@@ -182,7 +182,7 @@
             return modelMaterial;
         }
 
-        public static void UpdateMaterial(MaterialDesc desc)
+        public static void UpdateMaterial(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -217,7 +217,7 @@
             }
         }
 
-        public static async Task AsyncUpdateMaterial(MaterialDesc desc)
+        public static async Task AsyncUpdateMaterial(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)

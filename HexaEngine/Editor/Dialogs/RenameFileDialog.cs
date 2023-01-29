@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Widgets
+﻿namespace HexaEngine.Editor.Dialogs
 {
     using ImGuiNET;
 

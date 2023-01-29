@@ -27,7 +27,7 @@
             {
                 if (!pathToMeshes.TryGetValue(path, out var value))
                 {
-                    value = new(path);
+                    value = MeshSource.Load(path);
                     pathToMeshes.Add(path, value);
                     meshes.Add(value);
                 }
@@ -42,7 +42,7 @@
                 if (meshes.Contains(source))
                 {
                     meshes.Remove(source);
-                    pathToMeshes.Remove(source.Path);
+                    pathToMeshes.Remove(source.Name);
                 }
             }
         }

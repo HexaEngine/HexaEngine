@@ -21,7 +21,7 @@
 
             var manager = scene.MeshManager;
 
-            bool selected = ImGui.Combo("Mesh", ref current, manager.Meshes.Select(x => x.Path).ToArray(), manager.Count);
+            bool selected = ImGui.Combo("Mesh", ref current, manager.Meshes.Select(x => x.Name).ToArray(), manager.Count);
 
             ImGui.Separator();
 

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System;
@@ -40,18 +40,20 @@
             this.device = device;
         }
 
-        public ModelInstance CreateInstance(Model model, GameObject parent)
+        public ModelInstance CreateInstance(string path, GameObject parent)
         {
-            var material = ResourceManager.LoadMaterial(parent.GetScene().MaterialManager.GetMaterial(model.Material) ?? MaterialDesc.Default);
-            var mesh = ResourceManager.LoadMesh(model.Mesh);
+            var model = MeshSource.Load(path);
+            var material = ResourceManager.LoadMaterial(parent.GetScene().MaterialManager.TryAddMaterial(model.GetMaterial()));
+            var mesh = ResourceManager.LoadMesh(model);
             var instance = CreateInstance(mesh, material, parent);
             return instance;
         }
 
-        public async Task<ModelInstance> CreateInstanceAsync(Model model, GameObject parent)
+        public async Task<ModelInstance> CreateInstanceAsync(string path, GameObject parent)
         {
-            var material = await ResourceManager.LoadMaterialAsync(parent.GetScene().MaterialManager.GetMaterial(model.Material) ?? MaterialDesc.Default);
-            var mesh = await ResourceManager.LoadMeshAsync(model.Mesh);
+            var model = MeshSource.Load(path);
+            var material = await ResourceManager.LoadMaterialAsync(parent.GetScene().MaterialManager.TryAddMaterial(model.GetMaterial()));
+            var mesh = await ResourceManager.LoadMeshAsync(model);
             var instance = await CreateInstanceAsync(mesh, material, parent);
             return instance;
         }

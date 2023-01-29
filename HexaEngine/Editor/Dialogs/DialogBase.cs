@@ -17,13 +17,17 @@
         public void Draw()
         {
             if (!shown) return;
-            windowEnded = false;
-            if (ImGui.Begin(Name, ref shown, Flags))
+            if (!ImGui.Begin(Name, ref shown, Flags))
             {
-                DrawContent();
+                ImGui.End();
+                return;
             }
+            windowEnded = false;
 
-            EndDraw();
+            DrawContent();
+
+            if (!windowEnded)
+                ImGui.End();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

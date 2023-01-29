@@ -3,7 +3,6 @@
     using DiscordRPC.Entities;
     using HexaEngine.Core;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Plugins;
     using HexaEngine.Projects;
     using System.Diagnostics;

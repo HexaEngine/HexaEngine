@@ -104,8 +104,8 @@
         {
             if (psmDepthBuffer == null) return;
 #nullable disable
-            ShadowSpotlightData* data = &buffer.Local[QueueIndex];
-            data->View = view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);
+
+            view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);
             context.Write(psmBuffer, view);
             context.ClearDepthStencilView(psmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, psmDepthBuffer.DSV);

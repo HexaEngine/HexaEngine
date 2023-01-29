@@ -5,7 +5,6 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Dotnet;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Scripting;
     using HexaEngine.Windows;
     using System;

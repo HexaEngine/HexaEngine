@@ -6,6 +6,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes.Serialization;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
     using Silk.NET.Core.Native;
@@ -46,7 +47,7 @@
             ProjectManager.ProjectChanged += ProjectManager_ProjectLoaded;
         }
 
-        private void ProjectManager_ProjectLoaded(Projects.HexaProject obj)
+        private void ProjectManager_ProjectLoaded(HexaProject obj)
         {
             SetFolder(ProjectManager.CurrentProjectAssetsFolder);
         }
