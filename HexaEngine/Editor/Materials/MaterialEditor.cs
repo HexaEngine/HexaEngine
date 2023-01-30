@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Editor.Materials.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Nodes;
     using HexaEngine.Mathematics;
@@ -22,7 +23,6 @@
         private ConstantBuffer<Matrix4x4> world;
         private ConstantBuffer<CBCamera> view;
         private List<TextureFileNode> textureFiles = new();
-        private Camera camera = new();
 
         public MaterialEditor()
         {

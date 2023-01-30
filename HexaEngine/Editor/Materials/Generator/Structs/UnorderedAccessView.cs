@@ -7,10 +7,10 @@
     {
         public int Slot;
         public string Name;
-        public Type UavType;
-        public Type Type;
+        public SType UavType;
+        public SType Type;
 
-        public UnorderedAccessView(string name, Type uavType, Type type)
+        public UnorderedAccessView(string name, SType uavType, SType type)
         {
             Name = name;
             UavType = uavType;

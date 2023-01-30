@@ -7,11 +7,11 @@
     {
         public int Slot;
         public string Name;
-        public Type SrvType;
-        public Type Type;
+        public SType SrvType;
+        public SType Type;
         public int Samples;
 
-        public ShaderResourceView(string name, Type srvType, Type type, int samples = -1)
+        public ShaderResourceView(string name, SType srvType, SType type, int samples = -1)
         {
             Name = name;
             SrvType = srvType;
@@ -23,11 +23,11 @@
         {
             if (Samples > 0)
             {
-                builder.AppendLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
+                builder.AppendLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()},{Samples.ToString(CultureInfo.InvariantCulture)}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
             }
             else
             {
-                builder.AppendLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()},{Samples.ToString(CultureInfo.InvariantCulture)}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
+                builder.AppendLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
             }
         }
     }

@@ -12,11 +12,12 @@
         public PinShape Shape;
         public PinKind Kind;
         public PinType Type;
+        public uint MaxLinks;
         private object? _value;
         public readonly NodeEditor Graph;
         private readonly List<Link> links = new();
 
-        public Pin(NodeEditor graph, Node parent, string name, PinShape shape, PinKind kind, PinType type)
+        public Pin(NodeEditor graph, Node parent, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue)
         {
             Graph = graph;
             Id = graph.GetUniqueId();
@@ -25,6 +26,7 @@
             Shape = shape;
             Kind = kind;
             Type = type;
+            MaxLinks = maxLinks;
         }
 
         public event EventHandler? ValueChanged;
@@ -57,11 +59,14 @@
             }
         }
 
-        public bool CanCreateLink(Pin other)
+        public virtual bool CanCreateLink(Pin input, Pin output)
         {
-            if (Id == other.Id) return false;
-            if (!IsType(other)) return false;
-            if (Kind == other.Kind) return false;
+            if (Id == input.Id) return false;
+            if (Links.Count == MaxLinks) return false;
+            if (Type == PinType.DontCare) return true;
+            if (!IsType(input)) return false;
+            if (Kind == input.Kind) return false;
+
             return true;
         }
 

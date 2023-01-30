@@ -53,9 +53,31 @@
             return Pins.Find(x => x.Id == id && x.Kind == PinKind.Output) ?? throw new();
         }
 
-        public virtual Pin CreatePin(string name, PinKind kind, PinType type, PinShape shape)
+        public static Link? FindSourceLink(Pin pin, Node other)
         {
-            Pin pin = new(Graph, this, name, shape, kind, type);
+            for (int i = 0; i < pin.Links.Count; i++)
+            {
+                Link link = pin.Links[i];
+                if (link.SourceNode == other)
+                    return link;
+            }
+            return null;
+        }
+
+        public static Link? FindTargetLink(Pin pin, Node other)
+        {
+            for (int i = 0; i < pin.Links.Count; i++)
+            {
+                Link link = pin.Links[i];
+                if (link.TargetNode == other)
+                    return link;
+            }
+            return null;
+        }
+
+        public virtual Pin CreatePin(string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue)
+        {
+            Pin pin = new(Graph, this, name, shape, kind, type, maxLinks);
             Pins.Add(pin);
             Graph.AddPin(pin);
             PinAdded?.Invoke(this, pin);
@@ -125,6 +147,8 @@
 
             ImNodes.EndNodeTitleBar();
 
+            DrawContentBeforePins();
+
             for (int i = 0; i < Pins.Count; i++)
             {
                 Pins[i].Draw();
@@ -133,6 +157,10 @@
             DrawContent();
 
             ImNodes.EndNode();
+        }
+
+        protected virtual void DrawContentBeforePins()
+        {
         }
 
         protected virtual void DrawContent()

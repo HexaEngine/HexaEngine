@@ -4,14 +4,14 @@
     {
         public int Id;
         public string Name;
-        public Type ReturnType;
+        public SType Type;
         public int Refs;
 
-        public Operation(int id, string name, Type returnType)
+        public Operation(int id, string name, SType type)
         {
             Id = id;
             Name = name;
-            ReturnType = returnType;
+            Type = type;
             Refs = 0;
         }
     }

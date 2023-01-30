@@ -2,6 +2,7 @@
 {
     public enum PinType
     {
+        DontCare,
         Flow,
         Bool,
         Int,

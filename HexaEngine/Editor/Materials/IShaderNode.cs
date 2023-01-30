@@ -10,7 +10,7 @@
 
         public string Description { get; }
 
-        public Type OutputType { get; }
+        public SType OutputType { get; }
 
         public void Generate(VariableTable table, IReadOnlyDictionary<IShaderNode, int> mapping, StringBuilder builder);
     }

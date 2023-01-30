@@ -3,7 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Mathematics;
     using System;
+    using System.Numerics;
 
     public class Sphere : Primitive<MeshVertex>
     {
@@ -20,7 +22,7 @@
         public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 20, uint LongLines = 20)
         {
             float radius = 1;
-            float x, y, z, xy;                              // vertex position
+            float x, y, z;                              // vertex position
             float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
             float s, t;                                     // vertex texCoord
 
@@ -33,9 +35,9 @@
             int vi = 0;
             for (int i = 0; i <= LatLines; ++i)
             {
-                latitudeAngle = MathF.PI / 2 - i * deltaLatitude;        // starting from pi/2 to -pi/2
-                xy = radius * MathF.Cos(latitudeAngle);             // r * cos(u)
-                z = radius * MathF.Sin(latitudeAngle);              // r * sin(u)
+                latitudeAngle = i * deltaLatitude;        // starting from pi/2 to -pi/2
+                float latSin = radius * MathF.Sin(latitudeAngle);             // r * sin(u)
+                float latCos = radius * MathF.Cos(latitudeAngle);              // r * cos(u)
 
                 // add (sectorCount+1) vertices per stack
                 // the first and last vertices have same position and normal, but different tex coords
@@ -45,8 +47,9 @@
                     longitudeAngle = j * deltaLongitude;           // starting from 0 to 2pi
 
                     // vertex position (x, y, z)
-                    x = xy * MathF.Cos(longitudeAngle);             // r * cos(u) * cos(v)
-                    y = xy * MathF.Sin(longitudeAngle);             // r * cos(u) * sin(v)
+                    x = latSin * MathF.Cos(longitudeAngle);
+                    y = latCos;
+                    z = -latSin * MathF.Sin(longitudeAngle);
                     v.Position = new(x, y, z);
 
                     // normalized vertex normal (nx, ny, nz)
@@ -59,7 +62,7 @@
                     s = (float)j / LongLines;
                     t = (float)i / LatLines;
 
-                    v.Texture = new(Math.Abs(s - 1), Math.Abs(t - 1));
+                    v.Texture = new(MathF.Abs(1 - s), t);
                     vertices[vi++] = v;
                 }
             }

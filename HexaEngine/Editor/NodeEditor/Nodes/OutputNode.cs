@@ -19,7 +19,7 @@
         public OutputNode(IGraphicsDevice device, NodeEditor graph, bool removable, bool isStatic) : base(graph, "Output", removable, isStatic)
         {
             Texture = new(device, TextureDescription.CreateTexture2DWithRTV(128, 128, 1));
-            Out = CreatePin("in", PinKind.Input, PinType.VectorAny, ImNodesNET.PinShape.QuadFilled);
+            Out = CreatePin("in", PinKind.Input, PinType.VectorAny, PinShape.QuadFilled, 1);
             Camera = new();
             Camera.Fov = 90;
             Camera.Transform.Width = 1;

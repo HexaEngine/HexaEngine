@@ -262,7 +262,7 @@
             {
                 var pino = GetNode(idNode1).GetOuput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);
-                if (pino.CanCreateLink(pini))
+                if (pini.CanCreateLink(pini, pino))
                     CreateLink(pini, pino);
             }
             int idLink = 0;

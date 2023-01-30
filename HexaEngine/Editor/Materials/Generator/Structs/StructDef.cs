@@ -3,9 +3,9 @@
     public struct StructDef
     {
         public string Name;
-        public Type Type;
+        public SType Type;
 
-        public StructDef(string name, Type type)
+        public StructDef(string name, SType type)
         {
             Name = name;
             Type = type;

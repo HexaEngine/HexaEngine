@@ -7,9 +7,9 @@
     {
         public int Slot;
         public string Name;
-        public Type SamplerType;
+        public SType SamplerType;
 
-        public SamplerState(string name, Type samplerType)
+        public SamplerState(string name, SType samplerType)
         {
             Name = name;
             SamplerType = samplerType;

@@ -50,7 +50,7 @@
             }
         }
 
-        public static string CastTo(Type type)
+        public static string CastTo(SType type)
         {
             if (type.IsScalar || type.IsVector || type.IsMatrix || type.IsStruct)
             {
@@ -59,14 +59,14 @@
             throw new InvalidCastException();
         }
 
-        public static string FromCastTo(Type from, Type to)
+        public static string FromCastTo(SType from, SType to)
         {
             if (from == to)
                 return string.Empty;
             return CastTo(to);
         }
 
-        public static bool NeedCastPerComponentMath(Type a, Type b)
+        public static bool NeedCastPerComponentMath(SType a, SType b)
         {
             return a != b && !a.IsScalar && !b.IsScalar;
         }

@@ -3,9 +3,9 @@
     public struct ConstantBufferDef
     {
         public string Name;
-        public Type Type;
+        public SType Type;
 
-        public ConstantBufferDef(string name, Type type)
+        public ConstantBufferDef(string name, SType type)
         {
             Name = name;
             Type = type;
