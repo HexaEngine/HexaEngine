@@ -44,14 +44,14 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	float3 position = attrs.pos;
 	float3 baseColor = attrs.albedo;
 
-	float specular = 0.5f;
-	float specularTint = 0;
-	float sheen = 0;
-	float sheenTint = 0.5f;
-	float clearcoat = 0.0f;
-	float clearcoatGloss = 1;
+    float specular = attrs.specular;
+    float specularTint = attrs.speculartint;
+    float sheen = attrs.sheen;
+    float sheenTint = attrs.sheentint;
+    float clearcoat = attrs.clearcoat;
+    float clearcoatGloss = attrs.clearcoatGloss;
 	float anisotropic = attrs.anisotropic;
-	float subsurface = 0;
+    float subsurface = attrs.subsurface;
 	float roughness = attrs.roughness;
 	float metalness = attrs.metalness;
 

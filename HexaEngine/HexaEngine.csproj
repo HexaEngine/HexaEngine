@@ -210,6 +210,12 @@
 		<None Update="assets\shared\shaders\forward\wireframe\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\generic\mesh.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\generic\quad.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\internal\debugdraw\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

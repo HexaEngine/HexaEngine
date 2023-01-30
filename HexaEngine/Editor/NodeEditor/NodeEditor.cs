@@ -120,8 +120,6 @@
             return link;
         }
 
-       
-
         public static PinType GetPinType(ShaderInputBindDescription desc)
         {
             return desc.Type switch
@@ -301,6 +299,16 @@
             }
 
             ImNodes.EditorContextSet((nint)null);
+        }
+
+        public void Destroy()
+        {
+            var nodes = this.nodes.ToArray();
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                nodes[i].Destroy();
+            }
+            this.nodes.Clear();
         }
 
         public static bool Validate(Pin startPin, Pin endPin)

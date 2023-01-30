@@ -123,9 +123,7 @@ float3 BRDF(
 	float Fr = lerp(.04, 1.0, FH);
 	float Gr = smithG_GGX(NdotL, .25) * smithG_GGX(NdotV, .25);
 
-	return ((1 / PI) * (lerp(Fd * Cdlin, ss * float3(1, 0, 0), subsurface)) + Fsheen)
-		* (1 - metallic)
-		+ Gs * Fs * Ds + .25 * clearcoat * Gr * Fr * Dr;
+	return ((1 / PI) * (lerp(Fd * Cdlin, ss * float3(1, 0, 0), subsurface)) + Fsheen) * (1 - metallic) + Gs * Fs * Ds + .25 * clearcoat * Gr * Fr * Dr;
 }
 
 float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)

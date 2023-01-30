@@ -48,7 +48,6 @@
 		<ProjectReference Include="..\ImPlot.NET\ImPlot.NET.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Folder Include="AI\Pathfinding\" />
 	  <Folder Include="Particles\" />
 	</ItemGroup>
 </Project>

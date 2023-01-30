@@ -69,6 +69,35 @@
             };
             buffer = device.CreateBuffer(items, count, description);
             buffer.DebugName = dbgName;
+        }  /// <summary>
+
+           /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+           /// </summary>
+           /// <param name="device">The device.</param>
+           /// <param name="values">The values.</param>
+           /// <param name="accessFlags">The access flags.</param>
+        public ConstantBuffer(IGraphicsDevice device, T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            this.device = device;
+            description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
+            count = 1;
+            items = Alloc<T>(count);
+
+            T* src = &value;
+            int size = (int)(count * sizeof(T));
+            System.Buffer.MemoryCopy(src, items, size, size);
+
+            description.Usage = accessFlags switch
+            {
+                CpuAccessFlags.Write => Usage.Dynamic,
+                CpuAccessFlags.Read => Usage.Staging,
+                CpuAccessFlags.None => Usage.Immutable,
+                CpuAccessFlags.RW => Usage.Staging,
+                _ => throw new ArgumentException("Invalid CpuAccessFlags", nameof(accessFlags)),
+            };
+            buffer = device.CreateBuffer(items, count, description);
+            buffer.DebugName = dbgName;
         }
 
         /// <summary>

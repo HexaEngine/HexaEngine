@@ -54,10 +54,18 @@ GeometryData main(PixelInput input)
 	float3 normal;
 	float3 emissive;
 	float opacity = 1;
-	float metalness;
-	float roughness;
+
 	float ao;
-	float anisotropic = material.Anisotropic.x;
+    float specular = 0.5f;
+    float specularTint = 0;
+    float sheen = 0;
+    float sheenTint = 0.5f;
+    float clearcoat = 0;
+    float clearcoatGloss = 1;
+    float anisotropic = material.Anisotropic.x;
+    float subsurface;
+    float roughness;
+    float metalness;
 
 	if (material.DANR.y)
 	{
@@ -119,7 +127,7 @@ GeometryData main(PixelInput input)
 	if (opacity == 0)
 		discard;
 
-	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, input.tangent, emissive, 0, 1, 0.5f, ao, 1, anisotropic, 0, 0, 0, 0, 0, 0, 0);
+	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, input.tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
 }
 
 #endif

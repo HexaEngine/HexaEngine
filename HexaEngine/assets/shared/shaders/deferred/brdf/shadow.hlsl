@@ -230,16 +230,16 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	float3 position = attrs.pos;
 	float3 baseColor = attrs.albedo;
 
-	float specular = 0.5f;
-	float specularTint = 0;
-	float sheen = 0;
-	float sheenTint = 0.5f;
-	float clearcoat = 0.0f;
-	float clearcoatGloss = 1;
-	float anisotropic = attrs.anisotropic;
-	float subsurface = 0;
-	float roughness = attrs.roughness;
-	float metalness = attrs.metalness;
+    float specular = attrs.specular;
+    float specularTint = attrs.speculartint;
+    float sheen = attrs.sheen;
+    float sheenTint = attrs.sheentint;
+    float clearcoat = attrs.clearcoat;
+    float clearcoatGloss = attrs.clearcoatGloss;
+    float anisotropic = attrs.anisotropic;
+    float subsurface = attrs.subsurface;
+    float roughness = attrs.roughness;
+    float metalness = attrs.metalness;
 
 	float3 N = normalize(attrs.normal);
 	float3 X = normalize(attrs.tangent);
@@ -251,7 +251,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 	//float3 F0 = float3(pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0));
 	float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
 
-	float3 Lo = attrs.emission;
+    float3 Lo = float3(0, 0, 0);
 
 	[unroll(1)]
 	for (uint y = 0; y < directionalLightCount; y++)

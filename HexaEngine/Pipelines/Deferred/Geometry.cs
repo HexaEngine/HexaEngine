@@ -119,23 +119,27 @@ namespace HexaEngine.Pipelines.Deferred
         {
             pipeline.BeginDraw(context, viewport);
             context.DSSetConstantBuffer(Camera, 1);
+            context.VSSetConstantBuffer(Camera, 1);
         }
 
         public void BeginDrawDepth(IGraphicsContext context, IBuffer camera, Viewport viewport)
         {
             context.DSSetConstantBuffer(camera, 1);
+            context.VSSetConstantBuffer(Camera, 1);
             depthOnly.BeginDraw(context, viewport);
         }
 
         public void BeginDrawDepthFront(IGraphicsContext context, Viewport viewport)
         {
             context.DSSetConstantBuffer(Camera, 1);
+            context.VSSetConstantBuffer(Camera, 1);
             depthFront.BeginDraw(context, viewport);
         }
 
         public void BeginDrawDepthBack(IGraphicsContext context, Viewport viewport)
         {
             context.DSSetConstantBuffer(Camera, 1);
+            context.VSSetConstantBuffer(Camera, 1);
             depthBack.BeginDraw(context, viewport);
         }
 

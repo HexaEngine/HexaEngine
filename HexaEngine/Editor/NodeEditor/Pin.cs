@@ -75,6 +75,14 @@
             {
                 return IsTexture(other.Type);
             }
+            else if (other.Type == PinType.VectorAny)
+            {
+                return IsVector(Type);
+            }
+            else if (Type == PinType.VectorAny)
+            {
+                return IsVector(other.Type);
+            }
             else
             {
                 return other.Type == Type;
@@ -95,6 +103,19 @@
                 PinType.TextureCube => true,
                 PinType.TextureCubeArray => true,
                 PinType.Texture3D => true,
+                _ => false
+            };
+        }
+
+        public static bool IsVector(PinType type)
+        {
+            return type switch
+            {
+                PinType.VectorAny => true,
+                PinType.Float => true,
+                PinType.Vector2 => true,
+                PinType.Vector3 => true,
+                PinType.Vector4 => true,
                 _ => false
             };
         }

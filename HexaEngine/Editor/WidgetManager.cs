@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Materials;
     using HexaEngine.Editor.Widgets;
 
     public static class WidgetManager
@@ -26,6 +27,7 @@
             Register<DebugWindow>();
             Register<ProfilerWindow>();
             Register<EffectWindow>();
+            Register<MaterialEditor>();
         }
 
         public static bool Register<T>() where T : IImGuiWindow, new()
