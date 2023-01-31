@@ -91,6 +91,8 @@
         public UavTextureType UavTextureType;
         public bool IsConstantBuffer;
         public bool IsStruct;
+        public bool IsStructMember;
+        
 
         public List<Operator> Operators = new();
 
@@ -99,6 +101,8 @@
             IsStruct = true;
             structName = name;
         }
+
+
 
         public SType(ScalarType scalar, string semantic)
         {

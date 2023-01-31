@@ -16,6 +16,7 @@
     public class MaterialEditor : ImGuiWindow
     {
         private readonly NodeEditor editor = new();
+        private InputNode inputNode;
         private OutputNode outputNode;
         private ShaderGenerator generator = new();
         private IGraphicsPipeline pipeline;
@@ -34,7 +35,9 @@
 
         public override void Init(IGraphicsDevice device)
         {
+            inputNode = new(editor, false, false);
             outputNode = new(device, editor, false, false);
+            editor.AddNode(inputNode);
             editor.AddNode(outputNode);
 
             editor.NodeRemoved += Editor_NodeRemoved;
@@ -138,6 +141,11 @@
                         MixNode node = new(editor, true, false);
                         editor.AddNode(node);
                     }
+                    if (ImGui.MenuItem("Converter"))
+                    {
+                        ConverterNode node = new(editor, true, false);
+                        editor.AddNode(node);
+                    }
 
                     ImGui.EndMenu();
                 }
@@ -182,7 +190,7 @@
                 }
                 context.VSSetConstantBuffer(world.Buffer, 0);
                 context.VSSetConstantBuffer(view.Buffer, 1);
-                sphere.DrawAuto(context, pipeline, new(128, 128));
+                sphere.DrawAuto(context, pipeline, new(256, 256));
                 context.ClearState();
             }
 

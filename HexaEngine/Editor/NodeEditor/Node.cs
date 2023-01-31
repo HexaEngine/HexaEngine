@@ -43,6 +43,8 @@
             }
         }
 
+        public bool IsHovered { get; set; }
+
         public Pin GetInput(int id)
         {
             return Pins.Find(x => x.Id == id && x.Kind == PinKind.Input) ?? throw new();

@@ -262,7 +262,7 @@
             {
                 var pino = GetNode(idNode1).GetOuput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);
-                if (pini.CanCreateLink(pini, pino))
+                if (pini.CanCreateLink(pino) && pino.CanCreateLink(pini))
                     CreateLink(pini, pino);
             }
             int idLink = 0;
@@ -296,6 +296,12 @@
             int idpinStart = 0;
             if (ImNodes.IsLinkStarted(ref idpinStart))
             {
+            }
+
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                var id = Nodes[i].Id;
+                Nodes[i].IsHovered = ImNodes.IsNodeHovered(ref id);
             }
 
             ImNodes.EditorContextSet((nint)null);

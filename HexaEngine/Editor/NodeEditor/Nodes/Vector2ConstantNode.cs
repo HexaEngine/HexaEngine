@@ -8,7 +8,7 @@
     {
         public Vector2ConstantNode(NodeEditor graph, bool removable, bool isStatic) : base(graph, "Vector2", removable, isStatic)
         {
-            CreatePin("out", PinKind.Output, PinType.Vector2, ImNodesNET.PinShape.CircleFilled);
+            CreatePin("out", PinKind.Output, PinType.Float2, ImNodesNET.PinShape.CircleFilled);
         }
 
         public Vector2 Value;

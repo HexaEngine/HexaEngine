@@ -1,18 +1,20 @@
 ﻿namespace HexaEngine.Editor.NodeEditor.Nodes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     public class InputNode : Node
     {
-        public InputNode(List<(string, PinType)> values, NodeEditor graph, string name, bool removable, bool isStatic) : base(graph, name, removable, isStatic)
+        public InputNode(NodeEditor graph, bool removable, bool isStatic) : base(graph, "Geometry", removable, isStatic)
         {
-            for (int i = 0; i < values.Count; i++)
-            {
-            }
+            ClipPos = CreatePin("position", PinKind.Output, PinType.Float4, ImNodesNET.PinShape.CircleFilled);
+            WorldPos = CreatePin("pos", PinKind.Output, PinType.Float4, ImNodesNET.PinShape.CircleFilled);
+            TexCoord = CreatePin("tex", PinKind.Output, PinType.Float2, ImNodesNET.PinShape.CircleFilled);
+            Normal = CreatePin("normal", PinKind.Output, PinType.Float3, ImNodesNET.PinShape.CircleFilled);
+            Tangent = CreatePin("tangent", PinKind.Output, PinType.Float3, ImNodesNET.PinShape.CircleFilled);
         }
+
+        public Pin ClipPos;
+        public Pin WorldPos;
+        public Pin TexCoord;
+        public Pin Normal;
+        public Pin Tangent;
     }
 }

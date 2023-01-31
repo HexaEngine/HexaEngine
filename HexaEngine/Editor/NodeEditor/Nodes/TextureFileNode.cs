@@ -27,9 +27,13 @@
 
         public TextureFileNode(IGraphicsDevice device, NodeEditor graph, bool removable, bool isStatic) : base(graph, "Texture", removable, isStatic)
         {
-            CreatePin("out", PinKind.Output, PinType.VectorAny, ImNodesNET.PinShape.Quad);
+            OutColor = CreatePin("out", PinKind.Output, PinType.VectorAny, ImNodesNET.PinShape.Quad);
+            InUV = CreatePin("uv", PinKind.Input, PinType.Float2, ImNodesNET.PinShape.CircleFilled);
             this.device = device;
         }
+
+        public Pin OutColor;
+        public Pin InUV;
 
         public IShaderResourceView? Image
         {

@@ -3,24 +3,24 @@
     using HexaEngine.Editor.Materials.Generator;
     using ImGuiNET;
 
-    public class MixNode : Node
+    public abstract class MathBaseNode : Node, IMathOpNode
     {
-        private PinType mode = PinType.Float4;
+        private PinType mode = PinType.Float;
+        private string[] names;
+        private PinType[] modes;
+        private int item;
 
-        public MixNode(NodeEditor graph, bool removable, bool isStatic) : base(graph, "Mix", removable, isStatic)
+        protected MathBaseNode(NodeEditor graph, string name, bool removable, bool isStatic) : base(graph, name, removable, isStatic)
         {
+            modes = new PinType[] { PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4 };
+            names = modes.Select(x => x.ToString()).ToArray();
+            
             Out = CreatePin("out", PinKind.Output, mode, ImNodesNET.PinShape.QuadFilled);
             InLeft = CreatePin("Left", PinKind.Input, mode, ImNodesNET.PinShape.QuadFilled, 1);
             InRight = CreatePin("Right", PinKind.Input, mode, ImNodesNET.PinShape.QuadFilled, 1);
-            InMix = CreatePin("Mix", PinKind.Input, PinType.Float, ImNodesNET.PinShape.QuadFilled, 1);
             UpdateMode();
         }
 
-        public Pin Out;
-        public Pin InLeft;
-        public Pin InRight;
-        public Pin InMix;
-        public SType Type;
 
         private void UpdateMode()
         {
@@ -47,29 +47,25 @@
             }
         }
 
-        protected override void DrawContent()
+        protected override void DrawContentBeforePins()
         {
-            base.DrawContent();
-            if (ImGui.RadioButton("Float", mode == PinType.Float))
+            ImGui.PushItemWidth(100);
+            if (ImGui.Combo("##Mode", ref item, names, names.Length))
             {
-                mode = PinType.Float;
+                mode = modes[item];
                 UpdateMode();
             }
-            if (ImGui.RadioButton("Float2", mode == PinType.Float2))
-            {
-                mode = PinType.Float2;
-                UpdateMode();
-            }
-            if (ImGui.RadioButton("Float3", mode == PinType.Float3))
-            {
-                mode = PinType.Float3;
-                UpdateMode();
-            }
-            if (ImGui.RadioButton("Float4", mode == PinType.Float4))
-            {
-                mode = PinType.Float4;
-                UpdateMode();
-            }
+            ImGui.PopItemWidth();
         }
+
+        public SType Type { get; protected set; }
+
+        public Pin InLeft { get; }
+
+        public Pin InRight { get; }
+
+        public abstract string Op { get; }
+
+        public Pin Out { get; }
     }
 }

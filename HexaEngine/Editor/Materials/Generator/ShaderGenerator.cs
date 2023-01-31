@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.Materials.Generator
 {
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Editor.Materials.Generator.Enums;
     using HexaEngine.Editor.Materials.Generator.Structs;
     using HexaEngine.Editor.NodeEditor;
@@ -45,8 +46,10 @@
                     new("tangent", new(VectorType.Float3, "TANGENT")),
                 },
             };
+
             input = table.AddStruct(input);
             inputVar = table.AddVariable(new(-1, table.GetUniqueName(input.Name.ToLower()), new(input.Name)));
+            SType type = new(input.Name);
 
             output = new()
             {
@@ -58,7 +61,14 @@
             for (int i = 0; i < order.Length; i++)
             {
                 var node = order[i];
-                if (node is TextureFileNode textureFile)
+                if (node is InputNode)
+                {
+                    var id = mapping.Count;
+                    mapping.Add(node, id);
+                    table.AddVariable(new(id, inputVar.Name, type));
+
+                }
+                else if (node is TextureFileNode textureFile)
                 {
                     Build(textureFile, builder);
                 }
@@ -97,6 +107,10 @@
                 else if (node is OutputNode outNode)
                 {
                     Build(outNode, builder);
+                }
+                else if (node is ConverterNode converter)
+                {
+                    Build(converter, builder);
                 }
             }
             var body = builder.ToString();
@@ -245,7 +259,10 @@
         public Definition GetVariableFirstLink(Pin pin)
         {
             if (pin.Links.Count == 0)
-                throw new NullReferenceException();
+            {
+                return new Definition("0", new(ScalarType.Unknown));
+            }
+                
             var link = pin.Links[0];
 
             var op = Find(link.SourceNode);
@@ -255,7 +272,7 @@
             }
             else
             {
-                return new($"{op.Type.Name}.{link.Output.Name}", op.Type);
+                return new($"{op.Name}.{link.Output.Name}", op.Type);
             }
         }
 
@@ -326,10 +343,11 @@
 
         private Operation Build(TextureFileNode node, StringBuilder builder)
         {
+            var tex = GetVariableFirstLink(node.InUV);
             var srv = AddSrv($"Srv{node.Name}", new(TextureType.Texture2D), new(VectorType.Float4));
             var sampler = AddSampler($"Sampler{node.Name}", new(SamplerType.SamplerState));
             var output = AddVariable(node.Name, node, new(VectorType.Float4));
-            builder.AppendLine($"float4 {output.Name} = {srv.Name}.Sample({sampler.Name}, {inputVar.Name}.tex);");
+            builder.AppendLine($"float4 {output.Name} = {srv.Name}.Sample({sampler.Name}, {tex.Name});");
             return output;
         }
 
@@ -397,6 +415,9 @@
             else
             {
                 var min = left.Type.IsScalar ? right.Type : left.Type;
+                min = left.Type.IsStruct ? right.Type : min;
+                min = right.Type.IsStruct ? left.Type : min;
+             
                 var output = AddVariable(node.Name, node, min);
                 builder.AppendLine($"{min.Name} {output.Name} = {left.Name} {op} {right.Name};");
                 return output;
@@ -408,6 +429,19 @@
             var left = GetVariableFirstLink(node.InLeft);
             var right = GetVariableFirstLink(node.InRight);
             return Build(left, right, node.Type, (Node)node, node.Op, builder);
+        }
+
+        private Operation Build(ConverterNode node, StringBuilder builder)
+        {
+            var inVal = GetVariableFirstLink(node.In);
+            var output = AddVariable(node.Name, node, new(VectorType.Float4));
+            builder.AppendLine($"float4 {output.Name} = float4({inVal.Name},{node.Value.ToString(CultureInfo.InvariantCulture)});");
+            return output;
+        }
+
+        private Operation Build(InputNode node, StringBuilder builder)
+        {
+            return default;
         }
 
         private Operation Build(OutputNode node, StringBuilder builder)

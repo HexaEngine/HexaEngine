@@ -8,7 +8,7 @@
     {
         public Color4ConstantNode(NodeEditor graph, bool removable, bool isStatic) : base(graph, "Color4", removable, isStatic)
         {
-            CreatePin("out", PinKind.Output, PinType.Vector4, ImNodesNET.PinShape.CircleFilled);
+            CreatePin("out", PinKind.Output, PinType.Float4, ImNodesNET.PinShape.CircleFilled);
         }
 
         public Vector4 Value;

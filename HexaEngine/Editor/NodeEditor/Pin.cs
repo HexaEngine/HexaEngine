@@ -59,13 +59,13 @@
             }
         }
 
-        public virtual bool CanCreateLink(Pin input, Pin output)
+        public virtual bool CanCreateLink(Pin other)
         {
-            if (Id == input.Id) return false;
+            if (Id == other.Id) return false;
             if (Links.Count == MaxLinks) return false;
             if (Type == PinType.DontCare) return true;
-            if (!IsType(input)) return false;
-            if (Kind == input.Kind) return false;
+            if (!IsType(other)) return false;
+            if (Kind == other.Kind) return false;
 
             return true;
         }
@@ -118,9 +118,9 @@
             {
                 PinType.VectorAny => true,
                 PinType.Float => true,
-                PinType.Vector2 => true,
-                PinType.Vector3 => true,
-                PinType.Vector4 => true,
+                PinType.Float2 => true,
+                PinType.Float3 => true,
+                PinType.Float4 => true,
                 _ => false
             };
         }

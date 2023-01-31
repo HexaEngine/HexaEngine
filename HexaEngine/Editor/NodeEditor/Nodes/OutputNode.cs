@@ -13,13 +13,13 @@
     public class OutputNode : Node
     {
         private Vector3 sc = new(2, 0, 0);
-        private const float speed = 20;
+        private const float speed = 10;
         private static bool first = true;
 
         public OutputNode(IGraphicsDevice device, NodeEditor graph, bool removable, bool isStatic) : base(graph, "Output", removable, isStatic)
         {
-            Texture = new(device, TextureDescription.CreateTexture2DWithRTV(128, 128, 1));
-            Out = CreatePin("in", PinKind.Input, PinType.VectorAny, PinShape.QuadFilled, 1);
+            Texture = new(device, TextureDescription.CreateTexture2DWithRTV(256, 256, 1));
+            Out = CreatePin("in", PinKind.Input, PinType.Float4, PinShape.QuadFilled, 1);
             Camera = new();
             Camera.Fov = 90;
             Camera.Transform.Width = 1;
@@ -32,9 +32,9 @@
 
         protected override void DrawContent()
         {
-            ImGui.Image(Texture.ShaderResourceView?.NativePointer ?? 0, new(128, 128));
+            ImGui.Image(Texture.ShaderResourceView?.NativePointer ?? 0, new(256, 256));
 
-            if (ImGui.IsMouseDown(ImGuiMouseButton.Middle) || first)
+            if (IsHovered && ImGui.IsMouseDown(ImGuiMouseButton.Middle) || first)
             {
                 Vector2 delta = Vector2.Zero;
                 if (Mouse.IsDown(MouseButton.Middle))
