@@ -9,13 +9,15 @@
     using HexaEngine.Editor.Materials.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Nodes;
-    using HexaEngine.Mathematics;
+    using HexaEngine.Editor.NodeEditor.Nodes.Functions;
+    using HexaEngine.Editor.NodeEditor.Nodes.Operations;
+    using HexaEngine.Editor.NodeEditor.Nodes.Shaders;
     using ImGuiNET;
     using System.Numerics;
 
     public class MaterialEditor : ImGuiWindow
     {
-        private readonly NodeEditor editor = new();
+        private NodeEditor editor = new();
         private InputNode inputNode;
         private OutputNode outputNode;
         private ShaderGenerator generator = new();
@@ -31,16 +33,18 @@
             Flags = ImGuiWindowFlags.MenuBar;
         }
 
-        protected override string Name => "Mat Editor";
+        protected override string Name => "Material Editor";
 
         public override void Init(IGraphicsDevice device)
         {
-            inputNode = new(editor, false, false);
-            outputNode = new(device, editor, false, false);
+            inputNode = new(editor.GetUniqueId(), false, false);
+            outputNode = new(editor.GetUniqueId(), false, false);
+            outputNode.InitTexture(device);
             editor.AddNode(inputNode);
             editor.AddNode(outputNode);
 
             editor.NodeRemoved += Editor_NodeRemoved;
+            editor.Initialize();
 
             sphere = new(device);
             world = new(device, Matrix4x4.Transpose(Matrix4x4.Identity), CpuAccessFlags.None);
@@ -74,7 +78,7 @@
                 {
                     if (ImGui.MenuItem("Texture File"))
                     {
-                        TextureFileNode node = new(context.Device, editor, true, false);
+                        TextureFileNode node = new(context.Device, editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                         textureFiles.Add(node);
                     }
@@ -82,34 +86,19 @@
                 }
                 if (ImGui.BeginMenu("Constants"))
                 {
-                    if (ImGui.MenuItem("Float"))
+                    if (ImGui.MenuItem("BRDF"))
                     {
-                        FloatConstantNode node = new(editor, true, false);
+                        BRDFNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
-                    if (ImGui.MenuItem("Vector2"))
+                    if (ImGui.MenuItem("Splitter"))
                     {
-                        Vector2ConstantNode node = new(editor, true, false);
+                        SplitNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
-                    if (ImGui.MenuItem("Vector3"))
+                    if (ImGui.MenuItem("Packer"))
                     {
-                        Vector3ConstantNode node = new(editor, true, false);
-                        editor.AddNode(node);
-                    }
-                    if (ImGui.MenuItem("Vector4"))
-                    {
-                        Vector4ConstantNode node = new(editor, true, false);
-                        editor.AddNode(node);
-                    }
-                    if (ImGui.MenuItem("Color3"))
-                    {
-                        Color3ConstantNode node = new(editor, true, false);
-                        editor.AddNode(node);
-                    }
-                    if (ImGui.MenuItem("Color4"))
-                    {
-                        Color4ConstantNode node = new(editor, true, false);
+                        PackNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
                     ImGui.EndMenu();
@@ -118,32 +107,57 @@
                 {
                     if (ImGui.MenuItem("Add"))
                     {
-                        AddNode node = new(editor, true, false);
+                        AddNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
                     if (ImGui.MenuItem("Subtract"))
                     {
-                        SubtractNode node = new(editor, true, false);
+                        SubtractNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
                     if (ImGui.MenuItem("Multiply"))
                     {
-                        MultiplyNode node = new(editor, true, false);
+                        MultiplyNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
                     if (ImGui.MenuItem("Divide"))
                     {
-                        DivideNode node = new(editor, true, false);
+                        DivideNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
                     if (ImGui.MenuItem("Mix"))
                     {
-                        MixNode node = new(editor, true, false);
+                        MixNode node = new(editor.GetUniqueId(), true, false);
+                        editor.AddNode(node);
+                    }
+                    if (ImGui.MenuItem("Cross"))
+                    {
+                        CrossNode node = new(editor.GetUniqueId(), true, false);
+                        editor.AddNode(node);
+                    }
+                    if (ImGui.MenuItem("Dot"))
+                    {
+                        DotNode node = new(editor.GetUniqueId(), true, false);
+                        editor.AddNode(node);
+                    }
+                    if (ImGui.MenuItem("Min"))
+                    {
+                        MinNode node = new(editor.GetUniqueId(), true, false);
+                        editor.AddNode(node);
+                    }
+                    if (ImGui.MenuItem("Max"))
+                    {
+                        MaxNode node = new(editor.GetUniqueId(), true, false);
+                        editor.AddNode(node);
+                    }
+                    if (ImGui.MenuItem("Clamp"))
+                    {
+                        ClampNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
                     if (ImGui.MenuItem("Converter"))
                     {
-                        ConverterNode node = new(editor, true, false);
+                        ConvertNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
 
@@ -154,13 +168,11 @@
                     Directory.CreateDirectory(Paths.CurrentAssetsPath + "generated/" + "shaders/");
                     File.WriteAllText(Paths.CurrentAssetsPath + "generated/" + "shaders/" + "tmp.hlsl", generator.Generate(outputNode));
                     FileSystem.Refresh();
-                    if (pipeline == null)
+                    pipeline ??= context.Device.CreateGraphicsPipeline(new()
                     {
-                        pipeline = context.Device.CreateGraphicsPipeline(new()
-                        {
-                            PixelShader = "tmp.hlsl",
-                            VertexShader = "generic/mesh.hlsl",
-                        },
+                        PixelShader = "tmp.hlsl",
+                        VertexShader = "generic/mesh.hlsl",
+                    },
                         new GraphicsPipelineState()
                         {
                             Blend = BlendDescription.Opaque,
@@ -171,10 +183,40 @@
                             StencilRef = 0,
                             Topology = PrimitiveTopology.TriangleList
                         });
-                    }
 
                     pipeline.Recompile();
                 }
+
+                JsonSerializerSettings settings = new()
+                {
+                    Formatting = Formatting.Indented,
+                    ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                    ObjectCreationHandling = ObjectCreationHandling.Auto,
+                    TypeNameHandling = TypeNameHandling.All,
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    PreserveReferencesHandling = PreserveReferencesHandling.All,
+                    CheckAdditionalContent = true,
+                    MetadataPropertyHandling = MetadataPropertyHandling.Default,
+                    NullValueHandling = NullValueHandling.Include,
+                };
+
+                if (ImGui.MenuItem("Save"))
+                {
+                    File.WriteAllText("test.json", JsonConvert.SerializeObject(editor, settings));
+                }
+
+                if (ImGui.MenuItem("Load"))
+                {
+                    var obj = JsonConvert.DeserializeObject<NodeEditor>(File.ReadAllText("test.json"), settings);
+                    inputNode = obj.GetNode<InputNode>();
+                    outputNode = obj.GetNode<OutputNode>();
+                    outputNode.InitTexture(context.Device);
+                    obj.Initialize();
+                    editor.Destroy();
+                    editor = obj;
+                }
+
                 ImGui.EndMenuBar();
             }
 
@@ -183,15 +225,15 @@
                 view[0] = new(outputNode.Camera);
                 view.Update(context);
 
-                outputNode.Texture.ClearAndSetTarget(context, default);
+                outputNode.Texture.ClearAndSetTarget(context, default, DepthStencilClearFlags.All);
                 for (int i = 0; i < textureFiles.Count; i++)
                 {
                     context.PSSetShaderResource(textureFiles[i].Image, i);
                 }
                 context.VSSetConstantBuffer(world.Buffer, 0);
                 context.VSSetConstantBuffer(view.Buffer, 1);
+
                 sphere.DrawAuto(context, pipeline, new(256, 256));
-                context.ClearState();
             }
 
             editor.Draw();

@@ -23,10 +23,8 @@
             Register<OpenProjectWindow>();
             Register<PublishProjectWindow>();
             Register<SceneVariablesWindow>();
-            Register<PipelineEditor>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
-            Register<EffectWindow>();
             Register<MaterialEditor>();
         }
 

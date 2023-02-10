@@ -22,7 +22,7 @@
             Application.InEditorMode = true;
             FileSystem.Initialize();
 
-            Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor" });
+            Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor", DebugGraphics = true });
 
             PluginManager.Unload();
         }

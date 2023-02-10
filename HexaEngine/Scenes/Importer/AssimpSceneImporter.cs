@@ -185,7 +185,7 @@ namespace HexaEngine.Scenes.Importer
             materials = new MaterialData[scene->MNumMaterials];
             for (int i = 0; i < scene->MNumMaterials; i++)
             {
-                Silk.NET.Assimp.Material* mat = scene->MMaterials[i];
+                Material* mat = scene->MMaterials[i];
                 Dictionary<(string, object), object> props = new();
                 AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.Unknown + 1];
                 for (int j = 0; j < texs.Length; j++)
@@ -406,6 +406,14 @@ namespace HexaEngine.Scenes.Importer
                     Emissive = material.ColorEmissive,
                     Metalness = material.MetallicFactor,
                     Roughness = material.RoughnessFactor,
+                    Specular = material.SpecularFactor,
+                    SpecularTint = 0,
+                    Cleancoat = material.ClearcoatFactor,
+                    CleancoatGloss = material.ClearcoatRoughnessFactor,
+                    Sheen = material.SheenColorFactor,
+                    SheenTint = 0.5f,
+                    Anisotropic = material.AnisotropyFactor,
+                    Subsurface = 0,
                     Opacity = material.Opacity,
                     Name = material.Name,
                     BaseColorTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,

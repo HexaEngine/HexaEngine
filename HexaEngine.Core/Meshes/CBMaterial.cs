@@ -6,9 +6,24 @@
     public struct CBMaterial
     {
         public Vector4 Color;
-        public Vector4 RMAo;
-        public Vector4 Emissive;
-        public Vector4 Anisotropic;
+
+        public float Roughness;
+        public float Metalness;
+        public float Specular;
+        public float SpecularTint;
+
+        public float Sheen;
+        public float SheenTint;
+        public float Clearcoat;
+        public float ClearcoatGloss;
+
+        public float Anisotropic;
+        public float Subsurface;
+        public float Ao;
+        public float Padding0;
+
+        public Vector3 Emissive;
+        public float Padding1;
 
         public int HasDisplacementMap;
         public int HasAlbedoMap;
@@ -22,9 +37,18 @@
         public CBMaterial(MaterialData material)
         {
             Color = new(material.BaseColor, 1);
-            Emissive = new(material.Emissive, 1);
-            RMAo = new(material.Roughness, material.Metalness, material.Ao, 1);
-            Anisotropic = new(material.Anisotropic, 0, 0, 0);
+            Roughness = material.Roughness;
+            Metalness = material.Metalness;
+            Specular = material.Specular;
+            SpecularTint = material.SpecularTint;
+            Sheen = material.Sheen;
+            SheenTint = material.SheenTint;
+            Clearcoat = material.Cleancoat;
+            ClearcoatGloss = material.CleancoatGloss;
+            Anisotropic = material.Anisotropic;
+            Subsurface = material.Subsurface;
+            Ao = material.Ao;
+            Emissive = material.Emissive;
 
             HasAlbedoMap = string.IsNullOrEmpty(material.BaseColorTextureMap) ? 0 : 1;
             HasNormalMap = string.IsNullOrEmpty(material.NormalTextureMap) ? 0 : 1;

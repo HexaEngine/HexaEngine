@@ -1,14 +1,30 @@
 ﻿namespace HexaEngine.Editor.NodeEditor.Nodes
 {
     using HexaEngine.Editor.Materials.Generator;
+    using HexaEngine.Editor.NodeEditor.Pins;
 
-    public interface IMathOpNode
+    public interface ITypedNode
     {
-        Pin InLeft { get; }
-        Pin InRight { get; }
-        string Op { get; }
-        Pin Out { get; }
-
         SType Type { get; }
+    }
+
+    public interface IMathOpNode : ITypedNode
+    {
+        FloatPin InLeft { get; }
+
+        FloatPin InRight { get; }
+
+        string Op { get; }
+
+        Pin Out { get; }
+    }
+
+    public interface IMathFuncNode : ITypedNode
+    {
+        IReadOnlyList<FloatPin> Params { get; }
+
+        string Op { get; }
+
+        Pin Out { get; }
     }
 }

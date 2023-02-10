@@ -33,4 +33,12 @@
         Buffer,
         Sampler,
     }
+
+    public enum PinFlags
+    {
+        None = 0,
+        ColorEdit,
+        ColorPicker,
+        Slider,
+    }
 }

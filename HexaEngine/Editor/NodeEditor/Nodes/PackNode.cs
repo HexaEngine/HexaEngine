@@ -5,46 +5,45 @@
     using ImGuiNET;
     using ImNodesNET;
 
-    public abstract class MathBaseNode : Node
+    public class PackNode : Node, ITypedNode
     {
-        private bool initialized;
-        protected PinType mode = PinType.Float;
-        protected string[] names;
-        protected PinType[] modes;
-        protected int item;
+        private PinType mode = PinType.Float4;
+        private string[] names;
+        private PinType[] modes;
+        private int[] componentMasks = { 1, 2, 3, 4 };
+        private int item = 3;
 
-        protected MathBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
+        [JsonIgnore]
+        public FloatPin[] InPins = new FloatPin[4];
+
+        public PackNode(int id, bool removable, bool isStatic) : base(id, "Pack", removable, isStatic)
         {
-            TitleColor = new(0x0069d5ff);
-            TitleHoveredColor = new(0x0078f3ff);
-            TitleSelectedColor = new(0x007effff);
             modes = new PinType[] { PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4 };
             names = modes.Select(x => x.ToString()).ToArray();
-        }
-
-        public PinType Mode
-        {
-            get => mode;
-            set
-            {
-                mode = value;
-                if (initialized)
-                    UpdateMode();
-            }
         }
 
         public override void Initialize(NodeEditor editor)
         {
             Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, mode));
+            InPins[0] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "x", PinShape.QuadFilled, PinKind.Input, PinType.Float, 1));
+            InPins[1] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "y", PinShape.QuadFilled, PinKind.Input, PinType.Float, 1));
+            InPins[2] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "z", PinShape.QuadFilled, PinKind.Input, PinType.Float, 1));
+            InPins[3] = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "w", PinShape.QuadFilled, PinKind.Input, PinType.Float, 1));
             base.Initialize(editor);
-            initialized = true;
+            UpdateMode();
         }
 
-        protected virtual void UpdateMode()
+        private void UpdateMode()
         {
-            item = Array.IndexOf(modes, mode);
+            for (int i = 0; i < 4; i++)
+            {
+                DestroyPin(InPins[i]);
+            }
+            for (int i = 0; i < componentMasks[item]; i++)
+            {
+                AddPin(InPins[i]);
+            }
             Out.Type = mode;
-
             switch (mode)
             {
                 case PinType.Float:
@@ -65,6 +64,12 @@
             }
         }
 
+        [JsonIgnore]
+        public SType Type { get; private set; }
+
+        [JsonIgnore]
+        public Pin Out;
+
         protected override void DrawContentBeforePins()
         {
             ImGui.PushItemWidth(100);
@@ -75,14 +80,5 @@
             }
             ImGui.PopItemWidth();
         }
-
-        [JsonIgnore]
-        public SType Type { get; protected set; }
-
-        [JsonIgnore]
-        public abstract string Op { get; }
-
-        [JsonIgnore]
-        public Pin Out { get; private set; }
     }
 }

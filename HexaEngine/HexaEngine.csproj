@@ -39,17 +39,14 @@
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
 		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
-		<Compile Remove="assets\shared\shaders\deferred\toon\**" />
 		<Compile Remove="Pipelines\Compute\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\blinn\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
-		<EmbeddedResource Remove="assets\shared\shaders\deferred\toon\**" />
 		<EmbeddedResource Remove="Pipelines\Compute\**" />
 		<None Remove="assets\shared\shaders\compute\light\**" />
 		<None Remove="assets\shared\shaders\deferred\blinn\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
-		<None Remove="assets\shared\shaders\deferred\toon\**" />
 		<None Remove="Pipelines\Compute\**" />
 	</ItemGroup>
 
@@ -89,6 +86,15 @@
 		</None>
 		<None Update="assets\shared\shaders\compute\selection\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\debugging\normals\gs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\debugging\normals\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\debugging\normals\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\deferred\brdf\indirect.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -496,5 +502,11 @@
 		<PixelShader Include="assets\shaders\point\PixelShader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</PixelShader>
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <Folder Include="assets\shared\shaders\deferred\toon\" />
 	</ItemGroup>
 </Project>

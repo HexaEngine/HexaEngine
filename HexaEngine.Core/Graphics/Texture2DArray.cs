@@ -43,6 +43,27 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public TextureArray(IGraphicsDevice device, int width, int height, Format[] formats)
+        {
+            Count = (uint)formats.Length;
+            Width = width;
+            Height = height;
+            RTVs = new IRenderTargetView[formats.Length];
+            SRVs = new IShaderResourceView[formats.Length];
+            PSRVs = AllocArray((uint)formats.Length);
+            PRTVs = AllocArray((uint)formats.Length);
+            for (int i = 0; i < formats.Length; i++)
+            {
+                ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                SRVs[i] = device.CreateShaderResourceView(tex);
+                RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
+                PSRVs[i] = (void*)SRVs[i].NativePointer;
+                PRTVs[i] = (void*)RTVs[i].NativePointer;
+                tex.Dispose();
+            }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

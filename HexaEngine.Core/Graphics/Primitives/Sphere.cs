@@ -58,6 +58,15 @@
                     nz = z * lengthInv;
                     v.Normal = new(nx, ny, nz);
 
+                    if (Vector3.Dot(Vector3.UnitY, v.Normal) == 1.0f)
+                    {
+                        v.Tangent = Vector3.UnitX;
+                    }
+                    else
+                    {
+                        v.Tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, v.Normal));
+                    }
+
                     // vertex tex coord (s, t) range between [0, 1]
                     s = (float)j / LongLines;
                     t = (float)i / LatLines;

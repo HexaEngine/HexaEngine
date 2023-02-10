@@ -21,6 +21,8 @@
         private int cbvCounter;
         private int sptCounter;
 
+        public int OperationCount => operations.Count;
+
         public void Build(StringBuilder builder)
         {
             builder.AppendLine("/// Unordered Access Views");
@@ -236,6 +238,11 @@
             }
 
             return newName;
+        }
+
+        public Operation GetOperation(int i)
+        {
+            return operations[i];
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.Materials.Generator
 {
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Materials.Generator.Enums;
     using HexaEngine.Editor.Materials.Generator.Structs;
 
@@ -91,8 +90,7 @@
         public UavTextureType UavTextureType;
         public bool IsConstantBuffer;
         public bool IsStruct;
-        public bool IsStructMember;
-        
+        public bool IsUnknown;
 
         public List<Operator> Operators = new();
 
@@ -101,8 +99,6 @@
             IsStruct = true;
             structName = name;
         }
-
-
 
         public SType(ScalarType scalar, string semantic)
         {

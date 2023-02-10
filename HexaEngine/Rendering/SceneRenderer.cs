@@ -8,7 +8,6 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
@@ -16,7 +15,6 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
-    using HexaEngine.Mathematics;
     using HexaEngine.Pipelines.Deferred;
     using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
@@ -35,6 +33,7 @@ namespace HexaEngine.Rendering
         private IGraphicsContext context;
         private IGraphicsContext deferredContext;
         private ISwapChain swapChain;
+        private IRenderWindow window;
         private bool forwardMode;
 
         private Quad quad;
@@ -110,6 +109,7 @@ namespace HexaEngine.Rendering
             this.device = device;
             context = device.Context;
             this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
+            this.window = window;
             swapChain.Resized += OnWindowResizeEnd;
             ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
             SceneManager.SceneChanged += SceneChanged;
@@ -118,111 +118,113 @@ namespace HexaEngine.Rendering
             renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
 
             return
-            Task.Factory.StartNew(async () =>
+            Task.Factory.StartNew(Initialize);
+        }
+
+        private async void Initialize()
+        {
+            InitializeSettings();
+
+            quad = new(device);
+
+            pointSampler = ResourceManager.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp);
+            anisoSampler = ResourceManager.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp);
+            linearSampler = ResourceManager.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp);
+
+            cameraBuffer = ResourceManager.AddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
+            skyboxBuffer = new(device, CpuAccessFlags.Write);
+            tesselationBuffer = new(device, CpuAccessFlags.Write);
+
+            geometry = new();
+            geometry.Camera = cameraBuffer.Buffer;
+            effects.Add(geometry);
+
+            gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
+            depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
+            occlusionStencil = new(device, width, height, Format.Depth32Float);
+            dsv = depthStencil.DSV;
+            hizBuffer = new(device, width, height);
+
+            ResourceManager.AddTextureArray("GBuffer", gbuffer);
+            ResourceManager.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
+            ResourceManager.AddShaderResourceView("GBuffer.Position", gbuffer.SRVs[1]);
+            ResourceManager.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[2]);
+            ResourceManager.AddDepthStencilView("SwapChain.DSV", depthStencil.DSV);
+            ResourceManager.AddShaderResourceView("SwapChain.SRV", depthStencil.SRV);
+            ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+
+            depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget), DepthStencilDesc.Default);
+
+            fxaa = new();
+            effects.Add(fxaa);
+
+            bloom = new();
+            effects.Add(bloom);
+
+            tonemap = new();
+            effects.Add(tonemap);
+
+            autoExposure = new();
+            effects.Add(autoExposure);
+
+            dof = new();
+            effects.Add(dof);
+
+            ssao = new();
+            effects.Add(ssao);
+
+            Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
+            Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
+
+            env = ResourceManager.AddTextureColor("Environment", TextureDimension.TextureCube, solidColor);
+            envirr = ResourceManager.AddTextureColor("EnvironmentIrradiance", TextureDimension.TextureCube, ambient);
+            envfilter = ResourceManager.AddTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, solidColor);
+
+            envsmp = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+
+            brdflut = ResourceManager.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RGBA32Float));
+
+            window.Dispatcher.InvokeBlocking(() =>
             {
-                InitializeSettings();
-
-                quad = new(device);
-
-                pointSampler = ResourceManager.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp);
-                anisoSampler = ResourceManager.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp);
-                linearSampler = ResourceManager.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp);
-
-                cameraBuffer = ResourceManager.AddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
-                skyboxBuffer = new(device, CpuAccessFlags.Write);
-                tesselationBuffer = new(device, CpuAccessFlags.Write);
-
-                geometry = new();
-                geometry.Camera = cameraBuffer.Buffer;
-                effects.Add(geometry);
-
-                gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
-                depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
-                occlusionStencil = new(device, width, height, Format.Depth32Float);
-                dsv = depthStencil.DSV;
-                hizBuffer = new(device, width, height);
-
-                ResourceManager.AddTextureArray("GBuffer", gbuffer);
-                ResourceManager.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
-                ResourceManager.AddShaderResourceView("GBuffer.Position", gbuffer.SRVs[1]);
-                ResourceManager.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[2]);
-                ResourceManager.AddDepthStencilView("SwapChain.DSV", depthStencil.DSV);
-                ResourceManager.AddShaderResourceView("SwapChain.SRV", depthStencil.SRV);
-                ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-
-                depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget), DepthStencilDesc.Default);
-
-                fxaa = new();
-                effects.Add(fxaa);
-
-                bloom = new();
-                effects.Add(bloom);
-
-                tonemap = new();
-                effects.Add(tonemap);
-
-                autoExposure = new();
-                effects.Add(autoExposure);
-
-                dof = new();
-                effects.Add(dof);
-
-                ssao = new();
-                effects.Add(ssao);
-
-                Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
-                Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
-
-                env = ResourceManager.AddTextureColor("Environment", TextureDimension.TextureCube, solidColor);
-                envirr = ResourceManager.AddTextureColor("EnvironmentIrradiance", TextureDimension.TextureCube, ambient);
-                envfilter = ResourceManager.AddTextureColor("EnvironmentPrefilter", TextureDimension.TextureCube, solidColor);
-
-                envsmp = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-
-                brdflut = ResourceManager.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RGBA32Float));
-
-                window.Dispatcher.InvokeBlocking(() =>
-                {
-                    brdfLUT = new();
-                    brdfLUT.Initialize(device, 0, 0).Wait();
-                    brdfLUT.Target = brdflut.RenderTargetView;
-                    brdfLUT.Draw(context);
-                    context.ClearState();
-                    brdfLUT.Dispose();
-                    brdfLUT = null;
-                });
-
-                effects.ParallelForEachAsync(x => x.Initialize(device, width, height)).Wait();
-
-                skybox = new(device);
-                skybox.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
-                skybox.DSV = dsv;
-                skybox.Env = env.ShaderResourceView;
-                skybox.World = skyboxBuffer.Buffer;
-                skybox.Camera = cameraBuffer.Buffer;
-                skybox.Resize();
-
-                ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-                ssr = new(device, width, height);
-                ssr.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
-                ssr.Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-                ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
-                ssr.Position = gbuffer.SRVs[1];
-                ssr.Normal = gbuffer.SRVs[2];
-                ssr.Backdepth = depthbuffer.ShaderResourceView;
-
-                deferredContext = device.CreateDeferredContext();
-
-                initialized = true;
-                window.Dispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
-
-                configKey.GenerateSubKeyAuto(bloom, "Bloom");
-                configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
-                configKey.GenerateSubKeyAuto(autoExposure, "AutoExposure");
-                configKey.GenerateSubKeyAuto(ssao, "HBAO");
-                configKey.GenerateSubKeyAuto(ssr, "SSR");
-                configKey.GenerateSubKeyAuto(dof, "Dof");
+                brdfLUT = new();
+                brdfLUT.Initialize(device, 0, 0).Wait();
+                brdfLUT.Target = brdflut.RenderTargetView;
+                brdfLUT.Draw(context);
+                context.ClearState();
+                brdfLUT.Dispose();
+                brdfLUT = null;
             });
+
+            effects.ParallelForEachAsync(x => x.Initialize(device, width, height)).Wait();
+
+            skybox = new(device);
+            skybox.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
+            skybox.DSV = dsv;
+            skybox.Env = env.ShaderResourceView;
+            skybox.World = skyboxBuffer.Buffer;
+            skybox.Camera = cameraBuffer.Buffer;
+            skybox.Resize();
+
+            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+            ssr = new(device, width, height);
+            ssr.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
+            ssr.Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
+            ssr.Position = gbuffer.SRVs[1];
+            ssr.Normal = gbuffer.SRVs[2];
+            ssr.Backdepth = depthbuffer.ShaderResourceView;
+
+            deferredContext = device.CreateDeferredContext();
+
+            initialized = true;
+            window.Dispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
+
+            configKey.GenerateSubKeyAuto(bloom, "Bloom");
+            configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
+            configKey.GenerateSubKeyAuto(autoExposure, "AutoExposure");
+            configKey.GenerateSubKeyAuto(ssao, "HBAO");
+            configKey.GenerateSubKeyAuto(ssr, "SSR");
+            configKey.GenerateSubKeyAuto(dof, "Dof");
         }
 
         private void SceneChanged(object? sender, SceneChangedEventArgs e)

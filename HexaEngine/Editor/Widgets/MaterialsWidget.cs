@@ -93,6 +93,55 @@
                     hasChanged = true;
                 }
 
+                var Specular = material.Specular;
+                if (ImGui.SliderFloat("Specular", ref Specular, 0, 1))
+                {
+                    material.Specular = Specular;
+                    hasChanged = true;
+                }
+
+                var SpecularTint = material.SpecularTint;
+                if (ImGui.SliderFloat("SpecularTint", ref SpecularTint, 0, 1))
+                {
+                    material.SpecularTint = SpecularTint;
+                    hasChanged = true;
+                }
+
+                var Sheen = material.Sheen;
+                if (ImGui.SliderFloat("Sheen", ref Sheen, 0, 1))
+                {
+                    material.Sheen = Sheen;
+                    hasChanged = true;
+                }
+
+                var SheenTint = material.SheenTint;
+                if (ImGui.SliderFloat("SheenTint", ref SheenTint, 0, 1))
+                {
+                    material.SheenTint = SheenTint;
+                    hasChanged = true;
+                }
+
+                var Cleancoat = material.Cleancoat;
+                if (ImGui.SliderFloat("Cleancoat", ref Cleancoat, 0, 1))
+                {
+                    material.Cleancoat = Cleancoat;
+                    hasChanged = true;
+                }
+
+                var CleancoatGloss = material.CleancoatGloss;
+                if (ImGui.SliderFloat("CleancoatGloss", ref CleancoatGloss, 0, 1))
+                {
+                    material.CleancoatGloss = CleancoatGloss;
+                    hasChanged = true;
+                }
+
+                var Subsurface = material.Subsurface;
+                if (ImGui.SliderFloat("Subsurface", ref Subsurface, 0, 1))
+                {
+                    material.Subsurface = Subsurface;
+                    hasChanged = true;
+                }
+
                 var Ao = material.Ao;
                 if (ImGui.SliderFloat("Ao", ref Ao, 0, 1))
                 {

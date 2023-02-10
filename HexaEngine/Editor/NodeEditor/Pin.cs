@@ -3,25 +3,25 @@
     using ImGuiNET;
     using ImNodesNET;
     using System.Collections.Generic;
+    using static System.Net.Mime.MediaTypeNames;
 
     public class Pin
     {
-        public readonly int Id;
-        public readonly Node Parent;
-        public string Name;
+        private NodeEditor? editor;
+        private Node parent;
+        private int id;
+
+        public readonly string Name;
         public PinShape Shape;
         public PinKind Kind;
         public PinType Type;
         public uint MaxLinks;
-        private object? _value;
-        public readonly NodeEditor Graph;
+
         private readonly List<Link> links = new();
 
-        public Pin(NodeEditor graph, Node parent, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue)
+        public Pin(int id, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue)
         {
-            Graph = graph;
-            Id = graph.GetUniqueId();
-            Parent = parent;
+            this.id = id;
             Name = name;
             Shape = shape;
             Kind = kind;
@@ -29,13 +29,17 @@
             MaxLinks = maxLinks;
         }
 
-        public event EventHandler? ValueChanged;
-
         public event EventHandler<Link>? LinkCreated;
 
         public event EventHandler<Link>? LinkRemoved;
 
-        public IReadOnlyList<Link> Links => links;
+        public int Id => id;
+
+        [JsonIgnore]
+        public Node Parent => parent;
+
+        [JsonIgnore]
+        public List<Link> Links => links;
 
         public void AddLink(Link link)
         {
@@ -49,19 +53,9 @@
             LinkRemoved?.Invoke(this, link);
         }
 
-        public object? Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-                ValueChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
         public virtual bool CanCreateLink(Pin other)
         {
-            if (Id == other.Id) return false;
+            if (id == other.id) return false;
             if (Links.Count == MaxLinks) return false;
             if (Type == PinType.DontCare) return true;
             if (!IsType(other)) return false;
@@ -129,33 +123,47 @@
         {
             if (Kind == PinKind.Input)
             {
-                ImNodes.BeginInputAttribute(Id, Shape);
-                ImGui.Text(Name);
+                ImNodes.BeginInputAttribute(id, Shape);
+                DrawContent();
                 ImNodes.EndInputAttribute();
             }
             if (Kind == PinKind.Output)
             {
-                ImNodes.BeginOutputAttribute(Id, Shape);
-                ImGui.Text(Name);
+                ImNodes.BeginOutputAttribute(id, Shape);
+                DrawContent();
                 ImNodes.EndOutputAttribute();
             }
             if (Kind == PinKind.Static)
             {
-                ImNodes.BeginStaticAttribute(Id);
-                ImGui.Text(Name);
+                ImNodes.BeginStaticAttribute(id);
+                DrawContent();
                 ImNodes.EndStaticAttribute();
             }
         }
 
+        protected virtual void DrawContent()
+        {
+            ImGui.Text(Name);
+        }
+
+        public virtual void Initialize(NodeEditor editor, Node parent)
+        {
+            this.editor = editor;
+            this.parent = parent;
+            if (id == 0)
+                id = editor.GetUniqueId();
+        }
+
         public virtual void Destroy()
         {
+            if (editor == null) return;
             var links = Links.ToArray();
             for (int i = 0; i < links.Length; i++)
             {
                 links[i].Destroy();
             }
 
-            Graph.RemovePin(this);
+            editor = null;
         }
     }
 }

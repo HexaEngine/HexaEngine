@@ -48,7 +48,7 @@
 
         private readonly IGraphicsPipeline deferredDirect;
         private readonly unsafe void** directSrvs;
-        private const uint ndirectSrvs = 8 + 3;
+        private const uint ndirectSrvs = 8 + 4;
 
         private readonly IGraphicsPipeline deferredIndirect;
         private readonly unsafe void** indirectSrvs;
@@ -56,7 +56,7 @@
 
         private readonly IGraphicsPipeline deferredShadow;
         private readonly unsafe void** shadowSrvs;
-        private const uint nShadowSrvs = 8 + 3 + MaxDirectionalLightSDs + MaxPointLightSDs + MaxSpotlightSDs;
+        private const uint nShadowSrvs = 8 + 4 + MaxDirectionalLightSDs + MaxPointLightSDs + MaxSpotlightSDs;
 
         private readonly IGraphicsPipeline forwardSoild;
         private readonly unsafe void** simpleSrvs;
@@ -338,11 +338,6 @@
                     light.InUpdateQueue = true;
                     updateShadowLightQueue.Enqueue(light);
                 }
-                if (light.CastShadows && light is Spotlight && !light.InUpdateQueue)
-                {
-                    light.InUpdateQueue = true;
-                    updateShadowLightQueue.Enqueue(light);
-                }
             }
 
             UpdateShadowMaps(context, camera, updateShadowLightQueue);
@@ -400,18 +395,21 @@
                         simpleSrvs[i] = shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = (void*)GBuffers[i]?.NativePointer;
                     }
                 }
-            directSrvs[8] = (void*)directionalLights.SRV.NativePointer;
-            directSrvs[9] = (void*)pointLights.SRV.NativePointer;
-            directSrvs[10] = (void*)spotlights.SRV.NativePointer;
+            directSrvs[8] = (void*)SSAO?.NativePointer;
+            directSrvs[9] = (void*)directionalLights.SRV.NativePointer;
+            directSrvs[10] = (void*)pointLights.SRV.NativePointer;
+            directSrvs[11] = (void*)spotlights.SRV.NativePointer;
 
-            shadowSrvs[8] = (void*)shadowDirectionalLights.SRV.NativePointer;
-            shadowSrvs[9] = (void*)shadowPointLights.SRV.NativePointer;
-            shadowSrvs[10] = (void*)shadowSpotlights.SRV.NativePointer;
+            shadowSrvs[8] = (void*)SSAO?.NativePointer;
+            shadowSrvs[9] = (void*)shadowDirectionalLights.SRV.NativePointer;
+            shadowSrvs[10] = (void*)shadowPointLights.SRV.NativePointer;
+            shadowSrvs[11] = (void*)shadowSpotlights.SRV.NativePointer;
 
-            indirectSrvs[8] = (void*)Irraidance?.NativePointer;
-            indirectSrvs[9] = (void*)EnvPrefiltered?.NativePointer;
-            indirectSrvs[10] = (void*)LUT?.NativePointer;
-            indirectSrvs[11] = (void*)SSAO?.NativePointer;
+            indirectSrvs[8] = (void*)SSAO?.NativePointer;
+            indirectSrvs[9] = (void*)Irraidance?.NativePointer;
+            indirectSrvs[10] = (void*)EnvPrefiltered?.NativePointer;
+            indirectSrvs[11] = (void*)LUT?.NativePointer;
+
 #nullable enable
         }
 
@@ -497,9 +495,9 @@
                 shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + i] = null;
             }
 
-            directSrvs[8] = (void*)directionalLights.SRV.NativePointer;
-            directSrvs[9] = (void*)pointLights.SRV.NativePointer;
-            directSrvs[10] = (void*)spotlights.SRV.NativePointer;
+            directSrvs[9] = (void*)directionalLights.SRV.NativePointer;
+            directSrvs[10] = (void*)pointLights.SRV.NativePointer;
+            directSrvs[11] = (void*)spotlights.SRV.NativePointer;
         }
 
         public unsafe void DeferredPass(IGraphicsContext context, Camera camera)
@@ -561,7 +559,7 @@
                         context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
                     }
                 }
-                quad.DrawAuto(context, forwardSoild, Output.Viewport);
+                context.ClearState();
             }
 
             if (Viewport == ViewportShading.Wireframe)

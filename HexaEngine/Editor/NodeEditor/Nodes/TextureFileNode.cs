@@ -11,6 +11,7 @@
         private readonly IGraphicsDevice device;
         private IShaderResourceView? image;
 
+        [JsonIgnore]
         public Vector2 Size = new(128, 128);
 
         private static readonly string[] filterNames = Enum.GetNames<Filter>();
@@ -25,16 +26,25 @@
         public string Path = string.Empty;
         public SamplerDescription Description = SamplerDescription.PointClamp;
 
-        public TextureFileNode(IGraphicsDevice device, NodeEditor graph, bool removable, bool isStatic) : base(graph, "Texture", removable, isStatic)
+        public TextureFileNode(IGraphicsDevice device, int id, bool removable, bool isStatic) : base(id, "Texture", removable, isStatic)
         {
-            OutColor = CreatePin("out", PinKind.Output, PinType.VectorAny, ImNodesNET.PinShape.Quad);
-            InUV = CreatePin("uv", PinKind.Input, PinType.Float2, ImNodesNET.PinShape.CircleFilled);
             this.device = device;
         }
 
+        public override void Initialize(NodeEditor editor)
+        {
+            OutColor = CreateOrGetPin(editor, "out", PinKind.Output, PinType.VectorAny, ImNodesNET.PinShape.Quad);
+            InUV = CreateOrGetPin(editor, "uv", PinKind.Input, PinType.Float2, ImNodesNET.PinShape.CircleFilled);
+            base.Initialize(editor);
+        }
+
+        [JsonIgnore]
         public Pin OutColor;
+
+        [JsonIgnore]
         public Pin InUV;
 
+        [JsonIgnore]
         public IShaderResourceView? Image
         {
             get => image;
@@ -75,42 +85,47 @@
                 Reload();
             }
 
-            int filterIndex = Array.IndexOf(filters, Description.Filter);
-            if (ImGui.Combo("Filter", ref filterIndex, filterNames, filterNames.Length))
+            if (ImGui.TreeNodeEx("Test"))
             {
-                Description.Filter = filters[filterIndex];
+                int filterIndex = Array.IndexOf(filters, Description.Filter);
+                if (ImGui.Combo("Filter", ref filterIndex, filterNames, filterNames.Length))
+                {
+                    Description.Filter = filters[filterIndex];
+                }
+
+                int addressUIndex = Array.IndexOf(textureAddressModes, Description.AddressU);
+                if (ImGui.Combo("AddressU", ref addressUIndex, textureAddressModesNames, textureAddressModesNames.Length))
+                {
+                    Description.AddressU = textureAddressModes[addressUIndex];
+                }
+
+                int addressVIndex = Array.IndexOf(textureAddressModes, Description.AddressV);
+                if (ImGui.Combo("AddressV", ref addressVIndex, textureAddressModesNames, textureAddressModesNames.Length))
+                {
+                    Description.AddressV = textureAddressModes[addressVIndex];
+                }
+
+                int addressWIndex = Array.IndexOf(textureAddressModes, Description.AddressW);
+                if (ImGui.Combo("AddressW", ref addressWIndex, textureAddressModesNames, textureAddressModesNames.Length))
+                {
+                    Description.AddressW = textureAddressModes[addressWIndex];
+                }
+
+                ImGui.InputFloat("MipLODBias", ref Description.MipLODBias);
+                ImGui.SliderInt("Anisotropy", ref Description.MaxAnisotropy, 1, SamplerDescription.MaxMaxAnisotropy);
+
+                int comparisonFunctionIndex = Array.IndexOf(comparisonFunctions, Description.ComparisonFunction);
+                if (ImGui.Combo("Comparison", ref comparisonFunctionIndex, comparisonFunctionNames, comparisonFunctionNames.Length))
+                {
+                    Description.ComparisonFunction = comparisonFunctions[comparisonFunctionIndex];
+                }
+
+                ImGui.ColorEdit4("BorderColor", ref Description.BorderColor);
+                ImGui.InputFloat("MinLOD", ref Description.MinLOD);
+                ImGui.InputFloat("MaxLOD", ref Description.MaxLOD);
+
+                ImGui.TreePop();
             }
-
-            int addressUIndex = Array.IndexOf(textureAddressModes, Description.AddressU);
-            if (ImGui.Combo("AddressU", ref addressUIndex, textureAddressModesNames, textureAddressModesNames.Length))
-            {
-                Description.AddressU = textureAddressModes[addressUIndex];
-            }
-
-            int addressVIndex = Array.IndexOf(textureAddressModes, Description.AddressV);
-            if (ImGui.Combo("AddressV", ref addressVIndex, textureAddressModesNames, textureAddressModesNames.Length))
-            {
-                Description.AddressV = textureAddressModes[addressVIndex];
-            }
-
-            int addressWIndex = Array.IndexOf(textureAddressModes, Description.AddressW);
-            if (ImGui.Combo("AddressW", ref addressWIndex, textureAddressModesNames, textureAddressModesNames.Length))
-            {
-                Description.AddressW = textureAddressModes[addressWIndex];
-            }
-
-            ImGui.InputFloat("MipLODBias", ref Description.MipLODBias);
-            ImGui.SliderInt("Anisotropy", ref Description.MaxAnisotropy, 1, SamplerDescription.MaxMaxAnisotropy);
-
-            int comparisonFunctionIndex = Array.IndexOf(comparisonFunctions, Description.ComparisonFunction);
-            if (ImGui.Combo("Comparison", ref comparisonFunctionIndex, comparisonFunctionNames, comparisonFunctionNames.Length))
-            {
-                Description.ComparisonFunction = comparisonFunctions[comparisonFunctionIndex];
-            }
-
-            ImGui.ColorEdit4("BorderColor", ref Description.BorderColor);
-            ImGui.InputFloat("MinLOD", ref Description.MinLOD);
-            ImGui.InputFloat("MaxLOD", ref Description.MaxLOD);
 
             ImGui.PopItemWidth();
         }

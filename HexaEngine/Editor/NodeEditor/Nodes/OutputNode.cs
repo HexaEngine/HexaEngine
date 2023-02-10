@@ -7,7 +7,6 @@
     using HexaEngine.Mathematics;
     using ImGuiNET;
     using ImNodesNET;
-    using System.Collections.Generic;
     using System.Numerics;
 
     public class OutputNode : Node
@@ -16,22 +15,40 @@
         private const float speed = 10;
         private static bool first = true;
 
-        public OutputNode(IGraphicsDevice device, NodeEditor graph, bool removable, bool isStatic) : base(graph, "Output", removable, isStatic)
+        public OutputNode(int id, bool removable, bool isStatic) : base(id, "Output", removable, isStatic)
         {
-            Texture = new(device, TextureDescription.CreateTexture2DWithRTV(256, 256, 1));
-            Out = CreatePin("in", PinKind.Input, PinType.Float4, PinShape.QuadFilled, 1);
+            TitleColor = new(0xc80023ff);
+            TitleHoveredColor = new(0xe40028ff);
+            TitleSelectedColor = new(0xff002dff);
             Camera = new();
             Camera.Fov = 90;
             Camera.Transform.Width = 1;
             Camera.Transform.Height = 1;
         }
 
+        public override void Initialize(NodeEditor editor)
+        {
+            Out = CreateOrGetPin(editor, "in", PinKind.Input, PinType.Float4, PinShape.QuadFilled, 1);
+            base.Initialize(editor);
+        }
+
+        public void InitTexture(IGraphicsDevice device)
+        {
+            Texture = new(device, TextureDescription.CreateTexture2DWithRTV(256, 256, 1), DepthStencilDesc.Default);
+        }
+
+        [JsonIgnore]
         public Pin Out;
-        public Texture Texture;
+
+        [JsonIgnore]
+        public Texture? Texture;
+
+        [JsonIgnore]
         public Camera Camera;
 
         protected override void DrawContent()
         {
+            if (Texture == null) return;
             ImGui.Image(Texture.ShaderResourceView?.NativePointer ?? 0, new(256, 256));
 
             if (IsHovered && ImGui.IsMouseDown(ImGuiMouseButton.Middle) || first)
@@ -39,10 +56,7 @@
                 Vector2 delta = Vector2.Zero;
                 if (Mouse.IsDown(MouseButton.Middle))
                     delta = Mouse.Delta;
-
-                float wheel = 0;
-                if (Keyboard.IsDown(KeyCode.LShift))
-                    wheel = Mouse.DeltaWheel.Y;
+                float wheel = Mouse.DeltaWheel.Y;
 
                 // Only update the camera's position if the mouse got moved in either direction
                 if (delta.X != 0f || delta.Y != 0f || wheel != 0f || first)
@@ -69,7 +83,7 @@
 
         public override void Destroy()
         {
-            Texture.Dispose();
+            Texture?.Dispose();
             base.Destroy();
         }
     }

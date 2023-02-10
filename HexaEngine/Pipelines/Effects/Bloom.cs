@@ -88,7 +88,7 @@ namespace HexaEngine.Pipelines.Effects
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            int levels = MathUtil.ComputeMipLevels(currentWidth, currentHeight);
+            int levels = Math.Min(MathUtil.ComputeMipLevels(currentWidth, currentHeight), 8);
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
@@ -122,7 +122,7 @@ namespace HexaEngine.Pipelines.Effects
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            int levels = MathUtil.ComputeMipLevels(currentWidth, currentHeight);
+            int levels = Math.Min(MathUtil.ComputeMipLevels(currentWidth, currentHeight), 8);
 
             for (int i = 0; i < mipChainRTVs?.Length; i++)
             {
