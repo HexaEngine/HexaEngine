@@ -1,9 +1,10 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Mathematics;
     using ImGuiNET;
     using ImNodesNET;

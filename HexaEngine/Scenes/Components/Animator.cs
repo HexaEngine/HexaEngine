@@ -53,15 +53,17 @@
             if (!playing) return;
             if (currentAnimation == null) return;
             currentTime += deltaTime * (float)currentAnimation.TicksPerSecond;
-            currentTime %= (float)currentAnimation.Duration;
             for (int i = 0; i < currentAnimation.NodeChannels.Count; i++)
             {
+                var ct = currentTime % (float)currentAnimation.Duration;
                 var channel = currentAnimation.NodeChannels[i];
+
                 if (!_cache.TryGetValue(channel.NodeName, out var node))
                 {
                     _cache.Add(channel.NodeName, node = scene.Find(channel.NodeName) ?? throw new Exception());
                 }
-                channel.Update(currentTime);
+
+                channel.Update(ct);
                 node.Transform.Local = channel.Local;
             }
         }

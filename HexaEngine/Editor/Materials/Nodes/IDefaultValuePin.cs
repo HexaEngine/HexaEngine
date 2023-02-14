@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
     public interface IDefaultValuePin
     {

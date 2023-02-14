@@ -7,11 +7,11 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Materials.Generator;
+    using HexaEngine.Editor.Materials.Nodes;
+    using HexaEngine.Editor.Materials.Nodes.Functions;
+    using HexaEngine.Editor.Materials.Nodes.Operations;
+    using HexaEngine.Editor.Materials.Nodes.Shaders;
     using HexaEngine.Editor.NodeEditor;
-    using HexaEngine.Editor.NodeEditor.Nodes;
-    using HexaEngine.Editor.NodeEditor.Nodes.Functions;
-    using HexaEngine.Editor.NodeEditor.Nodes.Operations;
-    using HexaEngine.Editor.NodeEditor.Nodes.Shaders;
     using ImGuiNET;
     using System.Numerics;
 

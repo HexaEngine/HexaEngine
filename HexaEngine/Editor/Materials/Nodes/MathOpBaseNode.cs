@@ -1,5 +1,6 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImNodesNET;
 

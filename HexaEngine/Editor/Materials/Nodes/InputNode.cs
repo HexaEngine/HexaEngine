@@ -1,5 +1,7 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
+    using HexaEngine.Editor.NodeEditor;
+
     public class InputNode : Node
     {
         public InputNode(int id, bool removable, bool isStatic) : base(id, "Geometry", removable, isStatic)

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.NodeEditor.Pins
 {
-    using HexaEngine.Editor.NodeEditor.Nodes;
+    using HexaEngine.Editor.Materials.Nodes;
     using ImGuiNET;
     using ImNodesNET;
     using System.Globalization;

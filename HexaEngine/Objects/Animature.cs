@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Objects
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Scenes;
     using System.Numerics;
 
-    public class Animature
+    public class Animature : IComponent
     {
         public Animature(string name)
         {
@@ -22,6 +23,14 @@
         {
             Bones.Add(bone);
             BonesDictionary.Add(bone.Name, bone);
+        }
+
+        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        {
+        }
+
+        public void Destory()
+        {
         }
     }
 }

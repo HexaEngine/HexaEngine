@@ -1,9 +1,11 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes.Shaders
+﻿namespace HexaEngine.Editor.Materials.Nodes.Shaders
 {
+    using HexaEngine.Editor.Materials.Generator;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImNodesNET;
 
-    public class BRDFNode : BaseMethodNode
+    public class BRDFNode : MethodNode
     {
         public BRDFNode(int id, bool removable, bool isStatic) : base(id, "BRDF", removable, isStatic)
         {
@@ -11,7 +13,7 @@
 
         public override void Initialize(NodeEditor editor)
         {
-            Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, PinType.Float4));
+            Out = AddOrGetPin(new FloatPin(editor.GetUniqueId(), "out", PinShape.QuadFilled, PinKind.Output, PinType.Float3));
             AddOrGetPin(new FloatPin(editor.GetUniqueId(), "BaseColor", PinShape.QuadFilled, PinKind.Input, PinType.Float4, new(0.8f, 0.8f, 0.8f, 1), 1, PinFlags.ColorEdit));
             AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Roughness", PinShape.QuadFilled, PinKind.Input, PinType.Float, new(0.5f), 1, PinFlags.Slider));
             AddOrGetPin(new FloatPin(editor.GetUniqueId(), "Metallic", PinShape.QuadFilled, PinKind.Input, PinType.Float, new(0), 1, PinFlags.Slider));
@@ -31,11 +33,14 @@
         public override FloatPin Out { get; protected set; }
 
         [JsonIgnore]
-        public override string MethodName => "";
+        public override string MethodName => "BRDF";
 
-        public override string GetMethod()
+        [JsonIgnore]
+        public override SType Type { get; } = new SType(Generator.Enums.VectorType.Float3);
+
+        public override void DefineMethod(VariableTable table)
         {
-            throw new NotImplementedException();
+            table.AddInclude("brdf.hlsl");
         }
     }
 }

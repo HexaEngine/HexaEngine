@@ -1,13 +1,16 @@
 ﻿namespace HexaEngine.Editor.Materials.Generator
 {
+    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Editor.Materials.Generator.Enums;
     using HexaEngine.Editor.Materials.Generator.Structs;
+    using HexaEngine.Editor.Materials.Nodes;
+    using HexaEngine.Editor.Materials.Nodes.Shaders;
     using HexaEngine.Editor.NodeEditor;
-    using HexaEngine.Editor.NodeEditor.Nodes;
     using HexaEngine.Editor.NodeEditor.Pins;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
+    using System.Xml.Linq;
 
     public class ShaderSource
     {
@@ -105,6 +108,10 @@
                 else if (node is SplitNode split)
                 {
                     Build(split, builder);
+                }
+                else if (node is MethodNode method)
+                {
+                    Build(method, builder);
                 }
             }
 
@@ -360,6 +367,7 @@
 
         private Operation AddVariable(string name, Node node, SType type, string def)
         {
+            name = name.ToLower();
             string newName = table.GetUniqueName(name);
             return table.AddVariable(new(mapping[node], newName, type, def));
         }
@@ -434,7 +442,7 @@
                     builder.Append(',');
                 }
             }
-            builder.AppendLine(")");
+            builder.Append(')');
             var output = AddVariable(node.Name, node, type, builder.ToString());
 
             return output;
@@ -479,6 +487,18 @@
             }
 
             return default;
+        }
+
+        private Operation Build(MethodNode node, StringBuilder builder)
+        {
+            node.DefineMethod(table);
+            Definition[] definitions = new Definition[node.Params.Count];
+            for (int i = 0; i < definitions.Length; i++)
+            {
+                definitions[i] = GetVariableFirstLink(node, node.Params[i]);
+            }
+
+            return Build(definitions, node.Type, node, node.MethodName, builder);
         }
 
         private Operation Build(SplitNode node, StringBuilder builder)

@@ -5,6 +5,11 @@
     using System.Globalization;
     using System.Text;
 
+    public struct Include
+    {
+        public string Name;
+    }
+
     public class VariableTable
     {
         private readonly List<Identifier> identifiers = new();
@@ -15,6 +20,7 @@
         private readonly List<SamplerState> samplers = new();
         private readonly List<Operation> operations = new();
         private readonly List<Struct> structs = new();
+        private readonly List<Include> includes = new();
 
         private int srvCounter;
         private int uavCounter;
@@ -82,10 +88,46 @@
             operations.Clear();
             samplers.Clear();
             structs.Clear();
+            includes.Clear();
             srvCounter = 0;
             uavCounter = 0;
             cbvCounter = 0;
             sptCounter = 0;
+        }
+
+        public bool IsIncluded(string name)
+        {
+            for (int i = 0; i < includes.Count; i++)
+            {
+                var include = includes[i];
+                if (include.Name == name)
+                    return true;
+            }
+            return false;
+        }
+
+        public int IndexOfInclude(string name)
+        {
+            for (int i = 0; i < includes.Count; i++)
+            {
+                var include = includes[i];
+                if (include.Name == name)
+                    return i;
+            }
+            return -1;
+        }
+
+        public void AddInclude(string name)
+        {
+            if (!IsIncluded(name))
+                includes.Add(new() { Name = name });
+        }
+
+        public void RemoveInclude(string name)
+        {
+            var index = IndexOfInclude(name);
+            if (index != -1)
+                includes.RemoveAt(index);
         }
 
         public UnorderedAccessView AddUnorderedAccessView(UnorderedAccessView unorderedAccessView)

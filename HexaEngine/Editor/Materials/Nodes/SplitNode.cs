@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
     using HexaEngine.Editor.Materials.Generator;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImGuiNET;
     using ImNodesNET;
@@ -46,10 +47,10 @@
             In.Type = mode;
             SType type = mode switch
             {
-                PinType.Float => new(Materials.Generator.Enums.ScalarType.Float),
-                PinType.Float2 => new(Materials.Generator.Enums.VectorType.Float2),
-                PinType.Float3 => new(Materials.Generator.Enums.VectorType.Float3),
-                PinType.Float4 => new(Materials.Generator.Enums.VectorType.Float4),
+                PinType.Float => new(Generator.Enums.ScalarType.Float),
+                PinType.Float2 => new(Generator.Enums.VectorType.Float2),
+                PinType.Float3 => new(Generator.Enums.VectorType.Float3),
+                PinType.Float4 => new(Generator.Enums.VectorType.Float4),
                 _ => throw new NotImplementedException(),
             };
             Type = new(type.Name);

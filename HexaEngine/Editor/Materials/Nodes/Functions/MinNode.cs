@@ -1,11 +1,13 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes.Functions
+﻿namespace HexaEngine.Editor.Materials.Nodes.Functions
 {
+    using HexaEngine.Editor.Materials.Nodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImNodesNET;
 
-    public class DotNode : MathFuncBaseNode
+    public class MinNode : MathFuncBaseNode
     {
-        public DotNode(int id, bool removable, bool isStatic) : base(id, "Dot", removable, isStatic)
+        public MinNode(int id, bool removable, bool isStatic) : base(id, "Min", removable, isStatic)
         {
         }
 
@@ -17,12 +19,6 @@
             UpdateMode();
         }
 
-        public override string Op { get; } = "dot";
-
-        protected override void UpdateMode()
-        {
-            base.UpdateMode();
-            Out.Type = PinType.Float;
-        }
+        public override string Op { get; } = "min";
     }
 }

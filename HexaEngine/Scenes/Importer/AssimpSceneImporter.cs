@@ -37,8 +37,8 @@ namespace HexaEngine.Scenes.Importer
 
         private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
         private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
-        private readonly Dictionary<Pointer<Node>, Objects.Animature> animatureT = new();
-        private readonly Dictionary<Pointer<Silk.NET.Assimp.Mesh>, MeshSource> meshesT = new();
+        private readonly Dictionary<Pointer<Mesh>, Objects.Animature> animatureT = new();
+        private readonly Dictionary<Pointer<Mesh>, MeshSource> meshesT = new();
         private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
         private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
         private readonly Dictionary<string, Animation> animationsT = new();
@@ -459,6 +459,41 @@ namespace HexaEngine.Scenes.Importer
                     animation.NodeChannels.Add(channel);
                 }
 
+                for (int j = 0; j < anim->MNumMeshChannels; j++)
+                {
+                    var chan = anim->MMeshChannels[j];
+                    MeshChannel channel = new(chan->MName);
+                    for (int x = 0; x < chan->MNumKeys; x++)
+                    {
+                        var key = chan->MKeys[x];
+                        channel.Keyframes.Add(new() { Time = key.MTime, MeshName = meshesT[scene->MMeshes[key.MValue]].Name });
+                    }
+
+                    animation.MeshChannels.Add(channel);
+                }
+
+                for (int j = 0; j < anim->MNumMorphMeshChannels; j++)
+                {
+                    var chan = anim->MMorphMeshChannels[j];
+                    MorphMeshChannel channel = new(chan->MName);
+                    for (int x = 0; x < chan->MNumKeys; x++)
+                    {
+                        var key = chan->MKeys[x];
+                        MeshMorphKeyframe keyframe = new();
+                        keyframe.Values = new uint[key.MNumValuesAndWeights];
+                        keyframe.Weights = new double[key.MNumValuesAndWeights];
+                        for (int y = 0; y < key.MNumValuesAndWeights; y++)
+                        {
+                            keyframe.Values[y] = key.MValues[y];
+                            keyframe.Weights[y] = key.MWeights[y];
+                        }
+
+                        channel.Keyframes.Add(keyframe);
+                    }
+
+                    animation.MorphMeshChannels.Add(channel);
+                }
+
                 animations[i] = animation;
                 animationsT.Add(animation.Name, animation);
             }
@@ -466,7 +501,7 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void ExtractBoneWeightForVertices(SkinnedMeshVertex[] vertices, Mesh* mesh, AssimpScene* scene)
         {
-            Dictionary<AssimpString, BoneInfo> boneInfoMap = new();
+            Dictionary<string, BoneInfo> boneInfoMap = new();
             int boneCount = 0;
 
             for (int boneIndex = 0; boneIndex < mesh->MNumBones; ++boneIndex)
@@ -519,7 +554,7 @@ namespace HexaEngine.Scenes.Importer
             meshes = new MeshSource[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
-                Silk.NET.Assimp.Mesh* msh = scene->MMeshes[i];
+                Mesh* msh = scene->MMeshes[i];
 
                 MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
                 uint[] indices = new uint[msh->MNumFaces * 3];
@@ -581,6 +616,15 @@ namespace HexaEngine.Scenes.Importer
                         bones[j] = new MeshBone(bn->MName, weights, bn->MOffsetMatrix);
                         animature.AddBone(bones[j]);
                     }
+
+                    SkinnedMeshVertex[] skinnedVertices = new SkinnedMeshVertex[vertices.Length];
+                    for (int y = 0; y < skinnedVertices.Length; y++)
+                    {
+                        skinnedVertices[y] = new(vertices[y]);
+                    }
+                    ExtractBoneWeightForVertices(skinnedVertices, msh, scene);
+
+                    animatureT.Add(msh, animature);
                 }
 
                 BoundingBox box = new(min, max);
@@ -674,10 +718,6 @@ namespace HexaEngine.Scenes.Importer
 
         private readonly Stack<Pointer<Node>> findWalkStack = new();
 
-        private unsafe void Collect(List<Pointer<Node>> pointers, AssimpScene* scene, Node* start, Silk.NET.Assimp.Mesh* mesh)
-        {
-        }
-
         private unsafe Node* FindNode(AssimpScene* scene, string name)
         {
             findWalkStack.Clear();
@@ -754,6 +794,7 @@ namespace HexaEngine.Scenes.Importer
                     var renderer = node.GetOrCreateComponent<RendererComponent>();
                     var model = meshes[(int)p->MMeshes[i]];
                     renderer.AddMesh(model.Name);
+                    if (animatureT.TryGetValue(p->))
                 }
             }
         }

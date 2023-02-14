@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes.Operations
+﻿namespace HexaEngine.Editor.Materials.Nodes.Operations
 {
     public class MultiplyNode : MathOpBaseNode
     {

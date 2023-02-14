@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
     using HexaEngine.Editor.Materials.Generator;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
 
     public interface ITypedNode

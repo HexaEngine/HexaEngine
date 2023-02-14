@@ -21,6 +21,13 @@
             Normal = normal;
             Tangent = tangent; 
         }
+        public SkinnedMeshVertex(MeshVertex vertex)
+        {
+            Position = vertex.Position;
+            Texture = vertex.Texture;
+            Normal = vertex.Normal;
+            Tangent = vertex.Tangent;
+        }
 
         public SkinnedMeshVertex InvertTex()
         {

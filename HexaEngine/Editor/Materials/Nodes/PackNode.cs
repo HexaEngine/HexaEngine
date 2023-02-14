@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes
+﻿namespace HexaEngine.Editor.Materials.Nodes
 {
     using HexaEngine.Editor.Materials.Generator;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImGuiNET;
     using ImNodesNET;
@@ -47,19 +48,19 @@
             switch (mode)
             {
                 case PinType.Float:
-                    Type = new(Materials.Generator.Enums.ScalarType.Float);
+                    Type = new(Generator.Enums.ScalarType.Float);
                     break;
 
                 case PinType.Float2:
-                    Type = new(Materials.Generator.Enums.VectorType.Float2);
+                    Type = new(Generator.Enums.VectorType.Float2);
                     break;
 
                 case PinType.Float3:
-                    Type = new(Materials.Generator.Enums.VectorType.Float3);
+                    Type = new(Generator.Enums.VectorType.Float3);
                     break;
 
                 case PinType.Float4:
-                    Type = new(Materials.Generator.Enums.VectorType.Float4);
+                    Type = new(Generator.Enums.VectorType.Float4);
                     break;
             }
         }

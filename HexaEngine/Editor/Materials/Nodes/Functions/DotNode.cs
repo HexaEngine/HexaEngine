@@ -1,11 +1,13 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes.Functions
+﻿namespace HexaEngine.Editor.Materials.Nodes.Functions
 {
+    using HexaEngine.Editor.Materials.Nodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImNodesNET;
 
-    public class MaxNode : MathFuncBaseNode
+    public class DotNode : MathFuncBaseNode
     {
-        public MaxNode(int id, bool removable, bool isStatic) : base(id, "Max", removable, isStatic)
+        public DotNode(int id, bool removable, bool isStatic) : base(id, "Dot", removable, isStatic)
         {
         }
 
@@ -17,6 +19,12 @@
             UpdateMode();
         }
 
-        public override string Op { get; } = "max";
+        public override string Op { get; } = "dot";
+
+        protected override void UpdateMode()
+        {
+            base.UpdateMode();
+            Out.Type = PinType.Float;
+        }
     }
 }

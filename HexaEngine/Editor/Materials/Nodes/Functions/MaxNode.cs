@@ -1,11 +1,13 @@
-﻿namespace HexaEngine.Editor.NodeEditor.Nodes.Functions
+﻿namespace HexaEngine.Editor.Materials.Nodes.Functions
 {
+    using HexaEngine.Editor.Materials.Nodes;
+    using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using ImNodesNET;
 
-    public class MinNode : MathFuncBaseNode
+    public class MaxNode : MathFuncBaseNode
     {
-        public MinNode(int id, bool removable, bool isStatic) : base(id, "Min", removable, isStatic)
+        public MaxNode(int id, bool removable, bool isStatic) : base(id, "Max", removable, isStatic)
         {
         }
 
@@ -17,6 +19,6 @@
             UpdateMode();
         }
 
-        public override string Op { get; } = "min";
+        public override string Op { get; } = "max";
     }
 }

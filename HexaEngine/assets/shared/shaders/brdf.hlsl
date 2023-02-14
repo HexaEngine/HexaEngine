@@ -84,6 +84,9 @@ float3 BRDF(
     float NdotL = max(dot(N, L), 0);
     float NdotV = max(dot(N, V), 0);
 
+    if (NdotL == 0)
+        return 0;
+    
     float3 H = normalize(L + V);
     float NdotH = max(dot(N, H), 0);
     float LdotH = max(dot(L, H), 0);
@@ -138,29 +141,63 @@ float3 FresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
     return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
+float3 specularIBL(SamplerState samplerState, TextureCube prefilterMap, Texture2D brdfLUT, float3 r, float roughness)
+{
+    const float MAX_REFLECTION_LOD = 12.0;
+    return prefilterMap.SampleLevel(samplerState, r, roughness * MAX_REFLECTION_LOD).rgb;
+}
+
 float3 BRDFIndirect(
 	SamplerState samplerState,
 	TextureCube irradianceTex,
 	TextureCube prefilterMap,
 	Texture2D brdfLUT,
-	float3 F0, float3 N, float3 V, float3 baseColor, float roughness, float ao, float anisotropy)
+    float3 N,
+    float3 V,
+    float3 baseColor,
+    float metallic,
+    float roughness,
+    float clearcoat,
+    float clearcoatGloss,
+    float sheen,
+    float sheenTint,
+    float ao,
+    float anisotropy)
 {
-    float3 irradiance = irradianceTex.Sample(samplerState, N).rgb;
-    float3 kS = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
-    float3 kD = 1.0 - kS;
-    float3 diffuse = irradiance * baseColor / PI;
+    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
+    
+    float NdotV = max(dot(N, V), 0.0);
 
-    const float MAX_REFLECTION_LOD = 12.0;
+    float3 R = reflect(-V, N);
 
     float3 anisotropyDirection = float3(0., 1, 0.);
     float3 anisotropicTangent = cross(anisotropyDirection, V);
     float3 anisotropicNormal = cross(anisotropicTangent, anisotropyDirection);
     float3 bentNormal = normalize(lerp(N, anisotropicNormal, abs(anisotropy)));
-    float3 R = reflect(-V, bentNormal);
+    float3 bentR = reflect(-V, bentNormal);
 
-    float3 prefilteredColor = prefilterMap.SampleLevel(samplerState, R, roughness * MAX_REFLECTION_LOD).rgb;
-    float2 brdf = brdfLUT.Sample(samplerState, float2(max(dot(N, V), 0.0), roughness)).rg;
-    float3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
+    // specular
+    float3 Cs = FresnelSchlickRoughness(NdotV, F0, roughness);
+    float3 Cd = 1.0 - Cs;
+    float3 Fs = specularIBL(samplerState, prefilterMap, brdfLUT, bentR, roughness);
+    float2 brdf = brdfLUT.Sample(samplerState, float2(NdotV, roughness)).rg;
+    Cs = Cs * brdf.x + brdf.y;
+    float3 specular = Cs * Fs;
 
-    return (kD * diffuse + specular) * ao;
+    // diffuse
+    float3 irradiance = irradianceTex.Sample(samplerState, bentNormal).rgb;
+    float3 Fd = irradiance * baseColor / PI;
+    float3 diffuse = Cd * Fd;
+
+    // clearcoat
+    float Fc = F_Schlick(0.04, 1.0, NdotV) * clearcoat;
+    float2 Fcbrdf = brdfLUT.Sample(samplerState, float2(NdotV, 1 - clearcoatGloss)).rg;
+    Fc = Fc * brdf.x + brdf.y;
+    diffuse *= 1.0 - Fc;
+    specular *= sqr(1.0 - Fc);
+    specular += specularIBL(samplerState, prefilterMap, brdfLUT, bentR, 1 - clearcoatGloss) * Fc;
+
+    float3 result = diffuse + specular;
+
+    return result * ao;
 }

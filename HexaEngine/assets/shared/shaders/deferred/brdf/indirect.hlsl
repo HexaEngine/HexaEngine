@@ -53,10 +53,9 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 
 	//float IOR = 1.5;
 	//float3 F0 = float3(pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0));
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
 
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
-    float3 ambient = BRDFIndirect(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, F0, N, V, baseColor, roughness, ao, anisotropic);
+    float3 ambient = BRDFIndirect(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
 
     return float4(ambient + attrs.emission, 1);
 }
