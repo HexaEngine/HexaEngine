@@ -12,11 +12,13 @@
 - Editor
 - Physics Engine
 - Plugin System
-
-![alt text](https://raw.githubusercontent.com/JunaMeinhold/HexaEngine/master/preview.png)
+- Post-Processing Framework
+- Culling (Frustum and Occlusion)
 
 # Backends
-- D3D11: Yes
-- D3D12: Planned
-- Vulkan: Planned
-- OpenGL: Not planned
+| API     | Supported          |
+| ------- | ------------------ |
+| D3D11   | :white_check_mark: |
+| D3D12   | :ballot_box_with_check: (wip) |
+| Vulkan  | :ballot_box_with_check: (wip) |
+| OpenGL  | :x:                |
