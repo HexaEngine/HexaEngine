@@ -1,3 +1,7 @@
+# HexaEngine
+
+![logo](https://github.com/JunaMeinhold/HexaEngine/blob/master/icon.png)
+
 # Features
 - Principled BSDF
 - IBL
