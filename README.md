@@ -30,8 +30,8 @@
 | OpenGL  | :x:                |
 
 # Credits
-https://github.com/ocornut/imgui
-https://github.com/CedricGuillemet/ImGuizmo
-https://github.com/Nelarius/imnodes
-https://github.com/epezent/implot
-https://github.com/dotnet/Silk.NET
+https://github.com/ocornut/imgui  
+https://github.com/CedricGuillemet/ImGuizmo  
+https://github.com/Nelarius/imnodes  
+https://github.com/epezent/implot  
+https://github.com/dotnet/Silk.NET  
