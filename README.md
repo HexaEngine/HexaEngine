@@ -14,7 +14,7 @@
 - Auto Exposure
 - Tonemapping
 - DDA SSR
-- Editor
+- Level-Editor
 - Physics Engine
 - Plugin System
 - Post-Processing Framework
