@@ -14,6 +14,7 @@
 - Plugin System
 - Post-Processing Framework
 - Culling (Frustum and Occlusion)
+- Audio (Wav-file support)
 
 # Backends
 | API     | Supported          |
