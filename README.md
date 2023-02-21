@@ -1,6 +1,7 @@
 # HexaEngine
-
-![logo](https://github.com/JunaMeinhold/HexaEngine/blob/master/icon.png)
+<p align="center">
+  <img width="300" height="300" src="https://github.com/JunaMeinhold/HexaEngine/blob/master/icon.png">
+</p>
 
 # Features
 - Principled BSDF
