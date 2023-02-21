@@ -28,3 +28,10 @@
 | D3D12   | :ballot_box_with_check: (wip) |
 | Vulkan  | :ballot_box_with_check: (wip) |
 | OpenGL  | :x:                |
+
+# Credits
+https://github.com/ocornut/imgui
+https://github.com/CedricGuillemet/ImGuizmo
+https://github.com/Nelarius/imnodes
+https://github.com/epezent/implot
+https://github.com/dotnet/Silk.NET
