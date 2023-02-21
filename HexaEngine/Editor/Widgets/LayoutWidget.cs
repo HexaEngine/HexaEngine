@@ -18,6 +18,8 @@
         private readonly Dictionary<string, EditorNodeAttribute> cache = new();
         private readonly Dictionary<string, int> newInstances = new();
 
+        public static bool ShowHidden;
+
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "<Pending>")]
         public LayoutWidget()
         {
@@ -96,6 +98,10 @@
                 {
                     GameObject.Selected.PurgeSelection();
                 }
+                if (ImGui.MenuItem("Show Hidden"))
+                {
+                    ShowHidden = !ShowHidden;
+                }
                 ImGui.EndPopup();
             }
             ImGui.PopID();
@@ -103,28 +109,37 @@
 
         private void DisplayNode(GameObject element)
         {
+            if (element.IsHidden && !ShowHidden)
+            {
+                return;
+            }
+            else if (element.IsHidden)
+            {
+                ImGui.BeginDisabled(true);
+            }
+
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
-            if (element.IsSelected)
+            if (element.IsEditorSelected)
                 flags |= ImGuiTreeNodeFlags.Selected;
             if (element.Children.Count == 0)
                 flags |= ImGuiTreeNodeFlags.Leaf;
 
             bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
-            element.IsOpen = isOpen;
-            element.IsVisible = true;
-            if (element.IsSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center != element.Transform.GlobalPosition)
+            element.IsEditorOpen = isOpen;
+            element.IsEditorVisible = true;
+            if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center != element.Transform.GlobalPosition)
             {
                 CameraManager.Center = element.Transform.GlobalPosition;
             }
-            else if (element.IsSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center == element.Transform.GlobalPosition)
+            else if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.F) && CameraManager.Center == element.Transform.GlobalPosition)
             {
                 CameraManager.Center = Vector3.Zero;
             }
-            if (element.IsSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
+            if (element.IsEditorSelected && ImGui.IsKeyReleased(ImGuiKey.Delete))
             {
                 GameObject.Selected.PurgeSelection();
             }
-            if (element.IsSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
+            if (element.IsEditorSelected && ImGui.IsKeyPressed(ImGuiKey.LeftCtrl) && ImGui.IsKeyReleased(ImGuiKey.U))
             {
                 GameObject.Selected.ClearSelection();
             }
@@ -166,7 +181,7 @@
                     var last = GameObject.Selected.Last();
                     GameObject.Selected.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
                 }
-                else if (!element.IsSelected)
+                else if (!element.IsEditorSelected)
                 {
                     GameObject.Selected.AddOverwriteSelection(element);
                 }
@@ -184,8 +199,13 @@
             {
                 for (int j = 0; j < element.Children.Count; j++)
                 {
-                    element.Children[j].IsVisible = false;
+                    element.Children[j].IsEditorVisible = false;
                 }
+            }
+
+            if (element.IsHidden)
+            {
+                ImGui.EndDisabled();
             }
         }
 

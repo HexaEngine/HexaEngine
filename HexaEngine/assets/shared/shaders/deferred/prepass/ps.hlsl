@@ -15,7 +15,7 @@ SamplerState materialSamplerState : register(s0);
 
 cbuffer MaterialBuffer : register(b2)
 {
-	Material material;
+	MaterialNG material;
 };
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
@@ -49,15 +49,23 @@ float4 main(PixelInput input) : SV_Target
 
 GeometryData main(PixelInput input)
 {
-	float3 albedo;
+    float3 albedo = material.Color.rgb;
 	float3 pos = (float3)input.pos;
-	float3 normal;
-	float3 emissive;
+    float3 normal = input.normal;
+    float3 emissive = material.Emissive;
 	float opacity = 1;
-	float metalness;
-	float roughness;
-	float ao;
-	float anisotropic = material.Anisotropic.x;
+
+    float ao = material.Ao;
+    float specular = material.Specular;
+    float specularTint = material.SpecularTint;
+    float sheen = material.Sheen;
+    float sheenTint = material.SheenTint;
+    float clearcoat = material.Clearcoat;
+    float clearcoatGloss = material.ClearcoatGloss;
+    float anisotropic = material.Anisotropic;
+    float subsurface = material.Subsurface;
+    float roughness = material.Roughness;
+    float metalness = material.Metalness;
 
 	if (material.DANR.y)
 	{
@@ -65,49 +73,25 @@ GeometryData main(PixelInput input)
 		albedo = color.rgb * color.a;
 		opacity = color.a;
 	}
-	else
-	{
-		albedo = material.Color.rgb;
-	}
 	if (material.DANR.z)
 	{
 		normal = NormalSampleToWorldSpace(normalTexture.Sample(materialSamplerState, (float2) input.tex).rgb, input.normal, input.tangent);
-	}
-	else
-	{
-		normal = input.normal;
 	}
 	if (material.DANR.w)
 	{
 		roughness = roughnessTexture.Sample(materialSamplerState, (float2) input.tex).r;
 	}
-	else
-	{
-		roughness = material.RoughnessMetalnessAo.x;
-	}
 	if (material.MEAoRM.x)
 	{
 		metalness = metalnessTexture.Sample(materialSamplerState, (float2) input.tex).r;
-	}
-	else
-	{
-		metalness = material.RoughnessMetalnessAo.y;
 	}
 	if (material.MEAoRM.y)
 	{
 		emissive = emissiveTexture.Sample(materialSamplerState, (float2) input.tex).rgb;
 	}
-	else
-	{
-		emissive = material.Emissive.xyz;
-	}
 	if (material.MEAoRM.z)
 	{
 		ao = aoTexture.Sample(materialSamplerState, (float2) input.tex).r;
-	}
-	else
-	{
-		ao = material.RoughnessMetalnessAo.z;
 	}
 
 	if (material.MEAoRM.w)
@@ -119,7 +103,7 @@ GeometryData main(PixelInput input)
 	if (opacity == 0)
 		discard;
 
-	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, input.tangent, emissive, 0, 1, 0.5f, ao, 1, anisotropic, 0, 0, 0, 0, 0, 0, 0);
+	return PackGeometryData(albedo, opacity, pos, input.depth, normal, roughness, metalness, input.tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
 }
 
 #endif

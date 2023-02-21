@@ -1,20 +1,26 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Windows;
     using Silk.NET.SDL;
     using System.Collections.Generic;
-    using System.Diagnostics;
 
     public static unsafe class Application
     {
+        private static bool initialized = false;
         private static bool exiting = false;
-        private static readonly Dictionary<uint, SdlWindow> windows = new();
+        private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
+        private static readonly List<IRenderWindow> windows = new List<IRenderWindow>();
         private static readonly Sdl sdl = Sdl.GetApi();
         private static readonly List<Action<Event>> hooks = new();
         private static IRenderWindow? mainWindow;
         private static bool inDesignMode;
         private static bool inEditorMode;
+
+        private static IGraphicsAdapter adapter;
+        private static IGraphicsDevice device;
+        private static IGraphicsContext context;
 
 #nullable disable
         public static IRenderWindow MainWindow => mainWindow;
@@ -48,6 +54,8 @@
             }
         }
 
+        public static bool GraphicsDebugging { get; set; }
+
         public static event Action<bool>? OnDesignModeChanged;
 
         public static event Action<bool>? OnEditorModeChanged;
@@ -68,19 +76,42 @@
 
         public static void Run(IRenderWindow mainWindow)
         {
-            sdl.Init(Sdl.InitEvents);
-            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
+            Init();
             Application.mainWindow = mainWindow;
             mainWindow.Closing += MainWindow_Closing;
-            Keyboard.Init(sdl);
-            Mouse.Init(sdl);
+
             mainWindow.Show();
             PlatformRun();
         }
 
-        internal static void RegisterWindow(SdlWindow window)
+        private static void Init()
         {
-            windows.Add(window.WindowID, window);
+            sdl.Init(Sdl.InitEvents);
+            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
+            Keyboard.Init(sdl);
+            Mouse.Init(sdl);
+            if (OperatingSystem.IsWindows())
+            {
+                device = Adapter.CreateGraphics(RenderBackend.D3D11, GraphicsDebugging);
+                context = device.Context;
+            }
+            else
+            {
+                throw new PlatformNotSupportedException();
+            }
+            for (int i = 0; i < windows.Count; i++)
+            {
+                windows[i].RenderInitialize(device);
+            }
+            initialized = true;
+        }
+
+        internal static void RegisterWindow(IRenderWindow window)
+        {
+            windows.Add(window);
+            windowIdToWindow.Add(window.WindowID, window);
+            if (initialized)
+                window.RenderInitialize(device);
         }
 
         private static void MainWindow_Closing(object? sender, Events.CloseEventArgs e)
@@ -97,10 +128,12 @@
         private static void PlatformRun()
         {
             Event evnt;
+            Time.Initialize();
 
             while (!exiting)
             {
-                if (sdl.WaitEvent(&evnt) == (int)SdlBool.True)
+                sdl.PumpEvents();
+                while (sdl.PollEvent(&evnt) == (int)SdlBool.True)
                 {
                     EventType type = (EventType)evnt.Type;
                     switch (type)
@@ -139,7 +172,7 @@
 
                         case EventType.Windowevent:
                             {
-                                SdlWindow window = windows[evnt.Window.WindowID];
+                                SdlWindow window = (SdlWindow)windowIdToWindow[evnt.Window.WindowID];
                                 window.ProcessEvent(evnt.Window);
                                 if ((WindowEventID)evnt.Window.Event == WindowEventID.Close && window == mainWindow)
                                 {
@@ -154,9 +187,9 @@
                         case EventType.Keydown:
                             {
                                 var even = evnt.Key;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputKeyboard(even);
+                                    ((SdlWindow)window).ProcessInputKeyboard(even);
                                     Keyboard.Enqueue(even);
                                 }
                             }
@@ -165,9 +198,9 @@
                         case EventType.Keyup:
                             {
                                 var even = evnt.Key;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputKeyboard(even);
+                                    ((SdlWindow)window).ProcessInputKeyboard(even);
                                     Keyboard.Enqueue(even);
                                 }
                             }
@@ -179,9 +212,9 @@
                         case EventType.Textinput:
                             {
                                 var even = evnt.Text;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputText(even);
+                                    ((SdlWindow)window).ProcessInputText(even);
                                     Keyboard.Enqueue(even);
                                 }
                             }
@@ -193,9 +226,9 @@
                         case EventType.Mousemotion:
                             {
                                 var even = evnt.Motion;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputMouse(even);
+                                    ((SdlWindow)window).ProcessInputMouse(even);
                                     Mouse.Enqueue(even);
                                 }
                             }
@@ -204,9 +237,9 @@
                         case EventType.Mousebuttondown:
                             {
                                 var even = evnt.Button;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputMouse(even);
+                                    ((SdlWindow)window).ProcessInputMouse(even);
                                     Mouse.Enqueue(even);
                                 }
                             }
@@ -215,9 +248,9 @@
                         case EventType.Mousebuttonup:
                             {
                                 var even = evnt.Button;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputMouse(even);
+                                    ((SdlWindow)window).ProcessInputMouse(even);
                                     Mouse.Enqueue(even);
                                 }
                             }
@@ -226,9 +259,9 @@
                         case EventType.Mousewheel:
                             {
                                 var even = evnt.Wheel;
-                                if (windows.TryGetValue(even.WindowID, out var window))
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    window.ProcessInputMouse(even);
+                                    ((SdlWindow)window).ProcessInputMouse(even);
                                     Mouse.Enqueue(even);
                                 }
                             }
@@ -343,11 +376,21 @@
                     for (int i = 0; i < hooks.Count; i++)
                         hooks[i](evnt);
                 }
-                else
+
+                for (int i = 0; i < windows.Count; i++)
                 {
-                    Trace.WriteLine(sdl.GetErrorS());
-                    exiting = true;
+                    windows[i].Render(context);
                 }
+                for (int i = 0; i < windows.Count; i++)
+                {
+                    windows[i].ClearState();
+                }
+                Time.FrameUpdate();
+            }
+
+            for (int i = 0; i < windows.Count; i++)
+            {
+                windows[i].RenderDispose();
             }
 
             sdl.Quit();

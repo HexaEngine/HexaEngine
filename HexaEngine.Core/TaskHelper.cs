@@ -27,7 +27,7 @@
                     .Create(source)
                     .GetPartitions(maxDoP)
                     .AsParallel()
-                    .Select(p => AwaitPartition(p)));
+                    .Select(AwaitPartition));
         }
     }
 }

@@ -63,7 +63,7 @@ namespace HexaEngine.Scenes.Managers
             texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.RGBA32UInt), DepthStencilDesc.Default);
         }
 
-        public static unsafe GameObject? Select(IGraphicsContext context, Vector2 position, Viewport viewport)
+        public static unsafe GameObject? Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)

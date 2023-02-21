@@ -11,6 +11,22 @@
         private uint count;
         private uint capacity;
 
+        public UnsafeList()
+        {
+            allocator = Allocator.Default;
+        }
+
+        public UnsafeList(Allocator* customAllocator)
+        {
+            allocator = customAllocator;
+        }
+
+        public UnsafeList(uint capacity)
+        {
+            allocator = Allocator.Default;
+            EnsureCapacity(capacity);
+        }
+
         public uint Count => count;
 
         public uint Capacity
@@ -85,6 +101,18 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddRange(T[] values)
+        {
+            EnsureCapacity((uint)(count + values.Length));
+
+            fixed (T* src = values)
+            {
+                MemoryCopy(src, &items[count], capacity * sizeof(T), values.Length * sizeof(T));
+            }
+            count += (uint)values.Length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(T item)
         {
             RemoveAt(IndexOf(&item));
@@ -131,11 +159,6 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
-            var ptr = items;
-            for (int i = 0; i < count; i++)
-            {
-                ptr[i] = default;
-            }
             count = 0;
         }
 

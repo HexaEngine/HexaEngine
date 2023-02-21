@@ -2,6 +2,6 @@
 {
     public unsafe partial struct ImDrawDataPtr
     {
-        public RangePtrAccessor<ImDrawListPtr> CmdListsRange => new(CmdLists.ToPointer(), CmdListsCount);
+        public RangePtrAccessor<ImDrawListPtr> CmdListsRange => new RangePtrAccessor<ImDrawListPtr>(CmdLists.ToPointer(), CmdListsCount);
     }
 }

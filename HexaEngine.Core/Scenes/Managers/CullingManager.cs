@@ -142,7 +142,7 @@
             for (int i = 0; i < manager.TypeCount; i++)
             {
                 var type = manager.Types[i];
-                type.UpdateInstanceBuffer((uint)i, instanceDataNoCull, instanceDataBuffer, swapBuffer, frustum, cullingFlags.HasFlag(CullingFlags.Frustum));
+                type.UpdateInstanceBuffer((uint)i, instanceDataNoCull, instanceDataBuffer, swapBuffer, frustum, (cullingFlags & CullingFlags.Frustum) != 0);
                 instanceOffsetsNoCull.Add(offset);
                 offset += (uint)type.Count;
             }
@@ -161,7 +161,7 @@
 
             occlusionParamBuffer[0] = new()
             {
-                ActivateCulling = cullingFlags.HasFlag(CullingFlags.Occlusion) ? 1 : 0,
+                ActivateCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
                 NoofInstances = (uint)instanceCount,
                 NoofPropTypes = (uint)manager.TypeCount,
                 MaxMipLevel = (uint)mipChain.Mips,

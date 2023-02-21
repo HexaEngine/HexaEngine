@@ -5,76 +5,118 @@
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System.IO;
+    using System.Numerics;
     using System.Text;
 
     public class MeshSource
     {
-        private readonly Stream stream;
-        private bool cached;
-
         public readonly MeshHeader Header;
-        private MeshData Body;
-        public readonly string Path;
+        private MaterialData Material;
+        private MeshData Data;
+        public string Name;
 
-        public MeshSource(string path)
+        private MeshSource(string path)
         {
-            Path = path;
-            stream = FileSystem.Open(System.IO.Path.Combine(Paths.CurrentMeshesPath, path + ".mesh"));
-            Header.Read(stream, Encoding.UTF8);
+            Name = path;
+            var fs = FileSystem.Open(Path.Combine(Paths.CurrentMeshesPath, path + ".mesh"));
+            Header.Read(fs, Encoding.UTF8);
+            Material = MaterialData.Read(fs, Encoding.UTF8);
+            Data = MeshData.Read(Header, fs, Encoding.UTF8);
+            fs.Close();
         }
 
-        public MeshSource(string path, Stream source)
+        public MeshSource(string path, Stream fs)
         {
-            Path = path;
-            stream = source;
-            Header.Read(stream, Encoding.UTF8);
+            Name = path;
+            Header.Read(fs, Encoding.UTF8);
+            Material = MaterialData.Read(fs, Encoding.UTF8);
+            Data = MeshData.Read(Header, fs, Encoding.UTF8);
+            fs.Close();
         }
 
-        public MeshSource(string path, MeshVertex[] vertices, uint[] indices, BoundingBox box, BoundingSphere sphere)
+        public MeshSource(string path, MeshVertex[] vertices, uint[] indices, MeshBone[] bones, BoundingBox box, BoundingSphere sphere)
         {
-            Path = path;
-            cached = true;
+            Name = path;
             Header.Type = MeshType.Default;
             Header.BoundingBox = box;
             Header.BoundingSphere = sphere;
             Header.VerticesCount = (ulong)vertices.LongLength;
             Header.IndicesCount = (ulong)indices.LongLength;
 
-            Body = new(vertices, indices);
+            Data = new(vertices, indices, bones);
         }
 
-        private void Cache()
+        public MeshSource(string path, MaterialData material, MeshVertex[] vertices, uint[] indices, MeshBone[] bones, BoundingBox box, BoundingSphere sphere)
         {
-            if (cached) return;
-            switch (Header.Type)
-            {
-                case MeshType.Default:
-                    Body = MeshData.Read(Header, stream, Encoding.UTF8);
-                    break;
-
-                case MeshType.Skinned:
-                    break;
-
-                case MeshType.Terrain:
-                    break;
-            }
-
-            cached = true;
+            Name = path;
+            Header.Type = MeshType.Default;
+            Header.BoundingBox = box;
+            Header.BoundingSphere = sphere;
+            Header.VerticesCount = (ulong)vertices.LongLength;
+            Header.IndicesCount = (ulong)indices.LongLength;
+            Material = material;
+            Data = new(vertices, indices, bones);
         }
 
         public void Save(string dir)
         {
             Directory.CreateDirectory(dir);
-            var fs = File.Create(System.IO.Path.Combine(dir, Path + ".mesh"));
+            var fs = File.Create(Path.Combine(dir, Name + ".mesh"));
             Header.Write(fs, Encoding.UTF8);
-            Body.Write(fs, Encoding.UTF8);
+            Material.Write(fs, Encoding.UTF8);
+            Data.Write(fs, Encoding.UTF8);
             fs.Close();
         }
 
-        public MeshData ReadMesh()
+        public static MeshSource Load(string path)
         {
-            Cache();
-            return Body;
+            return new MeshSource(path);
+        }
+
+        public static MeshSource LoadExternal(string path)
+        {
+            return new MeshSource(path, File.OpenRead(path + ".mesh"));
+        }
+
+        public void SetMaterial(MaterialData material)
+        {
+            Material = material;
+        }
+
+        public MeshData GetMesh()
+        {
+            return Data;
+        }
+
+        public MeshVertex[] GetVertices()
+        {
+            return Data.Vertices;
+        }
+
+        public uint[] GetIndices()
+        {
+            return Data.Indices;
+        }
+
+        public MeshBone[] GetBones()
+        {
+            return Data.Bones;
+        }
+
+        public MaterialData GetMaterial()
+        {
+            return Material;
+        }
+
+        public Vector3[] GetPoints()
+        {
+            var data = GetMesh();
+            Vector3[] points = new Vector3[data.Indices.Length];
+            for (int i = 0; i < data.Indices.Length; i++)
+            {
+                points[i] = data.Vertices[data.Indices[i]].Position;
+            }
+            return points;
         }
     }
 }

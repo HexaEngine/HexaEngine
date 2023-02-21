@@ -18,8 +18,7 @@
 
         public const float DegToRadFactor = 0.0174532925f;
         public const float Speed = 10F;
-        public const float AngluarSpeed = 50F;
-        public const float AngluarGrain = 0.004f;
+        public const float AngluarSpeed = 20F;
 
         public static Vector3 Center { get => center; set => center = value; }
 
@@ -61,11 +60,11 @@
                     sc.X += sc.X / 2 * -wheel;
 
                     // Rotate the camera left and right
-                    sc.Y += -delta.X * Time.Delta;
+                    sc.Y += -delta.X * Time.Delta * 2;
 
                     // Rotate the camera up and down
                     // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta, -1.5f, 1.5f);
+                    sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta * 2, -MathF.PI / 2, MathF.PI / 2);
 
                     first = false;
 
@@ -73,6 +72,7 @@
                     Vector3 pos = SphereHelper.GetCartesianCoordinates(sc) + center;
                     var orientation = Quaternion.CreateFromYawPitchRoll(-sc.Y, sc.Z, 0);
                     camera.Transform.PositionRotation = (pos, orientation);
+                    camera.Transform.Recalculate();
                 }
             }
             if (mode == CameraEditorMode.Free)
@@ -83,7 +83,7 @@
 
                 if (delta.X != 0 | delta.Y != 0 || first)
                 {
-                    var re = new Vector3(delta.X, delta.Y, 0) * AngluarSpeed * Time.Delta;
+                    var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngluarSpeed;
                     camera.Transform.Rotation += re;
                     if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
                     {
@@ -143,6 +143,7 @@
                     else
                         camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * Time.Delta;
                 }
+                camera.Transform.Recalculate();
             }
         }
     }

@@ -7,7 +7,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
+    using HexaEngine.Core.Physics.Characters;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Core.Scenes.Systems;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -16,15 +18,18 @@
 
     public class Scene
     {
+        private readonly List<ISystem> systems = new();
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
         private string[] cameraNames = Array.Empty<string>();
-        private readonly List<Light> lights = new();
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
         private MaterialManager materialManager;
         private MeshManager meshManager;
+        private LightManager lightManager;
+        private AnimationManager animationManager = new();
         private readonly SemaphoreSlim semaphore = new(1);
+        private ISceneUpdateCallbacks sceneUpdateCallbacks;
         private string? path;
 
         [JsonIgnore]
@@ -43,6 +48,7 @@
         {
             Name = "Scene";
             root = new SceneRootNode(this);
+            sceneUpdateCallbacks = new SceneUpdateCallbacks();
         }
 
         public string Name { get; }
@@ -60,7 +66,7 @@
         public string[] CameraNames => cameraNames;
 
         [JsonIgnore]
-        public List<Light> Lights => lights;
+        public LightManager Lights => lightManager;
 
         [JsonIgnore]
         public List<GameObject> Nodes => nodes;
@@ -75,7 +81,28 @@
         public MaterialManager MaterialManager { get => materialManager; set => materialManager = value; }
 
         [JsonIgnore]
+        public ScriptManager Scripts => scriptManager;
+
+        [JsonIgnore]
+        public List<ISystem> Systems => systems;
+
+        [JsonIgnore]
+        public ISceneUpdateCallbacks UpdateCallbacks => sceneUpdateCallbacks;
+
+        [JsonIgnore]
         public MeshManager MeshManager { get => meshManager; set => meshManager = value; }
+
+        [JsonIgnore]
+        public AnimationManager AnimationManager { get => animationManager; set => animationManager = value; }
+
+        [JsonIgnore]
+        public SceneProfiler Profiler { get; } = new(10);
+
+        [JsonIgnore]
+        public CharacterControllers CharacterControllers => characterControllers;
+
+        [JsonIgnore]
+        public ContactEvents ContactEvents => contactEvents;
 
         public SceneVariables Variables { get; } = new();
 
@@ -86,18 +113,26 @@
         public void Initialize(IGraphicsDevice device)
         {
             instanceManager = new(device);
+            lightManager = new(device, instanceManager);
             materialManager ??= new();
             meshManager ??= new();
+
+            systems.Add(new PhysicsSystem());
+            systems.Add(new AnimationSystem(this));
+            systems.Add(scriptManager);
+            systems.Add(lightManager);
+            systems.Add(new TransformSystem());
+
             semaphore.Wait();
 
             BufferPool = new BufferPool();
             var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
             ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
 
-            NarrowphaseCallbacks callbacks = new();
-            callbacks.Characters = new(BufferPool);
-            callbacks.Events = new(ThreadDispatcher, BufferPool);
-            Simulation = Simulation.Create(BufferPool, callbacks, new PoseIntegratorCallbacks(new Vector3(0, -10, 0)), new SolveDescription(8, 1));
+            characterControllers = new(BufferPool);
+            contactEvents = new(ThreadDispatcher, BufferPool);
+
+            Simulation = Simulation.Create(BufferPool, new NarrowphaseCallbacks(characterControllers, contactEvents), new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
 
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
@@ -127,28 +162,82 @@
             root.RestoreState();
         }
 
-        private void FixedUpdate(object? sender, EventArgs e)
-        {
-            if (Application.InDesignMode) return;
-            semaphore.Wait();
-            for (int i = 0; i < root.Children.Count; i++)
-            {
-                root.Children[i].FixedUpdate();
-            }
-            semaphore.Release();
-        }
-
         public void Tick()
         {
+            Profiler.Clear();
             semaphore.Wait();
             CameraManager.Update();
             Simulate(Time.Delta);
             Dispatcher.ExecuteInvokes();
             semaphore.Release();
+#if PROFILE
+            Profiler.Start(sceneUpdateCallbacks);
+#endif
+            sceneUpdateCallbacks.Update(root);
+#if PROFILE
+            Profiler.End(sceneUpdateCallbacks);
+#endif
+
+#if PROFILE
+            Profiler.Start(systems);
+#endif
+            for (int i = 0; i < systems.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(systems[i]);
+#endif
+                systems[i].Update(ThreadDispatcher);
+#if PROFILE
+                Profiler.End(systems[i]);
+#endif
+            }
+#if PROFILE
+            Profiler.End(systems);
+#endif
+        }
+
+        private void FixedUpdate(object? sender, EventArgs e)
+        {
+            if (Application.InDesignMode)
+            {
+#if PROFILE
+                Profiler.Set(sceneUpdateCallbacks, 0);
+#endif
+                return;
+            }
+
+            semaphore.Wait();
+#if PROFILE
+            Profiler.Start(sceneUpdateCallbacks);
+#endif
+            sceneUpdateCallbacks.FixedUpdate(root);
+#if PROFILE
+            Profiler.End(sceneUpdateCallbacks);
+#endif
+
+#if PROFILE
+            Profiler.Start(systems);
+#endif
+            for (int i = 0; i < systems.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(systems[i]);
+#endif
+                systems[i].Update(ThreadDispatcher);
+#if PROFILE
+                Profiler.End(systems[i]);
+#endif
+            }
+#if PROFILE
+            Profiler.End(systems);
+#endif
+            semaphore.Release();
         }
 
         private const float stepsize = 0.016f;
         private float interpol;
+        private CharacterControllers characterControllers;
+        private ContactEvents contactEvents;
 
         public void Simulate(float delta)
         {
@@ -161,22 +250,22 @@
                 interpol -= stepsize;
                 Simulation.Timestep(stepsize, ThreadDispatcher);
             }
-
-            for (int i = 0; i < root.Children.Count; i++)
-            {
-                root.Children[i].Update();
-            }
-
-            scriptManager.Update();
         }
 
         public GameObject? Find(string? name)
         {
             if (string.IsNullOrEmpty(name)) return null;
             semaphore.Wait();
-            var result = nodes.FirstOrDefault(x => x.Name == name);
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Name == name)
+                {
+                    semaphore.Release();
+                    return nodes[i];
+                }
+            }
             semaphore.Release();
-            return result;
+            return null;
         }
 
         public string GetAvailableName(GameObject node, string name)
@@ -200,8 +289,10 @@
                 cameraNames[cameras.Count - 1] = node.Name;
             }
 
-            lights.AddIfIs(node);
-            scriptManager.Register(node);
+            for (int i = 0; i < systems.Count; i++)
+            {
+                systems[i].Register(node);
+            }
         }
 
         internal void UnregisterChild(GameObject node)
@@ -212,8 +303,10 @@
                 Array.Copy(cameraNames, index + 1, cameraNames, index, cameras.Count - index);
             }
 
-            lights.RemoveIfIs(node);
-            scriptManager.Unregister(node);
+            for (int i = 0; i < systems.Count; i++)
+            {
+                systems[i].Unregister(node);
+            }
         }
 
         private class SceneRootNode : GameObject
@@ -269,6 +362,8 @@
             root.Uninitialize();
             Simulation.Dispose();
             ThreadDispatcher.Dispose();
+            lightManager.Dispose();
+            systems.Clear();
             semaphore.Release();
         }
 
@@ -290,7 +385,7 @@
                         break;
                     }
                 }
-                if (collect && current.IsVisible)
+                if (collect && current.IsEditorVisible)
                     yield return current;
             }
         }

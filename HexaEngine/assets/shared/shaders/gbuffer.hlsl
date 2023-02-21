@@ -3,7 +3,7 @@ struct GeometryData
 	float4 albedo : SV_TARGET0;
 	float4 position : SV_TARGET1;
 	float4 normal : SV_TARGET2;
-	float4 clearcoat : SV_TARGET3;
+	float4 tangent : SV_TARGET3;
 	float4 emission : SV_TARGET4;
 	float4 misc0 : SV_TARGET5;
 	float4 misc1 : SV_TARGET6;
@@ -29,7 +29,7 @@ struct GeometryAttributes
 	float anisotropic;
 	float anisotropicrotation;
 	float clearcoat;
-	float clearcoatroughness;
+    float clearcoatGloss;
 	float subsurface;
 	float sheen;
 	float sheentint;
@@ -70,7 +70,7 @@ GeometryData PackGeometryData(
 	in float anisotropic,
 	in float anisotropicrotation,
 	in float clearcoat,
-	in float clearcoatroughness,
+	in float clearcoatGloss,
 	in float transmission,
 	in float transmissionroughness,
 	in float sheen,
@@ -84,8 +84,8 @@ GeometryData PackGeometryData(
 	data.position.w = depth;
 	data.normal.xyz = normal;
 	data.normal.w = roughness;
-	data.clearcoat.xyz = tangent;
-	data.clearcoat.w = metalness;
+	data.tangent.xyz = tangent;
+    data.tangent.w = metalness;
 	data.emission.xyz = emission;
 	data.emission.w = emissionstrength;
 	data.misc0.r = specular;
@@ -95,7 +95,7 @@ GeometryData PackGeometryData(
 	data.misc1.r = anisotropic;
 	data.misc1.g = anisotropicrotation;
 	data.misc1.b = clearcoat;
-	data.misc1.a = clearcoatroughness;
+    data.misc1.a = clearcoatGloss;
 	data.misc2.r = transmission;
 	data.misc2.g = transmissionroughness;
 	data.misc2.b = sheen;
@@ -108,7 +108,7 @@ void ExtractGeometryData(
 	in Texture2D<float4> albedoTex,
 	in Texture2D<float4> positionTex,
 	in Texture2D<float4> normalTex,
-	in Texture2D<float4> clearcoatTex,
+	in Texture2D<float4> tangentTex,
 	in Texture2D<float4> emissionTex,
 	in Texture2D<float4> misc0Tex,
 	in Texture2D<float4> misc1Tex,
@@ -119,7 +119,7 @@ void ExtractGeometryData(
 	float4 albedo = (float4) albedoTex.Sample(samplerState, tex);
 	float4 position = (float4) positionTex.Sample(samplerState, tex);
 	float4 normal = (float4) normalTex.Sample(samplerState, tex);
-	float4 clearcoat = (float4) clearcoatTex.Sample(samplerState, tex);
+    float4 tangent = (float4) tangentTex.Sample(samplerState, tex);
 	float4 emission = (float4) emissionTex.Sample(samplerState, tex);
 	float4 misc0 = (float4) misc0Tex.Sample(samplerState, tex);
 	float4 misc1 = (float4) misc1Tex.Sample(samplerState, tex);
@@ -131,8 +131,8 @@ void ExtractGeometryData(
 	attrs.depth = position.w;
 	attrs.normal = normal.xyz;
 	attrs.roughness = normal.w;
-	attrs.tangent = clearcoat.xyz;
-	attrs.metalness = clearcoat.w;
+    attrs.tangent = tangent.xyz;
+    attrs.metalness = tangent.w;
 	attrs.emission = emission.xyz;
 	attrs.emissionstrength = emission.w;
 	attrs.specular = misc0.r;
@@ -142,7 +142,7 @@ void ExtractGeometryData(
 	attrs.anisotropic = misc1.r;
 	attrs.anisotropicrotation = misc1.g;
 	attrs.clearcoat = misc1.b;
-	attrs.clearcoatroughness = misc1.a;
+    attrs.clearcoatGloss = misc1.a;
 	attrs.subsurface = misc2.r;
 	attrs.sheen = misc2.b;
 	attrs.sheentint = misc2.a;

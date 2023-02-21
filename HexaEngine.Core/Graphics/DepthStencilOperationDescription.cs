@@ -1,16 +1,35 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+
     public struct DepthStencilOperationDescription
     {
+        [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilFailOp;
+
+        [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilDepthFailOp;
+
+        [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilPassOp;
+
+        [DefaultValue(ComparisonFunction.Always)]
         public ComparisonFunction StencilFunc;
 
         /// <summary>
         /// A built-in description with default values.
         /// </summary>
         public static readonly DepthStencilOperationDescription Default = new(StencilOperation.Keep, StencilOperation.Keep, StencilOperation.Keep, ComparisonFunction.Always);
+
+        /// <summary>
+        /// A built-in description with default values.
+        /// </summary>
+        public static readonly DepthStencilOperationDescription DefaultFront = new(StencilOperation.Keep, StencilOperation.Increment, StencilOperation.Keep, ComparisonFunction.Always);
+
+        /// <summary>
+        /// A built-in description with default values.
+        /// </summary>
+        public static readonly DepthStencilOperationDescription DefaultBack = new(StencilOperation.Keep, StencilOperation.Decrement, StencilOperation.Keep, ComparisonFunction.Always);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DepthStencilOperationDescription"/> struct.

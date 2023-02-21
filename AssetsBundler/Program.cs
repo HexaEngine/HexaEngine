@@ -1,6 +1,7 @@
 ﻿namespace AssetsBundler
 {
     using CommandLine;
+    using HexaEngine.Core.IO;
     using System;
     using System.IO;
     using System.IO.Compression;
@@ -41,7 +42,7 @@
                     case Mode.create:
                         if (Directory.Exists(o.Path))
                         {
-                            AssetArchive.CreateFrom(o.Path, (Compression)o.Compress, (CompressionLevel)o.CompressionLevel);
+                            //AssetArchive.CreateFrom(o.Path, (Compression)o.Compress, (CompressionLevel)o.CompressionLevel);
                         }
                         break;
 

@@ -311,7 +311,7 @@
             float* fac = (float*)&factor;
 
             ctx->OMSetBlendState(blendState, fac, uint.MaxValue);
-            ctx->OMSetDepthStencilState(depthStencilState, 0);
+            ctx->OMSetDepthStencilState(depthStencilState, state.StencilRef);
             ctx->IASetInputLayout(layout);
             ctx->IASetPrimitiveTopology(Helper.Convert(state.Topology));
         }
@@ -335,7 +335,7 @@
             float* fac = (float*)&factor;
 
             context->OMSetBlendState(blendState, fac, uint.MaxValue);
-            context->OMSetDepthStencilState(depthStencilState, 0);
+            context->OMSetDepthStencilState(depthStencilState, state.StencilRef);
             context->IASetInputLayout(layout);
             context->IASetPrimitiveTopology(Helper.Convert(state.Topology));
         }

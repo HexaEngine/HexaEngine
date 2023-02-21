@@ -3,10 +3,33 @@
     using System;
     using System.Collections.Generic;
 
+    public interface IHistoryContext<T1, T2>
+    {
+        public T1 Target { get; set; }
+
+        public T2 OldValue { get; set; }
+
+        public T2 NewValue { get; set; }
+    }
+
+    public struct HistoryContext<T1, T2>
+    {
+        public T1 Target;
+        public T2 OldValue;
+        public T2 NewValue;
+
+        public HistoryContext(T1 target, T2 oldValue, T2 newValue)
+        {
+            Target = target;
+            OldValue = oldValue;
+            NewValue = newValue;
+        }
+    }
+
     public class History
     {
-        private readonly Stack<HistoryItem> undostack = new();
-        private readonly Stack<HistoryItem> redostack = new();
+        private readonly Stack<(object, HistoryItem)> undostack = new();
+        private readonly Stack<(object, HistoryItem)> redostack = new();
 
         public bool CanUndo => undostack.Count != 0;
 
@@ -18,33 +41,48 @@
 
         private struct HistoryItem
         {
-            public Action DoAction;
-            public Action UndoAction;
+            public Action<object> DoAction;
+            public Action<object> UndoAction;
 
-            public HistoryItem(Action doAction, Action undoAction)
+            public HistoryItem(Action<object> doAction, Action<object> undoAction)
             {
                 DoAction = doAction;
                 UndoAction = undoAction;
             }
         }
 
-        public void Push(Action doAction, Action undoAction)
+        public void Push(object context, Action<object> doAction, Action<object> undoAction)
         {
-            undostack.Push(new(doAction, undoAction));
+            undostack.Push((context, new(doAction, undoAction)));
             redostack.Clear();
         }
 
-        public void Do(Action doAction, Action undoAction)
+        public void Push<T1, T2>(T1 target, T2 oldValue, T2 newValue, Action<object> doAction, Action<object> undoAction)
         {
-            doAction();
-            undostack.Push(new(doAction, undoAction));
+            var context = new HistoryContext<T1, T2>(target, oldValue, newValue);
+            undostack.Push((context, new(doAction, undoAction)));
             redostack.Clear();
         }
 
-        public (Action, Action) Pop()
+        public void Do(object context, Action<object> doAction, Action<object> undoAction)
+        {
+            doAction(context);
+            undostack.Push((context, new(doAction, undoAction)));
+            redostack.Clear();
+        }
+
+        public void Do<T1, T2>(T1 target, T2 oldValue, T2 newValue, Action<object> doAction, Action<object> undoAction)
+        {
+            var context = new HistoryContext<T1, T2>(target, oldValue, newValue);
+            doAction(context);
+            undostack.Push((context, new(doAction, undoAction)));
+            redostack.Clear();
+        }
+
+        public (object, Action<object>, Action<object>) Pop()
         {
             var e = undostack.Pop();
-            return (e.DoAction, e.UndoAction);
+            return (e.Item1, e.Item2.DoAction, e.Item2.UndoAction);
         }
 
         public void Clear()
@@ -56,15 +94,15 @@
         public void Undo()
         {
             var item = undostack.Pop();
-            item.UndoAction();
+            item.Item2.UndoAction(item.Item1);
             redostack.Push(item);
         }
 
         public bool TryUndo()
         {
-            if (undostack.TryPop(out HistoryItem item))
+            if (undostack.TryPop(out var item))
             {
-                item.UndoAction();
+                item.Item2.UndoAction(item.Item1);
                 redostack.Push(item);
                 return true;
             }
@@ -74,15 +112,15 @@
         public void Redo()
         {
             var item = redostack.Pop();
-            item.DoAction();
+            item.Item2.DoAction(item.Item1);
             undostack.Push(item);
         }
 
         public bool TryRedo()
         {
-            if (redostack.TryPop(out HistoryItem item))
+            if (redostack.TryPop(out var item))
             {
-                item.DoAction();
+                item.Item2.DoAction(item.Item1);
                 undostack.Push(item);
                 return true;
             }

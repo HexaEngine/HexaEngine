@@ -6,6 +6,15 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
+cbuffer SSAOParams
+{
+    float TAP_SIZE = 0.0002;
+    uint NUM_TAPS = 16;
+    float THRESHOLD0 = 0.1;
+    float SCALE = 1.0;
+    float2 TARGET_SIZE;
+};
+
 Texture2D positionTexture : register(t1);
 Texture2D normalTexture : register(t2);
 Texture2D cleancoatNormalTexture : register(t3);

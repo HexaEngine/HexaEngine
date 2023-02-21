@@ -9,19 +9,24 @@
     /// </summary>
     public class SceneDispatcher
     {
-        private readonly ConcurrentQueue<Action> invokes = new();
+        private readonly ConcurrentQueue<(object, Action<object>)> invokes = new();
 
         public void ExecuteInvokes()
         {
-            while (invokes.TryDequeue(out Action? action))
+            while (invokes.TryDequeue(out var action))
             {
-                action.Invoke();
+                action.Item2.Invoke(action.Item1);
             }
         }
 
-        public void Invoke(Action action)
+        public void Invoke(object context, Action<object> action)
         {
-            invokes.Enqueue(action);
+            invokes.Enqueue((context, action));
+        }
+
+        public void Invoke<T>(T context, Action<T> action)
+        {
+            invokes.Enqueue((context, x => action((T)x)));
         }
     }
 }

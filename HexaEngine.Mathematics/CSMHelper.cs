@@ -27,7 +27,7 @@
             return frustumCorners;
         }
 
-        public static Matrix4x4 GetLightSpaceMatrix(Matrix4x4 viewProj, Transform transform)
+        public static Matrix4x4 GetLightSpaceMatrix(Matrix4x4 viewProj, Transform transform, ref BoundingFrustum frustum)
         {
             Vector4[] corners = GetFrustumCornersWorldSpace(viewProj);
 
@@ -38,7 +38,7 @@
             }
             center /= corners.Length;
 
-            var lightView = MathUtil.LookAtLH(center - transform.Forward, center, transform.Up);
+            var lightView = MathUtil.LookAtLH(center, center + transform.Forward, transform.Up);
 
             float minX = float.MaxValue;
             float maxX = float.MinValue;
@@ -58,7 +58,7 @@
             }
 
             // Tune this parameter according to the scene
-            float zMult = 1.0f;
+            float zMult = 5;
             if (minZ < 0)
             {
                 minZ *= zMult;
@@ -77,8 +77,10 @@
             }
 
             Matrix4x4 lightProjection = MathUtil.OrthoOffCenterLH(minX, maxX, minY, maxY, minZ, maxZ);
+            Matrix4x4 viewProjOut = lightView * lightProjection;
+            frustum.Initialize(viewProjOut);
 
-            return Matrix4x4.Transpose(lightView * lightProjection);
+            return Matrix4x4.Transpose(viewProjOut);
         }
 
         public static unsafe void GetCascades(CameraTransform camera, float* result, int count)
@@ -92,7 +94,7 @@
             float range = maxZ - minZ;
             float ratio = maxZ / minZ;
 
-            float cascadeSplitLambda = 0.95f;
+            float cascadeSplitLambda = 0.85f;
 
             for (uint i = 0; i < count; i++)
             {
@@ -147,30 +149,31 @@
             return result;
         }
 
-        public static unsafe Matrix4x4* GetLightSpaceMatrices(CameraTransform camera, Transform light, Matrix4x4* ret, float* cascades, int cascadesCount = 4)
+        public static unsafe Matrix4x4* GetLightSpaceMatrices(CameraTransform camera, Transform light, Matrix4x4* ret, float* cascades, BoundingFrustum[] frustra, int cascadesCount = 4)
         {
             float fov = camera.Fov.ToRad();
             float aspect = camera.AspectRatio;
             float far = camera.Far;
             float near = camera.Near;
 
-            Matrix4x4 view = GetCameraView(camera);
+            Matrix4x4 view = camera.View; //GetCameraView(camera);
             GetCascades(camera, cascades, cascadesCount);
             for (int i = 0; i < cascadesCount; i++)
             {
                 if (i == 0)
                 {
-                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, near, cascades[i]), light);
+                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, near, cascades[i]), light, ref frustra[i]);
                 }
                 else if (i < cascadesCount)
                 {
-                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], cascades[i]), light);
+                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], cascades[i]), light, ref frustra[i]);
                 }
                 else
                 {
-                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], far), light);
+                    ret[i] = GetLightSpaceMatrix(view * MathUtil.PerspectiveFovLH(fov, aspect, cascades[i - 1], far), light, ref frustra[i]);
                 }
             }
+
             return ret;
         }
     }

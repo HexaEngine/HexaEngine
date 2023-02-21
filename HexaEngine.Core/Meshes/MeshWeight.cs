@@ -4,5 +4,11 @@
     {
         public uint VertexId;
         public float Weight;
+
+        public MeshWeight(uint vertexId, float weight)
+        {
+            VertexId = vertexId;
+            Weight = weight;
+        }
     }
 }

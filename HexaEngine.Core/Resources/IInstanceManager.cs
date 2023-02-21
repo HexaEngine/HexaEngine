@@ -15,21 +15,23 @@
 
         IReadOnlyList<ModelInstanceType> Types { get; }
 
-        event Action<ModelInstance>? OnInstanceCreated;
+        event Action<ModelInstance>? InstanceCreated;
 
-        event Action<ModelInstance>? OnInstanceDestroyed;
+        event Action<ModelInstance>? InstanceDestroyed;
 
-        event Action<ModelInstanceType>? OnTypeCreated;
+        event Action<ModelInstanceType>? TypeCreated;
 
-        event Action<ModelInstanceType>? OnTypeDestroyed;
+        event Action<ModelInstanceType>? TypeDestroyed;
+
+        event Action<ModelInstanceType, ModelInstance>? Updated;
 
         ModelInstance CreateInstance(Mesh mesh, Material material, GameObject parent);
 
-        ModelInstance CreateInstance(Model model, GameObject parent);
+        ModelInstance CreateInstance(string model, GameObject parent);
 
         Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, GameObject parent);
 
-        Task<ModelInstance> CreateInstanceAsync(Model model, GameObject parent);
+        Task<ModelInstance> CreateInstanceAsync(string model, GameObject parent);
 
         void DestroyInstance(ModelInstance instance);
 

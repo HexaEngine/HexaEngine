@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <Platforms>AnyCPU;x64</Platforms>
-	  <Configurations>Debug;Release;TraceLeak</Configurations>
-	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
 </Project>

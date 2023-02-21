@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Scenes.Managers;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
@@ -78,11 +79,11 @@
         {
             lock (meshes)
             {
-                if (meshes.TryGetValue(mesh.Path, out var value))
+                if (meshes.TryGetValue(mesh.Name, out var value))
                     return value;
-                var source = mesh.ReadMesh();
-                Mesh model = new(device, mesh.Path, source.Vertices, source.Indices, mesh.Header.BoundingBox, mesh.Header.BoundingSphere);
-                meshes.TryAdd(mesh.Path, model);
+                var source = mesh.GetMesh();
+                Mesh model = new(device, mesh.Name, source.Vertices, source.Indices, mesh.Header.BoundingBox, mesh.Header.BoundingSphere);
+                meshes.TryAdd(mesh.Name, model);
                 return model;
             }
         }
@@ -119,7 +120,7 @@
             }
         }
 
-        public static Material LoadMaterial(MaterialDesc material)
+        public static Material LoadMaterial(MaterialData material)
         {
             Material? modelMaterial;
             lock (materials)
@@ -150,7 +151,7 @@
             return modelMaterial;
         }
 
-        public static async Task<Material> LoadMaterialAsync(MaterialDesc material)
+        public static async Task<Material> LoadMaterialAsync(MaterialData material)
         {
             Material? modelMaterial;
             lock (materials)
@@ -181,7 +182,7 @@
             return modelMaterial;
         }
 
-        public static void UpdateMaterial(MaterialDesc desc)
+        public static void UpdateMaterial(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -205,7 +206,18 @@
             modelMaterial.EndUpdate();
         }
 
-        public static async Task AsyncUpdateMaterial(MaterialDesc desc)
+        internal static void RenameMaterial(string oldName, string newName)
+        {
+            lock (materials)
+            {
+                if (materials.Remove(oldName, out var material))
+                {
+                    materials.TryAdd(newName, material);
+                }
+            }
+        }
+
+        public static async Task AsyncUpdateMaterial(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -926,6 +938,26 @@
             if (result.Item1)
             {
                 return result.Item2?.ShaderResourceView;
+            }
+            return null;
+        }
+
+        public static async Task<IShaderResourceView?> GetTextureSRVAsync(string name, bool dontWait)
+        {
+            var result = await TryGetResourceAsync<Graphics.Texture>(name, dontWait);
+            if (result.Item1)
+            {
+                return result.Item2?.ShaderResourceView;
+            }
+            return null;
+        }
+
+        public static async Task<IShaderResourceView?> GetSRVAsync(string name)
+        {
+            var result = await TryGetResourceAsync<IShaderResourceView>(name, false);
+            if (result.Item1)
+            {
+                return result.Item2;
             }
             return null;
         }

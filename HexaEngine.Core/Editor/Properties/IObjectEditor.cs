@@ -8,6 +8,7 @@
 
         Type Type { get; }
         object? Instance { get; set; }
+        bool IsEmpty { get; }
 
         void Draw();
     }

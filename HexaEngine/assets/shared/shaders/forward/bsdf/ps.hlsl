@@ -32,6 +32,33 @@ cbuffer MaterialBuffer : register(b2)
 	Material material;
 };
 
+cbuffer LightBuffer : register(b0)
+{
+	DirectionalLightSD directionalLightSDs[1];
+	uint directionalLightSDCount;
+	float3 padd1;
+
+	PointLightSD pointLightSDs[8];
+	uint pointLightSDCount;
+	float3 padd2;
+
+	SpotlightSD spotlightSDs[8];
+	uint spotlightSDCount;
+	float3 padd5;
+
+	DirectionalLight directionalLights[4];
+	uint directionalLightCount;
+	float3 padd3;
+
+	PointLight pointLights[32];
+	uint pointLightCount;
+	float3 padd4;
+
+	Spotlight spotlights[32];
+	uint spotlightCount;
+	float3 padd6;
+};
+
 float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D depthTex, SamplerState state)
 {
 #if HARD_SHADOWS

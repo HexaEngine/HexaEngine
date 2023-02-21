@@ -4,64 +4,65 @@
 
     public class Link
     {
-        public readonly NodeEditor Graph;
-        public readonly int Id;
-        public readonly Node SourceNode;
-        public readonly int SourceNodeId;
-        public readonly Pin Output;
-        public readonly int OutputId;
-        public readonly Node TargetNode;
-        public readonly int TargetNodeId;
-        public readonly Pin Input;
-        public readonly int InputId;
-        private object? _value;
+        private readonly Node outputNode;
+        private readonly Pin output;
+        private readonly Node inputNode;
+        private readonly Pin input;
 
-        public Link(NodeEditor graph, Node sourceNode, Pin output, Node targetNode, Pin input)
+        private NodeEditor? editor;
+        private int id;
+        private int outputId;
+        private int inputId;
+
+        [JsonConstructor]
+        public Link(int id, Node outputNode, Pin output, Node inputNode, Pin input)
         {
-            Graph = graph;
-            Id = graph.GetUniqueId();
-            SourceNode = sourceNode;
-            SourceNodeId = sourceNode.Id;
-            Output = output;
-            OutputId = output.Id;
-            TargetNode = targetNode;
-            TargetNodeId = targetNode.Id;
-            Input = input;
-            InputId = input.Id;
-            Output.ValueChanged += Output_ValueChanged;
+            this.id = id;
+            this.outputNode = outputNode;
+            this.output = output;
+            outputId = output.Id;
+            this.inputNode = inputNode;
+            this.input = input;
+            inputId = input.Id;
         }
 
-        private void Output_ValueChanged(object? sender, EventArgs e)
-        {
-            Value = Output.Value;
-            Input.Value = Value;
-        }
+        public int Id => id;
 
-        public event EventHandler? ValueChanged;
+        public Node OutputNode => outputNode;
 
-        public object? Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-                ValueChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public Pin Output => output;
+
+        public Node InputNode => inputNode;
+
+        public Pin Input => input;
 
         public void Draw()
         {
-            ImNodes.Link(Id, OutputId, InputId);
+            ImNodes.Link(id, outputId, inputId);
         }
 
         public virtual void Destroy()
         {
-            Output.ValueChanged -= Output_ValueChanged;
-            Graph.RemoveLink(this);
-            SourceNode.RemoveLink(this);
+            if (editor == null) return;
+            editor.RemoveLink(this);
+            OutputNode.RemoveLink(this);
             Output.RemoveLink(this);
-            TargetNode.RemoveLink(this);
+            InputNode.RemoveLink(this);
             Input.RemoveLink(this);
+            editor = null;
+        }
+
+        public virtual void Initialize(NodeEditor editor)
+        {
+            this.editor = editor;
+
+            outputId = output.Id;
+            inputId = input.Id;
+
+            OutputNode.AddLink(this);
+            Output.AddLink(this);
+            InputNode.AddLink(this);
+            Input.AddLink(this);
         }
     }
 }

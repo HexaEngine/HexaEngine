@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Projects;
     using ImGuiNET;
 
@@ -22,7 +21,7 @@
 
         public ProjectExplorer()
         {
-            IsShown = true;
+            IsShown = false;
         }
 
         protected override string Name => "Project";

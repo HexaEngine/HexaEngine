@@ -2,9 +2,11 @@
 
 namespace HexaEngine.Editor
 {
+    using BepuPhysics.Collidables;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;
@@ -13,8 +15,8 @@ namespace HexaEngine.Editor
     public class DebugDrawCommand
     {
         public PrimitiveTopology Topology;
-        public int[] Indices;
         public VertexPositionColor[] Vertices;
+        public UnsafeList<int> Indices;
         public uint nIndices;
         public uint nVertices;
         public Matrix4x4 Transform = Matrix4x4.Identity;
@@ -63,7 +65,54 @@ namespace HexaEngine.Editor
                 return true;
             }
 
+            if (command.nIndices != nIndex || command.nVertices != nVertex)
+            {
+                command.nIndices = nIndex;
+                command.nVertices = nVertex;
+                return true;
+            }
+
             return false;
+        }
+
+        private static bool BeginDraw(string id, out DebugDrawCommand command)
+        {
+            if (!cache.TryGetValue(id, out command))
+            {
+                command = new();
+                cache.Add(id, command);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool EndDraw(DebugDrawCommand command, string id, PrimitiveTopology topology, uint nIndex, uint nVertex)
+        {
+            vertexCount += nVertex;
+            indexCount += nIndex;
+            clearqueue.Remove(id);
+            drawqueue.Add(id);
+
+            command.Topology = topology;
+            command.nVertices = nVertex;
+            command.nIndices = nIndex;
+
+            return true;
+        }
+
+        private static void DrawReset(string id, DebugDrawCommand command, PrimitiveTopology topology, uint nIndex, uint nVertex)
+        {
+            vertexCount -= command.nVertices;
+            indexCount -= command.nIndices;
+            drawqueue.Remove(id);
+            vertexCount += nVertex;
+            indexCount += nIndex;
+            command.Topology = topology;
+            command.nVertices = nVertex;
+            command.nIndices = nIndex;
+            drawqueue.Add(id);
         }
 
         private struct CBView
@@ -233,7 +282,8 @@ namespace HexaEngine.Editor
             if (Draw(id, PrimitiveTopology.LineList, 24, BoundingFrustum.CornerCount, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[BoundingFrustum.CornerCount];
-                cmd.Indices = new int[]
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[]
                 {
                 0,1,
                 1,2,
@@ -247,7 +297,7 @@ namespace HexaEngine.Editor
                 5,6,
                 6,7,
                 7,4
-                };
+                });
             }
 
             var corners = frustum.GetCorners();
@@ -273,13 +323,13 @@ new Vector3(box.Min.X, box.Min.Y, box.Max.Z),
 new Vector3(box.Max.X, box.Min.Y, box.Max.Z),
 new Vector3(box.Max.X, box.Max.Y, box.Max.Z),
             };
-
-                cmd.Indices = new int[]
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[]
                 {
                 0,1,1,2,2,3,3,0,
                 0,4,1,5,2,6,3,7,
                 4,5,5,6,6,7,7,4
-                };
+                });
                 cmd.Vertices = new VertexPositionColor[pos.Length];
                 for (int i = 0; i < pos.Length; i++)
                 {
@@ -402,7 +452,8 @@ new Vector3(-0.000000f,0.831470f,0.555570f),
 new Vector3(-0.000000f,0.923880f,0.382683f),
 new Vector3(-0.000000f,0.980785f,0.195090f),
             };
-                cmd.Indices = (new int[]
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[]
                 {
 0,1,
 1,2,
@@ -523,7 +574,8 @@ new Vector3(-0.000000f,0.980785f,0.195090f),
             if (Draw(id, PrimitiveTopology.LineStrip, 3, 3, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[3];
-                cmd.Indices = new int[] { 0, 1, 2 };
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[] { 0, 1, 2 });
             }
 
             cmd.Vertices[0].Position = origin;
@@ -556,7 +608,8 @@ new Vector3(-0.000000f,0.980785f,0.195090f),
             if (Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[2];
-                cmd.Indices = new int[] { 0, 1 };
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[] { 0, 1 });
             }
 
             cmd.Vertices[0].Position = origin;
@@ -577,7 +630,7 @@ new Vector3(-0.000000f,0.980785f,0.195090f),
             if (Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[c_ringSegments + 1];
-                cmd.Indices = new int[c_ringSegments + 1];
+                cmd.Indices = new(c_ringSegments + 1);
                 for (int i = 0; i < c_ringSegments + 1; i++)
                 {
                     cmd.Indices[i] = i;
@@ -614,7 +667,7 @@ new Vector3(-0.000000f,0.980785f,0.195090f),
             if (Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[c_ringSegments + 1];
-                cmd.Indices = new int[c_ringSegments + 1];
+                cmd.Indices = new(c_ringSegments + 1);
                 for (int i = 0; i < c_ringSegments + 1; i++)
                 {
                     cmd.Indices[i] = i;
@@ -651,7 +704,7 @@ new Vector3(-0.000000f,0.980785f,0.195090f),
             if (Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[c_ringSegments + 1];
-                cmd.Indices = new int[c_ringSegments + 1];
+                cmd.Indices = new(c_ringSegments + 1);
                 for (int i = 0; i < c_ringSegments + 1; i++)
                 {
                     cmd.Indices[i] = i;
@@ -699,12 +752,8 @@ new Vector3(+1, -1, +1),
 new Vector3(+1, +1, +1),
             };
 
-                cmd.Indices = new int[]
-                {
-                0,1,1,2,2,3,3,0,
-                0,4,1,5,2,6,3,7,
-                4,5,5,6,6,7,7,4
-                };
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[] { 0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4 });
                 cmd.Vertices = new VertexPositionColor[pos.Length];
                 for (int i = 0; i < pos.Length; i++)
                 {
@@ -818,7 +867,8 @@ new Vector3(-0.000000f,0.831470f,0.555570f),
 new Vector3(-0.000000f,0.923880f,0.382683f),
 new Vector3(-0.000000f,0.980785f,0.195090f),
             };
-                cmd.Indices = (new int[]
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[]
                 {
 0,1,
 1,2,
@@ -1065,8 +1115,8 @@ new Vector3(0.555570f,0.915735f,-0.000000f),
 new Vector3(0.382683f,0.961940f,-0.000000f),
 new Vector3(0.195090f,0.990393f,-0.000000f),
             };
-
-                cmd.Indices = (new int[]
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[]
                 {
 1,0,
 3,2,
@@ -1287,8 +1337,8 @@ new Vector3(-0.555570f,-1.000000f,0.831470f),
 new Vector3(-0.382683f,-1.000000f,0.923880f),
 new Vector3(-0.195090f,-1.000000f,0.980785f),
             };
-
-                cmd.Indices = (new int[]
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[]
                 {
 1,0,
 2,1,
@@ -1380,13 +1430,44 @@ new Vector3(-0.195090f,-1.000000f,0.980785f),
             if (Draw(id, PrimitiveTopology.LineStrip, 4, 4, out var cmd))
             {
                 cmd.Vertices = new VertexPositionColor[4];
-                cmd.Indices = new int[] { 0, 1, 2, 3 };
+                cmd.Indices = new();
+                cmd.Indices.AddRange(new int[] { 0, 1, 2, 3 });
             }
 
             cmd.Vertices[0] = new(Vector3.Transform(a, orientation) + origin, color);
             cmd.Vertices[1] = new(Vector3.Transform(b, orientation) + origin, color);
             cmd.Vertices[2] = new(Vector3.Transform(c, orientation) + origin, color);
             cmd.Vertices[3] = cmd.Vertices[0];
+        }
+
+        public static void DrawConvexHull(string id, Vector3 origin, Quaternion orientation, HullData hull, Vector3[] points, Vector4 color)
+        {
+            uint verts = (uint)points.Length;
+
+            if (BeginDraw(id, out var cmd))
+            {
+                cmd.Vertices = new VertexPositionColor[verts];
+                cmd.Indices = new();
+                for (int i = 0; i < verts; i++)
+                {
+                    cmd.Vertices[i] = new(points[i], color);
+                }
+
+                for (int i = 0; i < hull.FaceStartIndices.Length; i++)
+                {
+                    hull.GetFace(i, out var face);
+                    for (int j = 0; j < face.VertexCount; j++)
+                    {
+                        cmd.Indices.Add(face.OriginalVertexMapping[face.VertexIndices[j]]);
+                    }
+                    cmd.Indices.Add(face.OriginalVertexMapping[face.VertexIndices[0]]);
+                }
+                cmd.Indices.Add(cmd.Indices[0]);
+            }
+
+            EndDraw(cmd, id, PrimitiveTopology.LineStrip, cmd.Indices.Count, verts);
+
+            cmd.Transform = Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin);
         }
     }
 }

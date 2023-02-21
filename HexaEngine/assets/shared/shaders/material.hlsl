@@ -1,8 +1,29 @@
 struct MaterialNG
 {
-	float4 Color;
-	float4 RoughnessMetalnessAo;
-	float4 Emissive;
+    float4 Color;
+	
+    float Roughness;
+    float Metalness;
+    float Specular;
+    float SpecularTint;
+	
+    float Sheen;
+    float SheenTint;
+    float Clearcoat;
+    float ClearcoatGloss;
+	
+    float Anisotropic;
+    float Subsurface;
+    float Ao;
+    float Padding0;
+	
+    float3 Emissive;
+    float Padding1;
+  
+	// Displacement Albedo Normal Roughness
+    bool4 DANR;
+	// Metalness Emissive Ao
+    bool4 MEAoRM;
 };
 
 struct Material

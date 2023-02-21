@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+
     public struct BlendDescription
     {
         public static readonly BlendDescription Opaque = new(Blend.One, Blend.Zero);
@@ -11,8 +13,13 @@
         public static readonly BlendDescription NonPremultiplied = new(Blend.SourceAlpha, Blend.InverseSourceAlpha);
 
         public const int SimultaneousRenderTargetCount = unchecked(8);
+
+        [DefaultValue(false)]
         public bool AlphaToCoverageEnable = false;
+
+        [DefaultValue(false)]
         public bool IndependentBlendEnable = false;
+
         public RenderTargetBlendDescription[] RenderTarget = new RenderTargetBlendDescription[SimultaneousRenderTargetCount];
 
         public BlendDescription()

@@ -1,15 +1,30 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+
     public struct DepthStencilDescription
     {
         public const int DefaultStencilReadMask = unchecked(255);
         public const int DefaultStencilWriteMask = unchecked(255);
+
+        [DefaultValue(true)]
         public bool DepthEnable;
+
+        [DefaultValue(DepthWriteMask.All)]
         public DepthWriteMask DepthWriteMask;
+
+        [DefaultValue(ComparisonFunction.LessEqual)]
         public ComparisonFunction DepthFunc;
+
+        [DefaultValue(false)]
         public bool StencilEnable;
+
+        [DefaultValue(DefaultStencilReadMask)]
         public byte StencilReadMask;
+
+        [DefaultValue(DefaultStencilWriteMask)]
         public byte StencilWriteMask;
+
         public DepthStencilOperationDescription FrontFace;
         public DepthStencilOperationDescription BackFace;
 
@@ -22,6 +37,11 @@
         /// A built-in description with default settings for using a depth stencil buffer.
         /// </summary>
         public static readonly DepthStencilDescription Default = new(true, DepthWriteMask.All);
+
+        /// <summary>
+        /// A built-in description with default settings for using a depth stencil buffer.
+        /// </summary>
+        public static readonly DepthStencilDescription DefaultStencil = new(true, true, DepthWriteMask.All);
 
         /// <summary>
         /// A built-in description with settings for enabling a read-only depth stencil buffer.
@@ -54,6 +74,24 @@
             StencilWriteMask = DefaultStencilWriteMask;
             FrontFace = DepthStencilOperationDescription.Default;
             BackFace = DepthStencilOperationDescription.Default;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DepthStencilDescription"/> struct.
+        /// </summary>
+        /// <param name="depthEnable">Enable depth testing.</param>
+        /// <param name="depthWriteMask">Identify a portion of the depth-stencil buffer that can be modified by depth data.</param>
+        /// <param name="depthFunc">A function that compares depth data against existing depth data. </param>
+        public DepthStencilDescription(bool depthEnable, bool stencilEnable, DepthWriteMask depthWriteMask, ComparisonFunction depthFunc = ComparisonFunction.LessEqual)
+        {
+            DepthEnable = depthEnable;
+            DepthWriteMask = depthWriteMask;
+            DepthFunc = depthFunc;
+            StencilEnable = stencilEnable;
+            StencilReadMask = DefaultStencilReadMask;
+            StencilWriteMask = DefaultStencilWriteMask;
+            FrontFace = DepthStencilOperationDescription.DefaultFront;
+            BackFace = DepthStencilOperationDescription.DefaultBack;
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Plugins
 {
+    using HexaEngine.Core.Debugging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -30,27 +31,36 @@
 
         public Assembly? LoadAssembly(string path)
         {
-            string? folder = Path.GetDirectoryName(path);
-            string filename = Path.GetFileName(path);
-            if (string.IsNullOrEmpty(folder)) return null;
-            string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
-            Assembly assembly;
-            if (File.Exists(pdb))
+            try
             {
-                using MemoryStream ms = new(File.ReadAllBytes(path));
-                using MemoryStream ms2 = new(File.ReadAllBytes(pdb));
-                assembly = context.LoadFromStream(ms, ms2);
+                string? folder = Path.GetDirectoryName(path);
+                string filename = Path.GetFileName(path);
+                if (string.IsNullOrEmpty(folder)) return null;
+                string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
+                Assembly assembly;
+                if (File.Exists(pdb))
+                {
+                    using MemoryStream ms = new(File.ReadAllBytes(path));
+                    using MemoryStream ms2 = new(File.ReadAllBytes(pdb));
+                    assembly = context.LoadFromStream(ms, ms2);
+                }
+                else
+                {
+                    using MemoryStream ms = new(File.ReadAllBytes(path));
+                    assembly = context.LoadFromStream(ms);
+                }
+
+                assemblies.Add(assembly);
+                Loaded?.Invoke(this, assembly);
+
+                return assembly;
             }
-            else
+            catch (Exception ex)
             {
-                using MemoryStream ms = new(File.ReadAllBytes(path));
-                assembly = context.LoadFromStream(ms);
+                ImGuiConsole.Log(ex);
             }
 
-            assemblies.Add(assembly);
-            Loaded?.Invoke(this, assembly);
-
-            return assembly;
+            return null;
         }
 
         public void Unload()

@@ -66,6 +66,28 @@ namespace ImNodesNET
             return ret;
         }
 
+        public static IntPtr CreateContext()
+        {
+            IntPtr ret = ImNodesNative.imnodes_CreateContext();
+            return ret;
+        }
+
+        public static void DestroyContext(IntPtr ctx)
+        {
+            ImNodesNative.imnodes_DestroyContext(ctx);
+        }
+
+        public static IntPtr GetCurrentContext()
+        {
+            IntPtr ret = ImNodesNative.imnodes_GetCurrentContext();
+            return ret;
+        }
+
+        public static void SetCurrentContext(IntPtr ctx)
+        {
+            ImNodesNative.imnodes_SetCurrentContext(ctx);
+        }
+
         public static void EditorContextFree(IntPtr noname1)
         {
             ImNodesNative.imnodes_EditorContextFree(noname1);
@@ -219,7 +241,7 @@ namespace ImNodesNET
             {
                 fixed (int* native_ended_at_attribute_id = &ended_at_attribute_id)
                 {
-                    byte ret = ImNodesNative.imnodes_IsLinkCreatedBoolPtr(native_started_at_attribute_id, native_ended_at_attribute_id, created_from_snap);
+                    byte ret = ImNodesNative.imnodes_IsLinkCreated_BoolPtr(native_started_at_attribute_id, native_ended_at_attribute_id, created_from_snap);
                     return ret != 0;
                 }
             }
@@ -233,7 +255,7 @@ namespace ImNodesNET
             {
                 fixed (int* native_ended_at_attribute_id = &ended_at_attribute_id)
                 {
-                    byte ret = ImNodesNative.imnodes_IsLinkCreatedBoolPtr(native_started_at_attribute_id, native_ended_at_attribute_id, native_created_from_snap);
+                    byte ret = ImNodesNative.imnodes_IsLinkCreated_BoolPtr(native_started_at_attribute_id, native_ended_at_attribute_id, native_created_from_snap);
                     created_from_snap = native_created_from_snap_val != 0;
                     return ret != 0;
                 }
@@ -251,7 +273,7 @@ namespace ImNodesNET
                     {
                         fixed (int* native_ended_at_attribute_id = &ended_at_attribute_id)
                         {
-                            byte ret = ImNodesNative.imnodes_IsLinkCreatedIntPtr(native_started_at_node_id, native_started_at_attribute_id, native_ended_at_node_id, native_ended_at_attribute_id, created_from_snap);
+                            byte ret = ImNodesNative.imnodes_IsLinkCreated_IntPtr(native_started_at_node_id, native_started_at_attribute_id, native_ended_at_node_id, native_ended_at_attribute_id, created_from_snap);
                             return ret != 0;
                         }
                     }
@@ -271,7 +293,7 @@ namespace ImNodesNET
                     {
                         fixed (int* native_ended_at_attribute_id = &ended_at_attribute_id)
                         {
-                            byte ret = ImNodesNative.imnodes_IsLinkCreatedIntPtr(native_started_at_node_id, native_started_at_attribute_id, native_ended_at_node_id, native_ended_at_attribute_id, native_created_from_snap);
+                            byte ret = ImNodesNative.imnodes_IsLinkCreated_IntPtr(native_started_at_node_id, native_started_at_attribute_id, native_ended_at_node_id, native_ended_at_attribute_id, native_created_from_snap);
                             created_from_snap = native_created_from_snap_val != 0;
                             return ret != 0;
                         }

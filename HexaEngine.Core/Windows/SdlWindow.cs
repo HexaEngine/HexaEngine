@@ -14,7 +14,7 @@
 
     public unsafe class SdlWindow : IWindow
     {
-        private readonly Sdl Sdl = Sdl.GetApi();
+        protected readonly Sdl Sdl = Sdl.GetApi();
         private readonly ShownEventArgs shownEventArgs = new();
         private readonly HiddenEventArgs hiddenEventArgs = new();
         private readonly ExposedEventArgs exposedEventArgs = new();
@@ -75,7 +75,7 @@
         {
             if (!created)
                 PlatformConstruct();
-            Application.RegisterWindow(this);
+            Application.RegisterWindow((IRenderWindow)this);
             Sdl.ShowWindow(window);
         }
 
@@ -615,10 +615,10 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static void ProcessInput()
+        public void ClearState()
         {
-            Keyboard.ProcessInput();
-            Mouse.ProcessInput();
+            Keyboard.ClearState();
+            Mouse.ClearState();
         }
     }
 }

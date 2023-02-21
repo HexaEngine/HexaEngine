@@ -1,9 +1,10 @@
-﻿using BepuPhysics;
-using BepuPhysics.Constraints;
-using BepuUtilities;
-using BepuUtilities.Memory;
+﻿using BepuUtilities;
+using BepuPhysics;
 using System.Numerics;
+using System;
 using System.Runtime.CompilerServices;
+using BepuPhysics.Constraints;
+using BepuUtilities.Memory;
 using static BepuUtilities.GatherScatter;
 
 namespace HexaEngine.Core.Physics.Characters
@@ -97,11 +98,6 @@ namespace HexaEngine.Core.Physics.Characters
             Vector2Wide.ReadFirst(source.TargetVelocity, out description.TargetVelocity);
             description.Depth = GetFirst(ref source.Depth);
             Vector3Wide.ReadFirst(source.OffsetFromCharacter, out description.OffsetFromCharacterToSupportPoint);
-        }
-
-        public TypeProcessor CreateTypeProcessor()
-        {
-            throw new NotImplementedException(); // TODO: FIX
         }
     }
 
@@ -380,11 +376,6 @@ namespace HexaEngine.Core.Physics.Characters
             description.Depth = GetFirst(ref source.Depth);
             Vector3Wide.ReadFirst(source.OffsetFromCharacter, out description.OffsetFromCharacterToSupportPoint);
             Vector3Wide.ReadFirst(source.OffsetFromSupport, out description.OffsetFromSupportToSupportPoint);
-        }
-
-        public TypeProcessor CreateTypeProcessor()
-        {
-            throw new NotImplementedException(); // TODO: FIX
         }
     }
 

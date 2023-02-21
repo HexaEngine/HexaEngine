@@ -32,8 +32,8 @@ Directional lights, Point/Omni lights, Spotlights
 Cascaded shadow mapping
 Omni directional shadow mapping
 PBR (Physically Based Rendering) and IBL (Image Based Lightning) (direct and indirect: diffuse, specular lightning)
-SSAO (Screen Space Ambient Occulusion)
-HBAO (Horizon Based Ambient Occulusion)
+SSAO (Screen Space Ambient Occlusion)
+HBAO (Horizon Based Ambient Occlusion)
 FXAA (Fast approximate anti-aliasing)
 SSR (Screen Space Reflections)
 

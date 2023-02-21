@@ -3,7 +3,8 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using HexaEngine.Pipelines.Effects.Filter;
+    using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Effects.Filter;
     using ImGuiNET;
     using System;
     using System.Linq;

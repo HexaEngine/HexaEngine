@@ -4,7 +4,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
-    using HexaEngine.Scenes.Components;
+    using HexaEngine.Scenes.Components.Collider;
     using ImGuizmoNET;
     using System.Numerics;
 
@@ -23,6 +23,7 @@
         private static ImGuizmoMode mode = ImGuizmoMode.LOCAL;
         private static bool gimbalGrabbed;
         private static Matrix4x4 gimbalBefore;
+        private static bool drawLightBounds;
 
         public static ImGuizmoOperation Operation { get => operation; set => operation = value; }
 
@@ -34,6 +35,8 @@
 
         public static bool DrawLights { get => drawLights; set => drawLights = value; }
 
+        public static bool DrawLightBounds { get => drawLightBounds; set => drawLightBounds = value; }
+
         public static bool DrawCameras { get => drawCameras; set => drawCameras = value; }
 
         public static bool DrawSkeletons { get => drawSkeletons; set => drawSkeletons = value; }
@@ -44,7 +47,7 @@
 
         public static bool DrawBoundingSpheres { get => drawBoundingSpheres; set => drawBoundingSpheres = value; }
 
-        public static void Draw()
+        public static unsafe void Draw()
         {
             if (!enabled)
                 return;
@@ -60,23 +63,44 @@
             {
                 for (int i = 0; i < scene.Lights.Count; i++)
                 {
-                    Light light = scene.Lights[i];
-                    if (light.Type == LightType.Directional)
+                    Light light = scene.Lights.Lights[i];
+                    if (light is DirectionalLight directional)
                     {
-                        DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.Zero);
-                        DebugDraw.DrawSphere(light.Name + "1", light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
+                        DebugDraw.DrawRay(light.Name + "0", light.Transform.GlobalPosition, light.Transform.Forward, false, Vector4.One);
+                        DebugDraw.DrawSphere(light.Name + "1", light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.One);
+
+                        if (drawLightBounds)
+                        {
+                            for (int j = 0; j < scene.Cameras.Count; j++)
+                            {
+                                for (int ji = 0; ji < 16; ji++)
+                                {
+                                    DebugDraw.DrawFrustum($"{light}{scene.Cameras[j]}{ji}", directional.ShadowFrustra[ji], Vector4.One);
+                                }
+                            }
+                        }
                     }
                     if (light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * 10, false, Vector4.One);
+                        DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.ShadowRange, false, Vector4.One);
 
-                        DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.Zero);
-                        DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetConeEllipse(10), Vector4.Zero);
-                        DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * 10, spotlight.GetInnerConeEllipse(10), Vector4.Zero);
+                        DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);
+                        DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.ShadowRange, spotlight.GetConeEllipse(spotlight.ShadowRange), Vector4.One);
+                        DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.ShadowRange, spotlight.GetInnerConeEllipse(spotlight.ShadowRange), Vector4.One);
+
+                        if (drawLightBounds)
+                        {
+                            DebugDraw.DrawFrustum(light.Name + "Bounds", spotlight.ShadowFrustum, Vector4.One);
+                        }
                     }
-                    if (light.Type == LightType.Point)
+                    if (light is PointLight pointLight)
                     {
-                        DebugDraw.DrawSphere(light.Name, light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.Zero);
+                        DebugDraw.DrawSphere(light.Name, light.Transform.GlobalPosition, Quaternion.Identity, 0.1f, Vector4.One);
+
+                        if (drawLightBounds)
+                        {
+                            DebugDraw.DrawBoundingBox(light.Name + "Bounds", pointLight.ShadowBox, Vector4.One);
+                        }
                     }
                 }
             }
@@ -166,8 +190,21 @@
                         {
                             DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
                         }
+                        if (component is ConvexHullCollider convex)
+                        {
+                            if (convex.HullData.HasValue)
+                                DebugDraw.DrawConvexHull(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, convex.HullData.Value, convex.Points, Vector4.One);
+                        }
+                        if (component is CompoundCollider compound)
+                        {
+                            DebugDraw.DrawSphere(node.Name + j, transform.GlobalPosition + compound.Center, Quaternion.Identity, 0.1f, new(1, 1, 0, 1));
+                        }
                     }
                 }
+            }
+
+            if (true)
+            {
             }
 
             {
@@ -194,12 +231,24 @@
                     if (gimbalGrabbed)
                     {
                         var oldValue = gimbalBefore;
-                        Designer.History.Push(() => element.Transform.Local = transform, () => element.Transform.Local = oldValue);
+                        Designer.History.Push(element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
                     }
                     gimbalGrabbed = false;
                     gimbalBefore = element.Transform.Local;
                 }
             }
+        }
+
+        private static void SetMatrix(object context)
+        {
+            var ctx = (HistoryContext<Transform, Matrix4x4>)context;
+            ctx.Target.Local = ctx.NewValue;
+        }
+
+        private static void RestoreMatrix(object context)
+        {
+            var ctx = (HistoryContext<Transform, Matrix4x4>)context;
+            ctx.Target.Local = ctx.OldValue;
         }
     }
 }

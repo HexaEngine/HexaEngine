@@ -36,7 +36,7 @@
         public unsafe bool ConfigureContactManifold<TManifold>(int workerIndex, CollidablePair pair, ref TManifold manifold, out PairMaterialProperties pairMaterial) where TManifold : unmanaged, IContactManifold<TManifold>
         {
             pairMaterial = new PairMaterialProperties { FrictionCoefficient = 1, MaximumRecoveryVelocity = 2, SpringSettings = new SpringSettings(30, 1) };
-            //Characters.TryReportContacts(pair, ref manifold, workerIndex, ref pairMaterial); // TODO: FIX
+            Characters.TryReportContacts(pair, ref manifold, workerIndex, ref pairMaterial); 
             Events.HandleManifold(workerIndex, pair, ref manifold);
             return true;
         }
@@ -55,7 +55,7 @@
 
         public void Initialize(Simulation simulation)
         {
-            //Characters.Initialize(simulation); // TODO: FIX
+            Characters.Initialize(simulation);
             Events.Initialize(simulation);
         }
     }
@@ -82,7 +82,7 @@
         /// <summary>
         /// Gets how the pose integrator should handle angular velocity integration.
         /// </summary>
-        public AngularIntegrationMode AngularIntegrationMode => AngularIntegrationMode.Nonconserving; //Don't care about fidelity in this demo!
+        public AngularIntegrationMode AngularIntegrationMode => AngularIntegrationMode.ConserveMomentum;
 
         public bool AllowSubstepsForUnconstrainedBodies { get; }
         public bool IntegrateVelocityForKinematics { get; }

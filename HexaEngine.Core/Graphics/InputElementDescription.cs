@@ -1,5 +1,10 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.IO;
+    using System.Runtime.CompilerServices;
+    using System.Text;
+    using System.Xml.Linq;
+
     public struct InputElementDescription
     {
         public string SemanticName;
@@ -122,6 +127,40 @@
                 hashCode = (hashCode * 397) ^ InstanceDataStepRate.GetHashCode();
                 return hashCode;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Write(Span<byte> dst, InputElementDescription element, Encoder encoder)
+        {
+            int idx = 0;
+            idx += dst[0..].WriteString(element.SemanticName, encoder);
+            idx += dst[idx..].WriteInt32(element.SemanticIndex);
+            idx += dst[idx..].WriteInt32((int)element.Format);
+            idx += dst[idx..].WriteInt32(element.Slot);
+            idx += dst[idx..].WriteInt32(element.AlignedByteOffset);
+            idx += dst[idx..].WriteInt32((int)element.Classification);
+            idx += dst[idx..].WriteInt32(element.InstanceDataStepRate);
+            return idx;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Read(ReadOnlySpan<byte> src, Decoder decoder, out InputElementDescription description)
+        {
+            int idx = 0;
+            idx += src[0..].ReadString(out string semanticName, decoder);
+            idx += src[idx..].ReadInt32(out int semanticIndex);
+            idx += src[idx..].ReadInt32(out int format);
+            idx += src[idx..].ReadInt32(out int slot);
+            idx += src[idx..].ReadInt32(out int alignedByteOffset);
+            idx += src[idx..].ReadInt32(out int classification);
+            idx += src[idx..].ReadInt32(out int instanceDataStepRate);
+            description = new(semanticName, semanticIndex, (Format)format, alignedByteOffset, slot, (InputClassification)classification, instanceDataStepRate);
+            return idx;
+        }
+
+        public int GetSize(Encoder encoder)
+        {
+            return SemanticName.SizeOf(encoder) + 24;
         }
     }
 }

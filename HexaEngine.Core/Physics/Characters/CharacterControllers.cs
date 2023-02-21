@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-using BepuPhysics;
+﻿using BepuPhysics;
 using BepuPhysics.Collidables;
 using BepuPhysics.CollisionDetection;
 using BepuUtilities;
@@ -100,7 +98,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// </summary>
         public Simulation Simulation { get; private set; }
 
-        private readonly BufferPool pool;
+        private BufferPool pool;
 
         private Buffer<int> bodyHandleToCharacterIndex;
         private QuickList<CharacterController> characters;
@@ -114,9 +112,9 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Creates a character controller systme.
         /// </summary>
-        /// <param dbgName="pool">Pool to allocate resources from.</param>
-        /// <param dbgName="initialCharacterCapacity">Number of characters to initially allocate space for.</param>
-        /// <param dbgName="initialBodyHandleCapacity">Number of body handles to initially allocate space for in the body handle->character mapping.</param>
+        /// <param name="pool">Pool to allocate resources from.</param>
+        /// <param name="initialCharacterCapacity">Number of characters to initially allocate space for.</param>
+        /// <param name="initialBodyHandleCapacity">Number of body handles to initially allocate space for in the body handle->character mapping.</param>
         public CharacterControllers(BufferPool pool, int initialCharacterCapacity = 4096, int initialBodyHandleCapacity = 4096)
         {
             this.pool = pool;
@@ -129,7 +127,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Caches the simulation associated with the characters.
         /// </summary>
-        /// <param dbgName="simulation">Simulation to be associated with the characters.</param>
+        /// <param name="simulation">Simulation to be associated with the characters.</param>
         public void Initialize(Simulation simulation)
         {
             Simulation = simulation;
@@ -152,7 +150,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Gets the current memory slot index of a character using its associated body handle.
         /// </summary>
-        /// <param dbgName="bodyHandle">Body handle associated with the character to look up the index of.</param>
+        /// <param name="bodyHandle">Body handle associated with the character to look up the index of.</param>
         /// <returns>Index of the character associated with the body handle.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int GetCharacterIndexForBodyHandle(int bodyHandle)
@@ -164,7 +162,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Gets a reference to the character at the given memory slot index.
         /// </summary>
-        /// <param dbgName="index">Index of the character to retrieve.</param>
+        /// <param name="index">Index of the character to retrieve.</param>
         /// <returns>Reference to the character at the given memory slot index.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref CharacterController GetCharacterByIndex(int index)
@@ -175,7 +173,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Gets a reference to the character using the handle of the character's body.
         /// </summary>
-        /// <param dbgName="bodyHandle">Body handle of the character to look up.</param>
+        /// <param name="bodyHandle">Body handle of the character to look up.</param>
         /// <returns>Reference to the character associated with the given body handle.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref CharacterController GetCharacterByBodyHandle(BodyHandle bodyHandle)
@@ -187,7 +185,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Allocates a character.
         /// </summary>
-        /// <param dbgName="bodyHandle">Body handle associated with the character.</param>
+        /// <param name="bodyHandle">Body handle associated with the character.</param>
         /// <returns>Reference to the allocated character.</returns>
         public ref CharacterController AllocateCharacter(BodyHandle bodyHandle)
         {
@@ -206,7 +204,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Removes a character from the character controllers set by the character's index.
         /// </summary>
-        /// <param dbgName="characterIndex">Index of the character to remove.</param>
+        /// <param name="characterIndex">Index of the character to remove.</param>
         public void RemoveCharacterByIndex(int characterIndex)
         {
             Debug.Assert(characterIndex >= 0 && characterIndex < characters.Count, "Character index must exist in the set of characters.");
@@ -225,7 +223,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Removes a character from the character controllers set by the body handle associated with the character.
         /// </summary>
-        /// <param dbgName="bodyHandle">Body handle associated with the character to remove.</param>
+        /// <param name="bodyHandle">Body handle associated with the character to remove.</param>
         public void RemoveCharacterByBodyHandle(BodyHandle bodyHandle)
         {
             Debug.Assert(bodyHandle.Value >= 0 && bodyHandle.Value < bodyHandleToCharacterIndex.Length && bodyHandleToCharacterIndex[bodyHandle.Value] >= 0,
@@ -291,7 +289,7 @@ namespace HexaEngine.Core.Physics.Characters
                     //Have to take into account the current potentially inactive location.
                     ref var bodyLocation = ref Simulation.Bodies.HandleToLocation[character.BodyHandle.Value];
                     ref var set = ref Simulation.Bodies.Sets[bodyLocation.SetIndex];
-                    ref var pose = ref set.DynamicsState[bodyLocation.Index].Motion.Pose;
+                    ref var pose = ref set.SolverStates[bodyLocation.Index].Motion.Pose;
                     QuaternionEx.Transform(character.LocalUp, pose.Orientation, out var up);
                     //Note that this branch is compiled out- the generic constraints force type specialization.
                     if (manifold.Convex)
@@ -398,10 +396,10 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Reports contacts about a collision to the character system. If the pair does not involve a character or there are no contacts, does nothing and returns false.
         /// </summary>
-        /// <param dbgName="pair">Pair of objects associated with the contact manifold.</param>
-        /// <param dbgName="manifold">Contact manifold between the colliding objects.</param>
-        /// <param dbgName="workerIndex">Index of the currently executing worker thread.</param>
-        /// <param dbgName="materialProperties">Material properties for this pair. Will be modified if the pair involves a character.</param>
+        /// <param name="pair">Pair of objects associated with the contact manifold.</param>
+        /// <param name="manifold">Contact manifold between the colliding objects.</param>
+        /// <param name="workerIndex">Index of the currently executing worker thread.</param>
+        /// <param name="materialProperties">Material properties for this pair. Will be modified if the pair involves a character.</param>
         /// <returns>True if the pair involved a character pair and has contacts, false otherwise.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryReportContacts<TManifold>(in CollidablePair pair, ref TManifold manifold, int workerIndex, ref PairMaterialProperties materialProperties) where TManifold : struct, IContactManifold<TManifold>
@@ -445,7 +443,7 @@ namespace HexaEngine.Core.Physics.Characters
         }
 
         private int boundingBoxExpansionJobIndex;
-        private readonly Action<int> expandBoundingBoxesWorker;
+        private Action<int> expandBoundingBoxesWorker;
 
         private void ExpandBoundingBoxesWorker(int workerIndex)
         {
@@ -467,7 +465,7 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Preallocates space for support data collected during the narrow phase. Should be called before the narrow phase executes.
         /// </summary>
-        private void PrepareForContacts(float dt, IThreadDispatcher threadDispatcher)
+        private void PrepareForContacts(float dt, IThreadDispatcher threadDispatcher = null)
         {
             Debug.Assert(!contactCollectionWorkerCaches.Allocated, "Worker caches were already allocated; did you forget to call AnalyzeContacts after collision detection to flush the previous frame's results?");
             var threadCount = threadDispatcher == null ? 1 : threadDispatcher.ThreadCount;
@@ -610,16 +608,16 @@ namespace HexaEngine.Core.Physics.Characters
                     //If the character is jumping, don't create a constraint.
                     if (supportCandidate.Depth > float.MinValue && character.TryJump)
                     {
-                        QuaternionEx.Transform(character.LocalUp, Simulation.Bodies.ActiveSet.DynamicsState[bodyLocation.Index].Motion.Pose.Orientation, out var characterUp);
+                        QuaternionEx.Transform(character.LocalUp, Simulation.Bodies.ActiveSet.SolverStates[bodyLocation.Index].Motion.Pose.Orientation, out var characterUp);
                         //Note that we assume that character orientations are constant. This isn't necessarily the case in all uses, but it's a decent approximation.
-                        var characterUpVelocity = Vector3.Dot(Simulation.Bodies.ActiveSet.DynamicsState[bodyLocation.Index].Motion.Velocity.Linear, characterUp);
+                        var characterUpVelocity = Vector3.Dot(Simulation.Bodies.ActiveSet.SolverStates[bodyLocation.Index].Motion.Velocity.Linear, characterUp);
                         //We don't want the character to be able to 'superboost' by simply adding jump speed on top of horizontal motion.
                         //Instead, jumping targets a velocity change necessary to reach character.JumpVelocity along the up axis.
                         if (character.Support.Mobility != CollidableMobility.Static)
                         {
                             ref var supportingBodyLocation = ref Simulation.Bodies.HandleToLocation[character.Support.BodyHandle.Value];
                             Debug.Assert(supportingBodyLocation.SetIndex == 0, "If the character is active, any support should be too.");
-                            ref var supportVelocity = ref Simulation.Bodies.ActiveSet.DynamicsState[supportingBodyLocation.Index].Motion.Velocity;
+                            ref var supportVelocity = ref Simulation.Bodies.ActiveSet.SolverStates[supportingBodyLocation.Index].Motion.Velocity;
                             var wxr = Vector3.Cross(supportVelocity.Angular, supportCandidate.OffsetFromSupport);
                             var supportContactVelocity = supportVelocity.Linear + wxr;
                             var supportUpVelocity = Vector3.Dot(supportContactVelocity, characterUp);
@@ -660,7 +658,7 @@ namespace HexaEngine.Core.Physics.Characters
                         Matrix3x3 surfaceBasis;
                         surfaceBasis.Y = supportCandidate.Normal;
                         //Note negation: we're using a right handed basis where -Z is forward, +Z is backward.
-                        QuaternionEx.Transform(character.LocalUp, Simulation.Bodies.ActiveSet.DynamicsState[bodyLocation.Index].Motion.Pose.Orientation, out var up);
+                        QuaternionEx.Transform(character.LocalUp, Simulation.Bodies.ActiveSet.SolverStates[bodyLocation.Index].Motion.Pose.Orientation, out var up);
                         var rayDistance = Vector3.Dot(character.ViewDirection, surfaceBasis.Y);
                         var rayVelocity = Vector3.Dot(up, surfaceBasis.Y);
                         Debug.Assert(rayVelocity > 0,
@@ -751,7 +749,7 @@ namespace HexaEngine.Core.Physics.Characters
         private int analysisJobIndex;
         private int analysisJobCount;
         private Buffer<AnalyzeContactsJob> jobs;
-        private readonly Action<int> analyzeContactsWorker;
+        private Action<int> analyzeContactsWorker;
 
         private void AnalyzeContactsWorker(int workerIndex)
         {
@@ -844,10 +842,10 @@ namespace HexaEngine.Core.Physics.Characters
                     for (int i = 0; i < workerCache.Jumps.Count; ++i)
                     {
                         ref var jump = ref workerCache.Jumps[i];
-                        activeSet.DynamicsState[jump.CharacterBodyIndex].Motion.Velocity.Linear += jump.CharacterVelocityChange;
+                        activeSet.SolverStates[jump.CharacterBodyIndex].Motion.Velocity.Linear += jump.CharacterVelocityChange;
                         if (jump.SupportBodyIndex >= 0)
                         {
-                            BodyReference.ApplyImpulse(Simulation.Bodies.ActiveSet, jump.SupportBodyIndex, jump.CharacterVelocityChange / -activeSet.DynamicsState[jump.CharacterBodyIndex].Inertia.Local.InverseMass, jump.SupportImpulseOffset);
+                            BodyReference.ApplyImpulse(Simulation.Bodies.ActiveSet, jump.SupportBodyIndex, jump.CharacterVelocityChange / -activeSet.SolverStates[jump.CharacterBodyIndex].Inertia.Local.InverseMass, jump.SupportImpulseOffset);
                         }
                     }
                     workerCache.Dispose(pool);
@@ -862,8 +860,8 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Ensures that the internal structures of the character controllers system can handle the given number of characters and body handles, resizing if necessary.
         /// </summary>
-        /// <param dbgName="characterCapacity">Minimum character capacity to require.</param>
-        /// <param dbgName="bodyHandleCapacity">Minimum number of body handles to allocate space for.</param>
+        /// <param name="characterCapacity">Minimum character capacity to require.</param>
+        /// <param name="bodyHandleCapacity">Minimum number of body handles to allocate space for.</param>
         public void EnsureCapacity(int characterCapacity, int bodyHandleCapacity)
         {
             characters.EnsureCapacity(characterCapacity, pool);
@@ -876,8 +874,8 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Resizes the internal structures of the character controllers system for the target sizes. Will not shrink below the currently active data size.
         /// </summary>
-        /// <param dbgName="characterCapacity">Target character capacity to allocate space for.</param>
-        /// <param dbgName="bodyHandleCapacity">Target number of body handles to allocate space for.</param>
+        /// <param name="characterCapacity">Target character capacity to allocate space for.</param>
+        /// <param name="bodyHandleCapacity">Target number of body handles to allocate space for.</param>
         public void Resize(int characterCapacity, int bodyHandleCapacity)
         {
             int lastOccupiedIndex = -1;
@@ -908,11 +906,8 @@ namespace HexaEngine.Core.Physics.Characters
             if (!disposed)
             {
                 disposed = true;
-                if (Simulation != null)
-                {
-                    Simulation.Timestepper.BeforeCollisionDetection -= PrepareForContacts;
-                    Simulation.Timestepper.CollisionsDetected -= AnalyzeContacts;
-                }
+                Simulation.Timestepper.BeforeCollisionDetection -= PrepareForContacts;
+                Simulation.Timestepper.CollisionsDetected -= AnalyzeContacts;
                 characters.Dispose(pool);
                 pool.Return(ref bodyHandleToCharacterIndex);
             }

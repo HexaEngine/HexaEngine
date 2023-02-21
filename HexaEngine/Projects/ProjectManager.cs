@@ -5,7 +5,6 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Dotnet;
-    using HexaEngine.Editor.Projects;
     using HexaEngine.Scripting;
     using HexaEngine.Windows;
     using System;
@@ -53,7 +52,9 @@
         public static async void Load(string path)
         {
             CurrentProjectPath = path;
-            Project = HexaProject.Load(CurrentProjectPath) ?? throw new Exception();
+            Project = HexaProject.Load(CurrentProjectPath);
+            if (Project == null)
+                return;
             CurrentFolder = Path.GetDirectoryName(CurrentProjectPath);
             var assets = Project.Items.FirstOrDefault(x => x.Name == "assets");
             if (assets == null)
@@ -72,7 +73,7 @@
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
             watcher.Changed += Watcher_Changed;
             watcher.EnableRaisingEvents = true;
-            await UpdateScripts();
+            _ = Task.Factory.StartNew(UpdateScripts);
         }
 
         private static void Watcher_Changed(object sender, FileSystemEventArgs e)

@@ -2,7 +2,7 @@
 {
     using System.Numerics;
 
-    public struct MaterialDesc
+    public class MaterialDesc
     {
         public string NormalTextureMap = string.Empty;
         public string DisplacementTextureMap = string.Empty;
@@ -39,6 +39,8 @@
         public Vector3 SubsurfaceColor;
         public Vector3 Emissive;
         public string Name = string.Empty;
+
+        public static MaterialDesc Default => new() { Name = "Default", Opacity = 1 };
 
         public MaterialDesc()
         {

@@ -74,7 +74,7 @@ namespace DiscordRPC
         /// <returns>The Message ID.</returns>
         /// <exception cref="ObjectDisposedException">Thrown when the client is disposed.</exception>
         /// <exception cref="Exception">Thrown when the webhook fails to execute.</exception>
-        public async Task<ulong> ExecuteAsync(WebhookMessage message, WebhookProfile profile = null)
+        public async Task<ulong> ExecuteAsync(WebhookMessage message, WebhookProfile? profile = null)
         {
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");

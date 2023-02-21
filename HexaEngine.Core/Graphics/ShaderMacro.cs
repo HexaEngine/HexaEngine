@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.IO;
+    using System.Text;
+
     public struct ShaderMacro
     {
         public string Name;
@@ -65,6 +68,28 @@
         public override string ToString()
         {
             return $"{Name}: {Definition}";
+        }
+
+        public static int Write(Span<byte> dst, ShaderMacro macro, Encoder encoder)
+        {
+            int idx = 0;
+            idx += dst[0..].WriteString(macro.Name, encoder);
+            idx += dst[idx..].WriteString(macro.Definition, encoder);
+            return idx;
+        }
+
+        public static int Read(ReadOnlySpan<byte> src, Decoder decoder, out ShaderMacro macro)
+        {
+            int idx = 0;
+            idx += src[0..].ReadString(out string name, decoder);
+            idx += src[idx..].ReadString(out string definition, decoder);
+            macro = new ShaderMacro(name, definition);
+            return idx;
+        }
+
+        public int GetSize(Encoder encoder)
+        {
+            return Name.SizeOf(encoder) + Definition.SizeOf(encoder);
         }
     }
 }

@@ -1,18 +1,23 @@
 ﻿namespace HexaEngine.Scenes.Components.Renderer
 {
+    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Properties;
     using ImGuiNET;
     using System;
 
+    [EditorComponent(typeof(RendererComponent), "Mesh Renderer")]
     public class RendererComponent : IComponent
     {
-        private readonly List<Model> models = new();
+        private readonly List<string> models = new();
         private readonly List<ModelInstance> instances = new();
         private GameObject? gameObject;
+        private Scene scene;
         private bool initialized;
 
         static RendererComponent()
@@ -20,16 +25,18 @@
             ObjectEditorFactory.RegisterEditor(typeof(RendererComponent), new RendererComponentEditor());
         }
 
-        public List<Model> Meshes => models;
+        public List<string> Meshes => models;
 
-        public void Awake(IGraphicsDevice device, GameObject node)
+        public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
-            gameObject = node;
+            this.gameObject = gameObject;
+            scene = gameObject.GetScene();
+
             initialized = true;
             for (int i = 0; i < models.Count; i++)
             {
                 var model = models[i];
-                node.GetScene().InstanceManager.CreateInstanceAsync(model, node).ContinueWith(t =>
+                scene.InstanceManager.CreateInstanceAsync(model, gameObject).ContinueWith(t =>
                 {
                     instances.Add(t.Result);
                 });
@@ -46,7 +53,7 @@
             instances.Clear();
         }
 
-        public void AddMesh(Model model)
+        public void AddMesh(string model)
         {
             models.Add(model);
             if (initialized)
@@ -55,17 +62,18 @@
             }
         }
 
-        public void UpdateModel(Model model)
+        public void UpdateModel(string model)
         {
             instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
         }
 
-        public void RemoveMesh(Model model)
+        public void RemoveMesh(string model)
         {
             models.Remove(model);
             if (initialized)
             {
-                instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
+                throw new NotImplementedException();
+                // instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
             }
         }
 
@@ -76,13 +84,16 @@
             public RendererComponentEditor()
             {
                 Type = typeof(RendererComponent);
-                Name = "Renderer";
+                Name = "Mesh Renderer";
             }
 
             public Type Type { get; }
 
             public string Name { get; }
+
             public object? Instance { get => instance; set => instance = value; }
+
+            public bool IsEmpty => false;
 
             public void Draw()
             {
@@ -90,8 +101,8 @@
                 RendererComponent component = (RendererComponent)instance;
                 for (int i = 0; i < component.models.Count; i++)
                 {
-                    Model model = component.models[i];
-                    ImGui.Text($"{model.Mesh}, {model.Material.Name}");
+                    string model = component.models[i];
+                    ImGui.Text($"{model}, {model}");
                 }
             }
         }

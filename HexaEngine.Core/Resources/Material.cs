@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
 
     public unsafe class Material : IDisposable
     {
         private readonly string name;
         private bool dirty = true;
-        public MaterialDesc desc;
+        public MaterialData desc;
         public IBuffer CB;
         public ISamplerState SamplerState;
         public Texture? AlbedoTexture;
@@ -23,7 +24,7 @@
         private bool disposedValue;
         private bool loaded;
 
-        public Material(MaterialDesc desc, IBuffer cB, ISamplerState samplerState)
+        public Material(MaterialData desc, IBuffer cB, ISamplerState samplerState)
         {
             this.desc = desc;
             name = desc.Name;
@@ -54,7 +55,7 @@
             return true;
         }
 
-        public void Update(MaterialDesc desc)
+        public void Update(MaterialData desc)
         {
             this.desc = desc;
             dirty = true;

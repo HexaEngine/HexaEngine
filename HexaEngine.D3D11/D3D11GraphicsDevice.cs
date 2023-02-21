@@ -9,6 +9,7 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
@@ -67,6 +68,11 @@
             D3DFeatureLevel* levels = (D3DFeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
 
             ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 2, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
+
+            if (code != ResultCode.S_OK)
+            {
+                throw new D3D11Exception(code);
+            }
 
             ID3D11Device1* device;
             ID3D11DeviceContext1* context;
@@ -362,6 +368,15 @@
         {
             ID3D11ShaderResourceView* srv;
             Device->CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, null, &srv).ThrowHResult();
+            return new D3D11ShaderResourceView(srv, default);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)
+        {
+            ID3D11ShaderResourceView* srv;
+            ShaderResourceViewDesc desc = Helper.Convert(description);
+            Device->CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv).ThrowHResult();
             return new D3D11ShaderResourceView(srv, default);
         }
 

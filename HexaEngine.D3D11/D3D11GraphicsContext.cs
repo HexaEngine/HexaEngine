@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.DirectXTex;
     using Silk.NET.Direct3D11;
     using Silk.NET.Maths;
     using System;
@@ -256,6 +257,16 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(IBuffer buffer, void* value, int size, Map flags)
+        {
+            Silk.NET.Direct3D11.MappedSubresource data;
+            ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
+            DeviceContext->Map(resource, 0, Helper.Convert(flags), 0, &data).ThrowHResult();
+            Buffer.MemoryCopy(value, data.PData, data.RowPitch, size);
+            DeviceContext->Unmap(resource, 0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Write<T>(IBuffer buffer, T* value, int size) where T : unmanaged
         {
             Silk.NET.Direct3D11.MappedSubresource data;
@@ -276,16 +287,14 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Write<T>(IBuffer buffer, T value) where T : struct
+        public void Write<T>(IBuffer buffer, T value) where T : unmanaged
         {
             Silk.NET.Direct3D11.MappedSubresource data;
             ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
             DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.WriteDiscard, 0, &data).ThrowHResult();
-            var size = Marshal.SizeOf<T>();
-            var ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(value, ptr, true);
-            Buffer.MemoryCopy((void*)ptr, data.PData, data.RowPitch, size);
-            Marshal.FreeHGlobal(ptr);
+
+            Buffer.MemoryCopy(&value, data.PData, data.RowPitch, sizeof(T));
+
             DeviceContext->Unmap(resource, 0);
         }
 
@@ -324,15 +333,17 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Read<T>(IBuffer buffer, T value) where T : struct
+        public void Read(IBuffer buffer, void* values, int length)
         {
-            throw new NotImplementedException();
-        }
+            Silk.NET.Direct3D11.MappedSubresource data;
+            ID3D11Resource* resource = (ID3D11Resource*)buffer.NativePointer;
+            DeviceContext->Map(resource, 0, Silk.NET.Direct3D11.Map.Read, 0, &data);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Read<T>(IBuffer buffer, T[] values) where T : struct
-        {
-            throw new NotImplementedException();
+            long destinationLength = length;
+            long bytesToCopy = data.RowPitch > destinationLength ? destinationLength : data.RowPitch;
+            Buffer.MemoryCopy(data.PData, values, destinationLength, bytesToCopy);
+
+            DeviceContext->Unmap(resource, 0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

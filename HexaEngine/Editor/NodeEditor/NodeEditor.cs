@@ -1,79 +1,107 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
-    using HexaEngine.Core.Graphics.Reflection;
     using ImGuiNET;
     using ImNodesNET;
     using System.Collections.Generic;
 
     public class NodeEditor
     {
-        private readonly List<Node> nodes = new();
-        private readonly List<Pin> pins = new();
-        private readonly List<Link> links = new();
-        private int IdState;
+        private string? state;
+        private nint context;
 
-        public bool isDragging;
-        public Pin? Pin;
-        private readonly nint context;
+        private readonly List<Node> nodes = new();
+        private readonly List<Link> links = new();
+        private int idState;
 
         public NodeEditor()
         {
-            context = ImNodes.EditorContextCreate();
-        }
-
-        ~NodeEditor()
-        {
-            ImNodes.EditorContextFree(context);
         }
 
         public event EventHandler<Node>? NodeAdded;
 
         public event EventHandler<Node>? NodeRemoved;
 
-        public event EventHandler<Pin>? PinAdded;
-
-        public event EventHandler<Pin>? PinRemoved;
-
         public event EventHandler<Link>? LinkAdded;
 
         public event EventHandler<Link>? LinkRemoved;
 
-        public IReadOnlyList<Node> Nodes => nodes;
+        [JsonProperty(Order = 0)]
+        public List<Node> Nodes => nodes;
 
-        public IReadOnlyList<Pin> Pins => pins;
+        [JsonProperty(Order = 2)]
+        public List<Link> Links => links;
 
-        public IReadOnlyList<Link> Links => links;
+        public int IdState { get => idState; set => idState = value; }
+
+        public string State { get => SaveState(); set => RestoreState(value); }
+
+        public virtual void Initialize()
+        {
+            if (context == 0)
+            {
+                context = ImNodes.EditorContextCreate();
+
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    nodes[i].Initialize(this);
+                }
+                for (int i = 0; i < links.Count; i++)
+                {
+                    links[i].Initialize(this);
+                }
+            }
+        }
 
         public int GetUniqueId()
         {
-            return IdState++;
+            return idState++;
         }
 
         public Node GetNode(int id)
         {
-            return nodes.Find(x => x.Id == id) ?? throw new();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                Node node = nodes[i];
+                if (node.Id == id)
+                    return node;
+            }
+            throw new();
         }
 
-        public Pin GetPin(int id)
+        public T GetNode<T>() where T : Node
         {
-            return pins.Find(x => x.Id == id) ?? throw new();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                if (node is T t)
+                    return t;
+            }
+            throw new KeyNotFoundException();
         }
 
         public Link GetLink(int id)
         {
-            return links.Find(x => x.Id == id) ?? throw new();
+            for (int i = 0; i < links.Count; i++)
+            {
+                var link = links[i];
+                if (link.Id == id)
+                    return link;
+            }
+
+            throw new KeyNotFoundException();
         }
 
         public Node CreateNode(string name, bool removable = true, bool isStatic = false)
         {
-            Node node = new(this, name, removable, isStatic);
-            nodes.Add(node);
-            NodeAdded?.Invoke(this, node);
+            Node node = new(GetUniqueId(), name, removable, isStatic);
+            AddNode(node);
             return node;
         }
 
         public void AddNode(Node node)
         {
+            if (context != 0)
+                node.Initialize(this);
             nodes.Add(node);
             NodeAdded?.Invoke(this, node);
         }
@@ -84,20 +112,10 @@
             NodeRemoved?.Invoke(this, node);
         }
 
-        public void AddPin(Pin pin)
-        {
-            pins.Add(pin);
-            PinAdded?.Invoke(this, pin);
-        }
-
-        public void RemovePin(Pin pin)
-        {
-            pins.Remove(pin);
-            PinRemoved?.Invoke(this, pin);
-        }
-
         public void AddLink(Link link)
         {
+            if (context != 0)
+                link.Initialize(this);
             links.Add(link);
             LinkAdded?.Invoke(this, link);
         }
@@ -110,134 +128,25 @@
 
         public Link CreateLink(Pin input, Pin output)
         {
-            Link link = new(this, output.Parent, output, input.Parent, input);
-            links.Add(link);
-            output.Parent.AddLink(link);
-            output.AddLink(link);
-            input.Parent.AddLink(link);
-            input.AddLink(link);
-            LinkAdded?.Invoke(this, link);
+            Link link = new(GetUniqueId(), output.Parent, output, input.Parent, input);
+            AddLink(link);
             return link;
         }
 
-        public static PinType GetPinType(ShaderInputBindDescription desc)
+        public string SaveState()
         {
-            return desc.Type switch
-            {
-                ShaderInputType.SitCbuffer => PinType.Object,
-                ShaderInputType.SitTbuffer => PinType.Object,
-                ShaderInputType.SitTexture => GetPinType(desc.Dimension),
-                ShaderInputType.SitSampler => PinType.Sampler,
-                ShaderInputType.SitUavRwtyped => throw new NotImplementedException(),
-                ShaderInputType.SitStructured => throw new NotImplementedException(),
-                ShaderInputType.SitUavRwstructured => throw new NotImplementedException(),
-                ShaderInputType.SitByteaddress => throw new NotImplementedException(),
-                ShaderInputType.SitUavRwbyteaddress => throw new NotImplementedException(),
-                ShaderInputType.SitUavAppendStructured => throw new NotImplementedException(),
-                ShaderInputType.SitUavConsumeStructured => throw new NotImplementedException(),
-                ShaderInputType.SitUavRwstructuredWithCounter => throw new NotImplementedException(),
-                ShaderInputType.SitRtaccelerationstructure => throw new NotImplementedException(),
-                ShaderInputType.SitUavFeedbacktexture => throw new NotImplementedException(),
-                _ => throw new NotImplementedException(),
-            };
+            return ImNodes.SaveEditorStateToIniString(context);
         }
 
-        public static PinType GetPinType(SrvDimension dimension)
+        public void RestoreState(string state)
         {
-            return dimension switch
+            if (context == 0)
             {
-                SrvDimension.Unknown => PinType.Object,
-                SrvDimension.Buffer => PinType.Buffer,
-                SrvDimension.Texture1D => PinType.Texture1D,
-                SrvDimension.Texture1Darray => PinType.Texture1DArray,
-                SrvDimension.Texture2D => PinType.Texture2D,
-                SrvDimension.Texture2Darray => PinType.Texture2DArray,
-                SrvDimension.Texture2Dms => PinType.Texture2DMS,
-                SrvDimension.Texture2Dmsarray => PinType.Texture2DMSArray,
-                SrvDimension.Texture3D => PinType.Texture3D,
-                SrvDimension.Texturecube => PinType.TextureCube,
-                SrvDimension.Texturecubearray => PinType.TextureCubeArray,
-                SrvDimension.Bufferex => PinType.Buffer,
-                _ => throw new NotImplementedException(),
-            };
-        }
-
-        private PinType GetPinType(SignatureParameterDescription output)
-        {
-            return output.SystemValueType switch
-            {
-                Name.Target => PinType.TextureAny,
-                Name.RenderTargetArrayIndex => PinType.TextureAny,
-                _ => throw new NotImplementedException(),
-            };
-        }
-
-        /*
-        public Node CreateFromPipeline<T>(T pipeline, string dbgName, bool removable = true, bool isStatic = false) where T : Pipeline
-        {
-            Node node = new(this, dbgName, removable, isStatic);
-            nodes.Add(node);
-            NodeAdded?.Invoke(this, node);
-
-            uint register = 0;
-            if (pipeline.output != null)
-                for (int i = 0; i < pipeline.output.Length; i++)
-                {
-                    var output = pipeline.output[i];
-                    if (output.Load != register || i == 0)
-                    {
-                        if (output.SystemValueType == DebugName.Undefined) continue;
-                        node.CreatePin($"{output.SemanticName} : {output.Load}", PinKind.Output, GetPinType(output), PinShape.Circle);
-                        register = output.Load;
-                    }
-                }
-            for (int i = 0; i < pipeline.inputs.Count; i++)
-            {
-                var key = pipeline.inputs.Keys.ElementAt(i);
-                for (int j = 0; j < pipeline.inputs[key].Length; j++)
-                {
-                    var input = pipeline.inputs[key][j];
-                    if (input.Dimension == SrvDimension.Unknown) continue;
-                    node.CreatePin(input.DebugName, PinKind.Input, GetPinType(input), PinShape.Circle);
-                }
+                this.state = state;
+                return;
             }
-
-            return node;
+            ImNodes.LoadEditorStateFromIniString(context, state, (uint)state.Length);
         }
-
-        public Node CreateFromEffect<T>(T pipeline, string dbgName, bool removable = true, bool isStatic = false) where T : Effect
-        {
-            Node node = new(this, dbgName, removable, isStatic);
-            nodes.Add(node);
-            NodeAdded?.Invoke(this, node);
-
-            uint register = 0;
-            if (pipeline.output != null)
-                for (int i = 0; i < pipeline.output.Length; i++)
-                {
-                    var output = pipeline.output[i];
-                    if (output.Load != register || i == 0)
-                    {
-                        if (output.SystemValueType == DebugName.Undefined) continue;
-                        node.CreatePin($"{output.SemanticName} : {output.Load}", PinKind.Output, GetPinType(output), PinShape.Circle);
-                        register = output.Load;
-                    }
-                }
-            if (pipeline.inputs != null)
-                for (int i = 0; i < pipeline.inputs.Count; i++)
-                {
-                    var key = pipeline.inputs.Keys.ElementAt(i);
-                    for (int j = 0; j < pipeline.inputs[key].Length; j++)
-                    {
-                        var input = pipeline.inputs[key][j];
-                        if (input.Dimension == SrvDimension.Unknown) continue;
-                        node.CreatePin(input.DebugName, PinKind.Input, GetPinType(input), PinShape.Circle);
-                    }
-                }
-
-            return node;
-        }
-        */
 
         public void Draw()
         {
@@ -262,7 +171,7 @@
             {
                 var pino = GetNode(idNode1).GetOuput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);
-                if (pino.CanCreateLink(pini))
+                if (pini.CanCreateLink(pino) && pino.CanCreateLink(pini))
                     CreateLink(pini, pino);
             }
             int idLink = 0;
@@ -289,7 +198,11 @@
                     ImNodes.GetSelectedNodes(ref nodes[0]);
                     for (int i = 0; i < nodes.Length; i++)
                     {
-                        GetNode(nodes[i]).Destroy();
+                        var node = GetNode(nodes[i]);
+                        if (node.Removable)
+                        {
+                            node.Destroy();
+                        }
                     }
                 }
             }
@@ -298,7 +211,31 @@
             {
             }
 
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                var id = Nodes[i].Id;
+                Nodes[i].IsHovered = ImNodes.IsNodeHovered(ref id);
+            }
+
             ImNodes.EditorContextSet((nint)null);
+
+            if (state != null)
+            {
+                RestoreState(state);
+                state = null;
+            }
+        }
+
+        public void Destroy()
+        {
+            var nodes = this.nodes.ToArray();
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                nodes[i].Destroy();
+            }
+            this.nodes.Clear();
+            ImNodes.EditorContextFree(context);
+            context = 0;
         }
 
         public static bool Validate(Pin startPin, Pin endPin)
@@ -314,12 +251,12 @@
                 Link link = node.Links[i];
                 i++;
                 walkstack.Push((i, node));
-                if (link.SourceNode == node)
+                if (link.OutputNode == node)
                 {
                     if (link.Output == endPin)
                         return true;
                     else
-                        walkstack.Push((0, link.TargetNode));
+                        walkstack.Push((0, link.InputNode));
                 }
             }
 
@@ -344,11 +281,11 @@
 
                 for (int i = 0; i < node.Links.Count; i++)
                 {
-                    if (node.Links[i].TargetNode == node)
+                    if (node.Links[i].InputNode == node)
                     {
-                        var src = node.Links[i].SourceNode;
+                        var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
-                            stack1.Push(node.Links[i].SourceNode);
+                            stack1.Push(node.Links[i].OutputNode);
                     }
                 }
             }
@@ -381,11 +318,11 @@
 
                 for (int i = 0; i < node.Links.Count; i++)
                 {
-                    if (node.Links[i].TargetNode == node)
+                    if (node.Links[i].InputNode == node)
                     {
-                        var src = node.Links[i].SourceNode;
+                        var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
-                            stack1.Push((priority + 1, node.Links[i].SourceNode));
+                            stack1.Push((priority + 1, node.Links[i].OutputNode));
                     }
                 }
 

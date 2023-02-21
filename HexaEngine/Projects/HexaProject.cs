@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Projects
+﻿namespace HexaEngine.Projects
 {
     using System.Collections.Specialized;
     using System.IO;
@@ -35,6 +35,7 @@
         public static HexaProject? Load(string path)
         {
             if (path is null) return null;
+            if (!File.Exists(path)) return null;
             var reader = File.OpenRead(path);
             HexaProject? result = (HexaProject?)serializer.Deserialize(reader);
             if (result == null) return null;

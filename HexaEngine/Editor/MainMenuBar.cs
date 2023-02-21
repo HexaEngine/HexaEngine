@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Projects;
     using ImGuiNET;
 
@@ -12,6 +11,7 @@
     {
         private static float height;
         private static bool isShown = true;
+        private static readonly ImportDialog importDialog = new();
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
         private static Action<OpenFileResult, string>? filePickerCallback;
@@ -35,22 +35,26 @@
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
+            importDialog.Draw();
+
             if (!isShown) return;
 
             if (ImGui.BeginMainMenuBar())
             {
                 if (ImGui.BeginMenu("File"))
                 {
+                    if (ImGui.MenuItem("Save Scene"))
+                    {
+                        SceneManager.Save();
+                    }
+
                     if (ImGui.MenuItem("Import"))
                     {
-                        filePickerCallback = (r, path) =>
+                        if (!importDialog.Shown)
                         {
-                            if (r == OpenFileResult.Ok)
-                            {
-                                Designer.OpenFile(filePicker.SelectedFile);
-                            }
-                        };
-                        filePicker.Show();
+                            importDialog.Reset();
+                            importDialog.Show();
+                        }
                     }
 
                     ImGui.EndMenu();
@@ -72,13 +76,6 @@
                 if (ImGui.BeginMenu("View"))
                 {
                     WidgetManager.DrawMenu();
-
-                    ImGui.Separator();
-
-                    if (ImGui.MenuItem("Fullframe"))
-                    {
-                        Framebuffer.Fullframe = !Framebuffer.Fullframe;
-                    }
 
                     ImGui.EndMenu();
                 }
@@ -143,15 +140,6 @@
                     ImGui.EndMenu();
                 }
 
-                if (ImGui.BeginMenu("Scene"))
-                {
-                    if (ImGui.MenuItem("Save Scene"))
-                    {
-                        SceneManager.Save();
-                    }
-                    ImGui.EndMenu();
-                }
-
                 if (ImGui.BeginMenu("Inspector"))
                 {
                     var enabled = Inspector.Enabled;
@@ -165,6 +153,10 @@
                     var drawLights = Inspector.DrawLights;
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
                         Inspector.DrawLights = drawLights;
+
+                    var drawLightBounds = Inspector.DrawLightBounds;
+                    if (ImGui.Checkbox("Draw Light Bounds", ref drawLightBounds))
+                        Inspector.DrawLightBounds = drawLightBounds;
 
                     var drawSkeletons = Inspector.DrawSkeletons;
                     if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))

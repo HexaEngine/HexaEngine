@@ -14,6 +14,7 @@ namespace HexaEngine.Editor.Widgets
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Numerics;
     using System.Reflection;
 
     public class PropertiesWidget : ImGuiWindow
@@ -36,6 +37,42 @@ namespace HexaEngine.Editor.Widgets
 
         protected override string Name => "Properties";
 
+        private static void SetPosition(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Position = ctx.NewValue;
+        }
+
+        private static void RestorePosition(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Position = ctx.OldValue;
+        }
+
+        private static void SetRotation(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Rotation = ctx.NewValue;
+        }
+
+        private static void RestoreRotation(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Rotation = ctx.OldValue;
+        }
+
+        private static void SetScale(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Scale = ctx.NewValue;
+        }
+
+        private static void RestoreScale(object context)
+        {
+            var ctx = (HistoryContext<Transform, Vector3>)context;
+            ctx.Target.Scale = ctx.OldValue;
+        }
+
         public override void DrawContent(IGraphicsContext context)
         {
             if (GameObject.Selected.Count == 0)
@@ -54,15 +91,22 @@ namespace HexaEngine.Editor.Widgets
                 element.Name = name;
             }
 
+            bool isEnabled = element.IsEnabled;
+            if (ImGui.Checkbox("Enabled", ref isEnabled))
+            {
+                element.IsEnabled = isEnabled;
+            }
+
             ImGui.Separator();
-            if (ImGui.CollapsingHeader(nameof(Transform)))
+
+            if (ImGui.CollapsingHeader(nameof(Transform), ImGuiTreeNodeFlags.DefaultOpen))
             {
                 {
                     var val = element.Transform.Position;
                     var oldVal = val;
                     if (ImGui.InputFloat3("Position", ref val))
                     {
-                        Designer.History.Do(() => element.Transform.Position = val, () => element.Transform.Position = oldVal);
+                        Designer.History.Do(element.Transform, oldVal, val, SetPosition, RestorePosition);
                     }
                 }
                 {
@@ -70,7 +114,7 @@ namespace HexaEngine.Editor.Widgets
                     var oldVal = val;
                     if (ImGui.InputFloat3("Rotation", ref val))
                     {
-                        Designer.History.Do(() => element.Transform.Rotation = val, () => element.Transform.Rotation = oldVal);
+                        Designer.History.Do(element.Transform, oldVal, val, SetRotation, RestoreRotation);
                     }
                 }
                 {
@@ -78,42 +122,8 @@ namespace HexaEngine.Editor.Widgets
                     var oldVal = val;
                     if (ImGui.InputFloat3("Scale", ref val))
                     {
-                        Designer.History.Do(() => element.Transform.Scale = val, () => element.Transform.Scale = oldVal);
+                        Designer.History.Do(element.Transform, oldVal, val, SetScale, RestoreScale);
                     }
-                }
-
-                ImGui.Separator();
-
-                ImGui.Text($"Global Position: {element.Transform.GlobalPosition}");
-                ImGui.Text($"Global Rotation: {element.Transform.GlobalOrientation.GetRotation().ToDeg()}");
-                ImGui.Text($"Global Scale: {element.Transform.GlobalScale}");
-
-                ImGui.Separator();
-
-                if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.TRANSLATE))
-                {
-                    Inspector.Operation = ImGuizmoOperation.TRANSLATE;
-                }
-
-                if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.ROTATE))
-                {
-                    Inspector.Operation = ImGuizmoOperation.ROTATE;
-                }
-
-                if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.SCALE))
-                {
-                    Inspector.Operation = ImGuizmoOperation.SCALE;
-                }
-
-                if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.LOCAL))
-                {
-                    Inspector.Mode = ImGuizmoNET.ImGuizmoMode.LOCAL;
-                }
-
-                ImGui.SameLine();
-                if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoNET.ImGuizmoMode.WORLD))
-                {
-                    Inspector.Mode = ImGuizmoNET.ImGuizmoMode.WORLD;
                 }
             }
             ImGui.Separator();
@@ -123,86 +133,90 @@ namespace HexaEngine.Editor.Widgets
             {
                 var editor = ObjectEditorFactory.CreateEditor(type);
                 editor.Instance = element;
-                if (ImGui.CollapsingHeader(editor.Name))
+
+                if (!editor.IsEmpty)
                 {
                     editor.Draw();
                 }
             }
 
             ImGui.Separator();
-            if (ImGui.CollapsingHeader("Components"))
+
+            if (typeFilterComponentCache.TryGetValue(type, out EditorComponentAttribute[] editorComponents))
             {
-                if (typeFilterComponentCache.TryGetValue(type, out EditorComponentAttribute[] editorComponents))
+                if (ImGui.BeginMenu("+"))
                 {
-                    if (ImGui.BeginMenu("+"))
+                    for (int i = 0; i < editorComponents.Length; i++)
                     {
-                        for (int i = 0; i < editorComponents.Length; i++)
+                        EditorComponentAttribute editorComponent = editorComponents[i];
+                        if (ImGui.MenuItem(editorComponent.Name))
                         {
-                            EditorComponentAttribute editorComponent = editorComponents[i];
-                            if (ImGui.MenuItem(editorComponent.Name))
-                            {
-                                IComponent component = editorComponent.Constructor();
-                                element.AddComponent(component);
-                            }
-                        }
-                        ImGui.EndMenu();
-                    }
-
-                    ImGui.Separator();
-                }
-                else
-                {
-                    List<EditorComponentAttribute> allowedComponents = new();
-                    foreach (var editorComponent in componentCache)
-                    {
-                        if (editorComponent.IsHidden)
-                        {
-                            continue;
-                        }
-
-                        if (editorComponent.IsInternal)
-                        {
-                            continue;
-                        }
-
-                        if (editorComponent.AllowedTypes == null)
-                        {
-                            allowedComponents.Add(editorComponent);
-                            continue;
-                        }
-                        else if (editorComponent.AllowedTypes.Length != 0 && !editorComponent.AllowedTypes.Any(x => x == type))
-                        {
-                            continue;
-                        }
-
-                        if (editorComponent.DisallowedTypes == null)
-                        {
-                            allowedComponents.Add(editorComponent);
-                            continue;
-                        }
-                        else if (!editorComponent.DisallowedTypes.Any(x => x == type))
-                        {
-                            allowedComponents.Add(editorComponent);
-                            continue;
+                            IComponent component = editorComponent.Constructor();
+                            element.AddComponent(component);
                         }
                     }
-
-                    typeFilterComponentCache.Add(type, allowedComponents.ToArray());
+                    ImGui.EndMenu();
                 }
 
-                for (int i = 0; i < element.Components.Count; i++)
+                ImGui.Separator();
+            }
+            else
+            {
+                List<EditorComponentAttribute> allowedComponents = new();
+                foreach (var editorComponent in componentCache)
                 {
-                    var component = element.Components[i];
-                    var editor = ObjectEditorFactory.CreateEditor(component.GetType());
-                    editor.Instance = component;
-                    if (ImGui.CollapsingHeader(editor.Name))
+                    if (editorComponent.IsHidden)
                     {
-                        if (ImGui.Button("Delete"))
-                        {
-                            scene.Dispatcher.Invoke(() => element.RemoveComponent(component));
-                        }
-                        editor?.Draw();
+                        continue;
                     }
+
+                    if (editorComponent.IsInternal)
+                    {
+                        continue;
+                    }
+
+                    if (editorComponent.AllowedTypes == null)
+                    {
+                        allowedComponents.Add(editorComponent);
+                        continue;
+                    }
+                    else if (editorComponent.AllowedTypes.Length != 0 && !editorComponent.AllowedTypes.Contains(type))
+                    {
+                        continue;
+                    }
+
+                    if (editorComponent.DisallowedTypes == null)
+                    {
+                        allowedComponents.Add(editorComponent);
+                        continue;
+                    }
+                    else if (!editorComponent.DisallowedTypes.Contains(type))
+                    {
+                        allowedComponents.Add(editorComponent);
+                        continue;
+                    }
+                }
+
+                typeFilterComponentCache.Add(type, allowedComponents.ToArray());
+            }
+
+            for (int i = 0; i < element.Components.Count; i++)
+            {
+                var component = element.Components[i];
+                var editor = ObjectEditorFactory.CreateEditor(component.GetType());
+                editor.Instance = component;
+                if (ImGui.CollapsingHeader(editor.Name))
+                {
+                    if (ImGui.BeginPopupContextWindow(editor.Name))
+                    {
+                        if (ImGui.MenuItem("Delete"))
+                        {
+                            scene.Dispatcher.Invoke((element, component), GameObject.RemoveComponent);
+                        }
+                        ImGui.EndPopup();
+                    }
+
+                    editor?.Draw();
                 }
             }
 

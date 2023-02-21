@@ -6,13 +6,12 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DebugType>embedded</DebugType>
-		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<Platforms>AnyCPU;x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;SEPA</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
@@ -28,18 +27,15 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-		<DefineConstants>$(DefineConstants)TRACE;</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Silk.NET.SDL" Version="2.16.0" />
-		<PackageReference Include="BepuPhysics" Version="2.5.0-beta.8" />
-		<PackageReference Include="BepuUtilities" Version="2.5.0-beta.8" />
-		<PackageReference Include="NLua" Version="1.6.0" />
-		<PackageReference Include="System.Text.Json" Version="7.0.0" />
+		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.5" />
 		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />
@@ -50,5 +46,8 @@
 		<ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET.csproj" />
 		<ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
 		<ProjectReference Include="..\ImPlot.NET\ImPlot.NET.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Particles\" />
 	</ItemGroup>
 </Project>

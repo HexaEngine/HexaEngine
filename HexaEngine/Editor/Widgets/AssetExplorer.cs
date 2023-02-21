@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Effects;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Scenes.Serialization;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
     using Silk.NET.Core.Native;
@@ -45,7 +47,7 @@
             ProjectManager.ProjectChanged += ProjectManager_ProjectLoaded;
         }
 
-        private void ProjectManager_ProjectLoaded(Projects.HexaProject obj)
+        private void ProjectManager_ProjectLoaded(HexaProject obj)
         {
             SetFolder(ProjectManager.CurrentProjectAssetsFolder);
         }
@@ -246,6 +248,11 @@
                     if (ImGui.MenuItem("Scene"))
                     {
                         SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
+                        Refresh();
+                    }
+                    if (ImGui.MenuItem("Effect"))
+                    {
+                        EffectDescriptionFile.Create(GetNewFilename(Path.Combine(currentDir.FullName, "New Effect.hexef")));
                         Refresh();
                     }
                     ImGui.EndMenu();

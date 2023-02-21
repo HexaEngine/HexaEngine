@@ -1,0 +1,14 @@
+----------------overloadings---------------------------
+imnodes_ClearLinkSelection	2
+1	void	imnodes_ClearLinkSelection_Nil ()
+2	void	imnodes_ClearLinkSelection_Int (int)
+imnodes_ClearNodeSelection	2
+1	void	imnodes_ClearNodeSelection_Nil ()
+2	void	imnodes_ClearNodeSelection_Int (int)
+imnodes_IsLinkCreated	2
+1	bool	imnodes_IsLinkCreated_BoolPtr (int*,int*,bool*)
+2	bool	imnodes_IsLinkCreated_IntPtr (int*,int*,int*,int*,bool*)
+imnodes_PushStyleVar	2
+1	void	imnodes_PushStyleVar_Float (ImNodesStyleVar,float)
+2	void	imnodes_PushStyleVar_Vec2 (ImNodesStyleVar,const ImVec2)
+8 overloaded

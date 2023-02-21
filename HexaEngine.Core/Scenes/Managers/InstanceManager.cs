@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System;
@@ -22,13 +23,15 @@
 
         public int TypeCount => types.Count;
 
-        public event Action<ModelInstance>? OnInstanceCreated;
+        public event Action<ModelInstance>? InstanceCreated;
 
-        public event Action<ModelInstance>? OnInstanceDestroyed;
+        public event Action<ModelInstance>? InstanceDestroyed;
 
-        public event Action<ModelInstanceType>? OnTypeCreated;
+        public event Action<ModelInstanceType>? TypeCreated;
 
-        public event Action<ModelInstanceType>? OnTypeDestroyed;
+        public event Action<ModelInstanceType>? TypeDestroyed;
+
+        public event Action<ModelInstanceType, ModelInstance>? Updated;
 
         public static InstanceManager? Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get => SceneManager.Current?.InstanceManager; }
 
@@ -37,18 +40,20 @@
             this.device = device;
         }
 
-        public ModelInstance CreateInstance(Model model, GameObject parent)
+        public ModelInstance CreateInstance(string path, GameObject parent)
         {
-            var material = ResourceManager.LoadMaterial(model.Material);
-            var mesh = ResourceManager.LoadMesh(model.Mesh);
+            var model = MeshSource.Load(path);
+            var material = ResourceManager.LoadMaterial(parent.GetScene().MaterialManager.TryAddMaterial(model.GetMaterial()));
+            var mesh = ResourceManager.LoadMesh(model);
             var instance = CreateInstance(mesh, material, parent);
             return instance;
         }
 
-        public async Task<ModelInstance> CreateInstanceAsync(Model model, GameObject parent)
+        public async Task<ModelInstance> CreateInstanceAsync(string path, GameObject parent)
         {
-            var material = await ResourceManager.LoadMaterialAsync(model.Material);
-            var mesh = await ResourceManager.LoadMeshAsync(model.Mesh);
+            var model = MeshSource.Load(path);
+            var material = await ResourceManager.LoadMaterialAsync(parent.GetScene().MaterialManager.TryAddMaterial(model.GetMaterial()));
+            var mesh = await ResourceManager.LoadMeshAsync(model);
             var instance = await CreateInstanceAsync(mesh, material, parent);
             return instance;
         }
@@ -63,18 +68,19 @@
                 if (!types.Contains(type))
                 {
                     types.Add(type);
-                    OnTypeCreated?.Invoke(type);
+                    type.Updated += TypeUpdated;
+                    TypeCreated?.Invoke(type);
                 }
             }
 
             ModelInstance instance;
             lock (instances)
             {
-                instance = type.CreateInstance(device, parent);
+                instance = type.CreateInstance(parent);
                 if (!instances.Contains(instance))
                 {
                     instances.Add(instance);
-                    OnInstanceCreated?.Invoke(instance);
+                    InstanceCreated?.Invoke(instance);
                 }
             }
 #if VERBOSE
@@ -82,6 +88,11 @@
 #endif
             semaphore.Release();
             return instance;
+        }
+
+        private void TypeUpdated(ModelInstanceType arg1, ModelInstance arg2)
+        {
+            Updated?.Invoke(arg1, arg2);
         }
 
         public async Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, GameObject parent)
@@ -94,18 +105,18 @@
                 if (!types.Contains(type))
                 {
                     types.Add(type);
-                    OnTypeCreated?.Invoke(type);
+                    TypeCreated?.Invoke(type);
                 }
             }
 
             ModelInstance instance;
             lock (instances)
             {
-                instance = type.CreateInstance(device, parent);
+                instance = type.CreateInstance(parent);
                 if (!instances.Contains(instance))
                 {
                     instances.Add(instance);
-                    OnInstanceCreated?.Invoke(instance);
+                    InstanceCreated?.Invoke(instance);
                 }
             }
 #if VERBOSE
@@ -138,15 +149,16 @@
                 instances.Remove(instance);
             }
 
-            type.DestroyInstance(device, instance);
-            OnInstanceDestroyed?.Invoke(instance);
+            type.DestroyInstance(instance);
+            InstanceDestroyed?.Invoke(instance);
 
             if (type.IsEmpty)
             {
                 var mesh = type.Mesh;
+                type.Updated -= TypeUpdated;
                 types.Remove(type);
                 mesh.DestroyInstanceType(type);
-                OnTypeDestroyed?.Invoke(type);
+                TypeDestroyed?.Invoke(type);
 
                 if (!mesh.IsUsed)
                 {
@@ -181,15 +193,15 @@
                 instances.Remove(instance);
             }
 
-            type.DestroyInstance(device, instance);
-            OnInstanceDestroyed?.Invoke(instance);
+            type.DestroyInstance(instance);
+            InstanceDestroyed?.Invoke(instance);
 
             if (type.IsEmpty)
             {
                 var mesh = type.Mesh;
                 types.Remove(type);
                 mesh.DestroyInstanceType(type);
-                OnTypeDestroyed?.Invoke(type);
+                TypeDestroyed?.Invoke(type);
 
                 if (!mesh.IsUsed)
                 {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
     using System.Text;
+    using HexaEngine.Core.IO.Meshes;
 
     public class MaterialLibrary
     {

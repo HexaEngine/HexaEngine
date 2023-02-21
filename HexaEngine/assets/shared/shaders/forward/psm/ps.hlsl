@@ -1,7 +1,7 @@
 #include "defs.hlsl"
 
-float4 main(PixelInput input) : SV_Target
+float main(PixelInput input) : SV_DEPTH
 {
-	float depth = input.shadowCoord.z / input.shadowCoord.w;
-	return float4(depth.xxxx);
+    float depth = input.shadowCoord.z / input.shadowCoord.w;
+    return depth;
 }

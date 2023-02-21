@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    public interface IAdapter
+    public interface IGraphicsAdapter
     {
         RenderBackend Backend { get; }
 

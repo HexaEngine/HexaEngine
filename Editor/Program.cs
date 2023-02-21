@@ -20,6 +20,7 @@
 
             Application.InDesignMode = true;
             Application.InEditorMode = true;
+            Application.GraphicsDebugging = true;
             FileSystem.Initialize();
 
             Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor" });

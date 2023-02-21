@@ -1,5 +1,5 @@
 ﻿#nullable disable
-
+/*
 namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
@@ -132,7 +132,6 @@ namespace HexaEngine.Pipelines.Deferred
             context.PSSetShaderResources(srvs, nsrvs, 0);
             context.PSSetSamplers(smps, 2, 0);
             quad.DrawAuto(context, brdf, Output.Viewport);
-            context.ClearState();
         }
 
         protected virtual unsafe void Dispose(bool disposing)
@@ -163,4 +162,4 @@ namespace HexaEngine.Pipelines.Deferred
             GC.SuppressFinalize(this);
         }
     }
-}
+}*/

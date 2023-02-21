@@ -49,9 +49,9 @@
         public unsafe Mesh(IGraphicsDevice device, string path)
         {
             name = path;
-            MeshSource source = new(path);
-            var vertices = source.ReadMesh().Vertices;
-            var indices = source.ReadMesh().Indices;
+            MeshSource source = MeshSource.Load(path);
+            var vertices = source.GetMesh().Vertices;
+            var indices = source.GetMesh().Indices;
             BoundingBox = source.Header.BoundingBox;
             BoundingSphere = source.Header.BoundingSphere;
             if (vertices.Length != 0)
