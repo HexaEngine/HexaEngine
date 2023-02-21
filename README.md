@@ -35,3 +35,6 @@ https://github.com/CedricGuillemet/ImGuizmo
 https://github.com/Nelarius/imnodes  
 https://github.com/epezent/implot  
 https://github.com/dotnet/Silk.NET  
+https://github.com/bepu/bepuphysics2  
+https://github.com/MiloszKrajewski/K4os.Compression.LZ4  
+https://www.newtonsoft.com/json  
