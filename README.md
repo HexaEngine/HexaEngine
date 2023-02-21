@@ -38,4 +38,5 @@ https://github.com/dotnet/Silk.NET
 https://github.com/bepu/bepuphysics2  
 https://github.com/MiloszKrajewski/K4os.Compression.LZ4  
 https://www.newtonsoft.com/json  
-https://github.com/mellinoe/ImGui.NET *modified  
+https://github.com/mellinoe/ImGui.NET *modified*  
+https://github.com/FaberSanZ/SPIRV-Cross.NET *modified*  
