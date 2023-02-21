@@ -5,8 +5,6 @@ Texture2D bloomTexture : register(t1);
 Texture2D positionTexture : register(t2);
 SamplerState state;
 
-#define FXAA
-
 struct VSOut
 {
     float4 Pos : SV_Position;
@@ -77,7 +75,7 @@ float4 main(VSOut vs) : SV_Target
     color.rgb = FogMix(vs.Tex, color.rgb);
     color.rgb = ACESFilm(color.rgb);
     color.rgb = OECF_sRGBFast(color.rgb);
-#ifdef FXAA
+#if FXAA == 1
     color.a = dot(color.rgb, float3(0.299, 0.587, 0.114));
 #endif
 

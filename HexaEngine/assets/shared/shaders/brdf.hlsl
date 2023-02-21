@@ -84,12 +84,15 @@ float3 BRDF(
     float NdotL = max(dot(N, L), 0);
     float NdotV = max(dot(N, V), 0);
 
-    if (NdotL == 0)
+    if (NdotL == 0 && NdotV == 0)
         return 0;
     
     float3 H = normalize(L + V);
     float NdotH = max(dot(N, H), 0);
     float LdotH = max(dot(L, H), 0);
+
+    if (NdotH == 0 && LdotH == 0)
+        return 0;
 
     float3 Cdlin = mon2lin(baseColor);
     float Cdlum = .3 * Cdlin[0] + .6 * Cdlin[1] + .1 * Cdlin[2]; // luminance approx.
@@ -164,7 +167,7 @@ float3 BRDFIndirect(
     float ao,
     float anisotropy)
 {
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
+    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
     
     float NdotV = max(dot(N, V), 0.0);
 

@@ -26,6 +26,7 @@
             Register<DebugWindow>();
             Register<ProfilerWindow>();
             Register<MaterialEditor>();
+            Register<PostProcessWindow>();
         }
 
         public static bool Register<T>() where T : IImGuiWindow, new()

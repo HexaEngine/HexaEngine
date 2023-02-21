@@ -1,6 +1,8 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Pipelines.Effects.Filter
+using HexaEngine;
+
+namespace HexaEngine.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Plugins
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using System;
     using System.Collections.Generic;
 
@@ -31,16 +32,30 @@
 
             foreach (var type in loader.GetAssignableTypes<IPlugin>())
             {
-                IPlugin? instance = (IPlugin?)Activator.CreateInstance(type);
-                if (instance is null) continue;
-                instances.Add(instance);
+                try
+                {
+                    IPlugin? instance = (IPlugin?)Activator.CreateInstance(type);
+                    if (instance is null) continue;
+                    instances.Add(instance);
+                }
+                catch (Exception ex)
+                {
+                    ImGuiConsole.Log(ex);
+                }
             }
 
             foreach (var instance in instances)
             {
-                Plugin plugin = new(instance);
-                plugins.Add(plugin);
-                config.GenerateSubKeyAuto(plugin, plugin.GetName());
+                try
+                {
+                    Plugin plugin = new(instance);
+                    plugins.Add(plugin);
+                    config.GenerateSubKeyAuto(plugin, plugin.GetName());
+                }
+                catch (Exception ex)
+                {
+                    ImGuiConsole.Log(ex);
+                }
             }
         }
 
@@ -54,8 +69,15 @@
         {
             foreach (var plugin in plugins)
             {
-                plugin.IsInitialized = false;
-                plugin.IsEnabled = false;
+                try
+                {
+                    plugin.IsInitialized = false;
+                    plugin.IsEnabled = false;
+                }
+                catch (Exception ex)
+                {
+                    ImGuiConsole.Log(ex);
+                }
             }
             plugins.Clear();
             loader?.Unload();

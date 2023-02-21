@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
@@ -169,17 +170,17 @@
                     }
                     ImGui.Separator();
                     ImGui.Text("Shading Mode");
-                    if (ImGui.RadioButton("Wireframe", scene.Lights.Viewport == Core.Scenes.Managers.ViewportShading.Wireframe))
+                    if (ImGui.RadioButton("Wireframe", scene.Lights.Viewport == ViewportShading.Wireframe))
                     {
-                        scene.Lights.Viewport = Core.Scenes.Managers.ViewportShading.Wireframe;
+                        scene.Lights.Viewport = ViewportShading.Wireframe;
                     }
-                    if (ImGui.RadioButton("Solid", scene.Lights.Viewport == Core.Scenes.Managers.ViewportShading.Solid))
+                    if (ImGui.RadioButton("Solid", scene.Lights.Viewport == ViewportShading.Solid))
                     {
-                        scene.Lights.Viewport = Core.Scenes.Managers.ViewportShading.Solid;
+                        scene.Lights.Viewport = ViewportShading.Solid;
                     }
-                    if (ImGui.RadioButton("Rendered", scene.Lights.Viewport == Core.Scenes.Managers.ViewportShading.Rendered))
+                    if (ImGui.RadioButton("Rendered", scene.Lights.Viewport == ViewportShading.Rendered))
                     {
-                        scene.Lights.Viewport = Core.Scenes.Managers.ViewportShading.Rendered;
+                        scene.Lights.Viewport = ViewportShading.Rendered;
                     }
 
                     ImGui.EndMenu();

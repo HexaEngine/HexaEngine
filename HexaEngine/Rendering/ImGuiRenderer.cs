@@ -31,20 +31,23 @@ namespace HexaEngine.Rendering
         private ISamplerState fontSampler;
         private IShaderResourceView fontTextureView;
         private int vertexBufferSize = 5000, indexBufferSize = 10000;
+        private nint guiContext;
+        private nint nodesContext;
+        private nint plotContext;
 
         public ImGuiRenderer(SdlWindow window, IGraphicsDevice device, ISwapChain swapChain)
         {
-            IntPtr igContext = ImGui.CreateContext();
-            ImGui.SetCurrentContext(igContext);
-            ImGuizmo.SetImGuiContext(igContext);
-            ImPlot.SetImGuiContext(igContext);
+            guiContext = ImGui.CreateContext();
+            ImGui.SetCurrentContext(guiContext);
+            ImGuizmo.SetImGuiContext(guiContext);
+            ImPlot.SetImGuiContext(guiContext);
+            ImNodes.SetImGuiContext(guiContext);
 
-            ImNodes.SetImGuiContext(igContext);
-            nint nodesContext = ImNodes.CreateContext();
+            nodesContext = ImNodes.CreateContext();
             ImNodes.SetCurrentContext(nodesContext);
-            //ImNodes.Initialize();
+            ImNodes.StyleColorsDark();
 
-            nint plotContext = ImPlot.CreateContext();
+            plotContext = ImPlot.CreateContext();
             ImPlot.SetCurrentContext(plotContext);
             ImPlot.StyleColorsDark();
 
@@ -175,6 +178,14 @@ namespace HexaEngine.Rendering
 
         public void BeginDraw()
         {
+            ImGui.SetCurrentContext(guiContext);
+            ImGuizmo.SetImGuiContext(guiContext);
+            ImPlot.SetImGuiContext(guiContext);
+            ImNodes.SetImGuiContext(guiContext);
+
+            ImNodes.SetCurrentContext(nodesContext);
+            ImPlot.SetCurrentContext(plotContext);
+
             inputHandler.Update();
             ImGui.NewFrame();
             ImGuizmo.BeginFrame();

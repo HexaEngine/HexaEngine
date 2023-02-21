@@ -3,16 +3,10 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using ImGuiNET;
-    using ImPlotNET;
-    using System.Security.Cryptography;
 
     public class DebugWindow : ImGuiWindow
     {
         protected override string Name => "Debug";
-        private int[] bar_data = new int[11];
-        private float[] x_data = new float[1000];
-        private float[] y_data = new float[1000];
-        private nint ctx;
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
@@ -30,12 +24,6 @@
                 ImGui.Text($"{light.Name}:{light.GetQueueIndex()}");
             }
             ImGui.EndListBox();
-
-            for (int i = 0; i < 1000; i++)
-            {
-                x_data[i] = RandomNumberGenerator.GetInt32(int.MaxValue);
-                y_data[i] = RandomNumberGenerator.GetInt32(int.MaxValue);
-            }
         }
     }
 }

@@ -8,7 +8,7 @@
     using System.Diagnostics;
     using System.Runtime.Versioning;
 
-    public unsafe class DXGIAdapter : IAdapter
+    public unsafe class DXGIAdapter : IGraphicsAdapter
     {
         internal readonly DXGI DXGI;
 

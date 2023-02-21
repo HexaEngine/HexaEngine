@@ -794,7 +794,7 @@ namespace HexaEngine.Scenes.Importer
                     var renderer = node.GetOrCreateComponent<RendererComponent>();
                     var model = meshes[(int)p->MMeshes[i]];
                     renderer.AddMesh(model.Name);
-                    if (animatureT.TryGetValue(p->))
+                    //if (animatureT.TryGetValue(p->))
                 }
             }
         }

@@ -46,7 +46,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
     float anisotropic = attrs.anisotropic;
     float subsurface = attrs.subsurface;
     float roughness = attrs.roughness;
-    float metalness = attrs.metalness;
+    float metallic = attrs.metalness;
 
     float3 N = normalize(attrs.normal);
     float3 V = normalize(GetCameraPos() - position);

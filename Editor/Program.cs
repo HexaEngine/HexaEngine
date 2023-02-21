@@ -20,9 +20,10 @@
 
             Application.InDesignMode = true;
             Application.InEditorMode = true;
+            Application.GraphicsDebugging = true;
             FileSystem.Initialize();
 
-            Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor", DebugGraphics = true });
+            Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor" });
 
             PluginManager.Unload();
         }

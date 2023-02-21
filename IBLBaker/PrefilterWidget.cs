@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Pipelines.Effects.Filter;
+    using HexaEngine.Effects.Filter;
     using ImGuiNET;
     using System;
     using System.Linq;

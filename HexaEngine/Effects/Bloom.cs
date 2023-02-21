@@ -1,14 +1,18 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Pipelines.Effects
+using HexaEngine;
+
+namespace HexaEngine.Effects
 {
+    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
+    using Silk.NET.OpenAL;
     using System.Numerics;
 
-    public class Bloom : IEffect
+    public class Bloom : IPostFx
     {
         private Quad quad;
         private IGraphicsPipeline downsample;
@@ -20,7 +24,7 @@ namespace HexaEngine.Pipelines.Effects
         private IRenderTargetView[] mipChainRTVs;
         private IShaderResourceView[] mipChainSRVs;
 
-        private bool enabled;
+        private bool enabled = true;
         private float radius = 0.003f;
         private bool dirty;
 
@@ -67,7 +71,13 @@ namespace HexaEngine.Pipelines.Effects
         public float Radius
         { get => radius; set { radius = value; dirty = true; } }
 
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        public string Name => "Bloom";
+
+        public PostFxFlags Flags => PostFxFlags.NoOutput;
+
+        public int Priority { get; set; } = 100;
+
+        public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             quad = new(device);
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
@@ -79,12 +89,12 @@ namespace HexaEngine.Pipelines.Effects
             {
                 VertexShader = "effects/bloom/downsample/vs.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
-            });
+            }, macros);
             upsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/bloom/upsample/vs.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",
-            });
+            }, macros);
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
@@ -107,18 +117,11 @@ namespace HexaEngine.Pipelines.Effects
             this.height = height;
 
             dirty = true;
-
-            Source = await ResourceManager.GetTextureSRVAsync("Tonemap");
         }
 
-        public void BeginResize()
+        public void Resize(int width, int height)
         {
             ResourceManager.RequireUpdate("Bloom");
-        }
-
-        public async void EndResize(int width, int height)
-        {
-            Source = await ResourceManager.GetTextureSRVAsync("Tonemap");
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
@@ -147,7 +150,16 @@ namespace HexaEngine.Pipelines.Effects
             dirty = true;
         }
 
-        public void Draw(IGraphicsContext context)
+        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        {
+        }
+
+        public void SetInput(IShaderResourceView view)
+        {
+            Source = view;
+        }
+
+        public void Update(IGraphicsContext context)
         {
             if (dirty)
             {
@@ -156,12 +168,10 @@ namespace HexaEngine.Pipelines.Effects
                 context.Write(upsampleCB, new ParamsUpsample(radius, default));
                 dirty = false;
             }
+        }
 
-            if (!enabled)
-            {
-                return;
-            }
-
+        public void Draw(IGraphicsContext context)
+        {
             for (int i = 0; i < mipChainRTVs.Length; i++)
             {
                 if (i > 0)

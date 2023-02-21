@@ -52,7 +52,9 @@
         public static async void Load(string path)
         {
             CurrentProjectPath = path;
-            Project = HexaProject.Load(CurrentProjectPath) ?? throw new Exception();
+            Project = HexaProject.Load(CurrentProjectPath);
+            if (Project == null)
+                return;
             CurrentFolder = Path.GetDirectoryName(CurrentProjectPath);
             var assets = Project.Items.FirstOrDefault(x => x.Name == "assets");
             if (assets == null)

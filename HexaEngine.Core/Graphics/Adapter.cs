@@ -5,7 +5,7 @@
 
     public static class Adapter
     {
-        public static List<IAdapter> Adapters { get; } = new();
+        public static List<IGraphicsAdapter> Adapters { get; } = new();
 
         public static IGraphicsDevice CreateGraphics(RenderBackend backend, bool debug)
         {

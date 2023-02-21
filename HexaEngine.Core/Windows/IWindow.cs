@@ -21,9 +21,9 @@
 
         Viewport RenderViewport { get; }
 
-        void RenderInitialize();
+        void RenderInitialize(IGraphicsDevice device);
 
-        void Render();
+        void Render(IGraphicsContext context);
 
         void RenderDispose();
     }

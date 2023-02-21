@@ -10,7 +10,6 @@
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
-    using HexaEngine.Editor.Widgets;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
@@ -22,10 +21,11 @@
     {
         None = 0,
         SceneGraph = 1,
-        ImGui = 2,
-        ImGuizmo = 4,
-        DebugDraw = 8,
+        DebugDraw = 2,
+        ImGui = 4,
+        ImGuizmo = 8,
         ImGuiWidgets = 16,
+        ImGuiViewport = 32,
         All = SceneGraph | ImGui | ImGuizmo | ImGuiWidgets,
     }
 
@@ -57,8 +57,6 @@
         public string? StartupScene;
         private Viewport renderViewport;
 
-        public bool DebugGraphics { get; set; } = false;
-
         public Viewport RenderViewport => renderViewport;
 
         public ISceneRenderer Renderer => deferredRenderer;
@@ -67,11 +65,11 @@
         {
         }
 
-        public void RenderInitialize()
+        public void RenderInitialize(IGraphicsDevice device)
         {
             if (OperatingSystem.IsWindows())
             {
-                device = Adapter.CreateGraphics(RenderBackend.D3D11, DebugGraphics);
+                this.device = device;
                 context = device.Context;
                 swapChain = device.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
                 swapChain.Active = true;
@@ -82,11 +80,14 @@
                 throw new PlatformNotSupportedException();
             }
 
-            AudioManager.Initialize();
-            ResourceManager.Initialize(device);
-            PipelineManager.Initialize(device);
-            CullingManager.Initialize(device);
-            ObjectPickerManager.Initialize(device, Width, Height);
+            if (Application.MainWindow == this)
+            {
+                AudioManager.Initialize();
+                ResourceManager.Initialize(device);
+                PipelineManager.Initialize(device);
+                CullingManager.Initialize(device);
+                ObjectPickerManager.Initialize(device, Width, Height);
+            }
 
             frameviewer = new(device);
 
@@ -107,20 +108,23 @@
 
             OnRendererInitialize(device);
 
-            deferredRenderer = new();
-            initTask = deferredRenderer.Initialize(device, swapChain, this);
-            initTask.ContinueWith(x =>
+            if (sceneGraph)
             {
-                if (x.IsCompletedSuccessfully)
+                deferredRenderer = new();
+                initTask = deferredRenderer.Initialize(device, swapChain, this);
+                initTask.ContinueWith(x =>
                 {
-                    ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
-                }
-                if (x.IsFaulted)
-                {
-                    ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
-                    ImGuiConsole.Log(x.Exception);
-                }
-            });
+                    if (x.IsCompletedSuccessfully)
+                    {
+                        ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
+                    }
+                    if (x.IsFaulted)
+                    {
+                        ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
+                        ImGuiConsole.Log(x.Exception);
+                    }
+                });
+            }
 
             if (StartupScene != null)
             {
@@ -128,7 +132,7 @@
             }
         }
 
-        public void Render()
+        public void Render(IGraphicsContext context)
         {
             if (resize)
             {
@@ -160,7 +164,7 @@
                 frameviewer.Draw();
             }
 
-            var drawing = initTask.IsCompleted && sceneGraph && SceneManager.Current is not null;
+            var drawing = sceneGraph && initTask.IsCompleted && SceneManager.Current is not null;
 
             if (drawing)
                 lock (SceneManager.Current)
@@ -203,7 +207,8 @@
                 SceneManager.Unload();
             if (!initTask.IsCompleted)
                 initTask.Wait();
-            deferredRenderer.Dispose();
+            if (sceneGraph)
+                deferredRenderer.Dispose();
             renderDispatcher.Dispose();
             ObjectPickerManager.Release();
             CullingManager.Release();

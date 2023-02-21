@@ -4,10 +4,12 @@ namespace HexaEngine.Rendering
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
+    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
@@ -15,8 +17,8 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Effects;
     using HexaEngine.Pipelines.Deferred;
-    using HexaEngine.Pipelines.Effects;
     using HexaEngine.Pipelines.Forward;
     using ImGuiNET;
     using System;
@@ -26,12 +28,16 @@ namespace HexaEngine.Rendering
     // TODO: Cleanup and specialization
     public class SceneRenderer : ISceneRenderer
     {
+        private readonly object update = new();
+        private readonly object culling = new();
+        private readonly object debug = new();
 #nullable disable
         private bool initialized;
         private bool disposedValue;
         private IGraphicsDevice device;
         private IGraphicsContext context;
         private IGraphicsContext deferredContext;
+        private PostProcessManager postProcessing;
         private ISwapChain swapChain;
         private IRenderWindow window;
         private bool forwardMode;
@@ -59,14 +65,9 @@ namespace HexaEngine.Rendering
         private ISamplerState anisoSampler;
         private ISamplerState linearSampler;
 
-        private readonly List<IEffect> effects = new();
         private DepthOfField dof;
         private HBAO ssao;
         private DDASSR ssr;
-        private Tonemap tonemap;
-        private FXAA fxaa;
-        private AutoExposure autoExposure;
-        private Bloom bloom;
 
         private BRDFLUT brdfLUT;
 
@@ -91,6 +92,19 @@ namespace HexaEngine.Rendering
         private readonly RendererProfiler profiler = new(10);
 
         public RendererProfiler Profiler => profiler;
+        public object Update => update;
+
+        public object Culling => culling;
+
+        public object Geometry => geometry;
+
+        public object SSAO => ssao;
+
+        public object Lights => lights;
+
+        public PostProcessManager PostProcess => postProcessing;
+
+        public object Debug => debug;
 
 #nullable enable
 
@@ -110,6 +124,7 @@ namespace HexaEngine.Rendering
             context = device.Context;
             this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
             this.window = window;
+            swapChain.Resizing += OnWindowResizeBegin;
             swapChain.Resized += OnWindowResizeEnd;
             ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
             SceneManager.SceneChanged += SceneChanged;
@@ -137,7 +152,6 @@ namespace HexaEngine.Rendering
 
             geometry = new();
             geometry.Camera = cameraBuffer.Buffer;
-            effects.Add(geometry);
 
             gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
             depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
@@ -155,23 +169,19 @@ namespace HexaEngine.Rendering
 
             depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget), DepthStencilDesc.Default);
 
-            fxaa = new();
-            effects.Add(fxaa);
+            postProcessing = new(device, width, height);
 
-            bloom = new();
-            effects.Add(bloom);
+            postProcessing.Add(new DepthOfField());
 
-            tonemap = new();
-            effects.Add(tonemap);
+            postProcessing.Add(new AutoExposure());
 
-            autoExposure = new();
-            effects.Add(autoExposure);
+            postProcessing.Add(new Bloom());
 
-            dof = new();
-            effects.Add(dof);
+            postProcessing.Add(new Tonemap());
+
+            postProcessing.Add(new FXAA());
 
             ssao = new();
-            effects.Add(ssao);
 
             Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
             Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
@@ -195,36 +205,31 @@ namespace HexaEngine.Rendering
                 brdfLUT = null;
             });
 
-            effects.ParallelForEachAsync(x => x.Initialize(device, width, height)).Wait();
+            postProcessing.Initialize(width, height);
+            postProcessing.Enabled = true;
 
             skybox = new(device);
-            skybox.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
+            skybox.Output = await ResourceManager.GetTextureRTVAsync("LightBuffer");
             skybox.DSV = dsv;
             skybox.Env = env.ShaderResourceView;
             skybox.World = skyboxBuffer.Buffer;
             skybox.Camera = cameraBuffer.Buffer;
             skybox.Resize();
 
-            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            ssr = new(device, width, height);
-            ssr.Output = await ResourceManager.GetTextureRTVAsync("DepthOfField");
-            ssr.Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-            ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
-            ssr.Position = gbuffer.SRVs[1];
-            ssr.Normal = gbuffer.SRVs[2];
-            ssr.Backdepth = depthbuffer.ShaderResourceView;
-
             deferredContext = device.CreateDeferredContext();
 
             initialized = true;
             window.Dispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
 
-            configKey.GenerateSubKeyAuto(bloom, "Bloom");
-            configKey.GenerateSubKeyAuto(tonemap, "Tonemap");
-            configKey.GenerateSubKeyAuto(autoExposure, "AutoExposure");
             configKey.GenerateSubKeyAuto(ssao, "HBAO");
-            configKey.GenerateSubKeyAuto(ssr, "SSR");
-            configKey.GenerateSubKeyAuto(dof, "Dof");
+
+            await geometry.Initialize(device, width, height);
+            await ssao.Initialize(device, width, height);
+        }
+
+        private void OnWindowResizeBegin(object? sender, EventArgs e)
+        {
+            postProcessing?.BeginResize();
         }
 
         private void SceneChanged(object? sender, SceneChangedEventArgs e)
@@ -340,7 +345,6 @@ namespace HexaEngine.Rendering
             depthStencil.Dispose();
             occlusionStencil.Dispose();
             gbuffer.Dispose();
-            ssrBuffer.Dispose();
             depthbuffer.Dispose();
 
             ResourceManager.RequireUpdate("SwapChain.RTV");
@@ -349,13 +353,6 @@ namespace HexaEngine.Rendering
             ResourceManager.RequireUpdate("GBuffer.Normal");
             ResourceManager.RequireUpdate("SwapChain.DSV");
             ResourceManager.RequireUpdate("LightBuffer");
-
-            fxaa.BeginResize();
-            bloom.BeginResize();
-            tonemap.BeginResize();
-            autoExposure.BeginResize();
-            dof.BeginResize();
-            ssao.BeginResize();
         }
 
         private void OnRendererResizeEnd(int width, int height)
@@ -377,25 +374,20 @@ namespace HexaEngine.Rendering
             depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource), DepthStencilDesc.Default);
             hizBuffer.Resize(device, width, height);
 
-            fxaa.EndResize(width, height);
-            bloom.EndResize(width, height);
-            tonemap.EndResize(width, height);
-            autoExposure.EndResize(width, height);
-            dof.EndResize(width, height);
-            ssao.EndResize(width, height);
-
-            skybox.Output = ResourceManager.GetTextureRTV("DepthOfField");
+            skybox.Output = ResourceManager.GetTextureRTV("LightBuffer");
             skybox.DSV = dsv;
             skybox.Resize();
 
-            ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            ssr.Resize(device, width, height);
-            ssr.Output = ResourceManager.GetTextureRTV("DepthOfField");
-            ssr.Camera = cameraBuffer.Buffer;
-            ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
-            ssr.Position = gbuffer.SRVs[1];
-            ssr.Normal = gbuffer.SRVs[2];
-            ssr.Backdepth = depthbuffer.ShaderResourceView;
+            /* ssrBuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+             ssr.Resize(device, width, height);
+             ssr.Output = ResourceManager.GetTextureRTV("DepthOfField");
+             ssr.Camera = cameraBuffer.Buffer;
+             ssr.Color = ResourceManager.GetTextureSRV("LightBuffer");
+             ssr.Position = gbuffer.SRVs[1];
+             ssr.Normal = gbuffer.SRVs[2];
+             ssr.Backdepth = depthbuffer.ShaderResourceView;*/
+
+            postProcessing.EndResize(width, height);
 
             var scene = SceneManager.Current;
             if (scene == null) return;
@@ -404,7 +396,7 @@ namespace HexaEngine.Rendering
             scene.Lights.EndResize(width, height);
         }
 
-        public unsafe void LoadScene(Scene scene)
+        public unsafe async void LoadScene(Scene scene)
         {
             SceneVariables variables = scene.Variables;
 
@@ -462,7 +454,7 @@ namespace HexaEngine.Rendering
             }
 
             scene.Lights.BeginResize();
-            scene.Lights.EndResize(width, height);
+            scene.Lights.EndResize(width, height).Wait();
         }
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera? camera)
@@ -477,12 +469,18 @@ namespace HexaEngine.Rendering
             {
                 ResourceManager.RequireUpdate("SwapChain.RTV");
                 windowResized = false;
-                fxaa.Output = swapChain.BackbufferRTV;
                 ResourceManager.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+                postProcessing.ResizeOutput();
             }
+
+            postProcessing.SetViewport(viewport);
 
             if (!initialized) return;
             if (camera == null) return;
+
+#if PROFILE
+            profiler.Start(update);
+#endif
 
             var types = scene.InstanceManager.Types;
 
@@ -491,6 +489,14 @@ namespace HexaEngine.Rendering
             cameraBuffer.Update(context);
             skyboxBuffer[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
             skyboxBuffer.Update(context);
+
+#if PROFILE
+            profiler.End(update);
+#endif
+
+#if PROFILE
+            profiler.Start(culling);
+#endif
             CullingManager.UpdateCamera(context);
 
             if (CameraManager.Culling != camera)
@@ -515,10 +521,16 @@ namespace HexaEngine.Rendering
                 hizBuffer.Generate(context, depthStencil.SRV);
                 CullingManager.DoCulling(context, hizBuffer);
             }
+#if PROFILE
+            profiler.End(culling);
+#endif
 
+#if PROFILE
+            profiler.Start(geometry);
+#endif
             context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-
             var lights = scene.Lights;
+            this.lights = lights;
             if (lights.Viewport == ViewportShading.Rendered)
             {
                 // Fill Geometry Buffer
@@ -535,63 +547,57 @@ namespace HexaEngine.Rendering
                 }
                 context.ClearState();
             }
+#if PROFILE
+            profiler.End(geometry);
+#endif
 
-            // Draw backface depth
-            if (ssr.Enabled)
-            {
-                depthbuffer.ClearAndSetTarget(context, default, DepthStencilClearFlags.All);
-                geometry.BeginDrawDepthBack(context, depthbuffer.Viewport);
-                for (int i = 0; i < types.Count; i++)
-                {
-                    var type = types[i];
-                    if (type.BeginDraw(context))
-                    {
-                        context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
-                    }
-                }
-                context.ClearState();
-            }
-
+#if PROFILE
+            profiler.Start(ssao);
+#endif
             // SSAO Pass
             ssao.Draw(context);
+#if PROFILE
+            profiler.End(ssao);
+#endif
 
+#if PROFILE
+            profiler.Start(lights);
+#endif
             // Light Pass
             if (lights.Viewport == ViewportShading.Rendered)
             {
-                scene.Lights.Update(context, camera);
-                scene.Lights.DeferredPass(context, camera);
+                lights.Update(context, camera);
+                lights.DeferredPass(context, camera);
             }
             else
             {
-                scene.Lights.ForwardPass(context, camera);
+                lights.ForwardPass(context, camera);
             }
+#if PROFILE
+            profiler.End(lights);
+#endif
 
-            // Screen Space Reflections
-            ssr.Draw(context);
-
-            // Skybox
             skybox.Draw(context);
+#if PROFILE
+            profiler.Start(postProcessing);
+#endif
+            postProcessing.Draw(context);
+#if PROFILE
+            profiler.End(postProcessing);
+#endif
 
-            // Depth of field
-            dof.Draw(context);
-
-            // Eye adaptation
-            autoExposure.Draw(context);
-
-            // Bloom
-            bloom.Draw(context);
-
-            // Compose and Tonemap
-            tonemap.Draw(context);
-
-            // Fast approximate anti-aliasing
-            fxaa.Draw(context, viewport);
-
+#if PROFILE
+            profiler.Start(debug);
+#endif
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             DebugDraw.Render(camera, viewport);
+#if PROFILE
+            profiler.End(debug);
+#endif
         }
 
         private float zoom = 1;
+        private object lights;
 
         public void DrawSettings()
         {
@@ -635,20 +641,14 @@ namespace HexaEngine.Rendering
                 skybox.Dispose();
                 gbuffer.Dispose();
 
-                ssrBuffer.Dispose();
                 depthbuffer.Dispose();
+                ssao.Dispose();
 
                 pointSampler.Dispose();
                 anisoSampler.Dispose();
                 linearSampler.Dispose();
 
-                ssao.Dispose();
-                ssr.Dispose();
-                fxaa.Dispose();
-                tonemap.Dispose();
-                dof.Dispose();
-                autoExposure.Dispose();
-                bloom.Dispose();
+                postProcessing.Dispose();
 
                 envsmp.Dispose();
                 env.Dispose();

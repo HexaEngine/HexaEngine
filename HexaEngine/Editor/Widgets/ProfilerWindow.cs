@@ -62,6 +62,13 @@
         public RingBuffer<double> Systems = new(512);
         private readonly Dictionary<object, RingBuffer<double>> systems = new();
 
+        public RingBuffer<double> Update = new(512);
+        public RingBuffer<double> Culling = new(512);
+        public RingBuffer<double> Geometry = new(512);
+        public RingBuffer<double> SSAO = new(512);
+        public RingBuffer<double> Lights = new(512);
+        public RingBuffer<double> PostProcess = new(512);
+
         public RingBuffer<double> Simulation = new(512);
         public RingBuffer<double> PoseIntegrator = new(512);
         public RingBuffer<double> Sleeper = new(512);
@@ -88,6 +95,13 @@
             Updates.Add(scene.Profiler[scene.UpdateCallbacks] * 1000);
 
             Systems.Add(scene.Profiler[scene.Systems] * 1000);
+
+            Update.Add(renderer.Profiler[renderer.Update] * 1000);
+            Culling.Add(renderer.Profiler[renderer.Culling] * 1000);
+            Geometry.Add(renderer.Profiler[renderer.Geometry] * 1000);
+            SSAO.Add(renderer.Profiler[renderer.SSAO] * 1000);
+            Lights.Add(renderer.Profiler[renderer.Lights] * 1000);
+            PostProcess.Add(renderer.Profiler[renderer.PostProcess] * 1000);
 
             Simulation.Add(simulation.Profiler[simulation] * 1000);
             PoseIntegrator.Add(simulation.Profiler[simulation.PoseIntegrator] * 1000);
@@ -144,6 +158,29 @@
                     ImPlot.PlotLine(system.Name, ref buffer.Values[0], buffer.Length, 1, 0, ImPlotLineFlags.None, buffer.Head);
                 }
 
+                ImPlot.EndPlot();
+            }
+
+            ImPlot.SetNextAxesToFit();
+            if (ImPlot.BeginPlot("Graphics", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+            {
+                ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                ImPlot.PlotShaded("Total", ref Graphics.Values[0], Graphics.Length, fill, 1, 0, ImPlotShadedFlags.None, Graphics.Head);
+                ImPlot.PlotShaded("Update", ref Update.Values[0], Update.Length, fill, 1, 0, ImPlotShadedFlags.None, Update.Head);
+                ImPlot.PlotShaded("Culling", ref Culling.Values[0], Culling.Length, fill, 1, 0, ImPlotShadedFlags.None, Culling.Head);
+                ImPlot.PlotShaded("Geometry", ref Geometry.Values[0], Geometry.Length, fill, 1, 0, ImPlotShadedFlags.None, Geometry.Head);
+                ImPlot.PlotShaded("SSAO", ref SSAO.Values[0], SSAO.Length, fill, 1, 0, ImPlotShadedFlags.None, SSAO.Head);
+                ImPlot.PlotShaded("Lights", ref Lights.Values[0], Lights.Length, fill, 1, 0, ImPlotShadedFlags.None, Lights.Head);
+                ImPlot.PlotShaded("PostProcess", ref PostProcess.Values[0], PostProcess.Length, fill, 1, 0, ImPlotShadedFlags.None, PostProcess.Head);
+                ImPlot.PopStyleVar();
+
+                ImPlot.PlotLine("Total", ref Graphics.Values[0], Graphics.Length, 1, 0, ImPlotLineFlags.None, Graphics.Head);
+                ImPlot.PlotLine("Update", ref Update.Values[0], Update.Length, 1, 0, ImPlotLineFlags.None, Update.Head);
+                ImPlot.PlotLine("Culling", ref Culling.Values[0], Culling.Length, 1, 0, ImPlotLineFlags.None, Culling.Head);
+                ImPlot.PlotLine("Geometry", ref Geometry.Values[0], Geometry.Length, 1, 0, ImPlotLineFlags.None, Geometry.Head);
+                ImPlot.PlotLine("SSAO", ref SSAO.Values[0], SSAO.Length, 1, 0, ImPlotLineFlags.None, SSAO.Head);
+                ImPlot.PlotLine("Lights", ref Lights.Values[0], Lights.Length, 1, 0, ImPlotLineFlags.None, Lights.Head);
+                ImPlot.PlotLine("PostProcess", ref PostProcess.Values[0], PostProcess.Length, 1, 0, ImPlotLineFlags.None, PostProcess.Head);
                 ImPlot.EndPlot();
             }
 

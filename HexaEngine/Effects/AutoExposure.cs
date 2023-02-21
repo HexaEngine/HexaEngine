@@ -1,16 +1,19 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Pipelines.Effects
+using HexaEngine;
+
+namespace HexaEngine.Effects
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
 
-    public class AutoExposure : IEffect
+    public class AutoExposure : IPostFx
     {
         private int width;
         private int height;
@@ -30,12 +33,11 @@ namespace HexaEngine.Pipelines.Effects
 
         private IGraphicsPipeline exposurePipeline;
         private Quad quad;
-        private ConstantBuffer<ExposureParams> exposureParams;
         private ISamplerState samplerPoint;
 
-        public IShaderResourceView Color;
+        public IShaderResourceView Input;
         public IRenderTargetView Output;
-        private bool enabled;
+        private bool enabled = true;
         private float minLogLuminance = -8;
         private float maxLogLuminance = 3;
         private float tau = 1.1f;
@@ -46,7 +48,6 @@ namespace HexaEngine.Pipelines.Effects
             set
             {
                 enabled = value;
-                exposureParams.Local->Enabled = value ? 1 : 0;
                 dirty = true;
             }
         }
@@ -88,6 +89,10 @@ namespace HexaEngine.Pipelines.Effects
             }
         }
 
+        public string Name => "Auto Exposure";
+        public PostFxFlags Flags => PostFxFlags.None;
+        public int Priority { get; set; } = 200;
+
         #region Structs
 
         private struct LumaParams
@@ -124,24 +129,10 @@ namespace HexaEngine.Pipelines.Effects
             }
         }
 
-        private struct ExposureParams
-        {
-            public int Enabled;
-            public Vector3 Padd;
-
-            public ExposureParams()
-            {
-                Enabled = 0;
-                Padd = default;
-            }
-        }
-
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        public Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
-            Color = ResourceManager.AddTextureSRV("AutoExposure", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-
             this.width = width;
             this.height = height;
             lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
@@ -170,12 +161,14 @@ namespace HexaEngine.Pipelines.Effects
             quad = new(device);
             InitUnsafe(device);
 
-            Output = await ResourceManager.GetTextureRTVAsync("Tonemap");
+            dirty = true;
+
+            return Task.CompletedTask;
         }
 
         private unsafe void InitUnsafe(IGraphicsDevice device)
         {
-            lumaParams = new(device, CpuAccessFlags.Write);
+            lumaParams = new(device, new LumaParams(), CpuAccessFlags.Write);
             lumaParams.Local->InputWidth = (uint)width;
             lumaParams.Local->InputHeight = (uint)height;
 
@@ -184,67 +177,64 @@ namespace HexaEngine.Pipelines.Effects
 
             lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));
 
-            lumaAvgParams = new(device, CpuAccessFlags.Write); //device.CreateBuffer(lumaAvgParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            lumaAvgParams = new(device, new LumaAvgParams(), CpuAccessFlags.Write);
             lumaAvgParams.Local->PixelCount = (uint)(width * height);
 
             lumaAvgUAVs = AllocArray(2);
             lumaAvgUAVs[0] = (void*)histogramUAV.NativePointer;
             lumaAvgUAVs[1] = (void*)lumaUAV.NativePointer;
-
-            exposureParams = new(device, CpuAccessFlags.Write); //device.CreateBuffer(exposureParams, 1, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-
-            dirty = true;
         }
 
-        public void BeginResize()
-        {
-            ResourceManager.RequireUpdate("AutoExposure");
-        }
-
-        public async void EndResize(int width, int height)
-        {
-            Output = await ResourceManager.GetTextureRTVAsync("Tonemap");
-            Color = ResourceManager.UpdateTextureSRV("AutoExposure", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-
-            this.width = width;
-            this.height = height;
-            EndResizeUnsafe(width, height);
-            dirty = true;
-        }
-
-        private unsafe void EndResizeUnsafe(int width, int height)
+        private unsafe void ResizeUnsafe(int width, int height)
         {
             lumaParams.Local->InputWidth = (uint)width;
             lumaParams.Local->InputHeight = (uint)height;
             lumaAvgParams.Local->PixelCount = (uint)(width * height);
         }
 
-        public unsafe void Draw(IGraphicsContext context)
+        public async void Resize(int width, int height)
         {
-            if (Output == null) return;
+            this.width = width;
+            this.height = height;
+            ResizeUnsafe(width, height);
+            dirty = true;
+        }
+
+        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        {
+            Output = view;
+        }
+
+        public void SetInput(IShaderResourceView view)
+        {
+            Input = view;
+        }
+
+        public void Update(IGraphicsContext context)
+        {
             if (dirty)
             {
                 dirty = false;
                 lumaParams.Update(context);
-                exposureParams.Update(context);
             }
+        }
 
-            if (enabled)
-            {
-                context.CSSetShaderResource(Color, 0);
-                context.CSSetConstantBuffer(lumaParams, 0);
-                context.CSSetUnorderedAccessViews(lumaUAVs, 1);
-                lumaCompute.Dispatch(context, width / 16, height / 16, 1);
+        public unsafe void Draw(IGraphicsContext context)
+        {
+            if (Output == null) return;
 
-                lumaAvgParams.Local->TimeDelta = Time.Delta;
-                lumaAvgParams.Update(context);
-                context.CSSetConstantBuffer(lumaAvgParams, 0);
-                context.CSSetUnorderedAccessViews(lumaAvgUAVs, 2);
-                lumaAvgCompute.Dispatch(context, 1, 1, 1);
-            }
+            context.CSSetShaderResource(Input, 0);
+            context.CSSetConstantBuffer(lumaParams, 0);
+            context.CSSetUnorderedAccessViews(lumaUAVs, 1);
+            lumaCompute.Dispatch(context, width / 16, height / 16, 1);
 
-            context.PSSetConstantBuffer(exposureParams, 0);
-            context.PSSetShaderResource(Color, 0);
+            lumaAvgParams.Local->TimeDelta = Time.Delta;
+            lumaAvgParams.Update(context);
+            context.CSSetConstantBuffer(lumaAvgParams, 0);
+            context.CSSetUnorderedAccessViews(lumaAvgUAVs, 2);
+            lumaAvgCompute.Dispatch(context, 1, 1, 1);
+
+            context.PSSetShaderResource(Input, 0);
             context.PSSetShaderResource(lumaSRV, 1);
             context.PSSetSampler(samplerPoint, 0);
             context.SetRenderTarget(Output, null);
@@ -266,7 +256,6 @@ namespace HexaEngine.Pipelines.Effects
             lumaUAV.Dispose();
 
             exposurePipeline.Dispose();
-            exposureParams.Dispose();
             samplerPoint.Dispose();
             quad.Dispose();
             Free(lumaUAVs);

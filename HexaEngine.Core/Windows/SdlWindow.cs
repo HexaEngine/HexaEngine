@@ -75,7 +75,7 @@
         {
             if (!created)
                 PlatformConstruct();
-            Application.RegisterWindow(this);
+            Application.RegisterWindow((IRenderWindow)this);
             Sdl.ShowWindow(window);
         }
 

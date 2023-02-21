@@ -1,10 +1,8 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Pipelines.Effects
+namespace HexaEngine.Effects
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using System.Numerics;
 

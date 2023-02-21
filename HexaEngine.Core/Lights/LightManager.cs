@@ -1,12 +1,11 @@
-﻿namespace HexaEngine.Core.Scenes.Managers
+﻿namespace HexaEngine.Core.Lights
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers.Forward;
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -356,7 +355,7 @@
             ResourceManager.RequireUpdate("LightBuffer");
         }
 
-        public async void EndResize(int width, int height)
+        public async Task EndResize(int width, int height)
         {
 #nullable disable
             Output = ResourceManager.UpdateTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
@@ -604,6 +603,7 @@
             deferredIndirect.Dispose();
             deferredShadow.Dispose();
             forwardSoild.Dispose();
+            forwardWireframe.Dispose();
             Free(simpleSrvs);
             Free(directSrvs);
             Free(indirectSrvs);

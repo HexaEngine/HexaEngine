@@ -942,6 +942,16 @@
             return null;
         }
 
+        public static async Task<IShaderResourceView?> GetTextureSRVAsync(string name, bool dontWait)
+        {
+            var result = await TryGetResourceAsync<Graphics.Texture>(name, dontWait);
+            if (result.Item1)
+            {
+                return result.Item2?.ShaderResourceView;
+            }
+            return null;
+        }
+
         public static async Task<IShaderResourceView?> GetSRVAsync(string name)
         {
             var result = await TryGetResourceAsync<IShaderResourceView>(name, false);

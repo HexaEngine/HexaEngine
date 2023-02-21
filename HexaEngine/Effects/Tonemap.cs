@@ -1,14 +1,18 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Pipelines.Effects
+using HexaEngine;
+
+namespace HexaEngine.Effects
 {
+    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
+    using HexaEngine.Mathematics;
     using System.Numerics;
 
-    public class Tonemap : IEffect
+    public class Tonemap : IPostFx
     {
         private Quad quad;
         private IGraphicsPipeline pipeline;
@@ -25,9 +29,10 @@ namespace HexaEngine.Pipelines.Effects
 
         public IBuffer Camera;
         private IRenderTargetView Output;
-        private IShaderResourceView HDR;
+        private IShaderResourceView Input;
         private IShaderResourceView Bloom;
         private IShaderResourceView Position;
+        public Viewport Viewport;
 
         private struct Params
         {
@@ -100,21 +105,26 @@ namespace HexaEngine.Pipelines.Effects
             }
         }
 
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
-        {
-            HDR = ResourceManager.AddTextureSRV("Tonemap", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+        public string Name => "Tonemap";
 
+        public PostFxFlags Flags => PostFxFlags.None;
+
+        public bool Enabled { get; set; } = true;
+
+        public int Priority { get; set; } = 0;
+
+        public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
+        {
             quad = new(device);
             pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/tonemap/vs.hlsl",
                 PixelShader = "effects/tonemap/ps.hlsl",
-            });
+            }, macros);
             paramBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
-            Output = await ResourceManager.GetTextureRTVAsync("FXAA");
-            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom");
+            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom", true);
             Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
             InitUnsafe();
@@ -123,7 +133,7 @@ namespace HexaEngine.Pipelines.Effects
         private unsafe void InitUnsafe()
         {
             srvs = AllocArray(3);
-            srvs[0] = (void*)HDR?.NativePointer;
+            srvs[0] = (void*)Input?.NativePointer;
             srvs[1] = (void*)Bloom?.NativePointer;
             srvs[2] = (void*)Position?.NativePointer;
             cbvs = AllocArray(2);
@@ -131,44 +141,53 @@ namespace HexaEngine.Pipelines.Effects
             cbvs[1] = (void*)Camera?.NativePointer;
         }
 
-        public void BeginResize()
-        {
-            ResourceManager.RequireUpdate("Tonemap");
-        }
-
-        public async void EndResize(int width, int height)
-        {
-            Output = await ResourceManager.GetTextureRTVAsync("FXAA");
-            HDR = ResourceManager.UpdateTextureSRV("Tonemap", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom");
-            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
-            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-            EndResizeUnsafe();
-        }
-
         private unsafe void EndResizeUnsafe()
         {
-            srvs[0] = (void*)HDR?.NativePointer;
+            srvs[0] = (void*)Input?.NativePointer;
             srvs[1] = (void*)Bloom?.NativePointer;
             srvs[2] = (void*)Position?.NativePointer;
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
             cbvs[1] = (void*)Camera?.NativePointer;
         }
 
-        public unsafe void Draw(IGraphicsContext context)
+        public async void Resize(int width, int height)
         {
-            if (Output is null) return;
+            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom", true);
+            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
+            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            EndResizeUnsafe();
+        }
+
+        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        {
+            Output = view;
+            Viewport = viewport;
+        }
+
+        public unsafe void SetInput(IShaderResourceView view)
+        {
+            Input = view;
+            srvs[0] = (void*)view.NativePointer;
+        }
+
+        public void Update(IGraphicsContext context)
+        {
             if (dirty)
             {
                 paramBuffer.Update(context);
                 dirty = false;
             }
+        }
+
+        public unsafe void Draw(IGraphicsContext context)
+        {
+            if (Output is null) return;
 
             context.SetRenderTarget(Output, default);
             context.PSSetConstantBuffers(cbvs, 2, 0);
             context.PSSetSampler(sampler, 0);
             context.PSSetShaderResources(srvs, 3, 0);
-            quad.DrawAuto(context, pipeline, Output.Viewport);
+            quad.DrawAuto(context, pipeline, Viewport);
             context.ClearState();
         }
 

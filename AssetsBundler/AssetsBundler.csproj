@@ -12,4 +12,8 @@
     <PackageReference Include="System.IO.Hashing" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+  </ItemGroup>
+
 </Project>
