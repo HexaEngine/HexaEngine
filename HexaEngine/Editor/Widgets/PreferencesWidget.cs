@@ -2,15 +2,37 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Input;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
+    using System.Text;
 
     public class PreferencesWidget : ImGuiWindow
     {
         private ConfigKey? displayedKey;
+        private List<KeyCode> keyCodes = new();
+        private string? recodingId;
 
         protected override string Name => "Preferences";
+
+        public PreferencesWidget()
+        {
+            Core.Input.Keyboard.Released += Keyboard;
+        }
+
+        ~PreferencesWidget()
+        {
+            Core.Input.Keyboard.Released -= Keyboard;
+        }
+
+        private void Keyboard(object? sender, Core.Input.Events.KeyboardEventArgs e)
+        {
+            if (recodingId != null)
+            {
+                keyCodes.Add(e.KeyCode);
+            }
+        }
 
         public override unsafe void DrawContent(IGraphicsContext context)
         {
@@ -212,6 +234,43 @@
                                 changed = ImGui.Button(value.Name);
                                 if (changed)
                                     val = null;
+                            }
+                            break;
+
+                        case DataType.Keys:
+                            {
+                                ImGui.Text(value.Name);
+
+                                if (recodingId == null)
+                                {
+                                    ImGui.SameLine();
+                                    if (ImGui.SmallButton($"Rec##{value.Name}"))
+                                    {
+                                        recodingId = value.Name;
+                                    }
+                                }
+                                else if (recodingId == value.Name)
+                                {
+                                    ImGui.SameLine();
+                                    if (ImGui.SmallButton("End"))
+                                    {
+                                        StringBuilder sb = new();
+                                        for (int i = 0; i < keyCodes.Count; i++)
+                                        {
+                                            if (sb.Length > 0)
+                                                sb.Append("+" + keyCodes[i]);
+                                            else
+                                                sb.Append(keyCodes[i]);
+                                        }
+                                        val = sb.ToString();
+                                        changed = true;
+                                        recodingId = null;
+                                        keyCodes.Clear();
+                                    }
+                                }
+
+                                ImGui.SameLine();
+                                ImGui.InputText($"##{value.Name}", ref val, 256, ImGuiInputTextFlags.ReadOnly);
                             }
                             break;
                     }

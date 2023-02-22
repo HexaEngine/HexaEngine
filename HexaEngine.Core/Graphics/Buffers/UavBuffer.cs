@@ -85,6 +85,8 @@
         /// </value>
         public IShaderResourceView SRV => srv;
 
+        public IBuffer Buffer => buffer;
+
         /// <summary>
         /// Not null when CanWrite is true
         /// </summary>

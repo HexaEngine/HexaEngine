@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
 
-    public struct DepthStencilDescription
+    public struct DepthStencilDescription : IEquatable<DepthStencilDescription>
     {
         public const int DefaultStencilReadMask = unchecked(255);
         public const int DefaultStencilWriteMask = unchecked(255);
@@ -141,6 +143,38 @@
             BackFace.StencilDepthFailOp = backStencilDepthFailOp;
             BackFace.StencilPassOp = backStencilPassOp;
             BackFace.StencilFunc = backStencilFunc;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is DepthStencilDescription description && Equals(description);
+        }
+
+        public bool Equals(DepthStencilDescription other)
+        {
+            return DepthEnable == other.DepthEnable &&
+                   DepthWriteMask == other.DepthWriteMask &&
+                   DepthFunc == other.DepthFunc &&
+                   StencilEnable == other.StencilEnable &&
+                   StencilReadMask == other.StencilReadMask &&
+                   StencilWriteMask == other.StencilWriteMask &&
+                   EqualityComparer<DepthStencilOperationDescription>.Default.Equals(FrontFace, other.FrontFace) &&
+                   EqualityComparer<DepthStencilOperationDescription>.Default.Equals(BackFace, other.BackFace);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(DepthEnable, DepthWriteMask, DepthFunc, StencilEnable, StencilReadMask, StencilWriteMask, FrontFace, BackFace);
+        }
+
+        public static bool operator ==(DepthStencilDescription left, DepthStencilDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DepthStencilDescription left, DepthStencilDescription right)
+        {
+            return !(left == right);
         }
     }
 }

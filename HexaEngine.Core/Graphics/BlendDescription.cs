@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
 
-    public struct BlendDescription
+    public struct BlendDescription : IEquatable<BlendDescription>
     {
         public static readonly BlendDescription Opaque = new(Blend.One, Blend.Zero);
 
@@ -57,6 +59,33 @@
                     || renderTarget.BlendOperation != BlendOperation.Add
                     || renderTarget.SourceBlend != Blend.One
                     || renderTarget.DestinationBlend != Blend.Zero;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is BlendDescription description && Equals(description);
+        }
+
+        public bool Equals(BlendDescription other)
+        {
+            return AlphaToCoverageEnable == other.AlphaToCoverageEnable &&
+                   IndependentBlendEnable == other.IndependentBlendEnable &&
+                   EqualityComparer<RenderTargetBlendDescription[]>.Default.Equals(RenderTarget, other.RenderTarget);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(AlphaToCoverageEnable, IndependentBlendEnable, RenderTarget);
+        }
+
+        public static bool operator ==(BlendDescription left, BlendDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(BlendDescription left, BlendDescription right)
+        {
+            return !(left == right);
         }
     }
 }

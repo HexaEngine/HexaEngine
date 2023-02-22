@@ -10,6 +10,8 @@
 
     public class Mesh
     {
+        public uint VertexCount;
+        public uint IndexCount;
     }
 
     public class Model

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Input;
     using Newtonsoft.Json.Linq;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
@@ -256,6 +257,20 @@
             string trimed = Value.Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             return new(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]), float.Parse(components[3]));
+        }
+
+        public IEnumerable<KeyCode> GetKeys()
+        {
+            if (Value == null)
+            {
+                yield break;
+            }
+
+            string[] keys = Value.Split('+', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < keys.Length; i++)
+            {
+                yield return (KeyCode)Enum.Parse(typeof(KeyCode), keys[i]);
+            }
         }
 
         public T Get<T>(Func<string?, T> convert)

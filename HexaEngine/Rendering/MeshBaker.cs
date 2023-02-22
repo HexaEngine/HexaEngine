@@ -1,11 +1,21 @@
-﻿/*namespace HexaEngine.Rendering
+﻿/*
+namespace HexaEngine.Rendering
 {
+    using BepuUtilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Rendering;
     using HexaEngine.Mathematics;
+    using HexaEngine.Pipelines.Forward;
+    using HexaEngine.Windows;
+    using ImGuiNET;
+    using Silk.NET.Direct3D11;
+    using Silk.NET.DXGI;
+    using Silk.NET.OpenAL;
+    using Silk.NET.SDL;
     using System;
     using System.Numerics;
+    using System.Xml.Linq;
 
     public class MeshBaker
     {
@@ -230,26 +240,18 @@
         }
 
         // Bakes an entire model
-        private void Bake(
-            Window& window,
-            ID3D11Device* device,
-            ID3D11DeviceContext* context,
-            Model model,
-            Skybox& skybox,
-            XMFLOAT3& sunDirection,
-            XMMATRIX& world,
-            MeshRenderer& meshRenderer)
+        private void Bake(IGraphicsDevice device, IGraphicsContext context, Model model, Skybox skybox, Vector3 sunDirection, Matrix4x4 world, MeshRenderer meshRenderer)
         {
-            for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+            for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
             {
                 // Create an input layout for each mesh
-                Mesh mesh = model.Meshes()[meshIdx];
+                Mesh mesh = model.Meshes[meshIdx];
 
                 // Create bake data for each mesh
                 UavBuffer meshData, summedMeshData, summedMeshData2;
-                meshData.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, mesh.NumVertices() * NumSHTargets);
-                summedMeshData.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, mesh.NumVertices() * NumSHTargets);
-                summedMeshData2.Initialize(device, DXGI_FORMAT_R32G32B32A32_FLOAT, 16, mesh.NumVertices() * NumSHTargets);
+                meshData = new(device, 16, mesh.IndexCount * NumSHTargets, Format.RGBA32Float, true, true);
+                summedMeshData = new(device, 16, mesh.IndexCount * NumSHTargets, Format.RGBA32Float, true, true);
+                summedMeshData2 = new(device, 16, mesh.IndexCount * NumSHTargets, Format.RGBA32Float, true, true);
 
                 currentMeshBuffers.Add(meshData);
                 summedMeshBuffers[0].Add(summedMeshData);
@@ -262,21 +264,20 @@
                 //PIXEvent bounceEvent((L"Bounce " + ToString(bounce)).c_str());
 
                 // Bake one mesh at a time
-                for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+                for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
                 {
-                    Mesh & mesh = model.Meshes()[meshIdx];
+                    Mesh mesh = model.Meshes[meshIdx];
 
-                    BakeMesh(deviceManager, window, device, context, model, skybox, sunDirection,
-                                        world, mesh, meshIdx, bounce, meshRenderer);
+                    BakeMesh(window, device, context, model, skybox, sunDirection, world, mesh, meshIdx, bounce, meshRenderer);
                 }
 
                 if (bounce == 0)
                 {
                     // We don't need to sum bounces, so just copy to the output buffers
-                    for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
+                    for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
                     {
-                        context->CopyResource(summedMeshBuffers[0][meshIdx].Buffer, currentMeshBuffers[meshIdx].Buffer);
-                        meshBakeData.Add(summedMeshBuffers[0][meshIdx].SRView);
+                        context.CopyResource(summedMeshBuffers[0][(int)meshIdx].Buffer, currentMeshBuffers[(int)meshIdx].Buffer);
+                        meshBakeData.Add(summedMeshBuffers[0][(int)meshIdx].SRV);
                     }
                 }
                 else
@@ -285,9 +286,154 @@
                     SumBounces(context, bounce);
 
                     meshBakeData.Clear();
-                    for (uint meshIdx = 0; meshIdx < model.Meshes().size(); ++meshIdx)
-                        meshBakeData.Add(summedMeshBuffers[bounce % 2][meshIdx].SRView);
+                    for (uint meshIdx = 0; meshIdx < model.Meshes.Length; ++meshIdx)
+                        meshBakeData.Add(summedMeshBuffers[bounce % 2][(int)meshIdx].SRV);
                 }
+            }
+        }
+
+        // Bakes all vertices of a single mesh
+        private void BakeMesh(IGraphicsDevice device, IGraphicsContext context, Model model, Skybox skybox, Vector3 sunDirection, Matrix4x4 world, Mesh mesh, uint meshIdx, uint bounce, MeshRenderer meshRenderer)
+        {
+            // Find the position, normal, tangent, and binormal elements
+            uint posOffset = 0xFFFFFFFF;
+            uint nmlOffset = 0xFFFFFFFF;
+            uint tangentOffset = 0xFFFFFFFF;
+            uint binormalOffset = 0xFFFFFFFF;
+            for (uint i = 0; i < mesh.NumInputElements(); ++i)
+            {
+                D3D11_INPUT_ELEMENT_DESC & element = mesh.InputElements()[i];
+                std::string semantic(element.SemanticName);
+                if (semantic == "POSITION")
+                    posOffset = element.AlignedByteOffset;
+                else if (semantic == "NORMAL")
+                    nmlOffset = element.AlignedByteOffset;
+                else if (semantic == "TANGENT")
+                    tangentOffset = element.AlignedByteOffset;
+                else if (semantic == "BINORMAL")
+                    binormalOffset = element.AlignedByteOffset;
+            }
+
+            if (posOffset == 0xFFFFFFFF)
+                throw Exception(L"Can't bake a mesh with no positions!");
+
+            if (nmlOffset == 0xFFFFFFFF)
+                throw Exception(L"Can't bake a mesh with no normals!");
+
+            if (tangentOffset == 0xFFFFFFFF || binormalOffset == 0xFFFFFFFF)
+                throw Exception(L"Can't bake a mesh with no tangent frame!");
+
+            // Pull out the vertex data from the mesh
+            uint numVerts = mesh.NumVertices();
+            uint vtxStride = mesh.VertexStride();
+            vector<Vertex> verts;
+            verts.reserve(numVerts);
+
+            // Create a CPU-readable staging buffer to which we can copy the vertex data
+            D3D11_BUFFER_DESC bufferDesc;
+            bufferDesc.BindFlags = 0;
+            bufferDesc.ByteWidth = numVerts * vtxStride;
+            bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+            bufferDesc.MiscFlags = 0;
+            bufferDesc.StructureByteStride = 0;
+            bufferDesc.Usage = D3D11_USAGE_STAGING;
+
+            ID3D11BufferPtr stagingBuffer;
+            DXCall(device->CreateBuffer(&bufferDesc, NULL, &stagingBuffer));
+
+            // Copy the vertex data
+            context->CopyResource(stagingBuffer, mesh.VertexBuffer());
+
+            // Map the staging buffer and read its contents
+            D3D11_MAPPED_SUBRESOURCE mapped;
+            DXCall(context->Map(stagingBuffer, 0, D3D11_MAP_READ, 0, &mapped));
+            BYTE* srcPositions = reinterpret_cast<BYTE*>(mapped.pData) + posOffset;
+            BYTE* srcNormals = reinterpret_cast<BYTE*>(mapped.pData) + nmlOffset;
+            BYTE* srcTangents = reinterpret_cast<BYTE*>(mapped.pData) + tangentOffset;
+            BYTE* srcBinormals = reinterpret_cast<BYTE*>(mapped.pData) + binormalOffset;
+
+            for (uint i = 0; i < numVerts; ++i)
+            {
+                XMVECTOR position = XMLoadFloat3(reinterpret_cast<XMFLOAT3*>(srcPositions));
+                XMVECTOR normal = XMLoadFloat3(reinterpret_cast<XMFLOAT3*>(srcNormals));
+                XMVECTOR tangent = XMLoadFloat3(reinterpret_cast<XMFLOAT3*>(srcTangents));
+                XMVECTOR binormal = XMLoadFloat3(reinterpret_cast<XMFLOAT3*>(srcBinormals));
+
+                // Transform the positions + tangent frame to world space
+                XMVECTOR positionWS = XMVector3TransformCoord(position, world);
+                XMVECTOR normalWS = XMVector3TransformNormal(normal, world);
+                normalWS = XMVector3Normalize(normalWS);
+
+                XMVECTOR tangentWS = XMVector3TransformNormal(tangent, world);
+                tangentWS = XMVector3Normalize(tangentWS);
+
+                XMVECTOR binormalWS = XMVector3TransformNormal(binormal, world);
+                binormalWS = XMVector3Normalize(binormalWS);
+
+                Vertex vertex;
+                XMStoreFloat3(&vertex.Position, positionWS);
+                XMStoreFloat3(&vertex.Normal, normalWS);
+                XMStoreFloat3(&vertex.Tangent, tangentWS);
+                XMStoreFloat3(&vertex.Binormal, binormalWS);
+                verts.push_back(vertex);
+
+                srcPositions += vtxStride;
+                srcNormals += vtxStride;
+                srcTangents += vtxStride;
+                srcBinormals += vtxStride;
+            }
+            context->Unmap(stagingBuffer, 0);
+
+            RWBuffer & meshData = currentMeshBuffers[meshIdx];
+
+            // Bake each vertex
+            for (uint vertIdx = 0; vertIdx < numVerts; ++vertIdx)
+            {
+                BakeVertex(device, context, model, skybox, sunDirection,
+                            world, verts[vertIdx], vertIdx, mesh, meshData, bounce, meshRenderer);
+
+                // Calculate the fps
+                timer.Update();
+                CalculateFPS();
+
+                // Render the FPS + current mesh/vertex info to the backbuffer, and keep pumping
+                // the window's message loop. This way we keep updating the progress, and the user
+                // can quit the app.
+                ID3D11RenderTargetView* renderTargets[1] = { deviceManager.BackBuffer() };
+                context->OMSetRenderTargets(1, renderTargets, NULL);
+                context->ClearRenderTargetView(renderTargets[0], reinterpret_cast<float*>(&XMFLOAT4(0, 0, 0, 0)));
+
+                D3D11_VIEWPORT vp;
+                vp.Width = static_cast<float>(deviceManager.BackBufferWidth());
+                vp.Height = static_cast<float>(deviceManager.BackBufferHeight());
+                vp.TopLeftX = 0;
+                vp.TopLeftY = 0;
+                vp.MinDepth = 0;
+                vp.MaxDepth = 1;
+                context->RSSetViewports(1, &vp);
+
+                spriteRenderer.Begin(context, SpriteRenderer::Point);
+
+                XMMATRIX transform = XMMatrixTranslation(50.0f, 50.0f, 0);
+                std::wstring text = L"Iteration " + ToString(bounce + 1) + L" of " + ToString(NumIterations) + L"\n";
+                text += L"Baking mesh " + ToString(meshIdx + 1) + L" of " + ToString(model.Meshes().size());
+                text += L"\nBaking vertex " + ToString(vertIdx + 1) + L" of " + ToString(numVerts);
+                text += L" (" + ToString(fps) + L" verts per second)";
+
+                spriteRenderer.RenderText(font, text.c_str(), transform);
+
+                spriteRenderer.End();
+
+                deviceManager.Present();
+
+                KeyboardState kbState = KeyboardState::GetKeyboardState();
+                if (kbState.IsKeyDown(Keys::Escape))
+                    window.Destroy();
+
+                window.MessageLoop();
+
+                if (!window.IsAlive())
+                    return;
             }
         }
     }

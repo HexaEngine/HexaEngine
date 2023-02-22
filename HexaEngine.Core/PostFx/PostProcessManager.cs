@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core.Fx
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
+    using System.Diagnostics.CodeAnalysis;
     using Texture = Graphics.Texture;
 
     public class PostProcessManager : IDisposable
@@ -13,6 +15,9 @@
         private readonly List<Texture> buffers = new();
         private readonly IGraphicsContext deferredContext;
         private readonly IGraphicsDevice device;
+        private int width;
+        private int height;
+
         private ICommandList? list;
         private bool isDirty = true;
         private bool isInitialized = false;
@@ -44,6 +49,8 @@
 
         public void Initialize(int width, int height)
         {
+            this.width = width;
+            this.height = height;
             macros = new ShaderMacro[effectsSorted.Count];
             for (int i = 0; i < effectsSorted.Count; i++)
             {
@@ -62,8 +69,89 @@
             Output = ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV").Result;
         }
 
+        public IPostFx? GetByName(string name)
+        {
+            lock (effectsSorted)
+            {
+                for (int i = 0; i < effectsSorted.Count; i++)
+                {
+                    var effect = effectsSorted[i];
+                    if (effect.Name == name)
+                        return effect;
+                }
+            }
+            return null;
+        }
+
+        public T? GetByName<T>(string name) where T : class, IPostFx
+        {
+            lock (effectsSorted)
+            {
+                for (int i = 0; i < effectsSorted.Count; i++)
+                {
+                    var effect = effectsSorted[i];
+                    if (effect is T t && effect.Name == name)
+                        return t;
+                }
+            }
+            return null;
+        }
+
+        public T? GetByType<T>() where T : class, IPostFx
+        {
+            lock (effectsSorted)
+            {
+                for (int i = 0; i < effectsSorted.Count; i++)
+                {
+                    var effect = effectsSorted[i];
+                    if (effect is T t)
+                        return t;
+                }
+            }
+            return null;
+        }
+
+        public bool TryGetByName(string name, [NotNullWhen(true)] out IPostFx? effect)
+        {
+            effect = GetByName(name);
+            return effect != null;
+        }
+
+        public bool TryGetByName<T>(string name, [NotNullWhen(true)] out T? effect) where T : class, IPostFx
+        {
+            effect = GetByName<T>(name);
+            return effect != null;
+        }
+
+        public bool TryGetByType<T>([NotNullWhen(true)] out T? effect) where T : class, IPostFx
+        {
+            effect = GetByType<T>();
+            return effect != null;
+        }
+
         public void Reload()
         {
+            for (int i = 0; i < effectsSorted.Count; i++)
+            {
+                effectsSorted[i].Dispose();
+            }
+
+            macros = new ShaderMacro[effectsSorted.Count];
+
+            for (int i = 0; i < effectsSorted.Count; i++)
+            {
+                var effect = effectsSorted[i];
+                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? 1 : 0);
+            }
+
+            for (int i = 0; i < effectsSorted.Count; i++)
+            {
+                effectsSorted[i].Initialize(device, width, height, macros);
+            }
+
+            Input = ResourceManager.GetTextureSRV("LightBuffer");
+            Output = ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV").Result;
+
             isDirty = true;
         }
 
@@ -75,6 +163,8 @@
 
         public void EndResize(int width, int height)
         {
+            this.width = width;
+            this.height = height;
             if (!isInitialized)
                 return;
 

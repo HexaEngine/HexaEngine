@@ -79,6 +79,7 @@ namespace HexaEngine.Effects
 
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
+            disposedValue = false;
             quad = new(device);
             downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
             upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);

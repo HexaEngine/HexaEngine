@@ -23,6 +23,12 @@
 
         public static float Height => height;
 
+        static MainMenuBar()
+        {
+            HotkeyManager.Register("Undo-Action", Designer.History.Undo);
+            HotkeyManager.Register("Redo-Action", Designer.History.Redo);
+        }
+
         internal static void Draw()
         {
             if (filePicker.Draw())

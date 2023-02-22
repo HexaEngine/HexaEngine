@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
     using System.ComponentModel;
 
-    public struct DepthStencilOperationDescription
+    public struct DepthStencilOperationDescription : IEquatable<DepthStencilOperationDescription>
     {
         [DefaultValue(StencilOperation.Keep)]
         public StencilOperation StencilFailOp;
@@ -44,6 +45,34 @@
             StencilDepthFailOp = stencilDepthFailOp;
             StencilPassOp = stencilPassOp;
             StencilFunc = stencilFunc;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is DepthStencilOperationDescription description && Equals(description);
+        }
+
+        public bool Equals(DepthStencilOperationDescription other)
+        {
+            return StencilFailOp == other.StencilFailOp &&
+                   StencilDepthFailOp == other.StencilDepthFailOp &&
+                   StencilPassOp == other.StencilPassOp &&
+                   StencilFunc == other.StencilFunc;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(StencilFailOp, StencilDepthFailOp, StencilPassOp, StencilFunc);
+        }
+
+        public static bool operator ==(DepthStencilOperationDescription left, DepthStencilOperationDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DepthStencilOperationDescription left, DepthStencilOperationDescription right)
+        {
+            return !(left == right);
         }
     }
 }

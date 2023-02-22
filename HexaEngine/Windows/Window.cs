@@ -159,6 +159,7 @@
                 Designer.Draw();
                 WidgetManager.Draw(context);
                 ImGuiConsole.Draw();
+
                 frameviewer.SourceViewport = Viewport;
                 frameviewer.Update();
                 frameviewer.Draw();

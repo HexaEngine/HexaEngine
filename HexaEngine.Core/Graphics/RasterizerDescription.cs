@@ -1,18 +1,19 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System;
     using System.ComponentModel;
 
-    public struct RasterizerDescription
+    public struct RasterizerDescription : IEquatable<RasterizerDescription>
     {
         public const int DefaultDepthBias = unchecked(0);
         public const float DefaultDepthBiasClamp = unchecked((float)0.0F);
         public const float DefaultSlopeScaledDepthBias = unchecked((float)0.0F);
 
         [DefaultValue(FillMode.Solid)]
-        public FillMode FillMode;
+        public FillMode FillMode = FillMode.Solid;
 
         [DefaultValue(CullMode.Back)]
-        public CullMode CullMode;
+        public CullMode CullMode = CullMode.Back;
 
         [DefaultValue(false)]
         public bool FrontCounterClockwise;
@@ -75,6 +76,51 @@
             ScissorEnable = false;
             MultisampleEnable = true;
             AntialiasedLineEnable = false;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is RasterizerDescription description && Equals(description);
+        }
+
+        public bool Equals(RasterizerDescription other)
+        {
+            return FillMode == other.FillMode &&
+                   CullMode == other.CullMode &&
+                   FrontCounterClockwise == other.FrontCounterClockwise &&
+                   DepthBias == other.DepthBias &&
+                   DepthBiasClamp == other.DepthBiasClamp &&
+                   SlopeScaledDepthBias == other.SlopeScaledDepthBias &&
+                   DepthClipEnable == other.DepthClipEnable &&
+                   ScissorEnable == other.ScissorEnable &&
+                   MultisampleEnable == other.MultisampleEnable &&
+                   AntialiasedLineEnable == other.AntialiasedLineEnable;
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(FillMode);
+            hash.Add(CullMode);
+            hash.Add(FrontCounterClockwise);
+            hash.Add(DepthBias);
+            hash.Add(DepthBiasClamp);
+            hash.Add(SlopeScaledDepthBias);
+            hash.Add(DepthClipEnable);
+            hash.Add(ScissorEnable);
+            hash.Add(MultisampleEnable);
+            hash.Add(AntialiasedLineEnable);
+            return hash.ToHashCode();
+        }
+
+        public static bool operator ==(RasterizerDescription left, RasterizerDescription right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(RasterizerDescription left, RasterizerDescription right)
+        {
+            return !(left == right);
         }
     }
 }
