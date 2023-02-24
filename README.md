@@ -40,5 +40,5 @@ https://github.com/MiloszKrajewski/K4os.Compression.LZ4
 https://www.newtonsoft.com/json  
 https://github.com/mellinoe/ImGui.NET *modified*  
 https://github.com/FaberSanZ/SPIRV-Cross.NET *modified*  
-https://github.com/stilldesign/PhysX.Net/tree/412-net6 *modified*
-https://github.com/NVIDIAGameWorks/PhysX
+https://github.com/stilldesign/PhysX.Net/tree/412-net6 *modified*  
+https://github.com/NVIDIAGameWorks/PhysX  
