@@ -6,10 +6,27 @@
     using System.Collections.Generic;
     using System.Text;
 
+    public static class KeyExtensions
+    {
+        public static string ToFormattedString(this IList<KeyCode> keys)
+        {
+            StringBuilder sb = new();
+            for (int i = 0; i < keys.Count; i++)
+            {
+                if (sb.Length > 0)
+                    sb.Append("+" + keys[i]);
+                else
+                    sb.Append(keys[i]);
+            }
+            return sb.ToString();
+        }
+    }
+
     public class Hotkey
     {
         private string? tostring;
         private readonly List<KeyCode> keys = new();
+        private readonly List<KeyCode> defaults = new();
         public readonly string Name;
 
         [JsonIgnore]
@@ -27,6 +44,7 @@
                     return;
                 }
                 confValue = value;
+                confValue.DefaultValue = defaults.ToFormattedString();
                 confValue.ValueChanged += ValueChanged;
                 keys.Clear();
                 keys.AddRange(value.GetKeys());
@@ -34,6 +52,8 @@
         }
 
         public ObservableWrapper<KeyCode> Keys { get; private set; }
+
+        public List<KeyCode> Defaults => defaults;
 
         public Hotkey(string name, Action callback)
         {
@@ -44,11 +64,22 @@
             Keys.CollectionChanged += CollectionChanged;
         }
 
-        public Hotkey(string name, Action callback, List<KeyCode> keys)
+        public Hotkey(string name, Action callback, List<KeyCode> defaults)
         {
             Name = name;
             Callback = callback;
-            this.keys = keys;
+            this.defaults.AddRange(defaults);
+            keys = defaults;
+            Keys = new(keys);
+            Keys.CollectionChanged += CollectionChanged;
+        }
+
+        public Hotkey(string name, Action callback, IEnumerable<KeyCode> defaults)
+        {
+            Name = name;
+            Callback = callback;
+            this.defaults.AddRange(defaults);
+            keys = new(defaults);
             Keys = new(keys);
             Keys.CollectionChanged += CollectionChanged;
         }
@@ -86,12 +117,14 @@
             return Keys.Count > 0;
         }
 
-        public bool TryExecute()
+        public bool TryExecute(List<KeyCode> keys)
         {
+            if (keys.Count < Keys.Count)
+                return false;
+
             for (int i = 0; i < Keys.Count; i++)
             {
-                KeyCode key = Keys[i];
-                if (Keyboard.IsUp(key))
+                if (keys[i] == Keys[i])
                 {
                     return false;
                 }

@@ -9,6 +9,7 @@
 
     public static class HotkeyManager
     {
+        private static readonly List<KeyCode> keys = new();
         private static readonly List<Hotkey> hotkeys = new();
         private static readonly ConfigKey config;
         private const string Filename = "hotkeys.json";
@@ -19,6 +20,7 @@
             if (File.Exists(Filename))
                 JsonConvert.DeserializeObject(File.ReadAllText(Filename));
             Keyboard.Pressed += KeyboardPressed;
+            Keyboard.Released += KeyboardReleased;
         }
 
         public static IReadOnlyList<Hotkey> Hotkeys => hotkeys;
@@ -91,6 +93,29 @@
             }
         }
 
+        public static Hotkey Register(string name, Action callback, params KeyCode[] defaults)
+        {
+            lock (hotkeys)
+            {
+                config.TryGetOrAddKeyValue(name, "", DataType.Keys, false, out var value);
+                if (TryFind(name, out var hotkey))
+                {
+                    hotkey.Callback = callback;
+                    hotkey.Value = value;
+                }
+                else
+                {
+                    hotkey = new(name, callback, defaults);
+                    hotkeys.Add(hotkey);
+                    hotkey.Value = value;
+                }
+
+                Save();
+
+                return hotkey;
+            }
+        }
+
         public static void Unregister(string name)
         {
             lock (hotkeys)
@@ -107,6 +132,7 @@
 
         private static void KeyboardPressed(object? sender, Core.Input.Events.KeyboardEventArgs e)
         {
+            keys.Add(e.KeyCode);
             lock (hotkeys)
             {
                 for (int i = 0; i < hotkeys.Count; i++)
@@ -116,12 +142,17 @@
                     {
                         continue;
                     }
-                    if (hotkey.TryExecute())
+                    if (hotkey.TryExecute(keys))
                     {
                         return;
                     }
                 }
             }
+        }
+
+        private static void KeyboardReleased(object? sender, Core.Input.Events.KeyboardEventArgs e)
+        {
+            keys.Remove(e.KeyCode);
         }
     }
 }

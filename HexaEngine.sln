@@ -93,6 +93,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cimnodes", "cimnodes\build\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cimplot", "cimplot\build\cimplot.vcxproj", "{326BB7DA-733B-373F-B088-13149FDD472A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HexaEngine.PhysX", "HexaEngine.PhysX\PhysX.Net.vcxproj", "{FB145A7D-CDF2-417D-A006-F7591481D609}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1003,6 +1005,36 @@ Global
 		{326BB7DA-733B-373F-B088-13149FDD472A}.TraceLeak|x64.Build.0 = RelWithDebInfo|x64
 		{326BB7DA-733B-373F-B088-13149FDD472A}.TraceLeak|x86.ActiveCfg = RelWithDebInfo|x64
 		{326BB7DA-733B-373F-B088-13149FDD472A}.TraceLeak|x86.Build.0 = RelWithDebInfo|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Debug|Any CPU.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Debug|x64.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Debug|x64.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Debug|x86.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Debug|x86.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.MinSizeRel|Any CPU.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.MinSizeRel|Any CPU.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.MinSizeRel|x64.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.MinSizeRel|x64.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.MinSizeRel|x86.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.MinSizeRel|x86.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Release|Any CPU.ActiveCfg = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Release|Any CPU.Build.0 = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Release|x64.ActiveCfg = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Release|x64.Build.0 = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Release|x86.ActiveCfg = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.Release|x86.Build.0 = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.RelWithDebInfo|Any CPU.ActiveCfg = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.RelWithDebInfo|Any CPU.Build.0 = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.RelWithDebInfo|x64.ActiveCfg = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.RelWithDebInfo|x64.Build.0 = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.RelWithDebInfo|x86.ActiveCfg = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.RelWithDebInfo|x86.Build.0 = Release|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.TraceLeak|Any CPU.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.TraceLeak|Any CPU.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.TraceLeak|x64.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.TraceLeak|x64.Build.0 = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.TraceLeak|x86.ActiveCfg = Debug|x64
+		{FB145A7D-CDF2-417D-A006-F7591481D609}.TraceLeak|x86.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

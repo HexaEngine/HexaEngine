@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
@@ -25,8 +26,8 @@
 
         static MainMenuBar()
         {
-            HotkeyManager.Register("Undo-Action", Designer.History.Undo);
-            HotkeyManager.Register("Redo-Action", Designer.History.Redo);
+            HotkeyManager.Register("Undo-Action", () => Designer.History.TryUndo(), KeyCode.LCtrl, KeyCode.Z);
+            HotkeyManager.Register("Redo-Action", () => Designer.History.TryRedo(), KeyCode.LCtrl, KeyCode.Y);
         }
 
         internal static void Draw()

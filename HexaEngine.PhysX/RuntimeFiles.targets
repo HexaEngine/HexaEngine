@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\E12134PhysX_64.dll">
+			<Link>E12134PhysX_64.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\E12134PhysXCommon_64.dll">
+			<Link>E12134PhysXCommon_64.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\E12134PhysXCooking_64.dll">
+			<Link>E12134PhysXCooking_64.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\E12134PhysXFoundation_64.dll">
+			<Link>E12134PhysXFoundation_64.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+
+		<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\Ijwhost.dll">
+			<Link>Ijwhost.dll</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+</Project>

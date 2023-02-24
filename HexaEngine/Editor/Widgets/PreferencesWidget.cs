@@ -13,6 +13,7 @@
         private ConfigKey? displayedKey;
         private List<KeyCode> keyCodes = new();
         private string? recodingId;
+        private string? filter = string.Empty;
 
         protected override string Name => "Preferences";
 
@@ -70,15 +71,31 @@
             ImGui.BeginChild("Settings");
             if (displayedKey != null)
             {
+                ImGui.InputText("Search", ref filter, 256);
+
+                ImGui.Separator();
+
                 ImGui.Text(displayedKey.Name);
 
                 for (int j = 0; j < displayedKey.Values.Count; j++)
                 {
                     var value = displayedKey.Values[j];
+
+                    if (!string.IsNullOrEmpty(filter) && !value.Name.Contains(filter))
+                        continue;
+
                     var val = value.Value;
                     bool changed = false;
                     if (value.IsReadOnly)
                         ImGui.BeginDisabled(true);
+
+                    if (!value.IsReadOnly)
+                    {
+                        if (ImGui.SmallButton($"\uE777##{value.Name}"))
+                            value.SetToDefault();
+                        ImGui.SameLine();
+                    }
+
                     switch (value.DataType)
                     {
                         case DataType.String:
@@ -244,17 +261,20 @@
                                 if (recodingId == null)
                                 {
                                     ImGui.SameLine();
-                                    if (ImGui.SmallButton($"Rec##{value.Name}"))
+                                    if (ImGui.SmallButton($"\uE7C8##{value.Name}"))
                                     {
                                         recodingId = value.Name;
+                                        val = string.Empty;
+                                        changed = true;
                                     }
                                 }
                                 else if (recodingId == value.Name)
                                 {
                                     ImGui.SameLine();
-                                    if (ImGui.SmallButton("End"))
+                                    if (ImGui.SmallButton("\uEA3F"))
                                     {
                                         StringBuilder sb = new();
+                                        keyCodes.Reverse();
                                         for (int i = 0; i < keyCodes.Count; i++)
                                         {
                                             if (sb.Length > 0)

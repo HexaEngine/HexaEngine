@@ -64,6 +64,7 @@
         private PropertyInfo? property;
 
         private string? value;
+        private string? defaultValue;
 
         [JsonConstructor]
         public ConfigValue(string name, DataType dataType, string? value, bool isReadOnly)
@@ -106,7 +107,15 @@
 
         public bool IsReadOnly { get; set; }
 
+        [JsonIgnore]
+        public string? DefaultValue { get => defaultValue; set => defaultValue = value; }
+
         public event Action<ConfigValue, string?>? ValueChanged;
+
+        public void SetToDefault()
+        {
+            Value = defaultValue;
+        }
 
         public byte GetUInt8()
         {
@@ -323,6 +332,7 @@
                 val = new ConfigValue(key, type, defaultValue, isReadOnly);
                 Values.Add(val);
             }
+            val.DefaultValue = defaultValue;
             value = val;
         }
 
@@ -350,7 +360,9 @@
 
         public void AddValue(string key, DataType type, string? value, bool isReadOnly)
         {
-            Values.Add(new(key, type, value, isReadOnly));
+            ConfigValue configValue = new(key, type, value, isReadOnly);
+            configValue.DefaultValue = value;
+            Values.Add(configValue);
         }
 
         public int TryGet(string key, int defaultValue)

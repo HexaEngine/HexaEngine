@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Windows;
+    using E12134PhysX;
     using Silk.NET.SDL;
     using System.Collections.Generic;
 
