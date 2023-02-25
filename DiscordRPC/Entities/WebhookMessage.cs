@@ -32,12 +32,16 @@ namespace DiscordRPC.Entities
         /// <summary>
         ///     Gets or sets the message content.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'Content' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Content { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Content' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the embeds.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'Embeds' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public List<Embed> Embeds { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Embeds' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets whether the message should be sent as a text-to-speech message.

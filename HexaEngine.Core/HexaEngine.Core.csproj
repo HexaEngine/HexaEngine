@@ -6,7 +6,7 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<DebugType>embedded</DebugType>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Platforms>x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
 
@@ -42,7 +42,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
-		<ProjectReference Include="..\HexaEngine.E12134PhysX\E12134PhysX.Net.vcxproj" />
+		<ProjectReference Include="..\HexaEngine.PhysX\PhysX.Net.vcxproj" />
 		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
 		<ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET.csproj" />
 		<ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />

@@ -10,7 +10,9 @@
         private readonly Format format;
         private readonly bool canWrite;
         private readonly bool canRead;
+#pragma warning disable CS0649 // Field 'UavBuffer.stride' is never assigned to, and will always have its default value 0
         private readonly int stride;
+#pragma warning restore CS0649 // Field 'UavBuffer.stride' is never assigned to, and will always have its default value 0
         private readonly BufferUnorderedAccessViewFlags uavflags;
         private readonly BufferExtendedShaderResourceViewFlags srvFlags;
         private readonly string dbgName;

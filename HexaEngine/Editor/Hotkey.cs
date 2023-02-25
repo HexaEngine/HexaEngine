@@ -124,7 +124,7 @@
 
             for (int i = 0; i < Keys.Count; i++)
             {
-                if (keys[i] == Keys[i])
+                if (keys[i] != Keys[i])
                 {
                     return false;
                 }

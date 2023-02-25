@@ -32,32 +32,44 @@ namespace DiscordRPC.Entities
         /// <summary>
         ///     Gets or sets the state of this RPC.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'State' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string State { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'State' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the details of this RPC.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'Details' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Details { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Details' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the timestamp information of this RPC.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'Timestamp' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public RichPresenceTimestamp Timestamp { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Timestamp' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the large image information of this RPC.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'LargeImage' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public RichPresenceMedia LargeImage { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'LargeImage' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the small image information of this RPC.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'SmallImage' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public RichPresenceMedia SmallImage { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'SmallImage' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the party information of this RPC.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'Party' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public RichPresenceParty Party { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Party' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Adds a state to this RPC.

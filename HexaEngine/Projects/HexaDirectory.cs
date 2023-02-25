@@ -6,7 +6,9 @@
 
     public class HexaDirectory : HexaParent
     {
+#pragma warning disable CS0169 // The field 'HexaDirectory.isSelected' is never used
         private bool isSelected;
+#pragma warning restore CS0169 // The field 'HexaDirectory.isSelected' is never used
 
         public HexaDirectory()
         {
@@ -22,7 +24,9 @@
         [XmlIgnore]
         public override IntPtr Icon => IntPtr.Zero;
 
+#pragma warning disable CS0067 // The event 'HexaDirectory.CollectionChanged' is never used
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;
+#pragma warning restore CS0067 // The event 'HexaDirectory.CollectionChanged' is never used
 
         public override void ImportFile(string path)
         {

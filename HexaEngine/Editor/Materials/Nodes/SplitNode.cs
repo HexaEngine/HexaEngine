@@ -17,7 +17,9 @@
         [JsonIgnore]
         public FloatPin[] OutPins = new FloatPin[4];
 
+#pragma warning disable CS8618 // Non-nullable field 'In' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public SplitNode(int id, bool removable, bool isStatic) : base(id, "Split", removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable field 'In' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             modes = new PinType[] { PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4 };
             names = modes.Select(x => x.ToString()).ToArray();

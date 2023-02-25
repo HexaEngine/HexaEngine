@@ -7,7 +7,9 @@
 
     public class BRDFNode : MethodNode
     {
+#pragma warning disable CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public BRDFNode(int id, bool removable, bool isStatic) : base(id, "BRDF", removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
         }
 

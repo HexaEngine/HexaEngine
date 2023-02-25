@@ -5,12 +5,18 @@
 
     public class StaticTerrain
     {
+#pragma warning disable CS8618 // Non-nullable field 'Vertices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public TerrainVertexStatic[] Vertices;
+#pragma warning restore CS8618 // Non-nullable field 'Vertices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'Indices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public int[] Indices;
+#pragma warning restore CS8618 // Non-nullable field 'Indices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public readonly int Height;
         public readonly int Width;
         public readonly int Scale;
+#pragma warning disable CS8618 // Non-nullable field 'Heights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public float[] Heights;
+#pragma warning restore CS8618 // Non-nullable field 'Heights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
         private void CalculateVertices()
         {

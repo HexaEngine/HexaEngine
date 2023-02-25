@@ -42,14 +42,28 @@ namespace HexaEngine.Scenes.Importer
         private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
         private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
         private readonly Dictionary<string, Animation> animationsT = new();
+#pragma warning disable CS8618 // Non-nullable field 'nodes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private List<GameObject> nodes;
+#pragma warning restore CS8618 // Non-nullable field 'nodes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'meshes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private MeshSource[] meshes;
+#pragma warning restore CS8618 // Non-nullable field 'meshes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'materials' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private MaterialData[] materials;
+#pragma warning restore CS8618 // Non-nullable field 'materials' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
+#pragma warning disable CS8618 // Non-nullable field 'animations' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Animation[] animations;
+#pragma warning restore CS8618 // Non-nullable field 'animations' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'cameras' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Core.Scenes.Camera[] cameras;
+#pragma warning restore CS8618 // Non-nullable field 'cameras' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'lights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Core.Lights.Light[] lights;
+#pragma warning restore CS8618 // Non-nullable field 'lights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'root' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private GameObject root;
+#pragma warning restore CS8618 // Non-nullable field 'root' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private unsafe AssimpScene* scene;
 
         public MeshSource[] Meshes => meshes;

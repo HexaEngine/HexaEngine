@@ -9,7 +9,9 @@
     {
         private FloatPin mix;
 
+#pragma warning disable CS8618 // Non-nullable field 'mix' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public MixNode(int id, bool removable, bool isStatic) : base(id, "Mix", removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable field 'mix' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
         }
 

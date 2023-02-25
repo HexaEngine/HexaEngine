@@ -4,9 +4,9 @@ using HexaEngine;
 
 namespace HexaEngine.Effects
 {
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using System.Numerics;
@@ -94,8 +94,8 @@ namespace HexaEngine.Effects
 
         private struct DofParams
         {
-            public float MinDistance;
-            public float MaxDistance;
+            public float FocusRange;
+            public float Padding;
             public Vector2 FocusPoint;
             public int Enabled;
             public int AutoFocusEnabled;
@@ -104,8 +104,8 @@ namespace HexaEngine.Effects
 
             public DofParams()
             {
-                MinDistance = 5.0f;
-                MaxDistance = 12.0f;
+                FocusRange = 20.0f;
+                Padding = 0;
                 FocusPoint = new(0.5f, 0.5f);
                 Enabled = 1;
                 AutoFocusEnabled = 1;
@@ -113,10 +113,9 @@ namespace HexaEngine.Effects
                 AutoFocusRadius = 30;
             }
 
-            public DofParams(float minDistance, float maxDistance, Vector2 focusPoint)
+            public DofParams(float focusRange, Vector2 focusPoint)
             {
-                MinDistance = minDistance;
-                MaxDistance = maxDistance;
+                FocusRange = focusRange;
                 FocusPoint = focusPoint;
             }
         }
@@ -226,22 +225,12 @@ namespace HexaEngine.Effects
             }
         }
 
-        public float DofMinDistance
+        public float FocusRange
         {
-            get => dofParams.MinDistance;
+            get => dofParams.FocusRange;
             set
             {
-                dofParams.MinDistance = value;
-                dirty = true;
-            }
-        }
-
-        public float DofMaxDistance
-        {
-            get => dofParams.MaxDistance;
-            set
-            {
-                dofParams.MaxDistance = value;
+                dofParams.FocusRange = value;
                 dirty = true;
             }
         }
@@ -304,7 +293,7 @@ namespace HexaEngine.Effects
             pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
 
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
+            Position = await ResourceManager.GetSRVAsync("SwapChain.SRV");
         }
 
         public async void Resize(int width, int height)
@@ -323,7 +312,7 @@ namespace HexaEngine.Effects
             bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
 
             Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
+            Position = await ResourceManager.GetSRVAsync("SwapChain.SRV");
         }
 
         public void SetOutput(IRenderTargetView view, Viewport viewport)

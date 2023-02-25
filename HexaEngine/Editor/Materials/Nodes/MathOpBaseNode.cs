@@ -6,7 +6,11 @@
 
     public abstract class MathOpBaseNode : MathBaseNode, IMathOpNode
     {
+#pragma warning disable CS8618 // Non-nullable property 'InLeft' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
+#pragma warning disable CS8618 // Non-nullable property 'InRight' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         protected MathOpBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable property 'InRight' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
+#pragma warning restore CS8618 // Non-nullable property 'InLeft' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
         }
 

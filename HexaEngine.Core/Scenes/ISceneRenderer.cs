@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
     using System;

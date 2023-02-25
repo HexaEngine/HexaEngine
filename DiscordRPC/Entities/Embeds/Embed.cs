@@ -34,20 +34,26 @@ namespace DiscordRPC.Entities.Embeds
         ///     Gets or sets the title of this embed.
         /// </summary>
         [JsonPropertyName("title")]
+#pragma warning disable CS8618 // Non-nullable property 'Title' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Title { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Title' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the description of this embed.
         /// </summary>
         [JsonPropertyName("description")]
+#pragma warning disable CS8618 // Non-nullable property 'Description' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Description { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Description' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the URL of this embed.
         ///     <para>Makes the title of this embed a hyperlink.</para>
         /// </summary>
         [JsonPropertyName("url")]
+#pragma warning disable CS8618 // Non-nullable property 'Url' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Url { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Url' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the timestamp of this embed.
@@ -66,31 +72,41 @@ namespace DiscordRPC.Entities.Embeds
         ///     Gets or sets the footer information for this embed.
         /// </summary>
         [JsonPropertyName("footer")]
+#pragma warning disable CS8618 // Non-nullable property 'Footer' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public EmbedFooter Footer { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Footer' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the image information for this embed.
         /// </summary>
         [JsonPropertyName("image")]
+#pragma warning disable CS8618 // Non-nullable property 'Image' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public EmbedMedia Image { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Image' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the thumbnail image information for this embed.
         /// </summary>
         [JsonPropertyName("thumbnail")]
+#pragma warning disable CS8618 // Non-nullable property 'Thumbnail' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public EmbedMedia Thumbnail { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Thumbnail' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the author information for this embed.
         /// </summary>
         [JsonPropertyName("author")]
+#pragma warning disable CS8618 // Non-nullable property 'Author' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public EmbedAuthor Author { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Author' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the fields of this embed.
         /// </summary>
         [JsonPropertyName("fields")]
+#pragma warning disable CS8618 // Non-nullable property 'Fields' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public List<EmbedField> Fields { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Fields' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Adds a title to this embed.

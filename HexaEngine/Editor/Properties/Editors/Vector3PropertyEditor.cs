@@ -22,7 +22,9 @@
 
         public bool Draw(object instance, ref object? value)
         {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
             Vector3 val = (Vector3)value;
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
             switch (mode)
             {

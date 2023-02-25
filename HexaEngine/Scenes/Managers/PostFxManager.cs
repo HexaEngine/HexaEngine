@@ -39,7 +39,9 @@
         private List<FxDependency> dependencies = new();
 
         private List<IEffect2> sorted = new();
+#pragma warning disable CS0169 // The field 'PostFxManager.dirty' is never used
         private bool dirty;
+#pragma warning restore CS0169 // The field 'PostFxManager.dirty' is never used
 
         public PostFxManager(IGraphicsDevice device)
         {

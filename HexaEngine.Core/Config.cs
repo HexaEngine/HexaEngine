@@ -805,7 +805,9 @@
             for (int i = 0; i < properties.Length; i++)
             {
                 PropertyInfo property = properties[i];
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
                 ConfigValue? val = null;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
                 if (property.PropertyType == typeof(string))
                 {
                     val = new(t, property, DataType.String, property.GetValue(t) as string, !property.CanWrite);

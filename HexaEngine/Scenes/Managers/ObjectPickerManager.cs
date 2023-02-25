@@ -24,13 +24,25 @@ namespace HexaEngine.Scenes.Managers
 
     public static class ObjectPickerManager
     {
+#pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IGraphicsDevice device;
+#pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'pipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IGraphicsPipeline pipeline;
+#pragma warning restore CS8618 // Non-nullable field 'pipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'texture' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static Texture texture;
+#pragma warning restore CS8618 // Non-nullable field 'texture' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
+#pragma warning disable CS8618 // Non-nullable field 'computePipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IComputePipeline computePipeline;
+#pragma warning restore CS8618 // Non-nullable field 'computePipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'mouseBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static ConstantBuffer<Vector4> mouseBuffer;
+#pragma warning restore CS8618 // Non-nullable field 'mouseBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static StructuredUavBuffer<SelectionData> outputBuffer;
+#pragma warning restore CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
         public static void Initialize(IGraphicsDevice device, int width, int height)
         {
@@ -69,8 +81,12 @@ namespace HexaEngine.Scenes.Managers
             if (manager == null)
                 return null;
 
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'depthStencilView' in 'void IGraphicsContext.ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)'.
             context.ClearDepthStencilView(texture.DepthStencilView, DepthStencilClearFlags.All, 1, 0);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'depthStencilView' in 'void IGraphicsContext.ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)'.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'renderTargetView' in 'void IGraphicsContext.ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)'.
             context.ClearRenderTargetView(texture.RenderTargetView, default);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'renderTargetView' in 'void IGraphicsContext.ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)'.
             context.SetRenderTarget(texture.RenderTargetView, texture.DepthStencilView);
             pipeline.BeginDraw(context, viewport);
             context.VSSetConstantBuffer(ResourceManager.GetConstantBuffer("CBCamera"), 1);

@@ -20,7 +20,11 @@
         [JsonConverter(typeof(UnmanagedConverter<BoundingSphere>))]
         public BoundingSphere BoundingSphere;
 
+#pragma warning disable CS8618 // Non-nullable field 'Vertices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'Indices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public MeshData()
+#pragma warning restore CS8618 // Non-nullable field 'Indices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Vertices' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
         }
 

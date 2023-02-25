@@ -4,10 +4,10 @@ using HexaEngine;
 
 namespace HexaEngine.Effects
 {
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using System.Numerics;

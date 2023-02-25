@@ -70,7 +70,9 @@
             }
         }
 
+#pragma warning disable CS8765 // Nullability of type of parameter 'value' doesn't match overridden member (possibly because of nullability attributes).
         public override bool TryGetValue(string key, [MaybeNullWhen(false)] out string value)
+#pragma warning restore CS8765 // Nullability of type of parameter 'value' doesn't match overridden member (possibly because of nullability attributes).
         {
             lock (this)
             {

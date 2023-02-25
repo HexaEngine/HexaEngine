@@ -32,7 +32,9 @@ namespace HexaEngine.Editor.Dialogs
             }
         }
 
+#pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public OpenFileDialog()
+#pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             string startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (File.Exists(startingPath))
@@ -52,7 +54,9 @@ namespace HexaEngine.Editor.Dialogs
             currentDir = new DirectoryInfo(CurrentFolder);
         }
 
+#pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public OpenFileDialog(string startingPath)
+#pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             if (File.Exists(startingPath))
             {
@@ -71,7 +75,9 @@ namespace HexaEngine.Editor.Dialogs
             currentDir = new DirectoryInfo(CurrentFolder);
         }
 
+#pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public OpenFileDialog(string startingPath, string? searchFilter = null)
+#pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             if (File.Exists(startingPath))
             {

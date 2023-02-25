@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Fx
+﻿namespace HexaEngine.Core.PostFx
 {
     public enum PostFxFlags
     {

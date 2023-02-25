@@ -115,7 +115,9 @@ namespace HexaEngine.Core.Physics.Characters
         /// <param name="pool">Pool to allocate resources from.</param>
         /// <param name="initialCharacterCapacity">Number of characters to initially allocate space for.</param>
         /// <param name="initialBodyHandleCapacity">Number of body handles to initially allocate space for in the body handle->character mapping.</param>
+#pragma warning disable CS8618 // Non-nullable property 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public CharacterControllers(BufferPool pool, int initialCharacterCapacity = 4096, int initialBodyHandleCapacity = 4096)
+#pragma warning restore CS8618 // Non-nullable property 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
             this.pool = pool;
             characters = new QuickList<CharacterController>(initialCharacterCapacity, pool);
@@ -465,7 +467,9 @@ namespace HexaEngine.Core.Physics.Characters
         /// <summary>
         /// Preallocates space for support data collected during the narrow phase. Should be called before the narrow phase executes.
         /// </summary>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         private void PrepareForContacts(float dt, IThreadDispatcher threadDispatcher = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             Debug.Assert(!contactCollectionWorkerCaches.Allocated, "Worker caches were already allocated; did you forget to call AnalyzeContacts after collision detection to flush the previous frame's results?");
             var threadCount = threadDispatcher == null ? 1 : threadDispatcher.ThreadCount;
@@ -499,7 +503,9 @@ namespace HexaEngine.Core.Physics.Characters
                 }
 
                 boundingBoxExpansionJobIndex = -1;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 threadDispatcher.DispatchWorkers(expandBoundingBoxesWorker, boundingBoxExpansionJobs.Length);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 pool.Return(ref boundingBoxExpansionJobs);
             }
         }

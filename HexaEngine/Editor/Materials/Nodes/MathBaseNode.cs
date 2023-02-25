@@ -14,7 +14,9 @@
         protected PinType[] modes;
         protected int item;
 
+#pragma warning disable CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         protected MathBaseNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
             TitleColor = new(0x0069d5ff);
             TitleHoveredColor = new(0x0078f3ff);

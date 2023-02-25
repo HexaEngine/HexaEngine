@@ -4,9 +4,9 @@ using HexaEngine;
 
 namespace HexaEngine.Effects
 {
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using Silk.NET.OpenAL;
@@ -77,7 +77,9 @@ namespace HexaEngine.Effects
 
         public int Priority { get; set; } = 100;
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             disposedValue = false;
             quad = new(device);

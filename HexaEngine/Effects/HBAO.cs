@@ -66,7 +66,9 @@ namespace HexaEngine.Effects
         private struct BlurParams
         {
             public int Radius;
+#pragma warning disable CS0649 // Field 'HBAO.BlurParams.Padding' is never assigned to, and will always have its default value
             public Vector3 Padding;
+#pragma warning restore CS0649 // Field 'HBAO.BlurParams.Padding' is never assigned to, and will always have its default value
 
             public BlurParams()
             {

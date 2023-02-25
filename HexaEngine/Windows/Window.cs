@@ -61,7 +61,21 @@
 
         public ISceneRenderer Renderer => deferredRenderer;
 
+#pragma warning disable CS8618 // Non-nullable field 'renderDispatcher' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'frameviewer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'deferredRenderer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'initTask' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'swapChain' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public Window()
+#pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'swapChain' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'initTask' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'deferredRenderer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'frameviewer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'renderDispatcher' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
         }
 
@@ -121,7 +135,9 @@
                     if (x.IsFaulted)
                     {
                         ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'e' in 'void ImGuiConsole.Log(Exception e)'.
                         ImGuiConsole.Log(x.Exception);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'e' in 'void ImGuiConsole.Log(Exception e)'.
                     }
                 });
             }
@@ -168,6 +184,7 @@
             var drawing = sceneGraph && initTask.IsCompleted && SceneManager.Current is not null;
 
             if (drawing)
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 lock (SceneManager.Current)
                 {
                     SceneManager.Current.Tick();
@@ -181,6 +198,7 @@
                     renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
                     deferredRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
                 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             OnRender(context);
 

@@ -75,7 +75,9 @@
             }
         }
 
+#pragma warning disable CS0067 // The event 'HexaProject.CollectionChanged' is never used
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;
+#pragma warning restore CS0067 // The event 'HexaProject.CollectionChanged' is never used
 
         public override T? FindRoot<T>() where T : class
         {

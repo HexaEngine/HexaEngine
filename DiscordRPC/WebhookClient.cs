@@ -53,7 +53,9 @@ namespace DiscordRPC
         /// </summary>
         public string WebhookUrl
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             get => _client.BaseAddress.ToString();
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             set
             {
                 if (_isDisposed)
@@ -79,6 +81,9 @@ namespace DiscordRPC
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");
 
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
             {
                 Content = message.Content,
@@ -86,6 +91,9 @@ namespace DiscordRPC
                 Username = profile?.Username,
                 AvatarUrl = profile?.AvatarUrl
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8601 // Possible null reference assignment.
             payload.Validate();
 
             var response = await _client.SendAsync(new HttpRequestMessage()
@@ -98,7 +106,9 @@ namespace DiscordRPC
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
 
+#pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
             return ulong.Parse(JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("id").GetString());
+#pragma warning restore CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
         }
 
         /// <summary>
@@ -110,11 +120,16 @@ namespace DiscordRPC
         /// <returns>The Message ID.</returns>
         /// <exception cref="ObjectDisposedException">Thrown when the client is disposed.</exception>
         /// <exception cref="Exception">Thrown when the webhook fails to execute.</exception>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public async Task<ulong> ExecuteAsync(WebhookMessage message, WebhookAttachment attachment, WebhookProfile profile = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");
 
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
             {
                 Content = message.Content,
@@ -123,6 +138,9 @@ namespace DiscordRPC
                 AvatarUrl = profile?.AvatarUrl,
                 Attachments = new[] { attachment }
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8601 // Possible null reference assignment.
             payload.Validate();
 
             var content = new MultipartFormDataContent
@@ -148,7 +166,9 @@ namespace DiscordRPC
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
 
+#pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
             return ulong.Parse(JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("id").GetString());
+#pragma warning restore CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
         }
 
         /// <summary>
@@ -160,11 +180,16 @@ namespace DiscordRPC
         /// <returns>The Message ID.</returns>
         /// <exception cref="ObjectDisposedException">Thrown when the client is disposed.</exception>
         /// <exception cref="Exception">Thrown when the webhook fails to execute.</exception>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public async Task<ulong> ExecuteAsync(WebhookMessage message, IEnumerable<WebhookAttachment> attachments, WebhookProfile profile = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");
 
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
             {
                 Content = message.Content,
@@ -173,6 +198,9 @@ namespace DiscordRPC
                 AvatarUrl = profile?.AvatarUrl,
                 Attachments = attachments.Select(x => new WebhookAttachment(x, attachments.ToList().IndexOf(x))).ToArray()
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8601 // Possible null reference assignment.
             payload.Validate();
 
             var content = new MultipartFormDataContent()
@@ -196,7 +224,9 @@ namespace DiscordRPC
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
 
+#pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
             return ulong.Parse(JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("id").GetString());
+#pragma warning restore CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
         }
 
         /// <summary>
@@ -212,11 +242,13 @@ namespace DiscordRPC
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");
 
+#pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
             {
                 Content = newMessage.Content,
                 Embeds = newMessage.Embeds?.ToArray()
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
             payload.Validate();
 
             var response = await _client.SendAsync(new HttpRequestMessage()
@@ -244,12 +276,14 @@ namespace DiscordRPC
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");
 
+#pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
             {
                 Content = newMessage.Content,
                 Embeds = newMessage.Embeds?.ToArray(),
                 Attachments = new[] { newAttachment }
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
             payload.Validate();
 
             var content = new MultipartFormDataContent()
@@ -290,12 +324,14 @@ namespace DiscordRPC
             if (_isDisposed)
                 throw new ObjectDisposedException("WebhookClient");
 
+#pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
             {
                 Content = newMessage.Content,
                 Embeds = newMessage.Embeds?.ToArray(),
                 Attachments = newAttachments.Select(x => new WebhookAttachment(x, newAttachments.ToList().IndexOf(x))).ToArray()
             };
+#pragma warning restore CS8601 // Possible null reference assignment.
             payload.Validate();
 
             var content = new MultipartFormDataContent()
@@ -353,22 +389,32 @@ namespace DiscordRPC
         private class Payload
         {
             [JsonPropertyName("content")]
+#pragma warning disable CS8618 // Non-nullable property 'Content' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
             public string Content { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Content' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
             [JsonPropertyName("username")]
+#pragma warning disable CS8618 // Non-nullable property 'Username' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
             public string Username { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Username' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
             [JsonPropertyName("avatar_url")]
+#pragma warning disable CS8618 // Non-nullable property 'AvatarUrl' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
             public string AvatarUrl { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'AvatarUrl' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
             [JsonPropertyName("tts")]
             public bool Tts { get; set; }
 
             [JsonPropertyName("embeds")]
+#pragma warning disable CS8618 // Non-nullable property 'Embeds' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
             public Embed[] Embeds { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Embeds' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
             [JsonPropertyName("attachments")]
+#pragma warning disable CS8618 // Non-nullable property 'Attachments' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
             public WebhookAttachment[] Attachments { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Attachments' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
             public void Validate()
             {

@@ -21,7 +21,9 @@
 
         public bool Draw(object instance, ref object? value)
         {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
             float val = (float)value;
+#pragma warning restore CS8605 // Unboxing a possibly null value.
 
             switch (mode)
             {

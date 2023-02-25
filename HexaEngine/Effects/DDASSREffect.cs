@@ -50,7 +50,9 @@ namespace HexaEngine.Effects
             public Vector2 InvTargetSize;
             public int MaxRayStep;
             public int Enabled;
+#pragma warning disable CS0649 // Field 'DDASSR.DDASSRParams.padd' is never assigned to, and will always have its default value
             public Vector2 padd;
+#pragma warning restore CS0649 // Field 'DDASSR.DDASSRParams.padd' is never assigned to, and will always have its default value
             public float Depthbias;
             public float RayStepScale;
             public float MaxThickness;
@@ -191,7 +193,9 @@ namespace HexaEngine.Effects
             throw new NotImplementedException();
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public async Task Initialize(IGraphicsDevice device, int width, int height)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             throw new NotImplementedException();
         }

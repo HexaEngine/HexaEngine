@@ -31,7 +31,9 @@
         public readonly Mesh Mesh;
         public readonly Material Material;
 
+#pragma warning disable CS8618 // Non-nullable event 'Updated' must contain a non-null value when exiting constructor. Consider declaring the event as nullable.
         public unsafe ModelInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> noCullInstanceBuffer, StructuredBuffer<uint> noCullInstanceOffsets, Mesh mesh, Material material)
+#pragma warning restore CS8618 // Non-nullable event 'Updated' must contain a non-null value when exiting constructor. Consider declaring the event as nullable.
         {
             Name = $"{mesh},{material}";
             Mesh = mesh;

@@ -8,7 +8,9 @@ namespace HexaEngine.Effects
 
     public class SSAO : IEffect
     {
+#pragma warning disable CS0169 // The field 'SSAO.ssao' is never used
         private IGraphicsPipeline ssao;
+#pragma warning restore CS0169 // The field 'SSAO.ssao' is never used
 
         public Task Initialize(IGraphicsDevice device, int width, int height)
         {

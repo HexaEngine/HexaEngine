@@ -4,7 +4,15 @@
 
     public class InputNode : Node
     {
+#pragma warning disable CS8618 // Non-nullable field 'Tangent' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'Normal' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'TexCoord' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'WorldPos' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public InputNode(int id, bool removable, bool isStatic) : base(id, "Geometry", removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable field 'WorldPos' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'TexCoord' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Normal' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Tangent' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             TitleColor = new(0xc80023ff);
             TitleHoveredColor = new(0xe40028ff);

@@ -35,7 +35,11 @@ namespace DiscordRPC.Entities.Embeds
         /// <param name="name">Name of the author.</param>
         /// <param name="url">URL of the author.</param>
         /// <param name="iconUrl">URL to the icon of the author.</param>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public EmbedAuthor(string name, string url = null, string iconUrl = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             Name = name;
             Url = url;

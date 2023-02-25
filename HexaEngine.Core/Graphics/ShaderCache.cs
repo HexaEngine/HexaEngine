@@ -58,7 +58,9 @@
                 inputElements = null;
                 if (DisableCache) return false;
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 var ventry = new ShaderCacheEntry(path, macros, null, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
                 {
@@ -92,7 +94,9 @@
                 inputElements = null;
                 if (DisableCache) return false;
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 var ventry = new ShaderCacheEntry(path, macros, null, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
                 {

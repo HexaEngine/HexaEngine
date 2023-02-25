@@ -84,7 +84,30 @@
 
         public ViewportShading Viewport = Application.InDesignMode ? ViewportShading.Solid : ViewportShading.Rendered;
 
+#pragma warning disable CS8618 // Non-nullable field 'Camera' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'GBuffers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'DSV' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'OSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'Output' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'Irraidance' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'EnvPrefiltered' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'LUT' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'PSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'SSAO' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'CSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public LightManager(IGraphicsDevice device, IInstanceManager instanceManager)
+#pragma warning restore CS8618 // Non-nullable field 'CSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'SSAO' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'PSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'LUT' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'EnvPrefiltered' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Irraidance' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Output' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'OSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'DSV' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'GBuffers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Camera' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             this.device = device;
             this.instanceManager = instanceManager;
@@ -436,7 +459,9 @@
                                 continue;
                             light.QueueIndex = csmCount;
                             shadowDirectionalLights.Add(new((DirectionalLight)light));
+#pragma warning disable CS8629 // Nullable value type may be null.
                             shadowSrvs[ndirectSrvs + csmCount] = (void*)light.GetShadowMap()?.NativePointer;
+#pragma warning restore CS8629 // Nullable value type may be null.
                             csmCount++;
                             break;
 
@@ -445,7 +470,9 @@
                                 continue;
                             light.QueueIndex = osmCount;
                             shadowPointLights.Add(new((PointLight)light));
+#pragma warning disable CS8629 // Nullable value type may be null.
                             shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + osmCount] = (void*)light.GetShadowMap()?.NativePointer;
+#pragma warning restore CS8629 // Nullable value type may be null.
                             osmCount++;
                             break;
 
@@ -454,7 +481,9 @@
                                 continue;
                             light.QueueIndex = psmCount;
                             shadowSpotlights.Add(new((Spotlight)light));
+#pragma warning disable CS8629 // Nullable value type may be null.
                             shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;
+#pragma warning restore CS8629 // Nullable value type may be null.
                             psmCount++;
                             break;
                     }
@@ -570,6 +599,53 @@
                 context.PSSetSamplers(smps, 2, 0);
 
                 forwardWireframe.BeginDraw(context, Output.Viewport);
+
+                for (int j = 0; j < types.Count; j++)
+                {
+                    var type = types[j];
+                    if (type.BeginDraw(context))
+                    {
+                        context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
+                    }
+                }
+                context.ClearState();
+            }
+        }
+
+        public unsafe void ForwardPass(IGraphicsContext context, Camera camera, IRenderTargetView rtv, IDepthStencilView dsv, Viewport viewport)
+        {
+            var types = instanceManager.Types;
+            if (Viewport == ViewportShading.Solid)
+            {
+                context.ClearRenderTargetView(rtv, default);
+                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.All, 1, 0);
+                context.SetRenderTarget(rtv, dsv);
+                context.DSSetConstantBuffers(&cbs[1], 1, 1);
+                context.PSSetConstantBuffers(&cbs[1], 1, 1);
+                context.PSSetSamplers(smps, 2, 0);
+
+                forwardSoild.BeginDraw(context, viewport);
+
+                for (int j = 0; j < types.Count; j++)
+                {
+                    var type = types[j];
+                    if (type.BeginDraw(context))
+                    {
+                        context.DrawIndexedInstancedIndirect(type.ArgBuffer, type.ArgBufferOffset);
+                    }
+                }
+                context.ClearState();
+            }
+
+            if (Viewport == ViewportShading.Wireframe)
+            {
+                context.ClearRenderTargetView(rtv, default);
+                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.All, 1, 0);
+                context.SetRenderTarget(rtv, dsv);
+                context.DSSetConstantBuffers(&cbs[1], 1, 1);
+                context.PSSetSamplers(smps, 2, 0);
+
+                forwardWireframe.BeginDraw(context, viewport);
 
                 for (int j = 0; j < types.Count; j++)
                 {

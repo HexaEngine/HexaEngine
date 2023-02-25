@@ -27,7 +27,9 @@
             stream = fs;
             this.header = header;
 
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Asset[] assets = new Asset[header.Entries.Length];
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             for (int i = 0; i < assets.Length; i++)
             {
                 var entry = header.Entries[i];
@@ -99,7 +101,9 @@
             var root = new DirectoryInfo(path);
             foreach (Asset asset in Assets)
             {
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path' in 'DirectoryInfo Directory.CreateDirectory(string path)'.
                 Directory.CreateDirectory(Path.GetDirectoryName(root.FullName + asset.Path));
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path' in 'DirectoryInfo Directory.CreateDirectory(string path)'.
                 var fs = File.Create(root.FullName + asset.Path);
                 fs.Write(asset.GetData());
                 fs.Flush();

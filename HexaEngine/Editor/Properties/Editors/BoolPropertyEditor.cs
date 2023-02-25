@@ -14,7 +14,9 @@
 
         public bool Draw(object instance, ref object? value)
         {
+#pragma warning disable CS8605 // Unboxing a possibly null value.
             bool val = (bool)value;
+#pragma warning restore CS8605 // Unboxing a possibly null value.
             if (ImGui.Checkbox(name, ref val))
             {
                 value = val;

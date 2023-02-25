@@ -9,7 +9,7 @@
 		<DebugType>embedded</DebugType>
 		<StripSymbols>true</StripSymbols>
 		<AnalysisLevel>latest-all</AnalysisLevel>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Platforms>x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
 

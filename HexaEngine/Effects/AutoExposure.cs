@@ -5,10 +5,10 @@ using HexaEngine;
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.PostFx;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -192,7 +192,9 @@ namespace HexaEngine.Effects
             lumaAvgParams.Local->PixelCount = (uint)(width * height);
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public async void Resize(int width, int height)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             this.width = width;
             this.height = height;

@@ -17,7 +17,9 @@
         private readonly List<string> models = new();
         private readonly List<ModelInstance> instances = new();
         private GameObject? gameObject;
+#pragma warning disable CS8618 // Non-nullable field 'scene' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Scene scene;
+#pragma warning restore CS8618 // Non-nullable field 'scene' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private bool initialized;
 
         static RendererComponent()
@@ -48,7 +50,9 @@
             initialized = false;
             for (int i = 0; i < instances.Count; i++)
             {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 gameObject.GetScene().InstanceManager.DestroyInstance(instances[i]);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
             instances.Clear();
         }
@@ -58,13 +62,17 @@
             models.Add(model);
             if (initialized)
             {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
         }
 
         public void UpdateModel(string model)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             instances.Add(gameObject.GetScene().InstanceManager.CreateInstance(model, gameObject));
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         public void RemoveMesh(string model)

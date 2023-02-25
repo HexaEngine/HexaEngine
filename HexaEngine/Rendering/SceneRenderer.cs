@@ -4,13 +4,13 @@ namespace HexaEngine.Rendering
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Events;
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
@@ -58,16 +58,22 @@ namespace HexaEngine.Rendering
 
         private DepthMipChain hizBuffer;
 
+#pragma warning disable CS0169 // The field 'SceneRenderer.ssrBuffer' is never used
         private Texture ssrBuffer;
+#pragma warning restore CS0169 // The field 'SceneRenderer.ssrBuffer' is never used
         private Texture depthbuffer;
 
         private ISamplerState pointSampler;
         private ISamplerState anisoSampler;
         private ISamplerState linearSampler;
 
+#pragma warning disable CS0169 // The field 'SceneRenderer.dof' is never used
         private DepthOfField dof;
+#pragma warning restore CS0169 // The field 'SceneRenderer.dof' is never used
         private HBAO ssao;
+#pragma warning disable CS0649 // Field 'SceneRenderer.ssr' is never assigned to, and will always have its default value null
         private DDASSR ssr;
+#pragma warning restore CS0649 // Field 'SceneRenderer.ssr' is never assigned to, and will always have its default value null
 
         private BRDFLUT brdfLUT;
 
@@ -84,11 +90,17 @@ namespace HexaEngine.Rendering
         private int height;
         private int rendererWidth;
         private int rendererHeight;
+#pragma warning disable CS0169 // The field 'SceneRenderer.windowWidth' is never used
         private int windowWidth;
+#pragma warning restore CS0169 // The field 'SceneRenderer.windowWidth' is never used
+#pragma warning disable CS0169 // The field 'SceneRenderer.windowHeight' is never used
         private int windowHeight;
+#pragma warning restore CS0169 // The field 'SceneRenderer.windowHeight' is never used
         private bool windowResized;
         private bool sceneChanged;
+#pragma warning disable CS0169 // The field 'SceneRenderer.sceneVariablesChanged' is never used
         private bool sceneVariablesChanged;
+#pragma warning restore CS0169 // The field 'SceneRenderer.sceneVariablesChanged' is never used
         private readonly RendererProfiler profiler = new(10);
 
         public RendererProfiler Profiler => profiler;
@@ -108,7 +120,10 @@ namespace HexaEngine.Rendering
 
 #nullable enable
 
+#pragma warning disable CS8618 // Non-nullable field 'lights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public SceneRenderer()
+#pragma warning restore CS8618 // Non-nullable field 'lights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
         }
 
@@ -164,7 +179,9 @@ namespace HexaEngine.Rendering
             ResourceManager.AddShaderResourceView("GBuffer.Position", gbuffer.SRVs[1]);
             ResourceManager.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[2]);
             ResourceManager.AddDepthStencilView("SwapChain.DSV", depthStencil.DSV);
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'srv' in 'void ResourceManager.AddShaderResourceView(string name, IShaderResourceView srv)'.
             ResourceManager.AddShaderResourceView("SwapChain.SRV", depthStencil.SRV);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'srv' in 'void ResourceManager.AddShaderResourceView(string name, IShaderResourceView srv)'.
             ResourceManager.AddTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
 
             depthbuffer = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget), DepthStencilDesc.Default);
@@ -396,7 +413,10 @@ namespace HexaEngine.Rendering
             scene.Lights.EndResize(width, height);
         }
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+
         public unsafe async void LoadScene(Scene scene)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             SceneVariables variables = scene.Variables;
 
@@ -513,12 +533,16 @@ namespace HexaEngine.Rendering
                     }
                 }
                 context.ClearState();
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'input' in 'void DepthMipChain.Generate(IGraphicsContext context, IShaderResourceView input)'.
                 hizBuffer.Generate(context, occlusionStencil.SRV);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'input' in 'void DepthMipChain.Generate(IGraphicsContext context, IShaderResourceView input)'.
                 CullingManager.DoCulling(context, hizBuffer);
             }
             else
             {
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'input' in 'void DepthMipChain.Generate(IGraphicsContext context, IShaderResourceView input)'.
                 hizBuffer.Generate(context, depthStencil.SRV);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'input' in 'void DepthMipChain.Generate(IGraphicsContext context, IShaderResourceView input)'.
                 CullingManager.DoCulling(context, hizBuffer);
             }
 #if PROFILE
@@ -563,6 +587,7 @@ namespace HexaEngine.Rendering
 #if PROFILE
             profiler.Start(lights);
 #endif
+            bool skipPost = false;
             // Light Pass
             if (lights.Viewport == ViewportShading.Rendered)
             {
@@ -571,20 +596,25 @@ namespace HexaEngine.Rendering
             }
             else
             {
-                lights.ForwardPass(context, camera);
+                lights.ForwardPass(context, camera, swapChain.BackbufferRTV, swapChain.BackbufferDSV, viewport);
+                skipPost = true;
             }
 #if PROFILE
             profiler.End(lights);
 #endif
 
             skybox.Draw(context);
+
+            if (!skipPost)
+            {
 #if PROFILE
-            profiler.Start(postProcessing);
+                profiler.Start(postProcessing);
 #endif
-            postProcessing.Draw(context);
+                postProcessing.Draw(context);
 #if PROFILE
-            profiler.End(postProcessing);
+                profiler.End(postProcessing);
 #endif
+            }
 
 #if PROFILE
             profiler.Start(debug);

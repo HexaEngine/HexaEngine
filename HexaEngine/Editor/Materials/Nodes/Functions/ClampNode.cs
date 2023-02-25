@@ -7,7 +7,13 @@
 
     public class ClampNode : MathFuncBaseNode
     {
+#pragma warning disable CS8618 // Non-nullable field 'InMax' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'InMin' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'InValue' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public ClampNode(int id, bool removable, bool isStatic) : base(id, "Clamp", removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable field 'InValue' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'InMin' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'InMax' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
         }
 

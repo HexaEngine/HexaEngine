@@ -10,8 +10,12 @@
     public class ListenerComponent : IComponent
     {
         private bool isActive;
+#pragma warning disable CS8618 // Non-nullable field 'listener' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Listener listener;
+#pragma warning restore CS8618 // Non-nullable field 'listener' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'gameObject' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private GameObject gameObject;
+#pragma warning restore CS8618 // Non-nullable field 'gameObject' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
         [EditorProperty("Is Active")]
         public bool IsActive

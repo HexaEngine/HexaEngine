@@ -24,7 +24,9 @@
         private readonly Stack<string> forwardHistory = new();
         private string? CurrentFolder = null;
 
+#pragma warning disable CS0169 // The field 'AssetExplorer.renameItem' is never used
         private Item? renameItem;
+#pragma warning restore CS0169 // The field 'AssetExplorer.renameItem' is never used
 
         private struct Item
         {
@@ -44,7 +46,9 @@
             Refresh();
             currentDir = null;
             parentDir = currentDir?.Parent;
+#pragma warning disable CS8622 // Nullability of reference types in type of parameter 'obj' of 'void AssetExplorer.ProjectManager_ProjectLoaded(HexaProject obj)' doesn't match the target delegate 'Action<HexaProject?>' (possibly because of nullability attributes).
             ProjectManager.ProjectChanged += ProjectManager_ProjectLoaded;
+#pragma warning restore CS8622 // Nullability of reference types in type of parameter 'obj' of 'void AssetExplorer.ProjectManager_ProjectLoaded(HexaProject obj)' doesn't match the target delegate 'Action<HexaProject?>' (possibly because of nullability attributes).
         }
 
         private void ProjectManager_ProjectLoaded(HexaProject obj)

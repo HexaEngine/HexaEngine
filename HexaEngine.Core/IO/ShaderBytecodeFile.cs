@@ -13,7 +13,13 @@
         public InputElementDescription[] InputElements;
         public ShaderMacro[] Macros;
 
+#pragma warning disable CS8618 // Non-nullable field 'Bytecode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'Macros' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'InputElements' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public ShaderBytecodeFile(string path)
+#pragma warning restore CS8618 // Non-nullable field 'InputElements' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Macros' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning restore CS8618 // Non-nullable field 'Bytecode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             Read(FileSystem.ReadAllBytes(path), Encoding.UTF8.GetDecoder());
         }

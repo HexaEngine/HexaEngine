@@ -30,12 +30,16 @@ namespace DiscordRPC.Entities
         /// <summary>
         ///     Gets or sets the username to override the webhook profile.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'Username' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Username { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Username' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Gets or sets the URL to the avatar to override the webhook profile.
         /// </summary>
+#pragma warning disable CS8618 // Non-nullable property 'AvatarUrl' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string AvatarUrl { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'AvatarUrl' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         /// <summary>
         ///     Adds a username override to this profile override.

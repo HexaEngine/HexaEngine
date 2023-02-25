@@ -35,7 +35,9 @@ namespace DiscordRPC.Entities
         /// <param name="path">Path to the file.</param>
         /// <param name="altText">Alt-text for the file.</param>
         /// <param name="spoiler">Whether the file should have the spoiler tag.</param>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public WebhookAttachment(string path, string altText = null, bool spoiler = false)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             FileName = (spoiler ? "SPOILER_" : null) + Path.GetFileName(path);
             AltText = altText;

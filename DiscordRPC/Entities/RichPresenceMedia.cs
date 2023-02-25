@@ -32,7 +32,9 @@ namespace DiscordRPC.Entities
         /// </summary>
         /// <param name="imageKey">Image key from the <see href="https://discord.com/developers">Discord Developer Portal</see>.</param>
         /// <param name="tooltip">Image tooltip.</param>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public RichPresenceMedia(string imageKey, string tooltip = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             ImageKey = imageKey;
             Tooltip = tooltip;

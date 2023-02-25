@@ -16,7 +16,9 @@
         private const float speed = 10;
         private static bool first = true;
 
+#pragma warning disable CS8618 // Non-nullable field 'Out' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         public OutputNode(int id, bool removable, bool isStatic) : base(id, "Output", removable, isStatic)
+#pragma warning restore CS8618 // Non-nullable field 'Out' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             TitleColor = new(0xc80023ff);
             TitleHoveredColor = new(0xe40028ff);

@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Windows;
-    using E12134PhysX;
     using Silk.NET.SDL;
     using System.Collections.Generic;
 
@@ -19,9 +18,17 @@
         private static bool inDesignMode;
         private static bool inEditorMode;
 
+#pragma warning disable CS8618 // Non-nullable field 'adapter' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS0169 // The field 'Application.adapter' is never used
         private static IGraphicsAdapter adapter;
+#pragma warning restore CS0169 // The field 'Application.adapter' is never used
+#pragma warning restore CS8618 // Non-nullable field 'adapter' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IGraphicsDevice device;
+#pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+#pragma warning disable CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IGraphicsContext context;
+#pragma warning restore CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
 #nullable disable
         public static IRenderWindow MainWindow => mainWindow;

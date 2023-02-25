@@ -25,7 +25,9 @@
             return !Equals(default(ObservableKeyValuePair<TKey, TValue>), r);
         }
 
+#pragma warning disable CS0693 // Type parameter 'TKey' has the same name as the type parameter from outer type 'ObservableDictionary<TKey, TValue>'
         private bool Equals<TKey>(TKey a, TKey b)
+#pragma warning restore CS0693 // Type parameter 'TKey' has the same name as the type parameter from outer type 'ObservableDictionary<TKey, TValue>'
         {
             return EqualityComparer<TKey>.Default.Equals(a, b);
         }
@@ -57,7 +59,9 @@
 
         public virtual bool TryGetValue(TKey key, out TValue value)
         {
+#pragma warning disable CS8601 // Possible null reference assignment.
             value = default;
+#pragma warning restore CS8601 // Possible null reference assignment.
             var r = GetKvpByTheKey(key);
             if (r == null)
             {
@@ -69,7 +73,11 @@
 
         private ObservableKeyValuePair<TKey, TValue> GetKvpByTheKey(TKey key)
         {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
             return ThisAsCollection().FirstOrDefault((i) => i.Key.Equals(key));
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
         }
 
         public ICollection<TValue> Values

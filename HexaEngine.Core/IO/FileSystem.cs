@@ -115,7 +115,9 @@
 
         public static bool Exists(string? path)
         {
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path' in 'string Path.GetFullPath(string path)'.
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path' in 'string Path.GetFullPath(string path)'.
             if (string.IsNullOrWhiteSpace(realPath)) return false;
             if (fileIndices.ContainsKey(realPath))
             {

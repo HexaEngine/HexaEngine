@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Fx
+﻿namespace HexaEngine.Core.PostFx
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;

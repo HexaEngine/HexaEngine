@@ -12,7 +12,9 @@
         private string path = string.Empty;
         private OpenFileDialog dialog = new();
         private bool loaded = false;
+#pragma warning disable CS0169 // The field 'ImportDialog.loadTask' is never used
         private Task? loadTask;
+#pragma warning restore CS0169 // The field 'ImportDialog.loadTask' is never used
 
         public override string Name => "Import Scene";
 

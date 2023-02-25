@@ -33,7 +33,9 @@ namespace DiscordRPC.Entities
         /// <param name="currentSize">Current size of the party.</param>
         /// <param name="maxSize">Maximum size of the party.</param>
         /// <param name="customId">Sets the party ID to a custom value. A <see cref="Guid"/> is used instead if null.</param>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public RichPresenceParty(int currentSize, int maxSize, string customId = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             CurrentSize = currentSize;
             MaxSize = maxSize;

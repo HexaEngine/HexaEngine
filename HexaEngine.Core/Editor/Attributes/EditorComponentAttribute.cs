@@ -10,7 +10,9 @@
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class EditorComponentAttribute : Attribute
     {
+#pragma warning disable CS8618 // Non-nullable property 'Editor' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public EditorComponentAttribute([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type type, string name)
+#pragma warning restore CS8618 // Non-nullable property 'Editor' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
             Type = type;
             Constructor = () => (IComponent?)Activator.CreateInstance(type) ?? throw new();

@@ -203,7 +203,9 @@
                 inputElements ??= elements;
 
                 ID3D11InputLayout* il;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 Helper.Convert(inputElements, descs);
                 device.Device->CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il);
                 Helper.Free(descs, inputElements.Length);

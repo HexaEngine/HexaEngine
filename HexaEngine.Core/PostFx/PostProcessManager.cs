@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Core.Fx
+﻿namespace HexaEngine.Core.PostFx
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using System.Diagnostics.CodeAnalysis;
@@ -18,10 +18,15 @@
         private int width;
         private int height;
 
+#pragma warning disable CS0649 // Field 'PostProcessManager.list' is never assigned to, and will always have its default value null
         private ICommandList? list;
+#pragma warning restore CS0649 // Field 'PostProcessManager.list' is never assigned to, and will always have its default value null
         private bool isDirty = true;
         private bool isInitialized = false;
         private int swapIndex;
+
+        private readonly Quad quad;
+        private readonly IGraphicsPipeline copy;
 
         public IShaderResourceView? Input;
         public IRenderTargetView? Output;
@@ -39,6 +44,13 @@
 
             deferredContext = device.CreateDeferredContext();
             macros = Array.Empty<ShaderMacro>();
+
+            quad = new(device);
+            copy = device.CreateGraphicsPipeline(new()
+            {
+                PixelShader = "effects/copy/ps.hlsl",
+                VertexShader = "effects/copy/vs.hlsl",
+            });
         }
 
         public int Count => effectsSorted.Count;
@@ -220,7 +232,14 @@
         public void Draw(IGraphicsContext context)
         {
             if (!enabled)
+            {
+                context.SetRenderTarget(Output, null);
+                context.PSSetShaderResource(Input, 0);
+                quad.DrawAuto(context, copy, Viewport);
+                context.ClearState();
                 return;
+            }
+              
             if (Input == null || Output == null)
                 return;
 
@@ -285,7 +304,9 @@
 
                         if ((effect.Flags & PostFxFlags.NoInput) == 0)
                         {
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
                             effect.SetInput(previous);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
                         }
 
                         if ((effect.Flags & PostFxFlags.NoOutput) == 0)
@@ -293,11 +314,15 @@
                             var buffer = buffers[swapIndex];
 
                             if (i != effectsSorted.Count - 1)
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
                                 effect.SetOutput(buffer.RenderTargetView, buffers[swapIndex].Viewport);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
                             else
                                 effect.SetOutput(Output, Viewport);
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             previous = buffer.ShaderResourceView;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
                             swapIndex++;
                             if (swapIndex == buffers.Count)
@@ -360,6 +385,8 @@
                 buffers.Clear();
                 list?.Dispose();
                 deferredContext.Dispose();
+                quad.Dispose();
+                copy.Dispose();
                 disposedValue = true;
             }
         }

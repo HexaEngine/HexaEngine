@@ -209,7 +209,9 @@
             }
             if (IsStruct)
             {
+#pragma warning disable CS8603 // Possible null reference return.
                 return structName;
+#pragma warning restore CS8603 // Possible null reference return.
             }
             throw new();
         }

@@ -24,7 +24,9 @@ namespace HexaEngine.Rendering
         private IGraphicsPipeline pipeline;
         private ISwapChain swapChain;
         private ImGuiInputHandler inputHandler;
+#pragma warning disable CS0169 // The field 'ImGuiRenderer.test' is never used
         private nint test;
+#pragma warning restore CS0169 // The field 'ImGuiRenderer.test' is never used
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
         private IBuffer constantBuffer;

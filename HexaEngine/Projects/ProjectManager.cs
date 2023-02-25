@@ -49,7 +49,9 @@
 
         public static event Action<HexaProject?>? ProjectChanged;
 
+#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         public static async void Load(string path)
+#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             CurrentProjectPath = path;
             Project = HexaProject.Load(CurrentProjectPath);
@@ -67,8 +69,14 @@
             Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
             ProjectHistory.AddEntry(Project.Name, CurrentProjectPath);
             ProjectChanged?.Invoke(Project);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             string solutionName = Path.GetFileName(CurrentFolder);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2)'.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path1' in 'string Path.Combine(string path1, string path2)'.
             string projectPath = Path.Combine(CurrentFolder, solutionName);
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path1' in 'string Path.Combine(string path1, string path2)'.
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2)'.
             watcher = new(projectPath);
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
             watcher.Changed += Watcher_Changed;
@@ -142,8 +150,14 @@
 
         private static void Build()
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             string solutionName = Path.GetFileName(CurrentFolder);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path1' in 'string Path.Combine(string path1, string path2, string path3)'.
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path1' in 'string Path.Combine(string path1, string path2, string path3)'.
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
             Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, "bin"));
             scriptProjectChanged = false;
         }
@@ -277,7 +291,9 @@
 
             // copy native runtimes
             string localRuntimesPath = Path.GetFullPath("runtimes");
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
             string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier, "native");
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
             CopyDirectory(targetRuntimePath, appTempPublishPath, true);
 
             // copy binaries to build folder
@@ -413,8 +429,12 @@ namespace App
         static ComponentRegistry()
         {
             Scripts = new();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             Assembly assembly = Assembly.GetAssembly(typeof(Window));
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             _components = new(assembly.GetTypes().AsParallel().Where(x => x.IsClass && !x.IsGenericType && x.GetInterface(nameof(IComponent)) != null));
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             Components = new((IEnumerable<Type>)_components);
             AssemblyManager.AssemblyLoaded += AssemblyLoaded;
             AssemblyManager.AssembliesUnloaded += AssembliesUnloaded;
@@ -446,11 +466,15 @@ namespace App
 
         public static void RegisterAssembly(string path)
         {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             Assembly assembly = AssemblyManager.Load(path);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             foreach (var type in assembly.GetTypes().AsParallel().Where(x => x.IsClass && !x.IsGenericType && x.GetInterface(nameof(IComponent)) != null))
             {
                 Components.Add(type);
             }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             foreach (var type in AssemblyManager.GetAssignableTypes<IScript>(assembly))
             {

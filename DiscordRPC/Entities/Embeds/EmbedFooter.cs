@@ -34,7 +34,9 @@ namespace DiscordRPC.Entities.Embeds
         /// </summary>
         /// <param name="text">Footer text.</param>
         /// <param name="iconUrl">URL to the footer icon.</param>
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         public EmbedFooter(string text, string iconUrl = null)
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             Text = text;
             IconUrl = iconUrl;

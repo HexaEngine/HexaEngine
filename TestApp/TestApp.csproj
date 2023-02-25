@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Platforms>AnyCPU;x64</Platforms>
+	  <Platforms>x64</Platforms>
 	  <AnalysisLevel>latest-all</AnalysisLevel>
 	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 	  <EnablePreviewFeatures>True</EnablePreviewFeatures>

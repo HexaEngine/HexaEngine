@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.PostFx
 {
-    using HexaEngine.Core.Fx;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using System;
@@ -24,7 +23,9 @@
 
         public PrimitiveTopology Topology { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable property 'Name' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Name { get; set; }
+#pragma warning restore CS8618 // Non-nullable property 'Name' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         public PostFxFlags Flags { get; set; }
 
@@ -50,7 +51,11 @@
             var fs = File.OpenRead(path);
             var result = serializer.Deserialize(fs);
             fs.Close();
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning disable CS8603 // Possible null reference return.
             return (PostFx)result;
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
         }
 
         public void Dispose()
@@ -95,7 +100,9 @@
 
         XmlSchema IXmlSerializable.GetSchema()
         {
+#pragma warning disable CS8603 // Possible null reference return.
             return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public void ReadXml(XmlReader reader)
@@ -110,14 +117,22 @@
                     case nameof(GraphicsPass):
                         {
                             XmlSerializer xmlSerializer = new(typeof(GraphicsPass));
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             Add((IPostFxPass)xmlSerializer.Deserialize(reader));
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
                         }
                         break;
 
                     case nameof(ComputePass):
                         {
                             XmlSerializer xmlSerializer = new(typeof(ComputePass));
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             Add((IPostFxPass)xmlSerializer.Deserialize(reader));
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
                         }
                         break;
 
@@ -168,8 +183,12 @@
 
     public class GraphicsPass : IPostFxPass
     {
+#pragma warning disable CS0169 // The field 'GraphicsPass.cbvs' is never used
         private unsafe void** cbvs;
+#pragma warning restore CS0169 // The field 'GraphicsPass.cbvs' is never used
+#pragma warning disable CS0169 // The field 'GraphicsPass.srvs' is never used
         private unsafe void** srvs;
+#pragma warning restore CS0169 // The field 'GraphicsPass.srvs' is never used
 
         public string? OutputBuffer { get; set; }
 
