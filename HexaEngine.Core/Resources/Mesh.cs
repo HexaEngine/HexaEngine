@@ -2,6 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Structs;
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;

@@ -3,7 +3,7 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Scenes.Managers.Forward;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;

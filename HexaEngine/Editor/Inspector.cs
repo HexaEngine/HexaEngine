@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;

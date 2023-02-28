@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Core.Resources
+﻿using HexaEngine.Core.Resources;
+
+namespace HexaEngine.Core.Instances
 {
     using HexaEngine.Core.Scenes;
     using System;

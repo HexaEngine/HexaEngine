@@ -4,9 +4,9 @@ namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
     using System.Numerics;
     using Texture = Texture;

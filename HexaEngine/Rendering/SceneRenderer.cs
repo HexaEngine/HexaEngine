@@ -3,6 +3,7 @@
 namespace HexaEngine.Rendering
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Culling;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;

@@ -1,15 +1,15 @@
-﻿namespace HexaEngine.Core.Resources
+﻿namespace HexaEngine.Core.Instances
 {
     using HexaEngine.Core.Graphics;
 
-    public unsafe class Texture : IDisposable
+    public unsafe class TextureInstance : IDisposable
     {
         public string _name;
         private IShaderResourceView? srv;
         private int instanceCount;
         private bool disposedValue;
 
-        public Texture(string name, int instances)
+        public TextureInstance(string name, int instances)
         {
             _name = name;
             Volatile.Write(ref instanceCount, instances);
@@ -59,7 +59,7 @@
             }
         }
 
-        ~Texture()
+        ~TextureInstance()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

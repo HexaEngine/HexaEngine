@@ -31,7 +31,7 @@
 
         event EventHandler? Updated;
 
-        Transform Clone();
+        object Clone();
         TransformSnapshot CreateSnapshot();
         bool Recalculate();
         void RestoreState();

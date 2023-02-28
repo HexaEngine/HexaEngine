@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Scenes.Managers
+﻿namespace HexaEngine.Core.Instances
 {
     using System.Numerics;
 

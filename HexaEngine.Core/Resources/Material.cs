@@ -3,6 +3,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Pipelines.Deferred;
+    using TextureInstance = Instances.TextureInstance;
 
     public unsafe class Material : IDisposable
     {
@@ -11,26 +13,28 @@
         public MaterialData desc;
         public IBuffer CB;
         public ISamplerState SamplerState;
-        public Texture? AlbedoTexture;
-        public Texture? NormalTexture;
-        public Texture? DisplacementTexture;
-        public Texture? RoughnessTexture;
-        public Texture? MetalnessTexture;
-        public Texture? EmissiveTexture;
-        public Texture? AoTexture;
-        public Texture? RoughnessMetalnessTexture;
+        public TextureInstance? AlbedoTexture;
+        public TextureInstance? NormalTexture;
+        public TextureInstance? DisplacementTexture;
+        public TextureInstance? RoughnessTexture;
+        public TextureInstance? MetalnessTexture;
+        public TextureInstance? EmissiveTexture;
+        public TextureInstance? AoTexture;
+        public TextureInstance? RoughnessMetalnessTexture;
         public void** SRVs;
+        public IGraphicsPipeline Pipeline;
         private int instances;
         private bool disposedValue;
         private bool loaded;
 
-        public Material(MaterialData desc, IBuffer cB, ISamplerState samplerState)
+        public Material(MaterialData desc, IGraphicsPipeline pipeline, IBuffer cB, ISamplerState samplerState)
         {
             this.desc = desc;
             name = desc.Name;
             CB = cB;
             SamplerState = samplerState;
             SRVs = AllocArray(7);
+            Pipeline = pipeline;       
         }
 
         public string Name => name;
@@ -53,6 +57,42 @@
             if (DisplacementTexture != null)
                 context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
             return true;
+        }
+
+        public void Draw(IGraphicsContext context, uint indexCount,  uint instanceCount)
+        {
+            if (!loaded) return;
+            if (dirty)
+            {
+                context.Write(CB, (CBMaterial)desc);
+                dirty = false;
+            }
+            context.DSSetConstantBuffer(CB, 2);
+            context.PSSetConstantBuffer(CB, 2);
+            context.PSSetSampler(SamplerState, 0);
+            context.DSSetSampler(SamplerState, 0);
+            context.PSSetShaderResources(SRVs, 7, 0);
+            if (DisplacementTexture != null)
+                context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+        }
+
+        public void DrawIndriect(IGraphicsContext context, IBuffer argBuffer, uint offset)
+        {
+            if (!loaded) return;
+            if (dirty)
+            {
+                context.Write(CB, (CBMaterial)desc);
+                dirty = false;
+            }
+            context.DSSetConstantBuffer(CB, 2);
+            context.PSSetConstantBuffer(CB, 2);
+            context.PSSetSampler(SamplerState, 0);
+            context.DSSetSampler(SamplerState, 0);
+            context.PSSetShaderResources(SRVs, 7, 0);
+            if (DisplacementTexture != null)
+                context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
+            context.DrawIndexedInstancedIndirect(argBuffer, offset);
         }
 
         public void Update(MaterialData desc)

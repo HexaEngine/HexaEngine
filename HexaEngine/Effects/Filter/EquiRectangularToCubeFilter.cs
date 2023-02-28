@@ -1,12 +1,11 @@
 ﻿#nullable disable
 
-using HexaEngine;
 
 namespace HexaEngine.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources.Buffers;
+    using HexaEngine.Core.Graphics.Structs;
     using System;
     using System.Numerics;
     using System.Threading.Tasks;
@@ -49,7 +48,7 @@ namespace HexaEngine.Effects.Filter
                 Vector3.UnitY, // +X
                 Vector3.UnitY, // -X
                 -Vector3.UnitZ,// +Y
-                Vector3.UnitZ,// -Y
+                Vector3.UnitZ, // -Y
                 Vector3.UnitY, // +Z
                 Vector3.UnitY, // -Z
             };

@@ -1,5 +1,6 @@
-﻿namespace HexaEngine.Core.Resources
+﻿namespace HexaEngine.Core.Instances
 {
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
 

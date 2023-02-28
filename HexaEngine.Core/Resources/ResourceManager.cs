@@ -5,16 +5,18 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Pipelines.Deferred;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
+    using TextureInstance = Instances.TextureInstance;
 
     public static class ResourceManager
     {
+        private static Geometry geometry;
         private static readonly ConcurrentDictionary<string, Mesh> meshes = new();
         private static readonly ConcurrentDictionary<string, Material> materials = new();
-        private static readonly ConcurrentDictionary<string, Texture> textures = new();
+        private static readonly ConcurrentDictionary<string, TextureInstance> textures = new();
         private static readonly List<IDisposable> resources = new();
         private static readonly Dictionary<string, IDisposable> sharedResources = new();
         private static readonly Dictionary<string, TaskCompletionSource> waitingHandles = new();
@@ -26,6 +28,8 @@
         public static void Initialize(IGraphicsDevice device)
         {
             ResourceManager.device = device;
+            geometry = new Geometry();
+            geometry.Initialize(device, 0, 0).Wait();
         }
 
         /// <summary>
@@ -132,6 +136,7 @@
                 }
 
                 modelMaterial = new(material,
+                    geometry.pipeline,
                     device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
                     device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
                 modelMaterial.AddRef();
@@ -162,7 +167,10 @@
                     return modelMaterial;
                 }
 
+                
+
                 modelMaterial = new(material,
+                    geometry.pipeline,
                     device.CreateBuffer((CBMaterial)material, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
                     device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
                 modelMaterial.AddRef();
@@ -263,11 +271,11 @@
             UnloadTexture(desc.AoTexture);
         }
 
-        public static Texture? LoadTexture(string? name)
+        public static TextureInstance? LoadTexture(string? name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (string.IsNullOrEmpty(name)) return null;
-            Texture? texture;
+            TextureInstance? texture;
             lock (textures)
             {
                 if (textures.TryGetValue(fullname, out texture))
@@ -288,12 +296,12 @@
             return texture;
         }
 
-        public static Task<Texture?> AsyncLoadTexture(string? name)
+        public static Task<TextureInstance?> AsyncLoadTexture(string? name)
         {
             return Task.Factory.StartNew(() => LoadTexture(name));
         }
 
-        public static void UnloadTexture(Texture? texture)
+        public static void UnloadTexture(TextureInstance? texture)
         {
             if (texture == null) return;
             texture.RemoveRef();
@@ -307,7 +315,7 @@
             }
         }
 
-        public static void UpdateTexture(ref Texture? texture, string name)
+        public static void UpdateTexture(ref TextureInstance? texture, string name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (texture?.Name == fullname) return;
@@ -315,7 +323,7 @@
             texture = LoadTexture(name);
         }
 
-        public static async Task<Texture?> AsyncUpdateTexture(Texture? texture, string name)
+        public static async Task<TextureInstance?> AsyncUpdateTexture(TextureInstance? texture, string name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (texture?.Name == fullname) return texture;

@@ -1,10 +1,11 @@
-﻿namespace HexaEngine.Core.Resources
+﻿namespace HexaEngine.Core.Instances
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
     using System.Numerics;
@@ -271,7 +272,7 @@
             return true;
         }
 
-        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Mathematics.Viewport viewport, int indexCount)
+        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, int indexCount)
         {
             if (Material == null) return;
             if (semaphore.CurrentCount == 0) return;

@@ -1,5 +1,6 @@
-﻿namespace HexaEngine.Core.Scenes.Managers
+﻿namespace HexaEngine.Core.Instances
 {
+    using HexaEngine.Core.Culling;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Resources;

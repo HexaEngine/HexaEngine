@@ -3,7 +3,7 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Properties;
     using ImGuiNET;

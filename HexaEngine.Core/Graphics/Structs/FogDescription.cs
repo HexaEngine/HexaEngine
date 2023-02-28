@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Resources.Buffers
+﻿namespace HexaEngine.Core.Graphics.Structs
 {
     using System.Numerics;
     using System.Runtime.InteropServices;

@@ -43,7 +43,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
-		<ProjectReference Include="..\HexaEngine.PhysX\PhysX.Net.vcxproj" />
 		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
 		<ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET.csproj" />
 		<ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />

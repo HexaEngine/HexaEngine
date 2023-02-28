@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Resources
+﻿namespace HexaEngine.Core.Graphics.Structs
 {
     public struct DrawIndexedInstancedIndirectArgs
     {

@@ -5,6 +5,7 @@
     using BepuUtilities.Memory;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Physics.Characters;

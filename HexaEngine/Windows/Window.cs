@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Windows
+﻿using HexaEngine.Core.Culling;
+
+namespace HexaEngine.Windows
 {
     using HexaEngine.Audio;
     using HexaEngine.Core;
@@ -15,7 +17,7 @@
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
-    using CullingManager = Core.Scenes.Managers.CullingManager;
+    using CullingManager = CullingManager;
 
     public enum RendererFlags
     {
