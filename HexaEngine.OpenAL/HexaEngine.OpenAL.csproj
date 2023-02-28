@@ -18,8 +18,4 @@
     <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.21.1.1" PrivateAssets="contentfiles;build" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
-  </ItemGroup>
-
 </Project>

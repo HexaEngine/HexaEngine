@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Windows;
     using HexaEngine.DirectXTex;
+    using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
@@ -604,6 +606,28 @@
             }
             TexMetadata metadata = image.GetMetadata();
 
+            if (metadata.MipLevels == 1)
+            {
+                bool isError = false;
+                ScratchImage image1 = new();
+                try
+                {
+                    DirectXTex.GenerateMipMaps(&image, TexFilterFlags.DEFAULT, (ulong)MathUtil.ComputeMipLevels((int)metadata.Width, (int)metadata.Height), &image1);
+                }
+                catch (Exception ex)
+                {
+                    image1.Release();
+                    isError = true;
+                    ImGuiConsole.Log(ex);
+                }
+                if (!isError)
+                {
+                    image.Release();
+                    image = image1;
+                    metadata = image.GetMetadata();
+                }
+            }
+
             ResourceMiscFlag optionFlags = metadata.IsCubemap() ? ResourceMiscFlag.TextureCube : ResourceMiscFlag.None;
             ID3D11Resource* resource;
             DirectXTex.CreateTextureEx((ID3D11Device*)(IntPtr)Device, &image, Silk.NET.Direct3D11.Usage.Immutable, BindFlag.ShaderResource, 0, 0, false, &resource);
@@ -671,6 +695,28 @@
                 return InitFallback(dimension);
             }
             TexMetadata metadata = image.GetMetadata();
+
+            if (metadata.MipLevels == 1)
+            {
+                bool isError = false;
+                ScratchImage image1 = new();
+                try
+                {
+                    DirectXTex.GenerateMipMaps(&image, TexFilterFlags.DEFAULT, (ulong)MathUtil.ComputeMipLevels((int)metadata.Width, (int)metadata.Height), &image1);
+                }
+                catch (Exception ex)
+                {
+                    image1.Release();
+                    isError = true;
+                    ImGuiConsole.Log(ex);
+                }
+                if (!isError)
+                {
+                    image.Release();
+                    image = image1;
+                    metadata = image.GetMetadata();
+                }
+            }
 
             ID3D11Resource* resource;
             DirectXTex.CreateTextureEx((ID3D11Device*)(IntPtr)Device, &image, Helper.Convert(usage), Helper.Convert(bind), Helper.Convert(cpuAccess), Helper.Convert(misc), false, &resource);

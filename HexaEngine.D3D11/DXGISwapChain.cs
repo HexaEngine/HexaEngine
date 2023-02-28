@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Windows.Events;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;

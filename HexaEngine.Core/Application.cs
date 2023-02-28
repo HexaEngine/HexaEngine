@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
     using System.Collections.Generic;
 
@@ -122,7 +123,7 @@
                 window.RenderInitialize(device);
         }
 
-        private static void MainWindow_Closing(object? sender, Events.CloseEventArgs e)
+        private static void MainWindow_Closing(object? sender, CloseEventArgs e)
         {
             if (!e.Handled)
                 exiting = true;

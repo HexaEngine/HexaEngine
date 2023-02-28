@@ -44,25 +44,10 @@
         private readonly GameObject root;
         public int ActiveCamera;
 
-#pragma warning disable CS8618 // Non-nullable field 'characterControllers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'meshManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'BufferPool' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'lightManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'instanceManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'ThreadDispatcher' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'materialManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'contactEvents' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public Scene()
 #pragma warning restore CS8618 // Non-nullable field 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'contactEvents' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'materialManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'ThreadDispatcher' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'instanceManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'lightManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'BufferPool' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'meshManager' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'characterControllers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             Name = "Scene";
             root = new SceneRootNode(this);

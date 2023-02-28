@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Events;
+    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
 
     public interface ISwapChain : IDisposable

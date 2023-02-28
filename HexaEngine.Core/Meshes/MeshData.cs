@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Meshes
 {
-    using HexaEngine.Core.Json;
+    using HexaEngine.Core.IO.Json;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
 

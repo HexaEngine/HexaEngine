@@ -5,6 +5,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Plugins;
     using HexaEngine.Projects;
+    using System;
     using System.Diagnostics;
 
     public class Plugin : IPlugin
@@ -35,6 +36,11 @@
             SetIdle();
         }
 
+        private DateTime GetTime()
+        {
+            return DateTime.Now;
+        }
+
         private void SetIdle()
         {
             if (rpcClient == null) return;
@@ -42,7 +48,7 @@
             rpcClient.Presence = new RichPresence()
                 .WithState("Idle")
                 .WithLargeImage(new("icon", "Editor"))
-                .WithTimestamp(new(DateTime.Now, RichPresenceTimestamp.TimestampDisplayType.Elapsed));
+                .WithTimestamp(new(GetTime(), RichPresenceTimestamp.TimestampDisplayType.Elapsed));
         }
 
         private void SetSceneState()
@@ -65,14 +71,14 @@
                 rpcClient.Presence = new RichPresence()
                     .WithState($"{ProjectManager.Project.Name}: editing {Path.GetFileName(SceneManager.Current.Path)}")
                     .WithLargeImage(new("icon", "Editor"))
-                    .WithTimestamp(new(DateTime.Now, RichPresenceTimestamp.TimestampDisplayType.Elapsed));
+                    .WithTimestamp(new(GetTime(), RichPresenceTimestamp.TimestampDisplayType.Elapsed));
             }
             else
             {
                 rpcClient.Presence = new RichPresence()
                     .WithState($"{ProjectManager.Project.Name}: playing {Path.GetFileName(SceneManager.Current.Path)}")
                     .WithLargeImage(new("icon", "Editor"))
-                    .WithTimestamp(new(DateTime.Now, RichPresenceTimestamp.TimestampDisplayType.Elapsed));
+                    .WithTimestamp(new(GetTime(), RichPresenceTimestamp.TimestampDisplayType.Elapsed));
             }
         }
 
@@ -98,7 +104,7 @@
             rpcClient.Presence = new RichPresence()
                     .WithState($"{obj.Name}: Idle")
                     .WithLargeImage(new("icon", "Editor"))
-                    .WithTimestamp(new(DateTime.Now, RichPresenceTimestamp.TimestampDisplayType.Elapsed));
+                    .WithTimestamp(new(GetTime(), RichPresenceTimestamp.TimestampDisplayType.Elapsed));
         }
 
         public void OnDisable()

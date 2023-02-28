@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.OpenAL
 {
-    using HexaEngine.Core.IO;
-
     public unsafe class WaveAudioStream : AudioStream
     {
         private readonly Stream stream;

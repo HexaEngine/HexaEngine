@@ -3,12 +3,12 @@
     using HexaEngine.Audio;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
@@ -68,6 +68,7 @@
 #pragma warning disable CS8618 // Non-nullable field 'initTask' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'swapChain' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public Window()
 #pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning restore CS8618 // Non-nullable field 'swapChain' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.

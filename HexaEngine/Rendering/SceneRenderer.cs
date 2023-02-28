@@ -3,7 +3,6 @@
 namespace HexaEngine.Rendering
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
@@ -15,6 +14,7 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
+    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Effects;

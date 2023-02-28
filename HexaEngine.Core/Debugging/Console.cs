@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
-    using HexaEngine.Core.Debugging.Collections;
+    using HexaEngine.Core.Collections;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;

@@ -3,8 +3,6 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Properties;
