@@ -537,6 +537,20 @@
             ShaderResourceView = device.CreateShaderResourceView(resource);
         }
 
+        public static Task<Texture> CreateTextureAsync(IGraphicsDevice device, TextureFileDescription description)
+        {
+            return Task.Factory.StartNew((object? state) =>
+            {
+                var data = ((IGraphicsDevice, TextureFileDescription))state;
+                return new Texture(data.Item1, data.Item2);
+            }, (device, description));
+        }
+
+        public static Task<Texture> CreateTextureAsync(IGraphicsDevice device, TextureDimension dimension, Vector4 color)
+        {
+            return Task.Factory.StartNew(() => new Texture(device, dimension, color));
+        }
+
         private unsafe IResource InitFallback(IGraphicsDevice device, TextureDimension dimension, Vector4 color)
         {
             SubresourceData fallback;
@@ -563,7 +577,7 @@
                     return device.CreateTexture2D(description, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback });
                 }
             }
-            throw new NotSupportedException();
+            throw new NotSupportedException(nameof(dimension));
         }
 
         #endregion Constructors

@@ -18,18 +18,19 @@
 
         protected abstract (VertexBuffer<T>, IndexBuffer?) InitializeMesh(IGraphicsDevice device);
 
-        public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport)
+        public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline)
         {
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
-
-                pipeline.DrawIndexedInstanced(context, viewport, indexBuffer.Count, 1, 0, 0, 0);
+                context.SetGraphicsPipeline(pipeline);
+                context.DrawIndexedInstanced(indexBuffer.Count, 1, 0, 0, 0);
             }
             else
             {
-                pipeline.DrawInstanced(context, viewport, vertexBuffer.Count, 1, 0, 0);
+                context.SetGraphicsPipeline(pipeline);
+                context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
             }
         }
 

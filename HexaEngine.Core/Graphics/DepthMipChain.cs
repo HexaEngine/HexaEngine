@@ -112,7 +112,8 @@
         {
             context.SetRenderTarget(RTV, null);
             context.PSSetShaderResource(Input, 0);
-            quad.DrawAuto(context, copy, viewports[0]);
+            context.SetViewport(viewports[0]);
+            quad.DrawAuto(context, copy);
             context.ClearState();
 
             for (uint i = 1; i < Mips; i++)
@@ -132,7 +133,8 @@
         {
             context.SetRenderTarget(RTV, null);
             context.PSSetShaderResource(input, 0);
-            quad.DrawAuto(context, copy, viewports[0]);
+            context.SetViewport(viewports[0]);
+            quad.DrawAuto(context, copy);
             context.ClearState();
 
             for (uint i = 1; i < Mips; i++)
@@ -192,6 +194,7 @@
         }
 
 #pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+
         public async Task Initialize(IGraphicsDevice device, int width, int height)
 #pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {

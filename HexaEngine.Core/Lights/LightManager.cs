@@ -27,7 +27,7 @@
         private readonly IGraphicsDevice device;
         private readonly IInstanceManager instanceManager;
         private readonly ConcurrentQueue<Light> updateQueue = new();
-        private readonly ConcurrentQueue<ModelInstance> modelUpdateQueue = new();
+        private readonly ConcurrentQueue<IInstance> modelUpdateQueue = new();
 
         private readonly StructuredUavBuffer<DirectionalLightData> directionalLights;
         private readonly StructuredUavBuffer<PointLightData> pointLights;
@@ -69,21 +69,19 @@
         public const int MaxSpotlightSDs = 32;
 
         public IRenderTargetView Output;
-        public IDepthStencilView DSV;
+        public ResourceRef<IDepthStencilView> DSV;
 
-        public IShaderResourceView[] GBuffers;
+        public ResourceRef<TextureArray> GBuffers;
 
-        public IShaderResourceView Irraidance;
-        public IShaderResourceView EnvPrefiltered;
-        public IShaderResourceView LUT;
-        public IShaderResourceView SSAO;
+        public ResourceRef<Texture> Irraidance;
+        public ResourceRef<Texture> EnvPrefiltered;
+        public ResourceRef<Texture> LUT;
+        public ResourceRef<Texture> SSAO;
 
         public IShaderResourceView[] CSMs;
         public IShaderResourceView[] OSMs;
         public IShaderResourceView[] PSMs;
-        public IBuffer Camera;
-
-        public ViewportShading Viewport = Application.InDesignMode ? ViewportShading.Solid : ViewportShading.Rendered;
+        public ResourceRef<IBuffer> Camera;
 
 #pragma warning disable CS8618 // Non-nullable field 'Camera' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'GBuffers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
@@ -139,9 +137,9 @@
                 Topology = PrimitiveTopology.TriangleList
             });
 
-            pointSampler = ResourceManager.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp);
-            linearSampler = ResourceManager.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp);
-            anisoSampler = ResourceManager.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp);
+            pointSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp).Value;
+            linearSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp).Value;
+            anisoSampler = ResourceManager2.Shared.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp).Value;
 
             unsafe
             {
@@ -229,17 +227,17 @@
 
         public string Name => "Lights";
 
-        private void InstanceUpdated(ModelInstanceType type, ModelInstance instance)
+        private void InstanceUpdated(IInstanceType type, IInstance instance)
         {
             modelUpdateQueue.Enqueue(instance);
         }
 
-        private void InstanceDestroyed(ModelInstance instance)
+        private void InstanceDestroyed(IInstance instance)
         {
             modelUpdateQueue.Enqueue(instance);
         }
 
-        private void InstanceCreated(ModelInstance instance)
+        private void InstanceCreated(IInstance instance)
         {
             modelUpdateQueue.Enqueue(instance);
         }
@@ -376,31 +374,27 @@
 
         public void BeginResize()
         {
-            ResourceManager.RequireUpdate("LightBuffer");
         }
 
         public async Task EndResize(int width, int height)
         {
 #nullable disable
-            Output = ResourceManager.UpdateTextureRTV("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            DSV = await ResourceManager.GetDepthStencilViewAsync("SwapChain.DSV");
+            Output = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1)).Value.RenderTargetView;
+            DSV = ResourceManager2.Shared.GetDepthStencilView("SwapChain.DSV");
 
-            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-            GBuffers = await ResourceManager.GetTextureArraySRVAsync("GBuffer");
-            Irraidance = await ResourceManager.GetTextureSRVAsync("EnvironmentIrradiance");
-            EnvPrefiltered = await ResourceManager.GetTextureSRVAsync("EnvironmentPrefilter");
-            LUT = await ResourceManager.GetTextureSRVAsync("BRDFLUT");
-            SSAO = await ResourceManager.GetTextureSRVAsync("SSAOBuffer");
+            Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+            GBuffers = ResourceManager2.Shared.GetTextureArray("GBuffer");
+            Irraidance = ResourceManager2.Shared.GetTexture("EnvIrr");
+            EnvPrefiltered = ResourceManager2.Shared.GetTexture("EnvPref");
+            LUT = ResourceManager2.Shared.GetTexture("BRDFLUT");
+            SSAO = ResourceManager2.Shared.GetTexture("SSAOBuffer");
+
 #nullable enable
             UpdateResources();
         }
 
         public void UpdateTextures()
         {
-#nullable disable
-            Irraidance = ResourceManager.GetTextureSRV("EnvironmentIrradiance");
-            EnvPrefiltered = ResourceManager.GetTextureSRV("EnvironmentPrefilter");
-#nullable enable
             UpdateResources();
         }
 
@@ -408,30 +402,30 @@
         {
 #nullable disable
             cbs[0] = (void*)paramsBuffer.Buffer?.NativePointer;
-            cbs[1] = (void*)Camera?.NativePointer;
+            cbs[1] = (void*)Camera.Value?.NativePointer;
 
             if (GBuffers != null)
                 for (int i = 0; i < 8; i++)
                 {
-                    if (i < GBuffers.Length)
+                    if (i < GBuffers.Value.Count)
                     {
-                        simpleSrvs[i] = shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = (void*)GBuffers[i]?.NativePointer;
+                        simpleSrvs[i] = shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = (void*)GBuffers.Value.SRVs[i]?.NativePointer;
                     }
                 }
-            directSrvs[8] = (void*)SSAO?.NativePointer;
+            directSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
             directSrvs[9] = (void*)directionalLights.SRV.NativePointer;
             directSrvs[10] = (void*)pointLights.SRV.NativePointer;
             directSrvs[11] = (void*)spotlights.SRV.NativePointer;
 
-            shadowSrvs[8] = (void*)SSAO?.NativePointer;
+            shadowSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
             shadowSrvs[9] = (void*)shadowDirectionalLights.SRV.NativePointer;
             shadowSrvs[10] = (void*)shadowPointLights.SRV.NativePointer;
             shadowSrvs[11] = (void*)shadowSpotlights.SRV.NativePointer;
 
-            indirectSrvs[8] = (void*)SSAO?.NativePointer;
-            indirectSrvs[9] = (void*)Irraidance?.NativePointer;
-            indirectSrvs[10] = (void*)EnvPrefiltered?.NativePointer;
-            indirectSrvs[11] = (void*)LUT?.NativePointer;
+            indirectSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
+            indirectSrvs[9] = (void*)Irraidance.Value?.ShaderResourceView.NativePointer;
+            indirectSrvs[10] = (void*)EnvPrefiltered.Value?.ShaderResourceView.NativePointer;
+            indirectSrvs[11] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
 
 #nullable enable
         }
@@ -529,19 +523,19 @@
             directSrvs[11] = (void*)spotlights.SRV.NativePointer;
         }
 
-        public unsafe void DeferredPass(IGraphicsContext context, Camera camera)
+        public unsafe void DeferredPass(IGraphicsContext context, ViewportShading shading, Camera camera)
         {
-            if (Viewport == ViewportShading.Rendered)
+            if (shading == ViewportShading.Rendered)
             {
-                context.ClearRenderTargetView(Output, default);
                 context.SetRenderTarget(Output, default);
+                context.SetViewport(Output.Viewport);
                 context.PSSetConstantBuffers(cbs, 2, 0);
                 context.PSSetSamplers(smps, 2, 0);
 
                 context.PSSetShaderResources(indirectSrvs, nindirectSrvs, 0);
 
                 // Indirect light pass
-                quad.DrawAuto(context, deferredIndirect, Output.Viewport);
+                quad.DrawAuto(context, deferredIndirect);
 
                 var lightParams = paramsBuffer.Local;
                 lightParams->DirectionalLights = directionalLights.Count;
@@ -552,7 +546,7 @@
                 context.PSSetShaderResources(directSrvs, ndirectSrvs, 0);
 
                 // Direct light pass
-                quad.DrawAuto(context, deferredDirect, Output.Viewport);
+                quad.DrawAuto(context, deferredDirect);
 
                 lightParams->DirectionalLights = shadowDirectionalLights.Count;
                 lightParams->PointLights = shadowPointLights.Count;
@@ -562,23 +556,22 @@
                 context.PSSetShaderResources(shadowSrvs, nShadowSrvs, 0);
 
                 // Shadow light pass
-                quad.DrawAuto(context, deferredShadow, Output.Viewport);
+                quad.DrawAuto(context, deferredShadow);
             }
         }
 
-        public unsafe void ForwardPass(IGraphicsContext context, Camera camera)
+        public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera)
         {
             var types = instanceManager.Types;
-            if (Viewport == ViewportShading.Solid)
+            if (shading == ViewportShading.Solid)
             {
-                context.ClearRenderTargetView(Output, default);
-                context.ClearDepthStencilView(DSV, DepthStencilClearFlags.All, 1, 0);
-                context.SetRenderTarget(Output, DSV);
+                context.SetRenderTarget(Output, DSV.Value);
+                context.SetViewport(Output.Viewport);
                 context.DSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetSamplers(smps, 2, 0);
 
-                forwardSoild.BeginDraw(context, Output.Viewport);
+                forwardSoild.BeginDraw(context);
 
                 for (int j = 0; j < types.Count; j++)
                 {
@@ -591,15 +584,14 @@
                 context.ClearState();
             }
 
-            if (Viewport == ViewportShading.Wireframe)
+            if (shading == ViewportShading.Wireframe)
             {
-                context.ClearRenderTargetView(Output, default);
-                context.ClearDepthStencilView(DSV, DepthStencilClearFlags.All, 1, 0);
-                context.SetRenderTarget(Output, DSV);
+                context.SetRenderTarget(Output, DSV.Value);
+                context.SetViewport(Output.Viewport);
                 context.DSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetSamplers(smps, 2, 0);
 
-                forwardWireframe.BeginDraw(context, Output.Viewport);
+                forwardWireframe.BeginDraw(context);
 
                 for (int j = 0; j < types.Count; j++)
                 {
@@ -613,19 +605,18 @@
             }
         }
 
-        public unsafe void ForwardPass(IGraphicsContext context, Camera camera, IRenderTargetView rtv, IDepthStencilView dsv, Viewport viewport)
+        public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera, IRenderTargetView rtv, IDepthStencilView dsv, Viewport viewport)
         {
             var types = instanceManager.Types;
-            if (Viewport == ViewportShading.Solid)
+            if (shading == ViewportShading.Solid)
             {
-                context.ClearRenderTargetView(rtv, default);
-                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.All, 1, 0);
                 context.SetRenderTarget(rtv, dsv);
+                context.SetViewport(viewport);
                 context.DSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetSamplers(smps, 2, 0);
 
-                forwardSoild.BeginDraw(context, viewport);
+                forwardSoild.BeginDraw(context);
 
                 for (int j = 0; j < types.Count; j++)
                 {
@@ -638,15 +629,14 @@
                 context.ClearState();
             }
 
-            if (Viewport == ViewportShading.Wireframe)
+            if (shading == ViewportShading.Wireframe)
             {
-                context.ClearRenderTargetView(rtv, default);
-                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.All, 1, 0);
                 context.SetRenderTarget(rtv, dsv);
+                context.SetViewport(viewport);
                 context.DSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetSamplers(smps, 2, 0);
 
-                forwardWireframe.BeginDraw(context, viewport);
+                forwardWireframe.BeginDraw(context);
 
                 for (int j = 0; j < types.Count; j++)
                 {

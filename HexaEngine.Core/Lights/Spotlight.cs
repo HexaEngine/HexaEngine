@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Instances;
-    using HexaEngine.Core.Scenes.Managers.Forward;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
     using System;
@@ -16,7 +15,7 @@
         public new CameraTransform Transform;
 
         private static ulong instances;
-        private static PSMPipeline? psmPipeline;
+        private static IGraphicsPipeline? psmPipeline;
         private static IBuffer? psmBuffer;
 
         private DepthStencil? psmDepthBuffer;
@@ -83,8 +82,21 @@
             if (Interlocked.Increment(ref instances) == 1)
             {
                 psmBuffer = device.CreateBuffer(new Matrix4x4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                psmPipeline = new(device);
-                psmPipeline.View = psmBuffer;
+
+                psmPipeline = device.CreateGraphicsPipeline(new()
+                {
+                    VertexShader = "forward/psm/vs.hlsl",
+                    HullShader = "forward/psm/hs.hlsl",
+                    DomainShader = "forward/psm/ds.hlsl",
+                    PixelShader = "forward/psm/ps.hlsl",
+                },
+                new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullFront,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.PatchListWith3ControlPoints,
+                });
             }
         }
 
@@ -109,7 +121,9 @@
             context.Write(psmBuffer, view);
             context.ClearDepthStencilView(psmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, psmDepthBuffer.DSV);
-            psmPipeline.BeginDraw(context, psmDepthBuffer.Viewport);
+            context.SetViewport(psmDepthBuffer.Viewport);
+            context.SetGraphicsPipeline(psmPipeline);
+            context.DSSetConstantBuffer(psmBuffer, 1);
 
             var types = manager.Types;
             for (int j = 0; j < types.Count; j++)

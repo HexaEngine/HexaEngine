@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Resources;
-
-namespace HexaEngine.Core.Instances
+﻿namespace HexaEngine.Core.Instances
 {
     using HexaEngine.Core.Scenes;
     using System;
@@ -11,32 +9,28 @@ namespace HexaEngine.Core.Instances
     {
         int InstanceCount { get; }
 
-        IReadOnlyList<ModelInstance> Instances { get; }
+        IReadOnlyList<IInstance> Instances { get; }
 
         int TypeCount { get; }
 
-        IReadOnlyList<ModelInstanceType> Types { get; }
+        IReadOnlyList<IInstanceType> Types { get; }
 
-        event Action<ModelInstance>? InstanceCreated;
+        event Action<IInstance>? InstanceCreated;
 
-        event Action<ModelInstance>? InstanceDestroyed;
+        event Action<IInstance>? InstanceDestroyed;
 
-        event Action<ModelInstanceType>? TypeCreated;
+        event Action<IInstanceType>? TypeCreated;
 
-        event Action<ModelInstanceType>? TypeDestroyed;
+        event Action<IInstanceType>? TypeDestroyed;
 
-        event Action<ModelInstanceType, ModelInstance>? Updated;
+        event Action<IInstanceType, IInstance>? Updated;
 
-        ModelInstance CreateInstance(Mesh mesh, Material material, GameObject parent);
+        IInstance CreateInstance(IInstanceType type, GameObject parent);
 
-        ModelInstance CreateInstance(string model, GameObject parent);
+        Task<IInstance> CreateInstanceAsync(IInstanceType type, GameObject parent);
 
-        Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, GameObject parent);
+        void DestroyInstance(IInstance instance);
 
-        Task<ModelInstance> CreateInstanceAsync(string model, GameObject parent);
-
-        void DestroyInstance(ModelInstance instance);
-
-        Task DestroyInstanceAsync(ModelInstance instance);
+        Task DestroyInstanceAsync(IInstance instance);
     }
 }

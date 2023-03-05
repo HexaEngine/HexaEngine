@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
@@ -12,7 +13,7 @@
         private static bool initialized = false;
         private static bool exiting = false;
         private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
-        private static readonly List<IRenderWindow> windows = new List<IRenderWindow>();
+        private static readonly List<IRenderWindow> windows = new();
         private static readonly Sdl sdl = Sdl.GetApi();
         private static readonly List<Action<Event>> hooks = new();
         private static IRenderWindow? mainWindow;
@@ -108,6 +109,7 @@
             {
                 throw new PlatformNotSupportedException();
             }
+            ResourceManager2.Shared = new(device);
             for (int i = 0; i < windows.Count; i++)
             {
                 windows[i].RenderInitialize(device);
@@ -396,7 +398,7 @@
                 }
                 Time.FrameUpdate();
             }
-
+            ResourceManager2.Shared.Dispose();
             for (int i = 0; i < windows.Count; i++)
             {
                 windows[i].RenderDispose();

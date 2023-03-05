@@ -2,119 +2,135 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Meshes;
-    using HexaEngine.Mathematics;
     using System.IO;
     using System.Numerics;
     using System.Text;
 
-    public class MeshSource
+    public class ModelSource
     {
         public readonly MeshHeader Header;
-        private MaterialData Material;
-        private MeshData Data;
+        private MeshData[] Meshes;
         public string Name;
 
-        private MeshSource(string path)
+        private ModelSource(string path)
         {
             Name = path;
-            var fs = FileSystem.Open(Path.Combine(Paths.CurrentMeshesPath, path + ".mesh"));
-            Header.Read(fs, Encoding.UTF8);
-            Material = MaterialData.Read(fs, Encoding.UTF8);
-            Data = MeshData.Read(Header, fs, Encoding.UTF8);
+            var fs = FileSystem.Open(Path.Combine(Paths.CurrentMeshesPath, path + ".model"));
+            Header.Read(fs);
+
+            Meshes = new MeshData[Header.MeshCount];
+            for (ulong i = 0; i < Header.MeshCount; i++)
+            {
+                Meshes[i] = MeshData.Read(fs, Encoding.UTF8);
+            }
+
             fs.Close();
         }
 
-        public MeshSource(string path, Stream fs)
+        public ModelSource(string path, Stream fs)
         {
             Name = path;
-            Header.Read(fs, Encoding.UTF8);
-            Material = MaterialData.Read(fs, Encoding.UTF8);
-            Data = MeshData.Read(Header, fs, Encoding.UTF8);
+            Header.Read(fs);
+
+            Meshes = new MeshData[Header.MeshCount];
+            for (ulong i = 0; i < Header.MeshCount; i++)
+            {
+                Meshes[i] = MeshData.Read(fs, Encoding.UTF8);
+            }
+
             fs.Close();
         }
 
-        public MeshSource(string path, MeshVertex[] vertices, uint[] indices, MeshBone[] bones, BoundingBox box, BoundingSphere sphere)
+        public ModelSource(string path, MeshData[] meshes)
         {
             Name = path;
             Header.Type = MeshType.Default;
-            Header.BoundingBox = box;
-            Header.BoundingSphere = sphere;
-            Header.VerticesCount = (ulong)vertices.LongLength;
-            Header.IndicesCount = (ulong)indices.LongLength;
-
-            Data = new(vertices, indices, bones);
-        }
-
-        public MeshSource(string path, MaterialData material, MeshVertex[] vertices, uint[] indices, MeshBone[] bones, BoundingBox box, BoundingSphere sphere)
-        {
-            Name = path;
-            Header.Type = MeshType.Default;
-            Header.BoundingBox = box;
-            Header.BoundingSphere = sphere;
-            Header.VerticesCount = (ulong)vertices.LongLength;
-            Header.IndicesCount = (ulong)indices.LongLength;
-            Material = material;
-            Data = new(vertices, indices, bones);
+            Header.MeshCount = (ulong)meshes.LongLength;
+            Meshes = meshes;
         }
 
         public void Save(string dir)
         {
             Directory.CreateDirectory(dir);
-            var fs = File.Create(Path.Combine(dir, Name + ".mesh"));
-            Header.Write(fs, Encoding.UTF8);
-            Material.Write(fs, Encoding.UTF8);
-            Data.Write(fs, Encoding.UTF8);
+            var fs = File.Create(Path.Combine(dir, Name + ".model"));
+
+            Header.Write(fs);
+
+            for (ulong i = 0; i < Header.MeshCount; i++)
+            {
+                Meshes[i].Write(fs, Encoding.UTF8);
+            }
+
             fs.Close();
         }
 
-        public static MeshSource Load(string path)
+        public static ModelSource Load(string path)
         {
-            return new MeshSource(path);
+            return new ModelSource(path);
         }
 
-        public static MeshSource LoadExternal(string path)
+        public static ModelSource LoadExternal(string path)
         {
-            return new MeshSource(path, File.OpenRead(path + ".mesh"));
+            return new ModelSource(path, File.OpenRead(path + ".model"));
         }
 
-        public void SetMaterial(MaterialData material)
+        public void SetMaterial(int index, MaterialData material)
         {
-            Material = material;
+            Meshes[index].Material = material;
         }
 
-        public MeshData GetMesh()
+        public void SetMaterial(ulong index, MaterialData material)
         {
-            return Data;
+            Meshes[index].Material = material;
         }
 
-        public MeshVertex[] GetVertices()
+        public MeshData GetMesh(int index)
         {
-            return Data.Vertices;
+            return Meshes[index];
         }
 
-        public uint[] GetIndices()
+        public MeshData GetMesh(ulong index)
         {
-            return Data.Indices;
+            return Meshes[index];
         }
 
-        public MeshBone[] GetBones()
+        public MaterialData GetMaterial(int index)
         {
-            return Data.Bones;
+            return Meshes[index].Material;
         }
 
-        public MaterialData GetMaterial()
+        public MaterialData GetMaterial(ulong index)
         {
-            return Material;
+            return Meshes[index].Material;
         }
 
-        public Vector3[] GetPoints()
+        public Vector3[] GetPoints(int index)
         {
-            var data = GetMesh();
+            var data = GetMesh(index);
             Vector3[] points = new Vector3[data.Indices.Length];
             for (int i = 0; i < data.Indices.Length; i++)
             {
                 points[i] = data.Vertices[data.Indices[i]].Position;
+            }
+            return points;
+        }
+
+        public Vector3[] GetAllPoints()
+        {
+            ulong count = 0;
+            for (ulong i = 0; i < Header.MeshCount; i++)
+            {
+                count += GetMesh(i).IndicesCount;
+            }
+            Vector3[] points = new Vector3[count];
+            ulong m = 0;
+            for (ulong i = 0; i < Header.MeshCount; i++)
+            {
+                var data = GetMesh(i);
+                for (int j = 0; j < data.Indices.Length; j++)
+                {
+                    points[m++] = data.Vertices[data.Indices[j]].Position;
+                }
             }
             return points;
         }

@@ -37,34 +37,18 @@ namespace HexaEngine.Pipelines.Deferred
 
         public GraphicsPipelineState State { get => pipeline.State; set => pipeline.State = value; }
 
-        public void BeginDraw(IGraphicsContext context, Viewport viewport)
+        public bool IsInitialized => pipeline.IsInitialized;
+
+        public bool IsValid => pipeline.IsValid;
+
+        public void BeginDraw(IGraphicsContext context)
         {
-            pipeline.BeginDraw(context, viewport);
+            pipeline.BeginDraw(context);
         }
 
         public void Dispose()
         {
             pipeline.Dispose();
-        }
-
-        public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
-        {
-            pipeline.DrawIndexedInstanced(context, viewport, indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
-        }
-
-        public void DrawIndexedInstancedIndirect(IGraphicsContext context, Viewport viewport, IBuffer args, uint stride)
-        {
-            pipeline.DrawIndexedInstancedIndirect(context, viewport, args, stride);
-        }
-
-        public void DrawInstanced(IGraphicsContext context, Viewport viewport, IBuffer args, uint stride)
-        {
-            pipeline.DrawInstanced(context, viewport, args, stride);
-        }
-
-        public void DrawInstanced(IGraphicsContext context, Viewport viewport, uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
-        {
-            pipeline.DrawInstanced(context, viewport, vertexCount, instanceCount, vertexOffset, instanceOffset);
         }
 
         public void EndDraw(IGraphicsContext context)

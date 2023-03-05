@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
@@ -9,7 +7,6 @@ namespace HexaEngine.Effects
     using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
-    using Silk.NET.OpenAL;
     using System.Numerics;
 
     public class Bloom : IPostFx
@@ -78,6 +75,7 @@ namespace HexaEngine.Effects
         public int Priority { get; set; } = 100;
 
 #pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
 #pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
@@ -108,13 +106,13 @@ namespace HexaEngine.Effects
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager.AddTextureRTV($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)) ?? throw new InvalidOperationException();
-                mipChainSRVs[i] = ResourceManager.GetTextureSRV($"Bloom.{i}") ?? throw new InvalidOperationException();
+                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)).Value.RenderTargetView;
+                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.ShaderResourceView;
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
 
-            ResourceManager.SetOrAddResource("Bloom", ResourceManager.GetTexture("Bloom.0") ?? throw new InvalidOperationException());
+            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
 
             this.width = width;
             this.height = height;
@@ -124,29 +122,22 @@ namespace HexaEngine.Effects
 
         public void Resize(int width, int height)
         {
-            ResourceManager.RequireUpdate("Bloom");
-
             int currentWidth = width / 2;
             int currentHeight = height / 2;
             int levels = Math.Min(MathUtil.ComputeMipLevels(currentWidth, currentHeight), 8);
-
-            for (int i = 0; i < mipChainRTVs?.Length; i++)
-            {
-                ResourceManager.RemoveResource($"Bloom.{i}");
-            }
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager.AddTextureRTV($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)) ?? throw new InvalidOperationException();
-                mipChainSRVs[i] = ResourceManager.GetTextureSRV($"Bloom.{i}") ?? throw new InvalidOperationException();
+                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)).Value.RenderTargetView;
+                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.ShaderResourceView;
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
 
-            ResourceManager.SetOrAddResource("Bloom", ResourceManager.GetTexture("Bloom.0") ?? throw new InvalidOperationException());
+            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
 
             this.width = width;
             this.height = height;
@@ -189,7 +180,8 @@ namespace HexaEngine.Effects
                 context.PSSetConstantBuffer(downsampleCB, 0);
                 context.PSSetSampler(sampler, 0);
                 context.SetRenderTarget(mipChainRTVs[i], null);
-                quad.DrawAuto(context, downsample, mipChainRTVs[i].Viewport);
+                context.SetViewport(mipChainRTVs[i].Viewport);
+                quad.DrawAuto(context, downsample);
                 context.ClearState();
             }
 
@@ -199,7 +191,8 @@ namespace HexaEngine.Effects
                 context.PSSetShaderResource(mipChainSRVs[i], 0);
                 context.PSSetConstantBuffer(upsampleCB, 0);
                 context.PSSetSampler(sampler, 0);
-                quad.DrawAuto(context, upsample, mipChainRTVs[i - 1].Viewport);
+                context.SetViewport(mipChainRTVs[i - 1].Viewport);
+                quad.DrawAuto(context, upsample);
             }
             context.ClearState();
         }
@@ -209,10 +202,6 @@ namespace HexaEngine.Effects
             if (!disposedValue)
             {
                 quad.Dispose();
-                for (int i = 0; i < mipChainRTVs?.Length; i++)
-                {
-                    ResourceManager.RemoveResource($"Bloom.{i}");
-                }
                 downsample.Dispose();
                 upsample.Dispose();
                 downsampleCB.Dispose();

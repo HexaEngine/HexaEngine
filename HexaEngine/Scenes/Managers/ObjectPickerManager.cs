@@ -7,7 +7,7 @@ namespace HexaEngine.Scenes.Managers
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Mathematics;
+    using Silk.NET.Assimp;
     using System.Numerics;
     using Texture = Texture;
 
@@ -43,6 +43,7 @@ namespace HexaEngine.Scenes.Managers
 #pragma warning disable CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static StructuredUavBuffer<SelectionData> outputBuffer;
 #pragma warning restore CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        private static ResourceRef<IBuffer> camera;
 
         public static void Initialize(IGraphicsDevice device, int width, int height)
         {
@@ -67,6 +68,7 @@ namespace HexaEngine.Scenes.Managers
             });
             mouseBuffer = new(device, CpuAccessFlags.Write);
             outputBuffer = new(device, 1, true, true);
+            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
         }
 
         public static void Resize(int width, int height)
@@ -88,8 +90,9 @@ namespace HexaEngine.Scenes.Managers
             context.ClearRenderTargetView(texture.RenderTargetView, default);
 #pragma warning restore CS8604 // Possible null reference argument for parameter 'renderTargetView' in 'void IGraphicsContext.ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)'.
             context.SetRenderTarget(texture.RenderTargetView, texture.DepthStencilView);
-            pipeline.BeginDraw(context, viewport);
-            context.VSSetConstantBuffer(ResourceManager.GetConstantBuffer("CBCamera"), 1);
+            context.SetViewport(viewport);
+            pipeline.BeginDraw(context);
+            context.VSSetConstantBuffer(camera.Value, 1);
             for (int i = 0; i < manager.TypeCount; i++)
             {
                 var type = manager.Types[i];

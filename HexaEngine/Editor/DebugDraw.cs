@@ -160,7 +160,7 @@ namespace HexaEngine.Editor
             Free(view);
         }
 
-        public static void Render(Camera camera, Viewport viewport)
+        public static void Render(Camera camera)
         {
             if (!Application.InEditorMode) return;
             if (camera == null) return;
@@ -256,7 +256,7 @@ namespace HexaEngine.Editor
                 context.VSSetConstantBuffer(cb, 0);
                 context.SetVertexBuffer(vb, (uint)sizeof(VertexPositionColor));
                 context.SetIndexBuffer(ib, Format.R32UInt, 0);
-                pipeline.BeginDraw(context, viewport);
+                pipeline.BeginDraw(context);
 
                 int voffset = 0;
                 uint ioffset = 0;

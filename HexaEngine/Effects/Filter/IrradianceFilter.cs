@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-
 namespace HexaEngine.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
@@ -108,7 +107,8 @@ namespace HexaEngine.Effects.Filter
                         context.PSSetSampler(sampler, 0);
                         context.PSSetShaderResource(Source, 0);
                         Targets.SetTarget(context, i);
-                        cube.DrawAuto(context, pipeline, Targets.Viewport);
+                        context.SetViewport(Targets.Viewport);
+                        cube.DrawAuto(context, pipeline);
                     }
                     context.Flush();
                 }
@@ -125,7 +125,8 @@ namespace HexaEngine.Effects.Filter
             context.PSSetSampler(sampler, 0);
             context.PSSetShaderResource(Source, 0);
             Targets.SetTarget(context, i);
-            cube.DrawAuto(context, pipeline, Targets.Viewport);
+            context.SetViewport(Targets.Viewport);
+            cube.DrawAuto(context, pipeline);
         }
 
         public void BeginResize()

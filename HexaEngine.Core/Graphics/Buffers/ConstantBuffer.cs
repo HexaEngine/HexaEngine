@@ -20,7 +20,7 @@
         /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, uint length, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = length;
@@ -47,7 +47,7 @@
         /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, T[] values, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = (uint)values.Length;
@@ -78,7 +78,7 @@
            /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = 1;
@@ -107,7 +107,7 @@
         /// <param dbgName="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
             count = 1;

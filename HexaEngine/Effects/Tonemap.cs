@@ -1,8 +1,4 @@
-﻿#nullable disable
-
-using HexaEngine;
-
-namespace HexaEngine.Effects
+﻿namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -27,11 +23,11 @@ namespace HexaEngine.Effects
         private Vector3 fogColor = Vector3.Zero;
         private bool dirty;
 
-        public IBuffer Camera;
+        private ResourceRef<IBuffer> Camera;
         private IRenderTargetView Output;
         private IShaderResourceView Input;
-        private IShaderResourceView Bloom;
-        private IShaderResourceView Position;
+        private ResourceRef<Texture> Bloom;
+        private ResourceRef<IShaderResourceView> Position;
         public Viewport Viewport;
 
         private struct Params
@@ -124,38 +120,36 @@ namespace HexaEngine.Effects
             paramBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
-            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom", true);
-            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
-            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            Bloom = ResourceManager2.Shared.GetResource<Texture>("Bloom");
+            Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Position");
+            Camera = ResourceManager2.Shared.GetResource<IBuffer>("CBCamera");
+            Bloom.Resource.ValueChanged += OnUpdate;
+            Position.Resource.ValueChanged += OnUpdate;
+            Camera.Resource.ValueChanged += OnUpdate;
             InitUnsafe();
+        }
+
+        private unsafe void OnUpdate(object? sender, IDisposable? e)
+        {
+            srvs[1] = (void*)Bloom.Value?.ShaderResourceView.NativePointer;
+            srvs[2] = (void*)Position.Value?.NativePointer;
+            cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
+            cbvs[1] = (void*)Camera.Value?.NativePointer;
         }
 
         private unsafe void InitUnsafe()
         {
             srvs = AllocArray(3);
             srvs[0] = (void*)Input?.NativePointer;
-            srvs[1] = (void*)Bloom?.NativePointer;
-            srvs[2] = (void*)Position?.NativePointer;
+            srvs[1] = (void*)Bloom.Value?.ShaderResourceView.NativePointer;
+            srvs[2] = (void*)Position.Value?.NativePointer;
             cbvs = AllocArray(2);
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
-            cbvs[1] = (void*)Camera?.NativePointer;
-        }
-
-        private unsafe void EndResizeUnsafe()
-        {
-            srvs[0] = (void*)Input?.NativePointer;
-            srvs[1] = (void*)Bloom?.NativePointer;
-            srvs[2] = (void*)Position?.NativePointer;
-            cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
-            cbvs[1] = (void*)Camera?.NativePointer;
+            cbvs[1] = (void*)Camera.Value?.NativePointer;
         }
 
         public async void Resize(int width, int height)
         {
-            Bloom = await ResourceManager.GetTextureSRVAsync("Bloom", true);
-            Position = await ResourceManager.GetSRVAsync("GBuffer.Position");
-            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-            EndResizeUnsafe();
         }
 
         public void SetOutput(IRenderTargetView view, Viewport viewport)
@@ -184,10 +178,11 @@ namespace HexaEngine.Effects
             if (Output is null) return;
 
             context.SetRenderTarget(Output, default);
+            context.SetViewport(Viewport);
             context.PSSetConstantBuffers(cbvs, 2, 0);
             context.PSSetSampler(sampler, 0);
             context.PSSetShaderResources(srvs, 3, 0);
-            quad.DrawAuto(context, pipeline, Viewport);
+            quad.DrawAuto(context, pipeline);
             context.ClearState();
         }
 

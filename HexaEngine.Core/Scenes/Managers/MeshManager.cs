@@ -5,10 +5,10 @@
 
     public class MeshManager
     {
-        private readonly Dictionary<string, MeshSource> pathToMeshes = new();
-        private readonly List<MeshSource> meshes = new();
+        private readonly Dictionary<string, ModelSource> pathToMeshes = new();
+        private readonly List<ModelSource> meshes = new();
 
-        public IReadOnlyList<MeshSource> Meshes => meshes;
+        public IReadOnlyList<ModelSource> Meshes => meshes;
 
         public int Count => meshes.Count;
 
@@ -21,13 +21,13 @@
             }
         }
 
-        public MeshSource Load(string path)
+        public ModelSource Load(string path)
         {
             lock (meshes)
             {
                 if (!pathToMeshes.TryGetValue(path, out var value))
                 {
-                    value = MeshSource.Load(path);
+                    value = ModelSource.Load(path);
                     pathToMeshes.Add(path, value);
                     meshes.Add(value);
                 }
@@ -35,7 +35,7 @@
             }
         }
 
-        public void Unload(MeshSource source)
+        public void Unload(ModelSource source)
         {
             lock (meshes)
             {

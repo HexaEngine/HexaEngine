@@ -122,6 +122,10 @@
 
         public GraphicsPipelineDesc Description => desc;
 
+        public bool IsInitialized => initialized;
+
+        public bool IsValid => valid;
+
         public GraphicsPipelineState State
         {
             get => state;
@@ -292,7 +296,7 @@
             valid = true;
         }
 
-        public virtual void BeginDraw(IGraphicsContext context, Viewport viewport)
+        public virtual void BeginDraw(IGraphicsContext context)
         {
             if (context is not D3D11GraphicsContext contextd3d11) return;
             if (!initialized) return;
@@ -305,8 +309,6 @@
             ctx->GSSetShader(gs, null, 0);
             ctx->PSSetShader(ps, null, 0);
 
-            var dViewport = Helper.Convert(viewport);
-            ctx->RSSetViewports(1, &dViewport);
             ctx->RSSetState(rasterizerState);
 
             var factor = State.BlendFactor;
@@ -342,46 +344,68 @@
             context->IASetPrimitiveTopology(Helper.Convert(state.Topology));
         }
 
+        public virtual void SetGraphicsPipeline(ID3D11DeviceContext1* context)
+        {
+            if (!initialized) return;
+            if (!valid) return;
+
+            context->VSSetShader(vs, null, 0);
+            context->HSSetShader(hs, null, 0);
+            context->DSSetShader(ds, null, 0);
+            context->GSSetShader(gs, null, 0);
+            context->PSSetShader(ps, null, 0);
+
+            context->RSSetState(rasterizerState);
+
+            var factor = State.BlendFactor;
+            float* fac = (float*)&factor;
+
+            context->OMSetBlendState(blendState, fac, uint.MaxValue);
+            context->OMSetDepthStencilState(depthStencilState, state.StencilRef);
+            context->IASetInputLayout(layout);
+            context->IASetPrimitiveTopology(Helper.Convert(state.Topology));
+        }
+
         public virtual void EndDraw(IGraphicsContext context)
         {
         }
 
-        public void DrawInstanced(IGraphicsContext context, Viewport viewport, uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
+        public void DrawInstanced(IGraphicsContext context, uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
         {
             if (!initialized) return;
             if (!valid) return;
 
-            BeginDraw(context, viewport);
+            BeginDraw(context);
             context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
             EndDraw(context);
         }
 
-        public void DrawIndexedInstanced(IGraphicsContext context, Viewport viewport, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
+        public void DrawIndexedInstanced(IGraphicsContext context, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
         {
             if (!initialized) return;
             if (!valid) return;
 
-            BeginDraw(context, viewport);
+            BeginDraw(context);
             context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
             EndDraw(context);
         }
 
-        public void DrawInstanced(IGraphicsContext context, Viewport viewport, IBuffer args, uint stride)
+        public void DrawInstanced(IGraphicsContext context, IBuffer args, uint stride)
         {
             if (!initialized) return;
             if (!valid) return;
 
-            BeginDraw(context, viewport);
+            BeginDraw(context);
             context.DrawInstancedIndirect(args, stride);
             EndDraw(context);
         }
 
-        public void DrawIndexedInstancedIndirect(IGraphicsContext context, Viewport viewport, IBuffer args, uint stride)
+        public void DrawIndexedInstancedIndirect(IGraphicsContext context, IBuffer args, uint stride)
         {
             if (!initialized) return;
             if (!valid) return;
 
-            BeginDraw(context, viewport);
+            BeginDraw(context);
             context.DrawIndexedInstancedIndirect(args, stride);
             EndDraw(context);
         }

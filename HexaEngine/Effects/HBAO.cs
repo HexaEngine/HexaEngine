@@ -30,11 +30,10 @@ namespace HexaEngine.Effects
 
         private ISamplerState samplerLinear;
 
-        public IRenderTargetView Output;
-        public IShaderResourceView OutputView;
-        public IBuffer Camera;
-        public IShaderResourceView Position;
-        public IShaderResourceView Normal;
+        public ResourceRef<Texture> Output;
+        public ResourceRef<IBuffer> Camera;
+        public ResourceRef<IShaderResourceView> Position;
+        public ResourceRef<IShaderResourceView> Normal;
 
         private bool isDirty = true;
         private bool disposedValue;
@@ -100,8 +99,7 @@ namespace HexaEngine.Effects
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
-            Output = ResourceManager.AddTextureRTV("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
-            OutputView = ResourceManager.GetTextureSRV("SSAOBuffer");
+            Output = ResourceManager2.Shared.AddTexture("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
 
             quad = new Quad(device);
 
@@ -115,18 +113,22 @@ namespace HexaEngine.Effects
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
 
-            Position = await ResourceManager.GetResourceAsync<IShaderResourceView>("SwapChain.SRV");
-            Normal = await ResourceManager.GetResourceAsync<IShaderResourceView>("GBuffer.Normal");
-            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
+            Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("SwapChain.SRV");
+            Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
+            Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+
+            Position.Resource.ValueChanged += ValueChanged;
+            Normal.Resource.ValueChanged += ValueChanged;
+            Camera.Resource.ValueChanged += ValueChanged;
 
             unsafe
             {
                 hbaoSRVs = AllocArray(2);
-                hbaoSRVs[0] = (void*)Position.NativePointer;
-                hbaoSRVs[1] = (void*)Normal.NativePointer;
+                hbaoSRVs[0] = (void*)Position.Value.NativePointer;
+                hbaoSRVs[1] = (void*)Normal.Value.NativePointer;
                 hbaoCBs = AllocArray(2);
                 hbaoCBs[0] = (void*)cbHBAO.NativePointer;
-                hbaoCBs[1] = (void*)Camera.NativePointer;
+                hbaoCBs[1] = (void*)Camera.Value.NativePointer;
             }
 
             blurPipeline = device.CreateGraphicsPipeline(new()
@@ -147,15 +149,23 @@ namespace HexaEngine.Effects
             samplerLinear = device.CreateSamplerState(SamplerDescription.LinearClamp);
         }
 
+        private void ValueChanged(object sender, IDisposable e)
+        {
+            unsafe
+            {
+                hbaoSRVs[0] = (void*)Position.Value.NativePointer;
+                hbaoSRVs[1] = (void*)Normal.Value.NativePointer;
+                hbaoCBs[1] = (void*)Camera.Value.NativePointer;
+            }
+        }
+
         public void BeginResize()
         {
-            ResourceManager.RequireUpdate("SSAOBuffer");
         }
 
         public async void EndResize(int width, int height)
         {
-            Output = ResourceManager.UpdateTextureRTV("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
-            OutputView = ResourceManager.GetTextureSRV("SSAOBuffer");
+            Output = ResourceManager2.Shared.UpdateTexture("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
 
             hbaoBuffer.Dispose();
             hbaoRTV.Dispose();
@@ -172,18 +182,6 @@ namespace HexaEngine.Effects
             hbaoParams.Res = new(width, height);
             hbaoParams.ResInv = new(1 / width, 1 / height);
 
-            Position = await ResourceManager.GetSRVAsync("SwapChain.SRV");
-            Normal = await ResourceManager.GetSRVAsync("GBuffer.Normal");
-            Camera = await ResourceManager.GetConstantBufferAsync("CBCamera");
-
-            unsafe
-            {
-                hbaoSRVs[0] = (void*)Position.NativePointer;
-                hbaoSRVs[1] = (void*)Normal.NativePointer;
-
-                hbaoCBs[1] = (void*)Camera.NativePointer;
-            }
-
             isDirty = true;
         }
 
@@ -198,16 +196,18 @@ namespace HexaEngine.Effects
             }
 
             context.SetRenderTarget(hbaoRTV, null);
+            context.SetViewport(hbaoRTV.Viewport);
             context.PSSetShaderResources(hbaoSRVs, 2, 0);
             context.PSSetConstantBuffers(hbaoCBs, 2, 0);
             context.PSSetSampler(samplerLinear, 0);
-            quad.DrawAuto(context, hbaoPipeline, hbaoRTV.Viewport);
+            quad.DrawAuto(context, hbaoPipeline);
 
-            context.SetRenderTarget(Output, null);
+            context.SetRenderTarget(Output.Value.RenderTargetView, null);
+            context.SetViewport(Output.Value.RenderTargetView.Viewport);
             context.PSSetShaderResources(blurSRVs, 1, 0);
             context.PSSetConstantBuffers(blurCBs, 1, 0);
             context.PSSetSampler(samplerLinear, 0);
-            quad.DrawAuto(context, blurPipeline, Output.Viewport);
+            quad.DrawAuto(context, blurPipeline);
             context.ClearState();
         }
 

@@ -22,16 +22,26 @@
         {
             if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape) return;
             var data = scene.MeshManager.Load(meshPath);
-            var meh = data.GetMesh();
-            bufferPool.Take(meh.Indices.Length, out Buffer<Triangle> buffer);
-            int j = 0;
-            for (int i = 0; i < meh.Indices.Length; i += 3)
+            ulong vertexCount = 0;
+            for (ulong i = 0; i < data.Header.MeshCount; i++)
             {
-                // Note verts are loaded counter-clockwise because the engine operates in LH mode
-                MeshVertex a = meh.Vertices[meh.Indices[i + 2]];
-                MeshVertex b = meh.Vertices[meh.Indices[i + 1]];
-                MeshVertex c = meh.Vertices[meh.Indices[i]];
-                buffer[j++] = new(a.Position, b.Position, c.Position);
+                var meh = data.GetMesh(i);
+                vertexCount += meh.IndicesCount;
+            }
+
+            bufferPool.Take((int)vertexCount, out Buffer<Triangle> buffer);
+            int m = 0;
+            for (ulong i = 0; i < data.Header.MeshCount; i++)
+            {
+                var meh = data.GetMesh(i);
+                for (int j = 0; j < meh.Indices.Length; j += 3)
+                {
+                    // Note verts are loaded counter-clockwise because the engine operates in LH mode
+                    MeshVertex a = meh.Vertices[meh.Indices[j + 2]];
+                    MeshVertex b = meh.Vertices[meh.Indices[j + 1]];
+                    MeshVertex c = meh.Vertices[meh.Indices[j]];
+                    buffer[m++] = new(a.Position, b.Position, c.Position);
+                }
             }
             mesh = new(buffer, Vector3.One, bufferPool);
             inertia = mesh.ComputeClosedInertia(Mass);

@@ -194,6 +194,7 @@ namespace HexaEngine.Effects
         }
 
 #pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+
         public async Task Initialize(IGraphicsDevice device, int width, int height)
 #pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
@@ -236,6 +237,7 @@ namespace HexaEngine.Effects
             if (enabled)
             {
                 context.SetRenderTarget(ssrRTV, null);
+                context.SetViewport(ssrRTV.Viewport);
                 context.PSSetConstantBuffer(cbSSR, 0);
                 context.PSSetConstantBuffer(Camera, 1);
                 context.PSSetShaderResource(Color, 0);
@@ -243,17 +245,19 @@ namespace HexaEngine.Effects
                 context.PSSetShaderResource(Normal, 2);
                 context.PSSetShaderResource(Backdepth, 3);
                 context.PSSetSampler(samplerLinear, 0);
-                quad.DrawAuto(context, ssrPipeline, ssrRTV.Viewport);
+                quad.DrawAuto(context, ssrPipeline);
 
                 context.SetRenderTarget(blurRTV, null);
+                context.SetViewport(blurRTV.Viewport);
                 context.PSSetConstantBuffer(cbBlur, 0);
                 context.PSSetShaderResource(ssrSRV, 0);
                 context.PSSetShaderResource(Normal, 1);
                 context.PSSetSampler(samplerLinear, 0);
-                quad.DrawAuto(context, blurPipeline, blurRTV.Viewport);
+                quad.DrawAuto(context, blurPipeline);
             }
 
             context.SetRenderTarget(Output, null);
+            context.SetViewport(Output.Viewport);
             context.PSSetConstantBuffer(cbMix, 0);
             context.PSSetShaderResource(Color, 0);
             if (!debug)
@@ -261,7 +265,7 @@ namespace HexaEngine.Effects
             else
                 context.PSSetShaderResource(ssrSRV, 1);
             context.PSSetSampler(samplerPoint, 0);
-            quad.DrawAuto(context, mixPipeline, Output.Viewport);
+            quad.DrawAuto(context, mixPipeline);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -24,7 +24,7 @@
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"IB: {filename}, Line:{lineNumber}";
+            dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
 
             items = Alloc<uint>(DefaultCapacity);
             ZeroRange(items, DefaultCapacity);
@@ -50,18 +50,22 @@
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint[] indices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"IB: {filename}, Line:{lineNumber}";
+            dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
 
             capacity = (uint)indices.Length;
-            items = Alloc<uint>(capacity);
             count = capacity;
 
-            for (uint i = 0; i < capacity; i++)
-            {
-                items[i] = indices[i];
-            }
-
             description = new(sizeof(uint) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
+
+            if ((flags & CpuAccessFlags.None) != 0)
+            {
+                description.Usage = Usage.Immutable;
+                fixed (uint* ptr = indices)
+                {
+                    buffer = device.CreateBuffer(ptr, capacity, description);
+                }
+                return;
+            }
             if ((flags & CpuAccessFlags.Write) != 0)
             {
                 description.Usage = Usage.Dynamic;
@@ -70,24 +74,23 @@
             {
                 description.Usage = Usage.Staging;
             }
-            if ((flags & CpuAccessFlags.None) != 0)
-            {
-                description.Usage = Usage.Immutable;
-            }
 
+            items = AllocCopy(indices);
             buffer = device.CreateBuffer(items, capacity, description);
         }
 
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint capacity, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"IB: {filename}, Line:{lineNumber}";
+            dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
 
             this.capacity = capacity;
-            items = Alloc<uint>(capacity);
-            ZeroRange(items, capacity);
 
             description = new(sizeof(uint) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
+            if ((flags & CpuAccessFlags.None) != 0)
+            {
+                throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
+            }
             if ((flags & CpuAccessFlags.Write) != 0)
             {
                 description.Usage = Usage.Dynamic;
@@ -96,11 +99,9 @@
             {
                 description.Usage = Usage.Staging;
             }
-            if ((flags & CpuAccessFlags.None) != 0)
-            {
-                description.Usage = Usage.Immutable;
-            }
 
+            items = Alloc<uint>(capacity);
+            ZeroRange(items, capacity);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
         }

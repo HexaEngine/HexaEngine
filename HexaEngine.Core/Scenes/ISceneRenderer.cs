@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
@@ -23,6 +24,7 @@
         PostProcessManager PostProcess { get; }
 
         object Debug { get; }
+        ViewportShading Shading { get; set; }
 
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window);
 

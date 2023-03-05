@@ -102,8 +102,7 @@ struct DomainInput
 };
 
 struct PixelInput
-{
-	
+{	
 	float4 position : SV_POSITION;
 	float4 pos : POSITION;
 	float2 tex : TEXCOORD0;

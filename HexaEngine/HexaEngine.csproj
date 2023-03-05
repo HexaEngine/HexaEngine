@@ -303,19 +303,19 @@
 		<None Update="assets\shared\shaders\shadow.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\prepass\defs.hlsl">
+		<None Update="assets\shared\shaders\deferred\geometry\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\prepass\ds.hlsl">
+		<None Update="assets\shared\shaders\deferred\geometry\ds.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\prepass\hs.hlsl">
+		<None Update="assets\shared\shaders\deferred\geometry\hs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\prepass\ps.hlsl">
+		<None Update="assets\shared\shaders\deferred\geometry\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\prepass\vs.hlsl">
+		<None Update="assets\shared\shaders\deferred\geometry\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\bloom\downsample\ps.hlsl">

@@ -1,25 +1,22 @@
 ﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Instances;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Pipelines.Deferred;
     using System.Collections.Concurrent;
     using System.Diagnostics.CodeAnalysis;
-    using System.Numerics;
-    using TextureInstance = Instances.TextureInstance;
 
     public static class ResourceManager
     {
-        private static Geometry geometry;
-        private static readonly ConcurrentDictionary<string, Mesh> meshes = new();
+        private static readonly ConcurrentDictionary<string, ResourceInstance<Mesh>> meshes = new();
         private static readonly ConcurrentDictionary<string, Material> materials = new();
-        private static readonly ConcurrentDictionary<string, TextureInstance> textures = new();
-        private static readonly List<IDisposable> resources = new();
-        private static readonly Dictionary<string, IDisposable> sharedResources = new();
-        private static readonly Dictionary<string, TaskCompletionSource> waitingHandles = new();
+        private static readonly ConcurrentDictionary<string, ResourceInstance<IShaderResourceView>> textures = new();
+        private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialShader>> shaders = new();
+        private static readonly ConcurrentDictionary<string, ResourceInstance<IGraphicsPipeline>> pipelines = new();
         private static bool suppressCleanup;
 #nullable disable
         private static IGraphicsDevice device;
@@ -28,8 +25,6 @@
         public static void Initialize(IGraphicsDevice device)
         {
             ResourceManager.device = device;
-            geometry = new Geometry();
-            geometry.Initialize(device, 0, 0).Wait();
         }
 
         /// <summary>
@@ -74,53 +69,42 @@
             }
         }
 
-        public static bool GetMesh(Meshes.MeshData mesh, [NotNullWhen(true)] out Mesh? model)
+        public static unsafe ResourceInstance<Mesh> LoadMesh(MeshData mesh)
         {
-            return meshes.TryGetValue(mesh.Name, out model);
-        }
-
-        public static unsafe Mesh LoadMesh(MeshSource mesh)
-        {
+            ResourceInstance<Mesh> instance;
             lock (meshes)
             {
                 if (meshes.TryGetValue(mesh.Name, out var value))
+                {
+                    value.AddRef();
                     return value;
-                var source = mesh.GetMesh();
-                Mesh model = new(device, mesh.Name, source.Vertices, source.Indices, mesh.Header.BoundingBox, mesh.Header.BoundingSphere);
-                meshes.TryAdd(mesh.Name, model);
-                return model;
+                }
+
+                instance = new(mesh.Name, 1);
+                meshes.TryAdd(mesh.Name, instance);
             }
+
+            Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.Box, mesh.Sphere);
+            instance.BeginLoad();
+            instance.EndLoad(model);
+
+            return instance;
         }
 
-        public static unsafe Mesh LoadMesh(string path)
-        {
-            lock (meshes)
-            {
-                if (meshes.TryGetValue(path, out var value))
-                    return value;
-                Mesh mesh = new(device, path);
-                meshes.TryAdd(path, mesh);
-                return mesh;
-            }
-        }
-
-        public static async Task<Mesh> LoadMeshAsync(string mesh)
+        public static async Task<ResourceInstance<Mesh>> LoadMeshAsync(MeshData mesh)
         {
             return await Task.Factory.StartNew(() => LoadMesh(mesh));
         }
 
-        public static async Task<Mesh> LoadMeshAsync(MeshSource mesh)
+        public static void UnloadMesh(ResourceInstance<Mesh> mesh)
         {
-            return await Task.Factory.StartNew(() => LoadMesh(mesh));
-        }
-
-        public static void UnloadMesh(Mesh model)
-        {
+            mesh.RemoveRef();
+            if (mesh.IsUsed) return;
             if (suppressCleanup) return;
             lock (meshes)
             {
-                meshes.Remove(model.Name, out _);
-                model.Dispose();
+                meshes.Remove(mesh.Name, out _);
+                mesh.Dispose();
             }
         }
 
@@ -136,13 +120,13 @@
                 }
 
                 modelMaterial = new(material,
-                    geometry.pipeline,
                     device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
                     device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
                 modelMaterial.AddRef();
                 materials.TryAdd(material.Name, modelMaterial);
             }
 
+            modelMaterial.Shader = LoadMaterialShader(material);
             modelMaterial.AlbedoTexture = LoadTexture(material.BaseColorTextureMap);
             modelMaterial.NormalTexture = LoadTexture(material.NormalTextureMap);
             modelMaterial.DisplacementTexture = LoadTexture(material.DisplacementTextureMap);
@@ -167,24 +151,22 @@
                     return modelMaterial;
                 }
 
-                
-
                 modelMaterial = new(material,
-                    geometry.pipeline,
                     device.CreateBuffer((CBMaterial)material, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
                     device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
                 modelMaterial.AddRef();
                 materials.TryAdd(material.Name, modelMaterial);
             }
 
-            modelMaterial.AlbedoTexture = await AsyncLoadTexture(material.BaseColorTextureMap);
-            modelMaterial.NormalTexture = await AsyncLoadTexture(material.NormalTextureMap);
-            modelMaterial.DisplacementTexture = await AsyncLoadTexture(material.DisplacementTextureMap);
-            modelMaterial.RoughnessTexture = await AsyncLoadTexture(material.RoughnessTextureMap);
-            modelMaterial.MetalnessTexture = await AsyncLoadTexture(material.MetalnessTextureMap);
-            modelMaterial.EmissiveTexture = await AsyncLoadTexture(material.EmissiveTextureMap);
-            modelMaterial.RoughnessMetalnessTexture = await AsyncLoadTexture(material.RoughnessMetalnessTextureMap);
-            modelMaterial.AoTexture = await AsyncLoadTexture(material.AoTextureMap);
+            modelMaterial.Shader = await LoadMaterialShaderAsync(material);
+            modelMaterial.AlbedoTexture = await LoadTextureAsync(material.BaseColorTextureMap);
+            modelMaterial.NormalTexture = await LoadTextureAsync(material.NormalTextureMap);
+            modelMaterial.DisplacementTexture = await LoadTextureAsync(material.DisplacementTextureMap);
+            modelMaterial.RoughnessTexture = await LoadTextureAsync(material.RoughnessTextureMap);
+            modelMaterial.MetalnessTexture = await LoadTextureAsync(material.MetalnessTextureMap);
+            modelMaterial.EmissiveTexture = await LoadTextureAsync(material.EmissiveTextureMap);
+            modelMaterial.RoughnessMetalnessTexture = await LoadTextureAsync(material.RoughnessMetalnessTextureMap);
+            modelMaterial.AoTexture = await LoadTextureAsync(material.AoTextureMap);
             modelMaterial.EndUpdate();
 
             return modelMaterial;
@@ -203,6 +185,7 @@
 
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
+            UpdateMaterialShader(ref modelMaterial.Shader, desc);
             UpdateTexture(ref modelMaterial.AlbedoTexture, desc.BaseColorTextureMap);
             UpdateTexture(ref modelMaterial.NormalTexture, desc.NormalTextureMap);
             UpdateTexture(ref modelMaterial.DisplacementTexture, desc.DisplacementTextureMap);
@@ -225,7 +208,7 @@
             }
         }
 
-        public static async Task AsyncUpdateMaterial(MaterialData desc)
+        public static async Task UpdateMaterialAsync(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -238,20 +221,22 @@
 
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
-            modelMaterial.AlbedoTexture = await AsyncUpdateTexture(modelMaterial.AlbedoTexture, desc.BaseColorTextureMap);
-            modelMaterial.NormalTexture = await AsyncUpdateTexture(modelMaterial.NormalTexture, desc.NormalTextureMap);
-            modelMaterial.DisplacementTexture = await AsyncUpdateTexture(modelMaterial.DisplacementTexture, desc.DisplacementTextureMap);
-            modelMaterial.RoughnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessTexture, desc.RoughnessTextureMap);
-            modelMaterial.MetalnessTexture = await AsyncUpdateTexture(modelMaterial.MetalnessTexture, desc.MetalnessTextureMap);
-            modelMaterial.EmissiveTexture = await AsyncUpdateTexture(modelMaterial.EmissiveTexture, desc.EmissiveTextureMap);
-            modelMaterial.RoughnessMetalnessTexture = await AsyncUpdateTexture(modelMaterial.RoughnessMetalnessTexture, desc.RoughnessMetalnessTextureMap);
-            modelMaterial.AoTexture = await AsyncUpdateTexture(modelMaterial.AoTexture, desc.AoTextureMap);
+            modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader, desc);
+            modelMaterial.AlbedoTexture = await UpdateTextureAsync(modelMaterial.AlbedoTexture, desc.BaseColorTextureMap);
+            modelMaterial.NormalTexture = await UpdateTextureAsync(modelMaterial.NormalTexture, desc.NormalTextureMap);
+            modelMaterial.DisplacementTexture = await UpdateTextureAsync(modelMaterial.DisplacementTexture, desc.DisplacementTextureMap);
+            modelMaterial.RoughnessTexture = await UpdateTextureAsync(modelMaterial.RoughnessTexture, desc.RoughnessTextureMap);
+            modelMaterial.MetalnessTexture = await UpdateTextureAsync(modelMaterial.MetalnessTexture, desc.MetalnessTextureMap);
+            modelMaterial.EmissiveTexture = await UpdateTextureAsync(modelMaterial.EmissiveTexture, desc.EmissiveTextureMap);
+            modelMaterial.RoughnessMetalnessTexture = await UpdateTextureAsync(modelMaterial.RoughnessMetalnessTexture, desc.RoughnessMetalnessTextureMap);
+            modelMaterial.AoTexture = await UpdateTextureAsync(modelMaterial.AoTexture, desc.AoTextureMap);
             modelMaterial.EndUpdate();
         }
 
         public static void UnloadMaterial(Material desc)
         {
             desc.RemoveRef();
+            ImGuiConsole.Log(desc.Name);
             if (desc.IsUsed) return;
             if (suppressCleanup) return;
 
@@ -261,6 +246,7 @@
                 desc.Dispose();
             }
 
+            UnloadMaterialShader(desc.Shader);
             UnloadTexture(desc.AlbedoTexture);
             UnloadTexture(desc.NormalTexture);
             UnloadTexture(desc.DisplacementTexture);
@@ -271,11 +257,11 @@
             UnloadTexture(desc.AoTexture);
         }
 
-        public static TextureInstance? LoadTexture(string? name)
+        public static ResourceInstance<IShaderResourceView>? LoadTexture(string? name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (string.IsNullOrEmpty(name)) return null;
-            TextureInstance? texture;
+            ResourceInstance<IShaderResourceView>? texture;
             lock (textures)
             {
                 if (textures.TryGetValue(fullname, out texture))
@@ -296,12 +282,12 @@
             return texture;
         }
 
-        public static Task<TextureInstance?> AsyncLoadTexture(string? name)
+        public static Task<ResourceInstance<IShaderResourceView>?> LoadTextureAsync(string? name)
         {
             return Task.Factory.StartNew(() => LoadTexture(name));
         }
 
-        public static void UnloadTexture(TextureInstance? texture)
+        public static void UnloadTexture(ResourceInstance<IShaderResourceView>? texture)
         {
             if (texture == null) return;
             texture.RemoveRef();
@@ -315,7 +301,7 @@
             }
         }
 
-        public static void UpdateTexture(ref TextureInstance? texture, string name)
+        public static void UpdateTexture(ref ResourceInstance<IShaderResourceView>? texture, string name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (texture?.Name == fullname) return;
@@ -323,694 +309,174 @@
             texture = LoadTexture(name);
         }
 
-        public static async Task<TextureInstance?> AsyncUpdateTexture(TextureInstance? texture, string name)
+        public static async Task<ResourceInstance<IShaderResourceView>?> UpdateTextureAsync(ResourceInstance<IShaderResourceView>? texture, string name)
         {
             string fullname = Paths.CurrentTexturePath + name;
             if (texture?.Name == fullname) return texture;
             UnloadTexture(texture);
-            return await AsyncLoadTexture(name);
+            return await LoadTextureAsync(name);
         }
 
-        private static void SignalWaitHandle(string name)
+        public static ResourceInstance<IGraphicsPipeline>? LoadPipeline(string name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
         {
-#if VERBOSE
-            Debug.WriteLine($"Signal {name}");
-#endif
-            GetWaitHandle(name).SetResult();
-        }
-
-        private static void ResetWaitHandle(string name)
-        {
-#if VERBOSE
-            Debug.WriteLine($"Reset {name}");
-#endif
-            lock (waitingHandles)
+            string fullname = Paths.CurrentTexturePath + name;
+            if (string.IsNullOrEmpty(name)) return null;
+            ResourceInstance<IGraphicsPipeline>? pipeline;
+            lock (pipelines)
             {
-                waitingHandles.Remove(name);
-                waitingHandles.Add(name, new(TaskCreationOptions.None));
-            }
-        }
-
-        private static void WaitForWaitHandle(string name)
-        {
-#if VERBOSE
-            Debug.WriteLine($"Wait {name}");
-#endif
-            GetWaitHandle(name).Task.Wait();
-        }
-
-        private static Task WaitForWaitHandleAsync(string name)
-        {
-            return GetWaitHandle(name).Task;
-        }
-
-        public static Graphics.Texture GetOrWait(string name)
-        {
-            // Wait for the resource creation.
-            WaitForWaitHandle(name);
-
-            lock (sharedResources)
-            {
-                if (sharedResources[name] is Graphics.Texture texture)
-                    return texture;
-                else
-                    throw new InvalidCastException();
-            }
-        }
-
-        public static async Task<Graphics.Texture> GetOrWaitAsync(string name)
-        {
-            // Wait for the resource creation.
-            await WaitForWaitHandleAsync(name);
-
-            lock (sharedResources)
-            {
-                if (sharedResources[name] is Graphics.Texture texture)
-                    return texture;
-                else
-                    throw new InvalidCastException();
-            }
-        }
-
-        public static void RequireUpdate(string name)
-        {
-            ResetWaitHandle(name);
-        }
-
-        public static object GetResource(string name)
-        {
-            lock (sharedResources)
-            {
-                WaitForWaitHandle(name);
-                return sharedResources[name];
-            }
-        }
-
-        public static void SetResource(string name, IDisposable resource)
-        {
-            lock (sharedResources)
-            {
-                sharedResources[name] = resource;
-                SignalWaitHandle(name);
-            }
-        }
-
-        public static void SetResource<T>(string name, T resource) where T : class, IDisposable
-        {
-            lock (sharedResources)
-            {
-                sharedResources[name] = resource;
-                SignalWaitHandle(name);
-            }
-        }
-
-        public static void SetOrAddResource<T>(string name, T resource) where T : class, IDisposable
-        {
-            lock (sharedResources)
-            {
-                if (sharedResources.ContainsKey(name))
-                    sharedResources[name] = resource;
-                else
-                    sharedResources.Add(name, resource);
-                SignalWaitHandle(name);
-            }
-        }
-
-        public static T? GetResource<T>(string name) where T : class, IDisposable
-        {
-            lock (sharedResources)
-            {
-                WaitForWaitHandle(name);
-                sharedResources.TryGetValue(name, out IDisposable? value);
-                return value is T t ? t : null;
-            }
-        }
-
-        public static async Task<T?> GetResourceAsync<T>(string name) where T : class, IDisposable
-        {
-            await WaitForWaitHandleAsync(name);
-            lock (sharedResources)
-            {
-                sharedResources.TryGetValue(name, out IDisposable? value);
-                return value is T t ? t : null;
-            }
-        }
-
-        public static bool TryGetResource<T>(string name, [NotNullWhen(true)] out T? value, bool dontWait = false) where T : class, IDisposable
-        {
-            lock (sharedResources)
-            {
-                if (!dontWait)
-                    WaitForWaitHandle(name);
-                sharedResources.TryGetValue(name, out IDisposable? val);
-                value = val is T t ? t : null;
-                return value != null;
-            }
-        }
-
-        public static async Task<(bool, T?)> TryGetResourceAsync<T>(string name, bool dontWait = false) where T : class, IDisposable
-        {
-            if (!dontWait)
-                await WaitForWaitHandleAsync(name);
-            lock (sharedResources)
-            {
-                sharedResources.TryGetValue(name, out IDisposable? val);
-                if (val is T t)
+                if (pipelines.TryGetValue(fullname, out pipeline))
                 {
-                    return (true, t);
+                    pipeline.Wait();
+                    pipeline.AddRef();
+                    return pipeline;
                 }
-                return (false, null);
+
+                pipeline = new(fullname, 1);
+                pipelines.TryAdd(fullname, pipeline);
             }
+
+            var pipe = device.CreateGraphicsPipeline(desc, state, macros);
+            pipeline.EndLoad(pipe);
+
+            return pipeline;
         }
 
-        private static void AddResource(string name, IDisposable resource)
+        public static Task<ResourceInstance<IGraphicsPipeline>?> LoadPipelineAsync(string? name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
         {
-            lock (sharedResources)
-            {
-                resources.Add(resource);
-                sharedResources.Add(name, resource);
-                SignalWaitHandle(name);
-            }
+            return Task.Factory.StartNew(() => LoadPipeline(name, desc, state, macros));
         }
 
-        public static void RemoveResource(string name)
+        public static void UnloadPipeline(ResourceInstance<IGraphicsPipeline>? pipeline)
         {
-            lock (sharedResources)
+            if (pipeline == null) return;
+            pipeline.RemoveRef();
+            if (!pipeline.IsUsed)
             {
-                var resource = sharedResources[name];
-                resources.Remove(resource);
-                sharedResources.Remove(name);
-                waitingHandles.Remove(name);
-                resource.Dispose();
-            }
-        }
-
-        public static void TryRemoveResource(string name)
-        {
-            lock (sharedResources)
-            {
-                if (sharedResources.TryGetValue(name, out IDisposable? value))
+                lock (pipelines)
                 {
-                    var resource = value;
-                    resources.Remove(resource);
-                    sharedResources.Remove(name);
-                    waitingHandles.Remove(name);
-                    resource.Dispose();
+                    pipelines.Remove(pipeline.Name, out _);
+                    pipeline.Dispose();
                 }
             }
         }
 
-        private static TaskCompletionSource GetWaitHandle(string name)
+        public static void UpdatePipeline(ref ResourceInstance<IGraphicsPipeline>? pipeline, string name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
         {
-            // Create an wait handle if there is none
-            TaskCompletionSource? handle;
-            lock (waitingHandles)
+            if (pipeline == null)
             {
-                if (!waitingHandles.TryGetValue(name, out handle))
+                pipeline = LoadPipeline(name, desc, state, macros);
+                return;
+            }
+
+            var pipe = device.CreateGraphicsPipeline(desc, state);
+            pipeline.BeginLoad();
+            pipeline.EndLoad(pipe);
+        }
+
+        public static async Task<ResourceInstance<IGraphicsPipeline>?> UpdatePipelineAsync(ResourceInstance<IGraphicsPipeline>? pipeline, string name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
+        {
+            if (pipeline == null)
+            {
+                return await LoadPipelineAsync(name, desc, state, macros);
+            }
+
+            var pipe = await device.CreateGraphicsPipelineAsync(desc, state, macros);
+            pipeline.BeginLoad();
+            pipeline.EndLoad(pipe);
+            return pipeline;
+        }
+
+        #region Shader
+
+        public static ResourceInstance<MaterialShader>? LoadMaterialShader(MaterialData data)
+        {
+            ResourceInstance<MaterialShader>? shader;
+            lock (shaders)
+            {
+                if (shaders.TryGetValue(data.Name, out shader))
                 {
-                    handle = new();
-                    waitingHandles.Add(name, handle);
-                }
-            }
-            return handle;
-        }
-
-        public static IBuffer? GetBuffer(string name)
-        {
-            return GetResource<IBuffer>(name);
-        }
-
-        public static Task<IBuffer?> GetBufferAsync(string name)
-        {
-            return GetResourceAsync<IBuffer>(name);
-        }
-
-        public static IBuffer? GetConstantBuffer(string name)
-        {
-            return GetResource<IConstantBuffer>(name)?.Buffer;
-        }
-
-        public static async Task<IBuffer?> GetConstantBufferAsync(string name)
-        {
-            return (await GetResourceAsync<IConstantBuffer>(name))?.Buffer;
-        }
-
-        public static void AddConstantBuffer(string name, IConstantBuffer buffer)
-        {
-            AddResource(name, buffer);
-        }
-
-        public static ConstantBuffer<T> AddConstantBuffer<T>(string name, CpuAccessFlags cpuAccessFlags) where T : unmanaged
-        {
-            lock (sharedResources)
-            {
-                ConstantBuffer<T> buffer = new(device, cpuAccessFlags);
-                AddResource(name, buffer);
-                return buffer;
-            }
-        }
-
-        public static ConstantBuffer<T> AddConstantBuffer<T>(string name, T[] values, CpuAccessFlags cpuAccessFlags) where T : unmanaged
-        {
-            lock (sharedResources)
-            {
-                ConstantBuffer<T> buffer = new(device, values, cpuAccessFlags);
-                AddResource(name, buffer);
-                return buffer;
-            }
-        }
-
-        public static ConstantBuffer<T> AddConstantBuffer<T>(string name, uint length, CpuAccessFlags cpuAccessFlags) where T : unmanaged
-        {
-            lock (sharedResources)
-            {
-                ConstantBuffer<T> buffer = new(device, length, cpuAccessFlags);
-                AddResource(name, buffer);
-                return buffer;
-            }
-        }
-
-        public static void AddSamplerState(string name, ISamplerState samplerState)
-        {
-            AddResource(name, samplerState);
-        }
-
-        public static ISamplerState AddSamplerState(string name, SamplerDescription description)
-        {
-            lock (sharedResources)
-            {
-                ISamplerState samplerState = device.CreateSamplerState(description);
-                AddResource(name, samplerState);
-                return samplerState;
-            }
-        }
-
-        public static ISamplerState? GetSamplerState(string name)
-        {
-            return GetResource<ISamplerState>(name);
-        }
-
-        public static Task<ISamplerState?> GetSamplerStateAsync(string name)
-        {
-            return GetResourceAsync<ISamplerState>(name);
-        }
-
-        public static ISamplerState GetOrAddSamplerState(string name, SamplerDescription description)
-        {
-            if (TryGetResource<ISamplerState>(name, out var samplerState, true))
-            {
-                return samplerState;
-            }
-
-            lock (sharedResources)
-            {
-                samplerState = device.CreateSamplerState(description);
-                AddResource(name, samplerState);
-                return samplerState;
-            }
-        }
-
-        public static void AddShaderResourceView(string name, IShaderResourceView srv)
-        {
-            AddResource(name, srv);
-        }
-
-        public static void AddDepthStencilView(string name, IDepthStencilView srv)
-        {
-            AddResource(name, srv);
-        }
-
-        public static IDepthStencilView? GetDepthStencilView(string name)
-        {
-            return GetResource<IDepthStencilView>(name);
-        }
-
-        public static Task<IDepthStencilView?> GetDepthStencilViewAsync(string name)
-        {
-            return GetResourceAsync<IDepthStencilView>(name);
-        }
-
-        public static void AddTextureArray(string name, TextureArray srv)
-        {
-            AddResource(name, srv);
-        }
-
-        public static TextureArray AddTextureArray(string name, int width, int height, uint count, Format format)
-        {
-            lock (sharedResources)
-            {
-                TextureArray textureArray = new(device, width, height, count, format);
-                AddResource(name, textureArray);
-                return textureArray;
-            }
-        }
-
-        public static TextureArray? GetTextureArray(string name)
-        {
-            return GetResource<TextureArray>(name);
-        }
-
-        public static Task<TextureArray?> GetTextureArrayAsync(string name)
-        {
-            return GetResourceAsync<TextureArray>(name);
-        }
-
-        public static IRenderTargetView[]? GetTextureArrayRTV(string name)
-        {
-            return GetResource<TextureArray>(name)?.RTVs;
-        }
-
-        public static async Task<IRenderTargetView[]?> GetTextureArrayRTVAsync(string name)
-        {
-            return (await GetResourceAsync<TextureArray>(name))?.RTVs;
-        }
-
-        public static IShaderResourceView[]? GetTextureArraySRV(string name)
-        {
-            return GetResource<TextureArray>(name)?.SRVs;
-        }
-
-        public static async Task<IShaderResourceView[]?> GetTextureArraySRVAsync(string name)
-        {
-            return (await GetResourceAsync<TextureArray>(name))?.SRVs;
-        }
-
-        public static Graphics.Texture AddTexture(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static Graphics.Texture AddTexture(string name, TextureDescription description, Span<byte> rawPixelData, int rowPitch)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, rawPixelData, rowPitch, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static Graphics.Texture AddTexture(string name, TextureDescription description, Span<byte> rawPixelData, int rowPitch, int slicePitch)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, rawPixelData, rowPitch, slicePitch, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static IRenderTargetView? AddTextureRTV(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture.RenderTargetView;
-            }
-        }
-
-        public static IShaderResourceView? AddTextureSRV(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture.ShaderResourceView;
-            }
-        }
-
-        public static IDepthStencilView? AddTextureDSV(string name, TextureDescription description, DepthStencilDesc depthStencilDesc)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description, depthStencilDesc);
-                AddResource(name, texture);
-                return texture.DepthStencilView;
-            }
-        }
-
-        public static Graphics.Texture AddTextureFile(string name, TextureFileDescription description)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static Graphics.Texture AddOrUpdateTextureFile(string name, TextureFileDescription description)
-        {
-            lock (sharedResources)
-            {
-                TryRemoveResource(name);
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static Graphics.Texture AddTextureColor(string name, TextureDimension dimension, Vector4 color)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, dimension, color);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static Graphics.Texture AddOrUpdateTextureColor(string name, TextureDimension dimension, Vector4 color)
-        {
-            lock (sharedResources)
-            {
-                TryRemoveResource(name);
-                Graphics.Texture texture = new(device, dimension, color);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static IRenderTargetView? AddTextureFileRTV(string name, TextureFileDescription description)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture.RenderTargetView;
-            }
-        }
-
-        public static IShaderResourceView? AddTextureFileSRV(string name, TextureFileDescription description)
-        {
-            lock (sharedResources)
-            {
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture.ShaderResourceView;
-            }
-        }
-
-        public static IRenderTargetView? UpdateTextureRTV(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                if (TryGetResource(name, out Graphics.Texture? texture, true))
-                {
-                    if (texture.Description != description)
-                    {
-                        texture = UpdateTexture(name, description);
-                    }
-                    return texture.RenderTargetView;
-                }
-                texture = new(device, description);
-                AddResource(name, texture);
-                return texture.RenderTargetView;
-            }
-        }
-
-        public static IShaderResourceView? UpdateTextureSRV(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                if (TryGetResource(name, out Graphics.Texture? texture, true))
-                {
-                    if (texture.Description != description)
-                    {
-                        texture = UpdateTexture(name, description);
-                    }
-                    return texture.ShaderResourceView;
-                }
-                texture = new(device, description);
-                AddResource(name, texture);
-                return texture.ShaderResourceView;
-            }
-        }
-
-        public static IRenderTargetView? GetTextureRTV(string name)
-        {
-            lock (sharedResources)
-            {
-                if (TryGetResource(name, out Graphics.Texture? texture))
-                {
-                    return texture.RenderTargetView;
+                    shader.Wait();
+                    shader.AddRef();
+                    return shader;
                 }
 
-                return null;
+                shader = new(data.Name, 1);
+                shaders.TryAdd(data.Name, shader);
             }
+
+            var shad = new MaterialShader();
+            shad.Initialize(device, data);
+            shader.EndLoad(shad);
+
+            return shader;
         }
 
-        public static IShaderResourceView? GetTextureSRV(string name)
+        public static async Task<ResourceInstance<MaterialShader>?> LoadMaterialShaderAsync(MaterialData data)
         {
-            lock (sharedResources)
+            ResourceInstance<MaterialShader>? shader;
+            lock (shaders)
             {
-                if (TryGetResource(name, out Graphics.Texture? texture))
+                if (shaders.TryGetValue(data.Name, out shader))
                 {
-                    return texture.ShaderResourceView;
+                    shader.Wait();
+                    shader.AddRef();
+                    return shader;
                 }
 
-                return null;
+                shader = new(data.Name, 1);
+                shaders.TryAdd(data.Name, shader);
             }
+
+            var shad = new MaterialShader();
+            await shad.InitializeAsync(device, data);
+            shader.EndLoad(shad);
+
+            return shader;
         }
 
-        public static IDepthStencilView? GetTextureDSV(string name)
+        public static void UnloadMaterialShader(ResourceInstance<MaterialShader>? shader)
         {
-            lock (sharedResources)
+            if (shader == null) return;
+            shader.RemoveRef();
+            if (!shader.IsUsed)
             {
-                if (TryGetResource(name, out Graphics.Texture? texture))
+                lock (shaders)
                 {
-                    return texture.DepthStencilView;
+                    shaders.Remove(shader.Name, out _);
+                    shader.Dispose();
                 }
-
-                return null;
             }
         }
 
-        public static Graphics.Texture? GetTexture(string name)
+        public static void UpdateMaterialShader(ref ResourceInstance<MaterialShader>? shader, MaterialData data)
         {
-            lock (sharedResources)
+            if (shader == null)
             {
-                if (TryGetResource(name, out Graphics.Texture? texture))
-                {
-                    return texture;
-                }
-                return null;
+                shader = LoadMaterialShader(data);
+                return;
             }
+
+            var shad = new MaterialShader();
+            shad.Initialize(device, data);
+            shader.BeginLoad();
+            shader.EndLoad(shad);
         }
 
-        public static IRenderTargetView? GetTextureFileRTV(string name)
+        public static async Task<ResourceInstance<MaterialShader>?> UpdateMaterialShaderAsync(ResourceInstance<MaterialShader>? pipeline, MaterialData data)
         {
-            lock (sharedResources)
+            if (pipeline == null)
             {
-                if (TryGetResource(name, out Graphics.Texture? texture))
-                {
-                    return texture.RenderTargetView;
-                }
-
-                return null;
+                return await LoadMaterialShaderAsync(data);
             }
+
+            var shad = new MaterialShader();
+            await shad.InitializeAsync(device, data);
+            pipeline.BeginLoad();
+            pipeline.EndLoad(shad);
+            return pipeline;
         }
 
-        public static IShaderResourceView? GetTextureFileSRV(string name)
-        {
-            lock (sharedResources)
-            {
-                if (TryGetResource(name, out Graphics.Texture? texture))
-                {
-                    return texture.ShaderResourceView;
-                }
-
-                return null;
-            }
-        }
-
-        public static async Task<IRenderTargetView?> GetTextureRTVAsync(string name)
-        {
-            var result = await TryGetResourceAsync<Graphics.Texture>(name, false);
-            if (result.Item1)
-            {
-                return result.Item2?.RenderTargetView;
-            }
-            return null;
-        }
-
-        public static async Task<IShaderResourceView?> GetTextureSRVAsync(string name)
-        {
-            var result = await TryGetResourceAsync<Graphics.Texture>(name, false);
-            if (result.Item1)
-            {
-                return result.Item2?.ShaderResourceView;
-            }
-            return null;
-        }
-
-        public static async Task<IShaderResourceView?> GetTextureSRVAsync(string name, bool dontWait)
-        {
-            var result = await TryGetResourceAsync<Graphics.Texture>(name, dontWait);
-            if (result.Item1)
-            {
-                return result.Item2?.ShaderResourceView;
-            }
-            return null;
-        }
-
-        public static async Task<IShaderResourceView?> GetSRVAsync(string name)
-        {
-            var result = await TryGetResourceAsync<IShaderResourceView>(name, false);
-            if (result.Item1)
-            {
-                return result.Item2;
-            }
-            return null;
-        }
-
-        public static async Task<IDepthStencilView?> GetTextureDSVAsync(string name)
-        {
-            var result = await TryGetResourceAsync<Graphics.Texture>(name, false);
-            if (result.Item1)
-            {
-                return result.Item2?.DepthStencilView;
-            }
-            return null;
-        }
-
-        public static async Task<Graphics.Texture?> GetTextureAsync(string name)
-        {
-            var result = await TryGetResourceAsync<Graphics.Texture>(name, false);
-            if (result.Item1)
-            {
-                return result.Item2;
-            }
-            return null;
-        }
-
-        public static Graphics.Texture UpdateTexture(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                RemoveResource(name);
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
-
-        public static Graphics.Texture UpdateTexture(string name, TextureFileDescription description)
-        {
-            lock (sharedResources)
-            {
-                RemoveResource(name);
-                Graphics.Texture texture = new(device, description);
-                AddResource(name, texture);
-                return texture;
-            }
-        }
+        #endregion Shader
 
         public static void Release()
         {
@@ -1019,26 +485,29 @@
                 mesh.Dispose();
             }
             meshes.Clear();
+
             foreach (var material in materials.Values)
             {
                 material.Dispose();
             }
             materials.Clear();
+
             foreach (var texture in textures.Values)
             {
                 texture.Dispose();
             }
             textures.Clear();
+
+            foreach (var pipeline in pipelines.Values)
+            {
+                pipeline.Dispose();
+            }
+            pipelines.Clear();
         }
 
-        public static void ReleaseShared()
+        public static void Dispose()
         {
-            foreach (var resource in resources)
-            {
-                resource.Dispose();
-            }
-            resources.Clear();
-            sharedResources.Clear();
+            Release();
         }
     }
 }

@@ -33,6 +33,7 @@
 #pragma warning disable CS8618 // Non-nullable field 'sphere' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'inputNode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'view' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public MaterialEditor()
 #pragma warning restore CS8618 // Non-nullable field 'view' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning restore CS8618 // Non-nullable field 'inputNode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
@@ -246,8 +247,9 @@
                 }
                 context.VSSetConstantBuffer(world.Buffer, 0);
                 context.VSSetConstantBuffer(view.Buffer, 1);
+                context.SetViewport(new(256, 256));
 
-                sphere.DrawAuto(context, pipeline, new(256, 256));
+                sphere.DrawAuto(context, pipeline);
             }
 
             editor.Draw();

@@ -22,7 +22,7 @@
 
         public StructuredBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"StructuredBuffer: {filename}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {

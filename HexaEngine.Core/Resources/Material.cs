@@ -4,7 +4,6 @@
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Pipelines.Deferred;
-    using TextureInstance = Instances.TextureInstance;
 
     public unsafe class Material : IDisposable
     {
@@ -13,28 +12,27 @@
         public MaterialData desc;
         public IBuffer CB;
         public ISamplerState SamplerState;
-        public TextureInstance? AlbedoTexture;
-        public TextureInstance? NormalTexture;
-        public TextureInstance? DisplacementTexture;
-        public TextureInstance? RoughnessTexture;
-        public TextureInstance? MetalnessTexture;
-        public TextureInstance? EmissiveTexture;
-        public TextureInstance? AoTexture;
-        public TextureInstance? RoughnessMetalnessTexture;
+        public ResourceInstance<MaterialShader>? Shader;
+        public ResourceInstance<IShaderResourceView>? AlbedoTexture;
+        public ResourceInstance<IShaderResourceView>? NormalTexture;
+        public ResourceInstance<IShaderResourceView>? DisplacementTexture;
+        public ResourceInstance<IShaderResourceView>? RoughnessTexture;
+        public ResourceInstance<IShaderResourceView>? MetalnessTexture;
+        public ResourceInstance<IShaderResourceView>? EmissiveTexture;
+        public ResourceInstance<IShaderResourceView>? AoTexture;
+        public ResourceInstance<IShaderResourceView>? RoughnessMetalnessTexture;
         public void** SRVs;
-        public IGraphicsPipeline Pipeline;
         private int instances;
         private bool disposedValue;
         private bool loaded;
 
-        public Material(MaterialData desc, IGraphicsPipeline pipeline, IBuffer cB, ISamplerState samplerState)
+        public Material(MaterialData desc, IBuffer cB, ISamplerState samplerState)
         {
             this.desc = desc;
             name = desc.Name;
             CB = cB;
             SamplerState = samplerState;
             SRVs = AllocArray(7);
-            Pipeline = pipeline;       
         }
 
         public string Name => name;
@@ -55,11 +53,11 @@
             context.DSSetSampler(SamplerState, 0);
             context.PSSetShaderResources(SRVs, 7, 0);
             if (DisplacementTexture != null)
-                context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
+                context.DSSetShaderResource(DisplacementTexture.Value, 0);
             return true;
         }
 
-        public void Draw(IGraphicsContext context, uint indexCount,  uint instanceCount)
+        public void DrawDepth(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
             if (!loaded) return;
             if (dirty)
@@ -67,17 +65,21 @@
                 context.Write(CB, (CBMaterial)desc);
                 dirty = false;
             }
+            if (!Shader.Value.BeginDrawDepth(context, camera))
+            {
+                return;
+            }
             context.DSSetConstantBuffer(CB, 2);
             context.PSSetConstantBuffer(CB, 2);
             context.PSSetSampler(SamplerState, 0);
             context.DSSetSampler(SamplerState, 0);
             context.PSSetShaderResources(SRVs, 7, 0);
             if (DisplacementTexture != null)
-                context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
+                context.DSSetShaderResource(DisplacementTexture.Value, 0);
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
         }
 
-        public void DrawIndriect(IGraphicsContext context, IBuffer argBuffer, uint offset)
+        public void Draw(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
             if (!loaded) return;
             if (dirty)
@@ -85,13 +87,40 @@
                 context.Write(CB, (CBMaterial)desc);
                 dirty = false;
             }
+            if (!Shader.Value.BeginDraw(context, camera))
+            {
+                return;
+            }
             context.DSSetConstantBuffer(CB, 2);
             context.PSSetConstantBuffer(CB, 2);
             context.PSSetSampler(SamplerState, 0);
             context.DSSetSampler(SamplerState, 0);
             context.PSSetShaderResources(SRVs, 7, 0);
             if (DisplacementTexture != null)
-                context.DSSetShaderResource(DisplacementTexture.Pointer, 0);
+                context.DSSetShaderResource(DisplacementTexture.Value, 0);
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+        }
+
+        public void DrawIndirect(IGraphicsContext context, IBuffer camera, IBuffer argBuffer, uint offset)
+        {
+            if (!loaded) return;
+            if (dirty)
+            {
+                context.Write(CB, (CBMaterial)desc);
+                dirty = false;
+            }
+            if (!Shader.Value.BeginDraw(context, camera))
+            {
+                return;
+            }
+            context.DSSetConstantBuffer(CB, 2);
+            context.PSSetConstantBuffer(CB, 2);
+            context.PSSetSampler(SamplerState, 0);
+            context.DSSetSampler(SamplerState, 0);
+            context.PSSetShaderResources(SRVs, 7, 0);
+            if (DisplacementTexture != null)
+                context.DSSetShaderResource(DisplacementTexture.Value, 0);
+
             context.DrawIndexedInstancedIndirect(argBuffer, offset);
         }
 
@@ -103,12 +132,12 @@
 
         public void AddRef()
         {
-            Volatile.Write(ref instances, Volatile.Read(ref instances) + 1);
+            Interlocked.Increment(ref instances);
         }
 
         public void RemoveRef()
         {
-            Volatile.Write(ref instances, Volatile.Read(ref instances) - 1);
+            Interlocked.Decrement(ref instances);
         }
 
         public void BeginUpdate()
@@ -121,31 +150,31 @@
 #nullable disable
             dirty = true;
             if (AlbedoTexture != null)
-                SRVs[0] = AlbedoTexture.Pointer;
+                SRVs[0] = (void*)AlbedoTexture.Pointer;
             else
                 SRVs[0] = null;
             if (NormalTexture != null)
-                SRVs[1] = NormalTexture.Pointer;
+                SRVs[1] = (void*)NormalTexture.Pointer;
             else
                 SRVs[1] = null;
             if (RoughnessTexture != null)
-                SRVs[2] = RoughnessTexture.Pointer;
+                SRVs[2] = (void*)RoughnessTexture.Pointer;
             else
                 SRVs[2] = null;
             if (MetalnessTexture != null)
-                SRVs[3] = MetalnessTexture.Pointer;
+                SRVs[3] = (void*)MetalnessTexture.Pointer;
             else
                 SRVs[3] = null;
             if (EmissiveTexture != null)
-                SRVs[4] = EmissiveTexture.Pointer;
+                SRVs[4] = (void*)EmissiveTexture.Pointer;
             else
                 SRVs[4] = null;
             if (AoTexture != null)
-                SRVs[5] = AoTexture.Pointer;
+                SRVs[5] = (void*)AoTexture.Pointer;
             else
                 SRVs[5] = null;
             if (RoughnessMetalnessTexture != null)
-                SRVs[6] = RoughnessMetalnessTexture.Pointer;
+                SRVs[6] = (void*)RoughnessMetalnessTexture.Pointer;
             else
                 SRVs[6] = null;
             loaded = true;

@@ -1,71 +1,48 @@
 ﻿namespace HexaEngine.Core.Instances
 {
-    using HexaEngine.Core.Culling;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System;
     using System.Runtime.CompilerServices;
 
     public class InstanceManager : IInstanceManager
     {
-        private readonly IGraphicsDevice device;
+        private readonly Func<object?, IInstance> CreateInstanceDelegate;
+        private readonly Action<object?> DestroyInstanceDelegate;
 
-        private readonly List<ModelInstanceType> types = new();
-        private readonly List<ModelInstance> instances = new();
-        private readonly SemaphoreSlim semaphore = new(1);
+        private readonly List<IInstanceType> types = new();
+        private readonly List<IInstance> instances = new();
 
-        public IReadOnlyList<ModelInstance> Instances => instances;
+        public IReadOnlyList<IInstance> Instances => instances;
 
-        public IReadOnlyList<ModelInstanceType> Types => types;
+        public IReadOnlyList<IInstanceType> Types => types;
 
         public int InstanceCount => instances.Count;
 
         public int TypeCount => types.Count;
 
-        public event Action<ModelInstance>? InstanceCreated;
+        public event Action<IInstance>? InstanceCreated;
 
-        public event Action<ModelInstance>? InstanceDestroyed;
+        public event Action<IInstance>? InstanceDestroyed;
 
-        public event Action<ModelInstanceType>? TypeCreated;
+        public event Action<IInstanceType>? TypeCreated;
 
-        public event Action<ModelInstanceType>? TypeDestroyed;
+        public event Action<IInstanceType>? TypeDestroyed;
 
-        public event Action<ModelInstanceType, ModelInstance>? Updated;
+        public event Action<IInstanceType, IInstance>? Updated;
 
         public static InstanceManager? Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get => SceneManager.Current?.InstanceManager; }
 
-        public unsafe InstanceManager(IGraphicsDevice device)
+        public unsafe InstanceManager()
         {
-            this.device = device;
+            CreateInstanceDelegate = CreateInstanceAsyncInternal;
+            DestroyInstanceDelegate = DestroyInstanceAsyncInternal;
         }
 
-        public ModelInstance CreateInstance(string path, GameObject parent)
+        public IInstance CreateInstance(IInstanceType type, GameObject parent)
         {
-            var model = MeshSource.Load(path);
-            var material = ResourceManager.LoadMaterial(parent.GetScene().MaterialManager.TryAddMaterial(model.GetMaterial()));
-            var mesh = ResourceManager.LoadMesh(model);
-            var instance = CreateInstance(mesh, material, parent);
-            return instance;
-        }
-
-        public async Task<ModelInstance> CreateInstanceAsync(string path, GameObject parent)
-        {
-            var model = MeshSource.Load(path);
-            var material = await ResourceManager.LoadMaterialAsync(parent.GetScene().MaterialManager.TryAddMaterial(model.GetMaterial()));
-            var mesh = await ResourceManager.LoadMeshAsync(model);
-            var instance = await CreateInstanceAsync(mesh, material, parent);
-            return instance;
-        }
-
-        public ModelInstance CreateInstance(Mesh mesh, Material material, GameObject parent)
-        {
-            semaphore.Wait();
-            ModelInstanceType type;
             lock (types)
             {
-                type = mesh.CreateInstanceType(device, CullingManager.DrawIndirectArgs, CullingManager.InstanceDataOutBuffer, CullingManager.InstanceOffsets, CullingManager.InstanceDataNoCull, CullingManager.InstanceOffsetsNoCull, material);
                 if (!types.Contains(type))
                 {
                     types.Add(type);
@@ -74,7 +51,7 @@
                 }
             }
 
-            ModelInstance instance;
+            IInstance instance;
             lock (instances)
             {
                 instance = type.CreateInstance(parent);
@@ -87,57 +64,38 @@
 #if VERBOSE
             Debug.WriteLine(instance.ToString());
 #endif
-            semaphore.Release();
+
             return instance;
         }
 
-        private void TypeUpdated(ModelInstanceType arg1, ModelInstance arg2)
+        private void TypeUpdated(IInstanceType arg1, IInstance arg2)
         {
             Updated?.Invoke(arg1, arg2);
         }
 
-        public async Task<ModelInstance> CreateInstanceAsync(Mesh mesh, Material material, GameObject parent)
+        public Task<IInstance> CreateInstanceAsync(IInstanceType type, GameObject parent)
         {
-            await semaphore.WaitAsync();
-            ModelInstanceType type;
-            lock (types)
-            {
-                type = mesh.CreateInstanceType(device, CullingManager.DrawIndirectArgs, CullingManager.InstanceDataOutBuffer, CullingManager.InstanceOffsets, CullingManager.InstanceDataNoCull, CullingManager.InstanceOffsetsNoCull, material);
-                if (!types.Contains(type))
-                {
-                    types.Add(type);
-                    TypeCreated?.Invoke(type);
-                }
-            }
-
-            ModelInstance instance;
-            lock (instances)
-            {
-                instance = type.CreateInstance(parent);
-                if (!instances.Contains(instance))
-                {
-                    instances.Add(instance);
-                    InstanceCreated?.Invoke(instance);
-                }
-            }
-#if VERBOSE
-            Debug.WriteLine(instance.ToString());
-#endif
-            semaphore.Release();
-            return instance;
+            Tuple<InstanceManager, IInstanceType, GameObject> state = new(this, type, parent);
+            return Task.Factory.StartNew(CreateInstanceDelegate, state);
         }
 
-        public void DestroyInstance(ModelInstance instance)
+        private static IInstance CreateInstanceAsyncInternal(object? state)
         {
-            semaphore.Wait();
+#nullable disable
+            Tuple<InstanceManager, IInstanceType, GameObject> args = (Tuple<InstanceManager, IInstanceType, GameObject>)state;
+            return args.Item1.CreateInstance(args.Item2, args.Item3);
+#nullable enable
+        }
 
+        public void DestroyInstance(IInstance instance)
+        {
             var type = instance.Type;
 
             lock (types)
             {
                 if (!types.Contains(type))
                 {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("The instance don't exist");
                 }
             }
 
@@ -145,7 +103,7 @@
             {
                 if (!instances.Contains(instance))
                 {
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException("The instance don't exist");
                 }
                 instances.Remove(instance);
             }
@@ -155,63 +113,41 @@
 
             if (type.IsEmpty)
             {
-                var mesh = type.Mesh;
                 type.Updated -= TypeUpdated;
                 types.Remove(type);
-                mesh.DestroyInstanceType(type);
+                type.Dispose();
                 TypeDestroyed?.Invoke(type);
-
-                if (!mesh.IsUsed)
-                {
-                    ResourceManager.UnloadMesh(mesh);
-                    ResourceManager.UnloadMaterial(type.Material);
-                }
             }
-
-            semaphore.Release();
         }
 
-        public async Task DestroyInstanceAsync(ModelInstance instance)
+        public Task DestroyInstanceAsync(IInstance instance)
         {
-            await semaphore.WaitAsync();
+            Tuple<InstanceManager, IInstance> state = new(this, instance);
+            return Task.Factory.StartNew(DestroyInstanceDelegate, state);
+        }
 
-            var type = instance.Type;
+        private static void DestroyInstanceAsyncInternal(object? state)
+        {
+#nullable disable
+            Tuple<InstanceManager, IInstance> args = (Tuple<InstanceManager, IInstance>)state;
+            args.Item1.DestroyInstance(args.Item2);
+#nullable enable
+        }
 
-            lock (types)
+        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        {
+            for (int i = 0; i < types.Count; i++)
             {
-                if (!types.Contains(type))
-                {
-                    throw new InvalidOperationException();
-                }
+                types[i].DrawDepth(context, camera);
             }
+        }
 
-            lock (instances)
+        public void Draw(IGraphicsContext context, IBuffer camera)
+        {
+            for (int i = 0; i < types.Count; i++)
             {
-                if (!instances.Contains(instance))
-                {
-                    throw new InvalidOperationException();
-                }
-                instances.Remove(instance);
+                types[i].Draw(context, camera);
             }
-
-            type.DestroyInstance(instance);
-            InstanceDestroyed?.Invoke(instance);
-
-            if (type.IsEmpty)
-            {
-                var mesh = type.Mesh;
-                types.Remove(type);
-                mesh.DestroyInstanceType(type);
-                TypeDestroyed?.Invoke(type);
-
-                if (!mesh.IsUsed)
-                {
-                    ResourceManager.UnloadMesh(mesh);
-                    ResourceManager.UnloadMaterial(type.Material);
-                }
-            }
-
-            semaphore.Release();
         }
     }
 }

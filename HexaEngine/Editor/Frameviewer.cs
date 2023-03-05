@@ -170,17 +170,17 @@
                     }
                     ImGui.Separator();
                     ImGui.Text("Shading Mode");
-                    if (ImGui.RadioButton("Wireframe", scene.Lights.Viewport == ViewportShading.Wireframe))
+                    if (ImGui.RadioButton("Wireframe", Application.MainWindow.Renderer.Shading == ViewportShading.Wireframe))
                     {
-                        scene.Lights.Viewport = ViewportShading.Wireframe;
+                        Application.MainWindow.Renderer.Shading = ViewportShading.Wireframe;
                     }
-                    if (ImGui.RadioButton("Solid", scene.Lights.Viewport == ViewportShading.Solid))
+                    if (ImGui.RadioButton("Solid", Application.MainWindow.Renderer.Shading == ViewportShading.Solid))
                     {
-                        scene.Lights.Viewport = ViewportShading.Solid;
+                        Application.MainWindow.Renderer.Shading = ViewportShading.Solid;
                     }
-                    if (ImGui.RadioButton("Rendered", scene.Lights.Viewport == ViewportShading.Rendered))
+                    if (ImGui.RadioButton("Rendered", Application.MainWindow.Renderer.Shading == ViewportShading.Rendered))
                     {
-                        scene.Lights.Viewport = ViewportShading.Rendered;
+                        Application.MainWindow.Renderer.Shading = ViewportShading.Rendered;
                     }
 
                     ImGui.EndMenu();

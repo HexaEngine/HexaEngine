@@ -81,18 +81,18 @@
                 }
                 if (ImGui.BeginTabBar("ImporterTabs"))
                 {
-                    if (ImGui.BeginTabItem("Meshes"))
+                    if (ImGui.BeginTabItem("Models"))
                     {
-                        for (int i = 0; i < importer.Meshes.Length; i++)
+                        for (int i = 0; i < importer.Models.Count; i++)
                         {
-                            var mesh = importer.Meshes[i];
-                            var value = mesh.Name;
+                            var model = importer.Models[i];
+                            var value = model.Name;
                             var invalid = value.Length > 255;
                             if (invalid)
                                 ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1, 0, 0, 1));
-                            if (ImGui.InputText($"Mesh {i}", ref value, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
+                            if (ImGui.InputText($"Model {i}", ref value, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
                             {
-                                importer.ChangeNameOfMesh(mesh, value);
+                                importer.ChangeNameOfModel(model, value);
                             }
                             if (invalid)
                                 ImGui.PopStyleColor();

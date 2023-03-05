@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
 
-    public interface IConstantBuffer : IDisposable
+    public interface IConstantBuffer : IResource
     {
         IBuffer Buffer { get; }
 

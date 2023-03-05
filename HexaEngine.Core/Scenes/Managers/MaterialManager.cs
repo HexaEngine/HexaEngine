@@ -147,7 +147,7 @@
                 }
             }
 
-            await ResourceManager.AsyncUpdateMaterial(desc);
+            await ResourceManager.UpdateMaterialAsync(desc);
         }
 
         public void Remove(MaterialData desc)

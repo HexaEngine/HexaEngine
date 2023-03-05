@@ -25,13 +25,70 @@
         public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
 
-            items = Alloc<T>(DefaultCapacity);
-            ZeroRange(items, DefaultCapacity);
             capacity = DefaultCapacity;
 
             description = new(sizeof(T) * DefaultCapacity, BindFlags.VertexBuffer, Usage.Default, flags);
+            if ((flags & CpuAccessFlags.Write) != 0)
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if ((flags & CpuAccessFlags.Read) != 0)
+            {
+                description.Usage = Usage.Staging;
+            }
+            if ((flags & CpuAccessFlags.None) != 0)
+            {
+                throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
+            }
+
+            items = Alloc<T>(DefaultCapacity);
+            ZeroRange(items, DefaultCapacity);
+            buffer = device.CreateBuffer(description);
+            buffer.DebugName = dbgName;
+        }
+
+        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T[] vertices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            this.device = device;
+            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+
+            capacity = (uint)vertices.Length;
+            count = capacity;
+
+            description = new(sizeof(T) * (int)capacity, BindFlags.VertexBuffer, Usage.Default, flags);
+            if ((flags & CpuAccessFlags.None) != 0)
+            {
+                description.Usage = Usage.Immutable;
+                fixed (T* ptr = vertices)
+                {
+                    buffer = device.CreateBuffer(ptr, capacity, description);
+                }
+                return;
+            }
+            if ((flags & CpuAccessFlags.Write) != 0)
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if ((flags & CpuAccessFlags.Read) != 0)
+            {
+                description.Usage = Usage.Staging;
+            }
+
+            items = AllocCopy(vertices);
+            buffer = device.CreateBuffer(items, capacity, description);
+            buffer.DebugName = dbgName;
+        }
+
+        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint capacity, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            this.device = device;
+            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+
+            this.capacity = capacity;
+
+            description = new(sizeof(T) * (int)capacity, BindFlags.VertexBuffer, Usage.Default, flags);
             if (flags.HasFlag(CpuAccessFlags.Write))
             {
                 description.Usage = Usage.Dynamic;
@@ -45,65 +102,8 @@
                 throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
             }
 
-            buffer = device.CreateBuffer(description);
-            buffer.DebugName = dbgName;
-        }
-
-        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T[] vertices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
-        {
-            this.device = device;
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
-
-            capacity = (uint)vertices.Length;
-            items = Alloc<T>(capacity);
-            count = capacity;
-
-            for (uint i = 0; i < capacity; i++)
-            {
-                items[i] = vertices[i];
-            }
-
-            description = new(sizeof(T) * (int)capacity, BindFlags.VertexBuffer, Usage.Default, flags);
-            if (flags.HasFlag(CpuAccessFlags.Write))
-            {
-                description.Usage = Usage.Dynamic;
-            }
-            if (flags.HasFlag(CpuAccessFlags.Read))
-            {
-                description.Usage = Usage.Staging;
-            }
-            if (flags.HasFlag(CpuAccessFlags.None))
-            {
-                description.Usage = Usage.Immutable;
-            }
-
-            buffer = device.CreateBuffer(items, capacity, description);
-            buffer.DebugName = dbgName;
-        }
-
-        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint capacity, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
-        {
-            this.device = device;
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
-
-            this.capacity = capacity;
             items = Alloc<T>(capacity);
             ZeroRange(items, capacity);
-
-            description = new(sizeof(T) * (int)capacity, BindFlags.VertexBuffer, Usage.Default, flags);
-            if (flags.HasFlag(CpuAccessFlags.Write))
-            {
-                description.Usage = Usage.Dynamic;
-            }
-            if (flags.HasFlag(CpuAccessFlags.Read))
-            {
-                description.Usage = Usage.Staging;
-            }
-            if (flags.HasFlag(CpuAccessFlags.None))
-            {
-                description.Usage = Usage.Immutable;
-            }
-
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
         }

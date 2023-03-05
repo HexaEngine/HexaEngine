@@ -45,14 +45,6 @@
 
         public void Draw(IGraphicsContext context)
         {
-            if (Output == null) return;
-
-            context.SetRenderTarget(Output, DSV);
-            context.PSSetSampler(sampler, 0);
-            context.VSSetConstantBuffers(cbs, 2, 0);
-            context.PSSetShaderResource(Env, 0);
-            sphere.DrawAuto(context, pipeline, Output.Viewport);
-            context.ClearState();
         }
 
         public void Dispose()

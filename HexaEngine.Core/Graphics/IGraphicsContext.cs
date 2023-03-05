@@ -9,6 +9,8 @@
 
         public void SetGraphicsPipeline(IGraphicsPipeline pipeline, Viewport viewport);
 
+        public void SetGraphicsPipeline(IGraphicsPipeline pipeline);
+
         void CopyResource(IResource dst, IResource src);
 
         unsafe void Write(IBuffer buffer, void* value, int size);

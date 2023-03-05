@@ -1,23 +1,41 @@
 ﻿namespace TestApp
 {
-    using HexaEngine.Core.Unsafes;
-    using System.Diagnostics;
-    using System.Globalization;
-    using System.Runtime.CompilerServices;
-
     public class Program
     {
+        public struct Test
+        {
+            public int X;
+            public int Y;
+            public int Z;
+        }
+
         public static unsafe void Main()
         {
-            U8String str = new(1024);
-            for (int i = 0; i < 1000000000; i++)
-            {
-                for (int j = 0; j < 1024; j++)
-                {
-                    j.ToString();
-                    str[j] = (byte)Random.Shared.Next(byte.MinValue, byte.MaxValue);
-                }
-            }
+            Test* value = stackalloc Test[1];
+            value->X = 1;
+            value->Y = 2;
+            value->Z = 3;
+
+            int* yComponent = (int*)value + 1;
+            *yComponent = 50;
+
+            Console.WriteLine(value->X);
+            Console.WriteLine(value->Y);
+            Console.WriteLine(value->Z);
+
+            var bytes = new Span<byte>((byte*)value, sizeof(Test));
+
+            Console.WriteLine(Convert.ToHexString(bytes));
+        }
+
+        public static unsafe void ModifyValueUnsafe(int* value)
+        {
+            *value = 10;
+        }
+
+        public static void ModifyValueSafe(ref int value)
+        {
+            value = 10;
         }
 
         /*

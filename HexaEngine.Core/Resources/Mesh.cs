@@ -1,20 +1,18 @@
 ﻿namespace HexaEngine.Core.Resources
 {
+    using HexaEngine.Core.Culling;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
-    using System.Numerics;
 
     public class Mesh : IDisposable
     {
-        private readonly SemaphoreSlim semaphore = new(1);
         private readonly ConcurrentDictionary<string, ModelInstanceType> materialToType = new();
         private readonly List<ModelInstanceType> instanceTypes = new();
+        private readonly IGraphicsDevice device;
         private readonly string name;
         private bool disposedValue;
         public IBuffer? VB;
@@ -26,6 +24,7 @@
 
         public unsafe Mesh(IGraphicsDevice device, string name, MeshVertex[] vertices, uint[] indices, BoundingBox box, BoundingSphere boundingSphere)
         {
+            this.device = device;
             this.name = name;
             BoundingBox = box;
             BoundingSphere = boundingSphere;
@@ -48,14 +47,14 @@
             }
         }
 
-        public unsafe Mesh(IGraphicsDevice device, string path)
+        public unsafe Mesh(IGraphicsDevice device, MeshData data)
         {
-            name = path;
-            MeshSource source = MeshSource.Load(path);
-            var vertices = source.GetMesh().Vertices;
-            var indices = source.GetMesh().Indices;
-            BoundingBox = source.Header.BoundingBox;
-            BoundingSphere = source.Header.BoundingSphere;
+            this.device = device;
+            name = data.Name;
+            var vertices = data.Vertices;
+            var indices = data.Indices;
+            BoundingBox = data.Box;
+            BoundingSphere = data.Sphere;
             if (vertices.Length != 0)
             {
                 fixed (MeshVertex* ptr = vertices)
@@ -79,80 +78,41 @@
 
         public bool IsUsed => instanceTypes.Count > 0;
 
-        internal ModelInstanceType CreateInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> noCullInstanceBuffer, StructuredBuffer<uint> noCullInstanceOffsets, Material material)
+        internal ModelInstanceType CreateInstanceType(ResourceInstance<Mesh> mesh, Material material)
         {
-            semaphore.Wait();
             lock (materialToType)
             {
-                if (!materialToType.TryGetValue(material.Name, out var type))
+                lock (instanceTypes)
                 {
-                    type = new(device, argsBuffer, instanceBuffer, instanceOffsets, noCullInstanceBuffer, noCullInstanceOffsets, this, material);
-                    if (!materialToType.TryAdd(material.Name, type))
-                        throw new Exception();
-                    lock (instanceTypes)
+                    if (!materialToType.TryGetValue(material.Name, out var type))
                     {
+                        type = new(mesh, material);
+                        type.Initialize(device, CullingManager.DrawIndirectArgs, CullingManager.InstanceDataOutBuffer, CullingManager.InstanceOffsets, CullingManager.InstanceDataNoCull, CullingManager.InstanceOffsetsNoCull);
+                        if (!materialToType.TryAdd(material.Name, type))
+                            throw new InvalidOperationException();
+
                         instanceTypes.Add(type);
                     }
-                }
 
-                semaphore.Release();
-                return type;
+                    return type;
+                }
             }
         }
 
         internal void DestroyInstanceType(ModelInstanceType type)
         {
-            if (instanceTypes.Contains(type))
+            lock (instanceTypes)
             {
-                lock (instanceTypes)
+                if (instanceTypes.Contains(type))
                 {
                     instanceTypes.Remove(type);
+                    materialToType.Remove(type.Material.Name, out _);
                 }
-                materialToType.Remove(type.Material.Name, out _);
-                type.Dispose();
-            }
-            else
-            {
-                throw new InvalidOperationException();
-            }
-        }
-
-        public unsafe bool DrawAuto(IGraphicsContext context, IEffect effect)
-        {
-            if (VB == null) return false;
-            if (IB == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-
-            effect.Draw(context);
-            context.SetVertexBuffer(VB, (uint)sizeof(MeshVertex));
-            context.SetIndexBuffer(IB, Format.R32UInt, 0);
-            lock (instanceTypes)
-            {
-                for (int i = 0; i < instanceTypes.Count; i++)
+                else
                 {
-                    instanceTypes[i].DrawAuto(context, IndexCount);
+                    throw new InvalidOperationException();
                 }
             }
-            context.ClearState();
-            return true;
-        }
-
-        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport)
-        {
-            if (VB == null) return;
-            if (IB == null) return;
-            if (semaphore.CurrentCount == 0) return;
-
-            context.SetVertexBuffer(VB, (uint)sizeof(MeshVertex));
-            context.SetIndexBuffer(IB, Format.R32UInt, 0);
-            lock (instanceTypes)
-            {
-                for (int i = 0; i < instanceTypes.Count; i++)
-                {
-                    instanceTypes[i].DrawAuto(context, pipeline, viewport, IndexCount);
-                }
-            }
-            context.ClearState();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -176,13 +136,11 @@
 
         ~Mesh()
         {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: false);
         }
 
         public void Dispose()
         {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

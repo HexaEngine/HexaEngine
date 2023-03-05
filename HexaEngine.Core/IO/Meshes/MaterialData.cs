@@ -1,8 +1,20 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
+    using HexaEngine.Core.Extensions;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using System.Numerics;
     using System.Text;
-    using HexaEngine.Core.IO;
+
+    [Flags]
+    public enum MaterialFlags
+    {
+        None = 0,
+        Depth = 1,
+        Tessellation = 2,
+        Geometry = 4,
+        Custom = 8,
+    }
 
     public struct MaterialData
     {
@@ -42,8 +54,40 @@
         public string SubsurfaceColorTextureMap = string.Empty;
         public string EmissiveTextureMap = string.Empty;
 
+        public MaterialFlags Flags = MaterialFlags.Depth;
+
         public MaterialData()
         {
+        }
+
+        public ShaderMacro[] GetShaderMacros()
+        {
+            ShaderMacro[] macros =
+            {
+                new ShaderMacro("BaseColor", new Vector4(BaseColor, Opacity).ToHLSL()),
+                new ShaderMacro("Roughness", Roughness.ToHLSL()),
+                new ShaderMacro("Metalness", Metalness.ToHLSL()),
+                new ShaderMacro("Specular", Specular.ToHLSL()),
+                new ShaderMacro("SpecularTint", SpecularTint.ToHLSL()),
+                new ShaderMacro("Sheen", Sheen.ToHLSL()),
+                new ShaderMacro("SheenTint", SheenTint.ToHLSL()),
+                new ShaderMacro("Clearcoat", Cleancoat.ToHLSL()),
+                new ShaderMacro("ClearcoatGloss", CleancoatGloss.ToHLSL()),
+                new ShaderMacro("Anisotropic", Anisotropic.ToHLSL()),
+                new ShaderMacro("Subsurface", Subsurface.ToHLSL()),
+                new ShaderMacro("Ao", Ao.ToHLSL()),
+                new ShaderMacro("Emissive", Emissive.ToHLSL()),
+
+                new ShaderMacro("HasBaseColorTex", string.IsNullOrEmpty(BaseColorTextureMap).ToHLSL()),
+                new ShaderMacro("HasNormalTex", string.IsNullOrEmpty(NormalTextureMap).ToHLSL()),
+                new ShaderMacro("HasDisplacementTex", string.IsNullOrEmpty(DisplacementTextureMap).ToHLSL()),
+                new ShaderMacro("HasMetalnessTex", string.IsNullOrEmpty(MetalnessTextureMap).ToHLSL()),
+                new ShaderMacro("HasRoughnessTex", string.IsNullOrEmpty(RoughnessTextureMap).ToHLSL()),
+                new ShaderMacro("HasEmissiveTex", string.IsNullOrEmpty(EmissiveTextureMap).ToHLSL()),
+                new ShaderMacro("HasAoTex", string.IsNullOrEmpty(AoTextureMap).ToHLSL()),
+                new ShaderMacro("HasRoughnessMetalnessTex", string.IsNullOrEmpty(RoughnessMetalnessTextureMap).ToHLSL()),
+            };
+            return macros;
         }
 
         public static MaterialData Read(Stream src, Encoding encoding)
@@ -84,6 +128,7 @@
             material.SubsurfaceTextureMap = src.ReadString(encoding);
             material.SubsurfaceColorTextureMap = src.ReadString(encoding);
             material.EmissiveTextureMap = src.ReadString(encoding);
+            material.Flags = MaterialFlags.Depth;
             return material;
         }
 

@@ -234,7 +234,7 @@ namespace HexaEngine.Windows
             renderDispatcher.Dispose();
             ObjectPickerManager.Release();
             CullingManager.Release();
-            ResourceManager.Release();
+            ResourceManager.Dispose();
             AudioManager.Release();
             swapChain.Dispose();
             context.Dispose();

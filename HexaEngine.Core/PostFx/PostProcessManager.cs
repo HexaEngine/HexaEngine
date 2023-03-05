@@ -28,8 +28,8 @@
         private readonly Quad quad;
         private readonly IGraphicsPipeline copy;
 
-        public IShaderResourceView? Input;
-        public IRenderTargetView? Output;
+        public ResourceRef<Texture> Input;
+        public ResourceRef<IRenderTargetView> Output;
         public Viewport Viewport;
         private bool enabled;
         private bool disposedValue;
@@ -51,6 +51,11 @@
                 PixelShader = "effects/copy/ps.hlsl",
                 VertexShader = "effects/copy/vs.hlsl",
             });
+
+            Input = ResourceManager2.Shared.GetTexture("LightBuffer");
+            Output = ResourceManager2.Shared.GetResource<IRenderTargetView>("SwapChain.RTV");
+            Input.ValueChanged += InputValueChanged;
+            Output.ValueChanged += OutputValueChanged;
         }
 
         public int Count => effectsSorted.Count;
@@ -58,6 +63,16 @@
         public IReadOnlyList<IPostFx> Effects => effectsSorted;
 
         public bool Enabled { get => enabled; set => enabled = value; }
+
+        private void OutputValueChanged(object? sender, IRenderTargetView? e)
+        {
+            isDirty = true;
+        }
+
+        private void InputValueChanged(object? sender, Texture? e)
+        {
+            isDirty = true;
+        }
 
         public void Initialize(int width, int height)
         {
@@ -67,7 +82,7 @@
             for (int i = 0; i < effectsSorted.Count; i++)
             {
                 var effect = effectsSorted[i];
-                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? 1 : 0);
+                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
             }
 
             for (int i = 0; i < effectsSorted.Count; i++)
@@ -76,9 +91,6 @@
             }
 
             isInitialized = true;
-
-            Input = ResourceManager.GetTextureSRV("LightBuffer");
-            Output = ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV").Result;
         }
 
         public IPostFx? GetByName(string name)
@@ -153,16 +165,13 @@
             for (int i = 0; i < effectsSorted.Count; i++)
             {
                 var effect = effectsSorted[i];
-                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? 1 : 0);
+                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
             }
 
             for (int i = 0; i < effectsSorted.Count; i++)
             {
                 effectsSorted[i].Initialize(device, width, height, macros);
             }
-
-            Input = ResourceManager.GetTextureSRV("LightBuffer");
-            Output = ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV").Result;
 
             isDirty = true;
         }
@@ -191,14 +200,11 @@
                 buffers[i] = new(device, TextureDescription.CreateTexture2D(width, height, 1, Format.RGBA32Float));
             }
 
-            Input = ResourceManager.GetTextureSRV("LightBuffer");
-            Output = ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV").Result;
             isDirty = true;
         }
 
         public void ResizeOutput()
         {
-            Output = ResourceManager.GetResourceAsync<IRenderTargetView>("SwapChain.RTV").Result;
             isDirty = true;
         }
 
@@ -233,14 +239,15 @@
         {
             if (!enabled)
             {
-                context.SetRenderTarget(Output, null);
-                context.PSSetShaderResource(Input, 0);
-                quad.DrawAuto(context, copy, Viewport);
+                context.SetRenderTarget(Output.Value, null);
+                context.PSSetShaderResource(Input.Value?.ShaderResourceView, 0);
+                context.SetViewport(Viewport);
+                quad.DrawAuto(context, copy);
                 context.ClearState();
                 return;
             }
-              
-            if (Input == null || Output == null)
+
+            if (Input.Value == null || Output.Value == null)
                 return;
 
             lock (effectsSorted)
@@ -295,7 +302,7 @@
                 {
                     context.ClearState();
                     swapIndex = 0;
-                    IShaderResourceView previous = Input;
+                    IShaderResourceView previous = Input.Value.ShaderResourceView;
                     for (int i = 0; i < effectsSorted.Count; i++)
                     {
                         var effect = effectsSorted[i];
@@ -318,7 +325,7 @@
                                 effect.SetOutput(buffer.RenderTargetView, buffers[swapIndex].Viewport);
 #pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
                             else
-                                effect.SetOutput(Output, Viewport);
+                                effect.SetOutput(Output.Value, Viewport);
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             previous = buffer.ShaderResourceView;

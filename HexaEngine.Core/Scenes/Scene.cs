@@ -14,8 +14,10 @@
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public class Scene
     {
@@ -28,7 +30,9 @@
         private MaterialManager materialManager;
         private MeshManager meshManager;
         private LightManager lightManager;
+        private RenderManager renderManager;
         private AnimationManager animationManager = new();
+
         private readonly SemaphoreSlim semaphore = new(1);
         private ISceneUpdateCallbacks sceneUpdateCallbacks;
         private string? path;
@@ -88,6 +92,9 @@
         public ScriptManager Scripts => scriptManager;
 
         [JsonIgnore]
+        public RenderManager RenderManager => renderManager;
+
+        [JsonIgnore]
         public List<ISystem> Systems => systems;
 
         [JsonIgnore]
@@ -116,7 +123,7 @@
 
         public void Initialize(IGraphicsDevice device)
         {
-            instanceManager = new(device);
+            instanceManager = new();
             lightManager = new(device, instanceManager);
             materialManager ??= new();
             meshManager ??= new();
@@ -126,6 +133,7 @@
             systems.Add(scriptManager);
             systems.Add(lightManager);
             systems.Add(new TransformSystem());
+            systems.Add(renderManager = new(device, instanceManager));
 
             semaphore.Wait();
 
@@ -367,6 +375,10 @@
             Simulation.Dispose();
             ThreadDispatcher.Dispose();
             lightManager.Dispose();
+            for (int i = 0; i < systems.Count; i++)
+            {
+                systems[i].Destroy(ThreadDispatcher);
+            }
             systems.Clear();
             semaphore.Release();
         }
@@ -392,6 +404,27 @@
                 if (collect && current.IsEditorVisible)
                     yield return current;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T? GetSystem<T>() where T : class, ISystem
+        {
+            for (int i = 0; i < systems.Count; i++)
+            {
+                var system = systems[i];
+                if (system is T t)
+                {
+                    return t;
+                }
+            }
+            return null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGetSystem<T>([NotNullWhen(true)] out T? system) where T : class, ISystem
+        {
+            system = GetSystem<T>();
+            return system != null;
         }
     }
 }

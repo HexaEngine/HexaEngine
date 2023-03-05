@@ -21,7 +21,8 @@ namespace HexaEngine.Effects
             if (Target == null) return;
             context.ClearRenderTargetView(Target, default);
             context.SetRenderTarget(Target, null);
-            quad.DrawAuto(context, pipeline, Target.Viewport);
+            context.SetViewport(Target.Viewport);
+            quad.DrawAuto(context, pipeline);
         }
 
         public void BeginResize()

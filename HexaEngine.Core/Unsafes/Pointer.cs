@@ -75,9 +75,22 @@
             Data = pointer;
         }
 
+        public bool IsNull => Data == null;
+
+        public void Free()
+        {
+            Utils.Free(Data);
+            Data = null;
+        }
+
         public Pointer Cast()
         {
             return new Pointer(Data);
+        }
+
+        public Pointer<CastTo> Cast<CastTo>() where CastTo : unmanaged
+        {
+            return new Pointer<CastTo>((CastTo*)Data);
         }
 
         public override bool Equals(object? obj)

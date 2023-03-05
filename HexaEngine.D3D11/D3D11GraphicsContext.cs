@@ -48,6 +48,11 @@
             ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext, viewport);
         }
 
+        public void SetGraphicsPipeline(IGraphicsPipeline pipeline)
+        {
+            ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
         {

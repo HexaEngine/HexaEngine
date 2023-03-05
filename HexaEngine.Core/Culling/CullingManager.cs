@@ -203,6 +203,16 @@
             DoOcclusionCulling(context, instanceManager, camera, count, mipChain);
         }
 
+        public static void DoCulling(IGraphicsContext context, InstanceManager instanceManager, DepthMipChain mipChain)
+        {
+            var camera = CameraManager.Culling;
+            if (camera == null) return;
+            if (instanceManager == null) return;
+
+            DoFrustumCulling(context, instanceManager, camera.Transform.Frustum, out var count);
+            DoOcclusionCulling(context, instanceManager, camera, count, mipChain);
+        }
+
         public static unsafe void Release()
         {
             occlusionCameraBuffer.Dispose();

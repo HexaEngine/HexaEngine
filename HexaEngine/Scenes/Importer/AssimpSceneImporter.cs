@@ -1,6 +1,5 @@
 ﻿using HexaEngine.Core.IO.Meshes;
 using HexaEngine.Core.Scenes;
-using Silk.NET.Assimp;
 
 namespace HexaEngine.Scenes.Importer
 {
@@ -9,10 +8,10 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Renderers.Components;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
-    using HexaEngine.Scenes.Components.Renderer;
     using Silk.NET.Assimp;
     using System.Diagnostics;
     using System.Numerics;
@@ -38,35 +37,25 @@ namespace HexaEngine.Scenes.Importer
         private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
         private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
         private readonly Dictionary<Pointer<Mesh>, Objects.Animature> animatureT = new();
-        private readonly Dictionary<Pointer<Mesh>, MeshSource> meshesT = new();
+        private readonly Dictionary<Pointer<Mesh>, MeshData> meshesT = new();
+        private readonly Dictionary<Pointer<Node>, ModelSource> modelsT = new();
         private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
         private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
         private readonly Dictionary<string, Animation> animationsT = new();
-#pragma warning disable CS8618 // Non-nullable field 'nodes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private List<GameObject> nodes;
-#pragma warning restore CS8618 // Non-nullable field 'nodes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'meshes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private MeshSource[] meshes;
-#pragma warning restore CS8618 // Non-nullable field 'meshes' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'materials' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private MaterialData[] materials;
-#pragma warning restore CS8618 // Non-nullable field 'materials' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
-#pragma warning disable CS8618 // Non-nullable field 'animations' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        private List<GameObject> nodes;
+        private List<ModelSource> models;
+        private MeshData[] meshes;
+        private MaterialData[] materials;
         private Animation[] animations;
-#pragma warning restore CS8618 // Non-nullable field 'animations' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'cameras' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Core.Scenes.Camera[] cameras;
-#pragma warning restore CS8618 // Non-nullable field 'cameras' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'lights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Core.Lights.Light[] lights;
-#pragma warning restore CS8618 // Non-nullable field 'lights' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'root' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private GameObject root;
-#pragma warning restore CS8618 // Non-nullable field 'root' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private unsafe AssimpScene* scene;
 
-        public MeshSource[] Meshes => meshes;
+        public IReadOnlyList<ModelSource> Models => models;
+
+        public MeshData[] Meshes => meshes;
 
         public MaterialData[] Materials => materials;
 
@@ -103,6 +92,8 @@ namespace HexaEngine.Scenes.Importer
 
             LoadMeshes(scene);
 
+            LoadModels(scene);
+
             LoadAnimations(scene);
 
             LoadCameras(scene);
@@ -116,7 +107,7 @@ namespace HexaEngine.Scenes.Importer
         {
             for (int i = 0; i < meshes.Length; i++)
             {
-                MeshSource model = meshes[i];
+                MeshData model = meshes[i];
                 if (model.Name.Length > 255)
                 {
                     return true;
@@ -125,7 +116,7 @@ namespace HexaEngine.Scenes.Importer
             return false;
         }
 
-        public bool ChangeNameOfMesh(MeshSource source, string newName)
+        public bool ChangeNameOfModel(ModelSource source, string newName)
         {
             if (meshes.Any(x => x.Name == newName))
                 return false;
@@ -141,12 +132,15 @@ namespace HexaEngine.Scenes.Importer
             string oldName = material.Name;
             for (int i = 0; i < meshes.Length; i++)
             {
-                MeshSource source = meshes[i];
-                MaterialData mat = source.GetMaterial();
-                if (source.GetMaterial().Name == oldName)
+                ModelSource source = models[i];
+                for (ulong j = 0; j < source.Header.MeshCount; j++)
                 {
-                    mat.Name = newName;
-                    source.SetMaterial(mat);
+                    MaterialData mat = source.GetMaterial(j);
+                    if (mat.Name == oldName)
+                    {
+                        mat.Name = newName;
+                        source.SetMaterial(j, mat);
+                    }
                 }
             }
             material.Name = newName;
@@ -565,7 +559,7 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void LoadMeshes(AssimpScene* scene)
         {
-            meshes = new MeshSource[scene->MNumMeshes];
+            meshes = new MeshData[scene->MNumMeshes];
             for (int i = 0; i < scene->MNumMeshes; i++)
             {
                 Mesh* msh = scene->MMeshes[i];
@@ -647,12 +641,32 @@ namespace HexaEngine.Scenes.Importer
                 float radius = box.Extent.Length();
                 BoundingSphere sphere = new(center, radius);
 
-                meshes[i] = new MeshSource(msh->MName, materials[(int)msh->MMaterialIndex], vertices, indices, bones, box, sphere);
+                meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, vertices, indices, bones);
 
                 meshesT.Add(msh, meshes[i]);
             }
 
             FileSystem.Refresh();
+        }
+
+        private unsafe void LoadModels(AssimpScene* scene)
+        {
+            models = new();
+            for (int x = 0; x < nodes.Count; x++)
+            {
+                GameObject node = nodes[x];
+                Node* p = nodesP[node];
+                if (p->MNumMeshes == 0)
+                    continue;
+                MeshData[] meshes = new MeshData[p->MNumMeshes];
+                for (int i = 0; i < p->MNumMeshes; i++)
+                {
+                    meshes[i] = this.meshes[(int)p->MMeshes[i]];
+                }
+                ModelSource model = new(p->MName, meshes);
+                models.Add(model);
+                modelsT.Add(p, model);
+            }
         }
 
         private unsafe void LoadCameras(AssimpScene* scene)
@@ -787,9 +801,9 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void InjectResources(Scene scene)
         {
-            for (int i = 0; i < meshes.Length; i++)
+            for (int i = 0; i < models.Count; i++)
             {
-                meshes[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
+                models[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
             }
 
             for (int i = 0; i < animations.Length; i++)
@@ -803,12 +817,12 @@ namespace HexaEngine.Scenes.Importer
             {
                 GameObject node = nodes[x];
                 Node* p = nodesP[node];
-                for (int i = 0; i < p->MNumMeshes; i++)
+
+                if (modelsT.ContainsKey(p))
                 {
-                    var renderer = node.GetOrCreateComponent<RendererComponent>();
-                    var model = meshes[(int)p->MMeshes[i]];
-                    renderer.AddMesh(model.Name);
-                    //if (animatureT.TryGetValue(p->))
+                    var component = node.GetOrCreateComponent<ModelRendererComponent>();
+                    var model = modelsT[p];
+                    component.Model = model.Name;
                 }
             }
         }

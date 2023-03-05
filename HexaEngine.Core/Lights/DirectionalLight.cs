@@ -5,7 +5,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers.Forward;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -14,7 +13,7 @@
     public class DirectionalLight : Light
     {
         private static ulong instances;
-        private static CSMPipeline? csmPipeline;
+        private static IGraphicsPipeline? csmPipeline;
         private static ConstantBuffer<Matrix4x4>? csmCB;
 
         private DepthStencil? csmDepthBuffer;
@@ -48,8 +47,19 @@
             if (Interlocked.Increment(ref instances) == 1)
             {
                 csmCB = new(device, 16, CpuAccessFlags.Write);
-                csmPipeline = new(device);
-                csmPipeline.View = csmCB.Buffer;
+                csmPipeline = device.CreateGraphicsPipeline(new()
+                {
+                    VertexShader = "forward/csm/vs.hlsl",
+                    HullShader = "forward/csm/hs.hlsl",
+                    DomainShader = "forward/csm/ds.hlsl",
+                    GeometryShader = "forward/csm/gs.hlsl",
+                }, new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.PatchListWith3ControlPoints,
+                });
             }
         }
 
@@ -84,7 +94,9 @@
 
             context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, csmDepthBuffer.DSV);
-            csmPipeline.BeginDraw(context, csmDepthBuffer.Viewport);
+            context.SetViewport(csmDepthBuffer.Viewport);
+            context.SetGraphicsPipeline(csmPipeline);
+            context.GSSetConstantBuffer(csmCB.Buffer, 0);
             var types = manager.Types;
             for (int j = 0; j < types.Count; j++)
             {

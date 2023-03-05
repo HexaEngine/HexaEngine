@@ -52,6 +52,7 @@
                 material.SubsurfaceTextureMap = fs.ReadString(encoding);
                 material.SubsurfaceColorTextureMap = fs.ReadString(encoding);
                 material.EmissiveTextureMap = fs.ReadString(encoding);
+                material.Flags = MaterialFlags.Depth;
                 Materials[i] = material;
             }
         }

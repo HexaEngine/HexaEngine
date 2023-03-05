@@ -27,4 +27,9 @@
         {
         }
     }
+
+    public interface IRenderComponent : IComponent
+    {
+        public void Draw();
+    }
 }

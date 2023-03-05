@@ -64,9 +64,10 @@ namespace HexaEngine.Effects
             if (Output == null) return;
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
+            context.SetViewport(Viewport);
             context.PSSetShaderResource(Input, 0);
             context.PSSetSampler(sampler, 0);
-            quad.DrawAuto(context, pipeline, Viewport);
+            quad.DrawAuto(context, pipeline);
             context.ClearState();
         }
 

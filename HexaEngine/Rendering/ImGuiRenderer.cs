@@ -328,7 +328,8 @@ namespace HexaEngine.Rendering
 
             uint stride = (uint)sizeof(ImDrawVert);
             uint offset = 0;
-            pipeline.BeginDraw(ctx, viewport);
+            ctx.SetGraphicsPipeline(pipeline);
+            ctx.SetViewport(viewport);
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);

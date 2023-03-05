@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Unsafes;
     using System;
+    using System.Diagnostics.Metrics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -460,6 +461,26 @@
             if (n1 != n2)
                 return false;
             return chars1.SequenceEqual(chars2);
+        }
+
+        /// <summary>
+        /// Compares two strings.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">b.</param>
+        /// <returns>true if the data matches the other, otherwise false.</returns>
+        public static unsafe bool StringCompare(char* a, string b)
+        {
+            int n1 = StringSizeNullTerminated(a);
+            int n2 = StringSizeNullTerminated(b);
+            ReadOnlySpan<char> chars1 = new(a, n1);
+            fixed (char* bp = b)
+            {
+                ReadOnlySpan<char> chars2 = new(bp, n2);
+                if (n1 != n2)
+                    return false;
+                return chars1.SequenceEqual(chars2);
+            }
         }
 
         /// <summary>

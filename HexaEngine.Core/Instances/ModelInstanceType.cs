@@ -10,35 +10,56 @@
     using System.Collections.Concurrent;
     using System.Numerics;
 
-    public class ModelInstanceType : IDisposable
+    public class ModelInstanceType : IInstanceType
     {
         private readonly SemaphoreSlim semaphore = new(1);
-        private readonly List<ModelInstance> instances = new();
-        private readonly ConcurrentQueue<ModelInstance> addQueue = new();
-        private readonly ConcurrentQueue<ModelInstance> removeQueue = new();
+        private readonly List<IInstance> instances = new();
+        private readonly ConcurrentQueue<IInstance> addQueue = new();
+        private readonly ConcurrentQueue<IInstance> removeQueue = new();
         private bool disposedValue;
-        private readonly DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argBuffer;
-        private readonly StructuredUavBuffer<Matrix4x4> instanceBuffer;
-        private readonly StructuredUavBuffer<uint> instanceOffsets;
-        private readonly StructuredBuffer<Matrix4x4> frustumInstanceBuffer;
-        private readonly StructuredBuffer<Matrix4x4> noCullInstanceBuffer;
-        private readonly StructuredBuffer<uint> noCullInstanceOffsets;
-        private readonly ConstantBuffer<uint> zeroIdBuffer;
-        private readonly ConstantBuffer<uint> idBuffer;
+        private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argBuffer;
+        private StructuredUavBuffer<Matrix4x4> instanceBuffer;
+        private StructuredUavBuffer<uint> instanceOffsets;
+        private StructuredBuffer<Matrix4x4> frustumInstanceBuffer;
+        private StructuredBuffer<Matrix4x4> noCullInstanceBuffer;
+        private StructuredBuffer<uint> noCullInstanceOffsets;
+        private ConstantBuffer<uint> zeroIdBuffer;
+        private ConstantBuffer<uint> idBuffer;
         private uint argBufferOffset;
         private int idCounter;
+        private int instanceCount;
 
         public readonly string Name;
-        public readonly Mesh Mesh;
+        public readonly ResourceInstance<Mesh> Mesh;
         public readonly Material Material;
 
-#pragma warning disable CS8618 // Non-nullable event 'Updated' must contain a non-null value when exiting constructor. Consider declaring the event as nullable.
-        public unsafe ModelInstanceType(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> noCullInstanceBuffer, StructuredBuffer<uint> noCullInstanceOffsets, Mesh mesh, Material material)
-#pragma warning restore CS8618 // Non-nullable event 'Updated' must contain a non-null value when exiting constructor. Consider declaring the event as nullable.
+        public unsafe ModelInstanceType(ResourceInstance<Mesh> mesh, Material material)
         {
             Name = $"{mesh},{material}";
             Mesh = mesh;
             Material = material;
+        }
+
+        public int VertexCount => Mesh.Value?.VertexCount ?? 0;
+
+        public int IndexCount => Mesh.Value?.IndexCount ?? 0;
+
+        public int Visible => (int)frustumInstanceBuffer.Count;
+
+        public int Count => instanceCount;
+
+        public bool IsEmpty => instanceCount == 0;
+
+        public IBuffer ArgBuffer => argBuffer.Buffer;
+
+        public uint ArgBufferOffset => argBufferOffset;
+
+        public IReadOnlyList<IInstance> Instances => instances;
+
+        public event Action<IInstanceType, IInstance>? Updated;
+
+        public void Initialize(IGraphicsDevice device, DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> argsBuffer, StructuredUavBuffer<Matrix4x4> instanceBuffer, StructuredUavBuffer<uint> instanceOffsets, StructuredBuffer<Matrix4x4> noCullInstanceBuffer, StructuredBuffer<uint> noCullInstanceOffsets)
+        {
             argBuffer = argsBuffer;
             this.instanceBuffer = instanceBuffer;
             this.instanceOffsets = instanceOffsets;
@@ -49,35 +70,20 @@
             idBuffer = new(device, 4, CpuAccessFlags.Write);
         }
 
-        public int VertexCount => Mesh.VertexCount;
-
-        public int IndexCount => Mesh.IndexCount;
-
-        public int Visible => (int)frustumInstanceBuffer.Count;
-
-        public int Count => instances.Count;
-
-        public bool IsEmpty => instances.Count == 0;
-
-        public IBuffer ArgBuffer => argBuffer.Buffer;
-
-        public uint ArgBufferOffset => argBufferOffset;
-
-        public IReadOnlyList<ModelInstance> Instances => instances;
-
-        public event Action<ModelInstanceType, ModelInstance> Updated;
-
-        public ModelInstance CreateInstance(GameObject parent)
+        public IInstance CreateInstance(GameObject parent)
         {
             var value = Interlocked.Increment(ref idCounter);
             ModelInstance instance = new(value, this, parent);
             addQueue.Enqueue(instance);
+            Interlocked.Increment(ref instanceCount);
             return instance;
         }
 
-        public void DestroyInstance(ModelInstance instance)
+        public void DestroyInstance(IInstance instance)
         {
+            Interlocked.Decrement(ref instanceCount);
             removeQueue.Enqueue(instance);
+            instance.Dispose();
         }
 
         public unsafe int UpdateInstanceBuffer(uint id, StructuredBuffer<Matrix4x4> noCullBuffer, StructuredBuffer<InstanceData> buffer, StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> drawArgs, BoundingFrustum frustum, bool doCulling)
@@ -115,7 +121,7 @@
                 }
             }
 
-            drawArgs.Add(new() { IndexCountPerInstance = (uint)Mesh.IndexCount });
+            drawArgs.Add(new() { IndexCountPerInstance = (uint)(Mesh.Value?.IndexCount ?? 0) });
 
             return count;
         }
@@ -192,15 +198,16 @@
 
         public unsafe bool BeginDrawNoOcculusion(IGraphicsContext context)
         {
-            if (Mesh.VB == null) return false;
-            if (Mesh.IB == null) return false;
+            if (Mesh.Value == null) return false;
+            if (Mesh.Value.VB == null) return false;
+            if (Mesh.Value.IB == null) return false;
             if (Material == null) return false;
             if (semaphore.CurrentCount == 0) return false;
             if (!Material.Bind(context)) return false;
 
             frustumInstanceBuffer.Update(context);
-            context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
-            context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
+            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(frustumInstanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
             context.VSSetConstantBuffer(zeroIdBuffer.Buffer, 0);
@@ -210,16 +217,17 @@
 
         public unsafe bool BeginDrawNoCulling(IGraphicsContext context)
         {
-            if (Mesh.VB == null) return false;
-            if (Mesh.IB == null) return false;
+            if (Mesh.Value == null) return false;
+            if (Mesh.Value.VB == null) return false;
+            if (Mesh.Value.IB == null) return false;
             if (Material == null) return false;
             if (semaphore.CurrentCount == 0) return false;
             if (!Material.Bind(context)) return false;
 
             noCullInstanceBuffer.Update(context);
             noCullInstanceOffsets.Update(context);
-            context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
-            context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
+            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(noCullInstanceBuffer.SRV, 0);
             context.VSSetShaderResource(noCullInstanceOffsets.SRV, 1);
             context.VSSetConstantBuffer(idBuffer.Buffer, 0);
@@ -229,15 +237,16 @@
 
         public unsafe bool BeginDraw(IGraphicsContext context)
         {
-            if (Mesh.VB == null) return false;
-            if (Mesh.IB == null) return false;
+            if (Mesh.Value == null) return false;
+            if (Mesh.Value.VB == null) return false;
+            if (Mesh.Value.IB == null) return false;
             if (Material == null) return false;
             if (semaphore.CurrentCount == 0) return false;
             if (!Material.Bind(context)) return false;
 
             idBuffer.Update(context);
-            context.SetVertexBuffer(0, Mesh.VB, (uint)sizeof(MeshVertex));
-            context.SetIndexBuffer(Mesh.IB, Format.R32UInt, 0);
+            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(instanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
             context.VSSetConstantBuffer(idBuffer.Buffer, 0);
@@ -245,10 +254,40 @@
             return true;
         }
 
-        public void Draw(IGraphicsContext context)
+        public unsafe void DrawDepth(IGraphicsContext context, IBuffer camera)
         {
-            if (BeginDraw(context))
-                context.DrawIndexedInstancedIndirect(ArgBuffer, ArgBufferOffset);
+            if (Mesh.Value == null) return;
+            if (Mesh.Value.VB == null) return;
+            if (Mesh.Value.IB == null) return;
+            if (Material == null) return;
+            if (semaphore.CurrentCount == 0) return;
+            if (!Material.Bind(context)) return;
+
+            idBuffer.Update(context);
+            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+            Material.DrawDepth(context, camera, (uint)IndexCount, (uint)Visible);
+        }
+
+        public unsafe void Draw(IGraphicsContext context, IBuffer camera)
+        {
+            if (Mesh.Value == null) return;
+            if (Mesh.Value.VB == null) return;
+            if (Mesh.Value.IB == null) return;
+            if (Material == null) return;
+            if (semaphore.CurrentCount == 0) return;
+            if (!Material.Bind(context)) return;
+
+            idBuffer.Update(context);
+            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+            Material.DrawIndirect(context, camera, ArgBuffer, ArgBufferOffset);
         }
 
         public void DrawNoOcclusion(IGraphicsContext context)
@@ -272,7 +311,7 @@
             return true;
         }
 
-        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, Viewport viewport, int indexCount)
+        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, int indexCount)
         {
             if (Material == null) return;
             if (semaphore.CurrentCount == 0) return;
@@ -283,7 +322,15 @@
             context.VSSetShaderResource(instanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
             context.VSSetConstantBuffer(idBuffer.Buffer, 0);
-            pipeline.DrawIndexedInstancedIndirect(context, viewport, argBuffer.Buffer, argBufferOffset);
+            context.SetGraphicsPipeline(pipeline);
+            context.DrawIndexedInstancedIndirect(argBuffer.Buffer, ArgBufferOffset);
+        }
+
+        public bool Equals(IInstanceType? other)
+        {
+            if (other == null) return false;
+            if (other is not ModelInstanceType type) return false;
+            return type.Mesh.Name == Mesh.Name && type.Material.Name == Material.Name;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -293,6 +340,7 @@
                 frustumInstanceBuffer.Dispose();
                 zeroIdBuffer.Dispose();
                 idBuffer.Dispose();
+                Mesh.Value?.DestroyInstanceType(this);
                 disposedValue = true;
             }
         }
