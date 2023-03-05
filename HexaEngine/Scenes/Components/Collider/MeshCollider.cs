@@ -13,15 +13,19 @@
     {
         private string meshPath = string.Empty;
         private Mesh mesh;
+        private Vector3 scale = Vector3.One;
 
         [EditorProperty("Mesh")]
         public string MeshPath
         { get => meshPath; set { meshPath = value; update = true; } }
 
+        [EditorProperty("Scale")]
+        public Vector3 Scale { get => scale; set => scale = value; }
+
         public override void CreateShape()
         {
             if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape) return;
-            var data = scene.MeshManager.Load(meshPath);
+            var data = scene.MeshManager.Load(Paths.CurrentAssetsPath + meshPath);
             ulong vertexCount = 0;
             for (ulong i = 0; i < data.Header.MeshCount; i++)
             {
@@ -29,7 +33,7 @@
                 vertexCount += meh.IndicesCount;
             }
 
-            bufferPool.Take((int)vertexCount, out Buffer<Triangle> buffer);
+            bufferPool.Take((int)vertexCount / 3, out Buffer<Triangle> buffer);
             int m = 0;
             for (ulong i = 0; i < data.Header.MeshCount; i++)
             {
@@ -43,7 +47,7 @@
                     buffer[m++] = new(a.Position, b.Position, c.Position);
                 }
             }
-            mesh = new(buffer, Vector3.One, bufferPool);
+            mesh = new(buffer, scale, bufferPool);
             inertia = mesh.ComputeClosedInertia(Mass);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             index = simulation.Shapes.Add(mesh);

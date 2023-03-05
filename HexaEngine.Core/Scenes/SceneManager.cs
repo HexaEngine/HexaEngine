@@ -143,15 +143,17 @@ namespace HexaEngine.Core.Scenes
         public static void Reload()
         {
             GameObject.Selected.ClearSelection();
-            var window = Application.MainWindow as IRenderWindow;
+            var window = Application.MainWindow;
 
             window.Dispatcher.InvokeBlocking(() =>
             {
                 lock (Current)
                 {
+                    ResourceManager.BeginPauseCleanup();
                     Current?.Uninitialize();
                     Current.Initialize(window.Device);
                     SceneChanged?.Invoke(null, new(Current, Current));
+                    ResourceManager.EndPauseCleanup();
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -168,6 +170,7 @@ namespace HexaEngine.Core.Scenes
             {
                 lock (Current)
                 {
+                    ResourceManager.BeginPauseCleanup();
                     Current?.Uninitialize();
                 }
                 GC.WaitForPendingFinalizers();
@@ -185,6 +188,7 @@ namespace HexaEngine.Core.Scenes
                 lock (Current)
                 {
                     Current.Initialize(window.Device);
+                    ResourceManager.EndPauseCleanup();
                     SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();

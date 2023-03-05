@@ -3,6 +3,7 @@ using HexaEngine.Core.Scenes;
 
 namespace HexaEngine.Scenes.Importer
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Animations;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
@@ -822,7 +823,7 @@ namespace HexaEngine.Scenes.Importer
                 {
                     var component = node.GetOrCreateComponent<ModelRendererComponent>();
                     var model = modelsT[p];
-                    component.Model = model.Name;
+                    component.Model = "meshes/" + model.Name + ".model";
                 }
             }
         }

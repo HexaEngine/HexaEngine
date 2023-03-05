@@ -5,7 +5,7 @@
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes;
 
-    public interface ICollider : IComponent
+    public interface IColliderComponent : IComponent
     {
         BodyHandle BodyHandle { get; }
 
@@ -42,5 +42,7 @@
         void DestroyShape();
 
         void SetCompoundData(ICompoundCollider parentCollider, CompoundChild compoundChild);
+
+        void Update();
     }
 }

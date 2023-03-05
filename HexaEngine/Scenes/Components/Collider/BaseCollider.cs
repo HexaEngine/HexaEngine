@@ -10,7 +10,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Systems;
 
-    public abstract class BaseCollider : ICollider
+    public abstract class BaseCollider : IColliderComponent
     {
         protected bool hasBody = false;
         protected bool hasShape = false;

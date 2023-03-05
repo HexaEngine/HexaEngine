@@ -15,7 +15,7 @@ namespace HexaEngine.Editor.Properties.Factories
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return new StringPropertyEditor(nameAttr.Name);
+            return new StringPropertyEditor(nameAttr.Name, nameAttr.Mode, nameAttr.StartingPath, nameAttr.Filter, nameAttr.RelativeTo);
         }
     }
 }

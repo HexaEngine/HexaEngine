@@ -7,6 +7,7 @@
 
     public class Vector3PropertyEditor : IPropertyEditor
     {
+        private readonly string id;
         private readonly string name;
         private readonly EditorPropertyMode mode;
         private readonly float min;
@@ -14,6 +15,7 @@
 
         public Vector3PropertyEditor(string name, EditorPropertyMode mode, float min, float max)
         {
+            id = Guid.NewGuid().ToString();
             this.name = name;
             this.mode = mode;
             this.min = min;
@@ -29,7 +31,7 @@
             switch (mode)
             {
                 case EditorPropertyMode.Default:
-                    if (ImGui.InputFloat3(name, ref val))
+                    if (ImGui.InputFloat3($"{name}##{id}", ref val))
                     {
                         value = val;
                         return true;
@@ -37,7 +39,7 @@
                     break;
 
                 case EditorPropertyMode.Colorpicker:
-                    if (ImGui.ColorEdit3(name, ref val))
+                    if (ImGui.ColorEdit3($"{name}##{id}", ref val))
                     {
                         value = val;
                         return true;
@@ -45,7 +47,7 @@
                     break;
 
                 case EditorPropertyMode.Slider:
-                    if (ImGui.SliderFloat3(name, ref val, min, max))
+                    if (ImGui.SliderFloat3($"{name}##{id}", ref val, min, max))
                     {
                         value = val;
                         return true;

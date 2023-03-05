@@ -331,15 +331,16 @@
                     ImGui.PopStyleColor();
                 }
 
+                for (int i = 0; i < dirs.Count; i++)
+                {
+                    DisplayDir(dirs[i]);
+                }
+
                 for (int i = 0; i < files.Count; i++)
                 {
                     DisplayFile(files[i]);
                 }
 
-                for (int i = 0; i < dirs.Count; i++)
-                {
-                    DisplayDir(dirs[i]);
-                }
                 ImGui.EndChild();
             }
         }

@@ -8,7 +8,6 @@
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
     using System;
-    using System.Reflection.Metadata;
     using System.Threading.Tasks;
 
     [EditorComponent<SkyboxRendererComponent>("Skybox", false, true)]
@@ -23,7 +22,7 @@
         private SkyboxData data;
         private Pointer<ObjectHandle> handle;
 
-        [EditorProperty("Environment")]
+        [EditorProperty("Environment", null)]
         public string Environment
         {
             get => environment;
@@ -72,7 +71,7 @@
                 var p = ((IGraphicsDevice, SkyboxRendererComponent))state;
                 var device = p.Item1;
                 var component = p.Item2;
-                var path = Paths.CurrentTexturePath + component.environment;
+                var path = Paths.CurrentAssetsPath + component.environment;
 
                 if (FileSystem.Exists(path))
                 {

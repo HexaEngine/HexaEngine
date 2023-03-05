@@ -7,14 +7,11 @@
         public void Awake(IGraphicsDevice device, GameObject gameObject);
 
         public void Destory();
+    }
 
-        public void FixedUpdate()
-        {
-        }
-
-        public void Update()
-        {
-        }
+    public interface IAudioComponent : IComponent
+    {
+        public void Update();
     }
 
     public interface IScriptComponent : IComponent
@@ -24,6 +21,14 @@
         }
 
         public void Destroy()
+        {
+        }
+
+        public void FixedUpdate()
+        {
+        }
+
+        public void Update()
         {
         }
     }

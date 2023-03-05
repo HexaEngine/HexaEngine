@@ -51,7 +51,7 @@
             set
             {
                 if (initialized)
-                    name = GetScene().GetAvailableName(this, value);
+                    name = GetScene().GetAvailableName(value);
                 else
                     name = value;
             }
@@ -214,26 +214,6 @@
             if (initialized)
                 component.Destory();
             components.Remove(component);
-        }
-
-        internal void Update()
-        {
-            for (int i = 0; i < children.Count; i++)
-            {
-                children[i].Update();
-            }
-        }
-
-        internal void FixedUpdate()
-        {
-            for (int i = 0; i < components.Count; i++)
-            {
-                components[i].FixedUpdate();
-            }
-            for (int i = 0; i < children.Count; i++)
-            {
-                children[i].FixedUpdate();
-            }
         }
 
         public virtual void Initialize(IGraphicsDevice device)

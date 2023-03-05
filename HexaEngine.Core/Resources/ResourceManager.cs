@@ -236,7 +236,6 @@
         public static void UnloadMaterial(Material desc)
         {
             desc.RemoveRef();
-            ImGuiConsole.Log(desc.Name);
             if (desc.IsUsed) return;
             if (suppressCleanup) return;
 

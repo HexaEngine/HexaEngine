@@ -16,7 +16,6 @@
     public class LayoutWidget : ImGuiWindow
     {
         private readonly Dictionary<string, EditorNodeAttribute> cache = new();
-        private readonly Dictionary<string, int> newInstances = new();
 
         public static bool ShowHidden;
 
@@ -56,17 +55,9 @@
                         if (ImGui.MenuItem(item.Key))
                         {
                             var node = item.Value.Constructor();
-                            if (newInstances.TryGetValue(item.Key, out int instance))
-                            {
-                                node.Name = $"{item.Key} {newInstances[item.Key]++}";
-                                scene.AddChild(node);
-                            }
-                            else
-                            {
-                                newInstances.Add(item.Key, 2);
-                                node.Name = $"{item.Key} {1}";
-                                scene.AddChild(node);
-                            }
+                            var name = scene.GetAvailableName(item.Key);
+                            node.Name = name;
+                            scene.AddChild(node);
                         }
                     }
 

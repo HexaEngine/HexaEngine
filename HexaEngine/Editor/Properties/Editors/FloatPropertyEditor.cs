@@ -6,6 +6,7 @@
 
     public class FloatPropertyEditor : IPropertyEditor
     {
+        private readonly string id;
         private readonly string name;
         private readonly EditorPropertyMode mode;
         private readonly float min;
@@ -13,6 +14,7 @@
 
         public FloatPropertyEditor(string name, EditorPropertyMode mode, float min, float max)
         {
+            this.id = Guid.NewGuid().ToString();
             this.name = name;
             this.mode = mode;
             this.min = min;
@@ -28,7 +30,7 @@
             switch (mode)
             {
                 case EditorPropertyMode.Default:
-                    if (ImGui.InputFloat(name, ref val))
+                    if (ImGui.InputFloat($"{name}##{id}", ref val))
                     {
                         value = val;
                         return true;
@@ -36,7 +38,7 @@
                     break;
 
                 case EditorPropertyMode.Slider:
-                    if (ImGui.SliderFloat(name, ref val, min, max))
+                    if (ImGui.SliderFloat($"{name}##{id}", ref val, min, max))
                     {
                         value = val;
                         return true;
@@ -44,7 +46,7 @@
                     break;
 
                 case EditorPropertyMode.SliderAngle:
-                    if (ImGui.SliderAngle(name, ref val, min, max))
+                    if (ImGui.SliderAngle($"{name}##{id}", ref val, min, max))
                     {
                         value = val;
                         return true;

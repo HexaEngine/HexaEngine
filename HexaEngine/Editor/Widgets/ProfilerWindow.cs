@@ -92,8 +92,6 @@
 
             Frame.Add(Time.Delta * 1000);
             Graphics.Add(renderer.Profiler[renderer] * 1000);
-            Updates.Add(scene.Profiler[scene.UpdateCallbacks] * 1000);
-
             Systems.Add(scene.Profiler[scene.Systems] * 1000);
 
             Update.Add(renderer.Profiler[renderer.Update] * 1000);

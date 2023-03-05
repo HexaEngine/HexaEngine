@@ -119,6 +119,8 @@
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
 #pragma warning restore CS8604 // Possible null reference argument for parameter 'path' in 'string Path.GetFullPath(string path)'.
             if (string.IsNullOrWhiteSpace(realPath)) return false;
+            realPath = realPath.Replace(@"\\", @"\");
+
             if (fileIndices.ContainsKey(realPath))
             {
                 return true;
@@ -130,9 +132,22 @@
             }
         }
 
+        public static string GetRelativePath(string path)
+        {
+            for (int i = 0; i < sources.Count; i++)
+            {
+                var rel = Path.GetRelativePath(sources[i], path);
+                if (rel == path)
+                    continue;
+                return rel;
+            }
+            return path;
+        }
+
         public static VirtualStream Open(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenRead(value);
@@ -165,6 +180,7 @@
         public static bool TryOpen(string path, [NotNullWhen(true)] out VirtualStream? stream)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenRead(value);

@@ -34,7 +34,6 @@
         private AnimationManager animationManager = new();
 
         private readonly SemaphoreSlim semaphore = new(1);
-        private ISceneUpdateCallbacks sceneUpdateCallbacks;
         private string? path;
 
         [JsonIgnore]
@@ -56,7 +55,6 @@
         {
             Name = "Scene";
             root = new SceneRootNode(this);
-            sceneUpdateCallbacks = new SceneUpdateCallbacks();
         }
 
         public string Name { get; }
@@ -98,9 +96,6 @@
         public List<ISystem> Systems => systems;
 
         [JsonIgnore]
-        public ISceneUpdateCallbacks UpdateCallbacks => sceneUpdateCallbacks;
-
-        [JsonIgnore]
         public MeshManager MeshManager { get => meshManager; set => meshManager = value; }
 
         [JsonIgnore]
@@ -128,6 +123,7 @@
             materialManager ??= new();
             meshManager ??= new();
 
+            systems.Add(new AudioSystem());
             systems.Add(new PhysicsSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
@@ -182,13 +178,6 @@
             Simulate(Time.Delta);
             Dispatcher.ExecuteInvokes();
             semaphore.Release();
-#if PROFILE
-            Profiler.Start(sceneUpdateCallbacks);
-#endif
-            sceneUpdateCallbacks.Update(root);
-#if PROFILE
-            Profiler.End(sceneUpdateCallbacks);
-#endif
 
 #if PROFILE
             Profiler.Start(systems);
@@ -219,13 +208,6 @@
             }
 
             semaphore.Wait();
-#if PROFILE
-            Profiler.Start(sceneUpdateCallbacks);
-#endif
-            sceneUpdateCallbacks.FixedUpdate(root);
-#if PROFILE
-            Profiler.End(sceneUpdateCallbacks);
-#endif
 
 #if PROFILE
             Profiler.Start(systems);
@@ -280,11 +262,26 @@
             return null;
         }
 
-        public string GetAvailableName(GameObject node, string name)
+        public string GetAvailableName(string name)
         {
-            if (string.IsNullOrEmpty(name)) return node.Name;
-            if (Find(name) != null) return node.Name;
-            return name;
+            return GetNewName(name);
+        }
+
+        private string GetNewName(string name)
+        {
+            if (Find(name) == null)
+                return name;
+
+            string result = name;
+
+            int i = 0;
+            while (Find(result) != null)
+            {
+                i++;
+                result = $"{name} {i}";
+            }
+
+            return result;
         }
 
         internal void RegisterChild(GameObject node)

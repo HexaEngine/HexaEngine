@@ -1,15 +1,12 @@
 ﻿namespace HexaEngine.Core.Renderers.Components
 {
     using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Editor.Properties;
-    using ImGuiNET;
-    using System;
     using System.Collections.Generic;
 
     [EditorComponent(typeof(ModelRendererComponent), "Model Renderer")]
@@ -22,10 +19,18 @@
 
         static ModelRendererComponent()
         {
-            ObjectEditorFactory.RegisterEditor(typeof(ModelRendererComponent), new ModelRendererComponentEditor());
         }
 
-        public string Model { get => model; set => model = value; }
+        [EditorProperty("Model", null, "*.mesh")]
+        public string Model
+        {
+            get => model;
+            set
+            {
+                model = value;
+                UpdateModel();
+            }
+        }
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
@@ -33,16 +38,7 @@
             if (!gameObject.GetScene().TryGetSystem<RenderManager>(out var manager))
                 return;
             renderer = manager.GetRenderer<ModelRenderer>();
-
-            ModelSource source = ModelSource.Load(model);
-            for (ulong i = 0; i < source.Header.MeshCount; i++)
-            {
-                var mesh = source.GetMesh(i);
-                renderer.CreateInstanceAsync(mesh, gameObject).ContinueWith(t =>
-                {
-                    instances.Add(t.Result);
-                });
-            }
+            UpdateModel();
         }
 
         public void Destory()
@@ -54,30 +50,38 @@
             instances.Clear();
         }
 
-        private class ModelRendererComponentEditor : IObjectEditor
+        private void UpdateModel()
         {
-            private object? instance;
-
-            public ModelRendererComponentEditor()
+            Task.Factory.StartNew(async state =>
             {
-                Type = typeof(ModelRendererComponent);
-                Name = "Model Renderer";
-            }
+                if (state is not ModelRendererComponent component)
+                    return;
+                if (component.gameObject == null)
+                    return;
+                lock (component.instances)
+                {
+                    for (int i = 0; i < component.instances.Count; i++)
+                    {
+                        component.renderer.DestroyInstance(component.instances[i]);
+                    }
+                }
+                component.instances.Clear();
+                var path = Paths.CurrentAssetsPath + component.model;
+                if (FileSystem.Exists(path))
+                {
+                    ModelSource source = ModelSource.Load(path);
 
-            public Type Type { get; }
-
-            public string Name { get; }
-
-            public object? Instance { get => instance; set => instance = value; }
-
-            public bool IsEmpty => false;
-
-            public void Draw()
-            {
-                if (instance == null) return;
-                ModelRendererComponent component = (ModelRendererComponent)instance;
-                ImGui.Text($"{component.model}");
-            }
+                    for (ulong i = 0; i < source.Header.MeshCount; i++)
+                    {
+                        var mesh = source.GetMesh(i);
+                        var instance = await component.renderer.CreateInstanceAsync(mesh, component.gameObject);
+                        lock (component.instances)
+                        {
+                            component.instances.Add(instance);
+                        }
+                    }
+                }
+            }, this);
         }
     }
 }

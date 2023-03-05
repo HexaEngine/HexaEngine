@@ -13,7 +13,7 @@
     [EditorComponent(typeof(CompoundCollider), "Compound Collider")]
     public class CompoundCollider : BaseCollider, ICompoundCollider
     {
-        protected List<ICollider>? colliderChildren;
+        protected List<IColliderComponent>? colliderChildren;
         protected Buffer<CompoundChild> compoundChildren;
         protected Vector3 center;
         protected Compound compound;
@@ -22,12 +22,12 @@
         public Vector3 Center => center;
 
         [JsonIgnore]
-        public IReadOnlyList<ICollider>? Children => colliderChildren;
+        public IReadOnlyList<IColliderComponent>? Children => colliderChildren;
 
         public override void CreateShape()
         {
             if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape) return;
-            colliderChildren = parent.GetComponentsFromChilds<ICollider>().ToList();
+            colliderChildren = parent.GetComponentsFromChilds<IColliderComponent>().ToList();
             CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
             for (int i = 0; i < colliderChildren.Count; i++)
             {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
@@ -8,7 +9,6 @@
     using HexaEngine.Editor.Properties;
     using HexaEngine.Scripting;
     using ImGuiNET;
-    using System.Diagnostics;
 
     [EditorComponent<CSharpScriptComponent>("C# Script")]
     public class CSharpScriptComponent : IScriptComponent
@@ -27,11 +27,10 @@
             if (ScriptType == null) return;
             if (!Application.InDesignMode)
             {
-                Debug.WriteLine($"Loading script: {ScriptType}");
                 Type? type = AssemblyManager.GetType(ScriptType);
                 if (type == null)
                 {
-                    Debug.WriteLine($"Couldn't load script: {ScriptType}");
+                    ImGuiConsole.Log($"Couldn't load script: {ScriptType}");
                     return;
                 }
 
@@ -41,7 +40,7 @@
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine(e);
+                    ImGuiConsole.Log(e);
                 }
 
                 if (instance != null)
@@ -53,7 +52,7 @@
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine(e);
+                        ImGuiConsole.Log(e);
                     }
                 }
             }
@@ -72,7 +71,7 @@
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                ImGuiConsole.Log(e);
             }
         }
 
@@ -89,7 +88,7 @@
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                ImGuiConsole.Log(e);
             }
         }
 
@@ -106,7 +105,7 @@
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                ImGuiConsole.Log(e);
             }
 
             instance = null;

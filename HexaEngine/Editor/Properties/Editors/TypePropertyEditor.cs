@@ -8,11 +8,13 @@
 
     public class TypePropertyEditor : IPropertyEditor
     {
+        private readonly string id;
         private readonly string name;
         private readonly Type targetType;
 
         public TypePropertyEditor(EditorPropertyAttribute attribute)
         {
+            this.id = Guid.NewGuid().ToString();
             name = attribute.Name;
             targetType = attribute.TargetType ?? throw new InvalidOperationException();
         }
@@ -33,7 +35,7 @@
             {
                 index = types.IndexOf((Type)value);
             }
-            if (ImGui.Combo(name, ref index, names, names.Length))
+            if (ImGui.Combo($"{name}##{id}", ref index, names, names.Length))
             {
                 value = types[index];
                 return true;

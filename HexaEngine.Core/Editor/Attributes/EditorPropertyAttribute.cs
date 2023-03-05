@@ -12,6 +12,15 @@
             Mode = mode;
         }
 
+        public EditorPropertyAttribute(string name, string? startingPath, string? filter = null, string? relativeTo = null, EditorPropertyMode mode = EditorPropertyMode.Filepicker)
+        {
+            Name = name;
+            StartingPath = startingPath;
+            Filter = filter;
+            RelativeTo = relativeTo;
+            Mode = mode;
+        }
+
         public EditorPropertyAttribute(string name, object[] enumValues, string[] enumNames, EditorPropertyMode mode = EditorPropertyMode.Enum)
         {
             Name = name;
@@ -54,6 +63,21 @@
         public object[]? EnumValues { get; }
 
         public string[]? EnumNames { get; }
+
+        /// <summary>
+        /// Filename filter for file picker.
+        /// </summary>
+        public string? Filter { get; }
+
+        /// <summary>
+        /// Sets the starting path.
+        /// </summary>
+        public string? StartingPath { get; }
+
+        /// <summary>
+        /// Returns the path relative to this value
+        /// </summary>
+        public string? RelativeTo { get; }
     }
 
     public class EditorPropertyAttribute<T> : EditorPropertyAttribute where T : struct, Enum
@@ -87,6 +111,7 @@
         Slider,
         SliderAngle,
         TypeSelector,
+        Filepicker,
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

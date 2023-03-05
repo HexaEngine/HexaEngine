@@ -6,11 +6,13 @@
 
     public class EnumPropertyEditor : IPropertyEditor
     {
+        private readonly string id;
         private readonly string name;
         private readonly Type propType;
 
         public EnumPropertyEditor(string name, Type propType)
         {
+            this.id = Guid.NewGuid().ToString();
             this.name = name;
             this.propType = propType;
         }
@@ -20,7 +22,7 @@
             var enums = AssemblyManager.GetEnumValues(propType);
             var names = AssemblyManager.GetEnumNames(propType);
             int index = Array.IndexOf(enums, value);
-            if (ImGui.Combo(name, ref index, names, names.Length))
+            if (ImGui.Combo($"{name}##{id}", ref index, names, names.Length))
             {
                 value = enums.GetValue(index);
                 return true;

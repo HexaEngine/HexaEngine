@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.IO;
     using System.IO;
     using System.Numerics;
@@ -15,7 +14,7 @@
         private ModelSource(string path)
         {
             Name = path;
-            var fs = FileSystem.Open(Path.Combine(Paths.CurrentMeshesPath, path + ".model"));
+            var fs = FileSystem.Open(path);
             Header.Read(fs);
 
             Meshes = new MeshData[Header.MeshCount];

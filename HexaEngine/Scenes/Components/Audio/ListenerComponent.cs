@@ -7,7 +7,7 @@
     using HexaEngine.OpenAL;
 
     [EditorComponent<ListenerComponent>("Listener")]
-    public class ListenerComponent : IComponent
+    public class ListenerComponent : IAudioComponent
     {
         private bool isActive;
 #pragma warning disable CS8618 // Non-nullable field 'listener' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.

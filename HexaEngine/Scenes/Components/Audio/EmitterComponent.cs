@@ -10,7 +10,7 @@ namespace HexaEngine.Scenes.Components.Audio
     using HexaEngine.OpenAL;
 
     [EditorComponent<EmitterComponent>("Emitter")]
-    public class EmitterComponent : IComponent
+    public class EmitterComponent : IAudioComponent
     {
         private GameObject gameObject;
         private Emitter emitter;

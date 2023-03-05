@@ -5,7 +5,7 @@
 
     public class PhysicsSystem : ISystem
     {
-        private readonly List<ICollider> colliders = new();
+        private readonly List<IColliderComponent> colliders = new();
 
         public string Name => "PhysicsUpdate";
 
