@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Audio;
+    using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using ImGuiNET;
     using System.Numerics;

@@ -518,5 +518,29 @@
             while (str[ret] != (byte)'\0') ret++;
             return ret + 1;
         }
+
+        public static T[]? ToManaged<T>(T* src, int length) where T : unmanaged
+        {
+            if (src == null)
+                return null;
+            T[] values = new T[length];
+            fixed (T* dst = values)
+            {
+                MemoryCopy(src, dst, length, length);
+            }
+            return values;
+        }
+
+        public static T[]? ToManaged<T>(T* src, uint length) where T : unmanaged
+        {
+            if (src == null)
+                return null;
+            T[] values = new T[length];
+            fixed (T* dst = values)
+            {
+                MemoryCopy(src, dst, length, length);
+            }
+            return values;
+        }
     }
 }

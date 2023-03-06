@@ -15,6 +15,7 @@
         private string model = string.Empty;
         private readonly List<IInstance> instances = new();
         private GameObject? gameObject;
+        private ModelManager modelManager;
         private ModelRenderer renderer;
 
         static ModelRendererComponent()
@@ -37,6 +38,7 @@
             this.gameObject = gameObject;
             if (!gameObject.GetScene().TryGetSystem<RenderManager>(out var manager))
                 return;
+            modelManager = gameObject.GetScene().ModelManager;
             renderer = manager.GetRenderer<ModelRenderer>();
             UpdateModel();
         }
@@ -69,7 +71,7 @@
                 var path = Paths.CurrentAssetsPath + component.model;
                 if (FileSystem.Exists(path))
                 {
-                    ModelSource source = ModelSource.Load(path);
+                    ModelSource source = component.modelManager.Load(path);
 
                     for (ulong i = 0; i < source.Header.MeshCount; i++)
                     {

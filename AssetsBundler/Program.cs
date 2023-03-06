@@ -2,6 +2,7 @@
 {
     using CommandLine;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Assets;
     using System;
     using System.IO;
     using System.IO.Compression;

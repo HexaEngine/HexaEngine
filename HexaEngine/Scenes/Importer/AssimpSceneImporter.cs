@@ -7,6 +7,7 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core.Animations;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Renderers.Components;
@@ -21,6 +22,10 @@ namespace HexaEngine.Scenes.Importer
     using Animation = Core.Animations.Animation;
     using AssimpScene = Silk.NET.Assimp.Scene;
     using Scene = Core.Scenes.Scene;
+    using TextureFlags = Silk.NET.Assimp.TextureFlags;
+    using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
+    using TextureOp = Silk.NET.Assimp.TextureOp;
+    using TextureType = Silk.NET.Assimp.TextureType;
 
     public struct BoneInfo
     {
@@ -374,7 +379,7 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTexopBase:
-                            texs[semantic].Op = (TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            texs[semantic].Op = (Silk.NET.Assimp.TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0];
                             break;
 
                         case Assimp.MatkeyMappingBase:
@@ -402,14 +407,39 @@ namespace HexaEngine.Scenes.Importer
                         case Assimp.MatkeyTexflagsBase:
                             texs[semantic].Flags = (TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0];
                             break;
+
+                        case Assimp.MatkeyShaderVertex:
+                            break;
+
+                        case Assimp.MatkeyShaderTesselation:
+                            break;
+
+                        case Assimp.MatkeyShaderPrimitive:
+                            break;
+
+                        case Assimp.MatkeyShaderGeo:
+                            break;
+
+                        case Assimp.MatkeyShaderFragment:
+                            break;
+
+                        case Assimp.MatkeyShaderCompute:
+                            break;
                     }
                 }
+
                 if (material.Name == string.Empty)
                     material.Name = i.ToString();
 
                 material.Textures = texs;
+                MaterialTexture[] textures = new MaterialTexture[texs.Length];
+                for (int j = 0; j < texs.Length; j++)
+                {
+                    textures[j] = texs[j];
+                }
                 materials[i] = new MaterialData()
                 {
+                    Textures = textures,
                     BaseColor = material.BaseColor,
                     Ao = 1,
                     Emissive = material.ColorEmissive,
@@ -425,6 +455,7 @@ namespace HexaEngine.Scenes.Importer
                     Subsurface = 0,
                     Opacity = material.Opacity,
                     Name = material.Name,
+
                     BaseColorTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
                     AoTextureMap = material.Textures[(int)TextureType.AmbientOcclusion].File ?? string.Empty,
                     DisplacementTextureMap = material.Textures[(int)TextureType.Displacement].File ?? string.Empty,
@@ -565,7 +596,6 @@ namespace HexaEngine.Scenes.Importer
             {
                 Mesh* msh = scene->MMeshes[i];
 
-                MeshVertex[] vertices = new MeshVertex[msh->MNumVertices];
                 uint[] indices = new uint[msh->MNumFaces * 3];
                 for (int j = 0; j < msh->MNumFaces; j++)
                 {
@@ -576,34 +606,24 @@ namespace HexaEngine.Scenes.Importer
                     }
                 }
 
-                Vector3 min = new(0, 0, 0);
-                Vector3 max = new(0, 0, 0);
-                for (int j = 0; j < msh->MNumVertices; j++)
+                Vector4[]? colors = ToManaged(msh->MColors.Element0, msh->MNumVertices);
+                Vector3[]? positions = ToManaged(msh->MVertices, msh->MNumVertices);
+                Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
+                Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
+                Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
+
+                BoundingBox box = default;
+                BoundingSphere sphere = default;
+                if (positions != null)
                 {
-                    Vector3 pos = msh->MVertices[j];
-                    Vector3 nor = msh->MNormals[j];
-                    Vector3 tex = default;
-                    Vector3 tan = default;
-                    if (j == 0)
-                    {
-                        min = max = pos;
-                    }
-
-                    if (msh->MTextureCoords[0] != null)
-                        tex = msh->MTextureCoords[0][j];
-                    if (msh->MTangents != null)
-                        tan = msh->MTangents[j];
-
-                    MeshVertex vertex = new(pos, new(tex.X, tex.Y), nor, tan);
-                    vertices[j] = vertex;
-                    max = Vector3.Max(max, pos);
-                    min = Vector3.Min(min, pos);
+                    box = BoundingBoxHelper.Compute(positions);
+                    sphere = BoundingSphere.CreateFromBoundingBox(box);
                 }
 
                 Objects.Animature? animature = null;
 
                 MeshBone[] bones = new MeshBone[msh->MNumBones];
-
+                List<MeshWeight> weightList = new();
                 if (msh->MNumBones > 0)
                 {
                     Queue<GameObject> queue = new();
@@ -621,28 +641,21 @@ namespace HexaEngine.Scenes.Importer
                         {
                             weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
                         }
-
+                        weightList.AddRange(weights);
                         bones[j] = new MeshBone(bn->MName, weights, bn->MOffsetMatrix);
                         animature.AddBone(bones[j]);
                     }
 
-                    SkinnedMeshVertex[] skinnedVertices = new SkinnedMeshVertex[vertices.Length];
-                    for (int y = 0; y < skinnedVertices.Length; y++)
-                    {
-                        skinnedVertices[y] = new(vertices[y]);
-                    }
-                    ExtractBoneWeightForVertices(skinnedVertices, msh, scene);
-
                     animatureT.Add(msh, animature);
                 }
-
-                BoundingBox box = new(min, max);
-
-                Vector3 center = box.Center;
-                float radius = box.Extent.Length();
-                BoundingSphere sphere = new(center, radius);
-
-                meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, vertices, indices, bones);
+                if (weightList.Count > 0)
+                {
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)weightList.Count, indices, colors, positions, uvs, normals, tangents, weightList.ToArray());
+                }
+                else
+                {
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, null);
+                }
 
                 meshesT.Add(msh, meshes[i]);
             }
@@ -819,10 +832,10 @@ namespace HexaEngine.Scenes.Importer
                 GameObject node = nodes[x];
                 Node* p = nodesP[node];
 
-                if (modelsT.ContainsKey(p))
+                if (modelsT.TryGetValue(p, out ModelSource? value))
                 {
                     var component = node.GetOrCreateComponent<ModelRendererComponent>();
-                    var model = modelsT[p];
+                    var model = value;
                     component.Model = "meshes/" + model.Name + ".model";
                 }
             }
@@ -888,12 +901,103 @@ namespace HexaEngine.Scenes.Importer
             public TextureType Type;
             public string File;
             public BlendMode Blend;
-            public TextureOp Op;
+            public Silk.NET.Assimp.TextureOp Op;
             public int Mapping;
             public int UVWSrc;
             public TextureMapMode U;
             public TextureMapMode V;
             public TextureFlags Flags;
+
+            public static implicit operator MaterialTexture(AssimpMaterialTexture texture)
+            {
+                return new MaterialTexture(Convert(texture.Type),
+                                           texture.File ?? string.Empty,
+                                           Convert(texture.Blend),
+                                           Convert(texture.Op),
+                                           texture.Mapping,
+                                           texture.UVWSrc,
+                                           Convert(texture.U),
+                                           Convert(texture.V),
+                                           Convert(texture.Flags));
+            }
+
+            public static Core.IO.Materials.TextureType Convert(TextureType type)
+            {
+                return type switch
+                {
+                    TextureType.None => Core.IO.Materials.TextureType.None,
+                    TextureType.Diffuse => Core.IO.Materials.TextureType.Diffuse,
+                    TextureType.Specular => Core.IO.Materials.TextureType.Specular,
+                    TextureType.Ambient => Core.IO.Materials.TextureType.Ambient,
+                    TextureType.Emissive => Core.IO.Materials.TextureType.Emissive,
+                    TextureType.Height => Core.IO.Materials.TextureType.Height,
+                    TextureType.Normals => Core.IO.Materials.TextureType.Normals,
+                    TextureType.Shininess => Core.IO.Materials.TextureType.Shininess,
+                    TextureType.Opacity => Core.IO.Materials.TextureType.Opacity,
+                    TextureType.Displacement => Core.IO.Materials.TextureType.Displacement,
+                    TextureType.Lightmap => Core.IO.Materials.TextureType.Lightmap,
+                    TextureType.Reflection => Core.IO.Materials.TextureType.Reflection,
+                    TextureType.BaseColor => Core.IO.Materials.TextureType.BaseColor,
+                    TextureType.NormalCamera => Core.IO.Materials.TextureType.NormalCamera,
+                    TextureType.EmissionColor => Core.IO.Materials.TextureType.EmissionColor,
+                    TextureType.Metalness => Core.IO.Materials.TextureType.Metalness,
+                    TextureType.DiffuseRoughness => Core.IO.Materials.TextureType.DiffuseRoughness,
+                    TextureType.AmbientOcclusion => Core.IO.Materials.TextureType.AmbientOcclusion,
+                    TextureType.Sheen => Core.IO.Materials.TextureType.Sheen,
+                    TextureType.Clearcoat => Core.IO.Materials.TextureType.Clearcoat,
+                    TextureType.Transmission => Core.IO.Materials.TextureType.Transmission,
+                    TextureType.Unknown => Core.IO.Materials.TextureType.RoughnessMetalness,
+                    _ => throw new NotImplementedException(),
+                };
+            }
+
+            public static Core.IO.Meshes.BlendMode Convert(BlendMode mode)
+            {
+                return mode switch
+                {
+                    BlendMode.None => Core.IO.Meshes.BlendMode.Default,
+                    BlendMode.Additive => Core.IO.Meshes.BlendMode.Additive,
+                    _ => throw new NotImplementedException(),
+                };
+            }
+
+            public static Core.IO.Materials.TextureOp Convert(Silk.NET.Assimp.TextureOp op)
+            {
+                return op switch
+                {
+                    TextureOp.None => Core.IO.Materials.TextureOp.None,
+                    TextureOp.Add => Core.IO.Materials.TextureOp.Add,
+                    TextureOp.Subtract => Core.IO.Materials.TextureOp.Subtract,
+                    TextureOp.Divide => Core.IO.Materials.TextureOp.Divide,
+                    TextureOp.SmoothAdd => Core.IO.Materials.TextureOp.SmoothAdd,
+                    TextureOp.SignedAdd => Core.IO.Materials.TextureOp.SignedAdd,
+                    _ => throw new NotImplementedException(),
+                };
+            }
+
+            public static Core.IO.Materials.TextureMapMode Convert(TextureMapMode mode)
+            {
+                return mode switch
+                {
+                    TextureMapMode.None => Core.IO.Materials.TextureMapMode.None,
+                    TextureMapMode.Clamp => Core.IO.Materials.TextureMapMode.Clamp,
+                    TextureMapMode.Decal => Core.IO.Materials.TextureMapMode.Decal,
+                    TextureMapMode.Mirror => Core.IO.Materials.TextureMapMode.Mirror,
+                    _ => throw new NotImplementedException(),
+                };
+            }
+
+            public static Core.IO.Materials.TextureFlags Convert(TextureFlags flags)
+            {
+                return flags switch
+                {
+                    TextureFlags.None => Core.IO.Materials.TextureFlags.None,
+                    TextureFlags.Invert => Core.IO.Materials.TextureFlags.Invert,
+                    TextureFlags.UseAlpha => Core.IO.Materials.TextureFlags.UseAlpha,
+                    TextureFlags.IgnoreAlpha => Core.IO.Materials.TextureFlags.IgnoreAlpha,
+                    _ => throw new NotImplementedException(),
+                };
+            }
         }
 
         public unsafe struct AssimpTexture

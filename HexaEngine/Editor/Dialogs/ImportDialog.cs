@@ -8,7 +8,7 @@
 
     public class ImportDialog : Modal, IDialog
     {
-        private AssimpSceneImporter importer = new();
+        private readonly AssimpSceneImporter importer = new();
         private string path = string.Empty;
         private OpenFileDialog dialog = new();
         private bool loaded = false;
@@ -24,6 +24,7 @@
 
         public override void Reset()
         {
+            loaded = false;
             importer.Clear();
         }
 

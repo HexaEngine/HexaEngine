@@ -1,14 +1,12 @@
 ﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Effects;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Instances;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Pipelines.Deferred;
     using System.Collections.Concurrent;
-    using System.Diagnostics.CodeAnalysis;
 
     public static class ResourceManager
     {
@@ -84,7 +82,8 @@
                 meshes.TryAdd(mesh.Name, instance);
             }
 
-            Mesh model = new(device, mesh.Name, mesh.Vertices, mesh.Indices, mesh.Box, mesh.Sphere);
+            // TODO: Handle different vertex types.
+            Mesh model = new(device, mesh.Name, mesh.GetVertices(), mesh.Indices, mesh.Box, mesh.Sphere);
             instance.BeginLoad();
             instance.EndLoad(model);
 

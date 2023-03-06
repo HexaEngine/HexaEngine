@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.IO
 {
+    using HexaEngine.Mathematics;
     using System;
     using System.Buffers;
     using System.Buffers.Binary;
@@ -44,21 +45,28 @@
             return 4;
         }
 
-        public static void WriteString(this Stream stream, string str, Encoding encoder)
+        public static void WriteString(this Stream stream, string str, Encoding encoder, Endianness endianness)
         {
             var count = encoder.GetByteCount(str);
             var bytes = count + 4;
             Span<byte> dst = bytes < 2048 ? stackalloc byte[bytes] : new byte[bytes];
-            BinaryPrimitives.WriteInt32LittleEndian(dst, count);
+            if (endianness == Endianness.LittleEndian)
+                BinaryPrimitives.WriteInt32LittleEndian(dst, count);
+            else
+                BinaryPrimitives.WriteInt32BigEndian(dst, count);
             encoder.GetBytes(str, dst[4..]);
             stream.Write(dst);
         }
 
-        public static string ReadString(this Stream stream, Encoding decoder)
+        public static string ReadString(this Stream stream, Encoding decoder, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
-            int len = BinaryPrimitives.ReadInt32LittleEndian(buf);
+            int len = 0;
+            if (endianness == Endianness.LittleEndian)
+                len = BinaryPrimitives.ReadInt32LittleEndian(buf);
+            else
+                len = BinaryPrimitives.ReadInt32BigEndian(buf);
 
             Span<byte> src = len < 2048 ? stackalloc byte[len] : new byte[len];
             stream.Read(src);
@@ -69,60 +77,84 @@
             return new(chars);
         }
 
-        public static void WriteInt(this Stream stream, int val)
+        public static void WriteInt(this Stream stream, int val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
-            BinaryPrimitives.WriteInt32LittleEndian(buf, val);
+            if (endianness == Endianness.LittleEndian)
+                BinaryPrimitives.WriteInt32LittleEndian(buf, val);
+            else
+                BinaryPrimitives.WriteInt32BigEndian(buf, val);
             stream.Write(buf);
         }
 
-        public static int ReadInt(this Stream stream)
+        public static int ReadInt(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
-            return BinaryPrimitives.ReadInt32LittleEndian(buf);
+            if (endianness == Endianness.LittleEndian)
+                return BinaryPrimitives.ReadInt32LittleEndian(buf);
+            else
+                return BinaryPrimitives.ReadInt32BigEndian(buf);
         }
 
-        public static uint ReadUInt(this Stream stream)
+        public static uint ReadUInt(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
-            return BinaryPrimitives.ReadUInt32LittleEndian(buf);
+            if (endianness == Endianness.LittleEndian)
+                return BinaryPrimitives.ReadUInt32LittleEndian(buf);
+            else
+                return BinaryPrimitives.ReadUInt32BigEndian(buf);
         }
 
-        public static void WriteUInt(this Stream stream, uint val)
+        public static void WriteUInt(this Stream stream, uint val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
-            BinaryPrimitives.WriteUInt32LittleEndian(buf, val);
+            if (endianness == Endianness.LittleEndian)
+                BinaryPrimitives.WriteUInt32LittleEndian(buf, val);
+            else
+                BinaryPrimitives.WriteUInt32BigEndian(buf, val);
             stream.Write(buf);
         }
 
-        public static void WriteUInt64(this Stream stream, ulong val)
+        public static void WriteUInt64(this Stream stream, ulong val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
-            BinaryPrimitives.WriteUInt64LittleEndian(buf, val);
+            if (endianness == Endianness.LittleEndian)
+                BinaryPrimitives.WriteUInt64LittleEndian(buf, val);
+            else
+                BinaryPrimitives.WriteUInt64BigEndian(buf, val);
             stream.Write(buf);
         }
 
-        public static void WriteInt64(this Stream stream, long val)
+        public static void WriteInt64(this Stream stream, long val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
-            BinaryPrimitives.WriteInt64LittleEndian(buf, val);
+            if (endianness == Endianness.LittleEndian)
+                BinaryPrimitives.WriteInt64LittleEndian(buf, val);
+            else
+                BinaryPrimitives.WriteInt64BigEndian(buf, val);
             stream.Write(buf);
         }
 
-        public static long ReadInt64(this Stream stream)
+        public static long ReadInt64(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
             stream.Read(buf);
-            return BinaryPrimitives.ReadInt64LittleEndian(buf);
+            if (endianness == Endianness.LittleEndian)
+                return BinaryPrimitives.ReadInt64LittleEndian(buf);
+            else
+                return BinaryPrimitives.ReadInt64BigEndian(buf);
         }
 
-        public static ulong ReadUInt64(this Stream stream)
+        public static ulong ReadUInt64(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
             stream.Read(buf);
-            return BinaryPrimitives.ReadUInt64LittleEndian(buf);
+            if (endianness == Endianness.LittleEndian)
+                return BinaryPrimitives.ReadUInt64LittleEndian(buf);
+            else
+                return BinaryPrimitives.ReadUInt64BigEndian(buf);
         }
 
         public static byte[] Read(this Stream stream, long length)
@@ -146,9 +178,9 @@
 #nullable enable
         }
 
-        public static bool Compare(this Stream stream, ulong value)
+        public static bool Compare(this Stream stream, ulong value, Endianness endianness)
         {
-            return stream.ReadUInt64() == value;
+            return stream.ReadUInt64(endianness) == value;
         }
 
         public static bool Compare(this ReadOnlySpan<byte> src, ulong value)
@@ -205,54 +237,144 @@
 #nullable enable
         }
 
-        public static int WriteVector3(Span<byte> dst, Vector3 vector)
+        public static void WriteVector4(this Stream stream, Vector4 vector, Endianness endianness)
         {
-            BinaryPrimitives.WriteSingleLittleEndian(dst, vector.X);
-            BinaryPrimitives.WriteSingleLittleEndian(dst[4..], vector.Y);
-            BinaryPrimitives.WriteSingleLittleEndian(dst[8..], vector.Z);
-            return 12;
-        }
+            Span<byte> dst = stackalloc byte[16];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteSingleLittleEndian(dst, vector.X);
+                BinaryPrimitives.WriteSingleLittleEndian(dst[4..], vector.Y);
+                BinaryPrimitives.WriteSingleLittleEndian(dst[8..], vector.Z);
+                BinaryPrimitives.WriteSingleLittleEndian(dst[12..], vector.W);
+            }
+            else
+            {
+                BinaryPrimitives.WriteSingleBigEndian(dst, vector.X);
+                BinaryPrimitives.WriteSingleBigEndian(dst[4..], vector.Y);
+                BinaryPrimitives.WriteSingleBigEndian(dst[8..], vector.Z);
+                BinaryPrimitives.WriteSingleBigEndian(dst[12..], vector.W);
+            }
 
-        public static int ReadVector3(ReadOnlySpan<byte> src, out Vector3 vector)
-        {
-            vector.X = BinaryPrimitives.ReadSingleLittleEndian(src);
-            vector.Y = BinaryPrimitives.ReadSingleLittleEndian(src[4..]);
-            vector.Z = BinaryPrimitives.ReadSingleLittleEndian(src[8..]);
-            return 12;
-        }
-
-        public static void WriteVector3(this Stream stream, Vector3 vector)
-        {
-            Span<byte> dst = stackalloc byte[12];
-            BinaryPrimitives.WriteSingleLittleEndian(dst, vector.X);
-            BinaryPrimitives.WriteSingleLittleEndian(dst[4..], vector.Y);
-            BinaryPrimitives.WriteSingleLittleEndian(dst[8..], vector.Z);
             stream.Write(dst);
         }
 
-        public static Vector3 ReadVector3(this Stream stream)
+        public static Vector4 ReadVector4(this Stream stream, Endianness endianness)
+        {
+            Span<byte> src = stackalloc byte[16];
+            stream.Read(src);
+            Vector4 vector;
+            if (endianness == Endianness.LittleEndian)
+            {
+                vector.X = BinaryPrimitives.ReadSingleLittleEndian(src);
+                vector.Y = BinaryPrimitives.ReadSingleLittleEndian(src[4..]);
+                vector.Z = BinaryPrimitives.ReadSingleLittleEndian(src[8..]);
+                vector.W = BinaryPrimitives.ReadSingleLittleEndian(src[12..]);
+            }
+            else
+            {
+                vector.X = BinaryPrimitives.ReadSingleBigEndian(src);
+                vector.Y = BinaryPrimitives.ReadSingleBigEndian(src[4..]);
+                vector.Z = BinaryPrimitives.ReadSingleBigEndian(src[8..]);
+                vector.W = BinaryPrimitives.ReadSingleBigEndian(src[12..]);
+            }
+
+            return vector;
+        }
+
+        public static void WriteVector3(this Stream stream, Vector3 vector, Endianness endianness)
+        {
+            Span<byte> dst = stackalloc byte[12];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteSingleLittleEndian(dst, vector.X);
+                BinaryPrimitives.WriteSingleLittleEndian(dst[4..], vector.Y);
+                BinaryPrimitives.WriteSingleLittleEndian(dst[8..], vector.Z);
+            }
+            else
+            {
+                BinaryPrimitives.WriteSingleBigEndian(dst, vector.X);
+                BinaryPrimitives.WriteSingleBigEndian(dst[4..], vector.Y);
+                BinaryPrimitives.WriteSingleBigEndian(dst[8..], vector.Z);
+            }
+
+            stream.Write(dst);
+        }
+
+        public static Vector3 ReadVector3(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[12];
             stream.Read(src);
             Vector3 vector;
-            vector.X = BinaryPrimitives.ReadSingleLittleEndian(src);
-            vector.Y = BinaryPrimitives.ReadSingleLittleEndian(src[4..]);
-            vector.Z = BinaryPrimitives.ReadSingleLittleEndian(src[8..]);
+            if (endianness == Endianness.LittleEndian)
+            {
+                vector.X = BinaryPrimitives.ReadSingleLittleEndian(src);
+                vector.Y = BinaryPrimitives.ReadSingleLittleEndian(src[4..]);
+                vector.Z = BinaryPrimitives.ReadSingleLittleEndian(src[8..]);
+            }
+            else
+            {
+                vector.X = BinaryPrimitives.ReadSingleBigEndian(src);
+                vector.Y = BinaryPrimitives.ReadSingleBigEndian(src[4..]);
+                vector.Z = BinaryPrimitives.ReadSingleBigEndian(src[8..]);
+            }
+
             return vector;
         }
 
-        public static void WriteFloat(this Stream stream, float value)
+        public static void WriteVector2(this Stream stream, Vector2 vector, Endianness endianness)
         {
-            Span<byte> dst = stackalloc byte[4];
-            BinaryPrimitives.WriteSingleLittleEndian(dst, value);
+            Span<byte> dst = stackalloc byte[8];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteSingleLittleEndian(dst, vector.X);
+                BinaryPrimitives.WriteSingleLittleEndian(dst[4..], vector.Y);
+            }
+            else
+            {
+                BinaryPrimitives.WriteSingleBigEndian(dst, vector.X);
+                BinaryPrimitives.WriteSingleBigEndian(dst[4..], vector.Y);
+            }
+
             stream.Write(dst);
         }
 
-        public static float ReadFloat(this Stream stream)
+        public static Vector2 ReadVector2(this Stream stream, Endianness endianness)
+        {
+            Span<byte> src = stackalloc byte[8];
+            stream.Read(src);
+            Vector2 vector;
+            if (endianness == Endianness.LittleEndian)
+            {
+                vector.X = BinaryPrimitives.ReadSingleLittleEndian(src);
+                vector.Y = BinaryPrimitives.ReadSingleLittleEndian(src[4..]);
+            }
+            else
+            {
+                vector.X = BinaryPrimitives.ReadSingleBigEndian(src);
+                vector.Y = BinaryPrimitives.ReadSingleBigEndian(src[4..]);
+            }
+
+            return vector;
+        }
+
+        public static void WriteFloat(this Stream stream, float value, Endianness endianness)
+        {
+            Span<byte> dst = stackalloc byte[4];
+            if (endianness == Endianness.LittleEndian)
+                BinaryPrimitives.WriteSingleLittleEndian(dst, value);
+            else
+                BinaryPrimitives.WriteSingleBigEndian(dst, value);
+            stream.Write(dst);
+        }
+
+        public static float ReadFloat(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[4];
             stream.Read(src);
-            return BinaryPrimitives.ReadSingleLittleEndian(src);
+            if (endianness == Endianness.LittleEndian)
+                return BinaryPrimitives.ReadSingleLittleEndian(src);
+            else
+                return BinaryPrimitives.ReadSingleBigEndian(src);
         }
     }
 }

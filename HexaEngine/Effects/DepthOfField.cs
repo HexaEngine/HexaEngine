@@ -260,17 +260,17 @@ namespace HexaEngine.Effects
             blurParams = new BlurParams();
             bokehParams = new BokehParams();
             dofParams = new DofParams();
-            pipelineBlur = device.CreateGraphicsPipeline(new()
+            pipelineBlur = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
                 PixelShader = "effects/blur/box.hlsl"
             }, macros);
-            pipelineBokeh = device.CreateGraphicsPipeline(new()
+            pipelineBokeh = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/bokeh/vs.hlsl",
                 PixelShader = "effects/bokeh/ps.hlsl"
             }, macros);
-            pipelineDof = device.CreateGraphicsPipeline(new()
+            pipelineDof = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/dof/vs.hlsl",
                 PixelShader = "effects/dof/ps.hlsl"

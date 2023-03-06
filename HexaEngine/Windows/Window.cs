@@ -2,8 +2,8 @@
 
 namespace HexaEngine.Windows
 {
-    using HexaEngine.Audio;
     using HexaEngine.Core;
+    using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Resources;

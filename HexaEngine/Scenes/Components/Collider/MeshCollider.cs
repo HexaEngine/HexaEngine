@@ -25,7 +25,7 @@
         public override void CreateShape()
         {
             if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape) return;
-            var data = scene.MeshManager.Load(Paths.CurrentAssetsPath + meshPath);
+            var data = scene.ModelManager.Load(Paths.CurrentAssetsPath + meshPath);
             ulong vertexCount = 0;
             for (ulong i = 0; i < data.Header.MeshCount; i++)
             {
@@ -41,10 +41,10 @@
                 for (int j = 0; j < meh.Indices.Length; j += 3)
                 {
                     // Note verts are loaded counter-clockwise because the engine operates in LH mode
-                    MeshVertex a = meh.Vertices[meh.Indices[j + 2]];
-                    MeshVertex b = meh.Vertices[meh.Indices[j + 1]];
-                    MeshVertex c = meh.Vertices[meh.Indices[j]];
-                    buffer[m++] = new(a.Position, b.Position, c.Position);
+                    Vector3 a = meh.Positions[meh.Indices[j + 2]];
+                    Vector3 b = meh.Positions[meh.Indices[j + 1]];
+                    Vector3 c = meh.Positions[meh.Indices[j]];
+                    buffer[m++] = new(a, b, c);
                 }
             }
             mesh = new(buffer, scale, bufferPool);

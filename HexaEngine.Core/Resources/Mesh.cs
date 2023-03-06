@@ -8,6 +8,9 @@
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
 
+    /// <summary>
+    /// TODO: Handle different vertex types.
+    /// </summary>
     public class Mesh : IDisposable
     {
         private readonly ConcurrentDictionary<string, ModelInstanceType> materialToType = new();
@@ -24,6 +27,7 @@
 
         public unsafe Mesh(IGraphicsDevice device, string name, MeshVertex[] vertices, uint[] indices, BoundingBox box, BoundingSphere boundingSphere)
         {
+            // TODO: Handle different vertex types.
             this.device = device;
             this.name = name;
             BoundingBox = box;
@@ -51,7 +55,8 @@
         {
             this.device = device;
             name = data.Name;
-            var vertices = data.Vertices;
+            // TODO: Handle different vertex types.
+            var vertices = data.GetVertices();
             var indices = data.Indices;
             BoundingBox = data.Box;
             BoundingSphere = data.Sphere;

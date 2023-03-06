@@ -24,7 +24,7 @@
         public SkinnedMeshVertex(MeshVertex vertex)
         {
             Position = vertex.Position;
-            Texture = vertex.Texture;
+            Texture = vertex.UV;
             Normal = vertex.Normal;
             Tangent = vertex.Tangent;
         }

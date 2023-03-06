@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.Resources
 {
+    using HexaEngine.Core.Effects;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Pipelines.Deferred;
 
     public unsafe class Material : IDisposable
     {

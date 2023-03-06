@@ -5,1418 +5,1418 @@ namespace SPIRVCross
 {
     public unsafe partial class SPIRV
     {
-        internal static IntPtr s_NativeLibrary = LoadNativeLibrary();
+        internal static IntPtr sNativeLibrary = LoadNativeLibrary();
 
-        internal static T LoadFunction<T>(string name) => LibraryLoader.LoadFunction<T>(s_NativeLibrary, name);
+        internal static T LoadFunction<T>(string name) => LibraryLoader.LoadFunction<T>(sNativeLibrary, name);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_get_version(uint* major, uint* minor, uint* patch);
+        private delegate void PFNSpvcGetVersion(uint* major, uint* minor, uint* patch);
 
-        private static readonly PFN_spvc_get_version spvc_get_version_ = LoadFunction<PFN_spvc_get_version>("spvc_get_version");
+        private static readonly PFNSpvcGetVersion spvcGetVersion = LoadFunction<PFNSpvcGetVersion>("spvc_get_version");
 
         public static void SpvcGetVersion(uint* major, uint* minor, uint* patch)
         {
-            spvc_get_version_(major, minor, patch);
+            spvcGetVersion(major, minor, patch);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_get_commit_revision_and_timestamp();
+        private delegate byte* PFNSpvcGetCommitRevisionAndTimestamp();
 
-        private static readonly PFN_spvc_get_commit_revision_and_timestamp spvc_get_commit_revision_and_timestamp_ = LoadFunction<PFN_spvc_get_commit_revision_and_timestamp>("spvc_get_commit_revision_and_timestamp");
+        private static readonly PFNSpvcGetCommitRevisionAndTimestamp spvcGetCommitRevisionAndTimestamp = LoadFunction<PFNSpvcGetCommitRevisionAndTimestamp>("spvc_get_commit_revision_and_timestamp");
 
         public static byte* SpvcGetCommitRevisionAndTimestamp()
         {
-            return spvc_get_commit_revision_and_timestamp_();
+            return spvcGetCommitRevisionAndTimestamp();
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_msl_vertex_attribute_init(SpvcMslVertexAttribute* attr);
+        private delegate void PFNSpvcMslVertexAttributeInit(SpvcMslVertexAttribute* attr);
 
-        private static readonly PFN_spvc_msl_vertex_attribute_init spvc_msl_vertex_attribute_init_ = LoadFunction<PFN_spvc_msl_vertex_attribute_init>("spvc_msl_vertex_attribute_init");
+        private static readonly PFNSpvcMslVertexAttributeInit spvcMslVertexAttributeInit = LoadFunction<PFNSpvcMslVertexAttributeInit>("spvc_msl_vertex_attribute_init");
 
         public static void SpvcMslVertexAttributeInit(SpvcMslVertexAttribute* attr)
         {
-            spvc_msl_vertex_attribute_init_(attr);
+            spvcMslVertexAttributeInit(attr);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_msl_shader_input_init(SpvcMslShaderInput* input);
+        private delegate void PFNSpvcMslShaderInputInit(SpvcMslShaderInput* input);
 
-        private static readonly PFN_spvc_msl_shader_input_init spvc_msl_shader_input_init_ = LoadFunction<PFN_spvc_msl_shader_input_init>("spvc_msl_shader_input_init");
+        private static readonly PFNSpvcMslShaderInputInit spvcMslShaderInputInit = LoadFunction<PFNSpvcMslShaderInputInit>("spvc_msl_shader_input_init");
 
-        public static void spvc_msl_shader_input_init(SpvcMslShaderInput* input)
+        public static void SpvcMslShaderInputInit(SpvcMslShaderInput* input)
         {
-            spvc_msl_shader_input_init_(input);
+            spvcMslShaderInputInit(input);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_msl_resource_binding_init(SpvcMslResourceBinding* binding);
+        private delegate void PFNSpvcMslResourceBindingInit(SpvcMslResourceBinding* binding);
 
-        private static readonly PFN_spvc_msl_resource_binding_init spvc_msl_resource_binding_init_ = LoadFunction<PFN_spvc_msl_resource_binding_init>("spvc_msl_resource_binding_init");
+        private static readonly PFNSpvcMslResourceBindingInit spvcMslResourceBindingInit = LoadFunction<PFNSpvcMslResourceBindingInit>("spvc_msl_resource_binding_init");
 
-        public static void spvc_msl_resource_binding_init(SpvcMslResourceBinding* binding)
+        public static void SpvcMslResourceBindingInit(SpvcMslResourceBinding* binding)
         {
-            spvc_msl_resource_binding_init_(binding);
+            spvcMslResourceBindingInit(binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_msl_get_aux_buffer_struct_version();
+        private delegate uint PFNSpvcMslGetAuxBufferStructVersion();
 
-        private static readonly PFN_spvc_msl_get_aux_buffer_struct_version spvc_msl_get_aux_buffer_struct_version_ = LoadFunction<PFN_spvc_msl_get_aux_buffer_struct_version>("spvc_msl_get_aux_buffer_struct_version");
+        private static readonly PFNSpvcMslGetAuxBufferStructVersion spvcMslGetAuxBufferStructVersion = LoadFunction<PFNSpvcMslGetAuxBufferStructVersion>("spvc_msl_get_aux_buffer_struct_version");
 
-        public static uint spvc_msl_get_aux_buffer_struct_version()
+        public static uint SpvcMslGetAuxBufferStructVersion()
         {
-            return spvc_msl_get_aux_buffer_struct_version_();
+            return spvcMslGetAuxBufferStructVersion();
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_msl_constexpr_sampler_init(SpvcMslConstexprSampler* sampler);
+        private delegate void PFNSpvcMslConstexprSamplerInit(SpvcMslConstexprSampler* sampler);
 
-        private static readonly PFN_spvc_msl_constexpr_sampler_init spvc_msl_constexpr_sampler_init_ = LoadFunction<PFN_spvc_msl_constexpr_sampler_init>("spvc_msl_constexpr_sampler_init");
+        private static readonly PFNSpvcMslConstexprSamplerInit spvcMslConstexprSamplerInit = LoadFunction<PFNSpvcMslConstexprSamplerInit>("spvc_msl_constexpr_sampler_init");
 
-        public static void spvc_msl_constexpr_sampler_init(SpvcMslConstexprSampler* sampler)
+        public static void SpvcMslConstexprSamplerInit(SpvcMslConstexprSampler* sampler)
         {
-            spvc_msl_constexpr_sampler_init_(sampler);
+            spvcMslConstexprSamplerInit(sampler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_msl_sampler_ycbcr_conversion_init(SpvcMslSamplerYcbcrConversion* conv);
+        private delegate void PFNSpvcMslSamplerYcbcrConversionInit(SpvcMslSamplerYcbcrConversion* conv);
 
-        private static readonly PFN_spvc_msl_sampler_ycbcr_conversion_init spvc_msl_sampler_ycbcr_conversion_init_ = LoadFunction<PFN_spvc_msl_sampler_ycbcr_conversion_init>("spvc_msl_sampler_ycbcr_conversion_init");
+        private static readonly PFNSpvcMslSamplerYcbcrConversionInit spvcMslSamplerYcbcrConversionInit = LoadFunction<PFNSpvcMslSamplerYcbcrConversionInit>("spvc_msl_sampler_ycbcr_conversion_init");
 
-        public static void spvc_msl_sampler_ycbcr_conversion_init(SpvcMslSamplerYcbcrConversion* conv)
+        public static void SpvcMslSamplerYcbcrConversionInit(SpvcMslSamplerYcbcrConversion* conv)
         {
-            spvc_msl_sampler_ycbcr_conversion_init_(conv);
+            spvcMslSamplerYcbcrConversionInit(conv);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_hlsl_resource_binding_init(SpvcHlslResourceBinding* binding);
+        private delegate void PFNSpvcHlslResourceBindingInit(SpvcHlslResourceBinding* binding);
 
-        private static readonly PFN_spvc_hlsl_resource_binding_init spvc_hlsl_resource_binding_init_ = LoadFunction<PFN_spvc_hlsl_resource_binding_init>("spvc_hlsl_resource_binding_init");
+        private static readonly PFNSpvcHlslResourceBindingInit spvcHlslResourceBindingInit = LoadFunction<PFNSpvcHlslResourceBindingInit>("spvc_hlsl_resource_binding_init");
 
-        public static void spvc_hlsl_resource_binding_init(SpvcHlslResourceBinding* binding)
+        public static void SpvcHlslResourceBindingInit(SpvcHlslResourceBinding* binding)
         {
-            spvc_hlsl_resource_binding_init_(binding);
+            spvcHlslResourceBindingInit(binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_context_create(SpvcContext* context);
+        private delegate SpvcResult PFNSpvcContextCreate(SpvcContext* context);
 
-        private static readonly PFN_spvc_context_create spvc_context_create_ = LoadFunction<PFN_spvc_context_create>("spvc_context_create");
+        private static readonly PFNSpvcContextCreate spvcContextCreate = LoadFunction<PFNSpvcContextCreate>("spvc_context_create");
 
         public static SpvcResult SpvcContextCreate(SpvcContext* context)
         {
-            return spvc_context_create_(context);
+            return spvcContextCreate(context);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_context_destroy(SpvcContext context);
+        private delegate void PFNSpvcContextDestroy(SpvcContext context);
 
-        private static readonly PFN_spvc_context_destroy spvc_context_destroy_ = LoadFunction<PFN_spvc_context_destroy>("spvc_context_destroy");
+        private static readonly PFNSpvcContextDestroy spvcContextDestroy = LoadFunction<PFNSpvcContextDestroy>("spvc_context_destroy");
 
         public static void SpvcContextDestroy(SpvcContext context)
         {
-            spvc_context_destroy_(context);
+            spvcContextDestroy(context);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_context_release_allocations(SpvcContext context);
+        private delegate void PFNSpvcContextReleaseAllocations(SpvcContext context);
 
-        private static readonly PFN_spvc_context_release_allocations spvc_context_release_allocations_ = LoadFunction<PFN_spvc_context_release_allocations>("spvc_context_release_allocations");
+        private static readonly PFNSpvcContextReleaseAllocations spvcContextReleaseAllocations = LoadFunction<PFNSpvcContextReleaseAllocations>("spvc_context_release_allocations");
 
-        public static void spvc_context_release_allocations(SpvcContext context)
+        public static void SpvcContextReleaseAllocations(SpvcContext context)
         {
-            spvc_context_release_allocations_(context);
+            spvcContextReleaseAllocations(context);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_context_get_last_error_string(SpvcContext context);
+        private delegate byte* PFNSpvcContextGetLastErrorString(SpvcContext context);
 
-        private static readonly PFN_spvc_context_get_last_error_string spvc_context_get_last_error_string_ = LoadFunction<PFN_spvc_context_get_last_error_string>("spvc_context_get_last_error_string");
+        private static readonly PFNSpvcContextGetLastErrorString spvcContextGetLastErrorString = LoadFunction<PFNSpvcContextGetLastErrorString>("spvc_context_get_last_error_string");
 
-        public static byte* spvc_context_get_last_error_string(SpvcContext context)
+        public static byte* SpvcContextGetLastErrorString(SpvcContext context)
         {
-            return spvc_context_get_last_error_string_(context);
+            return spvcContextGetLastErrorString(context);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_context_set_error_callback(SpvcContext context, SpvcErrorCallback cb, void* userdata);
+        private delegate void PFNSpvcContextSetErrorCallback(SpvcContext context, SpvcErrorCallback cb, void* userdata);
 
-        private static readonly PFN_spvc_context_set_error_callback spvc_context_set_error_callback_ = LoadFunction<PFN_spvc_context_set_error_callback>("spvc_context_set_error_callback");
+        private static readonly PFNSpvcContextSetErrorCallback spvcContextSetErrorCallback = LoadFunction<PFNSpvcContextSetErrorCallback>("spvc_context_set_error_callback");
 
         public static void SpvcContextSetErrorCallback(SpvcContext context, SpvcErrorCallback cb, void* userdata)
         {
-            spvc_context_set_error_callback_(context, cb, userdata);
+            spvcContextSetErrorCallback(context, cb, userdata);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_context_parse_spirv(SpvcContext context, SpvId* spirv, nuint word_count, SpvcParsedIr* parsed_ir);
+        private delegate SpvcResult PFNSpvcContextParseSpirv(SpvcContext context, SpvId* spirv, nuint wordCount, SpvcParsedIr* parsedIr);
 
-        private static readonly PFN_spvc_context_parse_spirv spvc_context_parse_spirv_ = LoadFunction<PFN_spvc_context_parse_spirv>("spvc_context_parse_spirv");
+        private static readonly PFNSpvcContextParseSpirv spvcContextParseSpirv = LoadFunction<PFNSpvcContextParseSpirv>("spvc_context_parse_spirv");
 
-        public static SpvcResult SpvcContextParseSpirv(SpvcContext context, SpvId* spirv, nuint word_count, SpvcParsedIr* parsed_ir)
+        public static SpvcResult SpvcContextParseSpirv(SpvcContext context, SpvId* spirv, nuint wordCount, SpvcParsedIr* parsedIr)
         {
-            return spvc_context_parse_spirv_(context, spirv, word_count, parsed_ir);
+            return spvcContextParseSpirv(context, spirv, wordCount, parsedIr);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_context_create_compiler(SpvcContext context, SpvcBackend backend, SpvcParsedIr parsed_ir, SpvcCaptureMode mode, SpvcCompiler* compiler);
+        private delegate SpvcResult PFNSpvcContextCreateCompiler(SpvcContext context, SpvcBackend backend, SpvcParsedIr parsedIr, SpvcCaptureMode mode, SpvcCompiler* compiler);
 
-        private static readonly PFN_spvc_context_create_compiler spvc_context_create_compiler_ = LoadFunction<PFN_spvc_context_create_compiler>("spvc_context_create_compiler");
+        private static readonly PFNSpvcContextCreateCompiler spvcContextCreateCompiler = LoadFunction<PFNSpvcContextCreateCompiler>("spvc_context_create_compiler");
 
-        public static SpvcResult SpvcContextCreateCompiler(SpvcContext context, SpvcBackend backend, SpvcParsedIr parsed_ir, SpvcCaptureMode mode, SpvcCompiler* compiler)
+        public static SpvcResult SpvcContextCreateCompiler(SpvcContext context, SpvcBackend backend, SpvcParsedIr parsedIr, SpvcCaptureMode mode, SpvcCompiler* compiler)
         {
-            return spvc_context_create_compiler_(context, backend, parsed_ir, mode, compiler);
+            return spvcContextCreateCompiler(context, backend, parsedIr, mode, compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_get_current_id_bound(SpvcCompiler compiler);
+        private delegate uint PFNSpvcCompilerGetCurrentIdBound(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_get_current_id_bound spvc_compiler_get_current_id_bound_ = LoadFunction<PFN_spvc_compiler_get_current_id_bound>("spvc_compiler_get_current_id_bound");
+        private static readonly PFNSpvcCompilerGetCurrentIdBound spvcCompilerGetCurrentIdBound = LoadFunction<PFNSpvcCompilerGetCurrentIdBound>("spvc_compiler_get_current_id_bound");
 
-        public static uint spvc_compiler_get_current_id_bound(SpvcCompiler compiler)
+        public static uint SpvcCompilerGetCurrentIdBound(SpvcCompiler compiler)
         {
-            return spvc_compiler_get_current_id_bound_(compiler);
+            return spvcCompilerGetCurrentIdBound(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_create_compiler_options(SpvcCompiler compiler, SpvcCompilerOptions* options);
+        private delegate SpvcResult PFNSpvcCompilerCreateCompilerOptions(SpvcCompiler compiler, SpvcCompilerOptions* options);
 
-        private static readonly PFN_spvc_compiler_create_compiler_options spvc_compiler_create_compiler_options_ = LoadFunction<PFN_spvc_compiler_create_compiler_options>("spvc_compiler_create_compiler_options");
+        private static readonly PFNSpvcCompilerCreateCompilerOptions spvcCompilerCreateCompilerOptions = LoadFunction<PFNSpvcCompilerCreateCompilerOptions>("spvc_compiler_create_compiler_options");
 
         public static SpvcResult SpvcCompilerCreateCompilerOptions(SpvcCompiler compiler, SpvcCompilerOptions* options)
         {
-            return spvc_compiler_create_compiler_options_(compiler, options);
+            return spvcCompilerCreateCompilerOptions(compiler, options);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_options_set_bool(SpvcCompilerOptions options, SpvcCompilerOption option, bool value);
+        private delegate SpvcResult PFNSpvcCompilerOptionsSetBool(SpvcCompilerOptions options, SpvcCompilerOption option, bool value);
 
-        private static readonly PFN_spvc_compiler_options_set_bool spvc_compiler_options_set_bool_ = LoadFunction<PFN_spvc_compiler_options_set_bool>("spvc_compiler_options_set_bool");
+        private static readonly PFNSpvcCompilerOptionsSetBool spvcCompilerOptionsSetBool = LoadFunction<PFNSpvcCompilerOptionsSetBool>("spvc_compiler_options_set_bool");
 
         public static SpvcResult SpvcCompilerOptionsSetBool(SpvcCompilerOptions options, SpvcCompilerOption option, bool value)
         {
-            return spvc_compiler_options_set_bool_(options, option, value);
+            return spvcCompilerOptionsSetBool(options, option, value);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_options_set_uint(SpvcCompilerOptions options, SpvcCompilerOption option, uint value);
+        private delegate SpvcResult PFNSpvcCompilerOptionsSetUint(SpvcCompilerOptions options, SpvcCompilerOption option, uint value);
 
-        private static readonly PFN_spvc_compiler_options_set_uint spvc_compiler_options_set_uint_ = LoadFunction<PFN_spvc_compiler_options_set_uint>("spvc_compiler_options_set_uint");
+        private static readonly PFNSpvcCompilerOptionsSetUint spvcCompilerOptionsSetUint = LoadFunction<PFNSpvcCompilerOptionsSetUint>("spvc_compiler_options_set_uint");
 
         public static SpvcResult SpvcCompilerOptionsSetUint(SpvcCompilerOptions options, SpvcCompilerOption option, uint value)
         {
-            return spvc_compiler_options_set_uint_(options, option, value);
+            return spvcCompilerOptionsSetUint(options, option, value);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_install_compiler_options(SpvcCompiler compiler, SpvcCompilerOptions options);
+        private delegate SpvcResult PFNSpvcCompilerInstallCompilerOptions(SpvcCompiler compiler, SpvcCompilerOptions options);
 
-        private static readonly PFN_spvc_compiler_install_compiler_options spvc_compiler_install_compiler_options_ = LoadFunction<PFN_spvc_compiler_install_compiler_options>("spvc_compiler_install_compiler_options");
+        private static readonly PFNSpvcCompilerInstallCompilerOptions spvcCompilerInstallCompilerOptions = LoadFunction<PFNSpvcCompilerInstallCompilerOptions>("spvc_compiler_install_compiler_options");
 
         public static SpvcResult SpvcCompilerInstallCompilerOptions(SpvcCompiler compiler, SpvcCompilerOptions options)
         {
-            return spvc_compiler_install_compiler_options_(compiler, options);
+            return spvcCompilerInstallCompilerOptions(compiler, options);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_compile(SpvcCompiler compiler, byte* source);
+        private delegate SpvcResult PFNSpvcCompilerCompile(SpvcCompiler compiler, byte* source);
 
-        private static readonly PFN_spvc_compiler_compile spvc_compiler_compile_ = LoadFunction<PFN_spvc_compiler_compile>("spvc_compiler_compile");
+        private static readonly PFNSpvcCompilerCompile spvcCompilerCompile = LoadFunction<PFNSpvcCompilerCompile>("spvc_compiler_compile");
 
         public static SpvcResult SpvcCompilerCompile(SpvcCompiler compiler, byte* source)
         {
-            return spvc_compiler_compile_(compiler, source);
+            return spvcCompilerCompile(compiler, source);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_add_header_line(SpvcCompiler compiler, byte* line);
+        private delegate SpvcResult PFNSpvcCompilerAddHeaderLine(SpvcCompiler compiler, byte* line);
 
-        private static readonly PFN_spvc_compiler_add_header_line spvc_compiler_add_header_line_ = LoadFunction<PFN_spvc_compiler_add_header_line>("spvc_compiler_add_header_line");
+        private static readonly PFNSpvcCompilerAddHeaderLine spvcCompilerAddHeaderLine = LoadFunction<PFNSpvcCompilerAddHeaderLine>("spvc_compiler_add_header_line");
 
-        public static SpvcResult spvc_compiler_add_header_line(SpvcCompiler compiler, byte* line)
+        public static SpvcResult SpvcCompilerAddHeaderLine(SpvcCompiler compiler, byte* line)
         {
-            return spvc_compiler_add_header_line_(compiler, line);
+            return spvcCompilerAddHeaderLine(compiler, line);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_require_extension(SpvcCompiler compiler, byte* ext);
+        private delegate SpvcResult PFNSpvcCompilerRequireExtension(SpvcCompiler compiler, byte* ext);
 
-        private static readonly PFN_spvc_compiler_require_extension spvc_compiler_require_extension_ = LoadFunction<PFN_spvc_compiler_require_extension>("spvc_compiler_require_extension");
+        private static readonly PFNSpvcCompilerRequireExtension spvcCompilerRequireExtension = LoadFunction<PFNSpvcCompilerRequireExtension>("spvc_compiler_require_extension");
 
-        public static SpvcResult spvc_compiler_require_extension(SpvcCompiler compiler, byte* ext)
+        public static SpvcResult SpvcCompilerRequireExtension(SpvcCompiler compiler, byte* ext)
         {
-            return spvc_compiler_require_extension_(compiler, ext);
+            return spvcCompilerRequireExtension(compiler, ext);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_flatten_buffer_block(SpvcCompiler compiler, uint id);
+        private delegate SpvcResult PFNSpvcCompilerFlattenBufferBlock(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_flatten_buffer_block spvc_compiler_flatten_buffer_block_ = LoadFunction<PFN_spvc_compiler_flatten_buffer_block>("spvc_compiler_flatten_buffer_block");
+        private static readonly PFNSpvcCompilerFlattenBufferBlock spvcCompilerFlattenBufferBlock = LoadFunction<PFNSpvcCompilerFlattenBufferBlock>("spvc_compiler_flatten_buffer_block");
 
-        public static SpvcResult spvc_compiler_flatten_buffer_block(SpvcCompiler compiler, uint id)
+        public static SpvcResult SpvcCompilerFlattenBufferBlock(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_flatten_buffer_block_(compiler, id);
+            return spvcCompilerFlattenBufferBlock(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_variable_is_depth_or_compare(SpvcCompiler compiler, uint id);
+        private delegate bool PFNSpvcCompilerVariableIsDepthOrCompare(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_variable_is_depth_or_compare spvc_compiler_variable_is_depth_or_compare_ = LoadFunction<PFN_spvc_compiler_variable_is_depth_or_compare>("spvc_compiler_variable_is_depth_or_compare");
+        private static readonly PFNSpvcCompilerVariableIsDepthOrCompare spvcCompilerVariableIsDepthOrCompare = LoadFunction<PFNSpvcCompilerVariableIsDepthOrCompare>("spvc_compiler_variable_is_depth_or_compare");
 
-        public static bool spvc_compiler_variable_is_depth_or_compare(SpvcCompiler compiler, uint id)
+        public static bool SpvcCompilerVariableIsDepthOrCompare(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_variable_is_depth_or_compare_(compiler, id);
+            return spvcCompilerVariableIsDepthOrCompare(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_hlsl_set_root_constants_layout(SpvcCompiler compiler, SpvcHlslRootConstants* constant_info, nuint count);
+        private delegate SpvcResult PFNSpvcCompilerHlslSetRootConstantsLayout(SpvcCompiler compiler, SpvcHlslRootConstants* constantInfo, nuint count);
 
-        private static readonly PFN_spvc_compiler_hlsl_set_root_constants_layout spvc_compiler_hlsl_set_root_constants_layout_ = LoadFunction<PFN_spvc_compiler_hlsl_set_root_constants_layout>("spvc_compiler_hlsl_set_root_constants_layout");
+        private static readonly PFNSpvcCompilerHlslSetRootConstantsLayout spvcCompilerHlslSetRootConstantsLayout = LoadFunction<PFNSpvcCompilerHlslSetRootConstantsLayout>("spvc_compiler_hlsl_set_root_constants_layout");
 
-        public static SpvcResult spvc_compiler_hlsl_set_root_constants_layout(SpvcCompiler compiler, SpvcHlslRootConstants* constant_info, nuint count)
+        public static SpvcResult SpvcCompilerHlslSetRootConstantsLayout(SpvcCompiler compiler, SpvcHlslRootConstants* constantInfo, nuint count)
         {
-            return spvc_compiler_hlsl_set_root_constants_layout_(compiler, constant_info, count);
+            return spvcCompilerHlslSetRootConstantsLayout(compiler, constantInfo, count);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_hlsl_add_vertex_attribute_remap(SpvcCompiler compiler, SpvcHlslVertexAttributeRemap* remap, nuint remaps);
+        private delegate SpvcResult PFNSpvcCompilerHlslAddVertexAttributeRemap(SpvcCompiler compiler, SpvcHlslVertexAttributeRemap* remap, nuint remaps);
 
-        private static readonly PFN_spvc_compiler_hlsl_add_vertex_attribute_remap spvc_compiler_hlsl_add_vertex_attribute_remap_ = LoadFunction<PFN_spvc_compiler_hlsl_add_vertex_attribute_remap>("spvc_compiler_hlsl_add_vertex_attribute_remap");
+        private static readonly PFNSpvcCompilerHlslAddVertexAttributeRemap spvcCompilerHlslAddVertexAttributeRemap = LoadFunction<PFNSpvcCompilerHlslAddVertexAttributeRemap>("spvc_compiler_hlsl_add_vertex_attribute_remap");
 
-        public static SpvcResult spvc_compiler_hlsl_add_vertex_attribute_remap(SpvcCompiler compiler, SpvcHlslVertexAttributeRemap* remap, nuint remaps)
+        public static SpvcResult SpvcCompilerHlslAddVertexAttributeRemap(SpvcCompiler compiler, SpvcHlslVertexAttributeRemap* remap, nuint remaps)
         {
-            return spvc_compiler_hlsl_add_vertex_attribute_remap_(compiler, remap, remaps);
+            return spvcCompilerHlslAddVertexAttributeRemap(compiler, remap, remaps);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_hlsl_remap_num_workgroups_builtin(SpvcCompiler compiler);
+        private delegate uint PFNSpvcCompilerHlslRemapNumWorkgroupsBuiltin(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_hlsl_remap_num_workgroups_builtin spvc_compiler_hlsl_remap_num_workgroups_builtin_ = LoadFunction<PFN_spvc_compiler_hlsl_remap_num_workgroups_builtin>("spvc_compiler_hlsl_remap_num_workgroups_builtin");
+        private static readonly PFNSpvcCompilerHlslRemapNumWorkgroupsBuiltin spvcCompilerHlslRemapNumWorkgroupsBuiltin = LoadFunction<PFNSpvcCompilerHlslRemapNumWorkgroupsBuiltin>("spvc_compiler_hlsl_remap_num_workgroups_builtin");
 
-        public static uint spvc_compiler_hlsl_remap_num_workgroups_builtin(SpvcCompiler compiler)
+        public static uint SpvcCompilerHlslRemapNumWorkgroupsBuiltin(SpvcCompiler compiler)
         {
-            return spvc_compiler_hlsl_remap_num_workgroups_builtin_(compiler);
+            return spvcCompilerHlslRemapNumWorkgroupsBuiltin(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_hlsl_set_resource_binding_flags(SpvcCompiler compiler, uint flags);
+        private delegate SpvcResult PFNSpvcCompilerHlslSetResourceBindingFlags(SpvcCompiler compiler, uint flags);
 
-        private static readonly PFN_spvc_compiler_hlsl_set_resource_binding_flags spvc_compiler_hlsl_set_resource_binding_flags_ = LoadFunction<PFN_spvc_compiler_hlsl_set_resource_binding_flags>("spvc_compiler_hlsl_set_resource_binding_flags");
+        private static readonly PFNSpvcCompilerHlslSetResourceBindingFlags spvcCompilerHlslSetResourceBindingFlags = LoadFunction<PFNSpvcCompilerHlslSetResourceBindingFlags>("spvc_compiler_hlsl_set_resource_binding_flags");
 
-        public static SpvcResult spvc_compiler_hlsl_set_resource_binding_flags(SpvcCompiler compiler, uint flags)
+        public static SpvcResult SpvcCompilerHlslSetResourceBindingFlags(SpvcCompiler compiler, uint flags)
         {
-            return spvc_compiler_hlsl_set_resource_binding_flags_(compiler, flags);
+            return spvcCompilerHlslSetResourceBindingFlags(compiler, flags);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_hlsl_add_resource_binding(SpvcCompiler compiler, SpvcHlslResourceBinding* binding);
+        private delegate SpvcResult PFNSpvcCompilerHlslAddResourceBinding(SpvcCompiler compiler, SpvcHlslResourceBinding* binding);
 
-        private static readonly PFN_spvc_compiler_hlsl_add_resource_binding spvc_compiler_hlsl_add_resource_binding_ = LoadFunction<PFN_spvc_compiler_hlsl_add_resource_binding>("spvc_compiler_hlsl_add_resource_binding");
+        private static readonly PFNSpvcCompilerHlslAddResourceBinding spvcCompilerHlslAddResourceBinding = LoadFunction<PFNSpvcCompilerHlslAddResourceBinding>("spvc_compiler_hlsl_add_resource_binding");
 
-        public static SpvcResult spvc_compiler_hlsl_add_resource_binding(SpvcCompiler compiler, SpvcHlslResourceBinding* binding)
+        public static SpvcResult SpvcCompilerHlslAddResourceBinding(SpvcCompiler compiler, SpvcHlslResourceBinding* binding)
         {
-            return spvc_compiler_hlsl_add_resource_binding_(compiler, binding);
+            return spvcCompilerHlslAddResourceBinding(compiler, binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_hlsl_is_resource_used(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding);
+        private delegate bool PFNSpvcCompilerHlslIsResourceUsed(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding);
 
-        private static readonly PFN_spvc_compiler_hlsl_is_resource_used spvc_compiler_hlsl_is_resource_used_ = LoadFunction<PFN_spvc_compiler_hlsl_is_resource_used>("spvc_compiler_hlsl_is_resource_used");
+        private static readonly PFNSpvcCompilerHlslIsResourceUsed spvcCompilerHlslIsResourceUsed = LoadFunction<PFNSpvcCompilerHlslIsResourceUsed>("spvc_compiler_hlsl_is_resource_used");
 
-        public static bool spvc_compiler_hlsl_is_resource_used(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding)
+        public static bool SpvcCompilerHlslIsResourceUsed(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding)
         {
-            return spvc_compiler_hlsl_is_resource_used_(compiler, model, set, binding);
+            return spvcCompilerHlslIsResourceUsed(compiler, model, set, binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_is_rasterization_disabled(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslIsRasterizationDisabled(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_is_rasterization_disabled spvc_compiler_msl_is_rasterization_disabled_ = LoadFunction<PFN_spvc_compiler_msl_is_rasterization_disabled>("spvc_compiler_msl_is_rasterization_disabled");
+        private static readonly PFNSpvcCompilerMslIsRasterizationDisabled spvcCompilerMslIsRasterizationDisabled = LoadFunction<PFNSpvcCompilerMslIsRasterizationDisabled>("spvc_compiler_msl_is_rasterization_disabled");
 
-        public static bool spvc_compiler_msl_is_rasterization_disabled(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslIsRasterizationDisabled(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_is_rasterization_disabled_(compiler);
+            return spvcCompilerMslIsRasterizationDisabled(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_needs_aux_buffer(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslNeedsAuxBuffer(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_needs_aux_buffer spvc_compiler_msl_needs_aux_buffer_ = LoadFunction<PFN_spvc_compiler_msl_needs_aux_buffer>("spvc_compiler_msl_needs_aux_buffer");
+        private static readonly PFNSpvcCompilerMslNeedsAuxBuffer spvcCompilerMslNeedsAuxBuffer = LoadFunction<PFNSpvcCompilerMslNeedsAuxBuffer>("spvc_compiler_msl_needs_aux_buffer");
 
-        public static bool spvc_compiler_msl_needs_aux_buffer(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslNeedsAuxBuffer(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_needs_aux_buffer_(compiler);
+            return spvcCompilerMslNeedsAuxBuffer(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_needs_swizzle_buffer(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslNeedsSwizzleBuffer(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_needs_swizzle_buffer spvc_compiler_msl_needs_swizzle_buffer_ = LoadFunction<PFN_spvc_compiler_msl_needs_swizzle_buffer>("spvc_compiler_msl_needs_swizzle_buffer");
+        private static readonly PFNSpvcCompilerMslNeedsSwizzleBuffer spvcCompilerMslNeedsSwizzleBuffer = LoadFunction<PFNSpvcCompilerMslNeedsSwizzleBuffer>("spvc_compiler_msl_needs_swizzle_buffer");
 
-        public static bool spvc_compiler_msl_needs_swizzle_buffer(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslNeedsSwizzleBuffer(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_needs_swizzle_buffer_(compiler);
+            return spvcCompilerMslNeedsSwizzleBuffer(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_needs_buffer_size_buffer(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslNeedsBufferSizeBuffer(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_needs_buffer_size_buffer spvc_compiler_msl_needs_buffer_size_buffer_ = LoadFunction<PFN_spvc_compiler_msl_needs_buffer_size_buffer>("spvc_compiler_msl_needs_buffer_size_buffer");
+        private static readonly PFNSpvcCompilerMslNeedsBufferSizeBuffer spvcCompilerMslNeedsBufferSizeBuffer = LoadFunction<PFNSpvcCompilerMslNeedsBufferSizeBuffer>("spvc_compiler_msl_needs_buffer_size_buffer");
 
-        public static bool spvc_compiler_msl_needs_buffer_size_buffer(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslNeedsBufferSizeBuffer(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_needs_buffer_size_buffer_(compiler);
+            return spvcCompilerMslNeedsBufferSizeBuffer(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_needs_output_buffer(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslNeedsOutputBuffer(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_needs_output_buffer spvc_compiler_msl_needs_output_buffer_ = LoadFunction<PFN_spvc_compiler_msl_needs_output_buffer>("spvc_compiler_msl_needs_output_buffer");
+        private static readonly PFNSpvcCompilerMslNeedsOutputBuffer spvcCompilerMslNeedsOutputBuffer = LoadFunction<PFNSpvcCompilerMslNeedsOutputBuffer>("spvc_compiler_msl_needs_output_buffer");
 
-        public static bool spvc_compiler_msl_needs_output_buffer(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslNeedsOutputBuffer(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_needs_output_buffer_(compiler);
+            return spvcCompilerMslNeedsOutputBuffer(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_needs_patch_output_buffer(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslNeedsPatchOutputBuffer(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_needs_patch_output_buffer spvc_compiler_msl_needs_patch_output_buffer_ = LoadFunction<PFN_spvc_compiler_msl_needs_patch_output_buffer>("spvc_compiler_msl_needs_patch_output_buffer");
+        private static readonly PFNSpvcCompilerMslNeedsPatchOutputBuffer spvcCompilerMslNeedsPatchOutputBuffer = LoadFunction<PFNSpvcCompilerMslNeedsPatchOutputBuffer>("spvc_compiler_msl_needs_patch_output_buffer");
 
-        public static bool spvc_compiler_msl_needs_patch_output_buffer(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslNeedsPatchOutputBuffer(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_needs_patch_output_buffer_(compiler);
+            return spvcCompilerMslNeedsPatchOutputBuffer(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_needs_input_threadgroup_mem(SpvcCompiler compiler);
+        private delegate bool PFNSpvcCompilerMslNeedsInputThreadgroupMem(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_needs_input_threadgroup_mem spvc_compiler_msl_needs_input_threadgroup_mem_ = LoadFunction<PFN_spvc_compiler_msl_needs_input_threadgroup_mem>("spvc_compiler_msl_needs_input_threadgroup_mem");
+        private static readonly PFNSpvcCompilerMslNeedsInputThreadgroupMem spvcCompilerMslNeedsInputThreadgroupMem = LoadFunction<PFNSpvcCompilerMslNeedsInputThreadgroupMem>("spvc_compiler_msl_needs_input_threadgroup_mem");
 
-        public static bool spvc_compiler_msl_needs_input_threadgroup_mem(SpvcCompiler compiler)
+        public static bool SpvcCompilerMslNeedsInputThreadgroupMem(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_needs_input_threadgroup_mem_(compiler);
+            return spvcCompilerMslNeedsInputThreadgroupMem(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_add_vertex_attribute(SpvcCompiler compiler, SpvcMslVertexAttribute* attrs);
+        private delegate SpvcResult PFNSpvcCompilerMslAddVertexAttribute(SpvcCompiler compiler, SpvcMslVertexAttribute* attrs);
 
-        private static readonly PFN_spvc_compiler_msl_add_vertex_attribute spvc_compiler_msl_add_vertex_attribute_ = LoadFunction<PFN_spvc_compiler_msl_add_vertex_attribute>("spvc_compiler_msl_add_vertex_attribute");
+        private static readonly PFNSpvcCompilerMslAddVertexAttribute spvcCompilerMslAddVertexAttribute = LoadFunction<PFNSpvcCompilerMslAddVertexAttribute>("spvc_compiler_msl_add_vertex_attribute");
 
-        public static SpvcResult spvc_compiler_msl_add_vertex_attribute(SpvcCompiler compiler, SpvcMslVertexAttribute* attrs)
+        public static SpvcResult SpvcCompilerMslAddVertexAttribute(SpvcCompiler compiler, SpvcMslVertexAttribute* attrs)
         {
-            return spvc_compiler_msl_add_vertex_attribute_(compiler, attrs);
+            return spvcCompilerMslAddVertexAttribute(compiler, attrs);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_add_resource_binding(SpvcCompiler compiler, SpvcMslResourceBinding* binding);
+        private delegate SpvcResult PFNSpvcCompilerMslAddResourceBinding(SpvcCompiler compiler, SpvcMslResourceBinding* binding);
 
-        private static readonly PFN_spvc_compiler_msl_add_resource_binding spvc_compiler_msl_add_resource_binding_ = LoadFunction<PFN_spvc_compiler_msl_add_resource_binding>("spvc_compiler_msl_add_resource_binding");
+        private static readonly PFNSpvcCompilerMslAddResourceBinding spvcCompilerMslAddResourceBinding = LoadFunction<PFNSpvcCompilerMslAddResourceBinding>("spvc_compiler_msl_add_resource_binding");
 
-        public static SpvcResult spvc_compiler_msl_add_resource_binding(SpvcCompiler compiler, SpvcMslResourceBinding* binding)
+        public static SpvcResult SpvcCompilerMslAddResourceBinding(SpvcCompiler compiler, SpvcMslResourceBinding* binding)
         {
-            return spvc_compiler_msl_add_resource_binding_(compiler, binding);
+            return spvcCompilerMslAddResourceBinding(compiler, binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_add_shader_input(SpvcCompiler compiler, SpvcMslShaderInput* input);
+        private delegate SpvcResult PFNSpvcCompilerMslAddShaderInput(SpvcCompiler compiler, SpvcMslShaderInput* input);
 
-        private static readonly PFN_spvc_compiler_msl_add_shader_input spvc_compiler_msl_add_shader_input_ = LoadFunction<PFN_spvc_compiler_msl_add_shader_input>("spvc_compiler_msl_add_shader_input");
+        private static readonly PFNSpvcCompilerMslAddShaderInput spvcCompilerMslAddShaderInput = LoadFunction<PFNSpvcCompilerMslAddShaderInput>("spvc_compiler_msl_add_shader_input");
 
-        public static SpvcResult spvc_compiler_msl_add_shader_input(SpvcCompiler compiler, SpvcMslShaderInput* input)
+        public static SpvcResult SpvcCompilerMslAddShaderInput(SpvcCompiler compiler, SpvcMslShaderInput* input)
         {
-            return spvc_compiler_msl_add_shader_input_(compiler, input);
+            return spvcCompilerMslAddShaderInput(compiler, input);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_add_discrete_descriptor_set(SpvcCompiler compiler, uint desc_set);
+        private delegate SpvcResult PFNSpvcCompilerMslAddDiscreteDescriptorSet(SpvcCompiler compiler, uint descSet);
 
-        private static readonly PFN_spvc_compiler_msl_add_discrete_descriptor_set spvc_compiler_msl_add_discrete_descriptor_set_ = LoadFunction<PFN_spvc_compiler_msl_add_discrete_descriptor_set>("spvc_compiler_msl_add_discrete_descriptor_set");
+        private static readonly PFNSpvcCompilerMslAddDiscreteDescriptorSet spvcCompilerMslAddDiscreteDescriptorSet = LoadFunction<PFNSpvcCompilerMslAddDiscreteDescriptorSet>("spvc_compiler_msl_add_discrete_descriptor_set");
 
-        public static SpvcResult spvc_compiler_msl_add_discrete_descriptor_set(SpvcCompiler compiler, uint desc_set)
+        public static SpvcResult SpvcCompilerMslAddDiscreteDescriptorSet(SpvcCompiler compiler, uint descSet)
         {
-            return spvc_compiler_msl_add_discrete_descriptor_set_(compiler, desc_set);
+            return spvcCompilerMslAddDiscreteDescriptorSet(compiler, descSet);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_set_argument_buffer_device_address_space(SpvcCompiler compiler, uint desc_set, bool device_address);
+        private delegate SpvcResult PFNSpvcCompilerMslSetArgumentBufferDeviceAddressSpace(SpvcCompiler compiler, uint descSet, bool deviceAddress);
 
-        private static readonly PFN_spvc_compiler_msl_set_argument_buffer_device_address_space spvc_compiler_msl_set_argument_buffer_device_address_space_ = LoadFunction<PFN_spvc_compiler_msl_set_argument_buffer_device_address_space>("spvc_compiler_msl_set_argument_buffer_device_address_space");
+        private static readonly PFNSpvcCompilerMslSetArgumentBufferDeviceAddressSpace spvcCompilerMslSetArgumentBufferDeviceAddressSpace = LoadFunction<PFNSpvcCompilerMslSetArgumentBufferDeviceAddressSpace>("spvc_compiler_msl_set_argument_buffer_device_address_space");
 
-        public static SpvcResult spvc_compiler_msl_set_argument_buffer_device_address_space(SpvcCompiler compiler, uint desc_set, bool device_address)
+        public static SpvcResult SpvcCompilerMslSetArgumentBufferDeviceAddressSpace(SpvcCompiler compiler, uint descSet, bool deviceAddress)
         {
-            return spvc_compiler_msl_set_argument_buffer_device_address_space_(compiler, desc_set, device_address);
+            return spvcCompilerMslSetArgumentBufferDeviceAddressSpace(compiler, descSet, deviceAddress);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_is_vertex_attribute_used(SpvcCompiler compiler, uint location);
+        private delegate bool PFNSpvcCompilerMslIsVertexAttributeUsed(SpvcCompiler compiler, uint location);
 
-        private static readonly PFN_spvc_compiler_msl_is_vertex_attribute_used spvc_compiler_msl_is_vertex_attribute_used_ = LoadFunction<PFN_spvc_compiler_msl_is_vertex_attribute_used>("spvc_compiler_msl_is_vertex_attribute_used");
+        private static readonly PFNSpvcCompilerMslIsVertexAttributeUsed spvcCompilerMslIsVertexAttributeUsed = LoadFunction<PFNSpvcCompilerMslIsVertexAttributeUsed>("spvc_compiler_msl_is_vertex_attribute_used");
 
-        public static bool spvc_compiler_msl_is_vertex_attribute_used(SpvcCompiler compiler, uint location)
+        public static bool SpvcCompilerMslIsVertexAttributeUsed(SpvcCompiler compiler, uint location)
         {
-            return spvc_compiler_msl_is_vertex_attribute_used_(compiler, location);
+            return spvcCompilerMslIsVertexAttributeUsed(compiler, location);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_is_shader_input_used(SpvcCompiler compiler, uint location);
+        private delegate bool PFNSpvcCompilerMslIsShaderInputUsed(SpvcCompiler compiler, uint location);
 
-        private static readonly PFN_spvc_compiler_msl_is_shader_input_used spvc_compiler_msl_is_shader_input_used_ = LoadFunction<PFN_spvc_compiler_msl_is_shader_input_used>("spvc_compiler_msl_is_shader_input_used");
+        private static readonly PFNSpvcCompilerMslIsShaderInputUsed spvcCompilerMslIsShaderInputUsed = LoadFunction<PFNSpvcCompilerMslIsShaderInputUsed>("spvc_compiler_msl_is_shader_input_used");
 
-        public static bool spvc_compiler_msl_is_shader_input_used(SpvcCompiler compiler, uint location)
+        public static bool SpvcCompilerMslIsShaderInputUsed(SpvcCompiler compiler, uint location)
         {
-            return spvc_compiler_msl_is_shader_input_used_(compiler, location);
+            return spvcCompilerMslIsShaderInputUsed(compiler, location);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_msl_is_resource_used(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding);
+        private delegate bool PFNSpvcCompilerMslIsResourceUsed(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding);
 
-        private static readonly PFN_spvc_compiler_msl_is_resource_used spvc_compiler_msl_is_resource_used_ = LoadFunction<PFN_spvc_compiler_msl_is_resource_used>("spvc_compiler_msl_is_resource_used");
+        private static readonly PFNSpvcCompilerMslIsResourceUsed spvcCompilerMslIsResourceUsed = LoadFunction<PFNSpvcCompilerMslIsResourceUsed>("spvc_compiler_msl_is_resource_used");
 
-        public static bool spvc_compiler_msl_is_resource_used(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding)
+        public static bool SpvcCompilerMslIsResourceUsed(SpvcCompiler compiler, SpvExecutionModel model, uint set, uint binding)
         {
-            return spvc_compiler_msl_is_resource_used_(compiler, model, set, binding);
+            return spvcCompilerMslIsResourceUsed(compiler, model, set, binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_remap_constexpr_sampler(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler);
+        private delegate SpvcResult PFNSpvcCompilerMslRemapConstexprSampler(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler);
 
-        private static readonly PFN_spvc_compiler_msl_remap_constexpr_sampler spvc_compiler_msl_remap_constexpr_sampler_ = LoadFunction<PFN_spvc_compiler_msl_remap_constexpr_sampler>("spvc_compiler_msl_remap_constexpr_sampler");
+        private static readonly PFNSpvcCompilerMslRemapConstexprSampler spvcCompilerMslRemapConstexprSampler = LoadFunction<PFNSpvcCompilerMslRemapConstexprSampler>("spvc_compiler_msl_remap_constexpr_sampler");
 
-        public static SpvcResult spvc_compiler_msl_remap_constexpr_sampler(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler)
+        public static SpvcResult SpvcCompilerMslRemapConstexprSampler(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler)
         {
-            return spvc_compiler_msl_remap_constexpr_sampler_(compiler, id, sampler);
+            return spvcCompilerMslRemapConstexprSampler(compiler, id, sampler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_remap_constexpr_sampler_by_binding(SpvcCompiler compiler, uint desc_set, uint binding, SpvcMslConstexprSampler* sampler);
+        private delegate SpvcResult PFNSpvcCompilerMslRemapConstexprSamplerByBinding(SpvcCompiler compiler, uint descSet, uint binding, SpvcMslConstexprSampler* sampler);
 
-        private static readonly PFN_spvc_compiler_msl_remap_constexpr_sampler_by_binding spvc_compiler_msl_remap_constexpr_sampler_by_binding_ = LoadFunction<PFN_spvc_compiler_msl_remap_constexpr_sampler_by_binding>("spvc_compiler_msl_remap_constexpr_sampler_by_binding");
+        private static readonly PFNSpvcCompilerMslRemapConstexprSamplerByBinding spvcCompilerMslRemapConstexprSamplerByBinding = LoadFunction<PFNSpvcCompilerMslRemapConstexprSamplerByBinding>("spvc_compiler_msl_remap_constexpr_sampler_by_binding");
 
-        public static SpvcResult spvc_compiler_msl_remap_constexpr_sampler_by_binding(SpvcCompiler compiler, uint desc_set, uint binding, SpvcMslConstexprSampler* sampler)
+        public static SpvcResult SpvcCompilerMslRemapConstexprSamplerByBinding(SpvcCompiler compiler, uint descSet, uint binding, SpvcMslConstexprSampler* sampler)
         {
-            return spvc_compiler_msl_remap_constexpr_sampler_by_binding_(compiler, desc_set, binding, sampler);
+            return spvcCompilerMslRemapConstexprSamplerByBinding(compiler, descSet, binding, sampler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_remap_constexpr_sampler_ycbcr(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv);
+        private delegate SpvcResult PFNSpvcCompilerMslRemapConstexprSamplerYcbcr(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv);
 
-        private static readonly PFN_spvc_compiler_msl_remap_constexpr_sampler_ycbcr spvc_compiler_msl_remap_constexpr_sampler_ycbcr_ = LoadFunction<PFN_spvc_compiler_msl_remap_constexpr_sampler_ycbcr>("spvc_compiler_msl_remap_constexpr_sampler_ycbcr");
+        private static readonly PFNSpvcCompilerMslRemapConstexprSamplerYcbcr spvcCompilerMslRemapConstexprSamplerYcbcr = LoadFunction<PFNSpvcCompilerMslRemapConstexprSamplerYcbcr>("spvc_compiler_msl_remap_constexpr_sampler_ycbcr");
 
-        public static SpvcResult spvc_compiler_msl_remap_constexpr_sampler_ycbcr(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv)
+        public static SpvcResult SpvcCompilerMslRemapConstexprSamplerYcbcr(SpvcCompiler compiler, uint id, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv)
         {
-            return spvc_compiler_msl_remap_constexpr_sampler_ycbcr_(compiler, id, sampler, conv);
+            return spvcCompilerMslRemapConstexprSamplerYcbcr(compiler, id, sampler, conv);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr(SpvcCompiler compiler, uint desc_set, uint binding, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv);
+        private delegate SpvcResult PFNSpvcCompilerMslRemapConstexprSamplerByBindingYcbcr(SpvcCompiler compiler, uint descSet, uint binding, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv);
 
-        private static readonly PFN_spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr_ = LoadFunction<PFN_spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr>("spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr");
+        private static readonly PFNSpvcCompilerMslRemapConstexprSamplerByBindingYcbcr spvcCompilerMslRemapConstexprSamplerByBindingYcbcr = LoadFunction<PFNSpvcCompilerMslRemapConstexprSamplerByBindingYcbcr>("spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr");
 
-        public static SpvcResult spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr(SpvcCompiler compiler, uint desc_set, uint binding, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv)
+        public static SpvcResult SpvcCompilerMslRemapConstexprSamplerByBindingYcbcr(SpvcCompiler compiler, uint descSet, uint binding, SpvcMslConstexprSampler* sampler, SpvcMslSamplerYcbcrConversion* conv)
         {
-            return spvc_compiler_msl_remap_constexpr_sampler_by_binding_ycbcr_(compiler, desc_set, binding, sampler, conv);
+            return spvcCompilerMslRemapConstexprSamplerByBindingYcbcr(compiler, descSet, binding, sampler, conv);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_set_fragment_output_components(SpvcCompiler compiler, uint location, uint components);
+        private delegate SpvcResult PFNSpvcCompilerMslSetFragmentOutputComponents(SpvcCompiler compiler, uint location, uint components);
 
-        private static readonly PFN_spvc_compiler_msl_set_fragment_output_components spvc_compiler_msl_set_fragment_output_components_ = LoadFunction<PFN_spvc_compiler_msl_set_fragment_output_components>("spvc_compiler_msl_set_fragment_output_components");
+        private static readonly PFNSpvcCompilerMslSetFragmentOutputComponents spvcCompilerMslSetFragmentOutputComponents = LoadFunction<PFNSpvcCompilerMslSetFragmentOutputComponents>("spvc_compiler_msl_set_fragment_output_components");
 
-        public static SpvcResult spvc_compiler_msl_set_fragment_output_components(SpvcCompiler compiler, uint location, uint components)
+        public static SpvcResult SpvcCompilerMslSetFragmentOutputComponents(SpvcCompiler compiler, uint location, uint components)
         {
-            return spvc_compiler_msl_set_fragment_output_components_(compiler, location, components);
+            return spvcCompilerMslSetFragmentOutputComponents(compiler, location, components);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_msl_get_automatic_resource_binding(SpvcCompiler compiler, uint id);
+        private delegate uint PFNSpvcCompilerMslGetAutomaticResourceBinding(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_msl_get_automatic_resource_binding spvc_compiler_msl_get_automatic_resource_binding_ = LoadFunction<PFN_spvc_compiler_msl_get_automatic_resource_binding>("spvc_compiler_msl_get_automatic_resource_binding");
+        private static readonly PFNSpvcCompilerMslGetAutomaticResourceBinding spvcCompilerMslGetAutomaticResourceBinding = LoadFunction<PFNSpvcCompilerMslGetAutomaticResourceBinding>("spvc_compiler_msl_get_automatic_resource_binding");
 
-        public static uint spvc_compiler_msl_get_automatic_resource_binding(SpvcCompiler compiler, uint id)
+        public static uint SpvcCompilerMslGetAutomaticResourceBinding(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_msl_get_automatic_resource_binding_(compiler, id);
+            return spvcCompilerMslGetAutomaticResourceBinding(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_msl_get_automatic_resource_binding_secondary(SpvcCompiler compiler, uint id);
+        private delegate uint PFNSpvcCompilerMslGetAutomaticResourceBindingSecondary(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_msl_get_automatic_resource_binding_secondary spvc_compiler_msl_get_automatic_resource_binding_secondary_ = LoadFunction<PFN_spvc_compiler_msl_get_automatic_resource_binding_secondary>("spvc_compiler_msl_get_automatic_resource_binding_secondary");
+        private static readonly PFNSpvcCompilerMslGetAutomaticResourceBindingSecondary spvcCompilerMslGetAutomaticResourceBindingSecondary = LoadFunction<PFNSpvcCompilerMslGetAutomaticResourceBindingSecondary>("spvc_compiler_msl_get_automatic_resource_binding_secondary");
 
-        public static uint spvc_compiler_msl_get_automatic_resource_binding_secondary(SpvcCompiler compiler, uint id)
+        public static uint SpvcCompilerMslGetAutomaticResourceBindingSecondary(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_msl_get_automatic_resource_binding_secondary_(compiler, id);
+            return spvcCompilerMslGetAutomaticResourceBindingSecondary(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_add_dynamic_buffer(SpvcCompiler compiler, uint desc_set, uint binding, uint index);
+        private delegate SpvcResult PFNSpvcCompilerMslAddDynamicBuffer(SpvcCompiler compiler, uint descSet, uint binding, uint index);
 
-        private static readonly PFN_spvc_compiler_msl_add_dynamic_buffer spvc_compiler_msl_add_dynamic_buffer_ = LoadFunction<PFN_spvc_compiler_msl_add_dynamic_buffer>("spvc_compiler_msl_add_dynamic_buffer");
+        private static readonly PFNSpvcCompilerMslAddDynamicBuffer spvcCompilerMslAddDynamicBuffer = LoadFunction<PFNSpvcCompilerMslAddDynamicBuffer>("spvc_compiler_msl_add_dynamic_buffer");
 
-        public static SpvcResult spvc_compiler_msl_add_dynamic_buffer(SpvcCompiler compiler, uint desc_set, uint binding, uint index)
+        public static SpvcResult SpvcCompilerMslAddDynamicBuffer(SpvcCompiler compiler, uint descSet, uint binding, uint index)
         {
-            return spvc_compiler_msl_add_dynamic_buffer_(compiler, desc_set, binding, index);
+            return spvcCompilerMslAddDynamicBuffer(compiler, descSet, binding, index);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_add_inline_uniform_block(SpvcCompiler compiler, uint desc_set, uint binding);
+        private delegate SpvcResult PFNSpvcCompilerMslAddInlineUniformBlock(SpvcCompiler compiler, uint descSet, uint binding);
 
-        private static readonly PFN_spvc_compiler_msl_add_inline_uniform_block spvc_compiler_msl_add_inline_uniform_block_ = LoadFunction<PFN_spvc_compiler_msl_add_inline_uniform_block>("spvc_compiler_msl_add_inline_uniform_block");
+        private static readonly PFNSpvcCompilerMslAddInlineUniformBlock spvcCompilerMslAddInlineUniformBlock = LoadFunction<PFNSpvcCompilerMslAddInlineUniformBlock>("spvc_compiler_msl_add_inline_uniform_block");
 
-        public static SpvcResult spvc_compiler_msl_add_inline_uniform_block(SpvcCompiler compiler, uint desc_set, uint binding)
+        public static SpvcResult SpvcCompilerMslAddInlineUniformBlock(SpvcCompiler compiler, uint descSet, uint binding)
         {
-            return spvc_compiler_msl_add_inline_uniform_block_(compiler, desc_set, binding);
+            return spvcCompilerMslAddInlineUniformBlock(compiler, descSet, binding);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_msl_set_combined_sampler_suffix(SpvcCompiler compiler, byte* suffix);
+        private delegate SpvcResult PFNSpvcCompilerMslSetCombinedSamplerSuffix(SpvcCompiler compiler, byte* suffix);
 
-        private static readonly PFN_spvc_compiler_msl_set_combined_sampler_suffix spvc_compiler_msl_set_combined_sampler_suffix_ = LoadFunction<PFN_spvc_compiler_msl_set_combined_sampler_suffix>("spvc_compiler_msl_set_combined_sampler_suffix");
+        private static readonly PFNSpvcCompilerMslSetCombinedSamplerSuffix spvcCompilerMslSetCombinedSamplerSuffix = LoadFunction<PFNSpvcCompilerMslSetCombinedSamplerSuffix>("spvc_compiler_msl_set_combined_sampler_suffix");
 
-        public static SpvcResult spvc_compiler_msl_set_combined_sampler_suffix(SpvcCompiler compiler, byte* suffix)
+        public static SpvcResult SpvcCompilerMslSetCombinedSamplerSuffix(SpvcCompiler compiler, byte* suffix)
         {
-            return spvc_compiler_msl_set_combined_sampler_suffix_(compiler, suffix);
+            return spvcCompilerMslSetCombinedSamplerSuffix(compiler, suffix);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_msl_get_combined_sampler_suffix(SpvcCompiler compiler);
+        private delegate byte* PFNSpvcCompilerMslGetCombinedSamplerSuffix(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_msl_get_combined_sampler_suffix spvc_compiler_msl_get_combined_sampler_suffix_ = LoadFunction<PFN_spvc_compiler_msl_get_combined_sampler_suffix>("spvc_compiler_msl_get_combined_sampler_suffix");
+        private static readonly PFNSpvcCompilerMslGetCombinedSamplerSuffix spvcCompilerMslGetCombinedSamplerSuffix = LoadFunction<PFNSpvcCompilerMslGetCombinedSamplerSuffix>("spvc_compiler_msl_get_combined_sampler_suffix");
 
-        public static byte* spvc_compiler_msl_get_combined_sampler_suffix(SpvcCompiler compiler)
+        public static byte* SpvcCompilerMslGetCombinedSamplerSuffix(SpvcCompiler compiler)
         {
-            return spvc_compiler_msl_get_combined_sampler_suffix_(compiler);
+            return spvcCompilerMslGetCombinedSamplerSuffix(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_active_interface_variables(SpvcCompiler compiler, SpvcSet* set);
+        private delegate SpvcResult PFNSpvcCompilerGetActiveInterfaceVariables(SpvcCompiler compiler, SpvcSet* set);
 
-        private static readonly PFN_spvc_compiler_get_active_interface_variables spvc_compiler_get_active_interface_variables_ = LoadFunction<PFN_spvc_compiler_get_active_interface_variables>("spvc_compiler_get_active_interface_variables");
+        private static readonly PFNSpvcCompilerGetActiveInterfaceVariables spvcCompilerGetActiveInterfaceVariables = LoadFunction<PFNSpvcCompilerGetActiveInterfaceVariables>("spvc_compiler_get_active_interface_variables");
 
-        public static SpvcResult spvc_compiler_get_active_interface_variables(SpvcCompiler compiler, SpvcSet* set)
+        public static SpvcResult SpvcCompilerGetActiveInterfaceVariables(SpvcCompiler compiler, SpvcSet* set)
         {
-            return spvc_compiler_get_active_interface_variables_(compiler, set);
+            return spvcCompilerGetActiveInterfaceVariables(compiler, set);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_set_enabled_interface_variables(SpvcCompiler compiler, SpvcSet set);
+        private delegate SpvcResult PFNSpvcCompilerSetEnabledInterfaceVariables(SpvcCompiler compiler, SpvcSet set);
 
-        private static readonly PFN_spvc_compiler_set_enabled_interface_variables spvc_compiler_set_enabled_interface_variables_ = LoadFunction<PFN_spvc_compiler_set_enabled_interface_variables>("spvc_compiler_set_enabled_interface_variables");
+        private static readonly PFNSpvcCompilerSetEnabledInterfaceVariables spvcCompilerSetEnabledInterfaceVariables = LoadFunction<PFNSpvcCompilerSetEnabledInterfaceVariables>("spvc_compiler_set_enabled_interface_variables");
 
-        public static SpvcResult spvc_compiler_set_enabled_interface_variables(SpvcCompiler compiler, SpvcSet set)
+        public static SpvcResult SpvcCompilerSetEnabledInterfaceVariables(SpvcCompiler compiler, SpvcSet set)
         {
-            return spvc_compiler_set_enabled_interface_variables_(compiler, set);
+            return spvcCompilerSetEnabledInterfaceVariables(compiler, set);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_create_shader_resources(SpvcCompiler compiler, SpvcResources* resources);
+        private delegate SpvcResult PFNSpvcCompilerCreateShaderResources(SpvcCompiler compiler, SpvcResources* resources);
 
-        private static readonly PFN_spvc_compiler_create_shader_resources spvc_compiler_create_shader_resources_ = LoadFunction<PFN_spvc_compiler_create_shader_resources>("spvc_compiler_create_shader_resources");
+        private static readonly PFNSpvcCompilerCreateShaderResources spvcCompilerCreateShaderResources = LoadFunction<PFNSpvcCompilerCreateShaderResources>("spvc_compiler_create_shader_resources");
 
         public static SpvcResult SpvcCompilerCreateShaderResources(SpvcCompiler compiler, SpvcResources* resources)
         {
-            return spvc_compiler_create_shader_resources_(compiler, resources);
+            return spvcCompilerCreateShaderResources(compiler, resources);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_create_shader_resources_for_active_variables(SpvcCompiler compiler, SpvcResources* resources, SpvcSet active);
+        private delegate SpvcResult PFNSpvcCompilerCreateShaderResourcesForActiveVariables(SpvcCompiler compiler, SpvcResources* resources, SpvcSet active);
 
-        private static readonly PFN_spvc_compiler_create_shader_resources_for_active_variables spvc_compiler_create_shader_resources_for_active_variables_ = LoadFunction<PFN_spvc_compiler_create_shader_resources_for_active_variables>("spvc_compiler_create_shader_resources_for_active_variables");
+        private static readonly PFNSpvcCompilerCreateShaderResourcesForActiveVariables spvcCompilerCreateShaderResourcesForActiveVariables = LoadFunction<PFNSpvcCompilerCreateShaderResourcesForActiveVariables>("spvc_compiler_create_shader_resources_for_active_variables");
 
-        public static SpvcResult spvc_compiler_create_shader_resources_for_active_variables(SpvcCompiler compiler, SpvcResources* resources, SpvcSet active)
+        public static SpvcResult SpvcCompilerCreateShaderResourcesForActiveVariables(SpvcCompiler compiler, SpvcResources* resources, SpvcSet active)
         {
-            return spvc_compiler_create_shader_resources_for_active_variables_(compiler, resources, active);
+            return spvcCompilerCreateShaderResourcesForActiveVariables(compiler, resources, active);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_resources_get_resource_list_for_type(SpvcResources resources, SpvcResourceType type, SpvcReflectedResource* resource_list, nuint* resource_size);
+        private delegate SpvcResult PFNSpvcResourcesGetResourceListForType(SpvcResources resources, SpvcResourceType type, SpvcReflectedResource* resourceList, nuint* resourceSize);
 
-        private static readonly PFN_spvc_resources_get_resource_list_for_type spvc_resources_get_resource_list_for_type_ = LoadFunction<PFN_spvc_resources_get_resource_list_for_type>("spvc_resources_get_resource_list_for_type");
+        private static readonly PFNSpvcResourcesGetResourceListForType spvcResourcesGetResourceListForType = LoadFunction<PFNSpvcResourcesGetResourceListForType>("spvc_resources_get_resource_list_for_type");
 
-        public static SpvcResult SpvcResourcesGetResourceListForType(SpvcResources resources, SpvcResourceType type, SpvcReflectedResource* resource_list, nuint* resource_size)
+        public static SpvcResult SpvcResourcesGetResourceListForType(SpvcResources resources, SpvcResourceType type, SpvcReflectedResource* resourceList, nuint* resourceSize)
         {
-            return spvc_resources_get_resource_list_for_type_(resources, type, resource_list, resource_size);
+            return spvcResourcesGetResourceListForType(resources, type, resourceList, resourceSize);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, uint argument);
+        private delegate void PFNSpvcCompilerSetDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, uint argument);
 
-        private static readonly PFN_spvc_compiler_set_decoration spvc_compiler_set_decoration_ = LoadFunction<PFN_spvc_compiler_set_decoration>("spvc_compiler_set_decoration");
+        private static readonly PFNSpvcCompilerSetDecoration spvcCompilerSetDecoration = LoadFunction<PFNSpvcCompilerSetDecoration>("spvc_compiler_set_decoration");
 
-        public static void spvc_compiler_set_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, uint argument)
+        public static void SpvcCompilerSetDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, uint argument)
         {
-            spvc_compiler_set_decoration_(compiler, id, decoration, argument);
+            spvcCompilerSetDecoration(compiler, id, decoration, argument);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_decoration_string(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, byte* argument);
+        private delegate void PFNSpvcCompilerSetDecorationString(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, byte* argument);
 
-        private static readonly PFN_spvc_compiler_set_decoration_string spvc_compiler_set_decoration_string_ = LoadFunction<PFN_spvc_compiler_set_decoration_string>("spvc_compiler_set_decoration_string");
+        private static readonly PFNSpvcCompilerSetDecorationString spvcCompilerSetDecorationString = LoadFunction<PFNSpvcCompilerSetDecorationString>("spvc_compiler_set_decoration_string");
 
-        public static void spvc_compiler_set_decoration_string(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, byte* argument)
+        public static void SpvcCompilerSetDecorationString(SpvcCompiler compiler, SpvId id, SpvDecoration decoration, byte* argument)
         {
-            spvc_compiler_set_decoration_string_(compiler, id, decoration, argument);
+            spvcCompilerSetDecorationString(compiler, id, decoration, argument);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_name(SpvcCompiler compiler, SpvId id, byte* argument);
+        private delegate void PFNSpvcCompilerSetName(SpvcCompiler compiler, SpvId id, byte* argument);
 
-        private static readonly PFN_spvc_compiler_set_name spvc_compiler_set_name_ = LoadFunction<PFN_spvc_compiler_set_name>("spvc_compiler_set_name");
+        private static readonly PFNSpvcCompilerSetName spvcCompilerSetName = LoadFunction<PFNSpvcCompilerSetName>("spvc_compiler_set_name");
 
-        public static void spvc_compiler_set_name(SpvcCompiler compiler, SpvId id, byte* argument)
+        public static void SpvcCompilerSetName(SpvcCompiler compiler, SpvId id, byte* argument)
         {
-            spvc_compiler_set_name_(compiler, id, argument);
+            spvcCompilerSetName(compiler, id, argument);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration, uint argument);
+        private delegate void PFNSpvcCompilerSetMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration, uint argument);
 
-        private static readonly PFN_spvc_compiler_set_member_decoration spvc_compiler_set_member_decoration_ = LoadFunction<PFN_spvc_compiler_set_member_decoration>("spvc_compiler_set_member_decoration");
+        private static readonly PFNSpvcCompilerSetMemberDecoration spvcCompilerSetMemberDecoration = LoadFunction<PFNSpvcCompilerSetMemberDecoration>("spvc_compiler_set_member_decoration");
 
-        public static void spvc_compiler_set_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration, uint argument)
+        public static void SpvcCompilerSetMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration, uint argument)
         {
-            spvc_compiler_set_member_decoration_(compiler, id, member_index, decoration, argument);
+            spvcCompilerSetMemberDecoration(compiler, id, memberIndex, decoration, argument);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_member_decoration_string(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration, byte* argument);
+        private delegate void PFNSpvcCompilerSetMemberDecorationString(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration, byte* argument);
 
-        private static readonly PFN_spvc_compiler_set_member_decoration_string spvc_compiler_set_member_decoration_string_ = LoadFunction<PFN_spvc_compiler_set_member_decoration_string>("spvc_compiler_set_member_decoration_string");
+        private static readonly PFNSpvcCompilerSetMemberDecorationString spvcCompilerSetMemberDecorationString = LoadFunction<PFNSpvcCompilerSetMemberDecorationString>("spvc_compiler_set_member_decoration_string");
 
-        public static void spvc_compiler_set_member_decoration_string(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration, byte* argument)
+        public static void SpvcCompilerSetMemberDecorationString(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration, byte* argument)
         {
-            spvc_compiler_set_member_decoration_string_(compiler, id, member_index, decoration, argument);
+            spvcCompilerSetMemberDecorationString(compiler, id, memberIndex, decoration, argument);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_member_name(SpvcCompiler compiler, uint id, uint member_index, byte* argument);
+        private delegate void PFNSpvcCompilerSetMemberName(SpvcCompiler compiler, uint id, uint memberIndex, byte* argument);
 
-        private static readonly PFN_spvc_compiler_set_member_name spvc_compiler_set_member_name_ = LoadFunction<PFN_spvc_compiler_set_member_name>("spvc_compiler_set_member_name");
+        private static readonly PFNSpvcCompilerSetMemberName spvcCompilerSetMemberName = LoadFunction<PFNSpvcCompilerSetMemberName>("spvc_compiler_set_member_name");
 
-        public static void spvc_compiler_set_member_name(SpvcCompiler compiler, uint id, uint member_index, byte* argument)
+        public static void SpvcCompilerSetMemberName(SpvcCompiler compiler, uint id, uint memberIndex, byte* argument)
         {
-            spvc_compiler_set_member_name_(compiler, id, member_index, argument);
+            spvcCompilerSetMemberName(compiler, id, memberIndex, argument);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_unset_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
+        private delegate void PFNSpvcCompilerUnsetDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_unset_decoration spvc_compiler_unset_decoration_ = LoadFunction<PFN_spvc_compiler_unset_decoration>("spvc_compiler_unset_decoration");
+        private static readonly PFNSpvcCompilerUnsetDecoration spvcCompilerUnsetDecoration = LoadFunction<PFNSpvcCompilerUnsetDecoration>("spvc_compiler_unset_decoration");
 
-        public static void spvc_compiler_unset_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
+        public static void SpvcCompilerUnsetDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
         {
-            spvc_compiler_unset_decoration_(compiler, id, decoration);
+            spvcCompilerUnsetDecoration(compiler, id, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_unset_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration);
+        private delegate void PFNSpvcCompilerUnsetMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_unset_member_decoration spvc_compiler_unset_member_decoration_ = LoadFunction<PFN_spvc_compiler_unset_member_decoration>("spvc_compiler_unset_member_decoration");
+        private static readonly PFNSpvcCompilerUnsetMemberDecoration spvcCompilerUnsetMemberDecoration = LoadFunction<PFNSpvcCompilerUnsetMemberDecoration>("spvc_compiler_unset_member_decoration");
 
-        public static void spvc_compiler_unset_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration)
+        public static void SpvcCompilerUnsetMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration)
         {
-            spvc_compiler_unset_member_decoration_(compiler, id, member_index, decoration);
+            spvcCompilerUnsetMemberDecoration(compiler, id, memberIndex, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_has_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
+        private delegate bool PFNSpvcCompilerHasDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_has_decoration spvc_compiler_has_decoration_ = LoadFunction<PFN_spvc_compiler_has_decoration>("spvc_compiler_has_decoration");
+        private static readonly PFNSpvcCompilerHasDecoration spvcCompilerHasDecoration = LoadFunction<PFNSpvcCompilerHasDecoration>("spvc_compiler_has_decoration");
 
-        public static bool spvc_compiler_has_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
+        public static bool SpvcCompilerHasDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
         {
-            return spvc_compiler_has_decoration_(compiler, id, decoration);
+            return spvcCompilerHasDecoration(compiler, id, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_has_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration);
+        private delegate bool PFNSpvcCompilerHasMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_has_member_decoration spvc_compiler_has_member_decoration_ = LoadFunction<PFN_spvc_compiler_has_member_decoration>("spvc_compiler_has_member_decoration");
+        private static readonly PFNSpvcCompilerHasMemberDecoration spvcCompilerHasMemberDecoration = LoadFunction<PFNSpvcCompilerHasMemberDecoration>("spvc_compiler_has_member_decoration");
 
-        public static bool spvc_compiler_has_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration)
+        public static bool SpvcCompilerHasMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration)
         {
-            return spvc_compiler_has_member_decoration_(compiler, id, member_index, decoration);
+            return spvcCompilerHasMemberDecoration(compiler, id, memberIndex, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_get_name(SpvcCompiler compiler, SpvId id);
+        private delegate byte* PFNSpvcCompilerGetName(SpvcCompiler compiler, SpvId id);
 
-        private static readonly PFN_spvc_compiler_get_name spvc_compiler_get_name_ = LoadFunction<PFN_spvc_compiler_get_name>("spvc_compiler_get_name");
+        private static readonly PFNSpvcCompilerGetName spvcCompilerGetName = LoadFunction<PFNSpvcCompilerGetName>("spvc_compiler_get_name");
 
-        public static byte* spvc_compiler_get_name(SpvcCompiler compiler, SpvId id)
+        public static byte* SpvcCompilerGetName(SpvcCompiler compiler, SpvId id)
         {
-            return spvc_compiler_get_name_(compiler, id);
+            return spvcCompilerGetName(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_get_decoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
+        private delegate uint PFNSpvcCompilerGetDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_get_decoration spvc_compiler_get_decoration_ = LoadFunction<PFN_spvc_compiler_get_decoration>("spvc_compiler_get_decoration");
+        private static readonly PFNSpvcCompilerGetDecoration spvcCompilerGetDecoration = LoadFunction<PFNSpvcCompilerGetDecoration>("spvc_compiler_get_decoration");
 
         public static uint SpvcCompilerGetDecoration(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
         {
-            return spvc_compiler_get_decoration_(compiler, id, decoration);
+            return spvcCompilerGetDecoration(compiler, id, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_get_decoration_string(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
+        private delegate byte* PFNSpvcCompilerGetDecorationString(SpvcCompiler compiler, SpvId id, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_get_decoration_string spvc_compiler_get_decoration_string_ = LoadFunction<PFN_spvc_compiler_get_decoration_string>("spvc_compiler_get_decoration_string");
+        private static readonly PFNSpvcCompilerGetDecorationString spvcCompilerGetDecorationString = LoadFunction<PFNSpvcCompilerGetDecorationString>("spvc_compiler_get_decoration_string");
 
-        public static byte* spvc_compiler_get_decoration_string(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
+        public static byte* SpvcCompilerGetDecorationString(SpvcCompiler compiler, SpvId id, SpvDecoration decoration)
         {
-            return spvc_compiler_get_decoration_string_(compiler, id, decoration);
+            return spvcCompilerGetDecorationString(compiler, id, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_get_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration);
+        private delegate uint PFNSpvcCompilerGetMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_get_member_decoration spvc_compiler_get_member_decoration_ = LoadFunction<PFN_spvc_compiler_get_member_decoration>("spvc_compiler_get_member_decoration");
+        private static readonly PFNSpvcCompilerGetMemberDecoration spvcCompilerGetMemberDecoration = LoadFunction<PFNSpvcCompilerGetMemberDecoration>("spvc_compiler_get_member_decoration");
 
-        public static uint spvc_compiler_get_member_decoration(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration)
+        public static uint SpvcCompilerGetMemberDecoration(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration)
         {
-            return spvc_compiler_get_member_decoration_(compiler, id, member_index, decoration);
+            return spvcCompilerGetMemberDecoration(compiler, id, memberIndex, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_get_member_decoration_string(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration);
+        private delegate byte* PFNSpvcCompilerGetMemberDecorationString(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration);
 
-        private static readonly PFN_spvc_compiler_get_member_decoration_string spvc_compiler_get_member_decoration_string_ = LoadFunction<PFN_spvc_compiler_get_member_decoration_string>("spvc_compiler_get_member_decoration_string");
+        private static readonly PFNSpvcCompilerGetMemberDecorationString spvcCompilerGetMemberDecorationString = LoadFunction<PFNSpvcCompilerGetMemberDecorationString>("spvc_compiler_get_member_decoration_string");
 
-        public static byte* spvc_compiler_get_member_decoration_string(SpvcCompiler compiler, uint id, uint member_index, SpvDecoration decoration)
+        public static byte* SpvcCompilerGetMemberDecorationString(SpvcCompiler compiler, uint id, uint memberIndex, SpvDecoration decoration)
         {
-            return spvc_compiler_get_member_decoration_string_(compiler, id, member_index, decoration);
+            return spvcCompilerGetMemberDecorationString(compiler, id, memberIndex, decoration);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_get_member_name(SpvcCompiler compiler, uint id, uint member_index);
+        private delegate byte* PFNSpvcCompilerGetMemberName(SpvcCompiler compiler, uint id, uint memberIndex);
 
-        private static readonly PFN_spvc_compiler_get_member_name spvc_compiler_get_member_name_ = LoadFunction<PFN_spvc_compiler_get_member_name>("spvc_compiler_get_member_name");
+        private static readonly PFNSpvcCompilerGetMemberName spvcCompilerGetMemberName = LoadFunction<PFNSpvcCompilerGetMemberName>("spvc_compiler_get_member_name");
 
-        public static byte* spvc_compiler_get_member_name(SpvcCompiler compiler, uint id, uint member_index)
+        public static byte* SpvcCompilerGetMemberName(SpvcCompiler compiler, uint id, uint memberIndex)
         {
-            return spvc_compiler_get_member_name_(compiler, id, member_index);
+            return spvcCompilerGetMemberName(compiler, id, memberIndex);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_entry_points(SpvcCompiler compiler, SpvcEntryPoint* entry_points, nuint* num_entry_points);
+        private delegate SpvcResult PFNSpvcCompilerGetEntryPoints(SpvcCompiler compiler, SpvcEntryPoint* entryPoints, nuint* numEntryPoints);
 
-        private static readonly PFN_spvc_compiler_get_entry_points spvc_compiler_get_entry_points_ = LoadFunction<PFN_spvc_compiler_get_entry_points>("spvc_compiler_get_entry_points");
+        private static readonly PFNSpvcCompilerGetEntryPoints spvcCompilerGetEntryPoints = LoadFunction<PFNSpvcCompilerGetEntryPoints>("spvc_compiler_get_entry_points");
 
-        public static SpvcResult spvc_compiler_get_entry_points(SpvcCompiler compiler, SpvcEntryPoint* entry_points, nuint* num_entry_points)
+        public static SpvcResult SpvcCompilerGetEntryPoints(SpvcCompiler compiler, SpvcEntryPoint* entryPoints, nuint* numEntryPoints)
         {
-            return spvc_compiler_get_entry_points_(compiler, entry_points, num_entry_points);
+            return spvcCompilerGetEntryPoints(compiler, entryPoints, numEntryPoints);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_set_entry_point(SpvcCompiler compiler, byte* name, SpvExecutionModel model);
+        private delegate SpvcResult PFNSpvcCompilerSetEntryPoint(SpvcCompiler compiler, byte* name, SpvExecutionModel model);
 
-        private static readonly PFN_spvc_compiler_set_entry_point spvc_compiler_set_entry_point_ = LoadFunction<PFN_spvc_compiler_set_entry_point>("spvc_compiler_set_entry_point");
+        private static readonly PFNSpvcCompilerSetEntryPoint spvcCompilerSetEntryPoint = LoadFunction<PFNSpvcCompilerSetEntryPoint>("spvc_compiler_set_entry_point");
 
-        public static SpvcResult spvc_compiler_set_entry_point(SpvcCompiler compiler, byte* name, SpvExecutionModel model)
+        public static SpvcResult SpvcCompilerSetEntryPoint(SpvcCompiler compiler, byte* name, SpvExecutionModel model)
         {
-            return spvc_compiler_set_entry_point_(compiler, name, model);
+            return spvcCompilerSetEntryPoint(compiler, name, model);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_rename_entry_point(SpvcCompiler compiler, byte* old_name, byte* new_name, SpvExecutionModel model);
+        private delegate SpvcResult PFNSpvcCompilerRenameEntryPoint(SpvcCompiler compiler, byte* oldName, byte* newName, SpvExecutionModel model);
 
-        private static readonly PFN_spvc_compiler_rename_entry_point spvc_compiler_rename_entry_point_ = LoadFunction<PFN_spvc_compiler_rename_entry_point>("spvc_compiler_rename_entry_point");
+        private static readonly PFNSpvcCompilerRenameEntryPoint spvcCompilerRenameEntryPoint = LoadFunction<PFNSpvcCompilerRenameEntryPoint>("spvc_compiler_rename_entry_point");
 
-        public static SpvcResult spvc_compiler_rename_entry_point(SpvcCompiler compiler, byte* old_name, byte* new_name, SpvExecutionModel model)
+        public static SpvcResult SpvcCompilerRenameEntryPoint(SpvcCompiler compiler, byte* oldName, byte* newName, SpvExecutionModel model)
         {
-            return spvc_compiler_rename_entry_point_(compiler, old_name, new_name, model);
+            return spvcCompilerRenameEntryPoint(compiler, oldName, newName, model);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_get_cleansed_entry_point_name(SpvcCompiler compiler, byte* name, SpvExecutionModel model);
+        private delegate byte* PFNSpvcCompilerGetCleansedEntryPointName(SpvcCompiler compiler, byte* name, SpvExecutionModel model);
 
-        private static readonly PFN_spvc_compiler_get_cleansed_entry_point_name spvc_compiler_get_cleansed_entry_point_name_ = LoadFunction<PFN_spvc_compiler_get_cleansed_entry_point_name>("spvc_compiler_get_cleansed_entry_point_name");
+        private static readonly PFNSpvcCompilerGetCleansedEntryPointName spvcCompilerGetCleansedEntryPointName = LoadFunction<PFNSpvcCompilerGetCleansedEntryPointName>("spvc_compiler_get_cleansed_entry_point_name");
 
-        public static byte* spvc_compiler_get_cleansed_entry_point_name(SpvcCompiler compiler, byte* name, SpvExecutionModel model)
+        public static byte* SpvcCompilerGetCleansedEntryPointName(SpvcCompiler compiler, byte* name, SpvExecutionModel model)
         {
-            return spvc_compiler_get_cleansed_entry_point_name_(compiler, name, model);
+            return spvcCompilerGetCleansedEntryPointName(compiler, name, model);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_execution_mode(SpvcCompiler compiler, SpvExecutionMode mode);
+        private delegate void PFNSpvcCompilerSetExecutionMode(SpvcCompiler compiler, SpvExecutionMode mode);
 
-        private static readonly PFN_spvc_compiler_set_execution_mode spvc_compiler_set_execution_mode_ = LoadFunction<PFN_spvc_compiler_set_execution_mode>("spvc_compiler_set_execution_mode");
+        private static readonly PFNSpvcCompilerSetExecutionMode spvcCompilerSetExecutionMode = LoadFunction<PFNSpvcCompilerSetExecutionMode>("spvc_compiler_set_execution_mode");
 
-        public static void spvc_compiler_set_execution_mode(SpvcCompiler compiler, SpvExecutionMode mode)
+        public static void SpvcCompilerSetExecutionMode(SpvcCompiler compiler, SpvExecutionMode mode)
         {
-            spvc_compiler_set_execution_mode_(compiler, mode);
+            spvcCompilerSetExecutionMode(compiler, mode);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_unset_execution_mode(SpvcCompiler compiler, SpvExecutionMode mode);
+        private delegate void PFNSpvcCompilerUnsetExecutionMode(SpvcCompiler compiler, SpvExecutionMode mode);
 
-        private static readonly PFN_spvc_compiler_unset_execution_mode spvc_compiler_unset_execution_mode_ = LoadFunction<PFN_spvc_compiler_unset_execution_mode>("spvc_compiler_unset_execution_mode");
+        private static readonly PFNSpvcCompilerUnsetExecutionMode spvcCompilerUnsetExecutionMode = LoadFunction<PFNSpvcCompilerUnsetExecutionMode>("spvc_compiler_unset_execution_mode");
 
-        public static void spvc_compiler_unset_execution_mode(SpvcCompiler compiler, SpvExecutionMode mode)
+        public static void SpvcCompilerUnsetExecutionMode(SpvcCompiler compiler, SpvExecutionMode mode)
         {
-            spvc_compiler_unset_execution_mode_(compiler, mode);
+            spvcCompilerUnsetExecutionMode(compiler, mode);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_compiler_set_execution_mode_with_arguments(SpvcCompiler compiler, SpvExecutionMode mode, uint arg0, uint arg1, uint arg2);
+        private delegate void PFNSpvcCompilerSetExecutionModeWithArguments(SpvcCompiler compiler, SpvExecutionMode mode, uint arg0, uint arg1, uint arg2);
 
-        private static readonly PFN_spvc_compiler_set_execution_mode_with_arguments spvc_compiler_set_execution_mode_with_arguments_ = LoadFunction<PFN_spvc_compiler_set_execution_mode_with_arguments>("spvc_compiler_set_execution_mode_with_arguments");
+        private static readonly PFNSpvcCompilerSetExecutionModeWithArguments spvcCompilerSetExecutionModeWithArguments = LoadFunction<PFNSpvcCompilerSetExecutionModeWithArguments>("spvc_compiler_set_execution_mode_with_arguments");
 
-        public static void spvc_compiler_set_execution_mode_with_arguments(SpvcCompiler compiler, SpvExecutionMode mode, uint arg0, uint arg1, uint arg2)
+        public static void SpvcCompilerSetExecutionModeWithArguments(SpvcCompiler compiler, SpvExecutionMode mode, uint arg0, uint arg1, uint arg2)
         {
-            spvc_compiler_set_execution_mode_with_arguments_(compiler, mode, arg0, arg1, arg2);
+            spvcCompilerSetExecutionModeWithArguments(compiler, mode, arg0, arg1, arg2);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_execution_modes(SpvcCompiler compiler, SpvExecutionMode* modes, nuint* num_modes);
+        private delegate SpvcResult PFNSpvcCompilerGetExecutionModes(SpvcCompiler compiler, SpvExecutionMode* modes, nuint* numModes);
 
-        private static readonly PFN_spvc_compiler_get_execution_modes spvc_compiler_get_execution_modes_ = LoadFunction<PFN_spvc_compiler_get_execution_modes>("spvc_compiler_get_execution_modes");
+        private static readonly PFNSpvcCompilerGetExecutionModes spvcCompilerGetExecutionModes = LoadFunction<PFNSpvcCompilerGetExecutionModes>("spvc_compiler_get_execution_modes");
 
-        public static SpvcResult spvc_compiler_get_execution_modes(SpvcCompiler compiler, SpvExecutionMode* modes, nuint* num_modes)
+        public static SpvcResult SpvcCompilerGetExecutionModes(SpvcCompiler compiler, SpvExecutionMode* modes, nuint* numModes)
         {
-            return spvc_compiler_get_execution_modes_(compiler, modes, num_modes);
+            return spvcCompilerGetExecutionModes(compiler, modes, numModes);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_get_execution_mode_argument(SpvcCompiler compiler, SpvExecutionMode mode);
+        private delegate uint PFNSpvcCompilerGetExecutionModeArgument(SpvcCompiler compiler, SpvExecutionMode mode);
 
-        private static readonly PFN_spvc_compiler_get_execution_mode_argument spvc_compiler_get_execution_mode_argument_ = LoadFunction<PFN_spvc_compiler_get_execution_mode_argument>("spvc_compiler_get_execution_mode_argument");
+        private static readonly PFNSpvcCompilerGetExecutionModeArgument spvcCompilerGetExecutionModeArgument = LoadFunction<PFNSpvcCompilerGetExecutionModeArgument>("spvc_compiler_get_execution_mode_argument");
 
-        public static uint spvc_compiler_get_execution_mode_argument(SpvcCompiler compiler, SpvExecutionMode mode)
+        public static uint SpvcCompilerGetExecutionModeArgument(SpvcCompiler compiler, SpvExecutionMode mode)
         {
-            return spvc_compiler_get_execution_mode_argument_(compiler, mode);
+            return spvcCompilerGetExecutionModeArgument(compiler, mode);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_get_execution_mode_argument_by_index(SpvcCompiler compiler, SpvExecutionMode mode, uint index);
+        private delegate uint PFNSpvcCompilerGetExecutionModeArgumentByIndex(SpvcCompiler compiler, SpvExecutionMode mode, uint index);
 
-        private static readonly PFN_spvc_compiler_get_execution_mode_argument_by_index spvc_compiler_get_execution_mode_argument_by_index_ = LoadFunction<PFN_spvc_compiler_get_execution_mode_argument_by_index>("spvc_compiler_get_execution_mode_argument_by_index");
+        private static readonly PFNSpvcCompilerGetExecutionModeArgumentByIndex spvcCompilerGetExecutionModeArgumentByIndex = LoadFunction<PFNSpvcCompilerGetExecutionModeArgumentByIndex>("spvc_compiler_get_execution_mode_argument_by_index");
 
-        public static uint spvc_compiler_get_execution_mode_argument_by_index(SpvcCompiler compiler, SpvExecutionMode mode, uint index)
+        public static uint SpvcCompilerGetExecutionModeArgumentByIndex(SpvcCompiler compiler, SpvExecutionMode mode, uint index)
         {
-            return spvc_compiler_get_execution_mode_argument_by_index_(compiler, mode, index);
+            return spvcCompilerGetExecutionModeArgumentByIndex(compiler, mode, index);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvExecutionModel PFN_spvc_compiler_get_execution_model(SpvcCompiler compiler);
+        private delegate SpvExecutionModel PFNSpvcCompilerGetExecutionModel(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_get_execution_model spvc_compiler_get_execution_model_ = LoadFunction<PFN_spvc_compiler_get_execution_model>("spvc_compiler_get_execution_model");
+        private static readonly PFNSpvcCompilerGetExecutionModel spvcCompilerGetExecutionModel = LoadFunction<PFNSpvcCompilerGetExecutionModel>("spvc_compiler_get_execution_model");
 
         public static SpvExecutionModel SpvcCompilerGetExecutionModel(SpvcCompiler compiler)
         {
-            return spvc_compiler_get_execution_model_(compiler);
+            return spvcCompilerGetExecutionModel(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcType PFN_spvc_compiler_get_type_handle(SpvcCompiler compiler, uint id);
+        private delegate SpvcType PFNSpvcCompilerGetTypeHandle(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_get_type_handle spvc_compiler_get_type_handle_ = LoadFunction<PFN_spvc_compiler_get_type_handle>("spvc_compiler_get_type_handle");
+        private static readonly PFNSpvcCompilerGetTypeHandle spvcCompilerGetTypeHandle = LoadFunction<PFNSpvcCompilerGetTypeHandle>("spvc_compiler_get_type_handle");
 
         public static SpvcType SpvcCompilerGetTypeHandle(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_get_type_handle_(compiler, id);
+            return spvcCompilerGetTypeHandle(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_base_type_id(SpvcType type);
+        private delegate uint PFNSpvcTypeGetBaseTypeId(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_base_type_id spvc_type_get_base_type_id_ = LoadFunction<PFN_spvc_type_get_base_type_id>("spvc_type_get_base_type_id");
+        private static readonly PFNSpvcTypeGetBaseTypeId spvcTypeGetBaseTypeId = LoadFunction<PFNSpvcTypeGetBaseTypeId>("spvc_type_get_base_type_id");
 
-        public static uint spvc_type_get_base_type_id(SpvcType type)
+        public static uint SpvcTypeGetBaseTypeId(SpvcType type)
         {
-            return spvc_type_get_base_type_id_(type);
+            return spvcTypeGetBaseTypeId(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcBasetype PFN_spvc_type_get_basetype(SpvcType type);
+        private delegate SpvcBasetype PFNSpvcTypeGetBasetype(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_basetype spvc_type_get_basetype_ = LoadFunction<PFN_spvc_type_get_basetype>("spvc_type_get_basetype");
+        private static readonly PFNSpvcTypeGetBasetype spvcTypeGetBasetype = LoadFunction<PFNSpvcTypeGetBasetype>("spvc_type_get_basetype");
 
-        public static SpvcBasetype spvc_type_get_basetype(SpvcType type)
+        public static SpvcBasetype SpvcTypeGetBasetype(SpvcType type)
         {
-            return spvc_type_get_basetype_(type);
+            return spvcTypeGetBasetype(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_bit_width(SpvcType type);
+        private delegate uint PFNSpvcTypeGetBitWidth(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_bit_width spvc_type_get_bit_width_ = LoadFunction<PFN_spvc_type_get_bit_width>("spvc_type_get_bit_width");
+        private static readonly PFNSpvcTypeGetBitWidth spvcTypeGetBitWidth = LoadFunction<PFNSpvcTypeGetBitWidth>("spvc_type_get_bit_width");
 
-        public static uint spvc_type_get_bit_width(SpvcType type)
+        public static uint SpvcTypeGetBitWidth(SpvcType type)
         {
-            return spvc_type_get_bit_width_(type);
+            return spvcTypeGetBitWidth(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_vector_size(SpvcType type);
+        private delegate uint PFNSpvcTypeGetVectorSize(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_vector_size spvc_type_get_vector_size_ = LoadFunction<PFN_spvc_type_get_vector_size>("spvc_type_get_vector_size");
+        private static readonly PFNSpvcTypeGetVectorSize spvcTypeGetVectorSize = LoadFunction<PFNSpvcTypeGetVectorSize>("spvc_type_get_vector_size");
 
-        public static uint spvc_type_get_vector_size(SpvcType type)
+        public static uint SpvcTypeGetVectorSize(SpvcType type)
         {
-            return spvc_type_get_vector_size_(type);
+            return spvcTypeGetVectorSize(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_columns(SpvcType type);
+        private delegate uint PFNSpvcTypeGetColumns(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_columns spvc_type_get_columns_ = LoadFunction<PFN_spvc_type_get_columns>("spvc_type_get_columns");
+        private static readonly PFNSpvcTypeGetColumns spvcTypeGetColumns = LoadFunction<PFNSpvcTypeGetColumns>("spvc_type_get_columns");
 
-        public static uint spvc_type_get_columns(SpvcType type)
+        public static uint SpvcTypeGetColumns(SpvcType type)
         {
-            return spvc_type_get_columns_(type);
+            return spvcTypeGetColumns(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_num_array_dimensions(SpvcType type);
+        private delegate uint PFNSpvcTypeGetNumArrayDimensions(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_num_array_dimensions spvc_type_get_num_array_dimensions_ = LoadFunction<PFN_spvc_type_get_num_array_dimensions>("spvc_type_get_num_array_dimensions");
+        private static readonly PFNSpvcTypeGetNumArrayDimensions spvcTypeGetNumArrayDimensions = LoadFunction<PFNSpvcTypeGetNumArrayDimensions>("spvc_type_get_num_array_dimensions");
 
-        public static uint spvc_type_get_num_array_dimensions(SpvcType type)
+        public static uint SpvcTypeGetNumArrayDimensions(SpvcType type)
         {
-            return spvc_type_get_num_array_dimensions_(type);
+            return spvcTypeGetNumArrayDimensions(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_type_array_dimension_is_literal(SpvcType type, uint dimension);
+        private delegate bool PFNSpvcTypeArrayDimensionIsLiteral(SpvcType type, uint dimension);
 
-        private static readonly PFN_spvc_type_array_dimension_is_literal spvc_type_array_dimension_is_literal_ = LoadFunction<PFN_spvc_type_array_dimension_is_literal>("spvc_type_array_dimension_is_literal");
+        private static readonly PFNSpvcTypeArrayDimensionIsLiteral spvcTypeArrayDimensionIsLiteral = LoadFunction<PFNSpvcTypeArrayDimensionIsLiteral>("spvc_type_array_dimension_is_literal");
 
-        public static bool spvc_type_array_dimension_is_literal(SpvcType type, uint dimension)
+        public static bool SpvcTypeArrayDimensionIsLiteral(SpvcType type, uint dimension)
         {
-            return spvc_type_array_dimension_is_literal_(type, dimension);
+            return spvcTypeArrayDimensionIsLiteral(type, dimension);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvId PFN_spvc_type_get_array_dimension(SpvcType type, uint dimension);
+        private delegate SpvId PFNSpvcTypeGetArrayDimension(SpvcType type, uint dimension);
 
-        private static readonly PFN_spvc_type_get_array_dimension spvc_type_get_array_dimension_ = LoadFunction<PFN_spvc_type_get_array_dimension>("spvc_type_get_array_dimension");
+        private static readonly PFNSpvcTypeGetArrayDimension spvcTypeGetArrayDimension = LoadFunction<PFNSpvcTypeGetArrayDimension>("spvc_type_get_array_dimension");
 
-        public static SpvId spvc_type_get_array_dimension(SpvcType type, uint dimension)
+        public static SpvId SpvcTypeGetArrayDimension(SpvcType type, uint dimension)
         {
-            return spvc_type_get_array_dimension_(type, dimension);
+            return spvcTypeGetArrayDimension(type, dimension);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_num_member_types(SpvcType type);
+        private delegate uint PFNSpvcTypeGetNumMemberTypes(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_num_member_types spvc_type_get_num_member_types_ = LoadFunction<PFN_spvc_type_get_num_member_types>("spvc_type_get_num_member_types");
+        private static readonly PFNSpvcTypeGetNumMemberTypes spvcTypeGetNumMemberTypes = LoadFunction<PFNSpvcTypeGetNumMemberTypes>("spvc_type_get_num_member_types");
 
-        public static uint spvc_type_get_num_member_types(SpvcType type)
+        public static uint SpvcTypeGetNumMemberTypes(SpvcType type)
         {
-            return spvc_type_get_num_member_types_(type);
+            return spvcTypeGetNumMemberTypes(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_member_type(SpvcType type, uint index);
+        private delegate uint PFNSpvcTypeGetMemberType(SpvcType type, uint index);
 
-        private static readonly PFN_spvc_type_get_member_type spvc_type_get_member_type_ = LoadFunction<PFN_spvc_type_get_member_type>("spvc_type_get_member_type");
+        private static readonly PFNSpvcTypeGetMemberType spvcTypeGetMemberType = LoadFunction<PFNSpvcTypeGetMemberType>("spvc_type_get_member_type");
 
-        public static uint spvc_type_get_member_type(SpvcType type, uint index)
+        public static uint SpvcTypeGetMemberType(SpvcType type, uint index)
         {
-            return spvc_type_get_member_type_(type, index);
+            return spvcTypeGetMemberType(type, index);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvStorageClass PFN_spvc_type_get_storage_class(SpvcType type);
+        private delegate SpvStorageClass PFNSpvcTypeGetStorageClass(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_storage_class spvc_type_get_storage_class_ = LoadFunction<PFN_spvc_type_get_storage_class>("spvc_type_get_storage_class");
+        private static readonly PFNSpvcTypeGetStorageClass spvcTypeGetStorageClass = LoadFunction<PFNSpvcTypeGetStorageClass>("spvc_type_get_storage_class");
 
-        public static SpvStorageClass spvc_type_get_storage_class(SpvcType type)
+        public static SpvStorageClass SpvcTypeGetStorageClass(SpvcType type)
         {
-            return spvc_type_get_storage_class_(type);
+            return spvcTypeGetStorageClass(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_type_get_image_sampled_type(SpvcType type);
+        private delegate uint PFNSpvcTypeGetImageSampledType(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_sampled_type spvc_type_get_image_sampled_type_ = LoadFunction<PFN_spvc_type_get_image_sampled_type>("spvc_type_get_image_sampled_type");
+        private static readonly PFNSpvcTypeGetImageSampledType spvcTypeGetImageSampledType = LoadFunction<PFNSpvcTypeGetImageSampledType>("spvc_type_get_image_sampled_type");
 
-        public static uint spvc_type_get_image_sampled_type(SpvcType type)
+        public static uint SpvcTypeGetImageSampledType(SpvcType type)
         {
-            return spvc_type_get_image_sampled_type_(type);
+            return spvcTypeGetImageSampledType(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvDim PFN_spvc_type_get_image_dimension(SpvcType type);
+        private delegate SpvDim PFNSpvcTypeGetImageDimension(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_dimension spvc_type_get_image_dimension_ = LoadFunction<PFN_spvc_type_get_image_dimension>("spvc_type_get_image_dimension");
+        private static readonly PFNSpvcTypeGetImageDimension spvcTypeGetImageDimension = LoadFunction<PFNSpvcTypeGetImageDimension>("spvc_type_get_image_dimension");
 
-        public static SpvDim spvc_type_get_image_dimension(SpvcType type)
+        public static SpvDim SpvcTypeGetImageDimension(SpvcType type)
         {
-            return spvc_type_get_image_dimension_(type);
+            return spvcTypeGetImageDimension(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_type_get_image_is_depth(SpvcType type);
+        private delegate bool PFNSpvcTypeGetImageIsDepth(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_is_depth spvc_type_get_image_is_depth_ = LoadFunction<PFN_spvc_type_get_image_is_depth>("spvc_type_get_image_is_depth");
+        private static readonly PFNSpvcTypeGetImageIsDepth spvcTypeGetImageIsDepth = LoadFunction<PFNSpvcTypeGetImageIsDepth>("spvc_type_get_image_is_depth");
 
-        public static bool spvc_type_get_image_is_depth(SpvcType type)
+        public static bool SpvcTypeGetImageIsDepth(SpvcType type)
         {
-            return spvc_type_get_image_is_depth_(type);
+            return spvcTypeGetImageIsDepth(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_type_get_image_arrayed(SpvcType type);
+        private delegate bool PFNSpvcTypeGetImageArrayed(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_arrayed spvc_type_get_image_arrayed_ = LoadFunction<PFN_spvc_type_get_image_arrayed>("spvc_type_get_image_arrayed");
+        private static readonly PFNSpvcTypeGetImageArrayed spvcTypeGetImageArrayed = LoadFunction<PFNSpvcTypeGetImageArrayed>("spvc_type_get_image_arrayed");
 
-        public static bool spvc_type_get_image_arrayed(SpvcType type)
+        public static bool SpvcTypeGetImageArrayed(SpvcType type)
         {
-            return spvc_type_get_image_arrayed_(type);
+            return spvcTypeGetImageArrayed(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_type_get_image_multisampled(SpvcType type);
+        private delegate bool PFNSpvcTypeGetImageMultisampled(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_multisampled spvc_type_get_image_multisampled_ = LoadFunction<PFN_spvc_type_get_image_multisampled>("spvc_type_get_image_multisampled");
+        private static readonly PFNSpvcTypeGetImageMultisampled spvcTypeGetImageMultisampled = LoadFunction<PFNSpvcTypeGetImageMultisampled>("spvc_type_get_image_multisampled");
 
-        public static bool spvc_type_get_image_multisampled(SpvcType type)
+        public static bool SpvcTypeGetImageMultisampled(SpvcType type)
         {
-            return spvc_type_get_image_multisampled_(type);
+            return spvcTypeGetImageMultisampled(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_type_get_image_is_storage(SpvcType type);
+        private delegate bool PFNSpvcTypeGetImageIsStorage(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_is_storage spvc_type_get_image_is_storage_ = LoadFunction<PFN_spvc_type_get_image_is_storage>("spvc_type_get_image_is_storage");
+        private static readonly PFNSpvcTypeGetImageIsStorage spvcTypeGetImageIsStorage = LoadFunction<PFNSpvcTypeGetImageIsStorage>("spvc_type_get_image_is_storage");
 
-        public static bool spvc_type_get_image_is_storage(SpvcType type)
+        public static bool SpvcTypeGetImageIsStorage(SpvcType type)
         {
-            return spvc_type_get_image_is_storage_(type);
+            return spvcTypeGetImageIsStorage(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvImageFormat PFN_spvc_type_get_image_storage_format(SpvcType type);
+        private delegate SpvImageFormat PFNSpvcTypeGetImageStorageFormat(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_storage_format spvc_type_get_image_storage_format_ = LoadFunction<PFN_spvc_type_get_image_storage_format>("spvc_type_get_image_storage_format");
+        private static readonly PFNSpvcTypeGetImageStorageFormat spvcTypeGetImageStorageFormat = LoadFunction<PFNSpvcTypeGetImageStorageFormat>("spvc_type_get_image_storage_format");
 
-        public static SpvImageFormat spvc_type_get_image_storage_format(SpvcType type)
+        public static SpvImageFormat SpvcTypeGetImageStorageFormat(SpvcType type)
         {
-            return spvc_type_get_image_storage_format_(type);
+            return spvcTypeGetImageStorageFormat(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvAccessQualifier PFN_spvc_type_get_image_access_qualifier(SpvcType type);
+        private delegate SpvAccessQualifier PFNSpvcTypeGetImageAccessQualifier(SpvcType type);
 
-        private static readonly PFN_spvc_type_get_image_access_qualifier spvc_type_get_image_access_qualifier_ = LoadFunction<PFN_spvc_type_get_image_access_qualifier>("spvc_type_get_image_access_qualifier");
+        private static readonly PFNSpvcTypeGetImageAccessQualifier spvcTypeGetImageAccessQualifier = LoadFunction<PFNSpvcTypeGetImageAccessQualifier>("spvc_type_get_image_access_qualifier");
 
-        public static SpvAccessQualifier spvc_type_get_image_access_qualifier(SpvcType type)
+        public static SpvAccessQualifier SpvcTypeGetImageAccessQualifier(SpvcType type)
         {
-            return spvc_type_get_image_access_qualifier_(type);
+            return spvcTypeGetImageAccessQualifier(type);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_declared_struct_size(SpvcCompiler compiler, SpvcType struct_type, nuint* size);
+        private delegate SpvcResult PFNSpvcCompilerGetDeclaredStructSize(SpvcCompiler compiler, SpvcType structType, nuint* size);
 
-        private static readonly PFN_spvc_compiler_get_declared_struct_size spvc_compiler_get_declared_struct_size_ = LoadFunction<PFN_spvc_compiler_get_declared_struct_size>("spvc_compiler_get_declared_struct_size");
+        private static readonly PFNSpvcCompilerGetDeclaredStructSize spvcCompilerGetDeclaredStructSize = LoadFunction<PFNSpvcCompilerGetDeclaredStructSize>("spvc_compiler_get_declared_struct_size");
 
-        public static SpvcResult SpvcCompilerGetDeclaredStructSize(SpvcCompiler compiler, SpvcType struct_type, nuint* size)
+        public static SpvcResult SpvcCompilerGetDeclaredStructSize(SpvcCompiler compiler, SpvcType structType, nuint* size)
         {
-            return spvc_compiler_get_declared_struct_size_(compiler, struct_type, size);
+            return spvcCompilerGetDeclaredStructSize(compiler, structType, size);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_declared_struct_size_runtime_array(SpvcCompiler compiler, SpvcType struct_type, nuint array_size, nuint* size);
+        private delegate SpvcResult PFNSpvcCompilerGetDeclaredStructSizeRuntimeArray(SpvcCompiler compiler, SpvcType structType, nuint arraySize, nuint* size);
 
-        private static readonly PFN_spvc_compiler_get_declared_struct_size_runtime_array spvc_compiler_get_declared_struct_size_runtime_array_ = LoadFunction<PFN_spvc_compiler_get_declared_struct_size_runtime_array>("spvc_compiler_get_declared_struct_size_runtime_array");
+        private static readonly PFNSpvcCompilerGetDeclaredStructSizeRuntimeArray spvcCompilerGetDeclaredStructSizeRuntimeArray = LoadFunction<PFNSpvcCompilerGetDeclaredStructSizeRuntimeArray>("spvc_compiler_get_declared_struct_size_runtime_array");
 
-        public static SpvcResult spvc_compiler_get_declared_struct_size_runtime_array(SpvcCompiler compiler, SpvcType struct_type, nuint array_size, nuint* size)
+        public static SpvcResult SpvcCompilerGetDeclaredStructSizeRuntimeArray(SpvcCompiler compiler, SpvcType structType, nuint arraySize, nuint* size)
         {
-            return spvc_compiler_get_declared_struct_size_runtime_array_(compiler, struct_type, array_size, size);
+            return spvcCompilerGetDeclaredStructSizeRuntimeArray(compiler, structType, arraySize, size);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_declared_struct_member_size(SpvcCompiler compiler, SpvcType type, uint index, nuint* size);
+        private delegate SpvcResult PFNSpvcCompilerGetDeclaredStructMemberSize(SpvcCompiler compiler, SpvcType type, uint index, nuint* size);
 
-        private static readonly PFN_spvc_compiler_get_declared_struct_member_size spvc_compiler_get_declared_struct_member_size_ = LoadFunction<PFN_spvc_compiler_get_declared_struct_member_size>("spvc_compiler_get_declared_struct_member_size");
+        private static readonly PFNSpvcCompilerGetDeclaredStructMemberSize spvcCompilerGetDeclaredStructMemberSize = LoadFunction<PFNSpvcCompilerGetDeclaredStructMemberSize>("spvc_compiler_get_declared_struct_member_size");
 
-        public static SpvcResult spvc_compiler_get_declared_struct_member_size(SpvcCompiler compiler, SpvcType type, uint index, nuint* size)
+        public static SpvcResult SpvcCompilerGetDeclaredStructMemberSize(SpvcCompiler compiler, SpvcType type, uint index, nuint* size)
         {
-            return spvc_compiler_get_declared_struct_member_size_(compiler, type, index, size);
+            return spvcCompilerGetDeclaredStructMemberSize(compiler, type, index, size);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_type_struct_member_offset(SpvcCompiler compiler, SpvcType type, uint index, uint* offset);
+        private delegate SpvcResult PFNSpvcCompilerTypeStructMemberOffset(SpvcCompiler compiler, SpvcType type, uint index, uint* offset);
 
-        private static readonly PFN_spvc_compiler_type_struct_member_offset spvc_compiler_type_struct_member_offset_ = LoadFunction<PFN_spvc_compiler_type_struct_member_offset>("spvc_compiler_type_struct_member_offset");
+        private static readonly PFNSpvcCompilerTypeStructMemberOffset spvcCompilerTypeStructMemberOffset = LoadFunction<PFNSpvcCompilerTypeStructMemberOffset>("spvc_compiler_type_struct_member_offset");
 
-        public static SpvcResult spvc_compiler_type_struct_member_offset(SpvcCompiler compiler, SpvcType type, uint index, uint* offset)
+        public static SpvcResult SpvcCompilerTypeStructMemberOffset(SpvcCompiler compiler, SpvcType type, uint index, uint* offset)
         {
-            return spvc_compiler_type_struct_member_offset_(compiler, type, index, offset);
+            return spvcCompilerTypeStructMemberOffset(compiler, type, index, offset);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_type_struct_member_array_stride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride);
+        private delegate SpvcResult PFNSpvcCompilerTypeStructMemberArrayStride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride);
 
-        private static readonly PFN_spvc_compiler_type_struct_member_array_stride spvc_compiler_type_struct_member_array_stride_ = LoadFunction<PFN_spvc_compiler_type_struct_member_array_stride>("spvc_compiler_type_struct_member_array_stride");
+        private static readonly PFNSpvcCompilerTypeStructMemberArrayStride spvcCompilerTypeStructMemberArrayStride = LoadFunction<PFNSpvcCompilerTypeStructMemberArrayStride>("spvc_compiler_type_struct_member_array_stride");
 
-        public static SpvcResult spvc_compiler_type_struct_member_array_stride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride)
+        public static SpvcResult SpvcCompilerTypeStructMemberArrayStride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride)
         {
-            return spvc_compiler_type_struct_member_array_stride_(compiler, type, index, stride);
+            return spvcCompilerTypeStructMemberArrayStride(compiler, type, index, stride);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_type_struct_member_matrix_stride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride);
+        private delegate SpvcResult PFNSpvcCompilerTypeStructMemberMatrixStride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride);
 
-        private static readonly PFN_spvc_compiler_type_struct_member_matrix_stride spvc_compiler_type_struct_member_matrix_stride_ = LoadFunction<PFN_spvc_compiler_type_struct_member_matrix_stride>("spvc_compiler_type_struct_member_matrix_stride");
+        private static readonly PFNSpvcCompilerTypeStructMemberMatrixStride spvcCompilerTypeStructMemberMatrixStride = LoadFunction<PFNSpvcCompilerTypeStructMemberMatrixStride>("spvc_compiler_type_struct_member_matrix_stride");
 
-        public static SpvcResult spvc_compiler_type_struct_member_matrix_stride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride)
+        public static SpvcResult SpvcCompilerTypeStructMemberMatrixStride(SpvcCompiler compiler, SpvcType type, uint index, uint* stride)
         {
-            return spvc_compiler_type_struct_member_matrix_stride_(compiler, type, index, stride);
+            return spvcCompilerTypeStructMemberMatrixStride(compiler, type, index, stride);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_build_dummy_sampler_for_combined_images(SpvcCompiler compiler, uint* id);
+        private delegate SpvcResult PFNSpvcCompilerBuildDummySamplerForCombinedImages(SpvcCompiler compiler, uint* id);
 
-        private static readonly PFN_spvc_compiler_build_dummy_sampler_for_combined_images spvc_compiler_build_dummy_sampler_for_combined_images_ = LoadFunction<PFN_spvc_compiler_build_dummy_sampler_for_combined_images>("spvc_compiler_build_dummy_sampler_for_combined_images");
+        private static readonly PFNSpvcCompilerBuildDummySamplerForCombinedImages spvcCompilerBuildDummySamplerForCombinedImages = LoadFunction<PFNSpvcCompilerBuildDummySamplerForCombinedImages>("spvc_compiler_build_dummy_sampler_for_combined_images");
 
-        public static SpvcResult spvc_compiler_build_dummy_sampler_for_combined_images(SpvcCompiler compiler, uint* id)
+        public static SpvcResult SpvcCompilerBuildDummySamplerForCombinedImages(SpvcCompiler compiler, uint* id)
         {
-            return spvc_compiler_build_dummy_sampler_for_combined_images_(compiler, id);
+            return spvcCompilerBuildDummySamplerForCombinedImages(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_build_combined_image_samplers(SpvcCompiler compiler);
+        private delegate SpvcResult PFNSpvcCompilerBuildCombinedImageSamplers(SpvcCompiler compiler);
 
-        private static readonly PFN_spvc_compiler_build_combined_image_samplers spvc_compiler_build_combined_image_samplers_ = LoadFunction<PFN_spvc_compiler_build_combined_image_samplers>("spvc_compiler_build_combined_image_samplers");
+        private static readonly PFNSpvcCompilerBuildCombinedImageSamplers spvcCompilerBuildCombinedImageSamplers = LoadFunction<PFNSpvcCompilerBuildCombinedImageSamplers>("spvc_compiler_build_combined_image_samplers");
 
-        public static SpvcResult spvc_compiler_build_combined_image_samplers(SpvcCompiler compiler)
+        public static SpvcResult SpvcCompilerBuildCombinedImageSamplers(SpvcCompiler compiler)
         {
-            return spvc_compiler_build_combined_image_samplers_(compiler);
+            return spvcCompilerBuildCombinedImageSamplers(compiler);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_combined_image_samplers(SpvcCompiler compiler, SpvcCombinedImageSampler* samplers, nuint* num_samplers);
+        private delegate SpvcResult PFNSpvcCompilerGetCombinedImageSamplers(SpvcCompiler compiler, SpvcCombinedImageSampler* samplers, nuint* numSamplers);
 
-        private static readonly PFN_spvc_compiler_get_combined_image_samplers spvc_compiler_get_combined_image_samplers_ = LoadFunction<PFN_spvc_compiler_get_combined_image_samplers>("spvc_compiler_get_combined_image_samplers");
+        private static readonly PFNSpvcCompilerGetCombinedImageSamplers spvcCompilerGetCombinedImageSamplers = LoadFunction<PFNSpvcCompilerGetCombinedImageSamplers>("spvc_compiler_get_combined_image_samplers");
 
-        public static SpvcResult spvc_compiler_get_combined_image_samplers(SpvcCompiler compiler, SpvcCombinedImageSampler* samplers, nuint* num_samplers)
+        public static SpvcResult SpvcCompilerGetCombinedImageSamplers(SpvcCompiler compiler, SpvcCombinedImageSampler* samplers, nuint* numSamplers)
         {
-            return spvc_compiler_get_combined_image_samplers_(compiler, samplers, num_samplers);
+            return spvcCompilerGetCombinedImageSamplers(compiler, samplers, numSamplers);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_specialization_constants(SpvcCompiler compiler, SpvcSpecializationConstant* constants, nuint* num_constants);
+        private delegate SpvcResult PFNSpvcCompilerGetSpecializationConstants(SpvcCompiler compiler, SpvcSpecializationConstant* constants, nuint* numConstants);
 
-        private static readonly PFN_spvc_compiler_get_specialization_constants spvc_compiler_get_specialization_constants_ = LoadFunction<PFN_spvc_compiler_get_specialization_constants>("spvc_compiler_get_specialization_constants");
+        private static readonly PFNSpvcCompilerGetSpecializationConstants spvcCompilerGetSpecializationConstants = LoadFunction<PFNSpvcCompilerGetSpecializationConstants>("spvc_compiler_get_specialization_constants");
 
-        public static SpvcResult spvc_compiler_get_specialization_constants(SpvcCompiler compiler, SpvcSpecializationConstant* constants, nuint* num_constants)
+        public static SpvcResult SpvcCompilerGetSpecializationConstants(SpvcCompiler compiler, SpvcSpecializationConstant* constants, nuint* numConstants)
         {
-            return spvc_compiler_get_specialization_constants_(compiler, constants, num_constants);
+            return spvcCompilerGetSpecializationConstants(compiler, constants, numConstants);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcConstant PFN_spvc_compiler_get_constant_handle(SpvcCompiler compiler, uint id);
+        private delegate SpvcConstant PFNSpvcCompilerGetConstantHandle(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_get_constant_handle spvc_compiler_get_constant_handle_ = LoadFunction<PFN_spvc_compiler_get_constant_handle>("spvc_compiler_get_constant_handle");
+        private static readonly PFNSpvcCompilerGetConstantHandle spvcCompilerGetConstantHandle = LoadFunction<PFNSpvcCompilerGetConstantHandle>("spvc_compiler_get_constant_handle");
 
-        public static SpvcConstant spvc_compiler_get_constant_handle(SpvcCompiler compiler, uint id)
+        public static SpvcConstant SpvcCompilerGetConstantHandle(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_get_constant_handle_(compiler, id);
+            return spvcCompilerGetConstantHandle(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_compiler_get_work_group_size_specialization_constants(SpvcCompiler compiler, SpvcSpecializationConstant* x, SpvcSpecializationConstant* y, SpvcSpecializationConstant* z);
+        private delegate uint PFNSpvcCompilerGetWorkGroupSizeSpecializationConstants(SpvcCompiler compiler, SpvcSpecializationConstant* x, SpvcSpecializationConstant* y, SpvcSpecializationConstant* z);
 
-        private static readonly PFN_spvc_compiler_get_work_group_size_specialization_constants spvc_compiler_get_work_group_size_specialization_constants_ = LoadFunction<PFN_spvc_compiler_get_work_group_size_specialization_constants>("spvc_compiler_get_work_group_size_specialization_constants");
+        private static readonly PFNSpvcCompilerGetWorkGroupSizeSpecializationConstants spvcCompilerGetWorkGroupSizeSpecializationConstants = LoadFunction<PFNSpvcCompilerGetWorkGroupSizeSpecializationConstants>("spvc_compiler_get_work_group_size_specialization_constants");
 
-        public static uint spvc_compiler_get_work_group_size_specialization_constants(SpvcCompiler compiler, SpvcSpecializationConstant* x, SpvcSpecializationConstant* y, SpvcSpecializationConstant* z)
+        public static uint SpvcCompilerGetWorkGroupSizeSpecializationConstants(SpvcCompiler compiler, SpvcSpecializationConstant* x, SpvcSpecializationConstant* y, SpvcSpecializationConstant* z)
         {
-            return spvc_compiler_get_work_group_size_specialization_constants_(compiler, x, y, z);
+            return spvcCompilerGetWorkGroupSizeSpecializationConstants(compiler, x, y, z);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_active_buffer_ranges(SpvcCompiler compiler, uint id, SpvcBufferRange* ranges, nuint* num_ranges);
+        private delegate SpvcResult PFNSpvcCompilerGetActiveBufferRanges(SpvcCompiler compiler, uint id, SpvcBufferRange* ranges, nuint* numRanges);
 
-        private static readonly PFN_spvc_compiler_get_active_buffer_ranges spvc_compiler_get_active_buffer_ranges_ = LoadFunction<PFN_spvc_compiler_get_active_buffer_ranges>("spvc_compiler_get_active_buffer_ranges");
+        private static readonly PFNSpvcCompilerGetActiveBufferRanges spvcCompilerGetActiveBufferRanges = LoadFunction<PFNSpvcCompilerGetActiveBufferRanges>("spvc_compiler_get_active_buffer_ranges");
 
-        public static SpvcResult spvc_compiler_get_active_buffer_ranges(SpvcCompiler compiler, uint id, SpvcBufferRange* ranges, nuint* num_ranges)
+        public static SpvcResult SpvcCompilerGetActiveBufferRanges(SpvcCompiler compiler, uint id, SpvcBufferRange* ranges, nuint* numRanges)
         {
-            return spvc_compiler_get_active_buffer_ranges_(compiler, id, ranges, num_ranges);
+            return spvcCompilerGetActiveBufferRanges(compiler, id, ranges, numRanges);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate float PFN_spvc_constant_get_scalar_fp16(SpvcConstant constant, uint column, uint row);
+        private delegate float PFNSpvcConstantGetScalarFp16(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_fp16 spvc_constant_get_scalar_fp16_ = LoadFunction<PFN_spvc_constant_get_scalar_fp16>(nameof(spvc_constant_get_scalar_fp16));
+        private static readonly PFNSpvcConstantGetScalarFp16 spvcConstantGetScalarFp16 = LoadFunction<PFNSpvcConstantGetScalarFp16>(nameof(spvcConstantGetScalarFp16));
 
-        public static float spvc_constant_get_scalar_fp16(SpvcConstant constant, uint column, uint row)
+        public static float SpvcConstantGetScalarFp16(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_fp16_(constant, column, row);
+            return spvcConstantGetScalarFp16(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate float PFN_spvc_constant_get_scalar_fp32(SpvcConstant constant, uint column, uint row);
+        private delegate float PFNSpvcConstantGetScalarFp32(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_fp32 spvc_constant_get_scalar_fp32_ = LoadFunction<PFN_spvc_constant_get_scalar_fp32>(nameof(spvc_constant_get_scalar_fp32));
+        private static readonly PFNSpvcConstantGetScalarFp32 spvcConstantGetScalarFp32 = LoadFunction<PFNSpvcConstantGetScalarFp32>(nameof(spvcConstantGetScalarFp32));
 
-        public static float spvc_constant_get_scalar_fp32(SpvcConstant constant, uint column, uint row)
+        public static float SpvcConstantGetScalarFp32(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_fp32_(constant, column, row);
+            return spvcConstantGetScalarFp32(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate double PFN_spvc_constant_get_scalar_fp64(SpvcConstant constant, uint column, uint row);
+        private delegate double PFNSpvcConstantGetScalarFp64(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_fp64 spvc_constant_get_scalar_fp64_ = LoadFunction<PFN_spvc_constant_get_scalar_fp64>(nameof(spvc_constant_get_scalar_fp64));
+        private static readonly PFNSpvcConstantGetScalarFp64 spvcConstantGetScalarFp64 = LoadFunction<PFNSpvcConstantGetScalarFp64>(nameof(spvcConstantGetScalarFp64));
 
-        public static double spvc_constant_get_scalar_fp64(SpvcConstant constant, uint column, uint row)
+        public static double SpvcConstantGetScalarFp64(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_fp64_(constant, column, row);
+            return spvcConstantGetScalarFp64(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_constant_get_scalar_u32(SpvcConstant constant, uint column, uint row);
+        private delegate uint PFNSpvcConstantGetScalarU32(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_u32 spvc_constant_get_scalar_u32_ = LoadFunction<PFN_spvc_constant_get_scalar_u32>(nameof(spvc_constant_get_scalar_u32));
+        private static readonly PFNSpvcConstantGetScalarU32 spvcConstantGetScalarU32 = LoadFunction<PFNSpvcConstantGetScalarU32>(nameof(spvcConstantGetScalarU32));
 
-        public static uint spvc_constant_get_scalar_u32(SpvcConstant constant, uint column, uint row)
+        public static uint SpvcConstantGetScalarU32(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_u32_(constant, column, row);
+            return spvcConstantGetScalarU32(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate int PFN_spvc_constant_get_scalar_i32(SpvcConstant constant, uint column, uint row);
+        private delegate int PFNSpvcConstantGetScalarI32(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_i32 spvc_constant_get_scalar_i32_ = LoadFunction<PFN_spvc_constant_get_scalar_i32>(nameof(spvc_constant_get_scalar_i32));
+        private static readonly PFNSpvcConstantGetScalarI32 spvcConstantGetScalarI32 = LoadFunction<PFNSpvcConstantGetScalarI32>(nameof(spvcConstantGetScalarI32));
 
-        public static int spvc_constant_get_scalar_i32(SpvcConstant constant, uint column, uint row)
+        public static int SpvcConstantGetScalarI32(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_i32_(constant, column, row);
+            return spvcConstantGetScalarI32(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_constant_get_scalar_u16(SpvcConstant constant, uint column, uint row);
+        private delegate uint PFNSpvcConstantGetScalarU16(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_u16 spvc_constant_get_scalar_u16_ = LoadFunction<PFN_spvc_constant_get_scalar_u16>(nameof(spvc_constant_get_scalar_u16));
+        private static readonly PFNSpvcConstantGetScalarU16 spvcConstantGetScalarU16 = LoadFunction<PFNSpvcConstantGetScalarU16>(nameof(spvcConstantGetScalarU16));
 
-        public static uint spvc_constant_get_scalar_u16(SpvcConstant constant, uint column, uint row)
+        public static uint SpvcConstantGetScalarU16(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_u16_(constant, column, row);
+            return spvcConstantGetScalarU16(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate int PFN_spvc_constant_get_scalar_i16(SpvcConstant constant, uint column, uint row);
+        private delegate int PFNSpvcConstantGetScalarI16(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_i16 spvc_constant_get_scalar_i16_ = LoadFunction<PFN_spvc_constant_get_scalar_i16>(nameof(spvc_constant_get_scalar_i16));
+        private static readonly PFNSpvcConstantGetScalarI16 spvcConstantGetScalarI16 = LoadFunction<PFNSpvcConstantGetScalarI16>(nameof(spvcConstantGetScalarI16));
 
-        public static int spvc_constant_get_scalar_i16(SpvcConstant constant, uint column, uint row)
+        public static int SpvcConstantGetScalarI16(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_i16_(constant, column, row);
+            return spvcConstantGetScalarI16(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_constant_get_scalar_u8(SpvcConstant constant, uint column, uint row);
+        private delegate uint PFNSpvcConstantGetScalarU8(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_u8 spvc_constant_get_scalar_u8_ = LoadFunction<PFN_spvc_constant_get_scalar_u8>(nameof(spvc_constant_get_scalar_u8));
+        private static readonly PFNSpvcConstantGetScalarU8 spvcConstantGetScalarU8 = LoadFunction<PFNSpvcConstantGetScalarU8>(nameof(spvcConstantGetScalarU8));
 
-        public static uint spvc_constant_get_scalar_u8(SpvcConstant constant, uint column, uint row)
+        public static uint SpvcConstantGetScalarU8(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_u8_(constant, column, row);
+            return spvcConstantGetScalarU8(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate int PFN_spvc_constant_get_scalar_i8(SpvcConstant constant, uint column, uint row);
+        private delegate int PFNSpvcConstantGetScalarI8(SpvcConstant constant, uint column, uint row);
 
-        private static readonly PFN_spvc_constant_get_scalar_i8 spvc_constant_get_scalar_i8_ = LoadFunction<PFN_spvc_constant_get_scalar_i8>(nameof(spvc_constant_get_scalar_i8));
+        private static readonly PFNSpvcConstantGetScalarI8 spvcConstantGetScalarI8 = LoadFunction<PFNSpvcConstantGetScalarI8>(nameof(spvcConstantGetScalarI8));
 
-        public static int spvc_constant_get_scalar_i8(SpvcConstant constant, uint column, uint row)
+        public static int SpvcConstantGetScalarI8(SpvcConstant constant, uint column, uint row)
         {
-            return spvc_constant_get_scalar_i8_(constant, column, row);
+            return spvcConstantGetScalarI8(constant, column, row);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate void PFN_spvc_constant_get_subconstants(SpvcConstant constant, uint* constituents, nuint* count);
+        private delegate void PFNSpvcConstantGetSubconstants(SpvcConstant constant, uint* constituents, nuint* count);
 
-        private static readonly PFN_spvc_constant_get_subconstants spvc_constant_get_subconstants_ = LoadFunction<PFN_spvc_constant_get_subconstants>("spvc_constant_get_subconstants");
+        private static readonly PFNSpvcConstantGetSubconstants spvcConstantGetSubconstants = LoadFunction<PFNSpvcConstantGetSubconstants>("spvc_constant_get_subconstants");
 
-        public static void spvc_constant_get_subconstants(SpvcConstant constant, uint* constituents, nuint* count)
+        public static void SpvcConstantGetSubconstants(SpvcConstant constant, uint* constituents, nuint* count)
         {
-            spvc_constant_get_subconstants_(constant, constituents, count);
+            spvcConstantGetSubconstants(constant, constituents, count);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate uint PFN_spvc_constant_get_type(SpvcConstant constant);
+        private delegate uint PFNSpvcConstantGetType(SpvcConstant constant);
 
-        private static readonly PFN_spvc_constant_get_type spvc_constant_get_type_ = LoadFunction<PFN_spvc_constant_get_type>("spvc_constant_get_type");
+        private static readonly PFNSpvcConstantGetType spvcConstantGetType = LoadFunction<PFNSpvcConstantGetType>("spvc_constant_get_type");
 
-        public static uint spvc_constant_get_type(SpvcConstant constant)
+        public static uint SpvcConstantGetType(SpvcConstant constant)
         {
-            return spvc_constant_get_type_(constant);
+            return spvcConstantGetType(constant);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_get_binary_offset_for_decoration(SpvcCompiler compiler, uint id, SpvDecoration decoration, uint* word_offset);
+        private delegate bool PFNSpvcCompilerGetBinaryOffsetForDecoration(SpvcCompiler compiler, uint id, SpvDecoration decoration, uint* wordOffset);
 
-        private static readonly PFN_spvc_compiler_get_binary_offset_for_decoration spvc_compiler_get_binary_offset_for_decoration_ = LoadFunction<PFN_spvc_compiler_get_binary_offset_for_decoration>("spvc_compiler_get_binary_offset_for_decoration");
+        private static readonly PFNSpvcCompilerGetBinaryOffsetForDecoration spvcCompilerGetBinaryOffsetForDecoration = LoadFunction<PFNSpvcCompilerGetBinaryOffsetForDecoration>("spvc_compiler_get_binary_offset_for_decoration");
 
-        public static bool spvc_compiler_get_binary_offset_for_decoration(SpvcCompiler compiler, uint id, SpvDecoration decoration, uint* word_offset)
+        public static bool SpvcCompilerGetBinaryOffsetForDecoration(SpvcCompiler compiler, uint id, SpvDecoration decoration, uint* wordOffset)
         {
-            return spvc_compiler_get_binary_offset_for_decoration_(compiler, id, decoration, word_offset);
+            return spvcCompilerGetBinaryOffsetForDecoration(compiler, id, decoration, wordOffset);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_buffer_is_hlsl_counter_buffer(SpvcCompiler compiler, uint id);
+        private delegate bool PFNSpvcCompilerBufferIsHlslCounterBuffer(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_buffer_is_hlsl_counter_buffer spvc_compiler_buffer_is_hlsl_counter_buffer_ = LoadFunction<PFN_spvc_compiler_buffer_is_hlsl_counter_buffer>("spvc_compiler_buffer_is_hlsl_counter_buffer");
+        private static readonly PFNSpvcCompilerBufferIsHlslCounterBuffer spvcCompilerBufferIsHlslCounterBuffer = LoadFunction<PFNSpvcCompilerBufferIsHlslCounterBuffer>("spvc_compiler_buffer_is_hlsl_counter_buffer");
 
-        public static bool spvc_compiler_buffer_is_hlsl_counter_buffer(SpvcCompiler compiler, uint id)
+        public static bool SpvcCompilerBufferIsHlslCounterBuffer(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_buffer_is_hlsl_counter_buffer_(compiler, id);
+            return spvcCompilerBufferIsHlslCounterBuffer(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate bool PFN_spvc_compiler_buffer_get_hlsl_counter_buffer(SpvcCompiler compiler, uint id, uint* counter_id);
+        private delegate bool PFNSpvcCompilerBufferGetHlslCounterBuffer(SpvcCompiler compiler, uint id, uint* counterId);
 
-        private static readonly PFN_spvc_compiler_buffer_get_hlsl_counter_buffer spvc_compiler_buffer_get_hlsl_counter_buffer_ = LoadFunction<PFN_spvc_compiler_buffer_get_hlsl_counter_buffer>("spvc_compiler_buffer_get_hlsl_counter_buffer");
+        private static readonly PFNSpvcCompilerBufferGetHlslCounterBuffer spvcCompilerBufferGetHlslCounterBuffer = LoadFunction<PFNSpvcCompilerBufferGetHlslCounterBuffer>("spvc_compiler_buffer_get_hlsl_counter_buffer");
 
-        public static bool spvc_compiler_buffer_get_hlsl_counter_buffer(SpvcCompiler compiler, uint id, uint* counter_id)
+        public static bool SpvcCompilerBufferGetHlslCounterBuffer(SpvcCompiler compiler, uint id, uint* counterId)
         {
-            return spvc_compiler_buffer_get_hlsl_counter_buffer_(compiler, id, counter_id);
+            return spvcCompilerBufferGetHlslCounterBuffer(compiler, id, counterId);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_declared_capabilities(SpvcCompiler compiler, SpvCapability* capabilities, nuint* num_capabilities);
+        private delegate SpvcResult PFNSpvcCompilerGetDeclaredCapabilities(SpvcCompiler compiler, SpvCapability* capabilities, nuint* numCapabilities);
 
-        private static readonly PFN_spvc_compiler_get_declared_capabilities spvc_compiler_get_declared_capabilities_ = LoadFunction<PFN_spvc_compiler_get_declared_capabilities>("spvc_compiler_get_declared_capabilities");
+        private static readonly PFNSpvcCompilerGetDeclaredCapabilities spvcCompilerGetDeclaredCapabilities = LoadFunction<PFNSpvcCompilerGetDeclaredCapabilities>("spvc_compiler_get_declared_capabilities");
 
-        public static SpvcResult spvc_compiler_get_declared_capabilities(SpvcCompiler compiler, SpvCapability* capabilities, nuint* num_capabilities)
+        public static SpvcResult SpvcCompilerGetDeclaredCapabilities(SpvcCompiler compiler, SpvCapability* capabilities, nuint* numCapabilities)
         {
-            return spvc_compiler_get_declared_capabilities_(compiler, capabilities, num_capabilities);
+            return spvcCompilerGetDeclaredCapabilities(compiler, capabilities, numCapabilities);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_declared_extensions(SpvcCompiler compiler, byte* extensions, nuint* num_extensions);
+        private delegate SpvcResult PFNSpvcCompilerGetDeclaredExtensions(SpvcCompiler compiler, byte* extensions, nuint* numExtensions);
 
-        private static readonly PFN_spvc_compiler_get_declared_extensions spvc_compiler_get_declared_extensions_ = LoadFunction<PFN_spvc_compiler_get_declared_extensions>("spvc_compiler_get_declared_extensions");
+        private static readonly PFNSpvcCompilerGetDeclaredExtensions spvcCompilerGetDeclaredExtensions = LoadFunction<PFNSpvcCompilerGetDeclaredExtensions>("spvc_compiler_get_declared_extensions");
 
-        public static SpvcResult spvc_compiler_get_declared_extensions(SpvcCompiler compiler, byte* extensions, nuint* num_extensions)
+        public static SpvcResult SpvcCompilerGetDeclaredExtensions(SpvcCompiler compiler, byte* extensions, nuint* numExtensions)
         {
-            return spvc_compiler_get_declared_extensions_(compiler, extensions, num_extensions);
+            return spvcCompilerGetDeclaredExtensions(compiler, extensions, numExtensions);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate byte* PFN_spvc_compiler_get_remapped_declared_block_name(SpvcCompiler compiler, uint id);
+        private delegate byte* PFNSpvcCompilerGetRemappedDeclaredBlockName(SpvcCompiler compiler, uint id);
 
-        private static readonly PFN_spvc_compiler_get_remapped_declared_block_name spvc_compiler_get_remapped_declared_block_name_ = LoadFunction<PFN_spvc_compiler_get_remapped_declared_block_name>("spvc_compiler_get_remapped_declared_block_name");
+        private static readonly PFNSpvcCompilerGetRemappedDeclaredBlockName spvcCompilerGetRemappedDeclaredBlockName = LoadFunction<PFNSpvcCompilerGetRemappedDeclaredBlockName>("spvc_compiler_get_remapped_declared_block_name");
 
-        public static byte* spvc_compiler_get_remapped_declared_block_name(SpvcCompiler compiler, uint id)
+        public static byte* SpvcCompilerGetRemappedDeclaredBlockName(SpvcCompiler compiler, uint id)
         {
-            return spvc_compiler_get_remapped_declared_block_name_(compiler, id);
+            return spvcCompilerGetRemappedDeclaredBlockName(compiler, id);
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate SpvcResult PFN_spvc_compiler_get_buffer_block_decorations(SpvcCompiler compiler, uint id, SpvDecoration* decorations, nuint* num_decorations);
+        private delegate SpvcResult PFNSpvcCompilerGetBufferBlockDecorations(SpvcCompiler compiler, uint id, SpvDecoration* decorations, nuint* numDecorations);
 
-        private static readonly PFN_spvc_compiler_get_buffer_block_decorations spvc_compiler_get_buffer_block_decorations_ = LoadFunction<PFN_spvc_compiler_get_buffer_block_decorations>("spvc_compiler_get_buffer_block_decorations");
+        private static readonly PFNSpvcCompilerGetBufferBlockDecorations spvcCompilerGetBufferBlockDecorations = LoadFunction<PFNSpvcCompilerGetBufferBlockDecorations>("spvc_compiler_get_buffer_block_decorations");
 
-        public static SpvcResult spvc_compiler_get_buffer_block_decorations(SpvcCompiler compiler, uint id, SpvDecoration* decorations, nuint* num_decorations)
+        public static SpvcResult SpvcCompilerGetBufferBlockDecorations(SpvcCompiler compiler, uint id, SpvDecoration* decorations, nuint* numDecorations)
         {
-            return spvc_compiler_get_buffer_block_decorations_(compiler, id, decorations, num_decorations);
+            return spvcCompilerGetBufferBlockDecorations(compiler, id, decorations, numDecorations);
         }
     }
 }

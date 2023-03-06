@@ -131,11 +131,11 @@ namespace HexaEngine.Effects
 
         #endregion Structs
 
-        public Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
+        public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             this.width = width;
             this.height = height;
-            lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
+            lumaCompute = await device.CreateComputePipelineAsync(new("compute/luma/shader.hlsl"));
 
             BufferDescription description = new()
             {
@@ -150,7 +150,7 @@ namespace HexaEngine.Effects
             lumaUAV = device.CreateUnorderedAccessView(luma, new(luma, UnorderedAccessViewDimension.Texture2D));
             lumaSRV = device.CreateShaderResourceView(luma);
 
-            exposurePipeline = device.CreateGraphicsPipeline(new()
+            exposurePipeline = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/exposure/vs.hlsl",
                 PixelShader = "effects/exposure/ps.hlsl",
@@ -162,8 +162,6 @@ namespace HexaEngine.Effects
             InitUnsafe(device);
 
             dirty = true;
-
-            return Task.CompletedTask;
         }
 
         private unsafe void InitUnsafe(IGraphicsDevice device)

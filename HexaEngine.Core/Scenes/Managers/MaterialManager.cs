@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using System;

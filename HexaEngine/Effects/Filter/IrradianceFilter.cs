@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-namespace HexaEngine.Effects.Filter
+﻿namespace HexaEngine.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
@@ -25,10 +23,8 @@ namespace HexaEngine.Effects.Filter
             public Matrix4x4 Projection;
         }
 
-#nullable disable
         private CubeFaceCamera[] Cameras;
         private bool disposedValue;
-#nullable enable
 
         public void SetViewPoint(Vector3 camera)
         {

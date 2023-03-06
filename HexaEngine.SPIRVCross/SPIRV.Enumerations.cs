@@ -7,8 +7,8 @@ namespace SPIRVCross
         SpvSourceLanguageUnknown = 0,
         SpvSourceLanguageESSL = 1,
         SpvSourceLanguageGLSL = 2,
-        SpvSourceLanguageOpenCL_C = 3,
-        SpvSourceLanguageOpenCL_CPP = 4,
+        SpvSourceLanguageOpenCLC = 3,
+        SpvSourceLanguageOpenCLCPP = 4,
         SpvSourceLanguageHLSL = 5,
         SpvSourceLanguageMax = 2147483647,
     }
@@ -276,7 +276,7 @@ namespace SPIRVCross
         SpvImageChannelDataTypeHalfFloat = 13,
         SpvImageChannelDataTypeFloat = 14,
         SpvImageChannelDataTypeUnormInt24 = 15,
-        SpvImageChannelDataTypeUnormInt101010_2 = 16,
+        SpvImageChannelDataTypeUnormInt1010102 = 16,
         SpvImageChannelDataTypeMax = 2147483647,
     }
 
@@ -1607,12 +1607,12 @@ namespace SPIRVCross
 
     public enum SpvcResult
     {
-        SPVC_SUCCESS = 0,
-        SPVC_ERROR_INVALID_SPIRV = -1,
-        SPVC_ERROR_UNSUPPORTED_SPIRV = -2,
-        SPVC_ERROR_OUT_OF_MEMORY = -3,
-        SPVC_ERROR_INVALID_ARGUMENT = -4,
-        SPVC_ERROR_INT_MAX = 2147483647,
+        SPVCSUCCESS = 0,
+        SPVCERRORINVALIDSPIRV = -1,
+        SPVCERRORUNSUPPORTEDSPIRV = -2,
+        SPVCERROROUTOFMEMORY = -3,
+        SPVCERRORINVALIDARGUMENT = -4,
+        SPVCERRORINTMAX = 2147483647,
     }
 
     public enum SpvcCaptureMode
@@ -1699,9 +1699,9 @@ namespace SPIRVCross
         Uint16 = 2,
         Any16 = 3,
         Any32 = 4,
-        SPVC_MSL_VERTEX_FORMAT_OTHER = Other,
-        SPVC_MSL_VERTEX_FORMAT_UINT8 = Uint8,
-        SPVC_MSL_VERTEX_FORMAT_UINT16 = Uint16,
+        SPVCMSLVERTEXFORMATOTHER = Other,
+        SPVCMSLVERTEXFORMATUINT8 = Uint8,
+        SPVCMSLVERTEXFORMATUINT16 = Uint16,
         IntMax = 2147483647,
     }
 
@@ -1712,9 +1712,9 @@ namespace SPIRVCross
         Uint16 = 2,
         Any16 = 3,
         Any32 = 4,
-        SPVC_MSL_VERTEX_FORMAT_OTHER = Other,
-        SPVC_MSL_VERTEX_FORMAT_UINT8 = Uint8,
-        SPVC_MSL_VERTEX_FORMAT_UINT16 = Uint16,
+        SPVCMSLVERTEXFORMATOTHER = Other,
+        SPVCMSLVERTEXFORMATUINT8 = Uint8,
+        SPVCMSLVERTEXFORMATUINT16 = Uint16,
         IntMax = 2147483647,
     }
 
@@ -1722,7 +1722,7 @@ namespace SPIRVCross
     {
         Normalized = 0,
         Pixel = 1,
-        SPVC_MSL_SAMPLER_INT_MAX = 2147483647,
+        SPVCMSLSAMPLERINTMAX = 2147483647,
     }
 
     public enum SpvcMslSamplerFilter
@@ -1773,9 +1773,9 @@ namespace SPIRVCross
 
     public enum SpvcMslFormatResolution
     {
-        _444 = 0,
-        _422 = 1,
-        _420 = 2,
+        FormatRes444 = 0,
+        FormatRes422 = 1,
+        FormatRes420 = 2,
         IntMax = 2147483647,
     }
 
@@ -1817,13 +1817,13 @@ namespace SPIRVCross
 
     public enum SpvcHlslBindingFlagBits
     {
-        SPVC_HLSL_BINDING_AUTO_NONE_BIT = 0,
-        SPVC_HLSL_BINDING_AUTO_PUSH_CONSTANT_BIT = 1,
-        SPVC_HLSL_BINDING_AUTO_CBV_BIT = 2,
-        SPVC_HLSL_BINDING_AUTO_SRV_BIT = 4,
-        SPVC_HLSL_BINDING_AUTO_UAV_BIT = 8,
-        SPVC_HLSL_BINDING_AUTO_SAMPLER_BIT = 16,
-        SPVC_HLSL_BINDING_AUTO_ALL = 2147483647,
+        SPVCHLSLBINDINGAUTONONEBIT = 0,
+        SPVCHLSLBINDINGAUTOPUSHCONSTANTBIT = 1,
+        SPVCHLSLBINDINGAUTOCBVBIT = 2,
+        SPVCHLSLBINDINGAUTOSRVBIT = 4,
+        SPVCHLSLBINDINGAUTOUAVBIT = 8,
+        SPVCHLSLBINDINGAUTOSAMPLERBIT = 16,
+        SPVCHLSLBINDINGAUTOALL = 2147483647,
     }
 
     public enum SpvcCompilerOption

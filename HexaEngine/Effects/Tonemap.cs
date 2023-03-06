@@ -112,12 +112,12 @@
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             quad = new(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/tonemap/vs.hlsl",
                 PixelShader = "effects/tonemap/ps.hlsl",
             }, macros);
-            paramBuffer = new(device, CpuAccessFlags.Write);
+            paramBuffer = new(device, new Params(bloomStrength), CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
             Bloom = ResourceManager2.Shared.GetResource<Texture>("Bloom");
@@ -131,24 +131,24 @@
 
         private unsafe void OnUpdate(object? sender, IDisposable? e)
         {
-            srvs[1] = (void*)Bloom.Value?.ShaderResourceView.NativePointer;
-            srvs[2] = (void*)Position.Value?.NativePointer;
+            srvs[1] = (void*)(Bloom.Value?.ShaderResourceView?.NativePointer ?? 0);
+            srvs[2] = (void*)(Position.Value?.NativePointer ?? 0);
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
-            cbvs[1] = (void*)Camera.Value?.NativePointer;
+            cbvs[1] = (void*)(Camera.Value?.NativePointer ?? 0);
         }
 
         private unsafe void InitUnsafe()
         {
             srvs = AllocArray(3);
-            srvs[0] = (void*)Input?.NativePointer;
-            srvs[1] = (void*)Bloom.Value?.ShaderResourceView.NativePointer;
-            srvs[2] = (void*)Position.Value?.NativePointer;
+            srvs[0] = (void*)(Input?.NativePointer ?? 0);
+            srvs[1] = (void*)(Bloom.Value?.ShaderResourceView?.NativePointer ?? 0);
+            srvs[2] = (void*)(Position.Value?.NativePointer ?? 0);
             cbvs = AllocArray(2);
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
-            cbvs[1] = (void*)Camera.Value?.NativePointer;
+            cbvs[1] = (void*)(Camera.Value?.NativePointer ?? 0);
         }
 
-        public async void Resize(int width, int height)
+        public void Resize(int width, int height)
         {
         }
 

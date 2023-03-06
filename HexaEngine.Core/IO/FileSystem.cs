@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO.Assets;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

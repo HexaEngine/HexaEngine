@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Meshes
 {
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Materials;
     using System.Numerics;
 
     public struct CBMaterial

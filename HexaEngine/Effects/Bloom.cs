@@ -74,10 +74,7 @@ namespace HexaEngine.Effects
 
         public int Priority { get; set; } = 100;
 
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             disposedValue = false;
             quad = new(device);
@@ -86,12 +83,12 @@ namespace HexaEngine.Effects
 
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
-            downsample = device.CreateGraphicsPipeline(new()
+            downsample = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/bloom/downsample/vs.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
             }, macros);
-            upsample = device.CreateGraphicsPipeline(new()
+            upsample = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/bloom/upsample/vs.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",

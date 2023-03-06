@@ -1,28 +1,40 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Mathematics;
+    using K4os.Compression.LZ4;
+    using K4os.Compression.LZ4.Streams;
     using System.IO;
+    using System.IO.Compression;
     using System.Numerics;
     using System.Text;
 
     public class ModelSource
     {
-        public readonly MeshHeader Header;
-        private MeshData[] Meshes;
+        public MeshHeader Header;
+        private readonly MeshData[] Meshes;
         public string Name;
 
         private ModelSource(string path)
         {
             Name = path;
-            var fs = FileSystem.Open(path);
+            Stream fs = FileSystem.Open(path);
             Header.Read(fs);
 
             Meshes = new MeshData[Header.MeshCount];
+
+            var stream = fs;
+            if (Header.Compression == Compression.Deflate)
+                stream = new DeflateStream(fs, CompressionMode.Decompress, true);
+            if (Header.Compression == Compression.LZ4)
+                stream = LZ4Stream.Decode(fs, 0, true);
+
             for (ulong i = 0; i < Header.MeshCount; i++)
             {
-                Meshes[i] = MeshData.Read(fs, Encoding.UTF8);
+                Meshes[i] = MeshData.Read(stream, Encoding.UTF8, Header.Endianness);
             }
-
+            stream.Close();
             fs.Close();
         }
 
@@ -32,9 +44,16 @@
             Header.Read(fs);
 
             Meshes = new MeshData[Header.MeshCount];
+
+            var stream = fs;
+            if (Header.Compression == Compression.Deflate)
+                stream = new DeflateStream(fs, CompressionMode.Decompress, true);
+            if (Header.Compression == Compression.LZ4)
+                stream = LZ4Stream.Decode(fs, 0, true);
+
             for (ulong i = 0; i < Header.MeshCount; i++)
             {
-                Meshes[i] = MeshData.Read(fs, Encoding.UTF8);
+                Meshes[i] = MeshData.Read(stream, Encoding.UTF8, Header.Endianness);
             }
 
             fs.Close();
@@ -43,23 +62,29 @@
         public ModelSource(string path, MeshData[] meshes)
         {
             Name = path;
-            Header.Type = MeshType.Default;
+            Header.Endianness = Endianness.LittleEndian;
             Header.MeshCount = (ulong)meshes.LongLength;
             Meshes = meshes;
         }
 
-        public void Save(string dir)
+        public void Save(string dir, Compression compression = Compression.LZ4)
         {
             Directory.CreateDirectory(dir);
-            var fs = File.Create(Path.Combine(dir, Name + ".model"));
+            Stream fs = File.Create(Path.Combine(dir, Name + ".model"));
 
+            Header.Compression = compression;
             Header.Write(fs);
 
+            var stream = fs;
+            if (compression == Compression.Deflate)
+                stream = new DeflateStream(fs, CompressionLevel.SmallestSize, true);
+            if (compression == Compression.LZ4)
+                stream = LZ4Stream.Encode(fs, LZ4Level.L12_MAX, 0, true);
             for (ulong i = 0; i < Header.MeshCount; i++)
             {
-                Meshes[i].Write(fs, Encoding.UTF8);
+                Meshes[i].Write(stream, Encoding.UTF8, Header.Endianness);
             }
-
+            stream.Close();
             fs.Close();
         }
 
@@ -109,7 +134,7 @@
             Vector3[] points = new Vector3[data.Indices.Length];
             for (int i = 0; i < data.Indices.Length; i++)
             {
-                points[i] = data.Vertices[data.Indices[i]].Position;
+                points[i] = data.Positions[data.Indices[i]];
             }
             return points;
         }
@@ -128,7 +153,7 @@
                 var data = GetMesh(i);
                 for (int j = 0; j < data.Indices.Length; j++)
                 {
-                    points[m++] = data.Vertices[data.Indices[j]].Position;
+                    points[m++] = data.Positions[data.Indices[j]];
                 }
             }
             return points;

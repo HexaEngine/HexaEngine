@@ -29,6 +29,7 @@
         private bool isEditorSelected;
 
         private GCHandle gcHandle;
+        private Guid guid = Guid.NewGuid();
 
         [JsonIgnore]
         public readonly IntPtr Pointer;
@@ -45,7 +46,13 @@
             gcHandle.Free();
         }
 
-        public virtual string Name
+        public Guid Guid
+        {
+            get => guid;
+            set => guid = value;
+        }
+
+        public string Name
         {
             get => name;
             set
@@ -286,7 +293,7 @@
             }
         }
 
-        public virtual T GetOrCreateComponent<T>() where T : IComponent, new()
+        public virtual T GetOrCreateComponent<T>() where T : class, IComponent, new()
         {
             for (int i = 0; i < components.Count; i++)
             {

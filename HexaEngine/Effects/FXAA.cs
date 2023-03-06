@@ -27,17 +27,15 @@ namespace HexaEngine.Effects
 
         public int Priority { get; set; } = -1;
 
-        public Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
+        public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             quad = new Quad(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/fxaa/vs.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl"
             }, macros);
             sampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
-
-            return Task.CompletedTask;
         }
 
         public void Resize(int width, int height)

@@ -179,15 +179,7 @@ namespace HexaEngine.Editor.Dialogs
                         var fileSystemEntries = GetFileSystemEntries(di.FullName);
                         foreach (var fse in fileSystemEntries)
                         {
-                            if (Directory.Exists(fse))
-                            {
-                                var name = Path.GetFileName(fse);
-                                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
-                                if (ImGui.Selectable("\xe8b7" + name, false, ImGuiSelectableFlags.DontClosePopups))
-                                    SetFolder(fse);
-                                ImGui.PopStyleColor();
-                            }
-                            else
+                            if (!Directory.Exists(fse))
                             {
                                 var name = Path.GetFileName(fse);
                                 bool isSelected = SelectedFile == fse;
@@ -202,6 +194,14 @@ namespace HexaEngine.Editor.Dialogs
                                     shown = false;
                                     return true;
                                 }
+                            }
+                            else
+                            {
+                                var name = Path.GetFileName(fse);
+                                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
+                                if (ImGui.Selectable("\xe8b7" + name, false, ImGuiSelectableFlags.DontClosePopups))
+                                    SetFolder(fse);
+                                ImGui.PopStyleColor();
                             }
                         }
                     }

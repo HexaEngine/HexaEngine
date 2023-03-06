@@ -1,16 +1,11 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
+    using HexaEngine.Mathematics;
     using System;
     using System.Buffers.Binary;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-
-    public enum Endianness : byte
-    {
-        LittleEndian = byte.MinValue,
-        BigEndian = byte.MaxValue,
-    }
 
     public unsafe struct UnsafeString : IFreeable
     {

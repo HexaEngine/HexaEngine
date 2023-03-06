@@ -28,7 +28,7 @@
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
         private MaterialManager materialManager;
-        private MeshManager meshManager;
+        private ModelManager meshManager;
         private LightManager lightManager;
         private RenderManager renderManager;
         private AnimationManager animationManager = new();
@@ -96,7 +96,7 @@
         public List<ISystem> Systems => systems;
 
         [JsonIgnore]
-        public MeshManager MeshManager { get => meshManager; set => meshManager = value; }
+        public ModelManager ModelManager { get => meshManager; set => meshManager = value; }
 
         [JsonIgnore]
         public AnimationManager AnimationManager { get => animationManager; set => animationManager = value; }
@@ -119,10 +119,10 @@
         public void Initialize(IGraphicsDevice device)
         {
             instanceManager = new();
-            lightManager = new(device, instanceManager);
+            lightManager = new(instanceManager);
             materialManager ??= new();
             meshManager ??= new();
-
+            Task.Factory.StartNew(async device => await lightManager.Initialize((IGraphicsDevice)device), device);
             systems.Add(new AudioSystem());
             systems.Add(new PhysicsSystem());
             systems.Add(new AnimationSystem(this));
@@ -199,14 +199,6 @@
 
         private void FixedUpdate(object? sender, EventArgs e)
         {
-            if (Application.InDesignMode)
-            {
-#if PROFILE
-                Profiler.Set(sceneUpdateCallbacks, 0);
-#endif
-                return;
-            }
-
             semaphore.Wait();
 
 #if PROFILE

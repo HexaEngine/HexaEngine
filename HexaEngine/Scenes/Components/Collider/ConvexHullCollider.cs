@@ -35,7 +35,7 @@
         {
             if (bufferPool == null || scene == null) return;
 
-            var data = scene.MeshManager.Load(mesh);
+            var data = scene.ModelManager.Load(mesh);
             points = data.GetAllPoints();
 
             ConvexHullHelper.CreateShape(points, bufferPool, out var dat, out center, out var ull);

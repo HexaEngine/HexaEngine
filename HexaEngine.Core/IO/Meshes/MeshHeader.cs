@@ -1,39 +1,39 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
     using HexaEngine.Core.IO;
+    using HexaEngine.Mathematics;
     using System.IO;
-    using System.Text;
 
     public struct MeshHeader
     {
         public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6e, 0x73, 0x4d, 0x65, 0x73, 0x68, 0x00 };
-        public const ulong Version = 3;
+        public const ulong Version = 5;
 
+        public Endianness Endianness;
         public Compression Compression;
-        public MeshType Type;
         public ulong MeshCount;
-        public ulong BodyStart;
+        public ulong ContentStart;
 
         public void Read(Stream stream)
         {
             if (!stream.Compare(MagicNumber))
-                throw new InvalidDataException();
-            if (!stream.Compare(Version))
-                throw new InvalidDataException();
+                throw new InvalidDataException("Magic number mismatch");
+            Endianness = (Endianness)stream.ReadByte();
+            if (!stream.Compare(Version, Endianness))
+                throw new InvalidDataException("Version mismatch");
 
-            Compression = (Compression)stream.ReadInt();
-            Type = (MeshType)stream.ReadInt();
-            MeshCount = stream.ReadUInt64();
-            BodyStart = (ulong)stream.Position;
+            Compression = (Compression)stream.ReadInt(Endianness);
+            MeshCount = stream.ReadUInt64(Endianness);
+            ContentStart = (ulong)stream.Position;
         }
 
         public void Write(Stream stream)
         {
             stream.Write(MagicNumber);
-            stream.WriteUInt64(Version);
-            stream.WriteInt((int)Compression);
-            stream.WriteInt((int)Type);
-            stream.WriteUInt64(MeshCount);
+            stream.WriteByte((byte)Endianness);
+            stream.WriteUInt64(Version, Endianness);
+            stream.WriteInt((int)Compression, Endianness);
+            stream.WriteUInt64(MeshCount, Endianness);
         }
     }
 }

@@ -1,9 +1,11 @@
 ﻿#nullable disable
 
-namespace HexaEngine.Pipelines.Deferred
+using HexaEngine;
+
+namespace HexaEngine.Core.Effects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Materials;
     using System.Threading.Tasks;
 
     public class MaterialShader : IDisposable

@@ -519,64 +519,35 @@
         /// <inheritdoc />
         public string ToString(string? format, IFormatProvider? formatProvider)
         => $"{nameof(BoundingBox)} {{ {nameof(Min)} = {_min.ToString(format, formatProvider)}, {nameof(Max)} = {_max.ToString(format, formatProvider)} }}";
+
+        public static BoundingBox Read(Stream stream, Endianness endianness)
+        {
+            Vector3 min = stream.ReadVector3(endianness);
+            Vector3 max = stream.ReadVector3(endianness);
+            return new BoundingBox(min, max);
+        }
+
+        public void Write(Stream stream, Endianness endianness)
+        {
+            stream.WriteVector3(Min, endianness);
+            stream.WriteVector3(Max, endianness);
+        }
     }
 
     public static class BoundingBoxHelper
     {
         public static BoundingBox Compute(Vector3[] positions)
         {
-            float min_x = positions[0].X, max_x = positions[0].X;
-            float min_y = positions[0].Y, max_y = positions[0].Y;
-            float min_z = positions[0].Z, max_z = positions[0].Z;
+            Vector3 min = default;
+            Vector3 max = default;
 
             for (int i = 0; i < positions.Length; i++)
             {
-                // x-axis
-                if (positions[i].X < min_x)
-                    min_x = positions[i].X;
-                if (positions[i].X > max_x)
-                    max_x = positions[i].X;
-                // y-axis
-                if (positions[i].Y < min_y)
-                    min_y = positions[i].Y;
-                if (positions[i].Y > max_y)
-                    max_y = positions[i].Y;
-                // z-axis
-                if (positions[i].Z < min_z)
-                    min_z = positions[i].Z;
-                if (positions[i].Z > max_z)
-                    max_z = positions[i].Z;
+                min = Vector3.Min(min, positions[i]);
+                max = Vector3.Max(max, positions[i]);
             }
 
-            return new BoundingBox(new(min_x, min_y, min_z), new(max_x, max_y, max_z));
-        }
-
-        public static BoundingBox Compute(Vertex[] vertices)
-        {
-            float min_x = vertices[0].Position.X, max_x = vertices[0].Position.X;
-            float min_y = vertices[0].Position.Y, max_y = vertices[0].Position.Y;
-            float min_z = vertices[0].Position.Z, max_z = vertices[0].Position.Z;
-
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                // x-axis
-                if (vertices[i].Position.X < min_x)
-                    min_x = vertices[i].Position.X;
-                if (vertices[i].Position.X > max_x)
-                    max_x = vertices[i].Position.X;
-                // y-axis
-                if (vertices[i].Position.Y < min_y)
-                    min_y = vertices[i].Position.Y;
-                if (vertices[i].Position.Y > max_y)
-                    max_y = vertices[i].Position.Y;
-                // z-axis
-                if (vertices[i].Position.Z < min_z)
-                    min_z = vertices[i].Position.Z;
-                if (vertices[i].Position.Z > max_z)
-                    max_z = vertices[i].Position.Z;
-            }
-
-            return new BoundingBox(new(min_x, min_y, min_z), new(max_x, max_y, max_z));
+            return new BoundingBox(min, max);
         }
     }
 }

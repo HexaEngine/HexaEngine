@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Assets;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Dotnet;
     using HexaEngine.Scripting;

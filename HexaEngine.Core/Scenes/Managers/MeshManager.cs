@@ -3,7 +3,7 @@
     using HexaEngine.Core.IO.Meshes;
     using System.Collections.Generic;
 
-    public class MeshManager
+    public class ModelManager
     {
         private readonly Dictionary<string, ModelSource> pathToMeshes = new();
         private readonly List<ModelSource> meshes = new();

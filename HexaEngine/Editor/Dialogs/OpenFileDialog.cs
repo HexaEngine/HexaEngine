@@ -33,6 +33,7 @@ namespace HexaEngine.Editor.Dialogs
         }
 
 #pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public OpenFileDialog()
 #pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
@@ -55,6 +56,7 @@ namespace HexaEngine.Editor.Dialogs
         }
 
 #pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public OpenFileDialog(string startingPath)
 #pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
@@ -76,6 +78,7 @@ namespace HexaEngine.Editor.Dialogs
         }
 
 #pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public OpenFileDialog(string startingPath, string? searchFilter = null)
 #pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
@@ -213,6 +216,15 @@ namespace HexaEngine.Editor.Dialogs
                             ImGui.PopStyleColor();
                         }
 
+                        for (int i = 0; i < dirs.Count; i++)
+                        {
+                            var dir = dirs[i];
+                            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
+                            if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.DontClosePopups))
+                                SetFolder(dir.Path);
+                            ImGui.PopStyleColor();
+                        }
+
                         for (int i = 0; i < files.Count; i++)
                         {
                             var file = files[i];
@@ -229,15 +241,6 @@ namespace HexaEngine.Editor.Dialogs
                                 shown = false;
                                 return true;
                             }
-                        }
-
-                        for (int i = 0; i < dirs.Count; i++)
-                        {
-                            var dir = dirs[i];
-                            ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
-                            if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.DontClosePopups))
-                                SetFolder(dir.Path);
-                            ImGui.PopStyleColor();
                         }
                     }
                 }

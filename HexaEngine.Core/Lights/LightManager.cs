@@ -24,45 +24,45 @@
     {
         private readonly List<Light> lights = new();
         private readonly List<Light> activeLights = new();
-        private readonly IGraphicsDevice device;
+        private IGraphicsDevice device;
         private readonly IInstanceManager instanceManager;
         private readonly ConcurrentQueue<Light> updateQueue = new();
         private readonly ConcurrentQueue<IInstance> modelUpdateQueue = new();
 
-        private readonly StructuredUavBuffer<DirectionalLightData> directionalLights;
-        private readonly StructuredUavBuffer<PointLightData> pointLights;
-        private readonly StructuredUavBuffer<SpotlightData> spotlights;
+        private StructuredUavBuffer<DirectionalLightData> directionalLights;
+        private StructuredUavBuffer<PointLightData> pointLights;
+        private StructuredUavBuffer<SpotlightData> spotlights;
 
-        private readonly StructuredUavBuffer<ShadowDirectionalLightData> shadowDirectionalLights;
-        private readonly StructuredUavBuffer<ShadowPointLightData> shadowPointLights;
-        private readonly StructuredUavBuffer<ShadowSpotlightData> shadowSpotlights;
+        private StructuredUavBuffer<ShadowDirectionalLightData> shadowDirectionalLights;
+        private StructuredUavBuffer<ShadowPointLightData> shadowPointLights;
+        private StructuredUavBuffer<ShadowSpotlightData> shadowSpotlights;
 
-        private readonly ConstantBuffer<LightBufferParams> paramsBuffer;
+        private ConstantBuffer<LightBufferParams> paramsBuffer;
 
-        private readonly Quad quad;
-        private readonly ISamplerState pointSampler;
-        private readonly ISamplerState linearSampler;
-        private readonly ISamplerState anisoSampler;
-        private readonly unsafe void** cbs;
-        private readonly unsafe void** smps;
+        private Quad quad;
+        private ISamplerState pointSampler;
+        private ISamplerState linearSampler;
+        private ISamplerState anisoSampler;
+        private unsafe void** cbs;
+        private unsafe void** smps;
 
-        private readonly IGraphicsPipeline deferredDirect;
-        private readonly unsafe void** directSrvs;
+        private IGraphicsPipeline deferredDirect;
+        private unsafe void** directSrvs;
         private const uint ndirectSrvs = 8 + 4;
 
-        private readonly IGraphicsPipeline deferredIndirect;
-        private readonly unsafe void** indirectSrvs;
+        private IGraphicsPipeline deferredIndirect;
+        private unsafe void** indirectSrvs;
         private const uint nindirectSrvs = 8 + 4;
 
-        private readonly IGraphicsPipeline deferredShadow;
-        private readonly unsafe void** shadowSrvs;
+        private IGraphicsPipeline deferredShadow;
+        private unsafe void** shadowSrvs;
         private const uint nShadowSrvs = 8 + 4 + MaxDirectionalLightSDs + MaxPointLightSDs + MaxSpotlightSDs;
 
-        private readonly IGraphicsPipeline forwardSoild;
-        private readonly unsafe void** simpleSrvs;
+        private IGraphicsPipeline forwardSoild;
+        private unsafe void** simpleSrvs;
         private const uint nSimpleSrvs = 8;
 
-        private readonly IGraphicsPipeline forwardWireframe;
+        private IGraphicsPipeline forwardWireframe;
 
         public const int MaxDirectionalLightSDs = 1;
         public const int MaxPointLightSDs = 32;
@@ -83,33 +83,24 @@
         public IShaderResourceView[] PSMs;
         public ResourceRef<IBuffer> Camera;
 
-#pragma warning disable CS8618 // Non-nullable field 'Camera' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'GBuffers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'DSV' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'OSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'Output' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'Irraidance' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'EnvPrefiltered' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'LUT' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'PSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'SSAO' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'CSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        public LightManager(IInstanceManager instanceManager)
+        {
+            this.instanceManager = instanceManager;
+        }
 
-        public LightManager(IGraphicsDevice device, IInstanceManager instanceManager)
-#pragma warning restore CS8618 // Non-nullable field 'CSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'SSAO' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'PSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'LUT' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'EnvPrefiltered' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'Irraidance' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'Output' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'OSMs' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'DSV' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'GBuffers' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'Camera' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        public IReadOnlyList<Light> Lights => lights;
+
+        public IReadOnlyList<Light> Active => activeLights;
+
+        public int Count => lights.Count;
+
+        public int ActiveCount => activeLights.Count;
+
+        public string Name => "Lights";
+
+        public async Task Initialize(IGraphicsDevice device)
         {
             this.device = device;
-            this.instanceManager = instanceManager;
             instanceManager.Updated += InstanceUpdated;
             instanceManager.InstanceCreated += InstanceCreated;
             instanceManager.InstanceDestroyed += InstanceDestroyed;
@@ -123,7 +114,7 @@
             shadowSpotlights = new(device, true, false);
 
             quad = new(device);
-            deferredDirect = device.CreateGraphicsPipeline(new()
+            deferredDirect = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "deferred/brdf/vs.hlsl",
                 PixelShader = "deferred/brdf/direct.hlsl",
@@ -156,7 +147,7 @@
                 simpleSrvs = AllocArray(nSimpleSrvs);
             }
 
-            deferredIndirect = device.CreateGraphicsPipeline(new()
+            deferredIndirect = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "deferred/brdf/vs.hlsl",
                 PixelShader = "deferred/brdf/indirect.hlsl",
@@ -170,7 +161,7 @@
                 Topology = PrimitiveTopology.TriangleList
             });
 
-            deferredShadow = device.CreateGraphicsPipeline(new()
+            deferredShadow = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "deferred/brdf/vs.hlsl",
                 PixelShader = "deferred/brdf/shadow.hlsl",
@@ -184,7 +175,7 @@
                 Topology = PrimitiveTopology.TriangleList
             });
 
-            forwardSoild = device.CreateGraphicsPipeline(new()
+            forwardSoild = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "forward/solid/vs.hlsl",
                 HullShader = "forward/solid/hs.hlsl",
@@ -200,7 +191,7 @@
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints
             });
 
-            forwardWireframe = device.CreateGraphicsPipeline(new()
+            forwardWireframe = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "forward/wireframe/vs.hlsl",
                 HullShader = "forward/wireframe/hs.hlsl",
@@ -216,16 +207,6 @@
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints
             });
         }
-
-        public IReadOnlyList<Light> Lights => lights;
-
-        public IReadOnlyList<Light> Active => activeLights;
-
-        public int Count => lights.Count;
-
-        public int ActiveCount => activeLights.Count;
-
-        public string Name => "Lights";
 
         private void InstanceUpdated(IInstanceType type, IInstance instance)
         {

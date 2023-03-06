@@ -1,30 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>x64</Platforms>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
-    <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+		<ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="runtimes\linux-x64\native\discord_game_sdk.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="runtimes\osx-x64\native\discord_game_sdk.bundle">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="runtimes\osx-x64\native\discord_game_sdk.dylib">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="runtimes\win-x64\native\discord_game_sdk.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="runtimes\linux-x64\native\discord_game_sdk.so">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\discord_game_sdk.bundle">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\osx-x64\native\discord_game_sdk.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="runtimes\win-x64\native\discord_game_sdk.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

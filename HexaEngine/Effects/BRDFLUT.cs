@@ -33,16 +33,14 @@ namespace HexaEngine.Effects
         {
         }
 
-        public Task Initialize(IGraphicsDevice device, int width, int height)
+        public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             quad = new Quad(device);
-            pipeline = device.CreateGraphicsPipeline(new()
+            pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
-                VertexShader = "effects/brdf/vs.hlsl",
-                PixelShader = "effects/brdf/ps.hlsl"
+                VertexShader = "effects/lut/vs.hlsl",
+                PixelShader = "effects/lut/brdf.hlsl"
             });
-
-            return Task.CompletedTask;
         }
 
         protected virtual void Dispose(bool disposing)

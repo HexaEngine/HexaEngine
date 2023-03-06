@@ -103,7 +103,7 @@ namespace HexaEngine.Effects
 
             quad = new Quad(device);
 
-            hbaoPipeline = device.CreateGraphicsPipeline(new()
+            hbaoPipeline = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/hbao/vs.hlsl",
                 PixelShader = "effects/hbao/ps.hlsl",
@@ -131,7 +131,7 @@ namespace HexaEngine.Effects
                 hbaoCBs[1] = (void*)Camera.Value.NativePointer;
             }
 
-            blurPipeline = device.CreateGraphicsPipeline(new()
+            blurPipeline = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
                 PixelShader = "effects/blur/box.hlsl",

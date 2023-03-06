@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Audio
+﻿namespace HexaEngine.Core.Audio
 {
     using HexaEngine.Core;
     using HexaEngine.Core.IO;

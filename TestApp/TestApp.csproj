@@ -14,6 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="SPIRV.Commands.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="SPIRV.Commands.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="default-44100.mhr">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

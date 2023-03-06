@@ -19,7 +19,7 @@
                 return;
             }
 
-            var manager = scene.MeshManager;
+            var manager = scene.ModelManager;
 
             bool selected = ImGui.Combo("Mesh", ref current, manager.Meshes.Select(x => x.Name).ToArray(), manager.Count);
 

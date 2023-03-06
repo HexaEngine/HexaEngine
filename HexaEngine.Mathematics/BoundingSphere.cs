@@ -281,5 +281,18 @@
         {
             return $"Center:{Center.ToString(format, formatProvider)} Radius:{Radius.ToString(format, formatProvider)}";
         }
+
+        public static BoundingSphere Read(Stream stream, Endianness endianness)
+        {
+            Vector3 center = stream.ReadVector3(endianness);
+            float radius = stream.ReadFloat(endianness);
+            return new(center, radius);
+        }
+
+        public void Write(Stream stream, Endianness endianness)
+        {
+            stream.WriteVector3(_center, endianness);
+            stream.WriteFloat(_radius, endianness);
+        }
     }
 }
