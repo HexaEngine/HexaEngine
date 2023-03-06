@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-
-namespace SPIRVCross
+namespace HexaEngine.SPIRVCross
 {
+    using System;
+    using System.Runtime.InteropServices;
+
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public readonly partial struct SpvId : IEquatable<SpvId>
     {

@@ -1,8 +1,7 @@
-using System;
-using System.Diagnostics;
-
-namespace SPIRVCross
+namespace HexaEngine.SPIRVCross
 {
+    using System.Diagnostics;
+
     /// <summary>
     /// A dispatchable handle.
     /// </summary>

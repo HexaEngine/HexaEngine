@@ -1,7 +1,7 @@
-using System.Runtime.InteropServices;
-
-namespace SPIRVCross
+namespace HexaEngine.SPIRVCross
 {
+    using System.Runtime.InteropServices;
+
     [StructLayout(LayoutKind.Sequential)]
     public partial struct SpvcReflectedResource
     {

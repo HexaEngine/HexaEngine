@@ -1,6 +1,4 @@
-using System;
-
-namespace SPIRVCross
+namespace HexaEngine.SPIRVCross
 {
     public enum SpvSourceLanguage
     {

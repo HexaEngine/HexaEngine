@@ -1,8 +1,8 @@
-using System.Reflection;
-using System.Runtime.InteropServices;
-
-namespace SPIRVCross
+namespace HexaEngine.SPIRVCross
 {
+    using System.Reflection;
+    using System.Runtime.InteropServices;
+
     public static unsafe partial class SPIRV
     {
         internal static IntPtr LoadNativeLibrary()
