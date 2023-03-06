@@ -4,13 +4,12 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Platforms>x64</Platforms>
-		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>x64</Platforms>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Silk.NET.XAudio" Version="2.16.0" />
+		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	</ItemGroup>
 
 </Project>

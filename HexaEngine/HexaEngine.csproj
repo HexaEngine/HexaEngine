@@ -479,6 +479,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 		<ProjectReference Include="..\HexaEngine.D3D11\HexaEngine.D3D11.csproj" />
+		<ProjectReference Include="..\HexaEngine.D3D12\HexaEngine.D3D12.csproj" />
 		<ProjectReference Include="..\HexaEngine.Dotnet\HexaEngine.Dotnet.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
 		<ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />

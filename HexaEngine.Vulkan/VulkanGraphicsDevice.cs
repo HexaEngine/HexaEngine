@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
+    using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using Silk.NET.Vulkan;
@@ -76,8 +77,8 @@
             uint rcount = 0;
             sdl.VulkanGetInstanceExtensions(window, &rcount, (byte**)null);
 
-            byte*[] extensions = new byte*[rcount];
-            sdl.VulkanGetInstanceExtensions(window, &rcount, Utilities.AsPointer(extensions));
+            byte** extensions = (byte**)AllocArray(rcount);
+            sdl.VulkanGetInstanceExtensions(window, &rcount, extensions);
 
             Trace.WriteLine("#### Required Extensions ####");
             for (int i = 0; i < rcount; i++)
@@ -85,31 +86,31 @@
                 Trace.WriteLine(Marshal.PtrToStringUTF8(new IntPtr(extensions[i])));
             }
             count = rcount;
-            return Utilities.AsPointer(extensions);
+            return extensions;
         }
 
         private byte** GetRequiredDeviceExtensions(out uint count)
         {
-            byte*[] ptrs = new byte*[DeviceExtensions.Length];
+            byte** ptrs = (byte**)AllocArray((uint)DeviceExtensions.Length);
             for (int i = 0; i < DeviceExtensions.Length; i++)
             {
-                ptrs[i] = (byte*)Unsafe.AsPointer(ref Encoding.UTF8.GetBytes(DeviceExtensions[i])[0]);
+                ptrs[i] = DeviceExtensions[i].ToUTF8();
             }
 
             count = (uint)DeviceExtensions.Length;
-            return Utilities.AsPointer(ptrs);
+            return ptrs;
         }
 
         private byte** GetValidationLayers(out uint count)
         {
-            byte*[] ptrs = new byte*[ValidationLayers.Length];
+            byte** ptrs = (byte**)AllocArray((uint)ValidationLayers.Length);
             for (int i = 0; i < ValidationLayers.Length; i++)
             {
-                ptrs[i] = (byte*)Unsafe.AsPointer(ref Encoding.UTF8.GetBytes(ValidationLayers[i])[0]);
+                ptrs[i] = ValidationLayers[i].ToUTF8();
             }
 
             count = (uint)ValidationLayers.Length;
-            return Utilities.AsPointer(ptrs);
+            return ptrs;
         }
 
         private bool CheckValidationLayerSupport()
@@ -437,51 +438,6 @@
 
         #endregion Logical Device
 
-        public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Compile(string code, string entry, string sourceName, string profile, out Blob? shaderBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, out Blob? shaderBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CompileFromFile(string path, string entry, string profile, out Blob? shaderBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob, out Blob? errorBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, out Blob? shaderBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBlendState CreateBlendState(BlendDescription blendDescription)
-        {
-            throw new NotImplementedException();
-        }
-
         public IBuffer CreateBuffer(BufferDescription description)
         {
             throw new NotImplementedException();
@@ -497,26 +453,6 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T[] values, BufferDescription description) where T : struct
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(T[] values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
-        {
-            throw new NotImplementedException();
-        }
-
-        public IComputeShader CreateComputeShader(byte[] bytecode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDepthStencilState CreateDepthStencilState(DepthStencilDescription description)
-        {
-            throw new NotImplementedException();
-        }
-
         public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description)
         {
             throw new NotImplementedException();
@@ -527,42 +463,7 @@
             throw new NotImplementedException();
         }
 
-        public IDomainShader CreateDomainShader(byte[] bytecode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IGeometryShader CreateGeometryShader(byte[] bytecode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IHullShader CreateHullShader(byte[] bytecode)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, Blob vertexShaderBlob)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IInputLayout CreateInputLayout(byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IPixelShader CreatePixelShader(byte[] bytecode)
-        {
-            throw new NotImplementedException();
-        }
-
         public IQuery CreateQuery()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRasterizerState CreateRasterizerState(RasterizerDescription description)
         {
             throw new NotImplementedException();
         }
@@ -652,11 +553,6 @@
             throw new NotImplementedException();
         }
 
-        public IVertexShader CreateVertexShader(byte[] bytecode)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -727,31 +623,6 @@
             throw new NotImplementedException();
         }
 
-        public IInputLayout CreateInputLayout(InputElementDescription[] inputElements, byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(Span<T> values, BufferDescription description) where T : struct
-        {
-            throw new NotImplementedException();
-        }
-
-        public IBuffer CreateBuffer<T>(Span<T> values, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
-        {
-            throw new NotImplementedException();
-        }
-
-        public ShaderInputBindDescription[] GetInputBindDescriptions(Blob shader)
-        {
-            throw new NotImplementedException();
-        }
-
-        public SignatureParameterDescription[] GetOutputBindDescriptions(Blob shader)
-        {
-            throw new NotImplementedException();
-        }
-
         public IGraphicsContext CreateDeferredContext()
         {
             throw new NotImplementedException();
@@ -773,6 +644,76 @@
         }
 
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(SdlWindow window)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
+        {
+            throw new NotImplementedException();
+        }
+
+        public IShaderResourceView CreateShaderResourceView(IBuffer buffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc)
         {
             throw new NotImplementedException();
         }

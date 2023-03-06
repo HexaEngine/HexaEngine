@@ -12,7 +12,7 @@
 
         public Direct3D11Functions()
         {
-            graphicsDevice = new(new(), null);
+            graphicsDevice = new(new(), true);
             device = (ID3D11Device*)graphicsDevice.Device;
             context = (ID3D11DeviceContext*)graphicsDevice.DeviceContext;
         }

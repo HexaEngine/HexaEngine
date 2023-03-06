@@ -1,26 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <Platforms>AnyCPU;x64</Platforms>
-	  <Configurations>Debug;Release;TraceLeak</Configurations>
-	  <DefineConstants>$(DefineConstants)TRACE;TRACELEAK</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Platforms>x64</Platforms>
+		<Configurations>Debug;Release;TraceLeak</Configurations>
+		<DefineConstants>$(DefineConstants)TRACE;TRACELEAK</DefineConstants>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.16.0" PrivateAssets="contentfiles;build" />
-    <PackageReference Include="Silk.NET.Direct3D11" Version="2.16.0" PrivateAssets="contentfiles;build" />
-    <PackageReference Include="Silk.NET.Direct3D12" Version="2.16.0" PrivateAssets="contentfiles;build" />
-    <PackageReference Include="Silk.NET.DXGI" Version="2.16.0" PrivateAssets="contentfiles;build" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.16.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.Direct3D11" Version="2.16.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.Direct3D12" Version="2.16.0" PrivateAssets="contentfiles;build" />
+		<PackageReference Include="Silk.NET.DXGI" Version="2.16.0" PrivateAssets="contentfiles;build" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
-    <ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
+		<ProjectReference Include="..\HexaEngine.DirectXTex\HexaEngine.DirectXTex.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Vulkan
 {
-    using HexaEngine.Core.Events;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
     using System;
 
@@ -48,6 +48,11 @@
         }
 
         public void Resize(int width, int height)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Wait()
         {
             throw new NotImplementedException();
         }
