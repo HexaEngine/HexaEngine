@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.IO;
+    using HexaEngine.Mathematics;
     using System.Text;
 
     public struct ShaderMacro
@@ -85,6 +86,18 @@
             idx += src[idx..].ReadString(out string definition, decoder);
             macro = new ShaderMacro(name, definition);
             return idx;
+        }
+
+        public  void Write(Stream stream, Encoding encoder, Endianness endianness)
+        {
+            stream.WriteString(Name, encoder, endianness);
+            stream.WriteString(Definition, encoder, endianness);
+        }
+
+        public  void Read(Stream stream, Encoding decoder, Endianness endianness)
+        {
+            Name = stream.ReadString(decoder, endianness);
+            Definition = stream.ReadString(decoder, endianness);
         }
 
         public int GetSize(Encoder encoder)

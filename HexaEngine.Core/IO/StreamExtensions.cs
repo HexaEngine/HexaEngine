@@ -209,6 +209,12 @@
             stream.Read(bytes, 0, length);
             return bytes;
         }
+        public static byte[] ReadBytes(this Stream stream, uint length)
+        {
+            byte[] bytes = new byte[length];
+            stream.Read(bytes);
+            return bytes;
+        }
 
         public static unsafe T ReadStruct<T>(this Stream stream) where T : unmanaged
         {

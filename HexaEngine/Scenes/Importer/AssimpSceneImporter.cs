@@ -21,6 +21,7 @@ namespace HexaEngine.Scenes.Importer
     using System.Text;
     using Animation = Core.Animations.Animation;
     using AssimpScene = Silk.NET.Assimp.Scene;
+    using BlendMode = Silk.NET.Assimp.BlendMode;
     using Scene = Core.Scenes.Scene;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
@@ -817,7 +818,7 @@ namespace HexaEngine.Scenes.Importer
         {
             for (int i = 0; i < models.Count; i++)
             {
-                models[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"));
+                models[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"), Encoding.UTF8);
             }
 
             for (int i = 0; i < animations.Length; i++)
@@ -901,7 +902,7 @@ namespace HexaEngine.Scenes.Importer
             public TextureType Type;
             public string File;
             public BlendMode Blend;
-            public Silk.NET.Assimp.TextureOp Op;
+            public TextureOp Op;
             public int Mapping;
             public int UVWSrc;
             public TextureMapMode U;
@@ -951,17 +952,17 @@ namespace HexaEngine.Scenes.Importer
                 };
             }
 
-            public static Core.IO.Meshes.BlendMode Convert(BlendMode mode)
+            public static Core.IO.Materials.BlendMode Convert(BlendMode mode)
             {
                 return mode switch
                 {
-                    BlendMode.None => Core.IO.Meshes.BlendMode.Default,
-                    BlendMode.Additive => Core.IO.Meshes.BlendMode.Additive,
+                    BlendMode.None => Core.IO.Materials.BlendMode.Default,
+                    BlendMode.Additive => Core.IO.Materials.BlendMode.Additive,
                     _ => throw new NotImplementedException(),
                 };
             }
 
-            public static Core.IO.Materials.TextureOp Convert(Silk.NET.Assimp.TextureOp op)
+            public static Core.IO.Materials.TextureOp Convert(TextureOp op)
             {
                 return op switch
                 {

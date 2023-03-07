@@ -12,7 +12,7 @@
 
     public class ModelSource
     {
-        public MeshHeader Header;
+        public ModelHeader Header;
         private readonly MeshData[] Meshes;
         public string Name;
 
@@ -67,11 +67,12 @@
             Meshes = meshes;
         }
 
-        public void Save(string dir, Compression compression = Compression.LZ4)
+        public void Save(string dir, Encoding encoding, Compression compression = Compression.LZ4)
         {
             Directory.CreateDirectory(dir);
             Stream fs = File.Create(Path.Combine(dir, Name + ".model"));
 
+            Header.Encoding = encoding;
             Header.Compression = compression;
             Header.Write(fs);
 
@@ -82,7 +83,7 @@
                 stream = LZ4Stream.Encode(fs, LZ4Level.L12_MAX, 0, true);
             for (ulong i = 0; i < Header.MeshCount; i++)
             {
-                Meshes[i].Write(stream, Encoding.UTF8, Header.Endianness);
+                Meshes[i].Write(stream, encoding, Header.Endianness);
             }
             stream.Close();
             fs.Close();

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.IO.Meshes
+﻿namespace HexaEngine.Core.IO.Materials
 {
     [Flags]
     public enum BlendMode

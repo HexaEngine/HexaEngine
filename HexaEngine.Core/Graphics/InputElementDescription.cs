@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.IO;
+    using HexaEngine.Mathematics;
     using System.Runtime.CompilerServices;
     using System.Text;
     using System.Xml.Linq;
@@ -130,37 +131,27 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Write(Span<byte> dst, InputElementDescription element, Encoder encoder)
+        public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
-            int idx = 0;
-            idx += dst[0..].WriteString(element.SemanticName, encoder);
-            idx += dst[idx..].WriteInt32(element.SemanticIndex);
-            idx += dst[idx..].WriteInt32((int)element.Format);
-            idx += dst[idx..].WriteInt32(element.Slot);
-            idx += dst[idx..].WriteInt32(element.AlignedByteOffset);
-            idx += dst[idx..].WriteInt32((int)element.Classification);
-            idx += dst[idx..].WriteInt32(element.InstanceDataStepRate);
-            return idx;
+            stream.WriteString(SemanticName, encoding, endianness);
+            stream.WriteInt(SemanticIndex, endianness);
+            stream.WriteInt((int)Format, endianness);
+            stream.WriteInt(Slot, endianness);
+            stream.WriteInt(AlignedByteOffset, endianness);
+            stream.WriteInt((int)Classification, endianness);
+            stream.WriteInt(InstanceDataStepRate, endianness);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Read(ReadOnlySpan<byte> src, Decoder decoder, out InputElementDescription description)
+        public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
-            int idx = 0;
-            idx += src[0..].ReadString(out string semanticName, decoder);
-            idx += src[idx..].ReadInt32(out int semanticIndex);
-            idx += src[idx..].ReadInt32(out int format);
-            idx += src[idx..].ReadInt32(out int slot);
-            idx += src[idx..].ReadInt32(out int alignedByteOffset);
-            idx += src[idx..].ReadInt32(out int classification);
-            idx += src[idx..].ReadInt32(out int instanceDataStepRate);
-            description = new(semanticName, semanticIndex, (Format)format, alignedByteOffset, slot, (InputClassification)classification, instanceDataStepRate);
-            return idx;
-        }
-
-        public int GetSize(Encoder encoder)
-        {
-            return SemanticName.SizeOf(encoder) + 24;
+            SemanticName = stream.ReadString(encoding, endianness);
+            SemanticIndex = stream.ReadInt(endianness);
+            Format = (Format)stream.ReadInt(endianness);
+            Slot = stream.ReadInt(endianness);
+            AlignedByteOffset = stream.ReadInt(endianness);
+            Classification = (InputClassification)stream.ReadInt(endianness);
+            InstanceDataStepRate = stream.ReadInt(endianness);
         }
     }
 }
