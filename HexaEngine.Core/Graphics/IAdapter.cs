@@ -2,8 +2,10 @@
 {
     public interface IGraphicsAdapter
     {
-        RenderBackend Backend { get; }
+        GraphicsBackend Backend { get; }
 
-        IGraphicsDevice CreateGraphics(bool debug);
+        IGraphicsDevice CreateGraphicsDevice(bool debug);
+
+        int PlatformScore { get; }
     }
 }

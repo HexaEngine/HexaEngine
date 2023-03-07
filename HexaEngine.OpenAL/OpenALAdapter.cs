@@ -1,22 +1,29 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using Silk.NET.OpenAL.Extensions.Enumeration;
+    using System;
     using System.Collections.Generic;
 
-    public unsafe class AudioSystem
+    public class OpenALAdapter : IAudioAdapter
     {
-        public AudioSystem()
-        {
-        }
+        public AudioBackend Backend => AudioBackend.OpenAL;
 
-        public static AudioDevice CreateAudioDevice(string? name)
+        public int PlatformScore => 0;
+
+        public unsafe IAudioDevice CreateAudioDevice(string? name)
         {
             Device* device = alc.OpenDevice(name);
             CheckError(device);
-            return new AudioDevice(device);
+            return new OpenALAudioDevice(device);
         }
 
-        public static List<string> GetAvailableDevices()
+        public static void Init()
+        {
+            AudioAdapter.Adapters.Add(new OpenALAdapter());
+        }
+
+        public unsafe List<string> GetAvailableDevices()
         {
             List<string> devices;
 

@@ -13,20 +13,12 @@ namespace HexaEngine.Scenes.Components.Audio
     public class EmitterComponent : IAudioComponent
     {
         private GameObject gameObject;
-        private Emitter emitter;
+        private IEmitter emitter;
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
             emitter = AudioManager.CreateEmitter();
             this.gameObject = gameObject;
-            if (!Application.InDesignMode)
-            {
-                WaveAudioStream stream = AudioManager.CreateStream("piano2.wav");
-                SourceVoice voice = AudioManager.CreateSourceVoice(stream);
-                voice.Looping = true;
-                voice.Emitter = emitter;
-                voice.Play();
-            }
         }
 
         public void Update()

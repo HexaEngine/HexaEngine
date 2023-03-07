@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using System;
 
-    public abstract class AudioStream
+    public abstract class OpenALAudioStream : IAudioStream
     {
         public abstract bool Looping { get; set; }
 

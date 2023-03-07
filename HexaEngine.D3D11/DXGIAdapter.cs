@@ -31,14 +31,16 @@
         {
             if (OperatingSystem.IsWindows())
             {
-                Adapter.Adapters.Add(new DXGIAdapter());
+                GraphicsAdapter.Adapters.Add(new DXGIAdapter());
             }
         }
 
-        public RenderBackend Backend => RenderBackend.D3D11;
+        public GraphicsBackend Backend => GraphicsBackend.D3D11;
+
+        public int PlatformScore => 100;
 
         [SupportedOSPlatform("windows")]
-        public IGraphicsDevice CreateGraphics(bool debug)
+        public IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
             return new D3D11GraphicsDevice(this, debug);
         }

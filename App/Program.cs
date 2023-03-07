@@ -1,11 +1,7 @@
 ﻿namespace App
 {
+    using HexaEngine;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO;
-    using HexaEngine.D3D11;
-    using HexaEngine.Projects;
-    using HexaEngine.Scripting;
     using HexaEngine.Windows;
 
     public static class Program
@@ -15,12 +11,9 @@
         /// </summary>
         public static void Main()
         {
-            CrashLogger.Initialize();
-            DXGIAdapter.Init();
-            AppConfig config = AppConfig.Load();
-            FileSystem.Initialize();
-            AssemblyManager.Load(config.ScriptAssembly);
-            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = config.StartupScene });
+            Platform.Init();
+            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = Platform.StartupScene });
+            Platform.Shutdown();
         }
     }
 }

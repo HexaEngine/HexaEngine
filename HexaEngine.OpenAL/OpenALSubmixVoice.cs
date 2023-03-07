@@ -1,15 +1,20 @@
 ﻿namespace HexaEngine.OpenAL
 {
-    public unsafe class MasteringVoice
+    using HexaEngine.Core.Audio;
+
+    public unsafe class OpenALSubmixVoice : ISubmixVoice
     {
         private float gain = 1;
 
-        public MasteringVoice(string name)
+        public OpenALSubmixVoice(string name, IMasteringVoice master)
         {
             Name = name;
+            Master = master;
         }
 
-        public string Name { get; }
+        public string Name { get; set; }
+
+        public IMasteringVoice Master { get; }
 
         public float Gain
         {

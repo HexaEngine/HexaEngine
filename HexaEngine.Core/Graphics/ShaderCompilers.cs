@@ -4,14 +4,14 @@
 
     public static class ShaderCompilers
     {
-        private static Dictionary<RenderBackend, IShaderCompiler> compilers = new();
+        private static Dictionary<GraphicsBackend, IShaderCompiler> compilers = new();
 
-        public static void Register(RenderBackend backend, IShaderCompiler compiler)
+        public static void Register(GraphicsBackend backend, IShaderCompiler compiler)
         {
             compilers.Add(backend, compiler);
         }
 
-        public static IShaderCompiler GetShaderCompiler(RenderBackend backend)
+        public static IShaderCompiler GetShaderCompiler(GraphicsBackend backend)
         {
             return compilers[backend];
         }

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
@@ -8,6 +9,7 @@
         public static readonly AL al = AL.GetApi(true);
         public static readonly ALContext alc = ALContext.GetApi(true);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool CheckError(Device* device, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0, [CallerMemberName] string name = "")
         {
             ContextError error = alc.GetError(device);
@@ -25,6 +27,19 @@
                 };
             }
             return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static AudioSourceState Convert(SourceState state)
+        {
+            return state switch
+            {
+                SourceState.Initial => AudioSourceState.Initial,
+                SourceState.Playing => AudioSourceState.Playing,
+                SourceState.Paused => AudioSourceState.Paused,
+                SourceState.Stopped => AudioSourceState.Stopped,
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }

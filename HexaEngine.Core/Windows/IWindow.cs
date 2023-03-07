@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Windows
 {
+    using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Scenes;
@@ -21,16 +22,16 @@
 
         Viewport RenderViewport { get; }
 
-        void RenderInitialize(IGraphicsDevice device);
+        void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice);
 
         void Render(IGraphicsContext context);
 
-        void RenderDispose();
+        void Uninitialize();
     }
 
     public interface IWindow
     {
-        RenderBackend Backend { get; }
+        GraphicsBackend Backend { get; }
         bool Bordered { get; set; }
         bool Focused { get; }
         int Height { get; set; }

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Resources;
@@ -20,17 +21,12 @@
         private static bool inDesignMode;
         private static bool inEditorMode;
 
-#pragma warning disable CS8618 // Non-nullable field 'adapter' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS0169 // The field 'Application.adapter' is never used
-        private static IGraphicsAdapter adapter;
-#pragma warning restore CS0169 // The field 'Application.adapter' is never used
-#pragma warning restore CS8618 // Non-nullable field 'adapter' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private static IGraphicsDevice device;
-#pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private static IGraphicsContext context;
-#pragma warning restore CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        private static IGraphicsAdapter graphicsAdapter;
+        private static IGraphicsDevice graphicsDevice;
+        private static IGraphicsContext graphicsContext;
+
+        private static IAudioAdapter audioAdapter;
+        private static IAudioDevice audioDevice;
 
 #nullable disable
         public static IRenderWindow MainWindow => mainWindow;
@@ -100,19 +96,15 @@
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
             Keyboard.Init(sdl);
             Mouse.Init(sdl);
-            if (OperatingSystem.IsWindows())
-            {
-                device = Adapter.CreateGraphics(RenderBackend.D3D11, GraphicsDebugging);
-                context = device.Context;
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
-            ResourceManager2.Shared = new(device);
+
+            graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend.Auto, GraphicsDebugging);
+            graphicsContext = graphicsDevice.Context;
+            audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
+
+            ResourceManager2.Shared = new(graphicsDevice);
             for (int i = 0; i < windows.Count; i++)
             {
-                windows[i].RenderInitialize(device);
+                windows[i].Initialize(audioDevice, graphicsDevice);
             }
             initialized = true;
         }
@@ -122,7 +114,7 @@
             windows.Add(window);
             windowIdToWindow.Add(window.WindowID, window);
             if (initialized)
-                window.RenderInitialize(device);
+                window.Initialize(audioDevice, graphicsDevice);
         }
 
         private static void MainWindow_Closing(object? sender, CloseEventArgs e)
@@ -390,7 +382,7 @@
 
                 for (int i = 0; i < windows.Count; i++)
                 {
-                    windows[i].Render(context);
+                    windows[i].Render(graphicsContext);
                 }
                 for (int i = 0; i < windows.Count; i++)
                 {
@@ -401,7 +393,7 @@
             ResourceManager2.Shared.Dispose();
             for (int i = 0; i < windows.Count; i++)
             {
-                windows[i].RenderDispose();
+                windows[i].Uninitialize();
             }
 
             sdl.Quit();

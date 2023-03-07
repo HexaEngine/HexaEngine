@@ -2,27 +2,26 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.IO;
-    using HexaEngine.OpenAL;
 
     public static class AudioManager
     {
 #nullable disable
-        private static AudioContext audioContext;
-        private static AudioDevice audioDevice;
-        private static MasteringVoice master;
+        private static IAudioContext audioContext;
+        private static IAudioDevice audioDevice;
+        private static IMasteringVoice master;
         private static Thread streamThread;
 #nullable enable
         private static bool running;
 
-        public static AudioDevice Device => audioDevice;
+        public static IAudioDevice Device => audioDevice;
 
-        public static AudioContext Context => audioContext;
+        public static IAudioContext Context => audioContext;
 
-        public static MasteringVoice Master => master;
+        public static IMasteringVoice Master => master;
 
-        public static void Initialize()
+        public static void Initialize(IAudioDevice device)
         {
-            audioDevice = AudioSystem.CreateAudioDevice(null);
+            audioDevice = device;
             audioContext = audioDevice.Default;
             master = audioDevice.CreateMasteringVoice("Master");
             running = true;
@@ -30,24 +29,24 @@
             streamThread.Start();
         }
 
-        public static WaveAudioStream CreateStream(string path)
+        public static IAudioStream CreateStream(string path)
         {
             return audioDevice.CreateWaveAudioStream(FileSystem.Open(Paths.CurrentSoundPath + path));
         }
 
-        public static SourceVoice CreateSourceVoice(WaveAudioStream stream)
+        public static ISourceVoice CreateSourceVoice(IAudioStream stream)
         {
             return audioDevice.CreateSourceVoice(stream);
         }
 
-        public static Listener CreateListener()
+        public static IListener CreateListener()
         {
             return audioDevice.CreateListener(master);
         }
 
-        public static Emitter CreateEmitter()
+        public static IEmitter CreateEmitter()
         {
-            return new();
+            return audioDevice.CreateEmitter();
         }
 
         private static void ThreadVoid()

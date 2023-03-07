@@ -51,6 +51,7 @@
         public static event Action<HexaProject?>? ProjectChanged;
 
 #pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+
         public static async void Load(string path)
 #pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
@@ -396,12 +397,8 @@
 @"
 namespace App
 {
+    using HexaEngine;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.IO;
-    using HexaEngine.D3D11;
-    using HexaEngine.Projects;
-    using HexaEngine.Scripting;
     using HexaEngine.Windows;
 
     public static class Program
@@ -411,12 +408,9 @@ namespace App
         /// </summary>
         public static void Main()
         {
-            CrashLogger.Initialize();
-            DXGIAdapter.Init();
-            AppConfig config = AppConfig.Load();
-            FileSystem.Initialize();
-            AssemblyManager.Load(config.ScriptAssembly);
-            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = config.StartupScene });
+            Platform.Init();
+            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = Platform.StartupScene });
+            Platform.Shutdown();
         }
     }
 }

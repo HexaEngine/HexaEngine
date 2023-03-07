@@ -1,21 +1,22 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
 
-    public class Listener : IDisposable
+    public class OpenALListener : IListener
     {
-        private static Listener? active;
-        private readonly MasteringVoice masteringVoice;
+        private static OpenALListener? active;
+        private readonly IMasteringVoice masteringVoice;
         private bool isActive;
         private float gain;
-        private Orientation orientation;
+        private AudioOrientation orientation;
         private Vector3 position;
         private Vector3 velocity;
         private bool disposedValue;
 
-        internal Listener(MasteringVoice masteringVoice)
+        internal OpenALListener(IMasteringVoice masteringVoice)
         {
             this.masteringVoice = masteringVoice;
             masteringVoice.GainChanged += MasteringVoice_GainChanged;
@@ -30,7 +31,7 @@
             al.SetListenerProperty(ListenerFloat.Gain, value);
         }
 
-        public Orientation Orientation
+        public AudioOrientation Orientation
         {
             get => orientation;
             set
@@ -88,7 +89,7 @@
             }
         }
 
-        public static Listener? Active
+        public static OpenALListener? Active
         {
             get => active;
             set
@@ -148,7 +149,7 @@
             }
         }
 
-        ~Listener()
+        ~OpenALListener()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

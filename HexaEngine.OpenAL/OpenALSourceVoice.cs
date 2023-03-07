@@ -1,20 +1,21 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using System.Numerics;
 
-    public class SourceVoice : IDisposable
+    public class OpenALSourceVoice : ISourceVoice
     {
         public const int SourceSpatializeSoft = 0x1214;
         private readonly uint source;
-        private readonly AudioStream stream;
+        private readonly IAudioStream stream;
         private SourceState state;
         private bool disposedValue;
-        private SubmixVoice? submix;
+        private ISubmixVoice? submix;
 
         private float pitch = 1;
         private float gain = 1;
 
-        internal SourceVoice(uint sourceVoice, AudioStream audioStream)
+        internal OpenALSourceVoice(uint sourceVoice, IAudioStream audioStream)
         {
             source = sourceVoice;
             stream = audioStream;
@@ -36,7 +37,7 @@
             audioStream.Initialize(source);
         }
 
-        public SubmixVoice? Submix
+        public ISubmixVoice? Submix
         {
             get => submix;
             set
@@ -55,7 +56,7 @@
             }
         }
 
-        public AudioStream Buffer => stream;
+        public IAudioStream Buffer => stream;
 
         /// <summary>
         /// Specify the pitch to be applied, either at Source, or on mixer results, at Listener.
@@ -104,9 +105,9 @@
             }
         }
 
-        public SourceState State => state;
+        public AudioSourceState State => Convert(state);
 
-        public event Action<SourceState>? OnStateChanged;
+        public event Action<AudioSourceState>? OnStateChanged;
 
         public event Action? OnPlay;
 
@@ -116,7 +117,7 @@
 
         public event Action? OnStop;
 
-        public Emitter? Emitter { get; set; }
+        public IEmitter? Emitter { get; set; }
 
         public void Update()
         {
@@ -140,7 +141,7 @@
             if (newState != state)
             {
                 state = newState;
-                OnStateChanged?.Invoke(state);
+                OnStateChanged?.Invoke(Convert(state));
             }
             if (state == SourceState.Playing)
             {
@@ -188,7 +189,7 @@
             }
         }
 
-        ~SourceVoice()
+        ~OpenALSourceVoice()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

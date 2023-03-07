@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using System.Numerics;
 
-    public class Emitter
+    public class OpenALEmitter : IEmitter
     {
         private float referenceDistance = 1;
         private float maxDistance = float.PositiveInfinity;

@@ -2,7 +2,7 @@
 {
     using System.Numerics;
 
-    public struct Orientation
+    public struct AudioOrientation
     {
         /// <summary>
         /// the look at vector normalized also called forward vector.
@@ -14,7 +14,7 @@
         /// </summary>
         public Vector3 Up;
 
-        public Orientation(Vector3 at, Vector3 up)
+        public AudioOrientation(Vector3 at, Vector3 up)
         {
             At = at;
             Up = up;

@@ -1,21 +1,22 @@
 ﻿namespace HexaEngine.OpenAL
 {
+    using HexaEngine.Core.Audio;
     using Silk.NET.OpenAL;
 
-    public unsafe class AudioDevice : IDisposable
+    public unsafe class OpenALAudioDevice : IAudioDevice
     {
         public const int ALC_HRTF_SOFT = 0x1992;
         public const int AL_SOURCE_SPATIALIZE_SOFT = 0x1214;
         public const int ALC_TRUE = 1;
         public const int ALC_FALSE = 0;
 
-        private readonly List<SourceVoice> sources = new();
+        private readonly List<OpenALSourceVoice> sources = new();
         public readonly Device* Device;
-        internal readonly AudioContext context;
+        internal readonly OpenALAudioContext context;
         private bool disposedValue;
-        private AudioContext? current;
+        private OpenALAudioContext? current;
 
-        internal AudioDevice(Device* device)
+        internal OpenALAudioDevice(Device* device)
         {
             Device = device;
             var pcontext = alc.CreateContext(Device, null);
@@ -26,20 +27,21 @@
             Current = context;
         }
 
-        public AudioContext Default => context;
+        public IAudioContext Default => context;
 
-        public AudioContext? Current
+        public IAudioContext? Current
         {
             get => current;
             set
             {
+                if (value is not OpenALAudioContext context) return;
                 if (current == value) return;
                 if (value != null)
-                    alc.MakeContextCurrent(value.Context);
+                    alc.MakeContextCurrent(context.Context);
                 else
                     alc.MakeContextCurrent(null);
                 CheckError(Device);
-                current = value;
+                current = context;
             }
         }
 
@@ -66,44 +68,44 @@
             return false;
         }
 
-        public AudioContext CreateContext()
+        public IAudioContext CreateContext()
         {
             var context = alc.CreateContext(Device, null);
             CheckError(Device);
-            return new(this, context);
+            return new OpenALAudioContext(this, context);
         }
 
-        public MasteringVoice CreateMasteringVoice(string name)
+        public IMasteringVoice CreateMasteringVoice(string name)
         {
-            return new(name);
+            return new OpenALMasteringVoice(name);
         }
 
-        public SubmixVoice CreateSubmixVoice(string name, MasteringVoice voice)
+        public ISubmixVoice CreateSubmixVoice(string name, IMasteringVoice voice)
         {
-            return new(name, voice);
+            return new OpenALSubmixVoice(name, voice);
         }
 
-        public WaveAudioStream CreateWaveAudioStream(Stream stream)
+        public IAudioStream CreateWaveAudioStream(Stream stream)
         {
-            return new(stream);
+            return new OpenALWaveAudioStream(stream);
         }
 
-        public SourceVoice CreateSourceVoice(AudioStream audioStream)
+        public ISourceVoice CreateSourceVoice(IAudioStream audioStream)
         {
             var source = al.GenSource();
-            var sourceVoice = new SourceVoice(source, audioStream);
+            var sourceVoice = new OpenALSourceVoice(source, audioStream);
             sources.Add(sourceVoice);
             return sourceVoice;
         }
 
-        public Listener CreateListener(MasteringVoice voice)
+        public IListener CreateListener(IMasteringVoice voice)
         {
-            return new(voice);
+            return new OpenALListener(voice);
         }
 
-        public Emitter CreateEmitter()
+        public IEmitter CreateEmitter()
         {
-            return new();
+            return new OpenALEmitter();
         }
 
         public void ProcessAudio()
@@ -123,7 +125,7 @@
             }
         }
 
-        ~AudioDevice()
+        ~OpenALAudioDevice()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

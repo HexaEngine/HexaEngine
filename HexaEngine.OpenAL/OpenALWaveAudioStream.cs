@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.OpenAL
 {
-    public unsafe class WaveAudioStream : AudioStream
+    public unsafe class OpenALWaveAudioStream : OpenALAudioStream
     {
         private readonly Stream stream;
         private readonly uint* buffers;
@@ -16,7 +16,7 @@
         private bool looping;
         private bool reachedEnd;
 
-        public WaveAudioStream(Stream stream, int bufferCount = 4, int bufferSize = 65536)
+        public OpenALWaveAudioStream(Stream stream, int bufferCount = 4, int bufferSize = 65536)
         {
             Type = SourceType.Streaming;
             Header = new(stream);

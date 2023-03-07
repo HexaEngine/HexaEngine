@@ -51,7 +51,7 @@
         private bool resizable = true;
         private bool bordered = true;
 
-        public RenderBackend Backend { get; private set; }
+        public GraphicsBackend Backend { get; private set; }
 
         private void PlatformConstruct()
         {

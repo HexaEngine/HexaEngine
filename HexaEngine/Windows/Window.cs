@@ -35,8 +35,9 @@ namespace HexaEngine.Windows
     {
         private RenderDispatcher renderDispatcher;
         private bool firstFrame;
-        private IGraphicsDevice device;
-        private IGraphicsContext context;
+        private IAudioDevice audioDevice;
+        private IGraphicsDevice graphicsDevice;
+        private IGraphicsContext graphicsContext;
         private ISwapChain swapChain;
         private Frameviewer frameviewer;
         private bool sceneGraph;
@@ -50,9 +51,9 @@ namespace HexaEngine.Windows
 
         public RenderDispatcher Dispatcher => renderDispatcher;
 
-        public IGraphicsDevice Device => device;
+        public IGraphicsDevice Device => graphicsDevice;
 
-        public IGraphicsContext Context => context;
+        public IGraphicsContext Context => graphicsContext;
 
         public ISwapChain SwapChain => swapChain;
 
@@ -82,53 +83,47 @@ namespace HexaEngine.Windows
         {
         }
 
-        public void RenderInitialize(IGraphicsDevice device)
+        public void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
-            if (OperatingSystem.IsWindows())
-            {
-                this.device = device;
-                context = device.Context;
-                swapChain = device.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
-                swapChain.Active = true;
-                renderDispatcher = new(device, Thread.CurrentThread);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+            this.audioDevice = audioDevice;
+            this.graphicsDevice = graphicsDevice;
+            graphicsContext = graphicsDevice.Context;
+            swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
+            swapChain.Active = true;
+            renderDispatcher = new(graphicsDevice, Thread.CurrentThread);
 
             if (Application.MainWindow == this)
             {
-                AudioManager.Initialize();
-                ResourceManager.Initialize(device);
-                PipelineManager.Initialize(device);
-                CullingManager.Initialize(device);
-                ObjectPickerManager.Initialize(device, Width, Height);
+                AudioManager.Initialize(audioDevice);
+                ResourceManager.Initialize(graphicsDevice);
+                PipelineManager.Initialize(graphicsDevice);
+                CullingManager.Initialize(graphicsDevice);
+                ObjectPickerManager.Initialize(graphicsDevice, Width, Height);
             }
 
-            frameviewer = new(device);
+            frameviewer = new(graphicsDevice);
 
             sceneGraph = Flags.HasFlag(RendererFlags.SceneGraph);
             imGuiWidgets = Flags.HasFlag(RendererFlags.ImGuiWidgets);
 
             if (Flags.HasFlag(RendererFlags.ImGui))
             {
-                renderer = new(this, device, swapChain);
-                DebugDraw.Init(device);
+                renderer = new(this, graphicsDevice, swapChain);
+                DebugDraw.Init(graphicsDevice);
             }
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
-                WidgetManager.Init(device);
+                WidgetManager.Init(graphicsDevice);
 
             if (Flags.HasFlag(RendererFlags.SceneGraph))
                 SceneManager.SceneChanged += (_, _) => { firstFrame = true; };
 
-            OnRendererInitialize(device);
+            OnRendererInitialize(graphicsDevice);
 
             if (sceneGraph)
             {
                 deferredRenderer = new();
-                initTask = deferredRenderer.Initialize(device, swapChain, this);
+                initTask = deferredRenderer.Initialize(graphicsDevice, swapChain, this);
                 initTask.ContinueWith(x =>
                 {
                     if (x.IsCompletedSuccessfully)
@@ -213,7 +208,7 @@ namespace HexaEngine.Windows
             swapChain.Wait();
         }
 
-        public void RenderDispose()
+        public void Uninitialize()
         {
             OnRendererDispose();
 
@@ -237,8 +232,8 @@ namespace HexaEngine.Windows
             ResourceManager.Dispose();
             AudioManager.Release();
             swapChain.Dispose();
-            context.Dispose();
-            device.Dispose();
+            graphicsContext.Dispose();
+            graphicsDevice.Dispose();
         }
 
         protected virtual void OnRendererInitialize(IGraphicsDevice device)

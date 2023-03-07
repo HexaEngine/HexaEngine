@@ -40,7 +40,7 @@
         static D3D11GraphicsDevice()
         {
             Compiler = new();
-            ShaderCompilers.Register(RenderBackend.D3D11, Compiler);
+            ShaderCompilers.Register(GraphicsBackend.D3D11, Compiler);
         }
 
         [SupportedOSPlatform("windows")]
