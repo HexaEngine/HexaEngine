@@ -10,7 +10,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.Versioning;
     using System.Text;
-    using KeyCode = Input.KeyCode;
+    using Key = Input.Key;
 
     public unsafe class SdlWindow : IWindow
     {
@@ -573,9 +573,10 @@
         internal void ProcessInputKeyboard(KeyboardEvent evnt)
         {
             KeyState state = (KeyState)evnt.State;
-            KeyCode keyCode = (KeyCode)Sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
+            Key keyCode = (Key)Sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
             keyboardEventArgs.KeyState = state;
             keyboardEventArgs.KeyCode = keyCode;
+            keyboardEventArgs.Scancode = evnt.Keysym.Scancode;
             OnKeyboardInput(keyboardEventArgs);
         }
 
@@ -587,10 +588,10 @@
 
         internal void ProcessInputMouse(MouseButtonEvent evnt)
         {
-            KeyState state = (KeyState)evnt.State;
+            MouseButtonState state = (MouseButtonState)evnt.State;
             MouseButton button = (MouseButton)evnt.Button;
-            mouseButtonEventArgs.MouseButton = button;
-            mouseButtonEventArgs.KeyState = state;
+            mouseButtonEventArgs.Button = button;
+            mouseButtonEventArgs.State = state;
             mouseButtonEventArgs.Clicks = evnt.Clicks;
             OnMouseButtonInput(mouseButtonEventArgs);
         }
@@ -608,17 +609,16 @@
 
         internal void ProcessInputMouse(MouseWheelEvent evnt)
         {
-            mouseWheelEventArgs.X = evnt.X;
-            mouseWheelEventArgs.Y = evnt.Y;
-            mouseWheelEventArgs.Direction = (MouseWheelDirection)evnt.Direction;
+            mouseWheelEventArgs.Wheel = new(evnt.X, evnt.Y);
+            mouseWheelEventArgs.Direction = (Input.MouseWheelDirection)evnt.Direction;
             OnMouseWheelInput(mouseWheelEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearState()
         {
-            Keyboard.ClearState();
-            Mouse.ClearState();
+            Keyboard.Flush();
+            Mouse.Flush();
         }
     }
 }

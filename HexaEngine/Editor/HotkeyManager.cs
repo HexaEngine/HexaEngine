@@ -9,7 +9,7 @@
 
     public static class HotkeyManager
     {
-        private static readonly List<KeyCode> keys = new();
+        private static readonly List<Key> keys = new();
         private static readonly List<Hotkey> hotkeys = new();
         private static readonly ConfigKey config;
         private const string Filename = "hotkeys.json";
@@ -19,8 +19,8 @@
             config = Config.Global.GetOrCreateKey("Hotkeys");
             if (File.Exists(Filename))
                 JsonConvert.DeserializeObject(File.ReadAllText(Filename));
-            Keyboard.Pressed += KeyboardPressed;
-            Keyboard.Released += KeyboardReleased;
+            Keyboard.KeyDown += KeyboardPressed;
+            Keyboard.KeyUp += KeyboardReleased;
         }
 
         public static IReadOnlyList<Hotkey> Hotkeys => hotkeys;
@@ -93,7 +93,7 @@
             }
         }
 
-        public static Hotkey Register(string name, Action callback, params KeyCode[] defaults)
+        public static Hotkey Register(string name, Action callback, params Key[] defaults)
         {
             lock (hotkeys)
             {

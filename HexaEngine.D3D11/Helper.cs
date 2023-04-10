@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Reflection;
+    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using System.Numerics;
@@ -9,6 +10,88 @@
 
     public static unsafe class Helper
     {
+        public static DirectXTex.CPFlags Convert(CPFlags flags)
+        {
+            DirectXTex.CPFlags result = 0;
+            if ((flags & CPFlags.None) != 0) result |= DirectXTex.CPFlags.None;
+            if ((flags & CPFlags.LegacyDWORD) != 0) result |= DirectXTex.CPFlags.LegacyDWORD;
+            if ((flags & CPFlags.Paragraph) != 0) result |= DirectXTex.CPFlags.Paragraph;
+            if ((flags & CPFlags.YMM) != 0) result |= DirectXTex.CPFlags.YMM;
+            if ((flags & CPFlags.ZMM) != 0) result |= DirectXTex.CPFlags.ZMM;
+            if ((flags & CPFlags.Page4K) != 0) result |= DirectXTex.CPFlags.Page4K;
+            if ((flags & CPFlags.BadDXTNTails) != 0) result |= DirectXTex.CPFlags.BadDXTNTails;
+            if ((flags & CPFlags.BPP24) != 0) result |= DirectXTex.CPFlags.BPP24;
+            if ((flags & CPFlags.BPP16) != 0) result |= DirectXTex.CPFlags.BPP16;
+            if ((flags & CPFlags.BPP8) != 0) result |= DirectXTex.CPFlags.BPP8;
+            return result;
+        }
+
+        public static DirectXTex.WICCodecs Convert(TexFileFormat format)
+        {
+            return format switch
+            {
+                TexFileFormat.DDS => throw new NotSupportedException(),
+                TexFileFormat.TGA => throw new NotSupportedException(),
+                TexFileFormat.HDR => throw new NotSupportedException(),
+                TexFileFormat.BMP => DirectXTex.WICCodecs.BMP,
+                TexFileFormat.JPEG => DirectXTex.WICCodecs.JPEG,
+                TexFileFormat.PNG => DirectXTex.WICCodecs.PNG,
+                TexFileFormat.TIFF => DirectXTex.WICCodecs.TIFF,
+                TexFileFormat.GIF => DirectXTex.WICCodecs.GIF,
+                TexFileFormat.WMP => DirectXTex.WICCodecs.WMP,
+                TexFileFormat.ICO => DirectXTex.WICCodecs.ICO,
+                _ => throw new NotSupportedException(),
+            };
+        }
+
+        public static DirectXTex.TexFilterFlags Convert(TexFilterFlags flags)
+        {
+            DirectXTex.TexFilterFlags result = 0;
+            if ((flags & TexFilterFlags.Default) != 0) result |= DirectXTex.TexFilterFlags.Default;
+            if ((flags & TexFilterFlags.WrapU) != 0) result |= DirectXTex.TexFilterFlags.WrapU;
+            if ((flags & TexFilterFlags.WrapV) != 0) result |= DirectXTex.TexFilterFlags.WrapV;
+            if ((flags & TexFilterFlags.WrapW) != 0) result |= DirectXTex.TexFilterFlags.WrapW;
+            if ((flags & TexFilterFlags.Wrap) != 0) result |= DirectXTex.TexFilterFlags.Wrap;
+            if ((flags & TexFilterFlags.MirrorU) != 0) result |= DirectXTex.TexFilterFlags.MirrorU;
+            if ((flags & TexFilterFlags.MirrorV) != 0) result |= DirectXTex.TexFilterFlags.MirrorV;
+            if ((flags & TexFilterFlags.MirrorW) != 0) result |= DirectXTex.TexFilterFlags.MirrorW;
+            if ((flags & TexFilterFlags.Mirror) != 0) result |= DirectXTex.TexFilterFlags.Mirror;
+            if ((flags & TexFilterFlags.SeparateAlpha) != 0) result |= DirectXTex.TexFilterFlags.SeparateAlpha;
+            if ((flags & TexFilterFlags.FloatX2Bias) != 0) result |= DirectXTex.TexFilterFlags.FloatX2Bias;
+            if ((flags & TexFilterFlags.RGBCopyRed) != 0) result |= DirectXTex.TexFilterFlags.RGBCopyRed;
+            if ((flags & TexFilterFlags.RGBCopyGreen) != 0) result |= DirectXTex.TexFilterFlags.RGBCopyGreen;
+            if ((flags & TexFilterFlags.RGBCopyBlue) != 0) result |= DirectXTex.TexFilterFlags.RGBCopyBlue;
+            if ((flags & TexFilterFlags.Dither) != 0) result |= DirectXTex.TexFilterFlags.Dither;
+            if ((flags & TexFilterFlags.DitherDiffusion) != 0) result |= DirectXTex.TexFilterFlags.DitherDiffusion;
+            if ((flags & TexFilterFlags.Point) != 0) result |= DirectXTex.TexFilterFlags.Point;
+            if ((flags & TexFilterFlags.Linear) != 0) result |= DirectXTex.TexFilterFlags.Linear;
+            if ((flags & TexFilterFlags.Cubic) != 0) result |= DirectXTex.TexFilterFlags.Cubic;
+            if ((flags & TexFilterFlags.Box) != 0) result |= DirectXTex.TexFilterFlags.Box;
+            if ((flags & TexFilterFlags.Triangle) != 0) result |= DirectXTex.TexFilterFlags.Triangle;
+            if ((flags & TexFilterFlags.SRGBIn) != 0) result |= DirectXTex.TexFilterFlags.SRGBIn;
+            if ((flags & TexFilterFlags.SRGBOut) != 0) result |= DirectXTex.TexFilterFlags.SRGBOut;
+            if ((flags & TexFilterFlags.SRGB) != 0) result |= DirectXTex.TexFilterFlags.SRGB;
+            if ((flags & TexFilterFlags.ForceNonWIC) != 0) result |= DirectXTex.TexFilterFlags.ForceNonWIC;
+            if ((flags & TexFilterFlags.ForceWIC) != 0) result |= DirectXTex.TexFilterFlags.ForceWIC;
+            return result;
+        }
+
+        public static DirectXTex.TexCompressFlags Convert(TexCompressFlags flags)
+        {
+            DirectXTex.TexCompressFlags result = 0;
+            if ((flags & TexCompressFlags.Default) != 0) result |= DirectXTex.TexCompressFlags.Default;
+            if ((flags & TexCompressFlags.DitherRGB) != 0) result |= DirectXTex.TexCompressFlags.DitherRGB;
+            if ((flags & TexCompressFlags.DitherA) != 0) result |= DirectXTex.TexCompressFlags.DitherA;
+            if ((flags & TexCompressFlags.Dither) != 0) result |= DirectXTex.TexCompressFlags.Dither;
+            if ((flags & TexCompressFlags.Uniform) != 0) result |= DirectXTex.TexCompressFlags.Uniform;
+            if ((flags & TexCompressFlags.BC7Use3Sunsets) != 0) result |= DirectXTex.TexCompressFlags.BC7Use3Sunsets;
+            if ((flags & TexCompressFlags.BC7Quick) != 0) result |= DirectXTex.TexCompressFlags.BC7Quick;
+            if ((flags & TexCompressFlags.SRGBIn) != 0) result |= DirectXTex.TexCompressFlags.SRGBIn;
+            if ((flags & TexCompressFlags.SRGBOut) != 0) result |= DirectXTex.TexCompressFlags.SRGBOut;
+            if ((flags & TexCompressFlags.Parallel) != 0) result |= DirectXTex.TexCompressFlags.Parallel;
+            return result;
+        }
+
         public static Silk.NET.Direct3D11.Map Convert(Map map)
         {
             return map switch
@@ -671,7 +754,7 @@
         {
             return new()
             {
-                PSysMem = data.DataPointer.ToPointer(),
+                PSysMem = (void*)data.DataPointer,
                 SysMemPitch = (uint)data.RowPitch,
                 SysMemSlicePitch = (uint)data.SlicePitch,
             };
@@ -1151,24 +1234,24 @@
                 Format.RGBA32UInt => Silk.NET.DXGI.Format.FormatR32G32B32A32Uint,
                 Format.RGBA32SInt => Silk.NET.DXGI.Format.FormatR32G32B32A32Sint,
                 Format.RGBA32Float => Silk.NET.DXGI.Format.FormatR32G32B32A32Float,
-                Format.Depth16UNorm => Silk.NET.DXGI.Format.FormatD16Unorm,
-                Format.Depth32Float => Silk.NET.DXGI.Format.FormatD32Float,
+                Format.D16UNorm => Silk.NET.DXGI.Format.FormatD16Unorm,
+                Format.D32Float => Silk.NET.DXGI.Format.FormatD32Float,
                 Format.Depth24UNormStencil8 => Silk.NET.DXGI.Format.FormatD24UnormS8Uint,
                 Format.Depth32FloatStencil8 => Silk.NET.DXGI.Format.FormatD32FloatS8X24Uint,
-                Format.BC1RGBAUNorm => Silk.NET.DXGI.Format.FormatBC1Unorm,
-                Format.BC1RGBAUNormSrgb => Silk.NET.DXGI.Format.FormatBC1UnormSrgb,
-                Format.BC2RGBAUNorm => Silk.NET.DXGI.Format.FormatBC2Unorm,
-                Format.BC2RGBAUNormSrgb => Silk.NET.DXGI.Format.FormatBC2UnormSrgb,
-                Format.BC3RGBAUNorm => Silk.NET.DXGI.Format.FormatBC3Unorm,
-                Format.BC3RGBAUNormSrgb => Silk.NET.DXGI.Format.FormatBC3UnormSrgb,
-                Format.BC4RUNorm => Silk.NET.DXGI.Format.FormatBC4Unorm,
-                Format.BC4RSNorm => Silk.NET.DXGI.Format.FormatBC4SNorm,
-                Format.BC5RGUNorm => Silk.NET.DXGI.Format.FormatBC5Unorm,
-                Format.BC5RGSNorm => Silk.NET.DXGI.Format.FormatBC5SNorm,
-                Format.BC6HRGBUFloat => Silk.NET.DXGI.Format.FormatBC6HUF16,
-                Format.BC6HRGBFloat => Silk.NET.DXGI.Format.FormatBC6HSF16,
-                Format.BC7RGBAUNorm => Silk.NET.DXGI.Format.FormatBC7Unorm,
-                Format.BC7RGBAUNormSrgb => Silk.NET.DXGI.Format.FormatBC7UnormSrgb,
+                Format.BC1UNorm => Silk.NET.DXGI.Format.FormatBC1Unorm,
+                Format.BC1UNormSrgb => Silk.NET.DXGI.Format.FormatBC1UnormSrgb,
+                Format.BC2UNorm => Silk.NET.DXGI.Format.FormatBC2Unorm,
+                Format.BC2UNormSrgb => Silk.NET.DXGI.Format.FormatBC2UnormSrgb,
+                Format.BC3UNorm => Silk.NET.DXGI.Format.FormatBC3Unorm,
+                Format.BC3UNormSrgb => Silk.NET.DXGI.Format.FormatBC3UnormSrgb,
+                Format.BC4UNorm => Silk.NET.DXGI.Format.FormatBC4Unorm,
+                Format.BC4SNorm => Silk.NET.DXGI.Format.FormatBC4SNorm,
+                Format.BC5UNorm => Silk.NET.DXGI.Format.FormatBC5Unorm,
+                Format.BC5SNorm => Silk.NET.DXGI.Format.FormatBC5SNorm,
+                Format.BC6HUFloat => Silk.NET.DXGI.Format.FormatBC6HUF16,
+                Format.BC6HFloat => Silk.NET.DXGI.Format.FormatBC6HSF16,
+                Format.BC7UNorm => Silk.NET.DXGI.Format.FormatBC7Unorm,
+                Format.BC7UNormSrgb => Silk.NET.DXGI.Format.FormatBC7UnormSrgb,
                 Format.R32Typeless => Silk.NET.DXGI.Format.FormatR32Typeless,
                 Format.RGB32Float => Silk.NET.DXGI.Format.FormatR32G32B32Float,
                 Format.R8Typeless => Silk.NET.DXGI.Format.FormatR8Typeless,
@@ -1242,24 +1325,24 @@
                 Silk.NET.DXGI.Format.FormatR32G32B32A32Uint => Format.RGBA32UInt,
                 Silk.NET.DXGI.Format.FormatR32G32B32A32Sint => Format.RGBA32SInt,
                 Silk.NET.DXGI.Format.FormatR32G32B32A32Float => Format.RGBA32Float,
-                Silk.NET.DXGI.Format.FormatD16Unorm => Format.Depth16UNorm,
-                Silk.NET.DXGI.Format.FormatD32Float => Format.Depth32Float,
+                Silk.NET.DXGI.Format.FormatD16Unorm => Format.D16UNorm,
+                Silk.NET.DXGI.Format.FormatD32Float => Format.D32Float,
                 Silk.NET.DXGI.Format.FormatD24UnormS8Uint => Format.Depth24UNormStencil8,
                 Silk.NET.DXGI.Format.FormatD32FloatS8X24Uint => Format.Depth32FloatStencil8,
-                Silk.NET.DXGI.Format.FormatBC1Unorm => Format.BC1RGBAUNorm,
-                Silk.NET.DXGI.Format.FormatBC1UnormSrgb => Format.BC1RGBAUNormSrgb,
-                Silk.NET.DXGI.Format.FormatBC2Unorm => Format.BC2RGBAUNorm,
-                Silk.NET.DXGI.Format.FormatBC2UnormSrgb => Format.BC2RGBAUNormSrgb,
-                Silk.NET.DXGI.Format.FormatBC3Unorm => Format.BC3RGBAUNorm,
-                Silk.NET.DXGI.Format.FormatBC3UnormSrgb => Format.BC3RGBAUNormSrgb,
-                Silk.NET.DXGI.Format.FormatBC4Unorm => Format.BC4RUNorm,
-                Silk.NET.DXGI.Format.FormatBC4SNorm => Format.BC4RSNorm,
-                Silk.NET.DXGI.Format.FormatBC5Unorm => Format.BC5RGUNorm,
-                Silk.NET.DXGI.Format.FormatBC5SNorm => Format.BC5RGSNorm,
-                Silk.NET.DXGI.Format.FormatBC6HUF16 => Format.BC6HRGBUFloat,
-                Silk.NET.DXGI.Format.FormatBC6HSF16 => Format.BC6HRGBFloat,
-                Silk.NET.DXGI.Format.FormatBC7Unorm => Format.BC7RGBAUNorm,
-                Silk.NET.DXGI.Format.FormatBC7UnormSrgb => Format.BC7RGBAUNormSrgb,
+                Silk.NET.DXGI.Format.FormatBC1Unorm => Format.BC1UNorm,
+                Silk.NET.DXGI.Format.FormatBC1UnormSrgb => Format.BC1UNormSrgb,
+                Silk.NET.DXGI.Format.FormatBC2Unorm => Format.BC2UNorm,
+                Silk.NET.DXGI.Format.FormatBC2UnormSrgb => Format.BC2UNormSrgb,
+                Silk.NET.DXGI.Format.FormatBC3Unorm => Format.BC3UNorm,
+                Silk.NET.DXGI.Format.FormatBC3UnormSrgb => Format.BC3UNormSrgb,
+                Silk.NET.DXGI.Format.FormatBC4Unorm => Format.BC4UNorm,
+                Silk.NET.DXGI.Format.FormatBC4SNorm => Format.BC4SNorm,
+                Silk.NET.DXGI.Format.FormatBC5Unorm => Format.BC5UNorm,
+                Silk.NET.DXGI.Format.FormatBC5SNorm => Format.BC5SNorm,
+                Silk.NET.DXGI.Format.FormatBC6HUF16 => Format.BC6HUFloat,
+                Silk.NET.DXGI.Format.FormatBC6HSF16 => Format.BC6HFloat,
+                Silk.NET.DXGI.Format.FormatBC7Unorm => Format.BC7UNorm,
+                Silk.NET.DXGI.Format.FormatBC7UnormSrgb => Format.BC7UNormSrgb,
                 Silk.NET.DXGI.Format.FormatR32Typeless => Format.R32Typeless,
                 Silk.NET.DXGI.Format.FormatR32G32B32Float => Format.RGB32Float,
                 _ => Format.Unknown,
@@ -1539,6 +1622,136 @@
                 UnorderedAccessViewDimension.Texture2D => Silk.NET.Direct3D11.UavDimension.Texture2D,
                 UnorderedAccessViewDimension.Texture2DArray => Silk.NET.Direct3D11.UavDimension.Texture2Darray,
                 UnorderedAccessViewDimension.Texture3D => Silk.NET.Direct3D11.UavDimension.Texture3D,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static DirectXTex.TexMetadata Convert(TexMetadata metadata)
+        {
+            DirectXTex.TexMetadata texMetadata;
+            texMetadata.Format = Convert(metadata.Format);
+            texMetadata.ArraySize = (ulong)metadata.ArraySize;
+            texMetadata.Width = (ulong)metadata.Width;
+            texMetadata.Height = (ulong)metadata.Height;
+            texMetadata.Depth = (ulong)metadata.Depth;
+            texMetadata.MipLevels = (ulong)metadata.MipLevels;
+            texMetadata.Dimension = Convert(metadata.Dimension);
+            texMetadata.MiscFlags = Convert(metadata.MiscFlags);
+            texMetadata.MiscFlags2 = 0;
+            texMetadata.SetAlphaMode(Convert(metadata.AlphaMode));
+            return texMetadata;
+        }
+
+        public static DirectXTex.TexAlphaMode Convert(TexAlphaMode mode)
+        {
+            return mode switch
+            {
+                TexAlphaMode.Unknown => DirectXTex.TexAlphaMode.Unknown,
+                TexAlphaMode.Straight => DirectXTex.TexAlphaMode.Straight,
+                TexAlphaMode.Premultiplied => DirectXTex.TexAlphaMode.Premultiplied,
+                TexAlphaMode.Opaque => DirectXTex.TexAlphaMode.Opaque,
+                TexAlphaMode.Custom => DirectXTex.TexAlphaMode.Custom,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static DirectXTex.TexMiscFlags Convert(TexMiscFlags flags)
+        {
+            DirectXTex.TexMiscFlags result = 0;
+            if ((flags & TexMiscFlags.GenerateMips) != 0) result |= DirectXTex.TexMiscFlags.GenerateMips;
+            if ((flags & TexMiscFlags.Shared) != 0) result |= DirectXTex.TexMiscFlags.Shared;
+            if ((flags & TexMiscFlags.TextureCube) != 0) result |= DirectXTex.TexMiscFlags.TextureCube;
+            if ((flags & TexMiscFlags.DrawIndirectArguments) != 0) result |= DirectXTex.TexMiscFlags.DrawIndirectArguments;
+            if ((flags & TexMiscFlags.BufferAllowRawViews) != 0) result |= DirectXTex.TexMiscFlags.BufferAllowRawViews;
+            if ((flags & TexMiscFlags.BufferStructured) != 0) result |= DirectXTex.TexMiscFlags.BufferStructured;
+            if ((flags & TexMiscFlags.ResourceClamp) != 0) result |= DirectXTex.TexMiscFlags.ResourceClamp;
+            if ((flags & TexMiscFlags.SharedKeyedMutex) != 0) result |= DirectXTex.TexMiscFlags.SharedKeyedMutex;
+            if ((flags & TexMiscFlags.GdiCompatible) != 0) result |= DirectXTex.TexMiscFlags.GdiCompatible;
+            if ((flags & TexMiscFlags.SharedNTHandle) != 0) result |= DirectXTex.TexMiscFlags.SharedNTHandle;
+            if ((flags & TexMiscFlags.RestrictedContent) != 0) result |= DirectXTex.TexMiscFlags.RestrictedContent;
+            if ((flags & TexMiscFlags.RestrictSharedResource) != 0) result |= DirectXTex.TexMiscFlags.RestrictSharedResource;
+            if ((flags & TexMiscFlags.RestrictSharedResourceDriver) != 0) result |= DirectXTex.TexMiscFlags.RestrictSharedResourceDriver;
+            if ((flags & TexMiscFlags.Guarded) != 0) result |= DirectXTex.TexMiscFlags.Guarded;
+            if ((flags & TexMiscFlags.TilePool) != 0) result |= DirectXTex.TexMiscFlags.TilePool;
+            if ((flags & TexMiscFlags.Tiled) != 0) result |= DirectXTex.TexMiscFlags.Tiled;
+            if ((flags & TexMiscFlags.HardwareProtected) != 0) result |= DirectXTex.TexMiscFlags.HardwareProtected;
+            if ((flags & TexMiscFlags.SharedDisplayable) != 0) result |= DirectXTex.TexMiscFlags.SharedDisplayable;
+            if ((flags & TexMiscFlags.SharedExclusiveWriter) != 0) result |= DirectXTex.TexMiscFlags.SharedExclusiveWriter;
+            if ((flags & TexMiscFlags.None) != 0) result |= DirectXTex.TexMiscFlags.None;
+            return result;
+        }
+
+        public static DirectXTex.TexDimension Convert(TexDimension dimension)
+        {
+            return dimension switch
+            {
+                TexDimension.Texture1D => DirectXTex.TexDimension.Texture1D,
+                TexDimension.Texture2D => DirectXTex.TexDimension.Texture2D,
+                TexDimension.Texture3D => DirectXTex.TexDimension.Texture3D,
+            };
+        }
+
+        public static TexMetadata ConvertBack(DirectXTex.TexMetadata metadata)
+        {
+            TexMetadata texMetadata;
+            texMetadata.Format = ConvertBack(metadata.Format);
+            texMetadata.ArraySize = (int)metadata.ArraySize;
+            texMetadata.Width = (int)metadata.Width;
+            texMetadata.Height = (int)metadata.Height;
+            texMetadata.Depth = (int)metadata.Depth;
+            texMetadata.MipLevels = (int)metadata.MipLevels;
+            texMetadata.Dimension = ConvertBack(metadata.Dimension);
+            texMetadata.MiscFlags = ConvertBack(metadata.MiscFlags);
+            texMetadata.AlphaMode = ConvertBack(metadata.GetAlphaMode());
+            return texMetadata;
+        }
+
+        private static TexDimension ConvertBack(DirectXTex.TexDimension dimension)
+        {
+            return dimension switch
+            {
+                DirectXTex.TexDimension.Texture1D => TexDimension.Texture1D,
+                DirectXTex.TexDimension.Texture2D => TexDimension.Texture2D,
+                DirectXTex.TexDimension.Texture3D => TexDimension.Texture3D,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        private static TexMiscFlags ConvertBack(DirectXTex.TexMiscFlags flags)
+        {
+            TexMiscFlags result = 0;
+            if ((flags & DirectXTex.TexMiscFlags.GenerateMips) != 0) result |= TexMiscFlags.GenerateMips;
+            if ((flags & DirectXTex.TexMiscFlags.Shared) != 0) result |= TexMiscFlags.Shared;
+            if ((flags & DirectXTex.TexMiscFlags.TextureCube) != 0) result |= TexMiscFlags.TextureCube;
+            if ((flags & DirectXTex.TexMiscFlags.DrawIndirectArguments) != 0) result |= TexMiscFlags.DrawIndirectArguments;
+            if ((flags & DirectXTex.TexMiscFlags.BufferAllowRawViews) != 0) result |= TexMiscFlags.BufferAllowRawViews;
+            if ((flags & DirectXTex.TexMiscFlags.BufferStructured) != 0) result |= TexMiscFlags.BufferStructured;
+            if ((flags & DirectXTex.TexMiscFlags.ResourceClamp) != 0) result |= TexMiscFlags.ResourceClamp;
+            if ((flags & DirectXTex.TexMiscFlags.SharedKeyedMutex) != 0) result |= TexMiscFlags.SharedKeyedMutex;
+            if ((flags & DirectXTex.TexMiscFlags.GdiCompatible) != 0) result |= TexMiscFlags.GdiCompatible;
+            if ((flags & DirectXTex.TexMiscFlags.SharedNTHandle) != 0) result |= TexMiscFlags.SharedNTHandle;
+            if ((flags & DirectXTex.TexMiscFlags.RestrictedContent) != 0) result |= TexMiscFlags.RestrictedContent;
+            if ((flags & DirectXTex.TexMiscFlags.RestrictSharedResource) != 0) result |= TexMiscFlags.RestrictSharedResource;
+            if ((flags & DirectXTex.TexMiscFlags.RestrictSharedResourceDriver) != 0) result |= TexMiscFlags.RestrictSharedResourceDriver;
+            if ((flags & DirectXTex.TexMiscFlags.Guarded) != 0) result |= TexMiscFlags.Guarded;
+            if ((flags & DirectXTex.TexMiscFlags.TilePool) != 0) result |= TexMiscFlags.TilePool;
+            if ((flags & DirectXTex.TexMiscFlags.Tiled) != 0) result |= TexMiscFlags.Tiled;
+            if ((flags & DirectXTex.TexMiscFlags.HardwareProtected) != 0) result |= TexMiscFlags.HardwareProtected;
+            if ((flags & DirectXTex.TexMiscFlags.SharedDisplayable) != 0) result |= TexMiscFlags.SharedDisplayable;
+            if ((flags & DirectXTex.TexMiscFlags.SharedExclusiveWriter) != 0) result |= TexMiscFlags.SharedExclusiveWriter;
+            if ((flags & DirectXTex.TexMiscFlags.None) != 0) result |= TexMiscFlags.None;
+            return result;
+        }
+
+        private static TexAlphaMode ConvertBack(DirectXTex.TexAlphaMode alphaMode)
+        {
+            return alphaMode switch
+            {
+                DirectXTex.TexAlphaMode.Unknown => TexAlphaMode.Unknown,
+                DirectXTex.TexAlphaMode.Straight => TexAlphaMode.Straight,
+                DirectXTex.TexAlphaMode.Premultiplied => TexAlphaMode.Premultiplied,
+                DirectXTex.TexAlphaMode.Opaque => TexAlphaMode.Opaque,
+                DirectXTex.TexAlphaMode.Custom => TexAlphaMode.Custom,
                 _ => throw new NotImplementedException(),
             };
         }

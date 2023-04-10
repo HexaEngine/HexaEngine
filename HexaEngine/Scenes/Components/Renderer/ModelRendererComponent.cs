@@ -1,10 +1,12 @@
-﻿namespace HexaEngine.Core.Renderers.Components
+﻿namespace HexaEngine.Scenes.Components.Renderer
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using System.Collections.Generic;
@@ -60,6 +62,8 @@
                     return;
                 if (component.gameObject == null)
                     return;
+                if (component.modelManager == null)
+                    return;
                 lock (component.instances)
                 {
                     for (int i = 0; i < component.instances.Count; i++)
@@ -71,7 +75,7 @@
                 var path = Paths.CurrentAssetsPath + component.model;
                 if (FileSystem.Exists(path))
                 {
-                    ModelSource source = component.modelManager.Load(path);
+                    ModelFile source = component.modelManager.Load(path);
 
                     for (ulong i = 0; i < source.Header.MeshCount; i++)
                     {

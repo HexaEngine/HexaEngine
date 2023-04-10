@@ -1,12 +1,19 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    using Silk.NET.SDL;
+    using System.Numerics;
 
     public class MouseWheelEventArgs : EventArgs
     {
-        public int X { get; internal set; }
+        public MouseWheelEventArgs()
+        {
+        }
 
-        public int Y { get; internal set; }
+        public MouseWheelEventArgs(Vector2 wheel)
+        {
+            Wheel = wheel;
+        }
+
+        public Vector2 Wheel { get; internal set; }
 
         public MouseWheelDirection Direction { get; internal set; }
     }

@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Scenes.Managers
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Instances;
@@ -9,16 +10,19 @@ namespace HexaEngine.Scenes.Managers
     using HexaEngine.Core.Scenes;
     using Silk.NET.Assimp;
     using System.Numerics;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
     using Texture = Texture;
 
     public struct SelectionData
     {
         public uint InstanceId;
         public uint TypeId;
+        public uint PrimitiveId;
+        public uint VertexId;
 
         public override string ToString()
         {
-            return $"Type:{TypeId}, Instance:{InstanceId}";
+            return $"Type:{TypeId}, Instance:{InstanceId}, Primitive:{PrimitiveId}, Vertex:{VertexId}";
         }
     }
 
@@ -77,18 +81,30 @@ namespace HexaEngine.Scenes.Managers
             texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.RGBA32UInt), DepthStencilDesc.Default);
         }
 
-        public static unsafe GameObject? Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
+        public static unsafe GameObject? SelectObject(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
+                return default;
+
+            var data = Select(context, position, viewport);
+
+            if (data.InstanceId == 0 || data.TypeId == 0)
                 return null;
 
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'depthStencilView' in 'void IGraphicsContext.ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)'.
+            ImGuiConsole.Log(LogSeverity.Log, data.ToString());
+
+            return manager.Types[(int)data.TypeId - 1].Instances[(int)data.InstanceId - 1].Parent;
+        }
+
+        public static unsafe SelectionData Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
+        {
+            InstanceManager? manager = InstanceManager.Current;
+            if (manager == null)
+                return default;
+
             context.ClearDepthStencilView(texture.DepthStencilView, DepthStencilClearFlags.All, 1, 0);
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'depthStencilView' in 'void IGraphicsContext.ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)'.
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'renderTargetView' in 'void IGraphicsContext.ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)'.
             context.ClearRenderTargetView(texture.RenderTargetView, default);
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'renderTargetView' in 'void IGraphicsContext.ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value)'.
             context.SetRenderTarget(texture.RenderTargetView, texture.DepthStencilView);
             context.SetViewport(viewport);
             pipeline.BeginDraw(context);
@@ -113,12 +129,7 @@ namespace HexaEngine.Scenes.Managers
             computePipeline.Dispatch(context, 1, 1, 1);
             outputBuffer.Read(context);
 
-            SelectionData data = outputBuffer[0];
-
-            if (data.InstanceId == 0 || data.TypeId == 0)
-                return null;
-
-            return manager.Types[(int)data.TypeId - 1].Instances[(int)data.InstanceId - 1].Parent;
+            return outputBuffer[0];
         }
 
         public static void Release()

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
-    using HexaEngine.Scripting;
+    using HexaEngine.Core.Scripts;
     using ImGuiNET;
     using System;
 

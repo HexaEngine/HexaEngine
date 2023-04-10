@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
@@ -206,7 +205,7 @@
             if (!Material.Bind(context)) return false;
 
             frustumInstanceBuffer.Update(context);
-            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
             context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(frustumInstanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
@@ -226,7 +225,7 @@
 
             noCullInstanceBuffer.Update(context);
             noCullInstanceOffsets.Update(context);
-            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
             context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(noCullInstanceBuffer.SRV, 0);
             context.VSSetShaderResource(noCullInstanceOffsets.SRV, 1);
@@ -245,7 +244,7 @@
             if (!Material.Bind(context)) return false;
 
             idBuffer.Update(context);
-            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
             context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(instanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
@@ -264,7 +263,7 @@
             if (!Material.Bind(context)) return;
 
             idBuffer.Update(context);
-            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
             context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(instanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
@@ -282,7 +281,7 @@
             if (!Material.Bind(context)) return;
 
             idBuffer.Update(context);
-            context.SetVertexBuffer(0, Mesh.Value.VB, (uint)sizeof(MeshVertex));
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
             context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
             context.VSSetShaderResource(instanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);

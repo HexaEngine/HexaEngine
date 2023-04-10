@@ -57,6 +57,8 @@
                 ImGui.CheckboxFlags("Find Degenerates", ref flags, (int)PostProcessSteps.FindDegenerates);
                 ImGui.CheckboxFlags("Find Invalid Data", ref flags, (int)PostProcessSteps.FindInvalidData);
                 ImGui.CheckboxFlags("Find Instances", ref flags, (int)PostProcessSteps.FindInstances);
+                ImGui.CheckboxFlags("Flip UVs", ref flags, (int)PostProcessSteps.FlipUVs);
+                ImGui.CheckboxFlags("Generate UVs", ref flags, (int)PostProcessSteps.GenerateUVCoords);
                 importer.PostProcessSteps = (PostProcessSteps)flags;
 
                 if (ImGui.Button("Load"))

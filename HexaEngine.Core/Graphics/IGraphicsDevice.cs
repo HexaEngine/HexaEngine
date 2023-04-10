@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
     using System;
@@ -11,6 +12,7 @@
         /// The immediate context of this device
         /// </summary>
         public IGraphicsContext Context { get; }
+        ITextureLoader TextureLoader { get; }
 
         public ISwapChain CreateSwapChain(SdlWindow window);
 
@@ -23,6 +25,16 @@
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="OutOfMemoryException"></exception>
         public IBuffer CreateBuffer(BufferDescription description);
+
+        /// <summary>
+        /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/>
+        /// </summary>
+        /// <param name="description">The <see cref="BufferDescription"/> that describes the <see cref="IBuffer"/></param>
+        /// <returns>The <see cref="IBuffer"/></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="OutOfMemoryException"></exception>
+        unsafe IBuffer CreateBuffer(void* src, uint length, BufferDescription description);
 
         /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/> and with the initial value <paramref name="value"/><br/>
@@ -99,6 +111,8 @@
         public ITexture1D LoadTexture1D(string path);
 
         public ITexture2D LoadTexture2D(string path);
+
+        public ITexture2D LoadTexture2D(string path, BindFlags flags);
 
         public ITexture3D LoadTexture3D(string path);
 

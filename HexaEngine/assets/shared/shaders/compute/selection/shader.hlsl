@@ -2,6 +2,8 @@
 {
 	uint InstanceId;
 	uint TypeId;
+    uint PrimitiveId;
+    uint VertexId;
 };
 
 cbuffer MouseBuffer
@@ -20,5 +22,7 @@ void main(uint groupIndex : SV_GroupIndex)
 	SelectionData outData;
 	outData.InstanceId = inData.x;
 	outData.TypeId = inData.y;
+    outData.PrimitiveId = inData.z;
+    outData.VertexId = inData.w;
 	output[0] = outData;
 }

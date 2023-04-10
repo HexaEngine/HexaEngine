@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Core.IO.Shaders
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Mathematics;
+    using System.Text;
 
     public unsafe class ShaderBytecodeFile
     {
@@ -10,28 +12,8 @@
         public InputElementDescription[] InputElements;
         public ShaderMacro[] Macros;
 
-        public ShaderBytecodeFile(string path)
+        public ShaderBytecodeFile(string path) : this(path, FileSystem.Open(path))
         {
-            Name = path;
-            Stream fs = FileSystem.Open(path);
-            Header.Read(fs);
-
-            var stream = fs;
-
-            Bytecode = stream.ReadBytes((int)Header.BytecodeLength);
-
-            InputElements = new InputElementDescription[Header.InputElementCount];
-            for (uint i = 0; i < Header.InputElementCount; i++)
-            {
-                InputElements[i].Read(stream, Header.Encoding, Header.Endianness);
-            }
-
-            Macros = new ShaderMacro[Header.MacroCount];
-            for (uint i = 0; i < Header.MacroCount; i++)
-            {
-                Macros[i].Read(stream, Header.Encoding, Header.Endianness);
-            }
-            fs.Close();
         }
 
         public ShaderBytecodeFile(string path, Stream fs)
@@ -75,14 +57,18 @@
             return new ShaderBytecodeFile(path, File.OpenRead(path));
         }
 
-        public void Save(string dir)
+        public void Save(string dir, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.None)
         {
             Directory.CreateDirectory(dir);
-            Stream fs = File.Create(Path.Combine(dir, Name + ".bytecode"));
+            Stream fs = File.Create(Path.Combine(dir, Path.GetFileNameWithoutExtension(Name) + ".bytecode"));
+
+            Header.Encoding = encoding;
+            Header.Endianness = endianness;
+            Header.Compression = compression;
+            Header.Write(fs);
 
             var stream = fs;
 
-            Header.Write(stream);
             stream.Write(Bytecode);
             for (uint i = 0; i < Header.InputElementCount; i++)
             {

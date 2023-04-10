@@ -1,12 +1,12 @@
 #include "defs.hlsl"
 #include "../../camera.hlsl"
 
-#ifndef HasDisplacementTex
-#define HasDisplacementTex 0
+#ifndef HasHeightTex
+#define HasHeightTex 0
 #endif
 
-Texture2D displacmentTexture : register(t0);
-SamplerState displacmentSampler : register(s0);
+Texture2D heightTexture : register(t0);
+SamplerState heightTextureSampler : register(s0);
 
 [domain("tri")]
 PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const OutputPatch<DomainInput, 3> tri)
@@ -29,13 +29,13 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 	output.normal = normalize(output.normal);
 #endif
 
-#if HasDisplacementTex
+#if HasHeightTex
 #if (DEPTH != 1)
-		float h = displacmentTexture.SampleLevel(displacmentSampler, (float2) output.tex, 0).r;
-		output.position += float4((h - 1.0) * (output.normal * 0.05f), 0);
+    float h = heightTexture.SampleLevel(heightTextureSampler, (float2) output.tex, 0).r;
+	output.position += float4((h - 1.0) * (output.normal * 0.05f), 0);
 #else
-		float h = displacmentTexture.SampleLevel(displacmentSampler, (float2)tex, 0).r;
-		output.position += float4((h - 1.0) * (normal * 0.05f), 0);
+	float h = heightTexture.SampleLevel(heightTextureSampler, (float2)tex, 0).r;
+	output.position += float4((h - 1.0) * (normal * 0.05f), 0);
 #endif
 #endif
 	

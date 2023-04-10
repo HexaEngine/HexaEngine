@@ -67,11 +67,8 @@ namespace HexaEngine.Rendering
         private int height;
         private int rendererWidth;
         private int rendererHeight;
-        private int windowWidth;
-        private int windowHeight;
         private bool windowResized;
         private bool sceneChanged;
-        private bool sceneVariablesChanged;
         private readonly RendererProfiler profiler = new(10);
 
         public RendererProfiler Profiler => profiler;
@@ -135,7 +132,7 @@ namespace HexaEngine.Rendering
 
             gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
             depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
-            occlusionStencil = new(device, width, height, Format.Depth32Float);
+            occlusionStencil = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
             hizBuffer = new(device, width, height);
 
@@ -159,11 +156,6 @@ namespace HexaEngine.Rendering
 
             ssao = new();
 
-            Vector4 solidColor = new(0.001f, 0.001f, 0.001f, 1);
-            Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
-
-            ResourceManager2.Shared.AddTextureColor("EnvIrr", TextureDimension.TextureCube, ambient);
-            ResourceManager2.Shared.AddTextureColor("EnvPref", TextureDimension.TextureCube, solidColor);
             brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RGBA32Float)).Value;
 
             window.Dispatcher.InvokeBlocking(() =>
@@ -307,7 +299,7 @@ namespace HexaEngine.Rendering
 
             gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
             depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
-            occlusionStencil = new(device, width, height, Format.Depth32Float);
+            occlusionStencil = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
 
             lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
@@ -328,55 +320,8 @@ namespace HexaEngine.Rendering
             scene.Lights.EndResize(width, height);
         }
 
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-
-        public unsafe async void LoadScene(Scene scene)
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+        public unsafe void LoadScene(Scene scene)
         {
-            SceneVariables variables = scene.Variables;
-
-            Vector4 skyColor = new(0.001f, 0.001f, 0.001f, 1);
-
-            {
-                if (variables.TryGetValue("SkyColor", out string? vl))
-                {
-                    if (float.TryParse(vl, out float value))
-                    {
-                        skyColor = new(value, value, value, 1);
-                    }
-                }
-            }
-
-            Vector4 ambient = new(0.1f, 0.1f, 0.1f, 1);
-
-            {
-                if (variables.TryGetValue("AmbientLight", out string? vl))
-                {
-                    if (float.TryParse(vl, out float value))
-                    {
-                        ambient = new(value);
-                    }
-                }
-            }
-
-            if (variables.TryGetValue("EnvIrr", out string? envirrp) && FileSystem.Exists(Paths.CurrentTexturePath + envirrp))
-            {
-                ResourceManager2.Shared.AddOrUpdateTextureFile("EnvIrr", new TextureFileDescription(Paths.CurrentTexturePath + envirrp, TextureDimension.TextureCube));
-            }
-            else
-            {
-                ResourceManager2.Shared.AddOrUpdateTextureColor("EnvIrr", TextureDimension.TextureCube, ambient);
-            }
-
-            if (variables.TryGetValue("EnvPref", out string? envfilterp) && FileSystem.Exists(Paths.CurrentTexturePath + envfilterp))
-            {
-                ResourceManager2.Shared.AddOrUpdateTextureFile("EnvPref", new TextureFileDescription(Paths.CurrentTexturePath + envfilterp, TextureDimension.TextureCube));
-            }
-            else
-            {
-                ResourceManager2.Shared.AddOrUpdateTextureColor("EnvPref", TextureDimension.TextureCube, skyColor);
-            }
-
             scene.Lights.BeginResize();
             scene.Lights.EndResize(width, height).Wait();
         }

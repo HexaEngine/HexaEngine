@@ -32,7 +32,7 @@
             Viewport = new(desc.Width, desc.Height);
 
             Resource = device.CreateTexture2D(depthStencilDesc);
-            var dsvdesc = new DepthStencilViewDescription((ITexture2D)Resource, desc.ArraySize > 1 ? DepthStencilViewDimension.Texture2DArray : DepthStencilViewDimension.Texture2D, Format.Depth32Float);
+            var dsvdesc = new DepthStencilViewDescription((ITexture2D)Resource, desc.ArraySize > 1 ? DepthStencilViewDimension.Texture2DArray : DepthStencilViewDimension.Texture2D, Format.D32Float);
             dsvdesc.Format = desc.Format;
             DSV = device.CreateDepthStencilView(Resource, dsvdesc);
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
@@ -113,7 +113,7 @@
             Format resformat = Format.Unknown;
             switch (depthformat)
             {
-                case Format.Depth16UNorm:
+                case Format.D16UNorm:
                     resformat = Format.R32Typeless;
                     break;
 
@@ -121,7 +121,7 @@
                     resformat = Format.R24G8Typeless;
                     break;
 
-                case Format.Depth32Float:
+                case Format.D32Float:
                     resformat = Format.R32Typeless;
                     break;
 
@@ -138,7 +138,7 @@
             Format srvformat = Format.Unknown;
             switch (depthformat)
             {
-                case Format.Depth16UNorm:
+                case Format.D16UNorm:
                     srvformat = Format.R16Float;
                     break;
 
@@ -146,7 +146,7 @@
                     srvformat = Format.R24UNormX8Typeless;
                     break;
 
-                case Format.Depth32Float:
+                case Format.D32Float:
                     srvformat = Format.R32Float;
                     break;
 

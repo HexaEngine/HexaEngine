@@ -2,29 +2,32 @@
 {
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using Point = Mathematics.Point;
 
     public static unsafe class Mouse
     {
+        private static MouseButton[] buttons = Enum.GetValues<MouseButton>();
+        private static string[] buttonNames = Enum.GetNames<MouseButton>();
+
 #nullable disable
         private static Sdl sdl;
 #nullable enable
 
-        private static readonly Dictionary<MouseButton, ButtonState> states = new();
-        private static readonly MouseMotionEventArgs mouseMotionEventArgs = new();
+        private static readonly Dictionary<MouseButton, MouseButtonState> states = new();
+        private static readonly MouseMotionEventArgs motionEventArgs = new();
+        private static readonly MouseButtonEventArgs buttonEventArgs = new();
+        private static readonly MouseWheelEventArgs wheelEventArgs = new();
 
         private static Point pos;
         private static Vector2 delta;
         private static Vector2 deltaWheel;
 
-        internal static void Init(Sdl sdl)
+        internal static void Init()
         {
-            Mouse.sdl = sdl;
+            sdl = Application.sdl;
             pos = default;
             sdl.GetMouseState(ref pos.X, ref pos.Y);
 
@@ -34,11 +37,11 @@
             uint maskRight = unchecked(1 << ((int)MouseButton.Right - 1));
             uint maskX1 = unchecked(1 << ((int)MouseButton.X1 - 1));
             uint maskX2 = unchecked(1 << ((int)MouseButton.X2 - 1));
-            states.Add(MouseButton.Left, (ButtonState)(state & maskLeft));
-            states.Add(MouseButton.Middle, (ButtonState)(state & maskMiddle));
-            states.Add(MouseButton.Right, (ButtonState)(state & maskRight));
-            states.Add(MouseButton.X1, (ButtonState)(state & maskX1));
-            states.Add(MouseButton.X2, (ButtonState)(state & maskX2));
+            states.Add(MouseButton.Left, (MouseButtonState)(state & maskLeft));
+            states.Add(MouseButton.Middle, (MouseButtonState)(state & maskMiddle));
+            states.Add(MouseButton.Right, (MouseButtonState)(state & maskRight));
+            states.Add(MouseButton.X1, (MouseButtonState)(state & maskX1));
+            states.Add(MouseButton.X2, (MouseButtonState)(state & maskX2));
         }
 
         public static Vector2 Position => pos;
@@ -47,60 +50,78 @@
 
         public static Vector2 DeltaWheel => deltaWheel;
 
+        public static IReadOnlyList<MouseButton> Buttons => buttons;
+
+        public static IReadOnlyList<string> ButtonNames => buttonNames;
+
+        public static IDictionary<MouseButton, MouseButtonState> States => states;
+
         public static event EventHandler<MouseMotionEventArgs>? Moved;
 
-        public static event EventHandler<MouseButton>? Pressed;
+        public static event EventHandler<MouseButtonEventArgs>? ButtonDown;
 
-        public static event EventHandler<MouseButton>? Released;
+        public static event EventHandler<MouseButtonEventArgs>? ButtonUp;
 
-        public static event EventHandler<Vector2>? Wheel;
+        public static event EventHandler<MouseWheelEventArgs>? Wheel;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsDown(MouseButton button)
         {
-            return states[button] == ButtonState.Pressed;
+            return states[button] == MouseButtonState.Down;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsUp(MouseButton button)
         {
-            return states[button] == ButtonState.Pressed;
+            return states[button] == MouseButtonState.Down;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void Enqueue(MouseButtonEvent mouseButtonEvent)
+        internal static void OnButtonDown(MouseButtonEvent mouseButtonEvent)
         {
-            ButtonState state = (ButtonState)mouseButtonEvent.State;
             MouseButton button = (MouseButton)mouseButtonEvent.Button;
-            states[button] = state;
-            if (state == ButtonState.Released)
-                Released?.Invoke(null, button);
-            else if (state == ButtonState.Pressed)
-                Pressed?.Invoke(null, button);
+            states[button] = MouseButtonState.Down;
+            buttonEventArgs.Button = button;
+            buttonEventArgs.State = MouseButtonState.Down;
+            buttonEventArgs.Clicks = mouseButtonEvent.Clicks;
+            ButtonDown?.Invoke(null, buttonEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void Enqueue(MouseMotionEvent mouseButtonEvent)
+        internal static void OnButtonUp(MouseButtonEvent mouseButtonEvent)
+        {
+            MouseButton button = (MouseButton)mouseButtonEvent.Button;
+            states[button] = MouseButtonState.Up;
+            buttonEventArgs.Button = button;
+            buttonEventArgs.State = MouseButtonState.Up;
+            buttonEventArgs.Clicks = mouseButtonEvent.Clicks;
+            ButtonUp?.Invoke(null, buttonEventArgs);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void OnMotion(MouseMotionEvent mouseButtonEvent)
         {
             if (mouseButtonEvent.Xrel == 0 && mouseButtonEvent.Yrel == 0)
                 return;
             delta += new Vector2(mouseButtonEvent.Xrel, mouseButtonEvent.Yrel);
-            mouseMotionEventArgs.RelX = delta.X;
-            mouseMotionEventArgs.RelY = delta.Y;
-            mouseMotionEventArgs.X = pos.X;
-            mouseMotionEventArgs.Y = pos.Y;
-            Moved?.Invoke(null, mouseMotionEventArgs);
+            motionEventArgs.RelX = delta.X;
+            motionEventArgs.RelY = delta.Y;
+            motionEventArgs.X = pos.X;
+            motionEventArgs.Y = pos.Y;
+            Moved?.Invoke(null, motionEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void Enqueue(MouseWheelEvent mouseWheelEvent)
+        internal static void OnWheel(MouseWheelEvent mouseWheelEvent)
         {
             deltaWheel += new Vector2(mouseWheelEvent.X, mouseWheelEvent.Y);
-            Wheel?.Invoke(null, deltaWheel);
+            wheelEventArgs.Wheel = new Vector2(mouseWheelEvent.X, mouseWheelEvent.Y);
+            wheelEventArgs.Direction = (MouseWheelDirection)mouseWheelEvent.Direction;
+            Wheel?.Invoke(null, wheelEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void ClearState()
+        internal static void Flush()
         {
             sdl.GetMouseState(ref pos.X, ref pos.Y);
             delta = Vector2.Zero;

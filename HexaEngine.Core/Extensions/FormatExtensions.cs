@@ -7,7 +7,7 @@
     {
         public static string ToHLSL(this bool scalar)
         {
-            return scalar ? "0" : "1";
+            return scalar ? "1" : "0";
         }
 
         public static string ToHLSL(this float scalar)

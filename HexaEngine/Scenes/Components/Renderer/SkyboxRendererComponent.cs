@@ -1,9 +1,11 @@
-﻿namespace HexaEngine.Core.Renderers.Components
+﻿namespace HexaEngine.Scenes.Components.Renderer
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
@@ -13,6 +15,7 @@
     [EditorComponent<SkyboxRendererComponent>("Skybox", false, true)]
     public class SkyboxRendererComponent : IRenderComponent
     {
+        private GameObject gameObject;
         private IGraphicsDevice? device;
         private SkyboxRenderer renderer;
         private Texture? env;
@@ -22,7 +25,7 @@
         private SkyboxData data;
         private Pointer<ObjectHandle> handle;
 
-        [EditorProperty("Environment", null)]
+        [EditorProperty("Env", null)]
         public string Environment
         {
             get => environment;
@@ -38,6 +41,7 @@
 
         public async void Awake(IGraphicsDevice device, GameObject gameObject)
         {
+            this.gameObject = gameObject;
             this.device = device;
             if (!gameObject.GetScene().TryGetSystem<RenderManager>(out var manager))
                 return;
@@ -58,21 +62,30 @@
 
         public void Draw()
         {
-            if (!Volatile.Read(ref drawable))
+            if (!Volatile.Read(ref drawable) || !gameObject.IsEnabled)
                 return;
             renderer.Draw(handle);
         }
 
         private Task UpdateEnvAsync(IGraphicsDevice device)
         {
-            var state = (device, this);
-            return Task.Factory.StartNew(async (object? state) =>
+            var state = new Tuple<IGraphicsDevice, SkyboxRendererComponent>(device, this);
+            return Task.Factory.StartNew(async (state) =>
             {
-                var p = ((IGraphicsDevice, SkyboxRendererComponent))state;
+                var p = (Tuple<IGraphicsDevice, SkyboxRendererComponent>)state;
                 var device = p.Item1;
                 var component = p.Item2;
                 var path = Paths.CurrentAssetsPath + component.environment;
 
+                unsafe
+                {
+                    // Inform renderer to stop render the skybox.
+                    Volatile.Write(ref component.drawable, false);
+                    component.data.Enviornment = null;
+                    component.renderer.UpdateInstance(component.handle, component.data);
+                }
+
+                component.env?.Dispose();
                 if (FileSystem.Exists(path))
                 {
                     try
@@ -94,7 +107,7 @@
                     component.data.Enviornment = (void*)(component.env.ShaderResourceView?.NativePointer ?? 0);
                     component.renderer.UpdateInstance(component.handle, component.data);
                 }
-                Volatile.Write(ref drawable, true);
+                Volatile.Write(ref component.drawable, true);
             }, state);
         }
     }

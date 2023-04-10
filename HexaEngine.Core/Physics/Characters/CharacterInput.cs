@@ -3,6 +3,9 @@ using BepuPhysics.Collidables;
 using BepuUtilities;
 using HexaEngine.Core.Input;
 using HexaEngine.Core.Scenes;
+using ImGuiNET;
+using ImNodesNET;
+using Silk.NET.SDL;
 using System.Diagnostics;
 using System.Numerics;
 
@@ -50,16 +53,31 @@ namespace HexaEngine.Core.Physics.Characters
             this.shape = shape;
         }
 
-        private static KeyCode MoveForward = KeyCode.W;
-        private static KeyCode MoveBackward = KeyCode.S;
-        private static KeyCode MoveRight = KeyCode.D;
-        private static KeyCode MoveLeft = KeyCode.A;
-        private static KeyCode Sprint = KeyCode.LShift;
-        private static KeyCode Jump = KeyCode.Space;
+        private static Key MoveForward = Key.W;
+        private static Key MoveBackward = Key.S;
+        private static Key MoveRight = Key.D;
+        private static Key MoveLeft = Key.A;
+        private static Key Sprint = Key.LShift;
+        private static Key Jump = Key.Space;
 
         public void UpdateCharacterGoals(Camera camera, float simulationTimestepDuration)
         {
+            ref var character = ref characters.GetCharacterByBodyHandle(bodyHandle);
             Vector2 movementDirection = default;
+
+            if (Gamepads.Controllers.Count > 0)
+            {
+                var gamepad = Gamepads.Controllers[0];
+                var lx = (gamepad.AxisStates[GamepadAxis.LeftX] + short.MaxValue) / (float)short.MaxValue - 1;
+                var ly = (gamepad.AxisStates[GamepadAxis.LeftY] + short.MaxValue) / (float)short.MaxValue - 1;
+                movementDirection += -1 * new Vector2(lx, ly);
+
+                if (gamepad.IsDown(GamepadButton.A))
+                {
+                    character.TryJump |= true;
+                }
+            }
+
             if (Keyboard.IsDown(MoveForward))
             {
                 movementDirection = new Vector2(0, 1);
@@ -82,8 +100,7 @@ namespace HexaEngine.Core.Physics.Characters
                 movementDirection /= MathF.Sqrt(movementDirectionLengthSquared);
             }
 
-            ref var character = ref characters.GetCharacterByBodyHandle(bodyHandle);
-            character.TryJump = Keyboard.IsDown(Jump);
+            character.TryJump |= Keyboard.IsDown(Jump);
             var characterBody = new BodyReference(bodyHandle, characters.Simulation.Bodies);
             var effectiveSpeed = Keyboard.IsDown(Sprint) ? speed * 1.75f : speed;
             var newTargetVelocity = movementDirection * effectiveSpeed;
@@ -93,7 +110,7 @@ namespace HexaEngine.Core.Physics.Characters
             //(You can also specify a negative deactivation threshold in the BodyActivityDescription to prevent the character from sleeping at all.)
             if (!characterBody.Awake && (character.TryJump || newTargetVelocity != Vector2.Zero && character.ViewDirection != viewDirection))
             {
-                 characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
+                characters.Simulation.Awakener.AwakenBody(character.BodyHandle);
             }
             character.TargetVelocity = newTargetVelocity;
             character.ViewDirection = viewDirection;

@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
@@ -12,7 +11,6 @@
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-    using System.Text;
     using Format = Core.Graphics.Format;
     using Viewport = Mathematics.Viewport;
 
@@ -66,6 +64,7 @@
         public string? DebugName { get; set; }
 
         public bool IsDisposed { get; }
+        public ITextureLoader TextureLoader { get; }
 
         public event EventHandler? OnDisposed;
 
@@ -714,6 +713,16 @@
         }
 
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBuffer CreateBuffer(void* src, uint length, BufferDescription description)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITexture2D LoadTexture2D(string path, BindFlags flags)
         {
             throw new NotImplementedException();
         }

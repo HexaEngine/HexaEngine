@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;

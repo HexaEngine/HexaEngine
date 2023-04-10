@@ -648,9 +648,9 @@
         public DepthStencilViewFlags ViewFlags;
         public SampleDescription SampleDescription;
 
-        public static DepthStencilBufferDesc CreateDepthBufferSRV(int width, int height) => new(width, height, 1, Format.Depth32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
+        public static DepthStencilBufferDesc CreateDepthBufferSRV(int width, int height) => new(width, height, 1, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
 
-        public static DepthStencilBufferDesc CreateDepthBufferSRV(int width, int height, int arraySize) => new(width, height, arraySize, Format.Depth32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
+        public static DepthStencilBufferDesc CreateDepthBufferSRV(int width, int height, int arraySize) => new(width, height, arraySize, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
 
         public DepthStencilBufferDesc(int width, int height, int arraySize, Format format, BindFlags bindFlags, Usage usage, CpuAccessFlags cPUAccessFlags, DepthStencilViewFlags viewFlags, SampleDescription sampleDescription)
         {

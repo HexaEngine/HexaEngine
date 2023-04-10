@@ -26,8 +26,8 @@
 
         static MainMenuBar()
         {
-            HotkeyManager.Register("Undo-Action", () => Designer.History.TryUndo(), KeyCode.LCtrl, KeyCode.Z);
-            HotkeyManager.Register("Redo-Action", () => Designer.History.TryRedo(), KeyCode.LCtrl, KeyCode.Y);
+            HotkeyManager.Register("Undo-Action", () => Designer.History.TryUndo(), Key.LCtrl, Key.Z);
+            HotkeyManager.Register("Redo-Action", () => Designer.History.TryRedo(), Key.LCtrl, Key.Y);
         }
 
         internal static void Draw()
@@ -53,6 +53,11 @@
                     if (ImGui.MenuItem("Save Scene"))
                     {
                         SceneManager.Save();
+                    }
+
+                    if (ImGui.MenuItem("Unload Scene"))
+                    {
+                        SceneManager.Unload();
                     }
 
                     if (ImGui.MenuItem("Import"))

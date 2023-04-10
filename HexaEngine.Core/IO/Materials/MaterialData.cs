@@ -3,12 +3,11 @@
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Text;
 
-    public struct MaterialData
+    public class MaterialData
     {
         public string Name = string.Empty;
         public Vector3 BaseColor;
@@ -28,25 +27,13 @@
         public Vector3 SubsurfaceColor;
         public Vector3 Emissive;
 
-        public string BaseColorTextureMap = string.Empty;
-        public string NormalTextureMap = string.Empty;
-        public string DisplacementTextureMap = string.Empty;
-        public string SpecularTextureMap = string.Empty;
-        public string SpecularColorTextureMap = string.Empty;
-        public string RoughnessTextureMap = string.Empty;
-        public string MetalnessTextureMap = string.Empty;
-        public string RoughnessMetalnessTextureMap = string.Empty;
-        public string AoTextureMap = string.Empty;
-        public string CleancoatTextureMap = string.Empty;
-        public string CleancoatGlossTextureMap = string.Empty;
-        public string SheenTextureMap = string.Empty;
-        public string SheenTintTextureMap = string.Empty;
-        public string AnisotropicTextureMap = string.Empty;
-        public string SubsurfaceTextureMap = string.Empty;
-        public string SubsurfaceColorTextureMap = string.Empty;
-        public string EmissiveTextureMap = string.Empty;
+        public MaterialTextureDesc[] Textures;
 
-        public MaterialTexture[] Textures;
+        public string? VertexShader;
+        public string? HullShader;
+        public string? DomainShader;
+        public string? GeometryShader;
+        public string? PixelShader;
 
         public MaterialFlags Flags = MaterialFlags.Depth;
 
@@ -54,8 +41,32 @@
         {
         }
 
+        public bool HasTexture(TextureType type)
+        {
+            for (int i = 0; i < Textures.Length; i++)
+            {
+                var tex = Textures[i];
+                if (tex.Type == type && !string.IsNullOrWhiteSpace(tex.File))
+                    return true;
+            }
+            return false;
+        }
+
+        public MaterialTextureDesc GetTexture(TextureType type)
+        {
+            for (int i = 0; i < Textures.Length; i++)
+            {
+                var tex = Textures[i];
+                if (tex.Type == type)
+                    return tex;
+            }
+            return default;
+        }
+
         public ShaderMacro[] GetShaderMacros()
         {
+            var ao = HasTexture(TextureType.AmbientOcclusion);
+            var rm = HasTexture(TextureType.RoughnessMetalness);
             ShaderMacro[] macros =
             {
                 new ShaderMacro("BaseColor", new Vector4(BaseColor, Opacity).ToHLSL()),
@@ -72,21 +83,21 @@
                 new ShaderMacro("Ao", Ao.ToHLSL()),
                 new ShaderMacro("Emissive", Emissive.ToHLSL()),
 
-                new ShaderMacro("HasBaseColorTex", string.IsNullOrEmpty(BaseColorTextureMap).ToHLSL()),
-                new ShaderMacro("HasNormalTex", string.IsNullOrEmpty(NormalTextureMap).ToHLSL()),
-                new ShaderMacro("HasDisplacementTex", string.IsNullOrEmpty(DisplacementTextureMap).ToHLSL()),
-                new ShaderMacro("HasMetalnessTex", string.IsNullOrEmpty(MetalnessTextureMap).ToHLSL()),
-                new ShaderMacro("HasRoughnessTex", string.IsNullOrEmpty(RoughnessTextureMap).ToHLSL()),
-                new ShaderMacro("HasEmissiveTex", string.IsNullOrEmpty(EmissiveTextureMap).ToHLSL()),
-                new ShaderMacro("HasAoTex", string.IsNullOrEmpty(AoTextureMap).ToHLSL()),
-                new ShaderMacro("HasRoughnessMetalnessTex", string.IsNullOrEmpty(RoughnessMetalnessTextureMap).ToHLSL()),
+                new ShaderMacro("HasBaseColorTex", (HasTexture(TextureType.BaseColor) || HasTexture(TextureType.Diffuse)).ToHLSL()),
+                new ShaderMacro("HasNormalTex",  HasTexture(TextureType.Normals).ToHLSL()),
+                new ShaderMacro("HasHeightTex", HasTexture(TextureType.Height).ToHLSL()),
+                new ShaderMacro("HasMetalnessTex", HasTexture(TextureType.Metalness).ToHLSL()),
+                new ShaderMacro("HasRoughnessTex", HasTexture(TextureType.Roughness).ToHLSL()),
+                new ShaderMacro("HasEmissiveTex", HasTexture(TextureType.Emissive).ToHLSL()),
+                new ShaderMacro("HasAmbientOcclusionTex", ao.ToHLSL()),
+                new ShaderMacro("HasRoughnessMetalnessTex", rm.ToHLSL()),
             };
             return macros;
         }
 
         public static MaterialData Read(Stream src, Encoding encoding, Endianness endianness)
         {
-            MaterialData material;
+            MaterialData material = new();
             material.Name = src.ReadString(encoding, endianness);
             material.BaseColor = src.ReadVector3(endianness);
             material.Opacity = src.ReadFloat(endianness);
@@ -104,32 +115,20 @@
             material.Subsurface = src.ReadFloat(endianness);
             material.SubsurfaceColor = src.ReadVector3(endianness);
             material.Emissive = src.ReadVector3(endianness);
-
-            material.BaseColorTextureMap = src.ReadString(encoding, endianness);
-            material.NormalTextureMap = src.ReadString(encoding, endianness);
-            material.DisplacementTextureMap = src.ReadString(encoding, endianness);
-            material.SpecularTextureMap = src.ReadString(encoding, endianness);
-            material.SpecularColorTextureMap = src.ReadString(encoding, endianness);
-            material.RoughnessTextureMap = src.ReadString(encoding, endianness);
-            material.MetalnessTextureMap = src.ReadString(encoding, endianness);
-            material.RoughnessMetalnessTextureMap = src.ReadString(encoding, endianness);
-            material.AoTextureMap = src.ReadString(encoding, endianness);
-            material.CleancoatTextureMap = src.ReadString(encoding, endianness);
-            material.CleancoatGlossTextureMap = src.ReadString(encoding, endianness);
-            material.SheenTextureMap = src.ReadString(encoding, endianness);
-            material.SheenTintTextureMap = src.ReadString(encoding, endianness);
-            material.AnisotropicTextureMap = src.ReadString(encoding, endianness);
-            material.SubsurfaceTextureMap = src.ReadString(encoding, endianness);
-            material.SubsurfaceColorTextureMap = src.ReadString(encoding, endianness);
-            material.EmissiveTextureMap = src.ReadString(encoding, endianness);
-            material.Flags = MaterialFlags.Depth;
+            material.Flags = (MaterialFlags)src.ReadInt(endianness);
 
             var textureCount = src.ReadInt(endianness);
-            material.Textures = new MaterialTexture[textureCount];
+            material.Textures = new MaterialTextureDesc[textureCount];
             for (int i = 0; i < textureCount; i++)
             {
-                material.Textures[i] = MaterialTexture.Read(src, encoding, endianness);
+                material.Textures[i] = MaterialTextureDesc.Read(src, encoding, endianness);
             }
+
+            material.VertexShader = src.ReadString(encoding, endianness);
+            material.HullShader = src.ReadString(encoding, endianness);
+            material.DomainShader = src.ReadString(encoding, endianness);
+            material.GeometryShader = src.ReadString(encoding, endianness);
+            material.PixelShader = src.ReadString(encoding, endianness);
 
             return material;
         }
@@ -153,30 +152,19 @@
             dst.WriteFloat(Subsurface, endianness);
             dst.WriteVector3(SubsurfaceColor, endianness);
             dst.WriteVector3(Emissive, endianness);
-
-            dst.WriteString(BaseColorTextureMap, encoding, endianness);
-            dst.WriteString(NormalTextureMap, encoding, endianness);
-            dst.WriteString(DisplacementTextureMap, encoding, endianness);
-            dst.WriteString(SpecularTextureMap, encoding, endianness);
-            dst.WriteString(SpecularColorTextureMap, encoding, endianness);
-            dst.WriteString(RoughnessTextureMap, encoding, endianness);
-            dst.WriteString(MetalnessTextureMap, encoding, endianness);
-            dst.WriteString(RoughnessMetalnessTextureMap, encoding, endianness);
-            dst.WriteString(AoTextureMap, encoding, endianness);
-            dst.WriteString(CleancoatTextureMap, encoding, endianness);
-            dst.WriteString(CleancoatGlossTextureMap, encoding, endianness);
-            dst.WriteString(SheenTextureMap, encoding, endianness);
-            dst.WriteString(SheenTintTextureMap, encoding, endianness);
-            dst.WriteString(AnisotropicTextureMap, encoding, endianness);
-            dst.WriteString(SubsurfaceTextureMap, encoding, endianness);
-            dst.WriteString(SubsurfaceColorTextureMap, encoding, endianness);
-            dst.WriteString(EmissiveTextureMap, encoding, endianness);
+            dst.WriteInt((int)Flags, endianness);
 
             dst.WriteInt(Textures.Length, endianness);
             for (int i = 0; i < Textures.Length; i++)
             {
                 Textures[i].Write(dst, encoding, endianness);
             }
+
+            dst.WriteString(VertexShader, encoding, endianness);
+            dst.WriteString(HullShader, encoding, endianness);
+            dst.WriteString(DomainShader, encoding, endianness);
+            dst.WriteString(GeometryShader, encoding, endianness);
+            dst.WriteString(PixelShader, encoding, endianness);
         }
     }
 }

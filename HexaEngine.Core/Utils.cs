@@ -2,13 +2,55 @@
 {
     using HexaEngine.Core.Unsafes;
     using System;
-    using System.Diagnostics.Metrics;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class Utils
     {
+        public static uint Bitcount(this uint value)
+        {
+            uint v = value;
+            v -= ((v >> 1) & 0x55555555); // reuse input as temporary
+            v = (v & 0x33333333) + ((v >> 2) & 0x33333333); // temp
+            uint c = ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
+            return c;
+        }
+
+        public static void CopyTo<T>(this T t, int* offset, byte* dst) where T : unmanaged
+        {
+            var size = sizeof(T);
+            var p = (byte*)&t;
+            var dst_ptr = &dst[*offset];
+            for (int i = 0; i < size; i++)
+            {
+                dst_ptr[i] = p[i];
+            }
+            *offset += size;
+        }
+
+        public static void CopyTo<T>(this T[] t, byte* dst, int stride, int* offset, int count) where T : unmanaged
+        {
+            var size = sizeof(T);
+            fixed (T* src = t)
+            {
+                var dst_ptr = dst;
+                var src_ptr = (byte*)src;
+                for (int i = 0; i < count; i++)
+                {
+                    var srcByteOffset = i * size;
+                    var dstByteOffset = i * stride + *offset;
+
+                    for (int j = 0; j < size; j++)
+                    {
+                        dst_ptr[j + dstByteOffset] = src_ptr[j + srcByteOffset];
+                    }
+                }
+            }
+            *offset += size;
+        }
+
         /// <summary>
         /// Converts to utf16 pointer.
         /// </summary>
@@ -131,6 +173,82 @@
         public static void MemoryCopy<T>(T* src, T* dst, int dstLength, int srcLength) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, dstLength * sizeof(T), srcLength * sizeof(T));
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengths.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy(void* src, void* dst, uint length)
+        {
+            Buffer.MemoryCopy(src, dst, length, length);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengths.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy(void* src, void* dst, int length)
+        {
+            Buffer.MemoryCopy(src, dst, length, length);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengths.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy(void* src, void* dst, long length)
+        {
+            Buffer.MemoryCopy(src, dst, length, length);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengths.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy(void* src, void* dst, ulong length)
+        {
+            Buffer.MemoryCopy(src, dst, length, length);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengths.
+        /// Automatically calculates byte widths with sizeof(T) * length.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy<T>(T* src, T* dst, uint length) where T : unmanaged
+        {
+            Buffer.MemoryCopy(src, dst, length * sizeof(T), length * sizeof(T));
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Automatically calculates byte widths with sizeof(T) * length.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void MemoryCopy<T>(T* src, T* dst, int length) where T : unmanaged
+        {
+            Buffer.MemoryCopy(src, dst, length * sizeof(T), length * sizeof(T));
         }
 
         /// <summary>
@@ -541,6 +659,11 @@
                 MemoryCopy(src, dst, length, length);
             }
             return values;
+        }
+
+        public static void Memset(void* ptr, byte value, int length)
+        {
+            new Span<byte>(ptr, length).Fill(value);
         }
     }
 }

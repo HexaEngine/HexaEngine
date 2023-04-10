@@ -1,6 +1,6 @@
 # HexaEngine
 <p align="center">
-  <img width="300" height="300" src="https://github.com/JunaMeinhold/HexaEngine/blob/master/icon.png">
+  <img width="300" height="300" src="https://raw.githubusercontent.com/JunaMeinhold/HexaEngine/master/icon.png">
 </p>
 
 # Features

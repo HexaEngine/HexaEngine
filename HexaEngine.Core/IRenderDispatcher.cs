@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core
 {
-    using HexaEngine.Core.Graphics;
     using System;
     using System.Threading.Tasks;
 
@@ -8,16 +7,16 @@
     {
         void Dispose();
 
-        void ExecuteQueue(IGraphicsContext immdiateContext);
-
         void Invoke(Action action);
 
         Task InvokeAsync(Action action);
 
         void InvokeBlocking(Action action);
 
-        void InvokeOnehitDraw(Action<IGraphicsContext> action);
+        void Invoke(Action<object> action, object state);
 
-        Task InvokeOnehitDrawAsync(Action<IGraphicsContext> action);
+        Task InvokeAsync(Action<object> action, object state);
+
+        void InvokeBlocking(Action<object> action, object state);
     }
 }

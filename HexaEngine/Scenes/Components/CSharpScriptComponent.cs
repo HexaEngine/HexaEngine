@@ -6,8 +6,8 @@
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scripts;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.Scripting;
     using ImGuiNET;
 
     [EditorComponent<CSharpScriptComponent>("C# Script")]

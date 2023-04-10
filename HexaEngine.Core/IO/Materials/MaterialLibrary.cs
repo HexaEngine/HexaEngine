@@ -1,53 +1,71 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
+    using HexaEngine.Mathematics;
     using System.Text;
 
     public class MaterialLibrary
     {
-        private MaterialLibraryHeader header;
+        public string Name;
+
+        public MaterialLibraryHeader Header;
         public MaterialData[] Materials;
 
         public MaterialLibrary(string path)
         {
+            Name = path;
             var fs = FileSystem.Open(path);
-            header.Read(fs);
-            Materials = new MaterialData[header.MaterialCount];
-            Encoding encoding = Encoding.UTF8;
-            for (int i = 0; i < header.MaterialCount; i++)
+            Header.Read(fs);
+
+            var stream = fs;
+
+            Materials = new MaterialData[Header.MaterialCount];
+            for (int i = 0; i < Header.MaterialCount; i++)
             {
-                Materials[i] = MaterialData.Read(fs, encoding, header.Endianness);
+                Materials[i] = MaterialData.Read(stream, Header.Encoding, Header.Endianness);
             }
-        }
-
-        public MaterialLibrary(Stream stream)
-        {
-            header.Read(stream);
-            Materials = new MaterialData[header.MaterialCount];
-        }
-
-        public MaterialLibrary(MaterialData[] materials)
-        {
-            header.MaterialCount = (uint)materials.LongLength;
-            Materials = materials;
-        }
-
-        public void Write(string path)
-        {
-            var fs = File.Create(path);
-            Write(fs);
             fs.Close();
         }
 
-        public void Write(Stream stream)
+        public MaterialLibrary(string path, Stream fs)
         {
-            header.MaterialCount = (uint)Materials.LongLength;
-            header.Write(stream);
+            Name = path;
+            Header.Read(fs);
 
-            Encoding encoding = Encoding.UTF8;
+            var stream = fs;
+
+            Materials = new MaterialData[Header.MaterialCount];
+            for (int i = 0; i < Header.MaterialCount; i++)
+            {
+                Materials[i] = MaterialData.Read(stream, Header.Encoding, Header.Endianness);
+            }
+        }
+
+        public MaterialLibrary(string name, MaterialData[] materials)
+        {
+            Name = name;
+            Header.MaterialCount = (uint)materials.LongLength;
+            Materials = materials;
+        }
+
+        public void Save(string dir, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.None)
+        {
+            Directory.CreateDirectory(dir);
+            Stream fs = File.Create(Path.Combine(dir, Path.GetFileNameWithoutExtension(Name) + ".matlib"));
+
+            var stream = fs;
+
+            Header.Encoding = encoding;
+            Header.Endianness = endianness;
+            Header.Compression = compression;
+            Header.MaterialCount = (uint)Materials.LongLength;
+            Header.Write(stream);
+
             for (int i = 0; i < Materials.Length; i++)
             {
-                Materials[i].Write(stream, encoding, header.Endianness);
+                Materials[i].Write(stream, Header.Encoding, Header.Endianness);
             }
+
+            fs.Close();
         }
     }
 }

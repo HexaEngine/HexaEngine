@@ -123,10 +123,10 @@
             Bloom = ResourceManager2.Shared.GetResource<Texture>("Bloom");
             Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Position");
             Camera = ResourceManager2.Shared.GetResource<IBuffer>("CBCamera");
+            InitUnsafe();
             Bloom.Resource.ValueChanged += OnUpdate;
             Position.Resource.ValueChanged += OnUpdate;
             Camera.Resource.ValueChanged += OnUpdate;
-            InitUnsafe();
         }
 
         private unsafe void OnUpdate(object? sender, IDisposable? e)

@@ -27,20 +27,7 @@
         private ConstantBuffer<CBCamera> view;
         private List<TextureFileNode> textureFiles = new();
 
-#pragma warning disable CS8618 // Non-nullable field 'world' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'pipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'outputNode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'sphere' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'inputNode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'view' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
         public MaterialEditor()
-#pragma warning restore CS8618 // Non-nullable field 'view' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'inputNode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'sphere' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'outputNode' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'pipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'world' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;

@@ -6,21 +6,21 @@
     public unsafe struct SkinnedMeshVertex
     {
         public Vector3 Position;
-        public Vector2 Texture;
+        public Vector3 Texture;
         public Vector3 Normal;
         public Vector3 Tangent;
 
         public fixed int BoneIds[4];
         public fixed float Weights[4];
 
-
-        public SkinnedMeshVertex(Vector3 position, Vector2 texture, Vector3 normal, Vector3 tangent)
+        public SkinnedMeshVertex(Vector3 position, Vector3 texture, Vector3 normal, Vector3 tangent)
         {
             Position = position;
             Texture = texture;
             Normal = normal;
-            Tangent = tangent; 
+            Tangent = tangent;
         }
+
         public SkinnedMeshVertex(MeshVertex vertex)
         {
             Position = vertex.Position;
@@ -31,7 +31,7 @@
 
         public SkinnedMeshVertex InvertTex()
         {
-            return new SkinnedMeshVertex(Position, new(Math.Abs(Texture.X - 1), Math.Abs(Texture.Y - 1)), Normal, Tangent);
+            return new SkinnedMeshVertex(Position, new(Math.Abs(Texture.X - 1), Math.Abs(Texture.Y - 1), 0), Normal, Tangent);
         }
 
         public static unsafe bool operator ==(SkinnedMeshVertex a, SkinnedMeshVertex b)

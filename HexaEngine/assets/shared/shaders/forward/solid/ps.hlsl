@@ -16,5 +16,5 @@ float4 ComputeLighting(float3 pos, float3 normal)
 
 float4 main(PixelInput input) : SV_Target
 {
-    return ComputeLighting(input.pos.xyz, input.normal);
+    return ComputeLighting(input.pos.xyz, normalize(input.normal));
 }

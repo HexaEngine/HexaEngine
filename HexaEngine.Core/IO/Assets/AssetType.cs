@@ -3,12 +3,11 @@
     public enum AssetType : ulong
     {
         Binary = 0,
-        Material,
-        Texture,
-        Mesh,
-        Font,
-        Sound,
-        Script,
+        MaterialLibrary,
+        TextureFile,
+        ModelFile,
+        FontFile,
+        AudioFile,
         ShaderSource,
         ShaderBytecode,
     }

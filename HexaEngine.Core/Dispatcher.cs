@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core
 {
-    using HexaEngine.Core.Graphics;
     using System;
     using System.Collections.Concurrent;
     using System.Runtime.CompilerServices;
@@ -122,43 +121,29 @@
 
     public class RenderDispatcher : IDisposable, IRenderDispatcher
     {
-        protected ConcurrentQueue<Action> queue = new();
-        protected ConcurrentQueue<ICommandList> drawQueue = new();
-        protected ConcurrentQueue<ValueTuple<Action, EventWaitHandle>> waitingQueue = new();
-        protected ConcurrentQueue<ValueTuple<ICommandList, EventWaitHandle>> drawWaitingQueue = new();
+        protected ConcurrentQueue<ValueTuple<Action, EventWaitHandle?>> waitingQueue = new();
+        protected ConcurrentQueue<ValueTuple<Action<object>, object, EventWaitHandle?>> waitingStateQueue = new();
         public readonly Thread DispatcherThread;
-        private readonly IGraphicsDevice device;
-        private readonly IGraphicsContext context;
 
         private bool disposedValue;
 
-        public RenderDispatcher(IGraphicsDevice device, Thread thread)
+        public RenderDispatcher(Thread thread)
         {
             DispatcherThread = thread;
-            this.device = device;
-            context = device.CreateDeferredContext();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ExecuteQueue(IGraphicsContext immdiateContext)
+        public void ExecuteQueue()
         {
-            while (queue.TryDequeue(out Action? item))
-            {
-                item();
-            }
             while (waitingQueue.TryDequeue(out var item))
             {
                 item.Item1();
-                item.Item2.Set();
+                item.Item2?.Set();
             }
-            while (drawQueue.TryDequeue(out var item))
+            while (waitingStateQueue.TryDequeue(out var item))
             {
-                immdiateContext.ExecuteCommandList(item, 0);
-            }
-            while (drawWaitingQueue.TryDequeue(out var item))
-            {
-                immdiateContext.ExecuteCommandList(item.Item1, 0);
-                item.Item2.Set();
+                item.Item1(item.Item2);
+                item.Item3?.Set();
             }
         }
 
@@ -171,7 +156,7 @@
             }
             else
             {
-                queue.Enqueue(action);
+                waitingQueue.Enqueue((action, null));
             }
         }
 
@@ -192,25 +177,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void InvokeOnehitDraw(Action<IGraphicsContext> action)
-        {
-            action(context);
-            var commandList = context.FinishCommandList(0);
-            if (DispatcherThread == Thread.CurrentThread)
-            {
-                drawQueue.Enqueue(commandList);
-            }
-            else
-            {
-                EventWaitHandle handle = new(false, EventResetMode.ManualReset);
-                drawWaitingQueue.Enqueue((commandList, handle));
-                handle.WaitOne();
-                handle.Dispose();
-                commandList.Dispose();
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task InvokeAsync(Action action)
         {
             if (DispatcherThread == Thread.CurrentThread)
@@ -227,21 +193,47 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public async Task InvokeOnehitDrawAsync(Action<IGraphicsContext> action)
+        public void Invoke(Action<object> action, object state)
         {
-            action(context);
-            var commandList = context.FinishCommandList(0);
             if (DispatcherThread == Thread.CurrentThread)
             {
-                drawQueue.Enqueue(commandList);
+                action(state);
+            }
+            else
+            {
+                waitingStateQueue.Enqueue((action, state, null));
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public async Task InvokeAsync(Action<object> action, object state)
+        {
+            if (DispatcherThread == Thread.CurrentThread)
+            {
+                action(state);
             }
             else
             {
                 EventWaitHandle handle = new(false, EventResetMode.ManualReset);
-                drawWaitingQueue.Enqueue((commandList, handle));
+                waitingStateQueue.Enqueue((action, state, handle));
                 await Task.Run(handle.WaitOne);
                 handle.Dispose();
-                commandList.Dispose();
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void InvokeBlocking(Action<object> action, object state)
+        {
+            if (DispatcherThread == Thread.CurrentThread)
+            {
+                action(state);
+            }
+            else
+            {
+                EventWaitHandle handle = new(false, EventResetMode.ManualReset);
+                waitingStateQueue.Enqueue((action, state, handle));
+                handle.WaitOne();
+                handle.Dispose();
             }
         }
 
@@ -249,8 +241,8 @@
         {
             if (!disposedValue)
             {
-                queue.Clear();
-                context.Dispose();
+                waitingQueue.Clear();
+                waitingStateQueue.Clear();
                 disposedValue = true;
             }
         }

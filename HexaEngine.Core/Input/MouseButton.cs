@@ -2,7 +2,6 @@
 {
     public enum MouseButton
     {
-        Unknown = 0,
         Left = 1,
         Middle = 2,
         Right = 3,
@@ -10,9 +9,9 @@
         X2 = 5
     }
 
-    public enum ButtonState
+    public enum MouseWheelDirection
     {
-        Released,
-        Pressed,
+        Normal = 0x0,
+        Flipped = 0x1
     }
 }

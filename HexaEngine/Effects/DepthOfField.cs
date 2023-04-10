@@ -294,7 +294,7 @@ namespace HexaEngine.Effects
             Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("SwapChain.SRV");
         }
 
-        public async void Resize(int width, int height)
+        public void Resize(int width, int height)
         {
             outOfFocusTex.Dispose();
             outOfFocusSRV.Dispose();

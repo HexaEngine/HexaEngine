@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
+    using HexaEngine.Core.Graphics.Textures;
     using System.Numerics;
 
     public unsafe class MiscImageOperations
@@ -38,7 +39,7 @@
             dstImage.Initialize(metadataDest, CPFlags.None);
 
             Rect rect = new() { X = 0, Y = 0, W = 64, H = 64 };
-            DirectXTex.CopyRectangle(srcImage.GetImage(0, 0, 0), &rect, dstImage.GetImage(0, 0, 0), TexFilterFlags.DEFAULT, 100, 50);
+            DirectXTex.CopyRectangle(srcImage.GetImage(0, 0, 0), &rect, dstImage.GetImage(0, 0, 0), TexFilterFlags.Default, 100, 50);
 
             srcImage.Release();
             dstImage.Release();

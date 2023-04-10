@@ -192,6 +192,17 @@
             }
         }
 
+        public static void WriteLine(string msg)
+        {
+            if (Redirect) Debug.WriteLine(msg);
+
+            messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+        }
+
         public static async Task LogAsync(string msg)
         {
             if (Redirect) Debug.WriteLine(msg);

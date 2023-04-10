@@ -1,3 +1,0 @@
-﻿namespace HexaEngine.Core.Meshes
-{
-}

@@ -16,10 +16,10 @@
 
         public void Read(Stream stream, Encoding encoding)
         {
-            if (stream.Compare(MagicNumber))
+            if (!stream.Compare(MagicNumber))
                 throw new InvalidDataException();
             Endianness = (Endianness)stream.ReadByte();
-            if (stream.Compare(Version, Endianness))
+            if (!stream.Compare(Version, Endianness))
                 throw new InvalidDataException();
 
             Compression = (Compression)stream.ReadInt(Endianness);
@@ -37,6 +37,7 @@
         public void Write(Stream stream, Encoding encoding)
         {
             stream.Write(MagicNumber);
+            stream.WriteByte((byte)Endianness);
             stream.WriteUInt64(Version, Endianness);
             stream.WriteInt((int)Compression, Endianness);
             stream.WriteInt(Entries.Length, Endianness);

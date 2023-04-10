@@ -94,8 +94,8 @@
             Span<byte> src = LoadTexture(TGAFilename);
             TexBlob blob = new();
 
-            DirectXTex.LoadFromTGAMemory(src, TGAFlags.TGA_FLAGS_NONE, &image);
-            DirectXTex.SaveToTGAMemory(&image, 0, TGAFlags.TGA_FLAGS_NONE, &blob);
+            DirectXTex.LoadFromTGAMemory(src, TGAFlags.None, &image);
+            DirectXTex.SaveToTGAMemory(&image, 0, TGAFlags.None, &blob);
 
             Span<byte> dest = blob.ToBytes();
             Assert.True(src.SequenceEqual(dest));
@@ -113,7 +113,7 @@
             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? string.Empty);
             ScratchImage image = new();
 
-            DirectXTex.LoadFromTGAFile(TGAFilename, TGAFlags.TGA_FLAGS_NONE, &image);
+            DirectXTex.LoadFromTGAFile(TGAFilename, TGAFlags.None, &image);
             DirectXTex.SaveToTGAFile(&image, 0, 0, path);
 
             Span<byte> src = LoadTexture(TGAFilename);

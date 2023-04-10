@@ -39,13 +39,7 @@
 
         void DestroyInstance(IInstance instance);
 
-        void Dispose();
-
         void Draw(IGraphicsContext context, IBuffer camera);
-
-        void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, int indexCount);
-
-        bool DrawAuto(IGraphicsContext context, int indexCount);
 
         void DrawDepth(IGraphicsContext context, IBuffer camera);
 

@@ -4,7 +4,8 @@ struct PixelInput
 	nointerpolation uint4 color : COLOR;
 };
 
-uint4 main(PixelInput input) : SV_Target
+uint4 main(PixelInput input, uint primitiveId : SV_PrimitiveID) : SV_Target
 {
+    input.color.z = primitiveId;
 	return input.color;
 }

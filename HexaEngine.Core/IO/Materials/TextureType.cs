@@ -18,7 +18,7 @@
         NormalCamera = 13,
         EmissionColor = 14,
         Metalness = 0xF,
-        DiffuseRoughness = 0x10,
+        Roughness = 0x10,
         AmbientOcclusion = 17,
         Sheen = 19,
         Clearcoat = 20,

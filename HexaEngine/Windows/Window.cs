@@ -90,7 +90,7 @@ namespace HexaEngine.Windows
             graphicsContext = graphicsDevice.Context;
             swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             swapChain.Active = true;
-            renderDispatcher = new(graphicsDevice, Thread.CurrentThread);
+            renderDispatcher = new(Thread.CurrentThread);
 
             if (Application.MainWindow == this)
             {
@@ -142,7 +142,8 @@ namespace HexaEngine.Windows
 
             if (StartupScene != null)
             {
-                Task.Run(() => SceneManager.AsyncLoad(StartupScene)).ContinueWith(x => SceneManager.Current.IsSimulating = true);
+                SceneManager.Load(StartupScene);
+                SceneManager.Current.IsSimulating = true;
             }
         }
 
@@ -164,10 +165,10 @@ namespace HexaEngine.Windows
             context.ClearDepthStencilView(swapChain.BackbufferDSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             context.ClearRenderTargetView(swapChain.BackbufferRTV, Vector4.Zero);
 
-            renderDispatcher.ExecuteQueue(context);
+            renderDispatcher.ExecuteQueue();
 
             renderer?.BeginDraw();
-
+            var drawing = sceneGraph && initTask.IsCompleted && SceneManager.Current is not null;
             if (imGuiWidgets && Application.InEditorMode)
             {
                 Designer.Draw();
@@ -177,9 +178,8 @@ namespace HexaEngine.Windows
                 frameviewer.SourceViewport = Viewport;
                 frameviewer.Update();
                 frameviewer.Draw();
+                drawing &= frameviewer.IsVisible;
             }
-
-            var drawing = sceneGraph && initTask.IsCompleted && SceneManager.Current is not null;
 
             if (drawing)
 #pragma warning disable CS8602 // Dereference of a possibly null reference.

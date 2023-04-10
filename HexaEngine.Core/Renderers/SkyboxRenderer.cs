@@ -117,7 +117,10 @@
             {
                 if (!handle.Data->IsValid)
                     continue;
+
                 var data = pool[handle];
+                if (data.Enviornment == null)
+                    continue;
                 cb[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
                 cb.Update(context);
 

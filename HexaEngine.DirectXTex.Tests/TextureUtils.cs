@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
+    using HexaEngine.Core.Graphics.Textures;
+
     public unsafe class TextureUtils
     {
         [Fact]
@@ -64,7 +66,7 @@
             image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
-            DirectXTex.Resize(&image, 1024, 1024, TexFilterFlags.DEFAULT, &image1);
+            DirectXTex.Resize(&image, 1024, 1024, TexFilterFlags.Default, &image1);
 
             Assert.Equal(metadata, image.GetMetadata());
             var metadata2 = image1.GetMetadata();
@@ -107,7 +109,7 @@
             image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
-            DirectXTex.Convert(&image, Format.FormatR16G16B16A16Unorm, TexFilterFlags.DEFAULT, 0.5f, &image1);
+            DirectXTex.Convert(&image, Format.FormatR16G16B16A16Unorm, TexFilterFlags.Default, 0.5f, &image1);
 
             Assert.Equal(metadata, image.GetMetadata());
             var metadata2 = image1.GetMetadata();
@@ -193,7 +195,7 @@
             image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
-            DirectXTex.GenerateMipMaps(&image, TexFilterFlags.DEFAULT, 4, &image1);
+            DirectXTex.GenerateMipMaps(&image, TexFilterFlags.Default, 4, &image1);
 
             Assert.Equal(metadata, image.GetMetadata());
             var metadata2 = image1.GetMetadata();
@@ -236,7 +238,7 @@
             image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
-            DirectXTex.GenerateMipMaps3D(&image, TexFilterFlags.DEFAULT, 4, &image1);
+            DirectXTex.GenerateMipMaps3D(&image, TexFilterFlags.Default, 4, &image1);
 
             Assert.Equal(metadata, image.GetMetadata());
             var metadata2 = image1.GetMetadata();

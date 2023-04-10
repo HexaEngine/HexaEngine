@@ -268,7 +268,7 @@
             return new(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]), float.Parse(components[3]));
         }
 
-        public IEnumerable<KeyCode> GetKeys()
+        public IEnumerable<Key> GetKeys()
         {
             if (Value == null)
             {
@@ -278,7 +278,7 @@
             string[] keys = Value.Split('+', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < keys.Length; i++)
             {
-                yield return (KeyCode)Enum.Parse(typeof(KeyCode), keys[i]);
+                yield return (Key)Enum.Parse(typeof(Key), keys[i]);
             }
         }
 

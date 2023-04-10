@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
+    using HexaEngine.Core.Graphics.Textures;
+
     public unsafe class DDSHelperFunctions
     {
         [Fact]

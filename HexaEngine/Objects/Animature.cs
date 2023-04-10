@@ -16,12 +16,12 @@
 
         public string Name;
         public GameObject Node;
-        public List<MeshBone> Bones = new();
-        public Dictionary<string, MeshBone> BonesDictionary = new();
+        public List<BoneData> Bones = new();
+        public Dictionary<string, BoneData> BonesDictionary = new();
         public Dictionary<string, Relation> Relationships = new();
         public Dictionary<Relation, string> RelationshipsDictionary = new();
 
-        public void AddBone(MeshBone bone)
+        public void AddBone(BoneData bone)
         {
             Bones.Add(bone);
             BonesDictionary.Add(bone.Name, bone);

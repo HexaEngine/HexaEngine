@@ -57,10 +57,13 @@ namespace HexaEngine.Core.Scenes
         public static void Load(Scene scene)
         {
             GameObject.Selected.ClearSelection();
-            var window = Application.MainWindow as IRenderWindow;
+            var window = Application.MainWindow;
 
-            window.Dispatcher.InvokeBlocking(() =>
+            window.Dispatcher.InvokeBlocking(state =>
             {
+                var values = (Tuple<IRenderWindow, Scene>)state;
+                var window = values.Item1;
+                var scene = values.Item2;
                 if (Current == null)
                 {
                     scene.Initialize(window.Device);
@@ -90,7 +93,7 @@ namespace HexaEngine.Core.Scenes
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            });
+            }, new Tuple<IRenderWindow, Scene>(window, scene));
         }
 
         /// <summary>
@@ -105,8 +108,11 @@ namespace HexaEngine.Core.Scenes
         public static void Load(IRenderWindow window, Scene scene)
         {
             GameObject.Selected.ClearSelection();
-            window.Dispatcher.InvokeBlocking(() =>
+            window.Dispatcher.InvokeBlocking(state =>
             {
+                var values = (Tuple<IRenderWindow, Scene>)state;
+                var window = values.Item1;
+                var scene = values.Item2;
                 if (Current == null)
                 {
                     scene.Initialize(window.Device);
@@ -136,7 +142,7 @@ namespace HexaEngine.Core.Scenes
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            });
+            }, new Tuple<IRenderWindow, Scene>(window, scene));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -144,11 +150,11 @@ namespace HexaEngine.Core.Scenes
         {
             GameObject.Selected.ClearSelection();
             var window = Application.MainWindow;
-
-            window.Dispatcher.InvokeBlocking(() =>
+            window.Dispatcher.InvokeBlocking(state =>
             {
                 lock (Current)
                 {
+                    var window = (IRenderWindow)state;
                     ResourceManager.BeginPauseCleanup();
                     Current?.Uninitialize();
                     Current.Initialize(window.Device);
@@ -157,14 +163,14 @@ namespace HexaEngine.Core.Scenes
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            });
+            }, window);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void BeginReload()
         {
             GameObject.Selected.ClearSelection();
-            var window = Application.MainWindow as IRenderWindow;
+            var window = Application.MainWindow;
 
             window.Dispatcher.InvokeBlocking(() =>
             {
@@ -181,10 +187,11 @@ namespace HexaEngine.Core.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void EndReload()
         {
-            var window = Application.MainWindow as IRenderWindow;
+            var window = Application.MainWindow;
 
-            window.Dispatcher.InvokeBlocking(() =>
+            window.Dispatcher.InvokeBlocking(state =>
             {
+                var window = (IRenderWindow)state;
                 lock (Current)
                 {
                     Current.Initialize(window.Device);
@@ -193,7 +200,7 @@ namespace HexaEngine.Core.Scenes
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            });
+            }, window);
         }
 
         public static async Task AsyncLoad(string path)
@@ -215,13 +222,16 @@ namespace HexaEngine.Core.Scenes
         public static async Task AsyncLoad(Scene scene)
         {
             GameObject.Selected.ClearSelection();
-            var window = Application.MainWindow as IRenderWindow;
+            var window = Application.MainWindow;
 
-            await window.Dispatcher.InvokeAsync(() =>
+            await window.Dispatcher.InvokeAsync(async state =>
             {
+                var values = (Tuple<IRenderWindow, Scene>)state;
+                var window = values.Item1;
+                var scene = values.Item2;
                 if (Current == null)
                 {
-                    scene.Initialize(window.Device);
+                    await scene.InitializeAsync(window.Device);
                     Current = scene;
                     SceneChanged?.Invoke(null, new(null, scene));
                     return;
@@ -248,7 +258,7 @@ namespace HexaEngine.Core.Scenes
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            });
+            }, new Tuple<IRenderWindow, Scene>(window, scene));
         }
 
         /// <summary>
@@ -260,11 +270,14 @@ namespace HexaEngine.Core.Scenes
         public static async Task AsyncLoad(IRenderWindow window, Scene scene)
         {
             GameObject.Selected.ClearSelection();
-            await window.Dispatcher.InvokeAsync(() =>
+            await window.Dispatcher.InvokeAsync(async state =>
             {
+                var values = (Tuple<IRenderWindow, Scene>)state;
+                var window = values.Item1;
+                var scene = values.Item2;
                 if (Current == null)
                 {
-                    scene.Initialize(window.Device);
+                    await scene.InitializeAsync(window.Device);
                     Current = scene;
                     SceneChanged?.Invoke(null, new(null, scene));
                     return;
@@ -291,7 +304,7 @@ namespace HexaEngine.Core.Scenes
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            });
+            }, new Tuple<IRenderWindow, Scene>(window, scene));
         }
 
         /// <summary>

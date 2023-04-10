@@ -1,8 +1,8 @@
 ﻿namespace IBLBaker
 {
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Plugins;
     using HexaEngine.Editor.Widgets;
-    using HexaEngine.Plugins;
     using System;
 
     public class Plugin : IPlugin

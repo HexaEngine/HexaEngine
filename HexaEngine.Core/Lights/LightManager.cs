@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.Core.Lights
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Instances;
+    using HexaEngine.Core.Lights.Probes;
+    using HexaEngine.Core.Lights.Structs;
+    using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
@@ -13,21 +15,18 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
-    public enum ViewportShading
-    {
-        Rendered,
-        Solid,
-        Wireframe,
-    }
-
     public partial class LightManager : ISystem
     {
+        private readonly List<ILightProbeComponent> probes = new();
         private readonly List<Light> lights = new();
         private readonly List<Light> activeLights = new();
         private IGraphicsDevice device;
         private readonly IInstanceManager instanceManager;
-        private readonly ConcurrentQueue<Light> updateQueue = new();
+        private readonly ConcurrentQueue<ILightProbeComponent> probeUpdateQueue = new();
+        private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
         private readonly ConcurrentQueue<IInstance> modelUpdateQueue = new();
+
+        private StructuredUavBuffer<GlobalProbeData> globalProbes;
 
         private StructuredUavBuffer<DirectionalLightData> directionalLights;
         private StructuredUavBuffer<PointLightData> pointLights;
@@ -37,7 +36,8 @@
         private StructuredUavBuffer<ShadowPointLightData> shadowPointLights;
         private StructuredUavBuffer<ShadowSpotlightData> shadowSpotlights;
 
-        private ConstantBuffer<LightBufferParams> paramsBuffer;
+        private ConstantBuffer<ProbeBufferParams> probeParamsBuffer;
+        private ConstantBuffer<LightBufferParams> lightParamsBuffer;
 
         private Quad quad;
         private ISamplerState pointSampler;
@@ -52,7 +52,8 @@
 
         private IGraphicsPipeline deferredIndirect;
         private unsafe void** indirectSrvs;
-        private const uint nindirectSrvs = 8 + 4;
+        private const uint nindirectSrvsBase = 8 + 3;
+        private const uint nindirectSrvs = 8 + 3 + MaxGlobalLightProbes * 2;
 
         private IGraphicsPipeline deferredShadow;
         private unsafe void** shadowSrvs;
@@ -64,6 +65,7 @@
 
         private IGraphicsPipeline forwardWireframe;
 
+        public const int MaxGlobalLightProbes = 4;
         public const int MaxDirectionalLightSDs = 1;
         public const int MaxPointLightSDs = 32;
         public const int MaxSpotlightSDs = 32;
@@ -73,8 +75,6 @@
 
         public ResourceRef<TextureArray> GBuffers;
 
-        public ResourceRef<Texture> Irraidance;
-        public ResourceRef<Texture> EnvPrefiltered;
         public ResourceRef<Texture> LUT;
         public ResourceRef<Texture> SSAO;
 
@@ -87,6 +87,8 @@
         {
             this.instanceManager = instanceManager;
         }
+
+        public IReadOnlyList<ILightProbeComponent> Probes => probes;
 
         public IReadOnlyList<Light> Lights => lights;
 
@@ -104,7 +106,11 @@
             instanceManager.Updated += InstanceUpdated;
             instanceManager.InstanceCreated += InstanceCreated;
             instanceManager.InstanceDestroyed += InstanceDestroyed;
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            probeParamsBuffer = new(device, CpuAccessFlags.Write);
+            lightParamsBuffer = new(device, CpuAccessFlags.Write);
+
+            globalProbes = new(device, true, false);
+
             directionalLights = new(device, true, false);
             pointLights = new(device, true, false);
             spotlights = new(device, true, false);
@@ -138,7 +144,7 @@
                 smps[0] = (void*)pointSampler.NativePointer;
                 smps[1] = (void*)linearSampler.NativePointer;
                 directSrvs = AllocArray(ndirectSrvs);
-                cbs = AllocArray(2);
+                cbs = AllocArray(3);
 
                 indirectSrvs = AllocArray(nindirectSrvs);
                 shadowSrvs = AllocArray(nShadowSrvs);
@@ -178,8 +184,6 @@
             forwardSoild = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "forward/solid/vs.hlsl",
-                HullShader = "forward/solid/hs.hlsl",
-                DomainShader = "forward/solid/ds.hlsl",
                 PixelShader = "forward/solid/ps.hlsl",
             },
             new GraphicsPipelineState()
@@ -188,7 +192,7 @@
                 BlendFactor = Vector4.Zero,
                 DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.PatchListWith3ControlPoints
+                Topology = PrimitiveTopology.TriangleList
             });
 
             forwardWireframe = await device.CreateGraphicsPipelineAsync(new()
@@ -223,15 +227,16 @@
             modelUpdateQueue.Enqueue(instance);
         }
 
-        private void LightTransformed(GameObject light)
+        private void LightTransformed(GameObject gameObject)
         {
-            updateQueue.Enqueue((Light)light);
+            if (gameObject is Light light)
+                lightUpdateQueue.Enqueue(light);
         }
 
         private void LightPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (sender is Light light)
-                updateQueue.Enqueue(light);
+                lightUpdateQueue.Enqueue(light);
         }
 
         public void Clear()
@@ -248,6 +253,10 @@
             {
                 AddLight(light);
             }
+            if (gameObject.TryGetComponent<ILightProbeComponent>(out var component))
+            {
+                AddProbe(component);
+            }
         }
 
         public unsafe void Unregister(GameObject gameObject)
@@ -257,6 +266,10 @@
                 light.DestroyShadowMap();
                 RemoveLight(light);
             }
+            if (gameObject.TryGetComponent<ILightProbeComponent>(out var component))
+            {
+                RemoveProbe(component);
+            }
         }
 
         public unsafe void AddLight(Light light)
@@ -264,9 +277,18 @@
             lock (lights)
             {
                 lights.Add(light);
-                updateQueue.Enqueue(light);
+                lightUpdateQueue.Enqueue(light);
                 light.Transformed += LightTransformed;
                 light.PropertyChanged += LightPropertyChanged;
+            }
+        }
+
+        public unsafe void AddProbe(ILightProbeComponent probe)
+        {
+            lock (probes)
+            {
+                probes.Add(probe);
+                probeUpdateQueue.Enqueue(probe);
             }
         }
 
@@ -281,10 +303,18 @@
             }
         }
 
+        public unsafe void RemoveProbe(ILightProbeComponent probe)
+        {
+            lock (probes)
+            {
+                probes.Remove(probe);
+            }
+        }
+
         public unsafe void Update(IGraphicsContext context, Camera camera)
         {
             Queue<Light> updateShadowLightQueue = new();
-            while (updateQueue.TryDequeue(out var light))
+            while (lightUpdateQueue.TryDequeue(out var light))
             {
                 if (light.IsEnabled)
                 {
@@ -344,6 +374,8 @@
 
             UpdateShadowMaps(context, camera, updateShadowLightQueue);
 
+            globalProbes.Update(context);
+
             directionalLights.Update(context);
             pointLights.Update(context);
             spotlights.Update(context);
@@ -357,7 +389,7 @@
         {
         }
 
-        public async Task EndResize(int width, int height)
+        public Task EndResize(int width, int height)
         {
 #nullable disable
             Output = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1)).Value.RenderTargetView;
@@ -365,13 +397,12 @@
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
             GBuffers = ResourceManager2.Shared.GetTextureArray("GBuffer");
-            Irraidance = ResourceManager2.Shared.GetTexture("EnvIrr");
-            EnvPrefiltered = ResourceManager2.Shared.GetTexture("EnvPref");
             LUT = ResourceManager2.Shared.GetTexture("BRDFLUT");
             SSAO = ResourceManager2.Shared.GetTexture("SSAOBuffer");
 
 #nullable enable
             UpdateResources();
+            return Task.CompletedTask;
         }
 
         public void UpdateTextures()
@@ -382,8 +413,9 @@
         private unsafe void UpdateResources()
         {
 #nullable disable
-            cbs[0] = (void*)paramsBuffer.Buffer?.NativePointer;
+            cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
             cbs[1] = (void*)Camera.Value?.NativePointer;
+            cbs[2] = (void*)probeParamsBuffer.Buffer?.NativePointer;
 
             if (GBuffers != null)
                 for (int i = 0; i < 8; i++)
@@ -393,6 +425,11 @@
                         simpleSrvs[i] = shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = (void*)GBuffers.Value.SRVs[i]?.NativePointer;
                     }
                 }
+
+            indirectSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
+            indirectSrvs[9] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
+            indirectSrvs[10] = (void*)globalProbes.SRV.NativePointer;
+
             directSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
             directSrvs[9] = (void*)directionalLights.SRV.NativePointer;
             directSrvs[10] = (void*)pointLights.SRV.NativePointer;
@@ -403,25 +440,47 @@
             shadowSrvs[10] = (void*)shadowPointLights.SRV.NativePointer;
             shadowSrvs[11] = (void*)shadowSpotlights.SRV.NativePointer;
 
-            indirectSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
-            indirectSrvs[9] = (void*)Irraidance.Value?.ShaderResourceView.NativePointer;
-            indirectSrvs[10] = (void*)EnvPrefiltered.Value?.ShaderResourceView.NativePointer;
-            indirectSrvs[11] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
-
 #nullable enable
         }
 
         private unsafe void UpdateDirectLights(IGraphicsContext context)
         {
+            globalProbes.ResetCounter();
             directionalLights.ResetCounter();
             pointLights.ResetCounter();
             spotlights.ResetCounter();
             shadowDirectionalLights.ResetCounter();
             shadowPointLights.ResetCounter();
             shadowSpotlights.ResetCounter();
+            uint globalProbesCount = 0;
             uint csmCount = 0;
             uint osmCount = 0;
             uint psmCount = 0;
+
+            for (int i = 0; i < probes.Count; i++)
+            {
+                var probe = probes[i];
+                if (!(probe.IsEnabled && probe.IsVaild))
+                    continue;
+                switch (probe.Type)
+                {
+                    case ProbeType.Global:
+                        globalProbes.Add((GlobalLightProbeComponent)probe);
+                        indirectSrvs[nindirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.ShaderResourceView?.NativePointer ?? 0);
+                        indirectSrvs[nindirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.ShaderResourceView?.NativePointer ?? 0);
+                        globalProbesCount++;
+                        break;
+
+                    case ProbeType.Local:
+                        break;
+                }
+            }
+
+            for (uint i = globalProbesCount; i < MaxGlobalLightProbes; i++)
+            {
+                indirectSrvs[nindirectSrvsBase + i] = null;
+                indirectSrvs[nindirectSrvsBase + MaxGlobalLightProbes + i] = null;
+            }
 
             for (int i = 0; i < activeLights.Count; i++)
             {
@@ -499,9 +558,15 @@
                 shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + i] = null;
             }
 
+            indirectSrvs[10] = (void*)globalProbes.SRV.NativePointer;
+
             directSrvs[9] = (void*)directionalLights.SRV.NativePointer;
             directSrvs[10] = (void*)pointLights.SRV.NativePointer;
             directSrvs[11] = (void*)spotlights.SRV.NativePointer;
+
+            shadowSrvs[9] = (void*)shadowDirectionalLights.SRV.NativePointer;
+            shadowSrvs[10] = (void*)shadowPointLights.SRV.NativePointer;
+            shadowSrvs[11] = (void*)shadowSpotlights.SRV.NativePointer;
         }
 
         public unsafe void DeferredPass(IGraphicsContext context, ViewportShading shading, Camera camera)
@@ -510,33 +575,38 @@
             {
                 context.SetRenderTarget(Output, default);
                 context.SetViewport(Output.Viewport);
-                context.PSSetConstantBuffers(cbs, 2, 0);
+                context.PSSetConstantBuffers(cbs, 3, 0);
                 context.PSSetSamplers(smps, 2, 0);
+
+                // Indirect light pass
+                var probeParams = probeParamsBuffer.Local;
+                probeParams->GlobalProbes = globalProbes.Count;
+                probeParamsBuffer.Update(context);
 
                 context.PSSetShaderResources(indirectSrvs, nindirectSrvs, 0);
 
-                // Indirect light pass
                 quad.DrawAuto(context, deferredIndirect);
 
-                var lightParams = paramsBuffer.Local;
+                // Direct light pass
+                var lightParams = lightParamsBuffer.Local;
                 lightParams->DirectionalLights = directionalLights.Count;
                 lightParams->PointLights = pointLights.Count;
                 lightParams->Spotlights = spotlights.Count;
-                paramsBuffer.Update(context);
+                lightParamsBuffer.Update(context);
 
+                context.PSSetConstantBuffers(cbs, 2, 0);
                 context.PSSetShaderResources(directSrvs, ndirectSrvs, 0);
 
-                // Direct light pass
                 quad.DrawAuto(context, deferredDirect);
 
+                // Shadow light pass
                 lightParams->DirectionalLights = shadowDirectionalLights.Count;
                 lightParams->PointLights = shadowPointLights.Count;
                 lightParams->Spotlights = shadowSpotlights.Count;
-                paramsBuffer.Update(context);
+                lightParamsBuffer.Update(context);
 
                 context.PSSetShaderResources(shadowSrvs, nShadowSrvs, 0);
 
-                // Shadow light pass
                 quad.DrawAuto(context, deferredShadow);
             }
         }
@@ -589,15 +659,14 @@
         public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera, IRenderTargetView rtv, IDepthStencilView dsv, Viewport viewport)
         {
             var types = instanceManager.Types;
-            if (shading == ViewportShading.Solid)
+            if (shading == ViewportShading.Solid && forwardSoild.IsValid)
             {
+                context.SetGraphicsPipeline(forwardSoild);
                 context.SetRenderTarget(rtv, dsv);
                 context.SetViewport(viewport);
-                context.DSSetConstantBuffers(&cbs[1], 1, 1);
+                context.VSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetSamplers(smps, 2, 0);
-
-                forwardSoild.BeginDraw(context);
 
                 for (int j = 0; j < types.Count; j++)
                 {
@@ -610,14 +679,13 @@
                 context.ClearState();
             }
 
-            if (shading == ViewportShading.Wireframe)
+            if (shading == ViewportShading.Wireframe && forwardWireframe.IsValid)
             {
+                context.SetGraphicsPipeline(forwardWireframe);
                 context.SetRenderTarget(rtv, dsv);
                 context.SetViewport(viewport);
                 context.DSSetConstantBuffers(&cbs[1], 1, 1);
                 context.PSSetSamplers(smps, 2, 0);
-
-                forwardWireframe.BeginDraw(context);
 
                 for (int j = 0; j < types.Count; j++)
                 {
@@ -637,6 +705,8 @@
             instanceManager.InstanceCreated -= InstanceCreated;
             instanceManager.InstanceDestroyed -= InstanceDestroyed;
 
+            globalProbes.Dispose();
+
             directionalLights.Dispose();
             pointLights.Dispose();
             spotlights.Dispose();
@@ -645,7 +715,8 @@
             shadowPointLights.Dispose();
             shadowSpotlights.Dispose();
 
-            paramsBuffer.Dispose();
+            probeParamsBuffer.Dispose();
+            lightParamsBuffer.Dispose();
             quad.Dispose();
             deferredDirect.Dispose();
             deferredIndirect.Dispose();

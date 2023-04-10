@@ -1,18 +1,16 @@
 ﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Effects;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Meshes;
     using System.Collections.Concurrent;
 
     public static class ResourceManager
     {
         private static readonly ConcurrentDictionary<string, ResourceInstance<Mesh>> meshes = new();
         private static readonly ConcurrentDictionary<string, Material> materials = new();
-        private static readonly ConcurrentDictionary<string, ResourceInstance<IShaderResourceView>> textures = new();
+        private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialTexture>> textures = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialShader>> shaders = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<IGraphicsPipeline>> pipelines = new();
         private static bool suppressCleanup;
@@ -83,7 +81,7 @@
             }
 
             // TODO: Handle different vertex types.
-            Mesh model = new(device, mesh.Name, mesh.GetVertices(), mesh.Indices, mesh.Box, mesh.Sphere);
+            Mesh model = new(device, mesh);
             instance.BeginLoad();
             instance.EndLoad(model);
 
@@ -107,71 +105,62 @@
             }
         }
 
-        public static Material LoadMaterial(MaterialData material)
+        public static Material LoadMaterial(MeshData mesh, MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
             {
-                if (materials.TryGetValue(material.Name, out var model))
+                if (materials.TryGetValue(desc.Name, out var model))
                 {
                     model.AddRef();
                     return model;
                 }
 
-                modelMaterial = new(material,
-                    device.CreateBuffer(new CBMaterial(material), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
-                    device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
+                modelMaterial = new(desc);
                 modelMaterial.AddRef();
-                materials.TryAdd(material.Name, modelMaterial);
+                materials.TryAdd(desc.Name, modelMaterial);
             }
 
-            modelMaterial.Shader = LoadMaterialShader(material);
-            modelMaterial.AlbedoTexture = LoadTexture(material.BaseColorTextureMap);
-            modelMaterial.NormalTexture = LoadTexture(material.NormalTextureMap);
-            modelMaterial.DisplacementTexture = LoadTexture(material.DisplacementTextureMap);
-            modelMaterial.RoughnessTexture = LoadTexture(material.RoughnessTextureMap);
-            modelMaterial.MetalnessTexture = LoadTexture(material.MetalnessTextureMap);
-            modelMaterial.EmissiveTexture = LoadTexture(material.EmissiveTextureMap);
-            modelMaterial.RoughnessMetalnessTexture = LoadTexture(material.RoughnessMetalnessTextureMap);
-            modelMaterial.AoTexture = LoadTexture(material.AoTextureMap);
+            modelMaterial.Shader = LoadMaterialShader(mesh, desc);
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(LoadTexture(desc.Textures[i]));
+            }
+
             modelMaterial.EndUpdate();
 
             return modelMaterial;
         }
 
-        public static async Task<Material> LoadMaterialAsync(MaterialData material)
+        public static async Task<Material> LoadMaterialAsync(MeshData mesh, MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
             {
-                if (materials.TryGetValue(material.Name, out modelMaterial))
+                if (materials.TryGetValue(desc.Name, out modelMaterial))
                 {
                     modelMaterial.AddRef();
                     return modelMaterial;
                 }
 
-                modelMaterial = new(material,
-                    device.CreateBuffer((CBMaterial)material, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write),
-                    device.CreateSamplerState(SamplerDescription.AnisotropicWrap));
+                modelMaterial = new(desc);
                 modelMaterial.AddRef();
-                materials.TryAdd(material.Name, modelMaterial);
+                materials.TryAdd(desc.Name, modelMaterial);
             }
 
-            modelMaterial.Shader = await LoadMaterialShaderAsync(material);
-            modelMaterial.AlbedoTexture = await LoadTextureAsync(material.BaseColorTextureMap);
-            modelMaterial.NormalTexture = await LoadTextureAsync(material.NormalTextureMap);
-            modelMaterial.DisplacementTexture = await LoadTextureAsync(material.DisplacementTextureMap);
-            modelMaterial.RoughnessTexture = await LoadTextureAsync(material.RoughnessTextureMap);
-            modelMaterial.MetalnessTexture = await LoadTextureAsync(material.MetalnessTextureMap);
-            modelMaterial.EmissiveTexture = await LoadTextureAsync(material.EmissiveTextureMap);
-            modelMaterial.RoughnessMetalnessTexture = await LoadTextureAsync(material.RoughnessMetalnessTextureMap);
-            modelMaterial.AoTexture = await LoadTextureAsync(material.AoTextureMap);
+            modelMaterial.Shader = await LoadMaterialShaderAsync(mesh, desc);
+
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(await LoadTextureAsync(desc.Textures[i]));
+            }
+
             modelMaterial.EndUpdate();
 
             return modelMaterial;
         }
 
-        public static void UpdateMaterial(MaterialData desc)
+        public static void UpdateMaterial(MeshData mesh, MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -184,15 +173,18 @@
 
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
-            UpdateMaterialShader(ref modelMaterial.Shader, desc);
-            UpdateTexture(ref modelMaterial.AlbedoTexture, desc.BaseColorTextureMap);
-            UpdateTexture(ref modelMaterial.NormalTexture, desc.NormalTextureMap);
-            UpdateTexture(ref modelMaterial.DisplacementTexture, desc.DisplacementTextureMap);
-            UpdateTexture(ref modelMaterial.RoughnessTexture, desc.RoughnessTextureMap);
-            UpdateTexture(ref modelMaterial.MetalnessTexture, desc.MetalnessTextureMap);
-            UpdateTexture(ref modelMaterial.EmissiveTexture, desc.EmissiveTextureMap);
-            UpdateTexture(ref modelMaterial.RoughnessMetalnessTexture, desc.RoughnessMetalnessTextureMap);
-            UpdateTexture(ref modelMaterial.AoTexture, desc.AoTextureMap);
+            UpdateMaterialShader(ref modelMaterial.Shader, mesh, desc);
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                UnloadTexture(modelMaterial.TextureList[i]);
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(LoadTexture(desc.Textures[i]));
+            }
+
             modelMaterial.EndUpdate();
         }
 
@@ -207,7 +199,7 @@
             }
         }
 
-        public static async Task UpdateMaterialAsync(MaterialData desc)
+        public static async Task UpdateMaterialAsync(MeshData mesh, MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -220,15 +212,19 @@
 
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
-            modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader, desc);
-            modelMaterial.AlbedoTexture = await UpdateTextureAsync(modelMaterial.AlbedoTexture, desc.BaseColorTextureMap);
-            modelMaterial.NormalTexture = await UpdateTextureAsync(modelMaterial.NormalTexture, desc.NormalTextureMap);
-            modelMaterial.DisplacementTexture = await UpdateTextureAsync(modelMaterial.DisplacementTexture, desc.DisplacementTextureMap);
-            modelMaterial.RoughnessTexture = await UpdateTextureAsync(modelMaterial.RoughnessTexture, desc.RoughnessTextureMap);
-            modelMaterial.MetalnessTexture = await UpdateTextureAsync(modelMaterial.MetalnessTexture, desc.MetalnessTextureMap);
-            modelMaterial.EmissiveTexture = await UpdateTextureAsync(modelMaterial.EmissiveTexture, desc.EmissiveTextureMap);
-            modelMaterial.RoughnessMetalnessTexture = await UpdateTextureAsync(modelMaterial.RoughnessMetalnessTexture, desc.RoughnessMetalnessTextureMap);
-            modelMaterial.AoTexture = await UpdateTextureAsync(modelMaterial.AoTexture, desc.AoTextureMap);
+
+            modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader, mesh, desc);
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                UnloadTexture(modelMaterial.TextureList[i]);
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(await LoadTextureAsync(desc.Textures[i]));
+            }
+
             modelMaterial.EndUpdate();
         }
 
@@ -245,21 +241,17 @@
             }
 
             UnloadMaterialShader(desc.Shader);
-            UnloadTexture(desc.AlbedoTexture);
-            UnloadTexture(desc.NormalTexture);
-            UnloadTexture(desc.DisplacementTexture);
-            UnloadTexture(desc.RoughnessTexture);
-            UnloadTexture(desc.MetalnessTexture);
-            UnloadTexture(desc.EmissiveTexture);
-            UnloadTexture(desc.RoughnessMetalnessTexture);
-            UnloadTexture(desc.AoTexture);
+            for (int i = 0; i < desc.TextureList.Count; i++)
+            {
+                UnloadTexture(desc.TextureList[i]);
+            }
         }
 
-        public static ResourceInstance<IShaderResourceView>? LoadTexture(string? name)
+        public static ResourceInstance<MaterialTexture>? LoadTexture(MaterialTextureDesc desc)
         {
-            string fullname = Paths.CurrentTexturePath + name;
-            if (string.IsNullOrEmpty(name)) return null;
-            ResourceInstance<IShaderResourceView>? texture;
+            string fullname = Paths.CurrentTexturePath + desc.File;
+            if (string.IsNullOrWhiteSpace(desc.File)) return null;
+            ResourceInstance<MaterialTexture>? texture;
             lock (textures)
             {
                 if (textures.TryGetValue(fullname, out texture))
@@ -274,18 +266,20 @@
             }
 
             var tex = device.LoadTexture2D(fullname);
-            texture.EndLoad(device.CreateShaderResourceView(tex));
+            var srv = device.CreateShaderResourceView(tex);
+            var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
+            texture.EndLoad(new(srv, sampler, desc));
             tex.Dispose();
 
             return texture;
         }
 
-        public static Task<ResourceInstance<IShaderResourceView>?> LoadTextureAsync(string? name)
+        public static Task<ResourceInstance<MaterialTexture>?> LoadTextureAsync(MaterialTextureDesc desc)
         {
-            return Task.Factory.StartNew(() => LoadTexture(name));
+            return Task.Factory.StartNew(() => LoadTexture(desc));
         }
 
-        public static void UnloadTexture(ResourceInstance<IShaderResourceView>? texture)
+        public static void UnloadTexture(ResourceInstance<MaterialTexture>? texture)
         {
             if (texture == null) return;
             texture.RemoveRef();
@@ -299,20 +293,20 @@
             }
         }
 
-        public static void UpdateTexture(ref ResourceInstance<IShaderResourceView>? texture, string name)
+        public static void UpdateTexture(ref ResourceInstance<MaterialTexture>? texture, MaterialTextureDesc desc)
         {
-            string fullname = Paths.CurrentTexturePath + name;
+            string fullname = Paths.CurrentTexturePath + desc.File;
             if (texture?.Name == fullname) return;
             UnloadTexture(texture);
-            texture = LoadTexture(name);
+            texture = LoadTexture(desc);
         }
 
-        public static async Task<ResourceInstance<IShaderResourceView>?> UpdateTextureAsync(ResourceInstance<IShaderResourceView>? texture, string name)
+        public static async Task<ResourceInstance<MaterialTexture>?> UpdateTextureAsync(ResourceInstance<MaterialTexture>? texture, MaterialTextureDesc desc)
         {
-            string fullname = Paths.CurrentTexturePath + name;
+            string fullname = Paths.CurrentTexturePath + desc.File;
             if (texture?.Name == fullname) return texture;
             UnloadTexture(texture);
-            return await LoadTextureAsync(name);
+            return await LoadTextureAsync(desc);
         }
 
         public static ResourceInstance<IGraphicsPipeline>? LoadPipeline(string name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
@@ -339,7 +333,7 @@
             return pipeline;
         }
 
-        public static Task<ResourceInstance<IGraphicsPipeline>?> LoadPipelineAsync(string? name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
+        public static Task<ResourceInstance<IGraphicsPipeline>?> LoadPipelineAsync(string name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
         {
             return Task.Factory.StartNew(() => LoadPipeline(name, desc, state, macros));
         }
@@ -386,47 +380,47 @@
 
         #region Shader
 
-        public static ResourceInstance<MaterialShader>? LoadMaterialShader(MaterialData data)
+        public static ResourceInstance<MaterialShader>? LoadMaterialShader(MeshData mesh, MaterialData material)
         {
             ResourceInstance<MaterialShader>? shader;
             lock (shaders)
             {
-                if (shaders.TryGetValue(data.Name, out shader))
+                if (shaders.TryGetValue(material.Name, out shader))
                 {
                     shader.Wait();
                     shader.AddRef();
                     return shader;
                 }
 
-                shader = new(data.Name, 1);
-                shaders.TryAdd(data.Name, shader);
+                shader = new(material.Name, 1);
+                shaders.TryAdd(material.Name, shader);
             }
 
             var shad = new MaterialShader();
-            shad.Initialize(device, data);
+            shad.Initialize(device, mesh, material);
             shader.EndLoad(shad);
 
             return shader;
         }
 
-        public static async Task<ResourceInstance<MaterialShader>?> LoadMaterialShaderAsync(MaterialData data)
+        public static async Task<ResourceInstance<MaterialShader>?> LoadMaterialShaderAsync(MeshData mesh, MaterialData material)
         {
             ResourceInstance<MaterialShader>? shader;
             lock (shaders)
             {
-                if (shaders.TryGetValue(data.Name, out shader))
+                if (shaders.TryGetValue(material.Name, out shader))
                 {
                     shader.Wait();
                     shader.AddRef();
                     return shader;
                 }
 
-                shader = new(data.Name, 1);
-                shaders.TryAdd(data.Name, shader);
+                shader = new(material.Name, 1);
+                shaders.TryAdd(material.Name, shader);
             }
 
             var shad = new MaterialShader();
-            await shad.InitializeAsync(device, data);
+            await shad.InitializeAsync(device, mesh, material);
             shader.EndLoad(shad);
 
             return shader;
@@ -446,29 +440,29 @@
             }
         }
 
-        public static void UpdateMaterialShader(ref ResourceInstance<MaterialShader>? shader, MaterialData data)
+        public static void UpdateMaterialShader(ref ResourceInstance<MaterialShader>? shader, MeshData mesh, MaterialData material)
         {
             if (shader == null)
             {
-                shader = LoadMaterialShader(data);
+                shader = LoadMaterialShader(mesh, material);
                 return;
             }
 
             var shad = new MaterialShader();
-            shad.Initialize(device, data);
+            shad.Initialize(device, mesh, material);
             shader.BeginLoad();
             shader.EndLoad(shad);
         }
 
-        public static async Task<ResourceInstance<MaterialShader>?> UpdateMaterialShaderAsync(ResourceInstance<MaterialShader>? pipeline, MaterialData data)
+        public static async Task<ResourceInstance<MaterialShader>?> UpdateMaterialShaderAsync(ResourceInstance<MaterialShader>? pipeline, MeshData mesh, MaterialData material)
         {
             if (pipeline == null)
             {
-                return await LoadMaterialShaderAsync(data);
+                return await LoadMaterialShaderAsync(mesh, material);
             }
 
             var shad = new MaterialShader();
-            await shad.InitializeAsync(device, data);
+            await shad.InitializeAsync(device, mesh, material);
             pipeline.BeginLoad();
             pipeline.EndLoad(shad);
             return pipeline;

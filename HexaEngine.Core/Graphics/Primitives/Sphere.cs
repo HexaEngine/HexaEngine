@@ -71,7 +71,7 @@
                     s = (float)j / LongLines;
                     t = (float)i / LatLines;
 
-                    v.UV = new(MathF.Abs(1 - s), t);
+                    v.UV = new(MathF.Abs(1 - s), t, 0);
                     vertices[vi++] = v;
                 }
             }

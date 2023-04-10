@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
@@ -163,7 +161,7 @@ namespace HexaEngine.Effects
         {
         }
 
-        public async void EndResize(int width, int height)
+        public void EndResize(int width, int height)
         {
             Output = ResourceManager2.Shared.UpdateTexture("SSAOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
 

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
+    using HexaEngine.Core.Graphics.Textures;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -48,8 +49,8 @@
             TexMetadata metadata2;
 
             Span<byte> bytes = LoadTexture(TGAFilename);
-            DirectXTex.GetMetadataFromTGAMemory(bytes, TGAFlags.TGA_FLAGS_NONE, &metadata1);
-            DirectXTex.GetMetadataFromTGAFile(TGAFilename, TGAFlags.TGA_FLAGS_NONE, &metadata2);
+            DirectXTex.GetMetadataFromTGAMemory(bytes, TGAFlags.None, &metadata1);
+            DirectXTex.GetMetadataFromTGAFile(TGAFilename, TGAFlags.None, &metadata2);
 
             Assert.Equal(metadata1, metadata2);
         }

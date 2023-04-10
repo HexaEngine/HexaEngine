@@ -9,6 +9,7 @@
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Physics.Characters;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Scenes.Systems;
     using Newtonsoft.Json;
@@ -27,7 +28,6 @@
         private string[] cameraNames = Array.Empty<string>();
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
-        private MaterialManager materialManager;
         private ModelManager meshManager;
         private LightManager lightManager;
         private RenderManager renderManager;
@@ -84,9 +84,6 @@
         public InstanceManager InstanceManager => instanceManager;
 
         [JsonIgnore]
-        public MaterialManager MaterialManager { get => materialManager; set => materialManager = value; }
-
-        [JsonIgnore]
         public ScriptManager Scripts => scriptManager;
 
         [JsonIgnore]
@@ -120,9 +117,8 @@
         {
             instanceManager = new();
             lightManager = new(instanceManager);
-            materialManager ??= new();
             meshManager ??= new();
-            Task.Factory.StartNew(async device => await lightManager.Initialize((IGraphicsDevice)device), device);
+            lightManager.Initialize(device).Wait();
             systems.Add(new AudioSystem());
             systems.Add(new PhysicsSystem());
             systems.Add(new AnimationSystem(this));
@@ -132,6 +128,39 @@
             systems.Add(renderManager = new(device, instanceManager));
 
             semaphore.Wait();
+
+            BufferPool = new BufferPool();
+            var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
+            ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
+
+            characterControllers = new(BufferPool);
+            contactEvents = new(ThreadDispatcher, BufferPool);
+
+            Simulation = Simulation.Create(BufferPool, new NarrowphaseCallbacks(characterControllers, contactEvents), new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
+
+            Time.FixedUpdate += FixedUpdate;
+            Time.Initialize();
+
+            root.Initialize(device);
+            Validate();
+            semaphore.Release();
+        }
+
+        public async Task InitializeAsync(IGraphicsDevice device)
+        {
+            instanceManager = new();
+            lightManager = new(instanceManager);
+            meshManager ??= new();
+            await lightManager.Initialize(device);
+            systems.Add(new AudioSystem());
+            systems.Add(new PhysicsSystem());
+            systems.Add(new AnimationSystem(this));
+            systems.Add(scriptManager);
+            systems.Add(lightManager);
+            systems.Add(new TransformSystem());
+            systems.Add(renderManager = new(device, instanceManager));
+
+            await semaphore.WaitAsync();
 
             BufferPool = new BufferPool();
             var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);

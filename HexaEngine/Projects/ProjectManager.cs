@@ -5,8 +5,8 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Assets;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scripts;
     using HexaEngine.Dotnet;
-    using HexaEngine.Scripting;
     using HexaEngine.Windows;
     using System;
     using System.Collections.Generic;

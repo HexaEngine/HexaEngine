@@ -16,12 +16,14 @@
     public class Frameviewer
     {
         private readonly IGraphicsDevice device;
-
+        private bool isShown;
+        private bool isVisible;
         private Vector2 position;
         private Vector2 size;
-        private bool isShown;
 
         public bool IsShown { get => isShown; set => isShown = value; }
+
+        public bool IsVisible => isVisible;
 
         public Vector2 Position => position;
 
@@ -44,11 +46,17 @@
 
         internal void Draw()
         {
-            ImGui.Begin("Framebuffer", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar);
+            if (!ImGui.Begin("Scene", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar))
+            {
+                isVisible = false;
+                ImGui.End();
+                return;
+            }
+            isVisible = true;
             var scene = SceneManager.Current;
             if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
             {
-                GameObject? gameObject = ObjectPickerManager.Select(device.Context, Mouse.Position, Viewport);
+                GameObject? gameObject = ObjectPickerManager.SelectObject(device.Context, Mouse.Position, Viewport);
                 if (gameObject != null)
                 {
                     if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))

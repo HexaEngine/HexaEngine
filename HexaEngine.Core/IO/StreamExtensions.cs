@@ -45,8 +45,13 @@
             return 4;
         }
 
-        public static void WriteString(this Stream stream, string str, Encoding encoder, Endianness endianness)
+        public static void WriteString(this Stream stream, string? str, Encoding encoder, Endianness endianness)
         {
+            if (str == null)
+            {
+                stream.WriteInt(0, endianness);
+                return;
+            }
             var count = encoder.GetByteCount(str);
             var bytes = count + 4;
             Span<byte> dst = bytes < 2048 ? stackalloc byte[bytes] : new byte[bytes];
@@ -58,7 +63,7 @@
             stream.Write(dst);
         }
 
-        public static string ReadString(this Stream stream, Encoding decoder, Endianness endianness)
+        public static string? ReadString(this Stream stream, Encoding decoder, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
@@ -67,6 +72,11 @@
                 len = BinaryPrimitives.ReadInt32LittleEndian(buf);
             else
                 len = BinaryPrimitives.ReadInt32BigEndian(buf);
+
+            if (len == 0)
+            {
+                return null;
+            }
 
             Span<byte> src = len < 2048 ? stackalloc byte[len] : new byte[len];
             stream.Read(src);
@@ -209,6 +219,7 @@
             stream.Read(bytes, 0, length);
             return bytes;
         }
+
         public static byte[] ReadBytes(this Stream stream, uint length)
         {
             byte[] bytes = new byte[length];

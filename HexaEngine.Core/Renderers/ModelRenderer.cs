@@ -18,7 +18,7 @@
 
         public IInstance CreateInstance(MeshData data, GameObject parent)
         {
-            var material = ResourceManager.LoadMaterial(parent.GetScene().MaterialManager.TryAddMaterial(data.Material));
+            var material = ResourceManager.LoadMaterial(data, MaterialManager.GetMaterial(data.Material.Name) ?? data.Material);
             var mesh = ResourceManager.LoadMesh(data);
             mesh.Wait();
             return instanceManager.CreateInstance(mesh.Value.CreateInstanceType(mesh, material), parent);
@@ -26,7 +26,7 @@
 
         public async Task<IInstance> CreateInstanceAsync(MeshData data, GameObject parent)
         {
-            var material = await ResourceManager.LoadMaterialAsync(parent.GetScene().MaterialManager.TryAddMaterial(data.Material));
+            var material = await ResourceManager.LoadMaterialAsync(data, MaterialManager.GetMaterial(data.Material.Name) ?? data.Material);
             var mesh = await ResourceManager.LoadMeshAsync(data);
             mesh.Wait();
             return await instanceManager.CreateInstanceAsync(mesh.Value.CreateInstanceType(mesh, material), parent);

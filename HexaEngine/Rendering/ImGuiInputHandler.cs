@@ -2,23 +2,69 @@
 using HexaEngine.Core.Input;
 using HexaEngine.Core.Windows;
 using ImGuiNET;
+using ImNodesNET;
 using Silk.NET.SDL;
-using KeyCode = HexaEngine.Core.Input.KeyCode;
 
 namespace HexaEngine.Rendering
 {
-    internal class ImGuiInputHandler
+    internal class ImGuiInputHandler : IDisposable
     {
         private readonly SdlWindow window;
+
         private ImGuiMouseCursor lastCursor;
 
-        public ImGuiInputHandler(SdlWindow window)
+        private static unsafe char* g_ClipboardTextData = null;
+
+        public unsafe ImGuiInputHandler(SdlWindow window)
         {
             this.window = window;
             window.MouseButtonInput += MouseButtonInput;
             window.KeyboardInput += KeyboardInput;
             window.KeyboardCharInput += KeyboardCharInput;
-            InitKeyMap();
+
+            var io = ImGui.GetIO();
+
+            io.SetClipboardTextFn = (nint)(delegate*<void*, char*, void>)&SetClipboardText;
+            io.GetClipboardTextFn = (nint)(delegate*<void*, char*>)&GetClipboardText;
+            io.ClipboardUserData = (nint)null;
+
+            io.KeyMap[(int)ImGuiKey.Tab] = (int)Scancode.ScancodeTab;
+            io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Scancode.ScancodeLeft;
+            io.KeyMap[(int)ImGuiKey.RightArrow] = (int)Scancode.ScancodeRight;
+            io.KeyMap[(int)ImGuiKey.UpArrow] = (int)Scancode.ScancodeUp;
+            io.KeyMap[(int)ImGuiKey.DownArrow] = (int)Scancode.ScancodeDown;
+            io.KeyMap[(int)ImGuiKey.PageUp] = (int)Scancode.ScancodePageup;
+            io.KeyMap[(int)ImGuiKey.PageDown] = (int)Scancode.ScancodePagedown;
+            io.KeyMap[(int)ImGuiKey.Home] = (int)Scancode.ScancodeHome;
+            io.KeyMap[(int)ImGuiKey.End] = (int)Scancode.ScancodeEnd;
+            io.KeyMap[(int)ImGuiKey.Insert] = (int)Scancode.ScancodeInsert;
+            io.KeyMap[(int)ImGuiKey.Delete] = (int)Scancode.ScancodeDelete;
+            io.KeyMap[(int)ImGuiKey.Backspace] = (int)Scancode.ScancodeBackspace;
+            io.KeyMap[(int)ImGuiKey.Space] = (int)Scancode.ScancodeSpace;
+            io.KeyMap[(int)ImGuiKey.Enter] = (int)Scancode.ScancodeReturn;
+            io.KeyMap[(int)ImGuiKey.Escape] = (int)Scancode.ScancodeEscape;
+            io.KeyMap[(int)ImGuiKey.KeypadEnter] = (int)Scancode.ScancodeKPEnter;
+            io.KeyMap[(int)ImGuiKey.A] = (int)Scancode.ScancodeA;
+            io.KeyMap[(int)ImGuiKey.C] = (int)Scancode.ScancodeC;
+            io.KeyMap[(int)ImGuiKey.V] = (int)Scancode.ScancodeV;
+            io.KeyMap[(int)ImGuiKey.X] = (int)Scancode.ScancodeX;
+            io.KeyMap[(int)ImGuiKey.Y] = (int)Scancode.ScancodeY;
+            io.KeyMap[(int)ImGuiKey.Z] = (int)Scancode.ScancodeZ;
+        }
+
+        private bool disposedValue;
+
+        private static unsafe char* GetClipboardText(void* user_data)
+        {
+            if (g_ClipboardTextData != null)
+                Clipboard.Free(g_ClipboardTextData);
+            g_ClipboardTextData = Clipboard.GetClipboardText();
+            return g_ClipboardTextData;
+        }
+
+        private static unsafe void SetClipboardText(void* user_data, char* text)
+        {
+            Clipboard.SetClipboardText(text);
         }
 
         private void KeyboardCharInput(object? sender, Core.Input.Events.KeyboardCharEventArgs e)
@@ -30,15 +76,27 @@ namespace HexaEngine.Rendering
         private void KeyboardInput(object? sender, Core.Input.Events.KeyboardEventArgs e)
         {
             var io = ImGui.GetIO();
-            io.AddKeyEvent(KeycodeToImGuiKey(e.KeyCode), e.KeyState == KeyState.Pressed);
+            int key = (int)e.Scancode;
+
+            io.KeysDown[key] = e.KeyState == KeyState.Down;
+
+            io.KeyShift = (Keyboard.GetModState() & Keymod.Shift) != 0;
+
+            io.KeyCtrl = (Keyboard.GetModState() & Keymod.Ctrl) != 0;
+            io.KeyAlt = (Keyboard.GetModState() & Keymod.Alt) != 0;
+#if WINDOWS
+            io.KeySuper = false;
+#else
+            io.KeySuper = (Keyboard.GetModState() & Keymod.Gui) != 0;
+#endif
         }
 
         private void MouseButtonInput(object? sender, Core.Input.Events.MouseButtonEventArgs e)
         {
             var io = ImGui.GetIO();
-            var index = e.MouseButton switch
+
+            var index = e.Button switch
             {
-                MouseButton.Unknown => -1,
                 MouseButton.Left => 0,
                 MouseButton.Right => 1,
                 MouseButton.Middle => 2,
@@ -46,17 +104,12 @@ namespace HexaEngine.Rendering
                 MouseButton.X2 => 4,
                 _ => -1,
             };
-            io.MouseDown[index] = e.KeyState == KeyState.Pressed;
+            io.MouseDown[index] = e.State == MouseButtonState.Down;
 
-            if (e.KeyState == KeyState.Pressed)
+            if (e.State == MouseButtonState.Down)
                 window.Capture();
             else
                 window.ReleaseCapture();
-        }
-
-        private void InitKeyMap()
-        {
-            var io = ImGui.GetIO();
         }
 
         public void Update()
@@ -64,7 +117,7 @@ namespace HexaEngine.Rendering
             var io = ImGui.GetIO();
             io.DisplaySize = new(window.Width, window.Height);
             io.DeltaTime = Time.Delta;
-            UpdateKeyModifiers();
+
             UpdateMousePosition();
 
             var mouseCursor = ImGui.GetIO().MouseDrawCursor ? ImGuiMouseCursor.None : ImGui.GetMouseCursor();
@@ -76,18 +129,11 @@ namespace HexaEngine.Rendering
 
             io.MouseWheel = Mouse.DeltaWheel.Y;
             io.MouseWheelH = Mouse.DeltaWheel.X;
+
+            UpdateGamepads();
         }
 
-        private void UpdateKeyModifiers()
-        {
-            var io = ImGui.GetIO();
-            io.KeyCtrl = Keyboard.IsDown(KeyCode.LCtrl);
-            io.KeyShift = Keyboard.IsDown(KeyCode.LShift);
-            io.KeyAlt = Keyboard.IsDown(KeyCode.Menu);
-            io.KeySuper = Keyboard.IsDown(KeyCode.Application);
-        }
-
-        public bool UpdateMouseCursor()
+        public static bool UpdateMouseCursor()
         {
             var io = ImGui.GetIO();
             if ((io.ConfigFlags & ImGuiConfigFlags.NoMouseCursorChange) != 0)
@@ -117,208 +163,88 @@ namespace HexaEngine.Rendering
             return true;
         }
 
-        private void UpdateMousePosition()
+        private static Sdl Sdl = Sdl.GetApi();
+
+        public static unsafe void UpdateGamepads()
+        {
+            var io = ImGui.GetIO();
+            Memset(io.NavInputs.Data, 0, io.NavInputs.Count);
+            if ((io.ConfigFlags & ImGuiConfigFlags.NavEnableGamepad) == 0)
+                return;
+
+            // Get gamepad
+            GameController* game_controller = Sdl.GameControllerOpen(0);
+            if (game_controller == null)
+            {
+                io.BackendFlags &= ~ImGuiBackendFlags.HasGamepad;
+                return;
+            }
+
+            // Update gamepad inputs
+            void MAP_BUTTON(ImGuiNavInput NAV_NO, GameControllerButton BUTTON_NO)
+            {
+                io.NavInputs[(int)NAV_NO] = (Sdl.GameControllerGetButton(game_controller, BUTTON_NO) != 0) ? 1.0f : 0.0f;
+            }
+            void MAP_ANALOG(ImGuiNavInput NAV_NO, GameControllerAxis AXIS_NO, int V0, int V1)
+            {
+                float vn = (float)(Sdl.GameControllerGetAxis(game_controller, AXIS_NO) - V0) / (V1 - V0);
+                if (vn > 1.0f)
+                    vn = 1.0f;
+                if (vn > 0.0f && io.NavInputs[(int)NAV_NO] < vn)
+                    io.NavInputs[(int)NAV_NO] = vn;
+            }
+
+            const int thumb_dead_zone = 8000;           // SDL_gamecontroller.h suggests using this value.
+            MAP_BUTTON(ImGuiNavInput.Activate, GameControllerButton.A);               // Cross / A
+            MAP_BUTTON(ImGuiNavInput.Cancel, GameControllerButton.B);               // Circle / B
+            MAP_BUTTON(ImGuiNavInput.Menu, GameControllerButton.X);               // Square / X
+            MAP_BUTTON(ImGuiNavInput.Input, GameControllerButton.Y);               // Triangle / Y
+            MAP_BUTTON(ImGuiNavInput.DpadLeft, GameControllerButton.DpadLeft);       // D-Pad Left
+            MAP_BUTTON(ImGuiNavInput.DpadRight, GameControllerButton.DpadRight);      // D-Pad Right
+            MAP_BUTTON(ImGuiNavInput.DpadUp, GameControllerButton.DpadUp);         // D-Pad Up
+            MAP_BUTTON(ImGuiNavInput.DpadDown, GameControllerButton.DpadDown);       // D-Pad Down
+            MAP_BUTTON(ImGuiNavInput.FocusPrev, GameControllerButton.Leftshoulder);    // L1 / LB
+            MAP_BUTTON(ImGuiNavInput.FocusNext, GameControllerButton.Rightshoulder);   // R1 / RB
+            MAP_BUTTON(ImGuiNavInput.TweakSlow, GameControllerButton.Leftshoulder);    // L1 / LB
+            MAP_BUTTON(ImGuiNavInput.TweakFast, GameControllerButton.Rightshoulder);   // R1 / RB
+            MAP_ANALOG(ImGuiNavInput.LStickLeft, GameControllerAxis.Leftx, -thumb_dead_zone, -32768);
+            MAP_ANALOG(ImGuiNavInput.LStickRight, GameControllerAxis.Leftx, +thumb_dead_zone, +32767);
+            MAP_ANALOG(ImGuiNavInput.LStickUp, GameControllerAxis.Lefty, -thumb_dead_zone, -32767);
+            MAP_ANALOG(ImGuiNavInput.LStickDown, GameControllerAxis.Lefty, +thumb_dead_zone, +32767);
+
+            io.BackendFlags |= ImGuiBackendFlags.HasGamepad;
+        }
+
+        private static void UpdateMousePosition()
         {
             var io = ImGui.GetIO();
             io.MousePos = Mouse.Position;
         }
 
-        private static ImGuiKey KeycodeToImGuiKey(KeyCode keycode)
+        protected virtual unsafe void Dispose(bool disposing)
         {
-            return keycode switch
+            if (!disposedValue)
             {
-                KeyCode.Tab => ImGuiKey.Tab,
-                KeyCode.Left => ImGuiKey.LeftArrow,
-                KeyCode.Right => ImGuiKey.RightArrow,
-                KeyCode.Up => ImGuiKey.UpArrow,
-                KeyCode.Down => ImGuiKey.DownArrow,
-                KeyCode.Pageup => ImGuiKey.PageUp,
-                KeyCode.Pagedown => ImGuiKey.PageDown,
-                KeyCode.Home => ImGuiKey.Home,
-                KeyCode.End => ImGuiKey.End,
-                KeyCode.Insert => ImGuiKey.Insert,
-                KeyCode.Delete => ImGuiKey.Delete,
-                KeyCode.Backspace => ImGuiKey.Backspace,
-                KeyCode.Space => ImGuiKey.Space,
-                KeyCode.Return => ImGuiKey.Enter,
-                KeyCode.Escape => ImGuiKey.Escape,
-                KeyCode.Quote => ImGuiKey.Apostrophe,
-                KeyCode.Comma => ImGuiKey.Comma,
-                KeyCode.Minus => ImGuiKey.Minus,
-                KeyCode.Period => ImGuiKey.Period,
-                KeyCode.Slash => ImGuiKey.Slash,
-                KeyCode.Semicolon => ImGuiKey.Semicolon,
-                KeyCode.Equals => ImGuiKey.Equal,
-                KeyCode.Leftbracket => ImGuiKey.LeftBracket,
-                KeyCode.Backslash => ImGuiKey.Backslash,
-                KeyCode.Rightbracket => ImGuiKey.RightBracket,
-                KeyCode.Backquote => ImGuiKey.GraveAccent,
-                KeyCode.Capslock => ImGuiKey.CapsLock,
-                KeyCode.Scrolllock => ImGuiKey.ScrollLock,
-                KeyCode.Numlockclear => ImGuiKey.NumLock,
-                KeyCode.Printscreen => ImGuiKey.PrintScreen,
-                KeyCode.Pause => ImGuiKey.Pause,
-                KeyCode.Num0 => ImGuiKey.Keypad0,
-                KeyCode.Num1 => ImGuiKey.Keypad1,
-                KeyCode.Num2 => ImGuiKey.Keypad2,
-                KeyCode.Num3 => ImGuiKey.Keypad3,
-                KeyCode.Num4 => ImGuiKey.Keypad4,
-                KeyCode.Num5 => ImGuiKey.Keypad5,
-                KeyCode.Num6 => ImGuiKey.Keypad6,
-                KeyCode.Num7 => ImGuiKey.Keypad7,
-                KeyCode.Num8 => ImGuiKey.Keypad8,
-                KeyCode.Num9 => ImGuiKey.Keypad9,
-                KeyCode.NumPeriod => ImGuiKey.KeypadDecimal,
-                KeyCode.NumDivide => ImGuiKey.KeypadDivide,
-                KeyCode.NumMultiply => ImGuiKey.KeypadMultiply,
-                KeyCode.NumMinus => ImGuiKey.KeypadSubtract,
-                KeyCode.NumPlus => ImGuiKey.KeypadAdd,
-                KeyCode.NumEnter => ImGuiKey.KeypadEnter,
-                KeyCode.NumEquals => ImGuiKey.KeypadEqual,
-                KeyCode.LCtrl => ImGuiKey.LeftCtrl,
-                KeyCode.LShift => ImGuiKey.LeftShift,
-                KeyCode.LAlt => ImGuiKey.LeftAlt,
-                KeyCode.LGui => ImGuiKey.LeftSuper,
-                KeyCode.RCtrl => ImGuiKey.RightCtrl,
-                KeyCode.RShift => ImGuiKey.RightShift,
-                KeyCode.RAlt => ImGuiKey.RightAlt,
-                KeyCode.RGui => ImGuiKey.RightSuper,
-                KeyCode.Application => ImGuiKey.Menu,
-                KeyCode.N0 => ImGuiKey._0,
-                KeyCode.N1 => ImGuiKey._1,
-                KeyCode.N2 => ImGuiKey._2,
-                KeyCode.N3 => ImGuiKey._3,
-                KeyCode.N4 => ImGuiKey._4,
-                KeyCode.N5 => ImGuiKey._5,
-                KeyCode.N6 => ImGuiKey._6,
-                KeyCode.N7 => ImGuiKey._7,
-                KeyCode.N8 => ImGuiKey._8,
-                KeyCode.N9 => ImGuiKey._9,
-                KeyCode.A => ImGuiKey.A,
-                KeyCode.B => ImGuiKey.B,
-                KeyCode.C => ImGuiKey.C,
-                KeyCode.D => ImGuiKey.D,
-                KeyCode.E => ImGuiKey.E,
-                KeyCode.F => ImGuiKey.F,
-                KeyCode.G => ImGuiKey.G,
-                KeyCode.H => ImGuiKey.H,
-                KeyCode.I => ImGuiKey.I,
-                KeyCode.J => ImGuiKey.J,
-                KeyCode.K => ImGuiKey.K,
-                KeyCode.L => ImGuiKey.L,
-                KeyCode.M => ImGuiKey.M,
-                KeyCode.N => ImGuiKey.N,
-                KeyCode.O => ImGuiKey.O,
-                KeyCode.P => ImGuiKey.P,
-                KeyCode.Q => ImGuiKey.Q,
-                KeyCode.R => ImGuiKey.R,
-                KeyCode.S => ImGuiKey.S,
-                KeyCode.T => ImGuiKey.T,
-                KeyCode.U => ImGuiKey.U,
-                KeyCode.V => ImGuiKey.V,
-                KeyCode.W => ImGuiKey.W,
-                KeyCode.X => ImGuiKey.X,
-                KeyCode.Y => ImGuiKey.Y,
-                KeyCode.Z => ImGuiKey.Z,
-                KeyCode.F1 => ImGuiKey.F1,
-                KeyCode.F2 => ImGuiKey.F2,
-                KeyCode.F3 => ImGuiKey.F3,
-                KeyCode.F4 => ImGuiKey.F4,
-                KeyCode.F5 => ImGuiKey.F5,
-                KeyCode.F6 => ImGuiKey.F6,
-                KeyCode.F7 => ImGuiKey.F7,
-                KeyCode.F8 => ImGuiKey.F8,
-                KeyCode.F9 => ImGuiKey.F9,
-                KeyCode.F10 => ImGuiKey.F10,
-                KeyCode.F11 => ImGuiKey.F11,
-                KeyCode.F12 => ImGuiKey.F12,
-                _ => ImGuiKey.None,
-            };
-        }
-
-        /*
-        public bool ProcessMessage(WindowMessage msg, UIntPtr wParam, IntPtr lParam)
-        {
-            if (ImGui.GetCurrentContext() == IntPtr.Zero)
-                return false;
-
-            var io = ImGui.GetIO();
-            switch (msg)
-            {
-                case WindowMessage.LButtonDown:
-                case WindowMessage.LButtonDBLCLK:
-                case WindowMessage.RButtonDown:
-                case WindowMessage.RButtonDBLCLK:
-                case WindowMessage.MButtonDown:
-                case WindowMessage.MButtonDBLCLK:
-                case WindowMessage.XButtonDown:
-                case WindowMessage.XButtonDBLCLK:
-                    {
-                        int button = 0;
-                        if (msg == WindowMessage.LButtonDown || msg == WindowMessage.LButtonDBLCLK) { button = 0; }
-                        if (msg == WindowMessage.RButtonDown || msg == WindowMessage.RButtonDBLCLK) { button = 1; }
-                        if (msg == WindowMessage.MButtonDown || msg == WindowMessage.MButtonDBLCLK) { button = 2; }
-                        if (msg == WindowMessage.XButtonDown || msg == WindowMessage.XButtonDBLCLK) { button = GET_XBUTTON_WPARAM(wParam) == 1 ? 3 : 4; }
-                        if (!ImGui.IsAnyMouseDown() && User32.GetCapture() == IntPtr.Zero)
-                            User32.SetCapture(hwnd);
-                        io.MouseDown[button] = true;
-                        return false;
-                    }
-                case WindowMessage.LButtonUp:
-                case WindowMessage.RButtonUp:
-                case WindowMessage.MButtonUp:
-                case WindowMessage.XButtonUp:
-                    {
-                        int button = 0;
-                        if (msg == WindowMessage.LButtonUp) { button = 0; }
-                        if (msg == WindowMessage.RButtonUp) { button = 1; }
-                        if (msg == WindowMessage.MButtonUp) { button = 2; }
-                        if (msg == WindowMessage.XButtonUp) { button = GET_XBUTTON_WPARAM(wParam) == 1 ? 3 : 4; }
-                        io.MouseDown[button] = false;
-                        if (!ImGui.IsAnyMouseDown() && User32.GetCapture() == hwnd)
-                            User32.ReleaseCapture();
-                        return false;
-                    }
-                case WindowMessage.MouseWheel:
-                    io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
-                    return false;
-
-                case WindowMessage.MouseHWheel:
-                    io.MouseWheelH += GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
-                    return false;
-
-                case WindowMessage.KeyDown:
-                case WindowMessage.SysKeyDown:
-                    if ((ulong)wParam < 256)
-                        io.KeyCodeDown[(int)wParam] = true;
-                    return false;
-
-                case WindowMessage.KeyUp:
-                case WindowMessage.SysKeyUp:
-                    if ((ulong)wParam < 256)
-                        io.KeyCodeDown[(int)wParam] = false;
-                    return false;
-
-                case WindowMessage.Char:
-                    io.AddInputCharacter((uint)wParam);
-                    return false;
-
-                case WindowMessage.SetCursor:
-                    if (Helper.SignedLOWORD((int)(long)lParam) == 1 && UpdateMouseCursor())
-                        return true;
-                    return false;
-
-                case WindowMessage.Size:
-                    int width = Helper.SignedLOWORD(lParam);
-                    int height = Helper.SignedHIWORD(lParam);
-                    io.DisplaySize = new(width, height);
-                    break;
+                window.MouseButtonInput -= MouseButtonInput;
+                window.KeyboardInput -= KeyboardInput;
+                window.KeyboardCharInput -= KeyboardCharInput;
+                if (g_ClipboardTextData != null)
+                    Clipboard.Free(g_ClipboardTextData);
+                disposedValue = true;
             }
-            return false;
         }
 
-        private static readonly int WHEEL_DELTA = 120;
+        ~ImGuiInputHandler()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
 
-        */
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

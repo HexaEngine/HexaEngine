@@ -15,13 +15,21 @@ Texture2D misc0Texture : register(t5);
 Texture2D misc1Texture : register(t6);
 Texture2D misc2Texture : register(t7);
 Texture2D ssao : register(t8);
-TextureCube irradianceTexture : register(t9);
-TextureCube prefilterTexture : register(t10);
-Texture2D brdfLUT : register(t11);
-
+Texture2D brdfLUT : register(t9);
+StructuredBuffer<GlobalProbe> globalProbes : register(t10);
+TextureCube globalDiffuse[4] : register(t11);
+TextureCube globalSpecular[4] : register(t15);
 
 SamplerState SampleTypePoint : register(s0);
 SamplerState SampleTypeAnsio : register(s1);
+
+cbuffer paramsBuffer : register(b2)
+{
+    uint globalProbeCount;
+    uint localProbeCount;
+    uint padd0;
+    uint padd1;
+};
 
 //////////////
 // TYPEDEFS //
@@ -50,13 +58,16 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 
     float3 N = normalize(attrs.normal);
     float3 V = normalize(GetCameraPos() - position);
-
-	//float IOR = 1.5;
-	//float3 F0 = float3(pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0));
-
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
-    float3 ambient = BRDFIndirect(SampleTypeAnsio, irradianceTexture, prefilterTexture, brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
+    float3 ambient = 0;
+    
+    [unroll(4)]
+    for (uint i = 0; i < globalProbeCount; i++)
+    {
+        ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
+    }
 
+    
     return float4(ambient + attrs.emission, 1);
 }
 

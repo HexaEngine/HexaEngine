@@ -24,9 +24,6 @@ namespace HexaEngine.Rendering
         private IGraphicsPipeline pipeline;
         private ISwapChain swapChain;
         private ImGuiInputHandler inputHandler;
-#pragma warning disable CS0169 // The field 'ImGuiRenderer.test' is never used
-        private nint test;
-#pragma warning restore CS0169 // The field 'ImGuiRenderer.test' is never used
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
         private IBuffer constantBuffer;
@@ -36,6 +33,7 @@ namespace HexaEngine.Rendering
         private nint guiContext;
         private nint nodesContext;
         private nint plotContext;
+        public static readonly Dictionary<nint, ISamplerState> Samplers = new();
 
         public ImGuiRenderer(SdlWindow window, IGraphicsDevice device, ISwapChain swapChain)
         {
@@ -75,7 +73,7 @@ namespace HexaEngine.Rendering
                 }
             }
 
-            io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            io.ConfigFlags |= ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.NavEnableGamepad;
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset | ImGuiBackendFlags.HasMouseCursors;
             ImGui.StyleColorsDark();
             CreateDeviceObjects();
@@ -302,6 +300,14 @@ namespace HexaEngine.Rendering
                         ctx.SetScissorRect((int)cmd.ClipRect.X, (int)cmd.ClipRect.Y, (int)cmd.ClipRect.Z, (int)cmd.ClipRect.W);
 
                         ctx.PSSetShaderResource((void*)cmd.TextureId, 0);
+                        if (Samplers.TryGetValue(cmd.TextureId, out var sampler))
+                        {
+                            ctx.PSSetSampler(sampler, 0);
+                        }
+                        else
+                        {
+                            ctx.PSSetSampler(fontSampler, 0);
+                        }
 
                         ctx.DrawIndexedInstanced(cmd.ElemCount, 1, idx_offset, vtx_offset, 0);
                     }

@@ -2,7 +2,7 @@
 {
     public enum KeyState
     {
-        Released,
-        Pressed,
+        Up,
+        Down,
     }
 }

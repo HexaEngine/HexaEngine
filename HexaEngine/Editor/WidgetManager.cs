@@ -2,6 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Materials;
+    using HexaEngine.Editor.Meshes;
+    using HexaEngine.Editor.Painting;
     using HexaEngine.Editor.Widgets;
 
     public static class WidgetManager
@@ -25,8 +27,11 @@
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
+            Register<MeshEditor>();
             Register<MaterialEditor>();
+            Register<ImagePainter>();
             Register<PostProcessWindow>();
+            Register<InputWindow>();
         }
 
         public static bool Register<T>() where T : IImGuiWindow, new()

@@ -24,59 +24,20 @@
         public int IndexCount;
         public BoundingBox BoundingBox;
         public BoundingSphere BoundingSphere;
-
-        public unsafe Mesh(IGraphicsDevice device, string name, MeshVertex[] vertices, uint[] indices, BoundingBox box, BoundingSphere boundingSphere)
-        {
-            // TODO: Handle different vertex types.
-            this.device = device;
-            this.name = name;
-            BoundingBox = box;
-            BoundingSphere = boundingSphere;
-            if (vertices.Length != 0)
-            {
-                fixed (MeshVertex* ptr = vertices)
-                {
-                    VB = device.CreateBuffer(ptr, (uint)vertices.Length, BindFlags.VertexBuffer, Usage.Immutable);
-                }
-
-                VertexCount = vertices.Length;
-            }
-            if (indices.Length != 0)
-            {
-                fixed (uint* ptr = indices)
-                {
-                    IB = device.CreateBuffer(ptr, (uint)indices.Length, BindFlags.IndexBuffer, Usage.Immutable);
-                }
-                IndexCount = indices.Length;
-            }
-        }
+        public uint Stride;
 
         public unsafe Mesh(IGraphicsDevice device, MeshData data)
         {
+            // TODO: Handle different vertex types.
             this.device = device;
             name = data.Name;
-            // TODO: Handle different vertex types.
-            var vertices = data.GetVertices();
-            var indices = data.Indices;
             BoundingBox = data.Box;
             BoundingSphere = data.Sphere;
-            if (vertices.Length != 0)
-            {
-                fixed (MeshVertex* ptr = vertices)
-                {
-                    VB = device.CreateBuffer(ptr, (uint)vertices.Length, BindFlags.VertexBuffer, Usage.Immutable);
-                }
-
-                VertexCount = vertices.Length;
-            }
-            if (indices.Length != 0)
-            {
-                fixed (uint* ptr = indices)
-                {
-                    IB = device.CreateBuffer(ptr, (uint)indices.Length, BindFlags.IndexBuffer, Usage.Immutable);
-                }
-                IndexCount = indices.Length;
-            }
+            IB = data.CreateIndexBuffer(device);
+            VB = data.CreateVertexBuffer(device);
+            IndexCount = (int)data.IndicesCount;
+            VertexCount = (int)data.VerticesCount;
+            Stride = data.GetStride();
         }
 
         public string Name => name;

@@ -11,7 +11,7 @@
     public class PreferencesWidget : ImGuiWindow
     {
         private ConfigKey? displayedKey;
-        private List<KeyCode> keyCodes = new();
+        private List<Key> keyCodes = new();
         private string? recodingId;
         private string? filter = string.Empty;
 
@@ -19,12 +19,12 @@
 
         public PreferencesWidget()
         {
-            Core.Input.Keyboard.Released += Keyboard;
+            Core.Input.Keyboard.KeyUp += Keyboard;
         }
 
         ~PreferencesWidget()
         {
-            Core.Input.Keyboard.Released -= Keyboard;
+            Core.Input.Keyboard.KeyUp -= Keyboard;
         }
 
         private void Keyboard(object? sender, Core.Input.Events.KeyboardEventArgs e)

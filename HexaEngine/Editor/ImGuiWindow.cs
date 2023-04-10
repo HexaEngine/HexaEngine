@@ -50,6 +50,16 @@
             }
         }
 
+        public virtual void Show()
+        {
+            IsShown = true;
+        }
+
+        public virtual void Close()
+        {
+            IsShown = false;
+        }
+
         public virtual void Dispose()
         {
         }

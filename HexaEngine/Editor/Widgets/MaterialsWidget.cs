@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using ImGuiNET;
-    using System.Linq;
 
     public unsafe class MaterialsWidget : ImGuiWindow
     {
@@ -22,26 +22,26 @@
 
                 return;
             }
-            var manager = scene.MaterialManager;
+
             if (ImGui.Button("Create"))
             {
-                var name = manager.GetFreeName("New Material");
-                manager.Add(new() { Name = name });
+                var name = MaterialManager.GetFreeName("New Material");
+                MaterialManager.Add(new() { Name = name });
             }
 
-            if (manager.Count == 0)
+            if (MaterialManager.Count == 0)
             {
                 current = -1;
             }
 
-            lock (manager.Materials)
+            lock (MaterialManager.Materials)
             {
                 ImGui.PushItemWidth(200);
                 if (ImGui.BeginListBox("##Materials"))
                 {
-                    for (int i = 0; i < manager.Count; i++)
+                    for (int i = 0; i < MaterialManager.Count; i++)
                     {
-                        var material = manager.Materials[i];
+                        var material = MaterialManager.Materials[i];
                         if (ImGui.MenuItem(material.Name))
                         {
                             current = i;
@@ -55,14 +55,14 @@
             ImGui.BeginChild("MaterialEditor");
             if (current != -1)
             {
-                var material = manager.Materials[current];
+                var material = MaterialManager.Materials[current];
 
                 var name = material.Name;
 
                 bool hasChanged = false;
                 if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
-                    manager.Rename(material.Name, name);
+                    MaterialManager.Rename(material.Name, name);
                 }
 
                 var color = material.BaseColor;
@@ -163,64 +163,10 @@
                     hasChanged = true;
                 }
 
-                var texAlbedo = material.BaseColorTextureMap;
-                if (ImGui.InputText("Albedo Tex", ref texAlbedo, 256))
-                {
-                    material.BaseColorTextureMap = texAlbedo;
-                    hasChanged = true;
-                }
-
-                var texNormal = material.NormalTextureMap;
-                if (ImGui.InputText("Normal Tex", ref texNormal, 256))
-                {
-                    material.NormalTextureMap = texNormal;
-                    hasChanged = true;
-                }
-
-                var texdisplacement = material.DisplacementTextureMap;
-                if (ImGui.InputText("Displacement Tex", ref texdisplacement, 256))
-                {
-                    material.DisplacementTextureMap = texdisplacement;
-                    hasChanged = true;
-                }
-
-                var texRoughness = material.RoughnessTextureMap;
-                if (ImGui.InputText("Roughness Tex", ref texRoughness, 256))
-                {
-                    material.RoughnessTextureMap = texRoughness;
-                    hasChanged = true;
-                }
-
-                var texMetalness = material.MetalnessTextureMap;
-                if (ImGui.InputText("Metalness Tex", ref texMetalness, 256))
-                {
-                    material.MetalnessTextureMap = texMetalness;
-                    hasChanged = true;
-                }
-
-                var texEmissive = material.EmissiveTextureMap;
-                if (ImGui.InputText("Emissive Tex", ref texEmissive, 256))
-                {
-                    material.EmissiveTextureMap = texEmissive;
-                    hasChanged = true;
-                }
-
-                var texAo = material.AoTextureMap;
-                if (ImGui.InputText("Ao Tex", ref texAo, 256))
-                {
-                    material.AoTextureMap = texAo;
-                    hasChanged = true;
-                }
-
-                var texRM = material.RoughnessMetalnessTextureMap;
-                if (ImGui.InputText("RM Tex", ref texRM, 256))
-                {
-                    material.RoughnessMetalnessTextureMap = texRM;
-                    hasChanged = true;
-                }
+                //TODO: Add new material texture system
 
                 if (hasChanged)
-                    manager.Update(material);
+                    MaterialManager.Update(material);
             }
             ImGui.EndChild();
         }

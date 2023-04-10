@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
     using HexaEngine.Core.Editor.Properties;
-    using HexaEngine.Scripting;
+    using HexaEngine.Core.Scripts;
     using ImGuiNET;
 
     public class EnumPropertyEditor : IPropertyEditor

@@ -346,28 +346,28 @@ namespace HexaEngine.Core.IO.Assets
             if (path.Contains("textures"))
             {
                 trimmed = path.Replace("textures/", string.Empty).Replace("textures\\", string.Empty);
-                return AssetType.Texture;
+                return AssetType.TextureFile;
             }
 
-            if (path.Contains("meshes"))
+            if (path.Contains("meshes") && path.EndsWith(".model"))
             {
                 trimmed = path.Replace("meshes/", string.Empty).Replace("meshes\\", string.Empty);
-                return AssetType.Mesh;
+                return AssetType.ModelFile;
             }
 
-            if (path.Contains("materials"))
+            if (path.Contains("materials") && path.EndsWith(".matlib"))
             {
                 trimmed = path.Replace("materials/", string.Empty).Replace("materials\\", string.Empty);
-                return AssetType.Material;
+                return AssetType.MaterialLibrary;
             }
 
-            if (path.Contains("shaders") && !Path.HasExtension(".sb"))
+            if (path.Contains("shaders") && !path.EndsWith(".sb"))
             {
                 trimmed = path.Replace("shaders/", string.Empty).Replace("shaders\\", string.Empty);
                 return AssetType.ShaderSource;
             }
 
-            if (path.Contains("shaders") && Path.HasExtension(".sb"))
+            if (path.Contains("shaders") && path.EndsWith(".sb"))
             {
                 trimmed = path.Replace("shaders/", string.Empty).Replace("shaders\\", string.Empty);
                 return AssetType.ShaderBytecode;
@@ -376,19 +376,13 @@ namespace HexaEngine.Core.IO.Assets
             if (path.Contains("fonts"))
             {
                 trimmed = path.Replace("fonts/", string.Empty).Replace("fonts\\", string.Empty);
-                return AssetType.Font;
+                return AssetType.FontFile;
             }
 
             if (path.Contains("sounds"))
             {
                 trimmed = path.Replace("sounds/", string.Empty).Replace("sounds\\", string.Empty);
-                return AssetType.Sound;
-            }
-
-            if (path.Contains("scripts"))
-            {
-                trimmed = path.Replace("scripts/", string.Empty).Replace("scripts\\", string.Empty);
-                return AssetType.Script;
+                return AssetType.AudioFile;
             }
 
             trimmed = path;

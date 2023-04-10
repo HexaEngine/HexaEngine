@@ -9,11 +9,12 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Meshes;
-    using HexaEngine.Core.Renderers.Components;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
+    using HexaEngine.Scenes.Components.Renderer;
     using Silk.NET.Assimp;
     using System.Diagnostics;
     using System.Numerics;
@@ -45,13 +46,13 @@ namespace HexaEngine.Scenes.Importer
         private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
         private readonly Dictionary<Pointer<Mesh>, Objects.Animature> animatureT = new();
         private readonly Dictionary<Pointer<Mesh>, MeshData> meshesT = new();
-        private readonly Dictionary<Pointer<Node>, ModelSource> modelsT = new();
+        private readonly Dictionary<Pointer<Node>, ModelFile> modelsT = new();
         private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
         private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
         private readonly Dictionary<string, Animation> animationsT = new();
 
         private List<GameObject> nodes;
-        private List<ModelSource> models;
+        private List<ModelFile> models;
         private MeshData[] meshes;
         private MaterialData[] materials;
         private Animation[] animations;
@@ -60,13 +61,13 @@ namespace HexaEngine.Scenes.Importer
         private GameObject root;
         private unsafe AssimpScene* scene;
 
-        public IReadOnlyList<ModelSource> Models => models;
+        public IReadOnlyList<ModelFile> Models => models;
 
         public MeshData[] Meshes => meshes;
 
         public MaterialData[] Materials => materials;
 
-        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FlipUVs | PostProcessSteps.FindInvalidData;
+        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FindInvalidData;
 
         public Task LoadAsync(string path)
         {
@@ -123,7 +124,7 @@ namespace HexaEngine.Scenes.Importer
             return false;
         }
 
-        public bool ChangeNameOfModel(ModelSource source, string newName)
+        public bool ChangeNameOfModel(ModelFile source, string newName)
         {
             if (meshes.Any(x => x.Name == newName))
                 return false;
@@ -139,7 +140,7 @@ namespace HexaEngine.Scenes.Importer
             string oldName = material.Name;
             for (int i = 0; i < meshes.Length; i++)
             {
-                ModelSource source = models[i];
+                ModelFile source = models[i];
                 for (ulong j = 0; j < source.Header.MeshCount; j++)
                 {
                     MaterialData mat = source.GetMaterial(j);
@@ -433,7 +434,7 @@ namespace HexaEngine.Scenes.Importer
                     material.Name = i.ToString();
 
                 material.Textures = texs;
-                MaterialTexture[] textures = new MaterialTexture[texs.Length];
+                MaterialTextureDesc[] textures = new MaterialTextureDesc[texs.Length];
                 for (int j = 0; j < texs.Length; j++)
                 {
                     textures[j] = texs[j];
@@ -456,15 +457,6 @@ namespace HexaEngine.Scenes.Importer
                     Subsurface = 0,
                     Opacity = material.Opacity,
                     Name = material.Name,
-
-                    BaseColorTextureMap = material.Textures[(int)TextureType.BaseColor].File ?? string.Empty,
-                    AoTextureMap = material.Textures[(int)TextureType.AmbientOcclusion].File ?? string.Empty,
-                    DisplacementTextureMap = material.Textures[(int)TextureType.Displacement].File ?? string.Empty,
-                    EmissiveTextureMap = material.Textures[(int)TextureType.EmissionColor].File ?? string.Empty,
-                    MetalnessTextureMap = material.Textures[(int)TextureType.Metalness].File ?? string.Empty,
-                    NormalTextureMap = material.Textures[(int)TextureType.Normals].File ?? string.Empty,
-                    RoughnessTextureMap = material.Textures[(int)TextureType.DiffuseRoughness].File ?? string.Empty,
-                    RoughnessMetalnessTextureMap = material.Textures[(int)TextureType.Unknown].File ?? string.Empty,
                 };
             }
         }
@@ -612,6 +604,7 @@ namespace HexaEngine.Scenes.Importer
                 Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
                 Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
                 Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
+                Vector3[]? bitangents = ToManaged(msh->MBitangents, msh->MNumVertices);
 
                 BoundingBox box = default;
                 BoundingSphere sphere = default;
@@ -623,8 +616,8 @@ namespace HexaEngine.Scenes.Importer
 
                 Objects.Animature? animature = null;
 
-                MeshBone[] bones = new MeshBone[msh->MNumBones];
-                List<MeshWeight> weightList = new();
+                BoneData[] bones = new BoneData[msh->MNumBones];
+                List<Core.Meshes.VertexWeight> weightList = new();
                 if (msh->MNumBones > 0)
                 {
                     Queue<GameObject> queue = new();
@@ -637,13 +630,13 @@ namespace HexaEngine.Scenes.Importer
                         var bn = msh->MBones[j];
                         var node = FindNode(scene, bn->MName);
 
-                        MeshWeight[] weights = new MeshWeight[bn->MNumWeights];
+                        Core.Meshes.VertexWeight[] weights = new Core.Meshes.VertexWeight[bn->MNumWeights];
                         for (int x = 0; x < weights.Length; x++)
                         {
                             weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
                         }
                         weightList.AddRange(weights);
-                        bones[j] = new MeshBone(bn->MName, weights, bn->MOffsetMatrix);
+                        bones[j] = new BoneData(bn->MName, weights, bn->MOffsetMatrix);
                         animature.AddBone(bones[j]);
                     }
 
@@ -651,11 +644,11 @@ namespace HexaEngine.Scenes.Importer
                 }
                 if (weightList.Count > 0)
                 {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)weightList.Count, indices, colors, positions, uvs, normals, tangents, weightList.ToArray());
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)weightList.Count, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
                 }
                 else
                 {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, null);
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
                 }
 
                 meshesT.Add(msh, meshes[i]);
@@ -678,7 +671,7 @@ namespace HexaEngine.Scenes.Importer
                 {
                     meshes[i] = this.meshes[(int)p->MMeshes[i]];
                 }
-                ModelSource model = new(p->MName, meshes);
+                ModelFile model = new(p->MName, meshes);
                 models.Add(model);
                 modelsT.Add(p, model);
             }
@@ -821,6 +814,12 @@ namespace HexaEngine.Scenes.Importer
                 models[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"), Encoding.UTF8);
             }
 
+            for (int i = 0; i < models.Count; i++)
+            {
+                MaterialLibrary library = new(models[i].Name, models[i].GetMaterials());
+                library.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials"), Encoding.UTF8);
+            }
+
             for (int i = 0; i < animations.Length; i++)
             {
                 animations[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "animations"));
@@ -833,7 +832,7 @@ namespace HexaEngine.Scenes.Importer
                 GameObject node = nodes[x];
                 Node* p = nodesP[node];
 
-                if (modelsT.TryGetValue(p, out ModelSource? value))
+                if (modelsT.TryGetValue(p, out ModelFile? value))
                 {
                     var component = node.GetOrCreateComponent<ModelRendererComponent>();
                     var model = value;
@@ -909,9 +908,9 @@ namespace HexaEngine.Scenes.Importer
             public TextureMapMode V;
             public TextureFlags Flags;
 
-            public static implicit operator MaterialTexture(AssimpMaterialTexture texture)
+            public static implicit operator MaterialTextureDesc(AssimpMaterialTexture texture)
             {
-                return new MaterialTexture(Convert(texture.Type),
+                return new MaterialTextureDesc(Convert(texture.Type),
                                            texture.File ?? string.Empty,
                                            Convert(texture.Blend),
                                            Convert(texture.Op),
@@ -942,7 +941,7 @@ namespace HexaEngine.Scenes.Importer
                     TextureType.NormalCamera => Core.IO.Materials.TextureType.NormalCamera,
                     TextureType.EmissionColor => Core.IO.Materials.TextureType.EmissionColor,
                     TextureType.Metalness => Core.IO.Materials.TextureType.Metalness,
-                    TextureType.DiffuseRoughness => Core.IO.Materials.TextureType.DiffuseRoughness,
+                    TextureType.DiffuseRoughness => Core.IO.Materials.TextureType.Roughness,
                     TextureType.AmbientOcclusion => Core.IO.Materials.TextureType.AmbientOcclusion,
                     TextureType.Sheen => Core.IO.Materials.TextureType.Sheen,
                     TextureType.Clearcoat => Core.IO.Materials.TextureType.Clearcoat,
@@ -980,7 +979,7 @@ namespace HexaEngine.Scenes.Importer
             {
                 return mode switch
                 {
-                    TextureMapMode.None => Core.IO.Materials.TextureMapMode.None,
+                    TextureMapMode.None => Core.IO.Materials.TextureMapMode.Wrap,
                     TextureMapMode.Clamp => Core.IO.Materials.TextureMapMode.Clamp,
                     TextureMapMode.Decal => Core.IO.Materials.TextureMapMode.Decal,
                     TextureMapMode.Mirror => Core.IO.Materials.TextureMapMode.Mirror,
@@ -1012,11 +1011,11 @@ namespace HexaEngine.Scenes.Importer
         public unsafe struct AssimpBone
         {
             public string Name;
-            public MeshWeight[] Weights;
+            public Core.Meshes.VertexWeight[] Weights;
             public Matrix4x4 Offset;
             public Node* Node;
 
-            public AssimpBone(string name, MeshWeight[] weights, Matrix4x4 offset, Node* node)
+            public AssimpBone(string name, Core.Meshes.VertexWeight[] weights, Matrix4x4 offset, Node* node)
             {
                 Name = name;
                 Weights = weights;

@@ -66,6 +66,20 @@
         /// Initializes a new instance of the <see cref="Viewport"/> struct.
         /// </summary>
         /// <param name="bounds">A <see cref="Vector4"/> that defines the location and size of the viewport in a render target.</param>
+        public Viewport(Vector2 pos, Vector2 size)
+        {
+            X = pos.X;
+            Y = pos.Y;
+            Width = size.X;
+            Height = size.Y;
+            MinDepth = 0.0f;
+            MaxDepth = 1.0f;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Viewport"/> struct.
+        /// </summary>
+        /// <param name="bounds">A <see cref="Vector4"/> that defines the location and size of the viewport in a render target.</param>
         public Viewport(Vector4 bounds)
         {
             X = bounds.X;

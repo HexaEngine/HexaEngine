@@ -8,7 +8,7 @@
 
     public static class KeyExtensions
     {
-        public static string ToFormattedString(this IList<KeyCode> keys)
+        public static string ToFormattedString(this IList<Key> keys)
         {
             StringBuilder sb = new();
             for (int i = 0; i < keys.Count; i++)
@@ -25,8 +25,8 @@
     public class Hotkey
     {
         private string? tostring;
-        private readonly List<KeyCode> keys = new();
-        private readonly List<KeyCode> defaults = new();
+        private readonly List<Key> keys = new();
+        private readonly List<Key> defaults = new();
         public readonly string Name;
 
         [JsonIgnore]
@@ -51,9 +51,9 @@
             }
         }
 
-        public ObservableWrapper<KeyCode> Keys { get; private set; }
+        public ObservableWrapper<Key> Keys { get; private set; }
 
-        public List<KeyCode> Defaults => defaults;
+        public List<Key> Defaults => defaults;
 
         public Hotkey(string name, Action callback)
         {
@@ -64,7 +64,7 @@
             Keys.CollectionChanged += CollectionChanged;
         }
 
-        public Hotkey(string name, Action callback, List<KeyCode> defaults)
+        public Hotkey(string name, Action callback, List<Key> defaults)
         {
             Name = name;
             Callback = callback;
@@ -74,7 +74,7 @@
             Keys.CollectionChanged += CollectionChanged;
         }
 
-        public Hotkey(string name, Action callback, IEnumerable<KeyCode> defaults)
+        public Hotkey(string name, Action callback, IEnumerable<Key> defaults)
         {
             Name = name;
             Callback = callback;
@@ -117,7 +117,7 @@
             return Keys.Count > 0;
         }
 
-        public bool TryExecute(List<KeyCode> keys)
+        public bool TryExecute(List<Key> keys)
         {
             if (keys.Count < Keys.Count)
                 return false;

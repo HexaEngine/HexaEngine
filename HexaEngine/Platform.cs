@@ -3,11 +3,11 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Scripts;
     using HexaEngine.D3D11;
+    using HexaEngine.Editor.Plugins;
     using HexaEngine.OpenAL;
-    using HexaEngine.Plugins;
     using HexaEngine.Projects;
-    using HexaEngine.Scripting;
 
     public static class Platform
     {

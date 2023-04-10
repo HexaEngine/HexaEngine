@@ -214,26 +214,12 @@
             return false;
         }
 
-        public static unsafe T[] LoadMesh<T>(string path) where T : unmanaged
-        {
-            var fs = Open(path);
-            var stride = sizeof(T);
-            var count = fs.Length / stride;
-            T[] values = new T[count];
-            byte[] data = fs.ReadBytes();
-            fixed (T* dst = values)
-            {
-                fixed (byte* src = data)
-                {
-                    Buffer.MemoryCopy(src, dst, data.Length, data.Length);
-                }
-            }
-            return values;
-        }
-
         public static string[] GetFiles(string path)
         {
-            return assetBundles.Where(x => x.Path.StartsWith(path)).Select(x => x.Path).ToArray();
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
+            var files = assetBundles.Where(x => x.Path.StartsWith(realPath)).Select(x => x.Path);
+            return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).Union(files).ToArray();
         }
 
         public static string[] ReadAllLines(string path)

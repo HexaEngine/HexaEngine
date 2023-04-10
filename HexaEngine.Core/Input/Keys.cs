@@ -3,7 +3,7 @@
     /// <summary>
     /// Enumeration for virtual keys.
     /// </summary>
-    public enum KeyCode
+    public enum Key
     {
         Unknown = 0,
         Return = 13,
