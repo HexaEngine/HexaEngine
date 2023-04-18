@@ -1,25 +1,24 @@
-struct VertexInputType
+struct VS_INPUT
 {
 	float3 position : POSITION;
+    float2 tex : TEXCOORD;
 	float4 color : COLOR;
 };
-struct GeometryInput
+struct PS_INPUT
 {
 	float4 position : SV_POSITION;
+    float2 tex : TEXCOORD;
 	float4 color : COLOR;
 };
 cbuffer MVPBuffer
 {
-	matrix view;
-	matrix proj;
-	matrix world;
+    matrix ProjectionMatrix;
 };
-GeometryInput main(VertexInputType input)
+PS_INPUT main(VS_INPUT input)
 {
-	GeometryInput output;
-	output.position = mul(float4(input.position, 1), world);
-	output.position = mul(output.position, view);
-	output.position = mul(output.position, proj);
+    PS_INPUT output;
+    output.position = mul(float4(input.position, 1), ProjectionMatrix);
+    output.tex = input.tex;
 	output.color = input.color;
 	return output;
 }

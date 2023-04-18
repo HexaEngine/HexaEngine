@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Materials;
     using HexaEngine.Editor.Meshes;
-    using HexaEngine.Editor.Painting;
     using HexaEngine.Editor.Widgets;
 
     public static class WidgetManager
@@ -29,7 +28,6 @@
             Register<ProfilerWindow>();
             Register<MeshEditor>();
             Register<MaterialEditor>();
-            Register<ImagePainter>();
             Register<PostProcessWindow>();
             Register<InputWindow>();
         }

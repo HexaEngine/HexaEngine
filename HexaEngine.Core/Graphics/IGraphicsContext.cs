@@ -163,9 +163,9 @@
 
         void GenerateMips(IShaderResourceView resourceView);
 
-        void ExecuteCommandList(ICommandList commandList, int restoreState);
+        void ExecuteCommandList(ICommandList commandList, bool restoreState);
 
-        ICommandList FinishCommandList(int restoreState);
+        ICommandList FinishCommandList(bool restoreState);
 
         void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
 

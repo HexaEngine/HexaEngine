@@ -171,6 +171,7 @@
                     if (materials[i].Name == desc.Name)
                     {
                         materials[i] = desc;
+                        ResourceManager.UpdateMaterialAsync(desc);
                     }
                 }
             }

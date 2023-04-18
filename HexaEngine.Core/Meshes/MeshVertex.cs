@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Meshes
 {
-    using HexaEngine.Core.IO;
-    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
 

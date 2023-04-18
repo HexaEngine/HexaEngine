@@ -8,6 +8,8 @@
     public unsafe class MaterialsWidget : ImGuiWindow
     {
         private int current = -1;
+        private bool hasChanged;
+        private bool isActive;
 
         protected override string Name => "Materials";
 
@@ -58,115 +60,101 @@
                 var material = MaterialManager.Materials[current];
 
                 var name = material.Name;
-
-                bool hasChanged = false;
+                isActive = false;
                 if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
                     MaterialManager.Rename(material.Name, name);
                 }
 
-                var color = material.BaseColor;
-                if (ImGui.ColorEdit3("Color", ref color, ImGuiColorEditFlags.Float))
+                for (int i = 0; i < material.Properties.Length; i++)
                 {
-                    material.BaseColor = color;
-                    hasChanged = true;
-                }
+                    var prop = material.Properties[i];
+                    switch (prop.ValueType)
+                    {
+                        case Core.IO.Materials.MaterialValueType.Float:
+                            {
+                                var value = prop.AsFloat();
+                                if (ImGui.SliderFloat(prop.Name, ref value, 0, 1))
+                                {
+                                    material.Properties[i].SetFloat(value);
+                                    hasChanged = true;
+                                }
+                                isActive |= ImGui.IsItemActive();
+                            }
+                            break;
 
-                var opacity = material.Opacity;
-                if (ImGui.SliderFloat("Opacity", ref opacity, 0, 1))
-                {
-                    material.Opacity = opacity;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Float2:
+                            break;
 
-                var roughness = material.Roughness;
-                if (ImGui.SliderFloat("Roughness", ref roughness, 0, 1))
-                {
-                    material.Roughness = roughness;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Float3:
+                            {
+                                var value = prop.AsFloat3();
+                                if (ImGui.ColorEdit3(prop.Name, ref value, ImGuiColorEditFlags.Float))
+                                {
+                                    material.Properties[i].SetFloat3(value);
+                                    hasChanged = true;
+                                }
+                                isActive |= ImGui.IsItemActive();
+                            }
+                            break;
 
-                var Metalness = material.Metalness;
-                if (ImGui.SliderFloat("Metalness", ref Metalness, 0, 1))
-                {
-                    material.Metalness = Metalness;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Float4:
+                            {
+                                var value = prop.AsFloat4();
+                                if (ImGui.ColorEdit4(prop.Name, ref value, ImGuiColorEditFlags.Float))
+                                {
+                                    material.Properties[i].SetFloat4(value);
+                                    hasChanged = true;
+                                }
+                                isActive |= ImGui.IsItemActive();
+                            }
+                            break;
 
-                var Specular = material.Specular;
-                if (ImGui.SliderFloat("Specular", ref Specular, 0, 1))
-                {
-                    material.Specular = Specular;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Bool:
+                            {
+                                var value = prop.AsBool();
+                                if (ImGui.Checkbox(prop.Name, ref value))
+                                {
+                                    material.Properties[i].SetBool(value);
+                                    hasChanged = true;
+                                }
+                                isActive |= ImGui.IsItemActive();
+                            }
+                            break;
 
-                var SpecularTint = material.SpecularTint;
-                if (ImGui.SliderFloat("SpecularTint", ref SpecularTint, 0, 1))
-                {
-                    material.SpecularTint = SpecularTint;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.UInt8:
+                            break;
 
-                var Sheen = material.Sheen;
-                if (ImGui.SliderFloat("Sheen", ref Sheen, 0, 1))
-                {
-                    material.Sheen = Sheen;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.UInt16:
+                            break;
 
-                var SheenTint = material.SheenTint;
-                if (ImGui.SliderFloat("SheenTint", ref SheenTint, 0, 1))
-                {
-                    material.SheenTint = SheenTint;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.UInt32:
+                            break;
 
-                var Cleancoat = material.Cleancoat;
-                if (ImGui.SliderFloat("Cleancoat", ref Cleancoat, 0, 1))
-                {
-                    material.Cleancoat = Cleancoat;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.UInt64:
+                            break;
 
-                var CleancoatGloss = material.CleancoatGloss;
-                if (ImGui.SliderFloat("CleancoatGloss", ref CleancoatGloss, 0, 1))
-                {
-                    material.CleancoatGloss = CleancoatGloss;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Int8:
+                            break;
 
-                var Subsurface = material.Subsurface;
-                if (ImGui.SliderFloat("Subsurface", ref Subsurface, 0, 1))
-                {
-                    material.Subsurface = Subsurface;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Int16:
+                            break;
 
-                var Ao = material.Ao;
-                if (ImGui.SliderFloat("Ao", ref Ao, 0, 1))
-                {
-                    material.Ao = Ao;
-                    hasChanged = true;
-                }
+                        case Core.IO.Materials.MaterialValueType.Int32:
+                            break;
 
-                var Anisotropic = material.Anisotropic;
-                if (ImGui.SliderFloat("Anisotropic", ref Anisotropic, 0, 1))
-                {
-                    material.Anisotropic = Anisotropic;
-                    hasChanged = true;
-                }
-
-                var Emissivness = material.Emissive;
-                if (ImGui.ColorEdit3("Emissivness", ref Emissivness, ImGuiColorEditFlags.Float))
-                {
-                    material.Emissive = Emissivness;
-                    hasChanged = true;
+                        case Core.IO.Materials.MaterialValueType.Int64:
+                            break;
+                    }
                 }
 
                 //TODO: Add new material texture system
-
-                if (hasChanged)
+                if (hasChanged && !isActive)
+                {
                     MaterialManager.Update(material);
+                    hasChanged = false;
+                }
+                ImGui.Text($"HasChanged: {hasChanged}, IsActive: {isActive}");
             }
             ImGui.EndChild();
         }

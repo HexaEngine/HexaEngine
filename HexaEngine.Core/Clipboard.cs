@@ -4,7 +4,7 @@
 
     public static unsafe class Clipboard
     {
-        private static readonly Sdl Sdl = Sdl.GetApi();
+        private static readonly Sdl Sdl = Application.sdl;
 
         public static char* GetClipboardText()
         {

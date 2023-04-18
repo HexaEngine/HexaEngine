@@ -12,7 +12,7 @@
         public static void Main()
         {
             Platform.Init();
-            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = Platform.StartupScene });
+            Application.Run(new Window() { StartupScene = Platform.StartupScene });
             Platform.Shutdown();
         }
     }

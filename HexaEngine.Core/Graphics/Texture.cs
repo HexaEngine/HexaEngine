@@ -42,9 +42,9 @@
 
             this.resource = resource;
 
-            if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
             DepthStencilView = depthStencil;
             overrwittenDSV = true;
@@ -167,9 +167,9 @@
                     throw new ArgumentOutOfRangeException(nameof(desc));
             }
 
-            if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
@@ -182,9 +182,9 @@
 
             this.resource = resource;
 
-            if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
         }
 
@@ -194,9 +194,9 @@
 
             this.resource = resource;
 
-            if (Description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = srv;
-            if (Description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = rtv;
         }
 
@@ -212,9 +212,9 @@
                 TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube),
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
@@ -338,9 +338,9 @@
                     break;
             }
 
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
@@ -359,9 +359,9 @@
                 TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
@@ -374,7 +374,7 @@
                 case TextureDimension.Texture1D:
                     {
                         ITexture1D texture;
-                        resource = texture = device.LoadTexture1D(description.Path);
+                        resource = texture = device.TextureLoader.LoadTexture1D(description.Path);
                         Description = new()
                         {
                             Width = texture.Description.Width,
@@ -396,7 +396,7 @@
                 case TextureDimension.Texture2D:
                     {
                         ITexture2D texture;
-                        resource = texture = device.LoadTexture2D(description.Path);
+                        resource = texture = device.TextureLoader.LoadTexture2D(description.Path);
                         Description = new()
                         {
                             Width = texture.Description.Width,
@@ -417,7 +417,7 @@
                 case TextureDimension.Texture3D:
                     {
                         ITexture3D texture;
-                        resource = texture = device.LoadTexture3D(description.Path);
+                        resource = texture = device.TextureLoader.LoadTexture3D(description.Path);
                         Description = new()
                         {
                             Width = texture.Description.Width,
@@ -439,9 +439,9 @@
                     throw new ArgumentOutOfRangeException(nameof(description));
             }
 
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
@@ -467,9 +467,9 @@
                     _ => throw new ArgumentOutOfRangeException(nameof(description)),
                 };
             }
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
@@ -493,9 +493,9 @@
                     _ => throw new ArgumentOutOfRangeException(nameof(description)),
                 };
             }
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
@@ -523,9 +523,9 @@
                 TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, subresources, description.BindFlags, ResourceMiscFlag.TextureCube),
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
-            if (description.BindFlags.HasFlag(BindFlags.ShaderResource))
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
-            if (description.BindFlags.HasFlag(BindFlags.RenderTarget))
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
                 renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
@@ -672,7 +672,7 @@
             var texs = new ITexture2D[textures.Length];
             for (int i = 0; i < textures.Length; i++)
             {
-                texs[i] = device.LoadTexture2D(textures[i], Usage.Staging, BindFlags.None, CpuAccessFlags.Read, ResourceMiscFlag.None);
+                texs[i] = device.TextureLoader.LoadTexture2D(textures[i], Usage.Staging, BindFlags.None, CpuAccessFlags.Read, ResourceMiscFlag.None);
             }
 
             var context = device.Context;

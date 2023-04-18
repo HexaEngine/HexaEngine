@@ -36,6 +36,9 @@
     <None Update="piano2.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="test.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 

@@ -29,6 +29,7 @@
 
 #pragma warning disable CS8618 // Non-nullable field 'InUV' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'OutColor' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         public TextureFileNode(IGraphicsDevice device, int id, bool removable, bool isStatic) : base(id, "Texture", removable, isStatic)
 #pragma warning restore CS8618 // Non-nullable field 'OutColor' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning restore CS8618 // Non-nullable field 'InUV' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
@@ -69,7 +70,7 @@
             {
                 try
                 {
-                    var tmp = device.LoadTexture2D(Paths.CurrentTexturePath + Path);
+                    var tmp = device.TextureLoader.LoadTexture2D(Paths.CurrentTexturePath + Path);
                     image = device.CreateShaderResourceView(tmp);
                     tmp.Dispose();
                 }

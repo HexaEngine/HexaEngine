@@ -65,6 +65,9 @@
 #ifndef HasRoughnessMetalnessTex
 #define HasRoughnessMetalnessTex 0
 #endif
+#ifndef HasAmbientOcclusionRoughnessMetalnessTex
+#define HasAmbientOcclusionRoughnessMetalnessTex 0
+#endif
 
 #if HasBaseColorTex
 Texture2D baseColorTexture : register(t0);
@@ -93,6 +96,10 @@ SamplerState ambientOcclusionTextureSampler : register(s5);
 #if HasRoughnessMetalnessTex
 Texture2D roughnessMetalnessTexture : register(t6);
 SamplerState roughnessMetalnessTextureSampler : register(s6);
+#endif
+#if HasAmbientOcclusionRoughnessMetalnessTex
+Texture2D ambientOcclusionRoughnessMetalnessTexture : register(t7);
+SamplerState ambientOcclusionRoughnessMetalnessSampler : register(s7);
 #endif
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 bitangent)
@@ -200,6 +207,12 @@ GeometryData main(PixelInput input)
     float2 rm = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, (float2) input.tex).gb;
     roughness = rm.x;
     metalness = rm.y;
+#endif
+#if HasAmbientOcclusionRoughnessMetalnessTex
+    float3 orm = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, (float2) input.tex).rgb;
+    ao = orm.r;
+    roughness = orm.g;
+    metalness = orm.b;
 #endif
 #endif
     if (baseColor.a == 0)

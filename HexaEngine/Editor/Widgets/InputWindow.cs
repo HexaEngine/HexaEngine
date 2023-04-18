@@ -337,7 +337,7 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.LeftX, out var leftX) && gamepad.AxisStates.TryGetValue(GamepadAxis.LeftY, out var leftY))
                 {
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
-                    if (ImPlot.BeginPlot("Left Analog", new Vector2(512, 512), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Left Analog", new Vector2(256, 256), ImPlotFlags.NoInputs))
                     {
                         ImPlot.PlotScatter("Pos", ref leftX, ref leftY, 1);
                         ImPlot.EndPlot();
@@ -347,7 +347,7 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.RightX, out var rightX) && gamepad.AxisStates.TryGetValue(GamepadAxis.RightY, out var rightY))
                 {
                     ImPlot.SetNextAxesLimits(short.MinValue, short.MaxValue, short.MinValue, short.MaxValue);
-                    if (ImPlot.BeginPlot("Right Analog", new Vector2(512, 512), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Right Analog", new Vector2(256, 256), ImPlotFlags.NoInputs))
                     {
                         ImPlot.PlotScatter("Pos", ref rightX, ref rightY, 1);
                         ImPlot.EndPlot();
@@ -357,7 +357,7 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.TriggerLeft, out var leftTrigger))
                 {
                     ImPlot.SetNextAxesLimits(-1, 1, 0, short.MaxValue);
-                    if (ImPlot.BeginPlot("Left Trigger", new Vector2(128, 512), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Left Trigger", new Vector2(128, 256), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
                         ImPlot.PlotScatter("Pos", ref x, ref leftTrigger, 1);
@@ -368,7 +368,7 @@
                 if (gamepad.AxisStates.TryGetValue(GamepadAxis.TriggerRight, out var rightTrigger))
                 {
                     ImPlot.SetNextAxesLimits(-1, 1, 0, short.MaxValue);
-                    if (ImPlot.BeginPlot("Right Trigger", new Vector2(128, 512), ImPlotFlags.NoInputs))
+                    if (ImPlot.BeginPlot("Right Trigger", new Vector2(128, 256), ImPlotFlags.NoInputs))
                     {
                         short x = 0;
                         ImPlot.PlotScatter("Pos", ref x, ref rightTrigger, 1);
@@ -404,6 +404,21 @@
 
                     ImGui.Separator();
 
+                    ImPlot.SetNextAxesLimits(0f, 1f, 0f, 1f);
+                    if (ImPlot.BeginPlot($"Touchpad {i}", new Vector2(256, 256), ImPlotFlags.NoInputs))
+                    {
+                        for (int j = 0; j < touchpad.FingerCount; j++)
+                        {
+                            var touchpadFinger = touchpad.GetFinger(j);
+                            touchpadFinger.Y = 1 - touchpadFinger.Y;
+                            if (touchpadFinger.State == FingerState.Down)
+                                ImPlot.PlotScatter($"Finger {j}", ref touchpadFinger.X, ref touchpadFinger.Y, 1);
+                        }
+                        ImPlot.EndPlot();
+                    }
+
+                    ImGui.Separator();
+
                     for (int j = 0; j < touchpad.FingerCount; j++)
                     {
                         var touchpadFinger = touchpad.GetFinger(j);
@@ -432,10 +447,20 @@
                     if (gamepad.Sensors.TryGetValue(sensorType, out var sensor))
                     {
                         var enable = sensor.Enabled;
-                        if (ImGui.Checkbox("Enabled", ref enable))
+                        if (ImGui.Checkbox($"Enabled##{i}", ref enable))
                             sensor.Enabled = enable;
 
                         ImGui.Text($"{sensorType}: {sensor.Vector}");
+
+                        ImGui.Separator();
+                        ImPlot.SetNextAxesLimits(-10, 10, -10, 10);
+                        if (ImPlot.BeginPlot($"Sensor {sensorType}", new Vector2(256, 256), ImPlotFlags.NoInputs))
+                        {
+                            Vector2 vector = new Vector2(sensor.Vector.X, sensor.Vector.Z);
+                            ImPlot.PlotScatter($"{sensorType}", ref vector.X, ref vector.Y, 1);
+
+                            ImPlot.EndPlot();
+                        }
 
                         if (i < sensorCount - 1)
                             ImGui.Separator();
@@ -445,9 +470,27 @@
 
             ImGui.Separator();
 
-            ImGui.Text($"Mapping: {gamepad.Mapping}");
+            if (ImGui.CollapsingHeader("Haptic"))
+            {
+                var haptic = gamepad.Haptic;
+                if (haptic != null)
+                {
+                    ImGui.Text($"Id: {haptic.Id}");
+                    ImGui.Text($"Name: {haptic.Name}");
+                    ImGui.Text($"AxesCount: {haptic.AxesCount}");
+                    ImGui.Text($"RumbleSupported: {haptic.RumbleSupported}");
+                    ImGui.Text($"EffectsSupported: {haptic.EffectsSupported}");
+                    ImGui.Text($"EffectsCount: {haptic.EffectsCount}");
+                    ImGui.Text($"EffectsPlayingCount: {haptic.EffectsPlayingCount}");
+                }
+            }
+
+            ImGui.Separator();
+
             if (ImGui.CollapsingHeader("Mappings"))
             {
+                ImGui.Text($"Mapping: {gamepad.Mapping}");
+                ImGui.Separator();
                 var mappingCount = gamepad.Mappings.Count;
                 for (int i = 0; i < mappingCount; i++)
                 {

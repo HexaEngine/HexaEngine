@@ -25,9 +25,11 @@
         public void** samplers;
         private bool disposedValue;
 
-        public int Count => count;
+        public int Count => textures.Count;
 
         public int StartSlot => startSlot;
+
+        public int SlotCount => count;
 
         public void** ShaderResourceViews => shaderResourceViews;
 
@@ -91,9 +93,10 @@
                 EnsureCapacity((uint)(slot + 1));
                 shaderResourceViews[slot] = (void*)texture.Value.ShaderResourceView.NativePointer;
                 samplers[slot] = (void*)texture.Value.Sampler.NativePointer;
-                count = Math.Max(slot + 1, count);
-                startSlot = Math.Min(slot + 1, startSlot);
+                count = Math.Max(slot, count);
+                startSlot = Math.Min(slot, startSlot);
             }
+            count++;
         }
 
         public void Bind(IGraphicsContext context)
@@ -113,6 +116,8 @@
                 context.PSSetShaderResource(texture.Value.ShaderResourceView, slot);
                 context.PSSetSampler(texture.Value.Sampler, slot);
             }
+
+            // context.PSSetShaderResources(shaderResourceViews, (uint)count, 0);
         }
 
         public bool Contains(ResourceInstance<MaterialTexture>? texture)
@@ -130,11 +135,11 @@
                 TextureType.Ambient => -1,
                 TextureType.Emissive => 4,
                 TextureType.Height => -1,
-                TextureType.Normals => 1,
+                TextureType.Normal => 1,
                 TextureType.Shininess => -1,
                 TextureType.Opacity => -1,
                 TextureType.Displacement => -1,
-                TextureType.Lightmap => -1,
+                TextureType.AmbientOcclusionRoughnessMetalness => 7,
                 TextureType.Reflection => -1,
                 TextureType.BaseColor => 0,
                 TextureType.NormalCamera => -1,

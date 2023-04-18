@@ -57,7 +57,7 @@
             Volatile.Write(ref drawable, false);
             renderer.DestroyInstance(handle);
             env?.Dispose();
-            handle.Free();
+            handle = default;
         }
 
         public void Draw()

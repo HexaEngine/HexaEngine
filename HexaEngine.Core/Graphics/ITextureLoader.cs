@@ -3,15 +3,41 @@
     using HexaEngine.Core.Graphics.Textures;
     using System;
 
+    [Flags]
+    public enum TextureLoaderFlags
+    {
+        None = 0,
+        GenerateMipMaps = 1,
+        Scale = 2,
+    }
+
     public interface ITextureLoader
     {
+        public IGraphicsDevice Device { get; }
+
+        public TextureLoaderFlags Flags { get; set; }
+
+        public float ScalingFactor { get; set; }
+
         public IScratchImage LoadFormFile(string filename);
 
         public IScratchImage LoadFormAssets(string filename);
 
         public IScratchImage LoadFromMemory(string filename, Stream stream);
 
-        public IScratchImage CaptureTexture(IGraphicsDevice device, IGraphicsContext context, IResource resource);
+        ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+
+        ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+
+        ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
+
+        ITexture1D LoadTexture1D(string path);
+
+        ITexture2D LoadTexture2D(string path);
+
+        ITexture3D LoadTexture3D(string path);
+
+        public IScratchImage CaptureTexture(IGraphicsContext context, IResource resource);
 
         public IScratchImage Initialize(TexMetadata metadata, CPFlags flags);
 

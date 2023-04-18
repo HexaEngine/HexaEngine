@@ -344,7 +344,7 @@
                 }
             }
 
-            UpdateDirectLights(context);
+            UpdateLights(context);
 
             while (modelUpdateQueue.TryDequeue(out var instance))
             {
@@ -405,17 +405,10 @@
             return Task.CompletedTask;
         }
 
-        public void UpdateTextures()
-        {
-            UpdateResources();
-        }
-
         private unsafe void UpdateResources()
         {
-#nullable disable
-            cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
             cbs[1] = (void*)Camera.Value?.NativePointer;
-            cbs[2] = (void*)probeParamsBuffer.Buffer?.NativePointer;
+#nullable disable
 
             if (GBuffers != null)
                 for (int i = 0; i < 8; i++)
@@ -443,7 +436,7 @@
 #nullable enable
         }
 
-        private unsafe void UpdateDirectLights(IGraphicsContext context)
+        private unsafe void UpdateLights(IGraphicsContext context)
         {
             globalProbes.ResetCounter();
             directionalLights.ResetCounter();
@@ -494,9 +487,7 @@
                                 continue;
                             light.QueueIndex = csmCount;
                             shadowDirectionalLights.Add(new((DirectionalLight)light));
-#pragma warning disable CS8629 // Nullable value type may be null.
                             shadowSrvs[ndirectSrvs + csmCount] = (void*)light.GetShadowMap()?.NativePointer;
-#pragma warning restore CS8629 // Nullable value type may be null.
                             csmCount++;
                             break;
 
@@ -505,9 +496,7 @@
                                 continue;
                             light.QueueIndex = osmCount;
                             shadowPointLights.Add(new((PointLight)light));
-#pragma warning disable CS8629 // Nullable value type may be null.
                             shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + osmCount] = (void*)light.GetShadowMap()?.NativePointer;
-#pragma warning restore CS8629 // Nullable value type may be null.
                             osmCount++;
                             break;
 
@@ -516,9 +505,7 @@
                                 continue;
                             light.QueueIndex = psmCount;
                             shadowSpotlights.Add(new((Spotlight)light));
-#pragma warning disable CS8629 // Nullable value type may be null.
                             shadowSrvs[ndirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;
-#pragma warning restore CS8629 // Nullable value type may be null.
                             psmCount++;
                             break;
                     }
@@ -575,14 +562,15 @@
             {
                 context.SetRenderTarget(Output, default);
                 context.SetViewport(Output.Viewport);
-                context.PSSetConstantBuffers(cbs, 3, 0);
                 context.PSSetSamplers(smps, 2, 0);
 
                 // Indirect light pass
                 var probeParams = probeParamsBuffer.Local;
                 probeParams->GlobalProbes = globalProbes.Count;
                 probeParamsBuffer.Update(context);
+                cbs[0] = (void*)probeParamsBuffer.Buffer?.NativePointer;
 
+                context.PSSetConstantBuffers(cbs, 2, 0);
                 context.PSSetShaderResources(indirectSrvs, nindirectSrvs, 0);
 
                 quad.DrawAuto(context, deferredIndirect);
@@ -593,6 +581,7 @@
                 lightParams->PointLights = pointLights.Count;
                 lightParams->Spotlights = spotlights.Count;
                 lightParamsBuffer.Update(context);
+                cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
 
                 context.PSSetConstantBuffers(cbs, 2, 0);
                 context.PSSetShaderResources(directSrvs, ndirectSrvs, 0);
@@ -604,7 +593,9 @@
                 lightParams->PointLights = shadowPointLights.Count;
                 lightParams->Spotlights = shadowSpotlights.Count;
                 lightParamsBuffer.Update(context);
+                cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
 
+                context.PSSetConstantBuffers(cbs, 2, 0);
                 context.PSSetShaderResources(shadowSrvs, nShadowSrvs, 0);
 
                 quad.DrawAuto(context, deferredShadow);

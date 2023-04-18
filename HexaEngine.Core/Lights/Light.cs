@@ -22,6 +22,8 @@
         [EditorProperty("Cast Shadows")]
         public bool CastShadows { get => castShadows; set => SetAndNotifyWithEqualsTest(ref castShadows, value); }
 
+        public abstract bool HasShadowMap { get; }
+
         /// <summary>
         /// Tests if an object that moved affects the shadow volume
         /// </summary>

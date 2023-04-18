@@ -1,48 +1,37 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.Windows;
-    using HexaEngine.DirectXTex;
-    using HexaEngine.Mathematics;
-    using Newtonsoft.Json.Linq;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
-    using System.Diagnostics;
-    using System.Numerics;
+    using System.Globalization;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
-    using DDSFlags = DirectXTex.DDSFlags;
     using Format = Core.Graphics.Format;
     using Query = Core.Graphics.Query;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
     using SubresourceData = Core.Graphics.SubresourceData;
-    using TexFilterFlags = DirectXTex.TexFilterFlags;
-    using TexMetadata = DirectXTex.TexMetadata;
-    using TGAFlags = DirectXTex.TGAFlags;
     using Usage = Core.Graphics.Usage;
     using Viewport = Mathematics.Viewport;
-    using WICFlags = DirectXTex.WICFlags;
 
     public unsafe partial class D3D11GraphicsDevice : IGraphicsDevice
     {
         internal readonly D3D11 D3D11;
-        private readonly DXGIAdapter adapter;
-        private bool disposedValue;
+
+        protected readonly DXGIAdapterD3D11 adapter;
+        protected bool disposedValue;
 
         public static readonly ShaderCompiler Compiler;
 
-        public ID3D11Device1* Device;
-        public ID3D11DeviceContext1* DeviceContext;
+        public ComPtr<ID3D11Device1> Device;
+        public ComPtr<ID3D11DeviceContext1> DeviceContext;
 
-        internal ID3D11Debug* DebugDevice;
+        internal ComPtr<ID3D11Debug> DebugDevice;
 
         static D3D11GraphicsDevice()
         {
@@ -50,15 +39,18 @@
             ShaderCompilers.Register(GraphicsBackend.D3D11, Compiler);
         }
 
-        [SupportedOSPlatform("windows")]
-        public D3D11GraphicsDevice(DXGIAdapter adapter, bool debug)
+        protected D3D11GraphicsDevice(DXGIAdapterD3D11 adapter)
         {
             this.adapter = adapter;
             D3D11 = D3D11.GetApi();
+            TextureLoader = new D3D11TextureLoader(this);
+        }
 
-#if D3D11On12
-
-#else
+        [SupportedOSPlatform("windows")]
+        public D3D11GraphicsDevice(DXGIAdapterD3D11 adapter, bool debug)
+        {
+            this.adapter = adapter;
+            D3D11 = D3D11.GetApi();
             D3DFeatureLevel[] levelsArr = new D3DFeatureLevel[]
             {
                 D3DFeatureLevel.Level111,
@@ -76,55 +68,49 @@
             D3DFeatureLevel level = 0;
             D3DFeatureLevel* levels = (D3DFeatureLevel*)Unsafe.AsPointer(ref levelsArr[0]);
 
-            ResultCode code = (ResultCode)D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, 2, D3D11.SdkVersion, &tempDevice, &level, &tempContext);
+            D3D11.CreateDevice((IDXGIAdapter*)adapter.IDXGIAdapter.Handle, D3DDriverType.Unknown, IntPtr.Zero, (uint)flags, levels, (uint)levelsArr.Length, D3D11.SdkVersion, &tempDevice, &level, &tempContext).ThrowHResult();
+            Level = level;
 
-            if (code != ResultCode.S_OK)
-            {
-                throw new D3D11Exception(code);
-            }
+            tempDevice->QueryInterface(out Device);
+            tempContext->QueryInterface(out DeviceContext);
 
-            ID3D11Device1* device;
-            ID3D11DeviceContext1* context;
-            tempDevice->QueryInterface(Utils.Guid(ID3D11Device1.Guid), (void**)&device);
-            tempContext->QueryInterface(Utils.Guid(ID3D11DeviceContext1.Guid), (void**)&context);
-            Device = device;
-            DeviceContext = context;
             tempDevice->Release();
             tempContext->Release();
 
-            NativePointer = new(device);
+            NativePointer = new(Device.Handle);
 
 #if DEBUG
             if (debug)
             {
-                ID3D11Debug* debugDevice;
-                Device->QueryInterface(Utils.Guid(ID3D11Debug.Guid), (void**)&debugDevice);
-                DebugDevice = debugDevice;
+                Device.QueryInterface(out DebugDevice);
             }
 #endif
-#endif
+
             Context = new D3D11GraphicsContext(this);
+            TextureLoader = new D3D11TextureLoader(this);
         }
 
-        public IGraphicsContext Context { get; }
+        public virtual GraphicsBackend Backend => GraphicsBackend.D3D11;
 
-        public IntPtr NativePointer { get; }
+        public IGraphicsContext Context { get; protected set; }
+
+        public ITextureLoader TextureLoader { get; }
 
         public string? DebugName { get; set; } = string.Empty;
+
+        public nint NativePointer { get; protected set; }
 
         public bool IsDisposed => disposedValue;
 
         public event EventHandler? OnDisposed;
 
-        public ISwapChain? SwapChain { get; }
+        public D3DFeatureLevel Level { get; protected set; }
 
         [SupportedOSPlatform("windows")]
         public ISwapChain CreateSwapChain(SdlWindow window)
         {
             return adapter.CreateSwapChainForWindow(this, window);
         }
-
-        public ITextureLoader TextureLoader { get; } = new D3D11TextureLoader();
 
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc)
         {
@@ -133,60 +119,60 @@
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, macros, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, macros, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, state, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, state, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line})");
+            return new GraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IBuffer CreateBuffer(BufferDescription description)
         {
-            ID3D11Buffer* buffer;
+            ComPtr<ID3D11Buffer> buffer;
             BufferDesc desc = Helper.Convert(description);
-            Device->CreateBuffer(&desc, null, &buffer).ThrowHResult();
+            Device.CreateBuffer(&desc, (D3D11SubresourceData*)null, &buffer.Handle).ThrowHResult();
             return new D3D11Buffer(buffer, description);
         }
 
         public IBuffer CreateBuffer(void* src, uint length, BufferDescription description)
         {
-            ID3D11Buffer* buffer;
+            ComPtr<ID3D11Buffer> buffer;
             description.ByteWidth = (int)length;
             BufferDesc desc = Helper.Convert(description);
             var data = Helper.Convert(new SubresourceData(src, description.ByteWidth));
-            Device->CreateBuffer(&desc, &data, &buffer).ThrowHResult();
+            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowHResult();
             return new D3D11Buffer(buffer, description);
         }
 
@@ -198,14 +184,14 @@
                 description.ByteWidth = Marshal.SizeOf<T>();
             }
 
-            ID3D11Buffer* buffer;
+            ComPtr<ID3D11Buffer> buffer;
             BufferDesc desc = Helper.Convert(description);
 
             var data = Alloc(description.ByteWidth);
             Marshal.StructureToPtr(value, (nint)data, true);
             D3D11SubresourceData* bufferData = Alloc(new D3D11SubresourceData(data, (uint)description.ByteWidth));
 
-            Device->CreateBuffer(&desc, bufferData, &buffer).ThrowHResult();
+            Device.CreateBuffer(&desc, bufferData, &buffer.Handle).ThrowHResult();
             Free(bufferData);
             Free(data);
 
@@ -223,11 +209,11 @@
         public IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged
         {
             uint size = (uint)(sizeof(T) * count);
-            ID3D11Buffer* buffer;
+            ComPtr<ID3D11Buffer> buffer;
             description.ByteWidth = (int)size;
             BufferDesc desc = Helper.Convert(description);
             var data = Helper.Convert(new SubresourceData(values, description.ByteWidth));
-            Device->CreateBuffer(&desc, &data, &buffer).ThrowHResult();
+            Device.CreateBuffer(&desc, &data, &buffer.Handle).ThrowHResult();
             return new D3D11Buffer(buffer, description);
         }
 
@@ -271,9 +257,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description)
         {
-            ID3D11DepthStencilView* view;
-            DepthStencilViewDesc desc = Helper.Convert(description);
-            Device->CreateDepthStencilView((ID3D11Resource*)resource.NativePointer, ref desc, &view).ThrowHResult();
+            ComPtr<ID3D11DepthStencilView> view;
+            var desc = Helper.Convert(description);
+            Device.CreateDepthStencilView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle).ThrowHResult();
             return new D3D11DepthStencilView(view, description);
         }
 
@@ -318,18 +304,18 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport)
         {
-            ID3D11RenderTargetView* rtv;
-            RenderTargetViewDesc desc = Helper.Convert(description);
-            Device->CreateRenderTargetView((ID3D11Resource*)resource.NativePointer, &desc, &rtv).ThrowHResult();
+            ComPtr<ID3D11RenderTargetView> rtv;
+            var desc = Helper.Convert(description);
+            Device.CreateRenderTargetView((ID3D11Resource*)resource.NativePointer, &desc, &rtv.Handle).ThrowHResult();
             return new D3D11RenderTargetView(rtv, description, viewport);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ISamplerState CreateSamplerState(SamplerDescription description)
         {
-            ID3D11SamplerState* sampler;
-            SamplerDesc desc = Helper.Convert(description);
-            Device->CreateSamplerState(ref desc, &sampler).ThrowHResult();
+            ComPtr<ID3D11SamplerState> sampler;
+            var desc = Helper.Convert(description);
+            Device.CreateSamplerState(&desc, &sampler.Handle).ThrowHResult();
             return new D3D11SamplerState(sampler, description);
         }
 
@@ -357,7 +343,7 @@
                 }
                 else
                     dimension = ShaderResourceViewDimension.Texture2D;
-                if (texture2d.Description.MiscFlags.HasFlag(ResourceMiscFlag.TextureCube))
+                if ((texture2d.Description.MiscFlags & ResourceMiscFlag.TextureCube) != 0)
                 {
                     dimension = texture2d.Description.ArraySize / 6 > 1 ? ShaderResourceViewDimension.TextureCubeArray : ShaderResourceViewDimension.TextureCube;
                 }
@@ -378,53 +364,53 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IShaderResourceView CreateShaderResourceView(IResource resource, ShaderResourceViewDescription description)
         {
-            ID3D11ShaderResourceView* srv;
-            ShaderResourceViewDesc desc = Helper.Convert(description);
-            Device->CreateShaderResourceView((ID3D11Resource*)resource.NativePointer, &desc, &srv).ThrowHResult();
+            ComPtr<ID3D11ShaderResourceView> srv;
+            var desc = Helper.Convert(description);
+            Device.CreateShaderResourceView((ID3D11Resource*)resource.NativePointer, &desc, &srv.Handle).ThrowHResult();
             return new D3D11ShaderResourceView(srv, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer)
         {
-            ID3D11ShaderResourceView* srv;
-            Device->CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, null, &srv).ThrowHResult();
+            ComPtr<ID3D11ShaderResourceView> srv;
+            Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, (ShaderResourceViewDesc*)null, &srv.Handle).ThrowHResult();
             return new D3D11ShaderResourceView(srv, default);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description)
         {
-            ID3D11ShaderResourceView* srv;
-            ShaderResourceViewDesc desc = Helper.Convert(description);
-            Device->CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv).ThrowHResult();
+            ComPtr<ID3D11ShaderResourceView> srv;
+            var desc = Helper.Convert(description);
+            Device.CreateShaderResourceView((ID3D11Resource*)buffer.NativePointer, &desc, &srv.Handle).ThrowHResult();
             return new D3D11ShaderResourceView(srv, default);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Texture1DDescription description)
         {
-            ID3D11Texture1D* texture;
+            ComPtr<ID3D11Texture1D> texture;
             Texture1DDesc desc = Helper.Convert(description);
-            Device->CreateTexture1D(ref desc, null, &texture).ThrowHResult();
+            Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             return new D3D11Texture1D(texture, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[]? subresources)
         {
-            ID3D11Texture1D* texture;
+            ComPtr<ID3D11Texture1D> texture;
             Texture1DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
                 D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device->CreateTexture1D(&desc, data, &texture).ThrowHResult();
+                Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
             }
             else
             {
-                Device->CreateTexture1D(&desc, null, &texture).ThrowHResult();
+                Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             }
             return new D3D11Texture1D(texture, description);
         }
@@ -439,19 +425,19 @@
         public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture1DDescription description = new(format, width, arraySize, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
-            ID3D11Texture1D* texture;
+            ComPtr<ID3D11Texture1D> texture;
             Texture1DDesc desc = Helper.Convert(description);
 
             if (subresources != null)
             {
                 D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device->CreateTexture1D(&desc, data, &texture).ThrowHResult();
+                Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
             }
             else
             {
-                Device->CreateTexture1D(&desc, null, &texture).ThrowHResult();
+                Device.CreateTexture1D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             }
 
             return new D3D11Texture1D(texture, description);
@@ -460,27 +446,27 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D CreateTexture2D(Texture2DDescription description)
         {
-            ID3D11Texture2D* texture;
+            ComPtr<ID3D11Texture2D> texture;
             Texture2DDesc desc = Helper.Convert(description);
-            Device->CreateTexture2D(ref desc, null, &texture).ThrowHResult();
+            Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             return new D3D11Texture2D(texture, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[]? subresources)
         {
-            ID3D11Texture2D* texture;
+            ComPtr<ID3D11Texture2D> texture;
             Texture2DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
                 D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device->CreateTexture2D(&desc, data, &texture).ThrowHResult();
+                Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
             }
             else
             {
-                Device->CreateTexture2D(&desc, null, &texture).ThrowHResult();
+                Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             }
             return new D3D11Texture2D(texture, description);
         }
@@ -495,19 +481,19 @@
         public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture2DDescription description = new(format, width, height, arraySize, mipLevels, bindFlags, usage, cpuAccessFlags, sampleCount, sampleQuality, misc);
-            ID3D11Texture2D* texture;
+            ComPtr<ID3D11Texture2D> texture;
             Texture2DDesc desc = Helper.Convert(description);
 
             if (subresources != null)
             {
                 D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device->CreateTexture2D(&desc, data, &texture).ThrowHResult();
+                Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
             }
             else
             {
-                Device->CreateTexture2D(&desc, null, &texture).ThrowHResult();
+                Device.CreateTexture2D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             }
 
             return new D3D11Texture2D(texture, description);
@@ -516,26 +502,26 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D CreateTexture3D(Texture3DDescription description)
         {
-            ID3D11Texture3D* texture;
+            ComPtr<ID3D11Texture3D> texture;
             Texture3DDesc desc = Helper.Convert(description);
-            Device->CreateTexture3D(ref desc, null, &texture).ThrowHResult();
+            Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             return new D3D11Texture3D(texture, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[]? subresources)
         {
-            ID3D11Texture3D* texture;
+            ComPtr<ID3D11Texture3D> texture;
             Texture3DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
                 D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device->CreateTexture3D(&desc, data, &texture).ThrowHResult();
+                Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowHResult();
             }
             else
             {
-                Device->CreateTexture3D(&desc, null, &texture).ThrowHResult();
+                Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             }
             return new D3D11Texture3D(texture, description);
         }
@@ -550,437 +536,21 @@
         public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None)
         {
             Texture3DDescription description = new(format, width, height, depth, mipLevels, bindFlags, usage, cpuAccessFlags, misc);
-            ID3D11Texture3D* texture;
+            ComPtr<ID3D11Texture3D> texture;
             Texture3DDesc desc = Helper.Convert(description);
 
             if (subresources != null)
             {
                 D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
-                Device->CreateTexture3D(&desc, data, &texture).ThrowHResult();
+                Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowHResult();
             }
             else
             {
-                Device->CreateTexture3D(&desc, null, &texture).ThrowHResult();
+                Device.CreateTexture3D(&desc, (D3D11SubresourceData*)null, &texture.Handle).ThrowHResult();
             }
 
             return new D3D11Texture3D(texture, description);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture1D LoadTexture1D(string path)
-        {
-            return (ITexture1D)LoadTextureAuto(path, TextureDimension.Texture1D);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
-        {
-            return (ITexture1D)LoadTextureAuto(path, TextureDimension.Texture1D, usage, bind, cpuAccess, misc);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture2D LoadTexture2D(string path)
-        {
-            return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture2D LoadTexture2D(string path, BindFlags flags)
-        {
-            return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D, Usage.Default, flags, CpuAccessFlags.None, ResourceMiscFlag.None);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
-        {
-            return (ITexture2D)LoadTextureAuto(path, TextureDimension.Texture2D, usage, bind, cpuAccess, misc);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture3D LoadTexture3D(string path)
-        {
-            return (ITexture3D)LoadTextureAuto(path, TextureDimension.Texture3D);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
-        {
-            return (ITexture3D)LoadTextureAuto(path, TextureDimension.Texture3D, usage, bind, cpuAccess, misc);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture2D LoadTextureCube(string path)
-        {
-            return (ITexture2D)LoadTextureAuto(path, TextureDimension.TextureCube);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ITexture2D LoadTextureCube(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
-        {
-            return (ITexture2D)LoadTextureAuto(path, TextureDimension.TextureCube, usage, bind, cpuAccess, misc);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IResource LoadTextureAuto(string path, TextureDimension dimension)
-        {
-            ScratchImage image = LoadAuto(path);
-            if (image.pScratchImage == null)
-            {
-                return InitFallback(dimension);
-            }
-            TexMetadata metadata = image.GetMetadata();
-
-            if (metadata.MipLevels == 1)
-            {
-                bool isError = false;
-                ScratchImage image1 = new();
-                try
-                {
-                    DirectXTex.GenerateMipMaps(&image, TexFilterFlags.Default, (ulong)MathUtil.ComputeMipLevels((int)metadata.Width, (int)metadata.Height), &image1);
-                }
-                catch (Exception ex)
-                {
-                    image1.Release();
-                    isError = true;
-                    ImGuiConsole.Log(ex);
-                }
-                if (!isError)
-                {
-                    image.Release();
-                    image = image1;
-                    metadata = image.GetMetadata();
-                }
-            }
-
-            ResourceMiscFlag optionFlags = metadata.IsCubemap() ? ResourceMiscFlag.TextureCube : ResourceMiscFlag.None;
-            ID3D11Resource* resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)(IntPtr)Device, &image, Silk.NET.Direct3D11.Usage.Immutable, BindFlag.ShaderResource, 0, 0, false, &resource);
-            image.Release();
-            switch (dimension)
-            {
-                case TextureDimension.Texture1D:
-                    {
-                        Texture1DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.ArraySize,
-                            (int)metadata.MipLevels,
-                            miscFlags: optionFlags);
-                        return new D3D11Texture1D((ID3D11Texture1D*)resource, texture);
-                    }
-
-                case TextureDimension.Texture2D:
-                    {
-                        Texture2DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.ArraySize,
-                            (int)metadata.MipLevels,
-                            miscFlags: optionFlags);
-                        return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
-                    }
-
-                case TextureDimension.Texture3D:
-                    {
-                        Texture3DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.Depth,
-                            (int)metadata.MipLevels,
-                            miscFlags: optionFlags);
-                        return new D3D11Texture3D((ID3D11Texture3D*)resource, texture);
-                    }
-
-                case TextureDimension.TextureCube:
-                    {
-                        Texture2DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.Depth,
-                            (int)metadata.MipLevels,
-                            miscFlags: optionFlags);
-                        return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
-                    }
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dimension));
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IResource LoadTextureAuto(string path, TextureDimension dimension, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc)
-        {
-            ScratchImage image = LoadAuto(path);
-            if (image.pScratchImage == null)
-            {
-                return InitFallback(dimension);
-            }
-            TexMetadata metadata = image.GetMetadata();
-
-            if (metadata.MipLevels == 1)
-            {
-                bool isError = false;
-                ScratchImage image1 = new();
-                try
-                {
-                    DirectXTex.GenerateMipMaps(&image, TexFilterFlags.Default, (ulong)MathUtil.ComputeMipLevels((int)metadata.Width, (int)metadata.Height), &image1);
-                }
-                catch (Exception ex)
-                {
-                    image1.Release();
-                    isError = true;
-                    ImGuiConsole.Log(ex);
-                }
-                if (!isError)
-                {
-                    image.Release();
-                    image = image1;
-                    metadata = image.GetMetadata();
-                }
-            }
-
-            ID3D11Resource* resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)(IntPtr)Device, &image, Helper.Convert(usage), Helper.Convert(bind), Helper.Convert(cpuAccess), Helper.Convert(misc), false, &resource);
-            image.Release();
-            switch (dimension)
-            {
-                case TextureDimension.Texture1D:
-                    {
-                        Texture1DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.ArraySize,
-                            (int)metadata.MipLevels,
-                            miscFlags: misc);
-                        return new D3D11Texture1D((ID3D11Texture1D*)resource, texture);
-                    }
-
-                case TextureDimension.Texture2D:
-                    {
-                        Texture2DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.ArraySize,
-                            (int)metadata.MipLevels,
-                            miscFlags: misc);
-                        return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
-                    }
-
-                case TextureDimension.Texture3D:
-                    {
-                        Texture3DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.Depth,
-                            (int)metadata.MipLevels,
-                            miscFlags: misc);
-                        return new D3D11Texture3D((ID3D11Texture3D*)resource, texture);
-                    }
-
-                case TextureDimension.TextureCube:
-                    {
-                        Texture2DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.Depth,
-                            (int)metadata.MipLevels,
-                            miscFlags: misc);
-                        return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
-                    }
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(dimension));
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private unsafe IResource InitFallback(TextureDimension dimension)
-        {
-            SubresourceData fallback;
-            Vector4[] values = new Vector4[16];
-            for (int i = 0; i < 16; i++)
-            {
-                values[i] = new(1f, 0.752941176f, 0.796078431f, 1f);
-            }
-            fixed (byte* ptr = MemoryMarshal.AsBytes(values.AsSpan()))
-            {
-                fallback = new(ptr, sizeof(Vector4));
-            }
-
-            if (dimension == TextureDimension.Texture1D)
-            {
-                return CreateTexture1D(Format.RGBA32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
-            }
-            if (dimension == TextureDimension.Texture2D)
-            {
-                return CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
-            }
-            if (dimension == TextureDimension.Texture3D)
-            {
-                fallback.SlicePitch = 1;
-                return CreateTexture3D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback, }, BindFlags.ShaderResource, Usage.Immutable);
-            }
-            if (dimension == TextureDimension.TextureCube)
-            {
-                return CreateTexture2D(Format.RGBA32Float, 4, 4, 6, 1, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback }, BindFlags.ShaderResource, Usage.Immutable, misc: ResourceMiscFlag.TextureCube);
-            }
-
-            throw new ArgumentOutOfRangeException(nameof(dimension));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ScratchImage LoadAuto(string path)
-        {
-            if (!FileSystem.TryOpen(path, out VirtualStream? fs))
-                return default;
-
-            ScratchImage image = new();
-            var data = fs.ReadBytes();
-            string extension = Path.GetExtension(path);
-            switch (extension)
-            {
-                case ".dds":
-                    DirectXTex.LoadFromDDSMemory(data, DDSFlags.None, &image);
-                    break;
-
-                case ".tga":
-                    DirectXTex.LoadFromTGAMemory(data, TGAFlags.None, &image);
-                    break;
-
-                case ".hdr":
-                    DirectXTex.LoadFromHDRMemory(data, &image);
-                    break;
-
-                default:
-                    DirectXTex.LoadFromWICMemory(data, WICFlags.None, &image, null);
-                    break;
-            };
-            return image;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTexture1D(ITexture1D texture, string path)
-        {
-            SaveAuto(texture, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTexture2D(ITexture2D texture, string path)
-        {
-            SaveAuto(texture, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTexture3D(ITexture3D texture, string path)
-        {
-            SaveAuto(texture, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTextureCube(ITexture2D texture, string path)
-        {
-            SaveAuto(texture, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SaveAuto(IResource resource, string path)
-        {
-            ScratchImage image = new();
-
-            DirectXTex.CaptureTexture((ID3D11Device*)NativePointer, (ID3D11DeviceContext*)Context.NativePointer, (ID3D11Resource*)resource.NativePointer, &image);
-            switch (Path.GetExtension(path))
-            {
-                case ".dds":
-                    DirectXTex.SaveToDDSFile(&image, DDSFlags.None, path);
-                    break;
-
-                case ".tga":
-                    DirectXTex.SaveToTGAFile(&image, 0, TGAFlags.None, path);
-                    break;
-
-                case ".hdr":
-                    DirectXTex.SaveToHDRFile(&image, 0, path);
-                    break;
-
-                default:
-                    DirectXTex.SaveToWICFile(&image, 0, WICFlags.None, DirectXTex.GetWICCodec(WICCodecs.PNG), path);
-                    break;
-            }
-            image.Release();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTexture1D(ITexture1D texture, Format format, string path)
-        {
-            SaveAuto(texture, format, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTexture2D(ITexture2D texture, Format format, string path)
-        {
-            SaveAuto(texture, format, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTexture3D(ITexture3D texture, Format format, string path)
-        {
-            SaveAuto(texture, format, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SaveTextureCube(ITexture2D texture, Format format, string path)
-        {
-            SaveAuto(texture, format, path);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SaveAuto(IResource resource, Format format, string path)
-        {
-            ScratchImage image = new();
-            DirectXTex.CaptureTexture((ID3D11Device*)NativePointer, (ID3D11DeviceContext*)Context.NativePointer, (ID3D11Resource*)resource.NativePointer, &image);
-            /*if (DirectXTex.IsCompressed(Helper.Convert(format)))
-            {
-                TexCompressFlags flags = TexCompressFlags.PARALLEL;
-                if (format == Format.BC7RGBAUNorm)
-                    flags |= TexCompressFlags.BC7_QUICK;
-                ScratchImage image1 = new();
-                DirectXTex.Compress((ID3D11Device*)NativePointer, &image, Helper.Convert(format), flags, 1f, &image1);
-                image.Release();
-                image = image1;
-            }
-            else
-            {
-                ScratchImage image1 = new();
-                DirectXTex.Convert(&image, Helper.Convert(format), TexFilterFlags.DEFAULT, 0.5f, &image1);
-                image.Release();
-                image = image1;
-            }*/
-            switch (Path.GetExtension(path))
-            {
-                case ".dds":
-                    DirectXTex.SaveToDDSFile(&image, DDSFlags.None, path);
-                    break;
-
-                case ".tga":
-                    DirectXTex.SaveToTGAFile(&image, 0, TGAFlags.None, path);
-                    break;
-
-                case ".hdr":
-                    DirectXTex.SaveToHDRFile(&image, 0, path);
-                    break;
-
-                default:
-                    DirectXTex.SaveToWICFile(&image, 0, WICFlags.None, DirectXTex.GetWICCodec(WICCodecs.PNG), path);
-                    break;
-            }
-            image.Release();
         }
 
         [Flags]
@@ -994,173 +564,21 @@
             All
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void CreateInputLayoutFromSignature(Blob shader, Blob signature, ID3D11InputLayout** layout)
-        {
-            ID3D11ShaderReflection* reflection;
-            Compiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
-            ShaderDesc desc;
-            reflection->GetDesc(&desc);
-
-            InputElementDesc* inputElements = Alloc<InputElementDesc>(desc.InputParameters);
-            for (uint i = 0; i < desc.InputParameters; i++)
-            {
-                SignatureParameterDesc parameterDesc;
-                reflection->GetInputParameterDesc(i, &parameterDesc);
-
-                InputElementDesc inputElement = new()
-                {
-                    SemanticName = parameterDesc.SemanticName,
-                    SemanticIndex = parameterDesc.SemanticIndex,
-                    InputSlot = 0,
-                    AlignedByteOffset = D3D11.AppendAlignedElement,
-                    InputSlotClass = Silk.NET.Direct3D11.InputClassification.PerVertexData,
-                    InstanceDataStepRate = 0
-                };
-
-                if (parameterDesc.Mask == (byte)RegisterComponentMaskFlags.ComponentX)
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY))
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32G32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32G32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32G32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY | RegisterComponentMaskFlags.ComponentZ))
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32G32B32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32G32B32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32G32B32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY | RegisterComponentMaskFlags.ComponentZ | RegisterComponentMaskFlags.ComponentW))
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32G32B32A32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32G32B32A32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32G32B32A32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                inputElements[i] = inputElement;
-            }
-
-            reflection->Release();
-            Device->CreateInputLayout(inputElements, desc.InputParameters, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
-            Free(inputElements);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void CreateInputLayoutFromSignature(Shader* shader, Blob signature, ID3D11InputLayout** layout)
-        {
-            ID3D11ShaderReflection* reflection;
-            Compiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
-            ShaderDesc desc;
-            reflection->GetDesc(&desc);
-
-            InputElementDesc* inputElements = Alloc<InputElementDesc>(desc.InputParameters);
-            for (uint i = 0; i < desc.InputParameters; i++)
-            {
-                SignatureParameterDesc parameterDesc;
-                reflection->GetInputParameterDesc(i, &parameterDesc);
-
-                InputElementDesc inputElement = new()
-                {
-                    SemanticName = parameterDesc.SemanticName,
-                    SemanticIndex = parameterDesc.SemanticIndex,
-                    InputSlot = 0,
-                    AlignedByteOffset = D3D11.AppendAlignedElement,
-                    InputSlotClass = Silk.NET.Direct3D11.InputClassification.PerVertexData,
-                    InstanceDataStepRate = 0
-                };
-
-                if (parameterDesc.Mask == (byte)RegisterComponentMaskFlags.ComponentX)
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY))
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32G32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32G32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32G32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY | RegisterComponentMaskFlags.ComponentZ))
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32G32B32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32G32B32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32G32B32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                if (parameterDesc.Mask == (byte)(RegisterComponentMaskFlags.ComponentX | RegisterComponentMaskFlags.ComponentY | RegisterComponentMaskFlags.ComponentZ | RegisterComponentMaskFlags.ComponentW))
-                {
-                    inputElement.Format = parameterDesc.ComponentType switch
-                    {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Silk.NET.DXGI.Format.FormatR32G32B32A32Uint,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Silk.NET.DXGI.Format.FormatR32G32B32A32Sint,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Silk.NET.DXGI.Format.FormatR32G32B32A32Float,
-                        _ => Silk.NET.DXGI.Format.FormatUnknown,
-                    };
-                }
-
-                inputElements[i] = inputElement;
-            }
-
-            reflection->Release();
-            Device->CreateInputLayout(inputElements, desc.InputParameters, signature.BufferPointer.ToPointer(), (uint)(int)signature.PointerSize, layout).ThrowHResult();
-            Free(inputElements);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 OnDisposed?.Invoke(this, EventArgs.Empty);
-                SwapChain?.Dispose();
+
                 Context.Dispose();
-                Device->Release();
+                Device.Release();
 
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
 
-                if (DebugDevice != null)
+                if (DebugDevice.Handle != null)
                 {
-                    DebugDevice->ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
-                    DebugDevice->Release();
+                    DebugDevice.ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
+                    DebugDevice.Release();
                 }
 
                 LeakTracer.ReportLiveInstances();
@@ -1193,26 +611,26 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IQuery CreateQuery(Query type)
         {
-            ID3D11Query* query;
+            ComPtr<ID3D11Query> query;
             QueryDesc desc = new(Helper.Convert(type), 0);
-            Device->CreateQuery(&desc, &query);
+            Device.CreateQuery(&desc, &query.Handle);
             return new D3D11Query(query);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IGraphicsContext CreateDeferredContext()
         {
-            ID3D11DeviceContext1* context;
-            Device->CreateDeferredContext1(0, &context);
+            ComPtr<ID3D11DeviceContext1> context;
+            Device.CreateDeferredContext1(0, &context.Handle);
             return new D3D11GraphicsContext(this, context);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description)
         {
-            ID3D11UnorderedAccessView* view;
-            UnorderedAccessViewDesc desc = Helper.Convert(description);
-            Device->CreateUnorderedAccessView((ID3D11Resource*)resource.NativePointer, &desc, &view);
+            ComPtr<ID3D11UnorderedAccessView> view;
+            var desc = Helper.Convert(description);
+            Device.CreateUnorderedAccessView((ID3D11Resource*)resource.NativePointer, &desc, &view.Handle);
             return new D3D11UnorderedAccessView(view, description);
         }
     }

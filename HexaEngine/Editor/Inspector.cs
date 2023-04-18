@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Types;
@@ -112,6 +113,8 @@
                 for (int i = 0; i < scene.Cameras.Count; i++)
                 {
                     var cam = scene.Cameras[i];
+                    if (!Application.InDesignMode && CameraManager.Current == cam)
+                        continue;
                     DebugDraw.DrawFrustum(cam.Name, cam.Transform.Frustum, Vector4.One);
                 }
             }
@@ -191,11 +194,6 @@
                         if (component is TriangleCollider triangle)
                         {
                             DebugDraw.DrawTriangle(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, triangle.Pos1, triangle.Pos2, triangle.Pos3, Vector4.One);
-                        }
-                        if (component is ConvexHullCollider convex)
-                        {
-                            if (convex.HullData.HasValue)
-                                DebugDraw.DrawConvexHull(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, convex.HullData.Value, convex.Points, Vector4.One);
                         }
                         if (component is CompoundCollider compound)
                         {

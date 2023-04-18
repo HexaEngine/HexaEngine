@@ -5,12 +5,21 @@
     using HexaEngine.Core.Input.Events;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
+    using Silk.NET.Core.Contexts;
+    using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.Versioning;
     using System.Text;
     using Key = Input.Key;
+
+    public enum FullscreenMode
+    {
+        Windowed,
+        Fullscreen,
+        WindowedFullscreen,
+    }
 
     public unsafe class SdlWindow : IWindow
     {
@@ -46,19 +55,34 @@
         private bool hovering;
         private bool focused;
         private WindowState state;
-        private string title = "MainWindow";
+        private string title = "Window";
         private bool lockCursor;
         private bool resizable = true;
         private bool bordered = true;
-
-        public GraphicsBackend Backend { get; private set; }
 
         private void PlatformConstruct()
         {
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 
-            window = Sdl.CreateWindow(ptr, x, y, width, height, (uint)(WindowFlags.Resizable | WindowFlags.Hidden));
+            WindowFlags flags = WindowFlags.Resizable | WindowFlags.Hidden;
+
+            switch (Application.GraphicsBackend)
+            {
+                case GraphicsBackend.Vulkan:
+                    flags |= WindowFlags.Vulkan;
+                    break;
+
+                case GraphicsBackend.OpenGL:
+                    flags |= WindowFlags.Opengl;
+                    break;
+
+                case GraphicsBackend.Metal:
+                    flags |= WindowFlags.Metal;
+                    break;
+            }
+
+            window = Sdl.CreateWindow(ptr, x, y, width, height, (uint)flags);
             WindowID = Sdl.GetWindowID(window);
 
             int w;
@@ -101,13 +125,28 @@
             Sdl.CaptureMouse(SdlBool.True);
         }
 
+        public void Fullscreen(FullscreenMode mode)
+        {
+            Sdl.SetWindowFullscreen(window, (uint)mode);
+        }
+
         [SupportedOSPlatform("windows")]
-        public IntPtr GetHWND()
+        public IntPtr GetWin32HWND()
         {
             SysWMInfo wmInfo;
             Sdl.GetVersion(&wmInfo.Version);
             Sdl.GetWindowWMInfo(window, &wmInfo);
             return wmInfo.Info.Win.Hwnd;
+        }
+
+        public bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle)
+        {
+            return Sdl.VulkanCreateSurface(window, vkHandle, vkNonDispatchableHandle) == SdlBool.True;
+        }
+
+        public IGLContext OpenGLCreateContext()
+        {
+            return new SdlContext(Sdl, window);
         }
 
         public Window* GetWindow() => window;
@@ -230,16 +269,6 @@
             {
                 bordered = value;
                 Sdl.SetWindowBordered(window, value ? SdlBool.True : SdlBool.False);
-            }
-        }
-
-        public (int, int) ScreenSize
-        {
-            get
-            {
-                DisplayMode mode;
-                Sdl.GetCurrentDisplayMode(0, &mode);
-                return (mode.W, mode.H);
             }
         }
 
@@ -612,6 +641,10 @@
             mouseWheelEventArgs.Wheel = new(evnt.X, evnt.Y);
             mouseWheelEventArgs.Direction = (Input.MouseWheelDirection)evnt.Direction;
             OnMouseWheelInput(mouseWheelEventArgs);
+        }
+
+        internal void ProcessInputController()
+        {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

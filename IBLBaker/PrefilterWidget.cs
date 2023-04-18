@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Effects.Filter;
@@ -92,7 +93,10 @@
                     context.GenerateMips(cube1.ShaderResourceView ?? throw new Exception("Cannot convert texture!"));
                     ImGuiConsole.Log(LogSeverity.Log, "Converted environment to cubemap ...");
                     ImGuiConsole.Log(LogSeverity.Log, "Exporting environment ...");
-                    device.SaveTexture2D((ITexture2D)cube1.Resource, "env_o.dds");
+                    var loader = context.Device.TextureLoader;
+                    var image = loader.CaptureTexture(context, cube1.Resource);
+                    image.SaveToFile("env_o.dds", TexFileFormat.DDS, 0);
+                    image.Dispose();
                     ImGuiConsole.Log(LogSeverity.Log, "Exported environment ... ./env_o.dds");
                     cu.Dispose();
                     source.Dispose();
@@ -190,7 +194,14 @@
                 {
                     ImGuiConsole.Log(LogSeverity.Log, "Exporting prefilter map ...");
                     context.GenerateMips(prefilterTex.ShaderResourceView);
-                    context.Device.SaveTextureCube((ITexture2D)prefilterTex.Resource, Format.RGBA8UNorm, "prefilter_o.dds");
+
+                    var loader = context.Device.TextureLoader;
+                    var image = loader.CaptureTexture(context, prefilterTex.Resource);
+                    {
+                        var tmp = image.Convert(Format.RGBA8UNorm, 0); image.Dispose(); image = tmp;
+                    }
+                    image.SaveToFile("prefilter_o.dds", TexFileFormat.DDS, 0);
+                    image.Dispose();
                     ImGuiConsole.Log(LogSeverity.Log, "Exported prefilter map ... ./prefilter_o.dds");
                 }
 

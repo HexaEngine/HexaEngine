@@ -5,6 +5,7 @@ namespace HexaEngine.D3D11
     using HexaEngine.Core.Graphics;
     using HexaEngine.DirectXTex;
     using HexaEngine.Mathematics;
+    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System.IO;
     using ResourceMiscFlag = Core.Graphics.ResourceMiscFlag;
@@ -31,7 +32,7 @@ namespace HexaEngine.D3D11
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
             ScratchImage inScImage = scImage;
             ScratchImage outScImage = new();
-            DirectXTex.Compress((ID3D11Device*)graphicsDevice.Device, &inScImage, Helper.Convert(format), Helper.Convert(flags), 0, &outScImage);
+            DirectXTex.Compress((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(format), Helper.Convert(flags), 0, &outScImage);
             return new D3DScratchImage(outScImage);
         }
 
@@ -79,8 +80,8 @@ namespace HexaEngine.D3D11
         {
             ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
-            ID3D11Resource* resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, &resource);
+            ComPtr<ID3D11Texture1D> resource;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
             Texture1DDescription texture = new(
                             Metadata.Format,
                             Metadata.Width,
@@ -91,15 +92,15 @@ namespace HexaEngine.D3D11
                             accessFlags,
                             miscFlag);
 
-            return new D3D11Texture1D((ID3D11Texture1D*)resource, texture);
+            return new D3D11Texture1D(resource, texture);
         }
 
         public ITexture2D CreateTexture2D(IGraphicsDevice device, Usage usage, BindFlags bindFlags, CpuAccessFlags accessFlags, ResourceMiscFlag miscFlag)
         {
             ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
-            ID3D11Resource* resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, &resource);
+            ComPtr<ID3D11Texture2D> resource;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
             Texture2DDescription texture = new(
                             Metadata.Format,
                             Metadata.Width,
@@ -113,14 +114,14 @@ namespace HexaEngine.D3D11
                             0,
                             miscFlag);
 
-            return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
+            return new D3D11Texture2D(resource, texture);
         }
 
         public ITexture2D CreateTexture2D(IGraphicsDevice device, int index, Usage usage, BindFlags bindFlags, CpuAccessFlags accessFlags, ResourceMiscFlag miscFlag)
         {
             ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
-            ID3D11Resource* resource;
+            ComPtr<ID3D11Texture2D> resource;
             var images = inScImage.GetImages();
             var metadata = inScImage.GetMetadata();
             var image = images[index];
@@ -129,7 +130,7 @@ namespace HexaEngine.D3D11
             metadata.ArraySize = 1;
             metadata.MipLevels = 1;
             metadata.MiscFlags = TexMiscFlags.None;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device, &image, 1, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, &resource);
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &image, 1, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
             Texture2DDescription texture = new(
                             Helper.ConvertBack(metadata.Format),
                             (int)metadata.Width,
@@ -143,15 +144,15 @@ namespace HexaEngine.D3D11
                             0,
                             miscFlag);
 
-            return new D3D11Texture2D((ID3D11Texture2D*)resource, texture);
+            return new D3D11Texture2D(resource, texture);
         }
 
         public ITexture3D CreateTexture3D(IGraphicsDevice device, Usage usage, BindFlags bindFlags, CpuAccessFlags accessFlags, ResourceMiscFlag miscFlag)
         {
             ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
-            ID3D11Resource* resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, &resource);
+            ComPtr<ID3D11Texture3D> resource;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
             Texture3DDescription texture = new(
                             Metadata.Format,
                             Metadata.Width,
@@ -163,7 +164,7 @@ namespace HexaEngine.D3D11
                             accessFlags,
                             miscFlag);
 
-            return new D3D11Texture3D((ID3D11Texture3D*)resource, texture);
+            return new D3D11Texture3D(resource, texture);
         }
 
         public void Dispose()

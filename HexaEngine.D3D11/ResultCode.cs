@@ -31,6 +31,7 @@
         D3D11_ERROR_FILE_NOT_FOUND = unchecked((int)0x887C0002),
         D3D11_ERROR_TOO_MANY_UNIQUE_VIEW_OBJECTS = unchecked((int)0x887C0003),
         D3D11_ERROR_DEFERRED_CONTEXT_MAP_WITHOUT_INITIAL_DISCARD = unchecked((int)0x887C0004),
+
         E_FAIL = unchecked((int)0x80004005),
         E_INVALIDARG = unchecked((int)0x80070057),
         E_OUTOFMEMORY = unchecked((int)0x8007000E),

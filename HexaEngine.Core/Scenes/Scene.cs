@@ -380,9 +380,9 @@
             semaphore.Release();
         }
 
-        public void BuildTree()
+        public void BuildReferences()
         {
-            root.BuildTree();
+            root.BuildReferences();
         }
 
         public void Uninitialize()

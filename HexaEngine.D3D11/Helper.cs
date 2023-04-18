@@ -96,7 +96,6 @@
         {
             return map switch
             {
-                Map.None => Silk.NET.Direct3D11.Map.None,
                 Map.Read => Silk.NET.Direct3D11.Map.Read,
                 Map.Write => Silk.NET.Direct3D11.Map.Write,
                 Map.ReadWrite => Silk.NET.Direct3D11.Map.ReadWrite,
@@ -821,12 +820,12 @@
         {
             return new()
             {
-                DepthEnable = description.DepthEnable ? 1 : 0,
+                DepthEnable = description.DepthEnable,
                 DepthFunc = Convert(description.DepthFunc),
                 BackFace = Convert(description.BackFace),
                 DepthWriteMask = Convert(description.DepthWriteMask),
                 FrontFace = Convert(description.FrontFace),
-                StencilEnable = description.StencilEnable ? 1 : 0,
+                StencilEnable = description.StencilEnable,
                 StencilReadMask = description.StencilReadMask,
                 StencilWriteMask = description.StencilWriteMask
             };
@@ -913,15 +912,15 @@
         {
             return new()
             {
-                AntialiasedLineEnable = description.AntialiasedLineEnable ? 1 : 0,
+                AntialiasedLineEnable = description.AntialiasedLineEnable,
                 CullMode = Convert(description.CullMode),
                 DepthBias = description.DepthBias,
                 DepthBiasClamp = description.DepthBiasClamp,
-                DepthClipEnable = description.DepthClipEnable ? 1 : 0,
+                DepthClipEnable = description.DepthClipEnable,
                 FillMode = Convert(description.FillMode),
-                FrontCounterClockwise = description.FrontCounterClockwise ? 1 : 0,
-                MultisampleEnable = description.MultisampleEnable ? 1 : 0,
-                ScissorEnable = description.ScissorEnable ? 1 : 0,
+                FrontCounterClockwise = description.FrontCounterClockwise,
+                MultisampleEnable = description.MultisampleEnable,
+                ScissorEnable = description.ScissorEnable,
                 SlopeScaledDepthBias = description.SlopeScaledDepthBias
             };
         }
@@ -951,8 +950,8 @@
         {
             return new()
             {
-                AlphaToCoverageEnable = description.AlphaToCoverageEnable ? 1 : 0,
-                IndependentBlendEnable = description.IndependentBlendEnable ? 1 : 0,
+                AlphaToCoverageEnable = description.AlphaToCoverageEnable,
+                IndependentBlendEnable = description.IndependentBlendEnable,
                 RenderTarget = Convert(description.RenderTarget),
             };
         }
@@ -976,7 +975,7 @@
         {
             return new()
             {
-                BlendEnable = description.IsBlendEnabled ? 1 : 0,
+                BlendEnable = description.IsBlendEnabled,
                 BlendOp = Convert(description.BlendOperation),
                 BlendOpAlpha = Convert(description.BlendOperationAlpha),
                 DestBlend = Convert(description.DestinationBlend),
@@ -1494,7 +1493,7 @@
         {
             return componentType switch
             {
-                D3DRegisterComponentType.None => RegisterComponentType.Unknown,
+                0 => RegisterComponentType.Unknown,
                 D3DRegisterComponentType.D3DRegisterComponentUint32 => RegisterComponentType.Uint32,
                 D3DRegisterComponentType.D3DRegisterComponentSint32 => RegisterComponentType.Sint32,
                 D3DRegisterComponentType.D3DRegisterComponentFloat32 => RegisterComponentType.Float32,
@@ -1606,7 +1605,7 @@
                 BufferUnorderedAccessViewFlags.Raw => Silk.NET.Direct3D11.BufferUavFlag.Raw,
                 BufferUnorderedAccessViewFlags.Append => Silk.NET.Direct3D11.BufferUavFlag.Append,
                 BufferUnorderedAccessViewFlags.Counter => Silk.NET.Direct3D11.BufferUavFlag.Counter,
-                BufferUnorderedAccessViewFlags.None => Silk.NET.Direct3D11.BufferUavFlag.None,
+                BufferUnorderedAccessViewFlags.None => 0,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -1688,6 +1687,7 @@
                 TexDimension.Texture1D => DirectXTex.TexDimension.Texture1D,
                 TexDimension.Texture2D => DirectXTex.TexDimension.Texture2D,
                 TexDimension.Texture3D => DirectXTex.TexDimension.Texture3D,
+                _ => throw new NotImplementedException(),
             };
         }
 

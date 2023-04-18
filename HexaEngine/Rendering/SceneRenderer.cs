@@ -7,7 +7,6 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.PostFx;
@@ -267,9 +266,9 @@ namespace HexaEngine.Rendering
                 val.ValueChanged += (ss, ee) =>
                 {
                     if (val.GetBool())
-                        CullingManager.CullingFlags |= CullingFlags.Frustum;
+                        CullingManager.CullingFlags |= CullingFlags.Occlusion;
                     else
-                        CullingManager.CullingFlags &= ~CullingFlags.Frustum;
+                        CullingManager.CullingFlags &= ~CullingFlags.Occlusion;
                     Config.Global.Save();
                 };
             }
@@ -449,16 +448,6 @@ namespace HexaEngine.Rendering
                 profiler.End(postProcessing);
 #endif
             }
-
-#if PROFILE
-            profiler.Start(debug);
-#endif
-            context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
-            context.SetViewport(viewport);
-            DebugDraw.Render(camera);
-#if PROFILE
-            profiler.End(debug);
-#endif
         }
 
         private float zoom = 1;

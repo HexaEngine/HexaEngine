@@ -37,6 +37,9 @@
         [JsonIgnore]
         public override LightType LightType => LightType.Directional;
 
+        [JsonIgnore]
+        public override bool HasShadowMap => csmDepthBuffer != null;
+
         public override IShaderResourceView? GetShadowMap()
         {
             return csmDepthBuffer?.SRV;

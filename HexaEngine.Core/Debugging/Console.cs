@@ -143,10 +143,10 @@
             }
         }
 
-        public static void Log(Exception e)
+        public static void Log(Exception? e)
         {
             if (Redirect) Debug.WriteLine(e);
-            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e.ToString(), Timestamp = DateTime.Now.ToShortTimeString() });
+            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e?.ToString() ?? string.Empty, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -193,6 +193,17 @@
         }
 
         public static void WriteLine(string msg)
+        {
+            if (Redirect) Debug.WriteLine(msg);
+
+            messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+        }
+
+        public static void WriteLine(object msg)
         {
             if (Redirect) Debug.WriteLine(msg);
 

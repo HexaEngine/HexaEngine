@@ -192,6 +192,8 @@ namespace HexaEngine.Rendering
                     vn = 1.0f;
                 if (vn > 0.0f && io.NavInputs[(int)NAV_NO] < vn)
                     io.NavInputs[(int)NAV_NO] = vn;
+                else
+                    io.NavInputs[(int)NAV_NO] = 0;
             }
 
             const int thumb_dead_zone = 8000;           // SDL_gamecontroller.h suggests using this value.

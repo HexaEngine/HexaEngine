@@ -2,6 +2,12 @@
 using HexaEngine.Core;
 using HexaEngine.Windows;
 
-Platform.Init(true);
-Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor" });
-Platform.Shutdown();
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Platform.Init(true);
+        Application.Run(new Window() { Flags = RendererFlags.All, Title = "Editor" });
+        Platform.Shutdown();
+    }
+}

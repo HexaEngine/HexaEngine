@@ -66,6 +66,9 @@
         [EditorProperty("Blend", 0f, 1f, EditorPropertyMode.Slider)]
         public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
 
+        [JsonIgnore]
+        public override bool HasShadowMap => psmDepthBuffer != null;
+
         public override void Initialize(IGraphicsDevice device)
         {
             base.Initialize(device);

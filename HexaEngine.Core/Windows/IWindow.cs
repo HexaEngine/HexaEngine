@@ -6,6 +6,8 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
+    using Silk.NET.Core.Contexts;
+    using Silk.NET.Core.Native;
     using Silk.NET.SDL;
 
     public interface IRenderWindow : IWindow
@@ -31,14 +33,12 @@
 
     public interface IWindow
     {
-        GraphicsBackend Backend { get; }
         bool Bordered { get; set; }
         bool Focused { get; }
         int Height { get; set; }
         bool Hovering { get; }
         bool LockCursor { get; set; }
         bool Resizeable { get; set; }
-        (int, int) ScreenSize { get; }
         WindowState State { get; set; }
         string Title { get; set; }
         Viewport Viewport { get; }
@@ -93,7 +93,11 @@
 
         void Close();
 
-        nint GetHWND();
+        nint GetWin32HWND();
+
+        unsafe bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle);
+
+        IGLContext OpenGLCreateContext();
 
         unsafe Window* GetWindow();
 

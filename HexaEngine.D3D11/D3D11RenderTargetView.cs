@@ -1,15 +1,17 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
+    using Silk.NET.SDL;
     using System;
     using Viewport = Mathematics.Viewport;
 
     public unsafe class D3D11RenderTargetView : DeviceChildBase, IRenderTargetView
     {
-        internal readonly ID3D11RenderTargetView* rtv;
+        internal readonly ComPtr<ID3D11RenderTargetView> rtv;
 
-        public D3D11RenderTargetView(ID3D11RenderTargetView* rtv, RenderTargetViewDescription description, Viewport viewport)
+        public D3D11RenderTargetView(ComPtr<ID3D11RenderTargetView> rtv, RenderTargetViewDescription description, Viewport viewport)
         {
             this.rtv = rtv;
             nativePointer = new(rtv);
@@ -23,7 +25,7 @@
 
         protected override void DisposeCore()
         {
-            rtv->Release();
+            rtv.Release();
         }
     }
 }

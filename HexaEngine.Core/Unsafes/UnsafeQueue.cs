@@ -11,12 +11,30 @@
         private T* items;
         private T* head;
         private T* tail;
-        private uint count;
-        private uint capacity;
+        private int size;
+        private int capacity;
 
-        public uint Count => count;
+        public UnsafeQueue()
+        {
+            allocator = Allocator.Default;
+            EnsureCapacity(DefaultCapacity);
+        }
 
-        public uint Capacity
+        public UnsafeQueue(Allocator* customAllocator)
+        {
+            allocator = customAllocator;
+            EnsureCapacity(DefaultCapacity);
+        }
+
+        public UnsafeQueue(int capacity)
+        {
+            allocator = Allocator.Default;
+            EnsureCapacity(capacity);
+        }
+
+        public int Size => size;
+
+        public int Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => capacity;
@@ -24,13 +42,13 @@
             set
             {
                 var tmp = allocator->Allocate<T>(value);
-                var oldsize = count * sizeof(T);
+                var oldsize = size * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
                 allocator->Free(items);
                 head = tail = items = tmp;
                 capacity = value;
-                count = capacity < count ? capacity : count;
+                size = capacity < size ? capacity : size;
             }
         }
 
@@ -55,15 +73,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Init(uint capacity)
+        public void Init(int capacity)
         {
             Grow(capacity);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Grow(uint capacity)
+        private void Grow(int capacity)
         {
-            uint newcapacity = count == 0 ? DefaultCapacity : 2 * count;
+            int newcapacity = size == 0 ? DefaultCapacity : 2 * size;
 
             if (newcapacity < capacity) newcapacity = capacity;
 
@@ -71,7 +89,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void EnsureCapacity(uint capacity)
+        public void EnsureCapacity(int capacity)
         {
             if (this.capacity < capacity)
             {
@@ -82,10 +100,10 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Enqueue(T item)
         {
-            EnsureCapacity(count + 1);
+            EnsureCapacity(size + 1);
             head++;
             *head = item;
-            count++;
+            size++;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -98,14 +116,14 @@
             {
                 head = tail = items;
             }
-            count--;
+            size--;
             return tmp;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryDequeue(out T item)
         {
-            if (count == 0)
+            if (size == 0)
             {
                 item = default;
                 return false;
@@ -117,14 +135,14 @@
             {
                 head = tail = items;
             }
-            count--;
+            size--;
             return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(T* array, uint arrayIndex, uint arraySize)
         {
-            Buffer.MemoryCopy(items, &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), count * sizeof(T));
+            Buffer.MemoryCopy(items, &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), size * sizeof(T));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -137,18 +155,18 @@
         public void Clear()
         {
             var ptr = items;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < size; i++)
             {
                 ptr[i] = default;
             }
-            count = 0;
+            size = 0;
             head = tail = items;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(T* item)
         {
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < size; i++)
             {
                 var current = &items[i];
                 if (current == null) break;
@@ -169,11 +187,7 @@
             head = null;
             tail = null;
             capacity = 0;
-            count = 0;
-            fixed (void* ptr = &this)
-            {
-                allocator->Free(ptr);
-            }
+            size = 0;
         }
     }
 }

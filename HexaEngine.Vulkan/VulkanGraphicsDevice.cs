@@ -29,6 +29,7 @@
             "VK_LAYER_KHRONOS_validation"
         };
 
+        private readonly IWindow window;
         public KhrSwapchain KhrSwapchain;
         public KhrSurface KhrSurface;
 
@@ -38,13 +39,11 @@
         public SurfaceKHR Surface;
         public Queue Queue;
         public VulkanSwapChain swapChain;
-        public Window* window;
+
         private bool validationLayersEnabled;
 
-        public VulkanGraphicsDevice(SdlWindow? window)
+        public VulkanGraphicsDevice(IWindow window)
         {
-            if (window != null)
-                this.window = window.GetWindow();
             Sdl = Sdl.GetApi();
             Vk = Vk.GetApi();
             KhrSwapchain = new(Vk.Context);
@@ -52,19 +51,20 @@
             InitializeInstance();
             InitializePhysicalDevice();
             InitializeLogicalDevice();
-            throw new NotImplementedException();
+            this.window = window;
         }
+
+        public GraphicsBackend Backend => GraphicsBackend.Vulkan;
 
         public IGraphicsContext Context { get; }
 
-        public ISwapChain? SwapChain { get; }
-
-        public IntPtr NativePointer { get; }
+        public ITextureLoader TextureLoader { get; }
 
         public string? DebugName { get; set; }
 
         public bool IsDisposed { get; }
-        public ITextureLoader TextureLoader { get; }
+
+        public nint NativePointer { get; }
 
         public event EventHandler? OnDisposed;
 
@@ -74,10 +74,10 @@
         {
             Sdl sdl = Sdl.GetApi();
             uint rcount = 0;
-            sdl.VulkanGetInstanceExtensions(window, &rcount, (byte**)null);
+            sdl.VulkanGetInstanceExtensions(window.GetWindow(), &rcount, (byte**)null);
 
             byte** extensions = (byte**)AllocArray(rcount);
-            sdl.VulkanGetInstanceExtensions(window, &rcount, extensions);
+            sdl.VulkanGetInstanceExtensions(window.GetWindow(), &rcount, extensions);
 
             Trace.WriteLine("#### Required Extensions ####");
             for (int i = 0; i < rcount; i++)
@@ -323,16 +323,10 @@
                     Trace.WriteLine(Marshal.PtrToStringUTF8(new IntPtr(extensionProperties_ptr[i].ExtensionName)));
                 }
             }
-
-            SurfaceKHR surface;
-            VkHandle handle = new(Instance.Handle);
-            Sdl.VulkanCreateSurface(window, handle, (VkNonDispatchableHandle*)&surface);
-            Surface = surface;
         }
 
         private void ShutdownInstance()
         {
-            KhrSurface.DestroySurface(Instance, Surface, null);
             Vk.DestroyInstance(Instance, null);
         }
 
@@ -435,10 +429,35 @@
             Vk.DestroyDevice(Device, null);
         }
 
+        private void CreateSurface()
+        {
+            SurfaceKHR surface;
+            VkHandle handle = new(Instance.Handle);
+            Sdl.VulkanCreateSurface(window.GetWindow(), handle, (VkNonDispatchableHandle*)&surface);
+            Surface = surface;
+        }
+
         #endregion Logical Device
 
         public IBuffer CreateBuffer(BufferDescription description)
         {
+            BufferCreateInfo info = default;
+            info.SharingMode = SharingMode.Concurrent;
+            info.Size = (ulong)description.ByteWidth;
+
+            if ((description.BindFlags & BindFlags.VertexBuffer) != 0)
+                info.Usage |= BufferUsageFlags.VertexBufferBit;
+            if ((description.BindFlags & BindFlags.IndexBuffer) != 0)
+                info.Usage |= BufferUsageFlags.IndexBufferBit;
+            if ((description.BindFlags & BindFlags.ConstantBuffer) != 0)
+                info.Usage |= BufferUsageFlags.UniformBufferBit;
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+                info.Usage |= BufferUsageFlags.ShaderBindingTableBitKhr;
+            if ((description.MiscFlags & ResourceMiscFlag.DrawIndirectArguments) == 0)
+                info.Usage |= BufferUsageFlags.IndirectBufferBit;
+            Silk.NET.Vulkan.Buffer buffer;
+            Vk.CreateBuffer(Device, &info, null, &buffer);
+
             throw new NotImplementedException();
         }
 

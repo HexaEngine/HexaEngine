@@ -1,13 +1,14 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
 
     public unsafe class ComputePipeline : IComputePipeline
     {
         private bool valid;
         private bool initialized;
-        private ID3D11ComputeShader* cs;
+        private ComPtr<ID3D11ComputeShader> cs;
         private readonly D3D11GraphicsDevice device;
         private ComputePipelineDesc desc;
         private bool disposedValue;
@@ -28,7 +29,7 @@
         {
             if (!valid) return;
             if (!initialized) return;
-            ((D3D11GraphicsContext)context).DeviceContext->CSSetShader(cs, null, 0);
+            ((D3D11GraphicsContext)context).DeviceContext.CSSetShader(cs, null, 0);
         }
 
         public virtual void BeginDispatch(ID3D11DeviceContext1* context)
@@ -74,8 +75,8 @@
         {
             initialized = false;
 
-            if (cs != null)
-                cs->Release();
+            if (cs.Handle != null)
+                cs.Release();
             cs = null;
 
             Compile(true);
@@ -96,8 +97,8 @@
                     valid = false;
                     return;
                 }
-                ID3D11ComputeShader* computeShader;
-                device.Device->CreateComputeShader(shader->Bytecode, shader->Length, null, &computeShader);
+                ComPtr<ID3D11ComputeShader> computeShader;
+                device.Device.CreateComputeShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &computeShader.Handle);
                 cs = computeShader;
                 //TODO: cs.DebugName = GetType().DebugName + nameof(cs);
                 Free(shader);
@@ -115,8 +116,8 @@
             if (!disposedValue)
             {
                 PipelineManager.Unregister(this);
-                if (cs != null)
-                    cs->Release();
+                if (cs.Handle != null)
+                    cs.Release();
                 disposedValue = true;
             }
         }

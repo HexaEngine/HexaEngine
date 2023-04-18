@@ -8,10 +8,10 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Components.Renderer;
@@ -23,11 +23,14 @@ namespace HexaEngine.Scenes.Importer
     using Animation = Core.Animations.Animation;
     using AssimpScene = Silk.NET.Assimp.Scene;
     using BlendMode = Silk.NET.Assimp.BlendMode;
-    using Scene = Core.Scenes.Scene;
+    using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
+    using MaterialProperty = Core.IO.Materials.MaterialProperty;
+    using Scene = Scene;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
     using TextureOp = Silk.NET.Assimp.TextureOp;
     using TextureType = Silk.NET.Assimp.TextureType;
+    using HexaEngine.Core.Graphics.Reflection;
 
     public struct BoneInfo
     {
@@ -203,20 +206,40 @@ namespace HexaEngine.Scenes.Importer
             {
                 Material* mat = scene->MMaterials[i];
                 Dictionary<(string, object), object> props = new();
-                AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.Unknown + 1];
+                AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.Transmission];
                 for (int j = 0; j < texs.Length; j++)
                 {
                     texs[j].Type = (TextureType)j;
                 }
-                AssimpMaterial material = new();
+
+                var material = materials[i] = new MaterialData();
+
+                List<MaterialProperty> properties = new();
+                List<MaterialTexture> textures = new();
 
                 for (int j = 0; j < mat->MNumProperties; j++)
                 {
-                    MaterialProperty* prop = mat->MProperties[j];
+                    AssimpMaterialProperty* prop = mat->MProperties[j];
                     if (prop == null) continue;
                     Span<byte> buffer = new(prop->MData, (int)prop->MDataLength);
                     string key = prop->MKey;
                     int semantic = (int)prop->MSemantic;
+
+                    static ref MaterialTexture FindOrCreate(List<MaterialTexture> textures, TextureType type)
+                    {
+                        var t = AssimpMaterialTexture.Convert(type);
+                        for (int i = 0; i < textures.Count; i++)
+                        {
+                            var tex = textures[i];
+                            if (tex.Type == t)
+                            {
+                                return ref textures.GetInternalArray()[i];
+                            }
+                        }
+                        var index = textures.Count;
+                        textures.Add(new MaterialTexture() { Type = t });
+                        return ref textures.GetInternalArray()[index];
+                    }
 
                     switch (key)
                     {
@@ -225,179 +248,180 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTwosided:
-                            material.Twosided = buffer[0] == 1;
+                            properties.Add(new("TwoSided", MaterialPropertyType.TwoSided, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyShadingModel:
-                            material.ShadingModel = (ShadingMode)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            properties.Add(new("ShadingMode", MaterialPropertyType.ShadingMode, MaterialValueType.Int32, default, sizeof(int), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyEnableWireframe:
-                            material.EnableWireframe = buffer[0] == 1;
+                            properties.Add(new("EnableWireframe", MaterialPropertyType.EnableWireframe, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyBlendFunc:
-                            material.BlendFunc = buffer[0] == 1;
+                            properties.Add(new("BlendFunc", MaterialPropertyType.BlendFunc, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyOpacity:
-                            material.Opacity = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Opacity", MaterialPropertyType.Opacity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyTransparencyfactor:
-                            material.Transparencyfactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Transparency", MaterialPropertyType.Transparency, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyBumpscaling:
-                            material.Bumpscaling = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("BumpScaling", MaterialPropertyType.BumpScaling, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyShininess:
-                            material.Shininess = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Shininess", MaterialPropertyType.Shininess, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyReflectivity:
-                            material.Reflectivity = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Reflectivity", MaterialPropertyType.Reflectivity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyShininessStrength:
-                            material.ShininessStrength = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("ShininessStrength", MaterialPropertyType.ShininessStrength, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyRefracti:
-                            material.Refracti = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Refractive", MaterialPropertyType.Refractive, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorDiffuse:
-                            material.ColorDiffuse = new(MemoryMarshal.Cast<byte, float>(buffer));
+                            properties.Add(new("ColorDiffuse", MaterialPropertyType.ColorDiffuse, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorAmbient:
-                            material.ColorAmbient = new(MemoryMarshal.Cast<byte, float>(buffer));
+                            properties.Add(new("ColorAmbient", MaterialPropertyType.ColorAmbient, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorSpecular:
-                            material.ColorSpecular = new(MemoryMarshal.Cast<byte, float>(buffer));
+                            properties.Add(new("ColorSpecular", MaterialPropertyType.ColorSpecular, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorEmissive:
-                            material.ColorEmissive = new(MemoryMarshal.Cast<byte, float>(buffer));
+                            properties.Add(new("Emissive", MaterialPropertyType.Emissive, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorTransparent:
-                            material.ColorTransparent = new(MemoryMarshal.Cast<byte, float>(buffer));
+                            properties.Add(new("ColorTransparent", MaterialPropertyType.ColorTransparent, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorReflective:
-                            material.ColorReflective = new(MemoryMarshal.Cast<byte, float>(buffer));
-                            break;
-
-                        case Assimp.MatkeyUseColorMap:
-                            material.UseColorMap = buffer[0] == 1;
+                            properties.Add(new("ColorReflective", MaterialPropertyType.ColorReflective, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyBaseColor:
-                            material.BaseColor = new(MemoryMarshal.Cast<byte, float>(buffer));
-                            break;
-
-                        case Assimp.MatkeyUseMetallicMap:
-                            material.UseMetallicMap = buffer[0] == 1;
+                            properties.Add(new("BaseColor", MaterialPropertyType.BaseColor, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyMetallicFactor:
-                            material.MetallicFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
-                            break;
-
-                        case Assimp.MatkeyUseRoughnessMap:
-                            material.UseRoughnessMap = buffer[0] == 1;
+                            properties.Add(new("Metallic", MaterialPropertyType.Metallic, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyRoughnessFactor:
-                            material.RoughnessFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Roughness", MaterialPropertyType.Roughness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyAnisotropyFactor:
-                            material.AnisotropyFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Anisotropy", MaterialPropertyType.Anisotropy, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeySpecularFactor:
-                            material.SpecularFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Specular", MaterialPropertyType.Specular, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyGlossinessFactor:
-                            material.GlossinessFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Glossiness", MaterialPropertyType.Glossiness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeySheenColorFactor:
-                            material.SheenColorFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("SheenTint", MaterialPropertyType.SheenTint, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeySheenRoughnessFactor:
-                            material.SheenRoughnessFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Sheen", MaterialPropertyType.Sheen, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyClearcoatFactor:
-                            material.ClearcoatFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Cleancoat", MaterialPropertyType.Cleancoat, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyClearcoatRoughnessFactor:
-                            material.ClearcoatRoughnessFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("CleancoatGloss", MaterialPropertyType.CleancoatGloss, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyTransmissionFactor:
-                            material.TransmissionFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("Transmission", MaterialPropertyType.Transmission, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyVolumeThicknessFactor:
-                            material.VolumeThicknessFactor = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("VolumeThickness", MaterialPropertyType.VolumeThickness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyVolumeAttenuationDistance:
-                            material.VolumeAttenuationDistance = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("VolumeAttenuationDistance", MaterialPropertyType.VolumeAttenuationDistance, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyVolumeAttenuationColor:
-                            material.VolumeAttenuationColor = new(MemoryMarshal.Cast<byte, float>(buffer));
-                            break;
+                            properties.Add(new("VolumeAttenuationColor", MaterialPropertyType.VolumeAttenuationColor, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
 
-                        case Assimp.MatkeyUseEmissiveMap:
-                            material.UseEmissiveMap = buffer[0] == 1;
                             break;
 
                         case Assimp.MatkeyEmissiveIntensity:
-                            material.EmissiveIntensity = MemoryMarshal.Cast<byte, float>(buffer)[0];
+                            properties.Add(new("EmissiveIntensity", MaterialPropertyType.EmissiveIntensity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                            break;
+
+                        case Assimp.MatkeyUseColorMap:
+                            //material.UseColorMap = buffer[0] == 1;
+                            break;
+
+                        case Assimp.MatkeyUseMetallicMap:
+                            //material.UseMetallicMap = buffer[0] == 1;
+                            break;
+
+                        case Assimp.MatkeyUseRoughnessMap:
+                            //material.UseRoughnessMap = buffer[0] == 1;
+                            break;
+
+                        case Assimp.MatkeyUseEmissiveMap:
+                            //material.UseEmissiveMap = buffer[0] == 1;
                             break;
 
                         case Assimp.MatkeyUseAOMap:
-                            material.UseAOMap = buffer[0] == 1;
+                            //material.UseAOMap = buffer[0] == 1;
                             break;
 
                         case Assimp.MatkeyTextureBase:
-                            texs[semantic].File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
 
                         case Assimp.MatkeyUvwsrcBase:
-                            texs[semantic].UVWSrc = MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).UVWSrc = MemoryMarshal.Cast<byte, int>(buffer)[0];
                             break;
 
                         case Assimp.MatkeyTexopBase:
-                            texs[semantic].Op = (Silk.NET.Assimp.TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).Op = AssimpMaterialTexture.Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyMappingBase:
-                            texs[semantic].Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
                             break;
 
                         case Assimp.MatkeyTexblendBase:
-                            texs[semantic].Blend = (BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).Blend = AssimpMaterialTexture.Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyMappingmodeUBase:
-                            texs[semantic].U = (TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).U = AssimpMaterialTexture.Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyMappingmodeVBase:
-                            texs[semantic].V = (TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).V = AssimpMaterialTexture.Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyTexmapAxisBase:
@@ -407,25 +431,31 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTexflagsBase:
-                            texs[semantic].Flags = (TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0];
+                            FindOrCreate(textures, (TextureType)semantic).Flags = AssimpMaterialTexture.Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyShaderVertex:
+                            material.VertexShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
 
                         case Assimp.MatkeyShaderTesselation:
+                            material.HullShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
 
                         case Assimp.MatkeyShaderPrimitive:
+                            material.DomainShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
 
                         case Assimp.MatkeyShaderGeo:
+                            material.GeometryShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
 
                         case Assimp.MatkeyShaderFragment:
+                            material.PixelShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
 
                         case Assimp.MatkeyShaderCompute:
+                            material.ComputeShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             break;
                     }
                 }
@@ -433,31 +463,50 @@ namespace HexaEngine.Scenes.Importer
                 if (material.Name == string.Empty)
                     material.Name = i.ToString();
 
-                material.Textures = texs;
-                MaterialTextureDesc[] textures = new MaterialTextureDesc[texs.Length];
-                for (int j = 0; j < texs.Length; j++)
+                material.Properties = properties.ToArray();
+                material.Textures = textures.ToArray();
+
+                bool rm = false;
+                bool orm = false;
+                for (int j = 0; j < material.Textures.Length; j++)
                 {
-                    textures[j] = texs[j];
+                    if (material.Textures[j].Type == Core.IO.Materials.TextureType.RoughnessMetalness)
+                    {
+                        rm = true;
+                    }
+                    if (material.Textures[j].Type == Core.IO.Materials.TextureType.AmbientOcclusionRoughnessMetalness)
+                    {
+                        orm = true;
+                    }
+                    if (material.Textures[j].File == null)
+                    {
+                        material.Textures[j].File = string.Empty;
+                    }
                 }
-                materials[i] = new MaterialData()
+
+                if (rm)
                 {
-                    Textures = textures,
-                    BaseColor = material.BaseColor,
-                    Ao = 1,
-                    Emissive = material.ColorEmissive,
-                    Metalness = material.MetallicFactor,
-                    Roughness = material.RoughnessFactor,
-                    Specular = material.SpecularFactor,
-                    SpecularTint = 0,
-                    Cleancoat = material.ClearcoatFactor,
-                    CleancoatGloss = material.ClearcoatRoughnessFactor,
-                    Sheen = material.SheenColorFactor,
-                    SheenTint = 0.5f,
-                    Anisotropic = material.AnisotropyFactor,
-                    Subsurface = 0,
-                    Opacity = material.Opacity,
-                    Name = material.Name,
-                };
+                    for (int k = 0; k < material.Textures.Length; k++)
+                    {
+                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Metalness)
+                            material.Textures[k].File = string.Empty;
+                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Roughness)
+                            material.Textures[k].File = string.Empty;
+                    }
+                }
+
+                if (orm)
+                {
+                    for (int k = 0; k < material.Textures.Length; k++)
+                    {
+                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Metalness)
+                            material.Textures[k].File = string.Empty;
+                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Roughness)
+                            material.Textures[k].File = string.Empty;
+                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.RoughnessMetalness)
+                            material.Textures[k].File = string.Empty;
+                    }
+                }
             }
         }
 
@@ -908,9 +957,9 @@ namespace HexaEngine.Scenes.Importer
             public TextureMapMode V;
             public TextureFlags Flags;
 
-            public static implicit operator MaterialTextureDesc(AssimpMaterialTexture texture)
+            public static implicit operator MaterialTexture(AssimpMaterialTexture texture)
             {
-                return new MaterialTextureDesc(Convert(texture.Type),
+                return new MaterialTexture(Convert(texture.Type),
                                            texture.File ?? string.Empty,
                                            Convert(texture.Blend),
                                            Convert(texture.Op),
@@ -931,11 +980,11 @@ namespace HexaEngine.Scenes.Importer
                     TextureType.Ambient => Core.IO.Materials.TextureType.Ambient,
                     TextureType.Emissive => Core.IO.Materials.TextureType.Emissive,
                     TextureType.Height => Core.IO.Materials.TextureType.Height,
-                    TextureType.Normals => Core.IO.Materials.TextureType.Normals,
+                    TextureType.Normals => Core.IO.Materials.TextureType.Normal,
                     TextureType.Shininess => Core.IO.Materials.TextureType.Shininess,
                     TextureType.Opacity => Core.IO.Materials.TextureType.Opacity,
                     TextureType.Displacement => Core.IO.Materials.TextureType.Displacement,
-                    TextureType.Lightmap => Core.IO.Materials.TextureType.Lightmap,
+                    TextureType.Lightmap => Core.IO.Materials.TextureType.AmbientOcclusionRoughnessMetalness,
                     TextureType.Reflection => Core.IO.Materials.TextureType.Reflection,
                     TextureType.BaseColor => Core.IO.Materials.TextureType.BaseColor,
                     TextureType.NormalCamera => Core.IO.Materials.TextureType.NormalCamera,
@@ -955,7 +1004,7 @@ namespace HexaEngine.Scenes.Importer
             {
                 return mode switch
                 {
-                    BlendMode.None => Core.IO.Materials.BlendMode.Default,
+                    BlendMode.Default => Core.IO.Materials.BlendMode.Default,
                     BlendMode.Additive => Core.IO.Materials.BlendMode.Additive,
                     _ => throw new NotImplementedException(),
                 };
@@ -965,7 +1014,7 @@ namespace HexaEngine.Scenes.Importer
             {
                 return op switch
                 {
-                    TextureOp.None => Core.IO.Materials.TextureOp.None,
+                    TextureOp.Multiply => Core.IO.Materials.TextureOp.Multiply,
                     TextureOp.Add => Core.IO.Materials.TextureOp.Add,
                     TextureOp.Subtract => Core.IO.Materials.TextureOp.Subtract,
                     TextureOp.Divide => Core.IO.Materials.TextureOp.Divide,
@@ -979,7 +1028,7 @@ namespace HexaEngine.Scenes.Importer
             {
                 return mode switch
                 {
-                    TextureMapMode.None => Core.IO.Materials.TextureMapMode.Wrap,
+                    TextureMapMode.Wrap => Core.IO.Materials.TextureMapMode.Wrap,
                     TextureMapMode.Clamp => Core.IO.Materials.TextureMapMode.Clamp,
                     TextureMapMode.Decal => Core.IO.Materials.TextureMapMode.Decal,
                     TextureMapMode.Mirror => Core.IO.Materials.TextureMapMode.Mirror,
@@ -991,7 +1040,7 @@ namespace HexaEngine.Scenes.Importer
             {
                 return flags switch
                 {
-                    TextureFlags.None => Core.IO.Materials.TextureFlags.None,
+                    0 => Core.IO.Materials.TextureFlags.None,
                     TextureFlags.Invert => Core.IO.Materials.TextureFlags.Invert,
                     TextureFlags.UseAlpha => Core.IO.Materials.TextureFlags.UseAlpha,
                     TextureFlags.IgnoreAlpha => Core.IO.Materials.TextureFlags.IgnoreAlpha,

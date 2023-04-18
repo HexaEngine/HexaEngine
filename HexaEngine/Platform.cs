@@ -17,7 +17,8 @@
         {
             Platform.editor = editor;
             CrashLogger.Initialize();
-            DXGIAdapter.Init();
+            DXGIAdapterD3D11.Init();
+            DXGIAdapterD3D11On12.Init();
             OpenALAdapter.Init();
 
             if (editor)

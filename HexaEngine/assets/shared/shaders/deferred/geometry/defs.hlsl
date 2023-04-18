@@ -1,3 +1,4 @@
+
 #ifndef VtxColor
 #define VtxColor 0
 #endif
@@ -22,6 +23,18 @@
 
 #ifndef Tessellation
 #define Tessellation 0
+#endif
+
+#ifndef TessellationFactor
+#define TessellationFactor 1
+#endif
+
+#ifndef MaxBones
+#define MaxBones 100
+#endif
+
+#ifndef MaxBoneInfluence
+#define MaxBoneInfluence 4
 #endif
 
 struct VertexInput

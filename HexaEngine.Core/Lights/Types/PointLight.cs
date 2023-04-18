@@ -38,6 +38,9 @@
         [JsonIgnore]
         public override LightType LightType => LightType.Point;
 
+        [JsonIgnore]
+        public override bool HasShadowMap => osmDepthBuffer != null;
+
         public override IShaderResourceView? GetShadowMap()
         {
             return osmDepthBuffer?.SRV;

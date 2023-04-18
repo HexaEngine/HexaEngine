@@ -3,7 +3,6 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Plugins;
     using HexaEngine.Editor.Widgets;
-    using System;
 
     public class Plugin : IPlugin
     {

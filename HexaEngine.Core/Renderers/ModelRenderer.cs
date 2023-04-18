@@ -13,28 +13,37 @@
         private readonly DrawQueue queue = new();
         private InstanceManager instanceManager;
         private ResourceRef<IBuffer> camera;
+        private SemaphoreSlim semaphore = new(1);
 
         public uint QueueIndex => (uint)RenderQueueIndex.Geometry;
 
         public IInstance CreateInstance(MeshData data, GameObject parent)
         {
+            semaphore.Wait();
             var material = ResourceManager.LoadMaterial(data, MaterialManager.GetMaterial(data.Material.Name) ?? data.Material);
             var mesh = ResourceManager.LoadMesh(data);
             mesh.Wait();
-            return instanceManager.CreateInstance(mesh.Value.CreateInstanceType(mesh, material), parent);
+            var instance = instanceManager.CreateInstance(mesh.Value.CreateInstanceType(mesh, material), parent);
+            semaphore.Release();
+            return instance;
         }
 
         public async Task<IInstance> CreateInstanceAsync(MeshData data, GameObject parent)
         {
+            await semaphore.WaitAsync();
             var material = await ResourceManager.LoadMaterialAsync(data, MaterialManager.GetMaterial(data.Material.Name) ?? data.Material);
             var mesh = await ResourceManager.LoadMeshAsync(data);
             mesh.Wait();
-            return await instanceManager.CreateInstanceAsync(mesh.Value.CreateInstanceType(mesh, material), parent);
+            var instance = await instanceManager.CreateInstanceAsync(mesh.Value.CreateInstanceType(mesh, material), parent);
+            semaphore.Release();
+            return instance;
         }
 
         public void DestroyInstance(IInstance instance)
         {
+            semaphore.Wait();
             instanceManager.DestroyInstance(instance);
+            semaphore.Release();
         }
 
         public void Initialize(IGraphicsDevice device, InstanceManager instanceManager)

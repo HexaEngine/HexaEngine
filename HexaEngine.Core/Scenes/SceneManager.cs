@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-namespace HexaEngine.Core.Scenes
+﻿namespace HexaEngine.Core.Scenes
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Resources;
@@ -21,7 +19,7 @@ namespace HexaEngine.Core.Scenes
         /// <value>
         /// The current scene.
         /// </value>
-        public static Scene Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; [MethodImpl(MethodImplOptions.AggressiveInlining)] private set; }
+        public static Scene? Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; [MethodImpl(MethodImplOptions.AggressiveInlining)] private set; }
 
         /// <summary>
         /// Occurs when [scene changed].

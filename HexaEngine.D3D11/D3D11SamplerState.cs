@@ -1,14 +1,14 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
-    using System;
 
     public unsafe class D3D11SamplerState : DeviceChildBase, ISamplerState
     {
-        internal readonly ID3D11SamplerState* sampler;
+        internal readonly ComPtr<ID3D11SamplerState> sampler;
 
-        public D3D11SamplerState(ID3D11SamplerState* sampler, SamplerDescription description)
+        public D3D11SamplerState(ComPtr<ID3D11SamplerState> sampler, SamplerDescription description)
         {
             this.sampler = sampler;
             nativePointer = new(sampler);
@@ -19,7 +19,7 @@
 
         protected override void DisposeCore()
         {
-            sampler->Release();
+            sampler.Release();
         }
     }
 }

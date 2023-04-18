@@ -8,8 +8,11 @@
     public class VulkanGraphicsContext : IGraphicsContext
     {
         public IGraphicsDevice Device { get; }
+
         public IntPtr NativePointer { get; }
+
         public string? DebugName { get; set; }
+
         public bool IsDisposed { get; }
 
         public event EventHandler? OnDisposed;
@@ -455,6 +458,16 @@
         }
 
         public void ClearUnorderedAccessViewUint(IUnorderedAccessView uav, uint r, uint g, uint b, uint a)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExecuteCommandList(ICommandList commandList, bool restoreState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICommandList FinishCommandList(bool restoreState)
         {
             throw new NotImplementedException();
         }

@@ -22,13 +22,10 @@ namespace HexaEngine.Windows
     public enum RendererFlags
     {
         None = 0,
-        SceneGraph = 1,
-        DebugDraw = 2,
-        ImGui = 4,
-        ImGuizmo = 8,
-        ImGuiWidgets = 16,
-        ImGuiViewport = 32,
-        All = SceneGraph | ImGui | ImGuizmo | ImGuiWidgets,
+        ImGui = 1,
+        ImGuiWidgets = 2,
+        DebugDraw = 4,
+        All = ImGui | ImGuiWidgets | DebugDraw,
     }
 
     public class Window : SdlWindow, IRenderWindow
@@ -40,12 +37,13 @@ namespace HexaEngine.Windows
         private IGraphicsContext graphicsContext;
         private ISwapChain swapChain;
         private Frameviewer frameviewer;
-        private bool sceneGraph;
         private bool imGuiWidgets;
-        private SceneRenderer deferredRenderer;
+        private SceneRenderer sceneRenderer;
         private Task initTask;
+        private bool rendererInitialized;
         private bool resize = false;
-        private ImGuiRenderer? renderer;
+        private ImGuiRenderer? imGuiRenderer;
+        private DebugDrawRenderer? debugDrawRenderer;
 
         public RendererFlags Flags;
 
@@ -55,6 +53,8 @@ namespace HexaEngine.Windows
 
         public IGraphicsContext Context => graphicsContext;
 
+        public IAudioDevice AudioDevice => audioDevice;
+
         public ISwapChain SwapChain => swapChain;
 
         public string? StartupScene;
@@ -62,28 +62,13 @@ namespace HexaEngine.Windows
 
         public Viewport RenderViewport => renderViewport;
 
-        public ISceneRenderer Renderer => deferredRenderer;
-
-#pragma warning disable CS8618 // Non-nullable field 'renderDispatcher' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'frameviewer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'deferredRenderer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'initTask' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'swapChain' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        public ISceneRenderer Renderer => sceneRenderer;
 
         public Window()
-#pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'swapChain' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'initTask' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'deferredRenderer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'frameviewer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'context' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning restore CS8618 // Non-nullable field 'renderDispatcher' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
         }
 
-        public void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
+        public virtual void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
@@ -103,48 +88,52 @@ namespace HexaEngine.Windows
 
             frameviewer = new(graphicsDevice);
 
-            sceneGraph = Flags.HasFlag(RendererFlags.SceneGraph);
-            imGuiWidgets = Flags.HasFlag(RendererFlags.ImGuiWidgets);
+            imGuiWidgets = (Flags & RendererFlags.ImGuiWidgets) != 0;
 
-            if (Flags.HasFlag(RendererFlags.ImGui))
+            if ((Flags & RendererFlags.ImGui) != 0)
             {
-                renderer = new(this, graphicsDevice, swapChain);
-                DebugDraw.Init(graphicsDevice);
+                imGuiRenderer = new(this, graphicsDevice, swapChain);
             }
 
-            if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
+            if ((Flags & RendererFlags.ImGuiWidgets) != 0)
                 WidgetManager.Init(graphicsDevice);
 
-            if (Flags.HasFlag(RendererFlags.SceneGraph))
-                SceneManager.SceneChanged += (_, _) => { firstFrame = true; };
+            if ((Flags & RendererFlags.DebugDraw) != 0)
+            {
+                debugDrawRenderer = new(graphicsDevice, swapChain);
+            }
+
+            SceneManager.SceneChanged += SceneChanged;
 
             OnRendererInitialize(graphicsDevice);
 
-            if (sceneGraph)
+            sceneRenderer = new();
+            initTask = sceneRenderer.Initialize(graphicsDevice, swapChain, this);
+            initTask.ContinueWith(x =>
             {
-                deferredRenderer = new();
-                initTask = deferredRenderer.Initialize(graphicsDevice, swapChain, this);
-                initTask.ContinueWith(x =>
+                if (x.IsCompletedSuccessfully)
                 {
-                    if (x.IsCompletedSuccessfully)
-                    {
-                        ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
-                    }
-                    if (x.IsFaulted)
-                    {
-                        ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'e' in 'void ImGuiConsole.Log(Exception e)'.
-                        ImGuiConsole.Log(x.Exception);
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'e' in 'void ImGuiConsole.Log(Exception e)'.
-                    }
-                });
-            }
+                    ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
+                }
+                if (x.IsFaulted)
+                {
+                    ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
+                    ImGuiConsole.Log(x.Exception);
+                }
+
+                rendererInitialized = true;
+            });
 
             if (StartupScene != null)
             {
                 SceneManager.Load(StartupScene);
                 SceneManager.Current.IsSimulating = true;
             }
+        }
+
+        private void SceneChanged(object? sender, SceneChangedEventArgs e)
+        {
+            firstFrame = true;
         }
 
         public void Render(IGraphicsContext context)
@@ -167,8 +156,12 @@ namespace HexaEngine.Windows
 
             renderDispatcher.ExecuteQueue();
 
-            renderer?.BeginDraw();
-            var drawing = sceneGraph && initTask.IsCompleted && SceneManager.Current is not null;
+            imGuiRenderer?.BeginDraw();
+            debugDrawRenderer?.BeginDraw();
+
+            OnRenderBegin(context);
+
+            var drawing = rendererInitialized;
             if (imGuiWidgets && Application.InEditorMode)
             {
                 Designer.Draw();
@@ -179,10 +172,14 @@ namespace HexaEngine.Windows
                 frameviewer.Update();
                 frameviewer.Draw();
                 drawing &= frameviewer.IsVisible;
+                renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
+                DebugDraw.SetViewport(renderViewport);
             }
 
+            drawing &= SceneManager.Current is not null;
+
             if (drawing)
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            {
                 lock (SceneManager.Current)
                 {
                     SceneManager.Current.Tick();
@@ -191,41 +188,42 @@ namespace HexaEngine.Windows
                         Time.Initialize();
                         firstFrame = false;
                     }
-                    deferredRenderer.Profiler.Clear();
-                    deferredRenderer.Profiler.Start(deferredRenderer);
-                    renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
-                    deferredRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
+                    sceneRenderer.Profiler.Clear();
+                    sceneRenderer.Profiler.Start(sceneRenderer);
+                    sceneRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
                 }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            }
 
             OnRender(context);
 
-            renderer?.EndDraw();
+            if (Application.InEditorMode)
+                debugDrawRenderer?.EndDraw();
+            imGuiRenderer?.EndDraw();
 
             swapChain.Present();
             if (drawing)
-                deferredRenderer.Profiler.End(deferredRenderer);
+                sceneRenderer.Profiler.End(sceneRenderer);
             swapChain.Wait();
         }
 
-        public void Uninitialize()
+        public virtual void Uninitialize()
         {
             OnRendererDispose();
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
                 WidgetManager.Dispose();
 
-            renderer?.Dispose();
+            if (imGuiRenderer is not null)
+                imGuiRenderer?.Dispose();
 
-            if (renderer is not null)
-                DebugDraw.Dispose();
+            if ((Flags & RendererFlags.DebugDraw) != 0)
+                debugDrawRenderer?.Dispose();
 
-            if (Flags.HasFlag(RendererFlags.SceneGraph))
-                SceneManager.Unload();
+            SceneManager.Unload();
             if (!initTask.IsCompleted)
                 initTask.Wait();
-            if (sceneGraph)
-                deferredRenderer.Dispose();
+
+            sceneRenderer.Dispose();
             renderDispatcher.Dispose();
             ObjectPickerManager.Release();
             CullingManager.Release();
@@ -237,6 +235,10 @@ namespace HexaEngine.Windows
         }
 
         protected virtual void OnRendererInitialize(IGraphicsDevice device)
+        {
+        }
+
+        protected virtual void OnRenderBegin(IGraphicsContext context)
         {
         }
 

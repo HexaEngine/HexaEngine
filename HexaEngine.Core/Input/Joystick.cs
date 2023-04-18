@@ -9,7 +9,7 @@
     {
         private static readonly Sdl sdl = Application.sdl;
         private readonly int id;
-        private readonly Silk.NET.SDL.Joystick* joystick;
+        internal readonly Silk.NET.SDL.Joystick* joystick;
         private readonly Dictionary<int, short> axes = new();
         private readonly Dictionary<int, (int, int)> balls = new();
         private readonly Dictionary<int, JoystickButtonState> buttons = new();

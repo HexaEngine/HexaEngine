@@ -28,6 +28,11 @@
             return (T*)Allocate(sizeof(T));
         }
 
+        public unsafe T* Allocate<T>(int count) where T : unmanaged
+        {
+            return (T*)Allocate((nint)(sizeof(T) * count));
+        }
+
         public unsafe T* Allocate<T>(uint count) where T : unmanaged
         {
             return (T*)Allocate((nint)(sizeof(T) * count));
@@ -36,6 +41,11 @@
         public unsafe T* Allocate<T>(ulong count) where T : unmanaged
         {
             return (T*)Allocate((nint)((ulong)sizeof(T) * count));
+        }
+
+        public unsafe T** AllocateArray<T>(int count) where T : unmanaged
+        {
+            return (T**)Allocate((nint)(sizeof(nint) * count));
         }
 
         public unsafe T** AllocateArray<T>(uint count) where T : unmanaged

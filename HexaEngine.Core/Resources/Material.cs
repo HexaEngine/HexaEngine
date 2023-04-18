@@ -30,8 +30,8 @@
         {
             if (!loaded) return false;
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.Count, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.Count, 0);
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
 
             return true;
         }
@@ -45,8 +45,8 @@
                 return;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.Count, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.Count, 0);
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
 
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
         }
@@ -60,8 +60,8 @@
                 return;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.Count, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.Count, 0);
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
         }
 
@@ -72,9 +72,9 @@
             {
                 return;
             }
-            TextureList.Bind(context);
-            //context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.Count, 0);
-            //context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.Count, 0);
+            //TextureList.Bind(context);
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
             context.DrawIndexedInstancedIndirect(argBuffer, offset);
         }
 

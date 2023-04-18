@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
+    using ImGuiNET;
     using System;
     using System.Numerics;
 
@@ -14,6 +15,7 @@
         public int Height;
         public int Width;
         private ITexture2D texture;
+        private ISamplerState samplerState;
         public IRenderTargetView RTV;
         public IShaderResourceView SRV;
         private IShaderResourceView[] srvs;
@@ -49,6 +51,7 @@
             texture = device.CreateTexture2D(Format.R32Float, width, height, 1, Mips, null, BindFlags.ShaderResource | BindFlags.RenderTarget | BindFlags.UnorderedAccess);
             SRV = device.CreateShaderResourceView(texture);
             RTV = device.CreateRenderTargetView(texture, new(width, height));
+            samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -65,6 +68,15 @@
                 viewports[i] = new(mipWidth, mipHeight);
                 mipWidth /= 2;
                 mipHeight /= 2;
+            }
+        }
+
+        public void Debug()
+        {
+            for (int i = 0; i < Mips; i++)
+            {
+                var view = viewports[i];
+                ImGui.Image(srvs[i].NativePointer, new(view.Width, view.Height), Vector2.Zero, Vector2.One, new(new Vector3(0.2f), 1));
             }
         }
 
@@ -123,6 +135,7 @@
                 context.CSSetConstantBuffer(cbDownsample, 0);
                 context.CSSetUnorderedAccessViews(&pUavs[i], (uint)Mips);
                 context.CSSetShaderResource(srvs[i - 1], 0);
+                context.CSSetSampler(samplerState, 0);
                 downsample.Dispatch(context, (int)viewports[i].Width, (int)viewports[i].Height, 1);
             }
 
@@ -139,11 +152,12 @@
 
             for (uint i = 1; i < Mips; i++)
             {
-                Vector2 texel = new(1 / viewports[i].Width * viewports[i - 1].Width, 1 / viewports[i].Height * viewports[i - 1].Height);
+                Vector2 texel = new(viewports[i].Width, viewports[i].Height);
                 context.Write(cbDownsample, new Vector4(texel, 0, 0));
                 context.CSSetConstantBuffer(cbDownsample, 0);
                 context.CSSetUnorderedAccessViews(&pUavs[i], 1);
                 context.CSSetShaderResource(srvs[i - 1], 0);
+                context.CSSetSampler(samplerState, 0);
                 downsample.Dispatch(context, (int)viewports[i].Width / 32 + 1, (int)viewports[i].Height / 32 + 1, 1);
             }
 
@@ -156,6 +170,7 @@
             downsample.Dispose();
             cbDownsample.Dispose();
             copy.Dispose();
+            samplerState.Dispose();
 
             for (int i = 0; i < Mips; i++)
             {

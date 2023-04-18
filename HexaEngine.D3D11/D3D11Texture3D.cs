@@ -1,14 +1,15 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using ResourceDimension = Core.Graphics.ResourceDimension;
 
     public unsafe class D3D11Texture3D : DeviceChildBase, ITexture3D
     {
-        internal readonly ID3D11Texture3D* texture;
+        internal readonly ComPtr<ID3D11Texture3D> texture;
 
-        public D3D11Texture3D(ID3D11Texture3D* texture, Texture3DDescription description)
+        public D3D11Texture3D(ComPtr<ID3D11Texture3D> texture, Texture3DDescription description)
         {
             this.texture = texture;
             nativePointer = new(texture);
@@ -21,7 +22,7 @@
 
         protected override void DisposeCore()
         {
-            texture->Release();
+            texture.Release();
         }
     }
 }

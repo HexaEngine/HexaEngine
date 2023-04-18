@@ -160,6 +160,22 @@
             }
         }
 
+        public unsafe void Reflect<T>(Blob blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
+        {
+            lock (D3DCompiler)
+            {
+                D3DCompiler.Reflect((void*)blob.BufferPointer, (nuint)(int)blob.PointerSize, out reflector);
+            }
+        }
+
+        public unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
+        {
+            lock (D3DCompiler)
+            {
+                D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
+            }
+        }
+
         public unsafe void Reflect(Blob blob, Guid guid, void** reflector)
         {
             lock (D3DCompiler)

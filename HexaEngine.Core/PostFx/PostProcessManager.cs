@@ -14,6 +14,7 @@
         private readonly List<IPostFx> effects = new();
         private readonly List<Texture> buffers = new();
         private readonly IGraphicsContext deferredContext;
+        private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
         private int width;
         private int height;
@@ -36,6 +37,7 @@
 
         public PostProcessManager(IGraphicsDevice device, int width, int height, int bufferCount = 2)
         {
+            config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
             for (int i = 0; i < bufferCount; i++)
             {
@@ -222,7 +224,7 @@
             {
                 effects.Add(effect);
             }
-
+            config.GenerateSubKeyAuto(effect, effect.Name);
             Sort();
         }
 

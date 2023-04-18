@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows.Events;
+    using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
@@ -10,9 +11,9 @@
 
     public unsafe class DXGISwapChain : DeviceChildBase, ISwapChain
     {
-        private IDXGISwapChain1* swapChain;
+        private ComPtr<IDXGISwapChain1> swapChain;
         private SwapChainFlag flags;
-        private ID3D11Texture2D* backbuffer;
+        private ComPtr<ID3D11Texture2D> backbuffer;
         private ITexture2D depthStencil;
         private long fpsStartTime;
         private long fpsFrameCount;
@@ -21,18 +22,16 @@
         private int targetFPS = 120;
         private bool active;
 
-        internal DXGISwapChain(D3D11GraphicsDevice device, IDXGISwapChain1* swapChain, SwapChainFlag flags)
+        internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain1> swapChain, SwapChainFlag flags)
         {
             Device = device;
             this.swapChain = swapChain;
             this.flags = flags;
 
-            ID3D11Texture2D* backbuffer;
-            swapChain->GetBuffer(0, Utils.Guid(ID3D11Texture2D.Guid), (void**)&backbuffer);
+            swapChain.GetBuffer(0, out backbuffer);
             Texture2DDesc desc;
-            backbuffer->GetDesc(&desc);
+            backbuffer.GetDesc(&desc);
             Texture2DDescription description = Helper.ConvertBack(desc);
-            this.backbuffer = backbuffer;
 
             Backbuffer = new D3D11Texture2D(backbuffer, description);
             BackbufferRTV = device.CreateRenderTargetView(Backbuffer, new(description.Width, description.Height));
@@ -73,11 +72,11 @@
         {
             if (sync)
             {
-                swapChain->Present(1, 0);
+                swapChain.Present(1, 0);
             }
             else
             {
-                swapChain->Present(0, DXGI.PresentAllowTearing);
+                swapChain.Present(0, DXGI.PresentAllowTearing);
             }
         }
 
@@ -85,15 +84,15 @@
         {
             if (!active)
             {
-                swapChain->Present(4, 0);
+                swapChain.Present(4, 0);
             }
             else if (vSync)
             {
-                swapChain->Present(1, 0);
+                swapChain.Present(1, 0);
             }
             else
             {
-                swapChain->Present(0, DXGI.PresentAllowTearing);
+                swapChain.Present(0, DXGI.PresentAllowTearing);
             }
         }
 
@@ -135,17 +134,15 @@
             BackbufferDSV.Dispose();
             depthStencil.Dispose();
 
-            swapChain->ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
+            swapChain.ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
             Width = width;
             Height = height;
             Viewport = new(0, 0, Width, Height);
 
-            ID3D11Texture2D* backbuffer;
-            swapChain->GetBuffer(0, Utils.Guid(ID3D11Texture2D.Guid), (void**)&backbuffer);
+            swapChain.GetBuffer(0, out backbuffer);
             Texture2DDesc desc;
-            backbuffer->GetDesc(&desc);
+            backbuffer.GetDesc(&desc);
             Texture2DDescription description = Helper.ConvertBack(desc);
-            this.backbuffer = backbuffer;
 
             Backbuffer = new D3D11Texture2D(backbuffer, description);
             BackbufferRTV = Device.CreateRenderTargetView(Backbuffer, new(description.Width, description.Height));
@@ -161,7 +158,7 @@
             BackbufferRTV.Dispose();
             BackbufferDSV.Dispose();
             depthStencil.Dispose();
-            swapChain->Release();
+            swapChain.Release();
         }
     }
 }

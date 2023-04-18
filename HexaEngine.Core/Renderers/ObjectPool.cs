@@ -6,7 +6,7 @@
     {
         public int Id;
 
-        public bool IsValid => Id >= 0;
+        public bool IsValid => Id > 0;
     }
 
     public unsafe class ObjectPool<T>
@@ -26,14 +26,14 @@
             {
                 lock (_lock)
                 {
-                    return (objects)[handle.Data->Id];
+                    return (objects)[handle.Data->Id - 1];
                 }
             }
             set
             {
                 lock (_lock)
                 {
-                    (objects)[handle.Data->Id] = value;
+                    (objects)[handle.Data->Id - 1] = value;
                 }
             }
         }
@@ -47,7 +47,7 @@
         public unsafe void Remove(Pointer<ObjectHandle> handle)
         {
             var hnd = (ObjectHandle*)handle;
-            objects.RemoveAt(hnd->Id);
+            objects.RemoveAt(hnd->Id - 1);
             DestroyHandle(handle);
         }
 
@@ -56,7 +56,7 @@
             lock (_lock)
             {
                 ObjectHandle* handle = Alloc<ObjectHandle>();
-                var id = handles->Count;
+                var id = handles->Size + 1;
                 handle->Id = (int)id;
                 handles->Add(handle);
                 return handle;
@@ -68,7 +68,7 @@
             lock (_lock)
             {
                 var baseIndex = handle->Id;
-                for (int i = baseIndex + 1, j = 0; i < handles->Count; i++, j++)
+                for (int i = baseIndex + 1, j = 0; i < handles->Size; i++, j++)
                 {
                     (*handles)[i].Data->Id = baseIndex + j;
                 }

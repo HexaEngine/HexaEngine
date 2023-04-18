@@ -7,10 +7,10 @@
     {
         public IShaderResourceView ShaderResourceView;
         public ISamplerState Sampler;
-        public MaterialTextureDesc Desc;
+        public IO.Materials.MaterialTexture Desc;
         private bool disposedValue;
 
-        public MaterialTexture(IShaderResourceView srv, ISamplerState sampler, MaterialTextureDesc desc)
+        public MaterialTexture(IShaderResourceView srv, ISamplerState sampler, IO.Materials.MaterialTexture desc)
         {
             ShaderResourceView = srv;
             Sampler = sampler;

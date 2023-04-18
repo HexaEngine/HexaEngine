@@ -163,11 +163,11 @@
             }
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                if (ImGui.IsKeyDown(ImGuiKey.LeftCtrl))
+                if (ImGui.GetIO().KeyCtrl)
                 {
                     GameObject.Selected.AddSelection(element);
                 }
-                else if (ImGui.IsKeyDown(ImGuiKey.LeftShift))
+                else if (ImGui.GetIO().KeyShift)
                 {
                     var last = GameObject.Selected.Last();
                     GameObject.Selected.AddMultipleSelection(SceneManager.Current.GetRange(last, element));

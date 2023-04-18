@@ -8,6 +8,7 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
+    using System.Collections.Concurrent;
     using System.Numerics;
 
     public unsafe struct SkyboxData
@@ -24,6 +25,7 @@
     {
         private readonly ObjectPool<SkyboxData> pool = new();
         private readonly DrawQueue drawQueue = new();
+        private readonly ConcurrentQueue<Pointer<ObjectHandle>> removeQueue = new();
         private volatile bool _disposed = true;
 #nullable disable
         private Sphere sphere;
@@ -83,6 +85,7 @@
         public void DestroyInstance(Pointer<ObjectHandle> handle)
         {
             pool.Remove(handle);
+            removeQueue.Enqueue(handle);
         }
 
         public void UpdateInstance(Pointer<ObjectHandle> handle, SkyboxData data)
@@ -131,6 +134,11 @@
                     context.PSSetSampler(sampler, 0);
                     sphere.DrawAuto(context, pipeline);
                 }
+            }
+
+            while (removeQueue.TryDequeue(out var handle))
+            {
+                handle.Free();
             }
 
             drawQueue.Swap();

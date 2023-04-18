@@ -23,12 +23,17 @@ TextureCube globalSpecular[4] : register(t15);
 SamplerState SampleTypePoint : register(s0);
 SamplerState SampleTypeAnsio : register(s1);
 
-cbuffer paramsBuffer : register(b2)
+struct Params
 {
     uint globalProbeCount;
     uint localProbeCount;
     uint padd0;
     uint padd1;
+};
+
+cbuffer paramsBuffer : register(b0)
+{
+    Params params;
 };
 
 //////////////
@@ -62,7 +67,7 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
     float3 ambient = 0;
     
     [unroll(4)]
-    for (uint i = 0; i < globalProbeCount; i++)
+    for (uint i = 0; i < params.globalProbeCount; i++)
     {
         ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
     }

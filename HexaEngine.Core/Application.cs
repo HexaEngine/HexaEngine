@@ -34,6 +34,8 @@
         public static IRenderWindow MainWindow => mainWindow;
 #nullable enable
 
+        public static GraphicsBackend GraphicsBackend => graphicsDevice.Backend;
+
         public enum SpecialFolder
         {
             Assets,
@@ -98,11 +100,18 @@
             if (type != null)
                 App = (IApp?)Activator.CreateInstance(type);
             App?.Startup();
-            sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick);
+
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
+            sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
+            sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
+            sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
+            sdl.SetHint(Sdl.HintJoystickRawinput, "0");
+            sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
+
             Keyboard.Init();
             Mouse.Init();
             Gamepads.Init();
+            TouchDevices.Init();
 
             graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend.Auto, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
@@ -140,8 +149,6 @@
         {
             Event evnt;
             Time.Initialize();
-
-            Touch touchpad = new();
 
             while (!exiting)
             {
@@ -200,10 +207,10 @@
                         case EventType.Keydown:
                             {
                                 var even = evnt.Key;
+                                Keyboard.OnKeyDown(even);
                                 if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
                                     ((SdlWindow)window).ProcessInputKeyboard(even);
-                                    Keyboard.OnKeyDown(even);
                                 }
                             }
                             break;
@@ -211,10 +218,10 @@
                         case EventType.Keyup:
                             {
                                 var even = evnt.Key;
+                                Keyboard.OnKeyUp(even);
                                 if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
                                     ((SdlWindow)window).ProcessInputKeyboard(even);
-                                    Keyboard.OnKeyUp(even);
                                 }
                             }
                             break;
@@ -225,10 +232,10 @@
                         case EventType.Textinput:
                             {
                                 var even = evnt.Text;
+                                Keyboard.OnTextInput(even);
                                 if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
                                     ((SdlWindow)window).ProcessInputText(even);
-                                    Keyboard.OnTextInput(even);
                                 }
                             }
                             break;
@@ -239,10 +246,10 @@
                         case EventType.Mousemotion:
                             {
                                 var even = evnt.Motion;
+                                Mouse.OnMotion(even);
                                 if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
                                     ((SdlWindow)window).ProcessInputMouse(even);
-                                    Mouse.OnMotion(even);
                                 }
                             }
                             break;

@@ -13,14 +13,23 @@
         }
 
         public ITexture2D Backbuffer { get; }
+
         public IRenderTargetView BackbufferRTV { get; }
+
         public IDepthStencilView BackbufferDSV { get; }
+
         public int Width { get; }
+
         public int Height { get; }
+
         public Viewport Viewport { get; }
+
         public bool VSync { get; set; }
+
         public int TargetFPS { get; set; }
+
         public bool LimitFPS { get; set; }
+
         public bool Active { get; set; }
 
         public event EventHandler? Resizing;

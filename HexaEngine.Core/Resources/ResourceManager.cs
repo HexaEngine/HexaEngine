@@ -160,7 +160,7 @@
             return modelMaterial;
         }
 
-        public static void UpdateMaterial(MeshData mesh, MaterialData desc)
+        public static void UpdateMaterial(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -173,7 +173,7 @@
 
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
-            UpdateMaterialShader(ref modelMaterial.Shader, mesh, desc);
+            UpdateMaterialShader(ref modelMaterial.Shader);
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -199,7 +199,7 @@
             }
         }
 
-        public static async Task UpdateMaterialAsync(MeshData mesh, MaterialData desc)
+        public static async Task UpdateMaterialAsync(MaterialData desc)
         {
             Material? modelMaterial;
             lock (materials)
@@ -213,7 +213,7 @@
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
 
-            modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader, mesh, desc);
+            modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader);
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -247,7 +247,7 @@
             }
         }
 
-        public static ResourceInstance<MaterialTexture>? LoadTexture(MaterialTextureDesc desc)
+        public static ResourceInstance<MaterialTexture>? LoadTexture(IO.Materials.MaterialTexture desc)
         {
             string fullname = Paths.CurrentTexturePath + desc.File;
             if (string.IsNullOrWhiteSpace(desc.File)) return null;
@@ -265,7 +265,7 @@
                 textures.TryAdd(fullname, texture);
             }
 
-            var tex = device.LoadTexture2D(fullname);
+            var tex = device.TextureLoader.LoadTexture2D(fullname, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
             var srv = device.CreateShaderResourceView(tex);
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
             texture.EndLoad(new(srv, sampler, desc));
@@ -274,7 +274,7 @@
             return texture;
         }
 
-        public static Task<ResourceInstance<MaterialTexture>?> LoadTextureAsync(MaterialTextureDesc desc)
+        public static Task<ResourceInstance<MaterialTexture>?> LoadTextureAsync(IO.Materials.MaterialTexture desc)
         {
             return Task.Factory.StartNew(() => LoadTexture(desc));
         }
@@ -293,7 +293,7 @@
             }
         }
 
-        public static void UpdateTexture(ref ResourceInstance<MaterialTexture>? texture, MaterialTextureDesc desc)
+        public static void UpdateTexture(ref ResourceInstance<MaterialTexture>? texture, IO.Materials.MaterialTexture desc)
         {
             string fullname = Paths.CurrentTexturePath + desc.File;
             if (texture?.Name == fullname) return;
@@ -301,7 +301,7 @@
             texture = LoadTexture(desc);
         }
 
-        public static async Task<ResourceInstance<MaterialTexture>?> UpdateTextureAsync(ResourceInstance<MaterialTexture>? texture, MaterialTextureDesc desc)
+        public static async Task<ResourceInstance<MaterialTexture>?> UpdateTextureAsync(ResourceInstance<MaterialTexture>? texture, IO.Materials.MaterialTexture desc)
         {
             string fullname = Paths.CurrentTexturePath + desc.File;
             if (texture?.Name == fullname) return texture;
@@ -396,8 +396,8 @@
                 shaders.TryAdd(material.Name, shader);
             }
 
-            var shad = new MaterialShader();
-            shad.Initialize(device, mesh, material);
+            var shad = new MaterialShader(device, mesh, material);
+            shad.Initialize();
             shader.EndLoad(shad);
 
             return shader;
@@ -419,8 +419,8 @@
                 shaders.TryAdd(material.Name, shader);
             }
 
-            var shad = new MaterialShader();
-            await shad.InitializeAsync(device, mesh, material);
+            var shad = new MaterialShader(device, mesh, material);
+            await shad.InitializeAsync();
             shader.EndLoad(shad);
 
             return shader;
@@ -440,31 +440,24 @@
             }
         }
 
-        public static void UpdateMaterialShader(ref ResourceInstance<MaterialShader>? shader, MeshData mesh, MaterialData material)
+        public static void UpdateMaterialShader(ref ResourceInstance<MaterialShader>? shader)
         {
-            if (shader == null)
+            if (shader == null || shader.Value == null)
             {
-                shader = LoadMaterialShader(mesh, material);
                 return;
             }
 
-            var shad = new MaterialShader();
-            shad.Initialize(device, mesh, material);
-            shader.BeginLoad();
-            shader.EndLoad(shad);
+            shader.Value.Recompile();
         }
 
-        public static async Task<ResourceInstance<MaterialShader>?> UpdateMaterialShaderAsync(ResourceInstance<MaterialShader>? pipeline, MeshData mesh, MaterialData material)
+        public static async Task<ResourceInstance<MaterialShader>?> UpdateMaterialShaderAsync(ResourceInstance<MaterialShader>? pipeline)
         {
-            if (pipeline == null)
+            if (pipeline == null || pipeline.Value == null)
             {
-                return await LoadMaterialShaderAsync(mesh, material);
+                return null;
             }
 
-            var shad = new MaterialShader();
-            await shad.InitializeAsync(device, mesh, material);
-            pipeline.BeginLoad();
-            pipeline.EndLoad(shad);
+            await pipeline.Value.RecompileAsync();
             return pipeline;
         }
 

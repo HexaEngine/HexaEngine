@@ -14,7 +14,7 @@ namespace HexaEngine.Effects
     public class DepthOfField : IPostFx
     {
         private IGraphicsDevice device;
-        private bool enabled = false;
+        private bool enabled = true;
         private bool bokehEnabled = true;
         private Quad quad;
         private IBuffer cbBlur;

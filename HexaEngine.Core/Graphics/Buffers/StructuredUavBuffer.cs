@@ -41,7 +41,7 @@
             bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
             buffer.DebugName = dbgName;
-            if (canWrite)
+            if (canWrite || canRead)
             {
                 copyDescription = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
                 if (canRead)
@@ -74,7 +74,7 @@
             bufferDescription = new(sizeof(T) * intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
             buffer = device.CreateBuffer(items, (uint)intialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
-            if (canWrite)
+            if (canWrite || canRead)
             {
                 copyDescription = new(sizeof(T) * intialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
                 if (canRead)
@@ -189,7 +189,7 @@
                 bufferDescription.ByteWidth = sizeof(T) * (int)capacity;
                 buffer = device.CreateBuffer(items, capacity, bufferDescription);
                 buffer.DebugName = dbgName;
-                if (canWrite)
+                if (canWrite || canRead)
                 {
                     copyDescription.ByteWidth = sizeof(T) * (int)value;
                     copyBuffer = device.CreateBuffer(copyDescription);
@@ -348,7 +348,7 @@
                 }
                 else
                 {
-                    context.Write(copyBuffer, items, (int)(count * sizeof(T)));
+                    context.Write(copyBuffer, items, (int)(count * sizeof(T)), Map.WriteDiscard);
                     context.CopyResource(buffer, copyBuffer);
                 }
 

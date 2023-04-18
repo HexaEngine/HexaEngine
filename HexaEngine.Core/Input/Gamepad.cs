@@ -18,11 +18,12 @@
         private readonly Sdl sdl;
         private readonly int id;
         private readonly GameController* controller;
-        private readonly Silk.NET.SDL.Joystick* joystick;
+        internal readonly Silk.NET.SDL.Joystick* joystick;
         private readonly Dictionary<GamepadAxis, short> axisStates = new();
         private readonly Dictionary<GamepadButton, GamepadButtonState> buttonStates = new();
         private readonly Dictionary<GamepadSensorType, GamepadSensor> sensors = new();
         private readonly List<GamepadTouchpad> touchpads = new();
+        private readonly Haptic? haptic;
         private readonly List<string> mappings = new();
 
         private readonly GamepadRemappedEventArgs remappedEventArgs = new();
@@ -83,6 +84,9 @@
                 mappings.Add(sdl.GameControllerMappingForIndexS(i));
             }
 
+            if (sdl.JoystickIsHaptic(joystick) == 1)
+                haptic = Haptic.OpenFromGamepad(this);
+
             var guid = sdl.JoystickGetGUID(joystick);
             var buffer = Alloc<byte>(33);
             sdl.JoystickGetGUIDString(guid, buffer, 33);
@@ -118,6 +122,8 @@
 
         public bool IsAttached => sdl.GameControllerGetAttached(controller) == SdlBool.True;
 
+        public bool IsHaptic => sdl.JoystickIsHaptic(joystick) == 1;
+
         public bool HasLED => sdl.GameControllerHasLED(controller) == SdlBool.True;
 
         public GamepadType Type => Helper.Convert(sdl.GameControllerGetType(controller));
@@ -137,6 +143,8 @@
         public IReadOnlyList<GamepadTouchpad> Touchpads => touchpads;
 
         public IReadOnlyList<string> Mappings => mappings;
+
+        public Haptic? Haptic => haptic;
 
         public event EventHandler<GamepadRemappedEventArgs>? Remapped;
 

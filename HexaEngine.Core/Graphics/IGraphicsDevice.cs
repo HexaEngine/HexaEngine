@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
     using System;
@@ -8,10 +7,13 @@
 
     public interface IGraphicsDevice : IDeviceChild
     {
+        public GraphicsBackend Backend { get; }
+
         /// <summary>
         /// The immediate context of this device
         /// </summary>
         public IGraphicsContext Context { get; }
+
         ITextureLoader TextureLoader { get; }
 
         public ISwapChain CreateSwapChain(SdlWindow window);
@@ -108,43 +110,11 @@
 
         public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
 
-        public ITexture1D LoadTexture1D(string path);
-
-        public ITexture2D LoadTexture2D(string path);
-
-        public ITexture2D LoadTexture2D(string path, BindFlags flags);
-
-        public ITexture3D LoadTexture3D(string path);
-
-        public ITexture2D LoadTextureCube(string path);
-
-        public void SaveTexture1D(ITexture1D texture, string path);
-
-        public void SaveTexture2D(ITexture2D texture, string path);
-
-        public void SaveTexture3D(ITexture3D texture, string path);
-
-        public void SaveTextureCube(ITexture2D texture, string path);
-
-        public void SaveTexture1D(ITexture1D texture, Format format, string path);
-
-        public void SaveTexture2D(ITexture2D texture, Format format, string path);
-
-        public void SaveTexture3D(ITexture3D texture, Format format, string path);
-
-        public void SaveTextureCube(ITexture2D texture, Format format, string path);
-
         IQuery CreateQuery();
 
         IQuery CreateQuery(Query type);
 
         IGraphicsContext CreateDeferredContext();
-
-        ITexture1D LoadTexture1D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
-
-        ITexture2D LoadTexture2D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
-
-        ITexture3D LoadTexture3D(string path, Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, ResourceMiscFlag misc);
 
         IUnorderedAccessView CreateUnorderedAccessView(IResource resource, UnorderedAccessViewDescription description);
 

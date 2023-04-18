@@ -43,7 +43,7 @@
 
             Scene? result = (Scene?)serializer.Deserialize(reader, typeof(Scene)) ?? throw new InvalidDataException();
             result.Path = path;
-            result.BuildTree();
+            result.BuildReferences();
             reader.Close();
             return result;
         }

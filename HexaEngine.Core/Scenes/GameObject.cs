@@ -263,13 +263,13 @@
             return parent?.GetScene() ?? throw new("Node tree invalid");
         }
 
-        public virtual void BuildTree()
+        public virtual void BuildReferences()
         {
             for (int i = 0; i < children.Count; i++)
             {
                 var child = children[i];
                 child.parent = this;
-                child.BuildTree();
+                child.BuildReferences();
             }
         }
 
