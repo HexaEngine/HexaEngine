@@ -4,7 +4,6 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.OpenAL;
 
     [EditorComponent<ListenerComponent>("Listener")]
     public class ListenerComponent : IAudioComponent

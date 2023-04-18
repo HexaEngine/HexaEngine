@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Mathematics;
     using System;
 
     public abstract class Primitive<T> : IPrimitive where T : unmanaged

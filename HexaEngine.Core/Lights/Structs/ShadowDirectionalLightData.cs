@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Lights.Structs
 {
+    using HexaEngine.Core.Lights.Types;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using HexaEngine.Core.Lights.Types;
 
     public struct ShadowDirectionalLightData
     {

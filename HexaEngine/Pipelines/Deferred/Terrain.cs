@@ -3,7 +3,6 @@
 namespace HexaEngine.Pipelines.Deferred
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
 
     public class Terrain : IGraphicsPipeline
     {

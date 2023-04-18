@@ -4,8 +4,6 @@
     using BepuUtilities.Memory;
     using HexaEngine.Core;
     using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Meshes;
-    using System;
     using System.Numerics;
 
     [EditorComponent(typeof(MeshCollider), "Mesh Collider")]

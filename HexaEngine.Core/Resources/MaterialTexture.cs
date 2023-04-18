@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
 
     public class MaterialTexture : IDisposable
     {

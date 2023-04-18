@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Graphics;
-
-namespace HexaEngine.Core.Lights.Structs
+﻿namespace HexaEngine.Core.Lights.Structs
 {
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Mathematics;

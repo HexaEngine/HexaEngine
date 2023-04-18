@@ -9,7 +9,6 @@ namespace HexaEngine.Editor.Widgets
     using HexaEngine.Editor.Properties;
     using HexaEngine.Mathematics;
     using ImGuiNET;
-    using ImGuizmoNET;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

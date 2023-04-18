@@ -3,9 +3,6 @@ using BepuPhysics.Collidables;
 using BepuUtilities;
 using HexaEngine.Core.Input;
 using HexaEngine.Core.Scenes;
-using ImGuiNET;
-using ImNodesNET;
-using Silk.NET.SDL;
 using System.Diagnostics;
 using System.Numerics;
 

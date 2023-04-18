@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Scenes;
-    using System.Numerics;
 
     public class Animature : IComponent
     {

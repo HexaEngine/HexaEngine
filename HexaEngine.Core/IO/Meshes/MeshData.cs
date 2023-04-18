@@ -5,7 +5,6 @@
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System;
-    using System.Diagnostics;
     using System.IO;
     using System.Numerics;
     using System.Text;

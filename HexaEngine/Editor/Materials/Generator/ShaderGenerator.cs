@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.Materials.Generator
 {
-    using HexaEngine.Core.Graphics.Reflection;
     using HexaEngine.Editor.Materials.Generator.Enums;
     using HexaEngine.Editor.Materials.Generator.Structs;
     using HexaEngine.Editor.Materials.Nodes;
@@ -10,7 +9,6 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
-    using System.Xml.Linq;
 
     public class ShaderSource
     {

@@ -2,7 +2,6 @@
 using HexaEngine.Core.Input;
 using HexaEngine.Core.Windows;
 using ImGuiNET;
-using ImNodesNET;
 using Silk.NET.SDL;
 
 namespace HexaEngine.Rendering

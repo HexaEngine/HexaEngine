@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Extensions
 {
     using System.Collections.Generic;
-    using System.Reflection.Emit;
     using System.Reflection;
+    using System.Reflection.Emit;
 
     internal static class ArrayAccessor<T>
     {

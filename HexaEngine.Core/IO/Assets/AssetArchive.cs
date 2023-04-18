@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.IO;
-
-namespace HexaEngine.Core.IO.Assets
+﻿namespace HexaEngine.Core.IO.Assets
 {
     using K4os.Compression.LZ4;
     using K4os.Compression.LZ4.Streams;

@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Renderers
 {
     using HexaEngine.Core.Unsafes;
-    using System;
     using System.Collections.Concurrent;
 
     public class DrawQueue

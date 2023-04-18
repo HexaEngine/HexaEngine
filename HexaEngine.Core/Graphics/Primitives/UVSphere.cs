@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
     using System;
-    using System.Numerics;
 
     public class UVSphere : Primitive<Vertex>
     {

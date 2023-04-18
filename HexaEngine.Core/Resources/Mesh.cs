@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
 

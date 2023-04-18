@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Core.Lights.Structs
 {
-    using System.Numerics;
     using HexaEngine.Core.Lights.Types;
+    using System.Numerics;
 
     public struct DirectionalLightData
     {

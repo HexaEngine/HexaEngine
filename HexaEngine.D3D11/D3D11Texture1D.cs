@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
-    using System;
     using ResourceDimension = Core.Graphics.ResourceDimension;
 
     public unsafe class D3D11Texture1D : DeviceChildBase, ITexture1D

@@ -1,6 +1,4 @@
-﻿using HexaEngine.Core.Graphics.Textures;
-
-namespace HexaEngine.D3D11
+﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.DirectXTex;

@@ -4,7 +4,6 @@
     using HexaEngine.Mathematics;
     using System.IO;
     using System.Numerics;
-    using System.Runtime.InteropServices;
     using System.Text;
 
     public unsafe struct BoneData

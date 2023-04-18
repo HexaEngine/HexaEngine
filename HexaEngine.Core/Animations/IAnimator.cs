@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Animations
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
 
     public interface IAnimator : IComponent

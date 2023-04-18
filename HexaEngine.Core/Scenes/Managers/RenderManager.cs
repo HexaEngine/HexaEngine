@@ -4,9 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Renderers;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public enum RenderQueueIndex
     {

@@ -8,9 +8,7 @@ namespace HexaEngine.Scenes.Managers
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using Silk.NET.Assimp;
     using System.Numerics;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
     using Texture = Texture;
 
     public struct SelectionData

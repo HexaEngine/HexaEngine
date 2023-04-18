@@ -4,7 +4,6 @@
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
     using Silk.NET.GLFW;
-    using System.Text;
 
     public unsafe class GlfwWindow
     {

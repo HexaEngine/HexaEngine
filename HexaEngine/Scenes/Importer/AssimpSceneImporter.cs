@@ -6,12 +6,12 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core;
     using HexaEngine.Core.Animations;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.Core.Extensions;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Components.Renderer;
@@ -21,16 +21,15 @@ namespace HexaEngine.Scenes.Importer
     using System.Runtime.InteropServices;
     using System.Text;
     using Animation = Core.Animations.Animation;
+    using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
     using AssimpScene = Silk.NET.Assimp.Scene;
     using BlendMode = Silk.NET.Assimp.BlendMode;
-    using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
     using MaterialProperty = Core.IO.Materials.MaterialProperty;
     using Scene = Scene;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
     using TextureOp = Silk.NET.Assimp.TextureOp;
     using TextureType = Silk.NET.Assimp.TextureType;
-    using HexaEngine.Core.Graphics.Reflection;
 
     public struct BoneInfo
     {

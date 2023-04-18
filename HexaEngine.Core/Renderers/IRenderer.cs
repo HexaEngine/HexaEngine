@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
-    using HexaEngine.Core.Scenes;
 
     public interface IRenderer
     {

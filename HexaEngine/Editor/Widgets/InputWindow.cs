@@ -4,7 +4,6 @@
     using HexaEngine.Core.Input;
     using ImGuiNET;
     using ImPlotNET;
-    using System;
     using System.Numerics;
 
     public class InputWindow : ImGuiWindow

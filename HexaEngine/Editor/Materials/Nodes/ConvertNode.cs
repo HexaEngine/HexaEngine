@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.Materials.Nodes
 {
+    using HexaEngine.Editor.NodeEditor;
     using ImGuiNET;
     using ImNodesNET;
-    using HexaEngine.Editor.NodeEditor;
 
     public class ConvertNode : Node
     {

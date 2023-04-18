@@ -1,13 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using BepuPhysics.Collidables;
     using HexaEngine.Core.Animations;
-    using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Resources;
-    using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
 
     public class AnimationManager
     {

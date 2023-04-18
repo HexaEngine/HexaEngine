@@ -1,10 +1,9 @@
-﻿using BepuUtilities;
-using BepuPhysics;
-using System.Numerics;
-using System;
-using System.Runtime.CompilerServices;
+﻿using BepuPhysics;
 using BepuPhysics.Constraints;
+using BepuUtilities;
 using BepuUtilities.Memory;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 using static BepuUtilities.GatherScatter;
 
 namespace HexaEngine.Core.Physics.Characters

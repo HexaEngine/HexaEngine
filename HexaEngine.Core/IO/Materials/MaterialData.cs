@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
-    using System;
     using System.Text;
 
     public class MaterialData

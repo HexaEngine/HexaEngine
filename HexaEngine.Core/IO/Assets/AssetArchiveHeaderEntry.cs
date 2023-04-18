@@ -1,8 +1,5 @@
-﻿using HexaEngine.Core.IO;
-
-namespace HexaEngine.Core.IO.Assets
+﻿namespace HexaEngine.Core.IO.Assets
 {
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
     using System.Buffers.Binary;

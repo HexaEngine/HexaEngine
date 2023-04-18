@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
 
 namespace HexaEngine.Effects
 {

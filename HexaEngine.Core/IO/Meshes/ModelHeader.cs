@@ -12,7 +12,7 @@
         public Endianness Endianness;
         public Encoding Encoding;
         public Compression Compression;
-        public ulong MeshCount;    
+        public ulong MeshCount;
         public ulong ContentStart;
 
         public void Read(Stream stream)

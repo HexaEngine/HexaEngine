@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Culling
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;

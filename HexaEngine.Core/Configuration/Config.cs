@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
     using HexaEngine.Core.Input;
-    using Newtonsoft.Json.Linq;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Numerics;

@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    using System;
-
     public static class Helper
     {
         public static Silk.NET.SDL.KeyCode ConvertBack(Key code)

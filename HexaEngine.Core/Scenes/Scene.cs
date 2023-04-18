@@ -9,7 +9,6 @@
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Physics.Characters;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Scenes.Systems;
     using Newtonsoft.Json;

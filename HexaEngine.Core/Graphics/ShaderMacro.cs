@@ -88,13 +88,13 @@
             return idx;
         }
 
-        public  void Write(Stream stream, Encoding encoder, Endianness endianness)
+        public void Write(Stream stream, Encoding encoder, Endianness endianness)
         {
             stream.WriteString(Name, encoder, endianness);
             stream.WriteString(Definition, encoder, endianness);
         }
 
-        public  void Read(Stream stream, Encoding decoder, Endianness endianness)
+        public void Read(Stream stream, Encoding decoder, Endianness endianness)
         {
             Name = stream.ReadString(decoder, endianness);
             Definition = stream.ReadString(decoder, endianness);

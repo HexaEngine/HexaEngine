@@ -9,7 +9,6 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
-    using Silk.NET.Core.Native;
     using System.Collections.Generic;
     using System.Numerics;
 
