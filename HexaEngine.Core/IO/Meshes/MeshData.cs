@@ -649,12 +649,7 @@
         {
             var faces = IndicesCount / 3;
             UnsafeList<Vector3> tempNormal = new();
-            Vector3 normal;
-            Vector3 edge1, edge2;
-
             UnsafeList<Vector3> tempTangent = new();
-            Vector3 tangent;
-            float tcU1, tcV1, tcU2, tcV2;
 
             for (uint i = 0; i < faces; i++)
             {
@@ -663,30 +658,33 @@
                 var vtxP2 = Positions[face.Index2];
                 var vtxP3 = Positions[face.Index3];
 
-                edge1 = vtxP2 - vtxP1;
-                edge2 = vtxP3 - vtxP1;
+                Vector3 v = vtxP2 - vtxP1;
+                Vector3 w = vtxP3 - vtxP1;
 
-                normal = Vector3.Normalize(Vector3.Cross(edge1, edge2));
+                Vector3 normal = Vector3.Normalize(Vector3.Cross(v, w));
 
                 tempNormal.Add(normal);
 
-                var vtxUV0 = UVs[face.Index1];
-                var vtxUV1 = UVs[face.Index2];
-                var vtxUV2 = UVs[face.Index3];
+                float sx = UVs[face.Index2].X - UVs[face.Index1].X, sy = UVs[face.Index2].Y - UVs[face.Index1].Y;
+                float tx = UVs[face.Index3].X - UVs[face.Index1].X, ty = UVs[face.Index3].Y - UVs[face.Index1].Y;
 
-                //Find first texture coordinate edge 2d vector
-                tcU1 = vtxUV0.X - vtxUV2.X;
-                tcV1 = vtxUV0.Y - vtxUV2.Y;
+                float dirCorrection = (tx * sy - ty * sx) < 0.0f ? -1.0f : 1.0f;
 
-                //Find second texture coordinate edge 2d vector
-                tcU2 = vtxUV2.X - vtxUV1.X;
-                tcV2 = vtxUV2.Y - vtxUV1.Y;
+                if (sx * ty == sy * tx)
+                {
+                    sx = 0.0f;
+                    sy = 1.0f;
+                    tx = 1.0f;
+                    ty = 0.0f;
+                }
 
-                //Find tangent using both tex coord edges and position edges
-                tangent = new Vector3((tcV1 * edge1.X - tcV2 * edge2.X) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
-                                      (tcV1 * edge1.Y - tcV2 * edge2.Y) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
-                                      (tcV1 * edge1.Z - tcV2 * edge2.Z) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)));
-
+                Vector3 tangent, bitangent;
+                tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
+                tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
+                tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
+                bitangent.X = (-w.X * sx + v.X * tx) * dirCorrection;
+                bitangent.Y = (-w.Y * sx + v.Y * tx) * dirCorrection;
+                bitangent.Z = (-w.Z * sx + v.Z * tx) * dirCorrection;
                 tempTangent.Add(tangent);
             }
 
