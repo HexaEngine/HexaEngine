@@ -7,6 +7,8 @@ namespace HexaEngine.Scenes.Importer
     using HexaEngine.Core.Animations;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Extensions;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Lights.Types;
@@ -40,6 +42,15 @@ namespace HexaEngine.Scenes.Importer
         public Matrix4x4 Offset;
     }
 
+    [Flags]
+    public enum TexPostProcessSteps
+    {
+        None = 0,
+        Scale = 1,
+        Convert = 2,
+        GenerateMips = 4,
+    }
+
     public class AssimpSceneImporter
     {
         private static readonly Assimp assimp = Assimp.GetApi();
@@ -53,8 +64,11 @@ namespace HexaEngine.Scenes.Importer
         private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
         private readonly Dictionary<string, Animation> animationsT = new();
 
+        private string dir;
         private List<GameObject> nodes;
         private List<ModelFile> models;
+        private List<MaterialLibrary> libraries;
+        private List<string> textures;
         private MeshData[] meshes;
         private MaterialData[] materials;
         private Animation[] animations;
@@ -69,31 +83,44 @@ namespace HexaEngine.Scenes.Importer
 
         public MaterialData[] Materials => materials;
 
+        public IReadOnlyList<string> Textures => textures;
+
         public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FindInvalidData;
+
+        public TexPostProcessSteps TexPostProcessSteps = TexPostProcessSteps.None;
+
+        public TexFileFormat TexFileFormat;
+
+        public Format TexFormat;
+
+        public float TexScaleFactor = 1;
+
+        public TexCompressFlags TexCompressFlags = TexCompressFlags.Parallel;
 
         public Task LoadAsync(string path)
         {
             return Task.Run(() => Load(path));
         }
 
-        public Task ImportAsync(Scene scene)
+        public Task ImportAsync(IGraphicsDevice device, Scene scene)
         {
-            return Task.Run(() => Import(scene));
+            return Task.Run(() => Import(device, scene));
         }
 
-        public Task ImportAsync()
+        public Task ImportAsync(IGraphicsDevice device)
         {
-            return Task.Run(() => Import(SceneManager.Current));
+            return Task.Run(() => Import(device, SceneManager.Current));
         }
 
         public unsafe void Load(string path)
         {
+            dir = Path.GetDirectoryName(path);
             var name = "HexaEngine".ToUTF8();
             LogStream stream = new(new(Log), name);
             assimp.AttachLogStream(&stream);
             assimp.EnableVerboseLogging(Assimp.True);
 
-            scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportTextFlavour | ImporterFlags.SupportCompressedFlavour));
+            scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour));
             assimp.ApplyPostProcessing(scene, (uint)PostProcessSteps);
 
             LoadSceneGraph(scene);
@@ -145,21 +172,47 @@ namespace HexaEngine.Scenes.Importer
                 ModelFile source = models[i];
                 for (ulong j = 0; j < source.Header.MeshCount; j++)
                 {
-                    MaterialData mat = source.GetMaterial(j);
-                    if (mat.Name == oldName)
+                    MeshData data = source.GetMesh(j);
+                    if (data.MaterialName == oldName)
                     {
-                        mat.Name = newName;
-                        source.SetMaterial(j, mat);
+                        source.GetMesh(j).MaterialName = newName;
                     }
                 }
             }
+
             material.Name = newName;
             return true;
         }
 
-        public unsafe void Import(Scene scene)
+        public bool ChangeNameOfMaterialLibrary(MaterialLibrary library, string newName)
         {
-            InjectResources(scene);
+            return false;
+        }
+
+        public bool ChangeNameOfTexture(string oldName, string newName)
+        {
+            if (textures.Contains(newName))
+                return false;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                var mat = materials[i];
+                for (int j = 0; j < mat.Textures.Length; j++)
+                {
+                    if (mat.Textures[j].File == oldName)
+                    {
+                        mat.Textures[j].File = newName;
+                    }
+                }
+            }
+
+            var index = textures.IndexOf(oldName);
+            textures[index] = newName;
+            return true;
+        }
+
+        public unsafe void Import(IGraphicsDevice device, Scene scene)
+        {
+            InjectResources(device, device.TextureLoader);
 
             if (root.Name == "ROOT")
                 scene.Merge(root);
@@ -182,34 +235,13 @@ namespace HexaEngine.Scenes.Importer
             }
         }
 
-        private unsafe void LoadTextures(AssimpScene* scene)
-        {
-            AssimpTexture[] textures = new AssimpTexture[scene->MNumTextures];
-            for (int i = 0; i < scene->MNumTextures; i++)
-            {
-                var tex = scene->MTextures[i];
-                textures[i] = new()
-                {
-                    Data = tex->PcData,
-                    Format = new Span<int>(tex->AchFormatHint, 1)[0],
-                    Height = (int)tex->MHeight,
-                    Width = (int)tex->MWidth
-                };
-            }
-        }
-
         private unsafe void LoadMaterials(AssimpScene* scene)
         {
+            textures = new();
             materials = new MaterialData[scene->MNumMaterials];
             for (int i = 0; i < scene->MNumMaterials; i++)
             {
                 Material* mat = scene->MMaterials[i];
-                Dictionary<(string, object), object> props = new();
-                AssimpMaterialTexture[] texs = new AssimpMaterialTexture[(int)TextureType.Transmission];
-                for (int j = 0; j < texs.Length; j++)
-                {
-                    texs[j].Type = (TextureType)j;
-                }
 
                 var material = materials[i] = new MaterialData();
 
@@ -226,7 +258,7 @@ namespace HexaEngine.Scenes.Importer
 
                     static ref MaterialTexture FindOrCreate(List<MaterialTexture> textures, TextureType type)
                     {
-                        var t = AssimpMaterialTexture.Convert(type);
+                        var t = Convert(type);
                         for (int i = 0; i < textures.Count; i++)
                         {
                             var tex = textures[i];
@@ -287,7 +319,7 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyRefracti:
-                            properties.Add(new("Refractive", MaterialPropertyType.Refractive, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                            properties.Add(new("IOR", MaterialPropertyType.IOR, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
                             break;
 
                         case Assimp.MatkeyColorDiffuse:
@@ -396,7 +428,9 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTextureBase:
-                            FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            var file = FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            if (!this.textures.Contains(file))
+                                this.textures.Add(file);
                             break;
 
                         case Assimp.MatkeyUvwsrcBase:
@@ -404,7 +438,7 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTexopBase:
-                            FindOrCreate(textures, (TextureType)semantic).Op = AssimpMaterialTexture.Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                            FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyMappingBase:
@@ -412,15 +446,15 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTexblendBase:
-                            FindOrCreate(textures, (TextureType)semantic).Blend = AssimpMaterialTexture.Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                            FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyMappingmodeUBase:
-                            FindOrCreate(textures, (TextureType)semantic).U = AssimpMaterialTexture.Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                            FindOrCreate(textures, (TextureType)semantic).U = Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyMappingmodeVBase:
-                            FindOrCreate(textures, (TextureType)semantic).V = AssimpMaterialTexture.Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                            FindOrCreate(textures, (TextureType)semantic).V = Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyTexmapAxisBase:
@@ -430,7 +464,7 @@ namespace HexaEngine.Scenes.Importer
                             break;
 
                         case Assimp.MatkeyTexflagsBase:
-                            FindOrCreate(textures, (TextureType)semantic).Flags = AssimpMaterialTexture.Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                            FindOrCreate(textures, (TextureType)semantic).Flags = Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
                             break;
 
                         case Assimp.MatkeyShaderVertex:
@@ -692,11 +726,11 @@ namespace HexaEngine.Scenes.Importer
                 }
                 if (weightList.Count > 0)
                 {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)weightList.Count, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)weightList.Count, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
                 }
                 else
                 {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex], box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
                 }
 
                 meshesT.Add(msh, meshes[i]);
@@ -707,6 +741,7 @@ namespace HexaEngine.Scenes.Importer
 
         private unsafe void LoadModels(AssimpScene* scene)
         {
+            libraries = new();
             models = new();
             for (int x = 0; x < nodes.Count; x++)
             {
@@ -715,11 +750,17 @@ namespace HexaEngine.Scenes.Importer
                 if (p->MNumMeshes == 0)
                     continue;
                 MeshData[] meshes = new MeshData[p->MNumMeshes];
+                MaterialData[] materials = new MaterialData[p->MNumMeshes];
                 for (int i = 0; i < p->MNumMeshes; i++)
                 {
+                    materials[i] = this.materials[scene->MMeshes[p->MMeshes[i]]->MMaterialIndex];
                     meshes[i] = this.meshes[(int)p->MMeshes[i]];
                 }
-                ModelFile model = new(p->MName, meshes);
+
+                MaterialLibrary library = new(p->MName, materials);
+                libraries.Add(library);
+
+                ModelFile model = new(p->MName, library.Name + ".matlib", meshes);
                 models.Add(model);
                 modelsT.Add(p, model);
             }
@@ -784,6 +825,7 @@ namespace HexaEngine.Scenes.Importer
 
                     case LightSourceType.Area:
                         throw new NotSupportedException();
+
                     default:
                         throw new NotSupportedException();
                 }
@@ -855,17 +897,68 @@ namespace HexaEngine.Scenes.Importer
             return sceneNode;
         }
 
-        private unsafe void InjectResources(Scene scene)
+        private static void SwapImage(ref IScratchImage before, IScratchImage after)
         {
+            before.Dispose();
+            before = after;
+        }
+
+        private unsafe void InjectResources(IGraphicsDevice device, ITextureLoader textureLoader)
+        {
+            for (int i = 0; i < textures.Count; i++)
+            {
+                var srcFile = Path.Combine(dir, textures[i]);
+                var dest = Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "textures");
+
+                if (TexPostProcessSteps == TexPostProcessSteps.None)
+                {
+                    var destFile = Path.Combine(dest, textures[i]);
+                    Directory.CreateDirectory(Path.GetDirectoryName(destFile));
+                    System.IO.File.Copy(srcFile, destFile);
+                }
+                else
+                {
+                    IScratchImage image = textureLoader.LoadFormFile(srcFile);
+
+                    if ((TexPostProcessSteps & TexPostProcessSteps.Scale) != 0)
+                    {
+                        SwapImage(ref image, image.Resize(TexScaleFactor, TexFilterFlags.Default));
+                    }
+
+                    if ((TexPostProcessSteps & TexPostProcessSteps.GenerateMips) != 0)
+                    {
+                        SwapImage(ref image, image.GenerateMipMaps(TexFilterFlags.Default));
+                    }
+
+                    if ((TexPostProcessSteps & TexPostProcessSteps.Convert) != 0)
+                    {
+                        if (FormatHelper.IsCompressed(TexFormat))
+                        {
+                            SwapImage(ref image, image.Compress(device, TexFormat, TexCompressFlags));
+                        }
+                        else
+                        {
+                            SwapImage(ref image, image.Convert(TexFormat, TexFilterFlags.Default));
+                        }
+                    }
+
+                    var newName = Path.GetFileNameWithoutExtension(textures[i]) + $".{TexFileFormat.ToString().ToLowerInvariant()}";
+                    ChangeNameOfTexture(textures[i], newName);
+                    var destFile = Path.Combine(dest, newName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(destFile));
+                    image.SaveToFile(destFile, TexFileFormat, 0);
+                    image.Dispose();
+                }
+            }
+
             for (int i = 0; i < models.Count; i++)
             {
                 models[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"), Encoding.UTF8);
             }
 
-            for (int i = 0; i < models.Count; i++)
+            for (int i = 0; i < libraries.Count; i++)
             {
-                MaterialLibrary library = new(models[i].Name, models[i].GetMaterials());
-                library.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials"), Encoding.UTF8);
+                libraries[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials"), Encoding.UTF8);
             }
 
             for (int i = 0; i < animations.Length; i++)
@@ -896,180 +989,82 @@ namespace HexaEngine.Scenes.Importer
             ImGuiConsole.Log(msg);
         }
 
-        public struct AssimpMaterial
+        public static Core.IO.Materials.TextureType Convert(TextureType type)
         {
-            public string Name = string.Empty;
-            public bool Twosided = false;
-            public ShadingMode ShadingModel = ShadingMode.Gouraud;
-            public bool EnableWireframe = false;
-            public bool BlendFunc = false;
-            public float Opacity = 1;
-            public float Transparencyfactor = 1;
-            public float Bumpscaling = 1;
-            public float Shininess = 0;
-            public float Reflectivity = 0;
-            public float ShininessStrength = 1;
-            public float Refracti = 1;
-            public Vector3 ColorDiffuse = Vector3.Zero;
-            public Vector3 ColorAmbient = Vector3.Zero;
-            public Vector3 ColorSpecular = Vector3.Zero;
-            public Vector3 ColorEmissive = Vector3.Zero;
-            public Vector3 ColorTransparent = Vector3.Zero;
-            public Vector3 ColorReflective = Vector3.Zero;
-
-            public bool UseColorMap = false;
-            public Vector3 BaseColor = Vector3.Zero;
-            public bool UseMetallicMap = false;
-            public float MetallicFactor = 0f;
-            public bool UseRoughnessMap = false;
-            public float RoughnessFactor = 0.5f;
-            public float AnisotropyFactor = 0f;
-            public float SpecularFactor = 0.5f;
-            public float GlossinessFactor = 0f;
-            public float SheenColorFactor = 0f;
-            public float SheenRoughnessFactor = 0.5f;
-            public float ClearcoatFactor = 0f;
-            public float ClearcoatRoughnessFactor = 0.03f;
-            public float TransmissionFactor = 0f;
-            public float VolumeThicknessFactor = 0;
-            public float VolumeAttenuationDistance = 0;
-            public Vector3 VolumeAttenuationColor = Vector3.Zero;
-            public bool UseEmissiveMap = false;
-            public float EmissiveIntensity = 1;
-            public bool UseAOMap = false;
-            public AssimpMaterialTexture[] Textures = Array.Empty<AssimpMaterialTexture>();
-
-            public AssimpMaterial()
+            return type switch
             {
-            }
+                TextureType.None => Core.IO.Materials.TextureType.None,
+                TextureType.Diffuse => Core.IO.Materials.TextureType.Diffuse,
+                TextureType.Specular => Core.IO.Materials.TextureType.Specular,
+                TextureType.Ambient => Core.IO.Materials.TextureType.Ambient,
+                TextureType.Emissive => Core.IO.Materials.TextureType.Emissive,
+                TextureType.Height => Core.IO.Materials.TextureType.Height,
+                TextureType.Normals => Core.IO.Materials.TextureType.Normal,
+                TextureType.Shininess => Core.IO.Materials.TextureType.Shininess,
+                TextureType.Opacity => Core.IO.Materials.TextureType.Opacity,
+                TextureType.Displacement => Core.IO.Materials.TextureType.Displacement,
+                TextureType.Lightmap => Core.IO.Materials.TextureType.AmbientOcclusionRoughnessMetalness,
+                TextureType.Reflection => Core.IO.Materials.TextureType.Reflection,
+                TextureType.BaseColor => Core.IO.Materials.TextureType.BaseColor,
+                TextureType.NormalCamera => Core.IO.Materials.TextureType.NormalCamera,
+                TextureType.EmissionColor => Core.IO.Materials.TextureType.EmissionColor,
+                TextureType.Metalness => Core.IO.Materials.TextureType.Metalness,
+                TextureType.DiffuseRoughness => Core.IO.Materials.TextureType.Roughness,
+                TextureType.AmbientOcclusion => Core.IO.Materials.TextureType.AmbientOcclusion,
+                TextureType.Sheen => Core.IO.Materials.TextureType.Sheen,
+                TextureType.Clearcoat => Core.IO.Materials.TextureType.Clearcoat,
+                TextureType.Transmission => Core.IO.Materials.TextureType.Transmission,
+                TextureType.Unknown => Core.IO.Materials.TextureType.RoughnessMetalness,
+                _ => throw new NotImplementedException(),
+            };
         }
 
-        public struct AssimpMaterialTexture
+        public static Core.IO.Materials.BlendMode Convert(BlendMode mode)
         {
-            public TextureType Type;
-            public string File;
-            public BlendMode Blend;
-            public TextureOp Op;
-            public int Mapping;
-            public int UVWSrc;
-            public TextureMapMode U;
-            public TextureMapMode V;
-            public TextureFlags Flags;
-
-            public static implicit operator MaterialTexture(AssimpMaterialTexture texture)
+            return mode switch
             {
-                return new MaterialTexture(Convert(texture.Type),
-                                           texture.File ?? string.Empty,
-                                           Convert(texture.Blend),
-                                           Convert(texture.Op),
-                                           texture.Mapping,
-                                           texture.UVWSrc,
-                                           Convert(texture.U),
-                                           Convert(texture.V),
-                                           Convert(texture.Flags));
-            }
-
-            public static Core.IO.Materials.TextureType Convert(TextureType type)
-            {
-                return type switch
-                {
-                    TextureType.None => Core.IO.Materials.TextureType.None,
-                    TextureType.Diffuse => Core.IO.Materials.TextureType.Diffuse,
-                    TextureType.Specular => Core.IO.Materials.TextureType.Specular,
-                    TextureType.Ambient => Core.IO.Materials.TextureType.Ambient,
-                    TextureType.Emissive => Core.IO.Materials.TextureType.Emissive,
-                    TextureType.Height => Core.IO.Materials.TextureType.Height,
-                    TextureType.Normals => Core.IO.Materials.TextureType.Normal,
-                    TextureType.Shininess => Core.IO.Materials.TextureType.Shininess,
-                    TextureType.Opacity => Core.IO.Materials.TextureType.Opacity,
-                    TextureType.Displacement => Core.IO.Materials.TextureType.Displacement,
-                    TextureType.Lightmap => Core.IO.Materials.TextureType.AmbientOcclusionRoughnessMetalness,
-                    TextureType.Reflection => Core.IO.Materials.TextureType.Reflection,
-                    TextureType.BaseColor => Core.IO.Materials.TextureType.BaseColor,
-                    TextureType.NormalCamera => Core.IO.Materials.TextureType.NormalCamera,
-                    TextureType.EmissionColor => Core.IO.Materials.TextureType.EmissionColor,
-                    TextureType.Metalness => Core.IO.Materials.TextureType.Metalness,
-                    TextureType.DiffuseRoughness => Core.IO.Materials.TextureType.Roughness,
-                    TextureType.AmbientOcclusion => Core.IO.Materials.TextureType.AmbientOcclusion,
-                    TextureType.Sheen => Core.IO.Materials.TextureType.Sheen,
-                    TextureType.Clearcoat => Core.IO.Materials.TextureType.Clearcoat,
-                    TextureType.Transmission => Core.IO.Materials.TextureType.Transmission,
-                    TextureType.Unknown => Core.IO.Materials.TextureType.RoughnessMetalness,
-                    _ => throw new NotImplementedException(),
-                };
-            }
-
-            public static Core.IO.Materials.BlendMode Convert(BlendMode mode)
-            {
-                return mode switch
-                {
-                    BlendMode.Default => Core.IO.Materials.BlendMode.Default,
-                    BlendMode.Additive => Core.IO.Materials.BlendMode.Additive,
-                    _ => throw new NotImplementedException(),
-                };
-            }
-
-            public static Core.IO.Materials.TextureOp Convert(TextureOp op)
-            {
-                return op switch
-                {
-                    TextureOp.Multiply => Core.IO.Materials.TextureOp.Multiply,
-                    TextureOp.Add => Core.IO.Materials.TextureOp.Add,
-                    TextureOp.Subtract => Core.IO.Materials.TextureOp.Subtract,
-                    TextureOp.Divide => Core.IO.Materials.TextureOp.Divide,
-                    TextureOp.SmoothAdd => Core.IO.Materials.TextureOp.SmoothAdd,
-                    TextureOp.SignedAdd => Core.IO.Materials.TextureOp.SignedAdd,
-                    _ => throw new NotImplementedException(),
-                };
-            }
-
-            public static Core.IO.Materials.TextureMapMode Convert(TextureMapMode mode)
-            {
-                return mode switch
-                {
-                    TextureMapMode.Wrap => Core.IO.Materials.TextureMapMode.Wrap,
-                    TextureMapMode.Clamp => Core.IO.Materials.TextureMapMode.Clamp,
-                    TextureMapMode.Decal => Core.IO.Materials.TextureMapMode.Decal,
-                    TextureMapMode.Mirror => Core.IO.Materials.TextureMapMode.Mirror,
-                    _ => throw new NotImplementedException(),
-                };
-            }
-
-            public static Core.IO.Materials.TextureFlags Convert(TextureFlags flags)
-            {
-                return flags switch
-                {
-                    0 => Core.IO.Materials.TextureFlags.None,
-                    TextureFlags.Invert => Core.IO.Materials.TextureFlags.Invert,
-                    TextureFlags.UseAlpha => Core.IO.Materials.TextureFlags.UseAlpha,
-                    TextureFlags.IgnoreAlpha => Core.IO.Materials.TextureFlags.IgnoreAlpha,
-                    _ => throw new NotImplementedException(),
-                };
-            }
+                BlendMode.Default => Core.IO.Materials.BlendMode.Default,
+                BlendMode.Additive => Core.IO.Materials.BlendMode.Additive,
+                _ => throw new NotImplementedException(),
+            };
         }
 
-        public unsafe struct AssimpTexture
+        public static Core.IO.Materials.TextureOp Convert(TextureOp op)
         {
-            public int Format;
-            public int Width;
-            public int Height;
-            public void* Data;
+            return op switch
+            {
+                TextureOp.Multiply => Core.IO.Materials.TextureOp.Multiply,
+                TextureOp.Add => Core.IO.Materials.TextureOp.Add,
+                TextureOp.Subtract => Core.IO.Materials.TextureOp.Subtract,
+                TextureOp.Divide => Core.IO.Materials.TextureOp.Divide,
+                TextureOp.SmoothAdd => Core.IO.Materials.TextureOp.SmoothAdd,
+                TextureOp.SignedAdd => Core.IO.Materials.TextureOp.SignedAdd,
+                _ => throw new NotImplementedException(),
+            };
         }
 
-        public unsafe struct AssimpBone
+        public static Core.IO.Materials.TextureMapMode Convert(TextureMapMode mode)
         {
-            public string Name;
-            public Core.Meshes.VertexWeight[] Weights;
-            public Matrix4x4 Offset;
-            public Node* Node;
-
-            public AssimpBone(string name, Core.Meshes.VertexWeight[] weights, Matrix4x4 offset, Node* node)
+            return mode switch
             {
-                Name = name;
-                Weights = weights;
-                Offset = offset;
-                Node = node;
-            }
+                TextureMapMode.Wrap => Core.IO.Materials.TextureMapMode.Wrap,
+                TextureMapMode.Clamp => Core.IO.Materials.TextureMapMode.Clamp,
+                TextureMapMode.Decal => Core.IO.Materials.TextureMapMode.Decal,
+                TextureMapMode.Mirror => Core.IO.Materials.TextureMapMode.Mirror,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static Core.IO.Materials.TextureFlags Convert(TextureFlags flags)
+        {
+            return flags switch
+            {
+                0 => Core.IO.Materials.TextureFlags.None,
+                TextureFlags.Invert => Core.IO.Materials.TextureFlags.Invert,
+                TextureFlags.UseAlpha => Core.IO.Materials.TextureFlags.UseAlpha,
+                TextureFlags.IgnoreAlpha => Core.IO.Materials.TextureFlags.IgnoreAlpha,
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }

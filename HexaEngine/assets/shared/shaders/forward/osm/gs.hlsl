@@ -1,8 +1,10 @@
 #include "defs.hlsl"
 
-cbuffer LIGHT_VIEW_PROJECTION : register(b0)
+cbuffer LIGHT_VIEW_PROJECTION : register(b1)
 {
 	matrix g_lightSpace[6];
+    float3 Position;
+    float FarPlane;
 };
 
 [maxvertexcount(3 * 6)]
@@ -14,9 +16,10 @@ void main(triangle GeometryInput input[3], inout TriangleStream<PixelInput> triS
 	{
 		for (int j = 0; j < 3; ++j)
 		{
-			output.shadowCoord = input[j].position;
-			output.position = mul(input[j].position, g_lightSpace[i]);
-			output.rtIndex = i;
+            output.depth = length(input[j].pos.xyz - Position) / FarPlane;
+            output.position = mul(float4(input[j].pos, 1), g_lightSpace[i]);
+            output.rtvIndex = i;
+			
 			triStream.Append(output);
 		}
 		triStream.RestartStrip();

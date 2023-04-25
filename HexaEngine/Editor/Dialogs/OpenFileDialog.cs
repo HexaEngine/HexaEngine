@@ -10,8 +10,8 @@ namespace HexaEngine.Editor.Dialogs
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         public string RootFolder;
-        public string currentFolder;
-        public string SelectedFile = string.Empty;
+        private string currentFolder;
+        private string selectedFile = string.Empty;
         public List<string> AllowedExtensions = new();
         public bool OnlyAllowFolders;
         public bool OnlyAllowFilteredExtensions;
@@ -23,11 +23,13 @@ namespace HexaEngine.Editor.Dialogs
         private struct Item
         {
             public string Path;
+            public string Filename;
             public string Name;
 
-            public Item(string name, string path)
+            public Item(string name, string filename, string path)
             {
                 Name = name;
+                Filename = filename;
                 Path = path;
             }
         }
@@ -49,10 +51,10 @@ namespace HexaEngine.Editor.Dialogs
                     startingPath = AppContext.BaseDirectory;
             }
 
+            currentDir = new DirectoryInfo(startingPath);
             RootFolder = startingPath;
             CurrentFolder = startingPath;
             OnlyAllowFolders = false;
-            currentDir = new DirectoryInfo(CurrentFolder);
         }
 
 #pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
@@ -71,10 +73,10 @@ namespace HexaEngine.Editor.Dialogs
                     startingPath = AppContext.BaseDirectory;
             }
 
+            currentDir = new DirectoryInfo(startingPath);
             RootFolder = startingPath;
             CurrentFolder = startingPath;
             OnlyAllowFolders = false;
-            currentDir = new DirectoryInfo(CurrentFolder);
         }
 
 #pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
@@ -93,10 +95,6 @@ namespace HexaEngine.Editor.Dialogs
                     startingPath = AppContext.BaseDirectory;
             }
 
-            RootFolder = startingPath;
-            CurrentFolder = startingPath;
-            OnlyAllowFolders = false;
-
             if (searchFilter != null)
             {
                 if (AllowedExtensions != null)
@@ -107,10 +105,25 @@ namespace HexaEngine.Editor.Dialogs
                 AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
             }
 
-            currentDir = new DirectoryInfo(CurrentFolder);
+            currentDir = new DirectoryInfo(startingPath);
+            RootFolder = startingPath;
+            CurrentFolder = startingPath;
+            OnlyAllowFolders = false;
         }
 
         public bool Shown => shown;
+
+        public string FullPath
+        {
+            get => Path.Combine(currentFolder, selectedFile);
+            set
+            {
+                currentFolder = Path.GetDirectoryName(value) ?? string.Empty;
+                selectedFile = Path.GetFileName(value);
+            }
+        }
+
+        public string SelectedFile { get => selectedFile; set => selectedFile = value; }
 
         public string CurrentFolder
         {
@@ -229,11 +242,11 @@ namespace HexaEngine.Editor.Dialogs
                         {
                             var file = files[i];
 
-                            bool isSelected = SelectedFile == file.Path;
+                            bool isSelected = selectedFile == file.Path;
                             if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.DontClosePopups))
-                                SelectedFile = file.Path;
+                                selectedFile = file.Filename;
 
-                            if (ImGui.IsMouseDoubleClicked(0))
+                            if (ImGui.IsItemClicked(0) && ImGui.IsMouseDoubleClicked(0))
                             {
                                 Result = OpenFileResult.Ok;
                                 ImGui.EndChild();
@@ -246,7 +259,7 @@ namespace HexaEngine.Editor.Dialogs
                 }
                 ImGui.EndChild();
 
-                ImGui.InputText("Selected", ref SelectedFile, 1024);
+                ImGui.InputText("Selected", ref selectedFile, 1024);
 
                 ImGui.SameLine();
                 if (ImGui.Button("Cancel"))
@@ -263,13 +276,13 @@ namespace HexaEngine.Editor.Dialogs
                     if (ImGui.Button("Open"))
                     {
                         Result = OpenFileResult.Ok;
-                        SelectedFile = CurrentFolder;
+                        selectedFile = CurrentFolder;
                         ImGui.End();
                         shown = false;
                         return true;
                     }
                 }
-                else if (SelectedFile != null)
+                else if (selectedFile != null)
                 {
                     ImGui.SameLine();
                     if (ImGui.Button("Open"))
@@ -349,7 +362,7 @@ namespace HexaEngine.Editor.Dialogs
                     continue;
                 if (Directory.Exists(fse))
                 {
-                    dirs.Add(new("\xe8b7" + Path.GetFileName(fse), fse));
+                    dirs.Add(new("\xe8b7" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
                 }
                 else if (!OnlyAllowFolders)
                 {
@@ -357,11 +370,11 @@ namespace HexaEngine.Editor.Dialogs
                     {
                         var ext = Path.GetExtension(fse);
                         if (AllowedExtensions.Contains(ext))
-                            files.Add(new("\xe8a5" + Path.GetFileName(fse), fse));
+                            files.Add(new("\xe8a5" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
                     }
                     else
                     {
-                        files.Add(new("\xe8a5" + Path.GetFileName(fse), fse));
+                        files.Add(new("\xe8a5" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
                     }
                 }
             }

@@ -354,7 +354,7 @@ namespace HexaEngine.Rendering
                 Height = height,
                 MipLevels = 1,
                 ArraySize = 1,
-                Format = Format.RGBA8UNorm,
+                Format = Format.R8G8B8A8UNorm,
                 SampleDescription = new SampleDescription { Count = 1 },
                 Usage = Usage.Default,
                 BindFlags = BindFlags.ShaderResource,
@@ -372,7 +372,7 @@ namespace HexaEngine.Rendering
 
             var resViewDesc = new ShaderResourceViewDescription
             {
-                Format = Format.RGBA8UNorm,
+                Format = Format.R8G8B8A8UNorm,
                 ViewDimension = ShaderResourceViewDimension.Texture2D,
                 Texture2D = new Texture2DShaderResourceView { MipLevels = texDesc.MipLevels, MostDetailedMip = 0 }
             };
@@ -435,9 +435,9 @@ namespace HexaEngine.Rendering
 
             var inputElements = new[]
           {
-                new InputElementDescription( "POSITION", 0, Format.RG32Float,   0, 0, InputClassification.PerVertexData, 0 ),
-                new InputElementDescription( "TEXCOORD", 0, Format.RG32Float,   8,  0, InputClassification.PerVertexData, 0 ),
-                new InputElementDescription( "COLOR",    0, Format.RGBA8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
+                new InputElementDescription( "POSITION", 0, Format.R32G32Float,   0, 0, InputClassification.PerVertexData, 0 ),
+                new InputElementDescription( "TEXCOORD", 0, Format.R32G32Float,   8,  0, InputClassification.PerVertexData, 0 ),
+                new InputElementDescription( "COLOR",    0, Format.R8G8B8A8UNorm, 16, 0, InputClassification.PerVertexData, 0 ),
             };
 
             pipeline = device.CreateGraphicsPipeline(new()

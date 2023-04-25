@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
@@ -275,11 +274,11 @@ namespace HexaEngine.Effects
                 PixelShader = "effects/dof/ps.hlsl"
             }, macros);
 
-            outOfFocusTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            outOfFocusTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
             outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
 
-            bokehTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            bokehTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             bokehSRV = device.CreateShaderResourceView(bokehTex);
             bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
 
@@ -298,13 +297,13 @@ namespace HexaEngine.Effects
             outOfFocusTex.Dispose();
             outOfFocusSRV.Dispose();
             outOfFocusRTV.Dispose();
-            outOfFocusTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            outOfFocusTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
             outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
             bokehTex.Dispose();
             bokehSRV.Dispose();
             bokehRTV.Dispose();
-            bokehTex = device.CreateTexture2D(Format.RGBA32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            bokehTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             bokehSRV = device.CreateShaderResourceView(bokehTex);
             bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
         }

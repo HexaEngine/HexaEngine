@@ -1,52 +1,31 @@
 ﻿namespace TestApp
 {
-    using System.Diagnostics;
+    using System.Text;
 
-    public static class Program
+    public static partial class Program
     {
-        public static async Task Main()
+        public static void Main()
         {
-            ProcessStartInfo psi = new("cmd.exe");
-            psi.RedirectStandardError = true;
-            psi.RedirectStandardInput = true;
-            psi.RedirectStandardOutput = true;
-            psi.CreateNoWindow = true;
-            var process = Process.Start(psi);
-            var so = process.StandardOutput;
-            var si = process.StandardInput;
-            var se = process.StandardError;
+            string fileA = File.ReadAllText("Format.cs");
+            string fileB = File.ReadAllText("FormatSilk.cs");
+            string[] linesA = fileA.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            string[] linesB = fileB.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-            bool running = true;
-            Task outputtask = Task.Factory.StartNew(async () =>
+            string namespaceA = "Format.";
+            string namespaceB = "Silk.NET.DXGI.Format.";
+
+            StringBuilder sbConvert = new();
+            for (int i = 0; i < linesA.Length; i++)
             {
-                char[] buffer = new char[1024];
-                while (running)
-                {
-                    var read = await so.ReadAsync(buffer, 0, 1024);
-                    Console.Write(new string(buffer.AsSpan(0, read)));
-                }
-            }, default, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-
-            Task errortask = Task.Factory.StartNew(async () =>
-            {
-                char[] buffer = new char[1024];
-                while (running)
-                {
-                    Thread.Sleep(1000);
-                    //var read = await so.ReadAsync(buffer, 0, 1024);
-                    //Console.Write(new string(buffer.AsSpan(0, read)));
-                }
-            }, default, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-
-            while (running)
-            {
-                var input = Console.Read();
-
-                await si.WriteAsync((char)input);
+                sbConvert.AppendLine($"{namespaceA}{linesA[i]} => {namespaceB}{linesB[i]},");
             }
-
-            outputtask.Wait();
-            errortask.Wait();
+            StringBuilder sbConvertBack = new();
+            for (int i = 0; i < linesA.Length; i++)
+            {
+                sbConvertBack.AppendLine($"{namespaceB}{linesB[i]} => {namespaceA}{linesA[i]},");
+            }
+            File.WriteAllText("convert.txt", sbConvert.ToString());
+            File.WriteAllText("convertback.txt", sbConvertBack.ToString());
         }
     }
 }

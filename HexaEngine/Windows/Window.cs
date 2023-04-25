@@ -86,6 +86,11 @@ namespace HexaEngine.Windows
                 ObjectPickerManager.Initialize(graphicsDevice, Width, Height);
             }
 
+            if (Application.InEditorMode)
+            {
+                Designer.Init(graphicsDevice);
+            }
+
             frameviewer = new(graphicsDevice);
 
             imGuiWidgets = (Flags & RendererFlags.ImGuiWidgets) != 0;
@@ -164,16 +169,17 @@ namespace HexaEngine.Windows
             var drawing = rendererInitialized;
             if (imGuiWidgets && Application.InEditorMode)
             {
-                Designer.Draw();
-                WidgetManager.Draw(context);
-                ImGuiConsole.Draw();
-
                 frameviewer.SourceViewport = Viewport;
                 frameviewer.Update();
                 frameviewer.Draw();
                 drawing &= frameviewer.IsVisible;
                 renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
                 DebugDraw.SetViewport(renderViewport);
+                DebugDraw.SetCamera(CameraManager.Current);
+
+                Designer.Draw();
+                WidgetManager.Draw(context);
+                ImGuiConsole.Draw();
             }
 
             drawing &= SceneManager.Current is not null;

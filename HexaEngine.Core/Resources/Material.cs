@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.Lights;
 
     public unsafe class Material : IDisposable
     {
@@ -34,6 +35,21 @@
             context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
 
             return true;
+        }
+
+        public void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type, uint indexCount, uint instanceCount)
+        {
+            if (!loaded) return;
+
+            if (!Shader.Value.BeginDrawShadow(context, light, type))
+            {
+                return;
+            }
+
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
         }
 
         public void DrawDepth(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)

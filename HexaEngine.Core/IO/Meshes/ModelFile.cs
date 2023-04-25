@@ -14,13 +14,16 @@
     {
         public ModelHeader Header;
         public string Name;
+        public string MaterialLibrary;
         public readonly MeshData[] Meshes;
         public readonly Node Root;
 
         private ModelFile(string path, Stream fs)
         {
             Name = path;
+
             Header.Read(fs);
+            MaterialLibrary = Header.MaterialLibrary;
 
             Meshes = new MeshData[Header.MeshCount];
 
@@ -42,9 +45,10 @@
         {
         }
 
-        public ModelFile(string path, MeshData[] meshes)
+        public ModelFile(string path, string materialLibrary, MeshData[] meshes)
         {
             Name = path;
+            MaterialLibrary = materialLibrary;
             Header.MeshCount = (ulong)meshes.LongLength;
             Meshes = meshes;
         }
@@ -57,6 +61,7 @@
             Header.Encoding = encoding;
             Header.Endianness = endianness;
             Header.Compression = compression;
+            Header.MaterialLibrary = MaterialLibrary;
             Header.Write(fs);
 
             var stream = fs;
@@ -80,47 +85,17 @@
 
         public static ModelFile LoadExternal(string path)
         {
-            return new ModelFile(path, File.OpenRead(path + ".model"));
+            return new ModelFile(path, File.OpenRead(path));
         }
 
-        public void SetMaterial(int index, MaterialData material)
+        public ref MeshData GetMesh(int index)
         {
-            Meshes[index].Material = material;
+            return ref Meshes[index];
         }
 
-        public void SetMaterial(ulong index, MaterialData material)
+        public ref MeshData GetMesh(ulong index)
         {
-            Meshes[index].Material = material;
-        }
-
-        public MeshData GetMesh(int index)
-        {
-            return Meshes[index];
-        }
-
-        public MeshData GetMesh(ulong index)
-        {
-            return Meshes[index];
-        }
-
-        public MaterialData GetMaterial(int index)
-        {
-            return Meshes[index].Material;
-        }
-
-        public MaterialData GetMaterial(ulong index)
-        {
-            return Meshes[index].Material;
-        }
-
-        public MaterialData[] GetMaterials()
-        {
-            MaterialData[] materials = new MaterialData[Meshes.Length];
-            for (int i = 0; i < Meshes.Length; i++)
-            {
-                materials[i] = Meshes[i].Material;
-            }
-            return materials;
+            return ref Meshes[index];
         }
 
         public Vector3[] GetPoints(int index)

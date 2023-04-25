@@ -1,10 +1,14 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.DirectXTex;
     using Silk.NET.Direct3D11;
+    using System;
+    using System.Diagnostics;
     using System.IO;
+    using System.Numerics;
 
     public unsafe class D3D11TextureLoader : ITextureLoader
     {
@@ -37,14 +41,17 @@
             return new D3DScratchImage(image);
         }
 
-        public IScratchImage LoadFormAssets(string filename)
+        public IScratchImage LoadFormAssets(string path)
         {
-            if (!FileSystem.TryOpen(filename, out VirtualStream? fs))
+            if (!FileSystem.TryOpen(path, out VirtualStream? fs))
+            {
+                Trace.WriteLine($"Warning couldn't find texture {path}");
                 return default;
+            }
 
             ScratchImage image = new();
             var data = fs.ReadBytes();
-            string extension = Path.GetExtension(filename);
+            string extension = Path.GetExtension(path);
             switch (extension)
             {
                 case ".dds":
@@ -64,6 +71,67 @@
                     break;
             };
             return new D3DScratchImage(image);
+        }
+
+        public IScratchImage LoadFormAssets(string path, TextureDimension dimension)
+        {
+            if (!FileSystem.TryOpen(path, out VirtualStream? fs))
+            {
+                Trace.WriteLine($"Warning couldn't find texture {path}");
+                return InitFallback(dimension);
+            }
+
+            ScratchImage image = new();
+            var data = fs.ReadBytes();
+            string extension = Path.GetExtension(path);
+            switch (extension)
+            {
+                case ".dds":
+                    DirectXTex.LoadFromDDSMemory(data, DDSFlags.None, &image);
+                    break;
+
+                case ".tga":
+                    DirectXTex.LoadFromTGAMemory(data, TGAFlags.None, &image);
+                    break;
+
+                case ".hdr":
+                    DirectXTex.LoadFromHDRMemory(data, &image);
+                    break;
+
+                default:
+                    DirectXTex.LoadFromWICMemory(data, WICFlags.None, &image, null);
+                    break;
+            };
+            return new D3DScratchImage(image);
+        }
+
+        private IScratchImage InitFallback(TextureDimension dimension)
+        {
+            Vector4 fallbackColor = new(1, 0, 1, 1);
+            ScratchImage fallback = new();
+            if (dimension == TextureDimension.Texture1D)
+            {
+                fallback.Initialize1D(Silk.NET.DXGI.Format.FormatR32G32B32A32Float, 1, 1, 1, CPFlags.None);
+            }
+            if (dimension == TextureDimension.Texture2D)
+            {
+                fallback.Initialize2D(Silk.NET.DXGI.Format.FormatR32G32B32A32Float, 1, 1, 1, 1, CPFlags.None);
+            }
+            if (dimension == TextureDimension.Texture3D)
+            {
+                fallback.Initialize3D(Silk.NET.DXGI.Format.FormatR32G32B32A32Float, 1, 1, 1, 1, CPFlags.None);
+            }
+            if (dimension == TextureDimension.TextureCube)
+            {
+                fallback.InitializeCube(Silk.NET.DXGI.Format.FormatR32G32B32A32Float, 1, 1, 1, 1, CPFlags.None);
+            }
+            var size = fallback.GetPixelsSize();
+            for (ulong i = 0; i < 1; i++)
+            {
+                ((Vector4*)fallback.GetPixels())[i] = fallbackColor;
+            }
+
+            return new D3DScratchImage(fallback);
         }
 
         public IScratchImage LoadFormFile(string filename)
@@ -203,14 +271,14 @@
 
         public ITexture1D LoadTexture1D(string path, Core.Graphics.Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, Core.Graphics.ResourceMiscFlag misc)
         {
-            var image = LoadFormAssets(path);
+            var image = LoadFormAssets(path, TextureDimension.Texture1D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -225,14 +293,14 @@
 
         public ITexture2D LoadTexture2D(string path, Core.Graphics.Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, Core.Graphics.ResourceMiscFlag misc)
         {
-            var image = LoadFormAssets(path);
+            var image = LoadFormAssets(path, TextureDimension.Texture2D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -247,14 +315,14 @@
 
         public ITexture3D LoadTexture3D(string path, Core.Graphics.Usage usage, BindFlags bind, CpuAccessFlags cpuAccess, Core.Graphics.ResourceMiscFlag misc)
         {
-            var image = LoadFormAssets(path);
+            var image = LoadFormAssets(path, TextureDimension.Texture3D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -269,14 +337,14 @@
 
         public ITexture1D LoadTexture1D(string path)
         {
-            var image = LoadFormAssets(path);
+            var image = LoadFormAssets(path, TextureDimension.Texture1D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -291,14 +359,14 @@
 
         public ITexture2D LoadTexture2D(string path)
         {
-            var image = LoadFormAssets(path);
+            var image = LoadFormAssets(path, TextureDimension.Texture2D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -317,14 +385,14 @@
 
         public ITexture3D LoadTexture3D(string path)
         {
-            var image = LoadFormAssets(path);
+            var image = LoadFormAssets(path, TextureDimension.Texture3D);
             if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
             {
                 var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();

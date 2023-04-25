@@ -6,11 +6,6 @@ SamplerState state;
 Texture2DArray colorTex;
 Texture2D maskTex;
 
-cbuffer MTL
-{
-	Material materials[16];
-};
-
 GeometryData main(PixelInput input)
 {
 	float3 c0 = colorTex.Sample(state, float3(input.tex, 0)).xyz;
@@ -24,5 +19,5 @@ GeometryData main(PixelInput input)
 	color = lerp(color, c1, mask.g);
 	color = lerp(color, c2, mask.b);
 
-	return PackGeometryData(color, 1, input.pos, 0, input.normal, 0.8f, 0, float3(0, 0, 0), float3(0, 0, 0), 0, 1, 0.5f, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+	return PackGeometryData(color, 1, input.pos.xyz, 0, input.normal, 0.8f, 0, float3(0, 0, 0), float3(0, 0, 0), 0, 1, 0.5f, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
 }

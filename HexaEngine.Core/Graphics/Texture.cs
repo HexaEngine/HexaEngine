@@ -13,7 +13,7 @@
 
         private readonly IResource resource;
         public readonly IShaderResourceView? ShaderResourceView;
-        private readonly IRenderTargetView? renderTargetView;
+        public readonly IRenderTargetView? RenderTargetView;
         private readonly IResource? depthStencil;
         public IDepthStencilView? DepthStencilView;
         private readonly List<ShaderBinding> bindings = new();
@@ -27,8 +27,6 @@
         #region Properties
 
         public IResource Resource => resource;
-
-        public IRenderTargetView? RenderTargetView => renderTargetView;
 
         public IResource? DepthStencil => depthStencil;
 
@@ -45,7 +43,8 @@
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+
             DepthStencilView = depthStencil;
             overrwittenDSV = true;
         }
@@ -170,7 +169,7 @@
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
             Viewport = Description.GetViewport();
@@ -185,7 +184,7 @@
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
         }
 
         public Texture(IResource resource, IShaderResourceView srv, IRenderTargetView rtv)
@@ -197,7 +196,7 @@
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = srv;
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = rtv;
+                RenderTargetView = rtv;
         }
 
         public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
@@ -215,7 +214,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
             overrwittenDSV = true;
@@ -341,7 +340,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
             Viewport = Description.GetViewport();
@@ -362,7 +361,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
         }
@@ -442,7 +441,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
         }
@@ -470,7 +469,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
         }
@@ -496,7 +495,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
         }
@@ -526,7 +525,7 @@
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
                 ShaderResourceView = device.CreateShaderResourceView(resource);
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-                renderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
 
             Viewport = Description.GetViewport();
         }
@@ -565,15 +564,15 @@
 
                 if (dimension == TextureDimension.Texture1D)
                 {
-                    return device.CreateTexture1D(Format.RGBA32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
+                    return device.CreateTexture1D(Format.R32G32B32A32Float, 16, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
                 }
                 if (dimension == TextureDimension.Texture2D)
                 {
-                    return device.CreateTexture2D(Format.RGBA32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
+                    return device.CreateTexture2D(Format.R32G32B32A32Float, 4, 4, 1, 1, new SubresourceData[] { fallback }, BindFlags.ShaderResource, Usage.Immutable);
                 }
                 if (dimension == TextureDimension.TextureCube)
                 {
-                    Texture2DDescription description = new(Format.RGBA32Float, 4, 4, 6, 1, BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, 1, 0, ResourceMiscFlag.TextureCube);
+                    Texture2DDescription description = new(Format.R32G32B32A32Float, 4, 4, 6, 1, BindFlags.ShaderResource, Usage.Immutable, CpuAccessFlags.None, 1, 0, ResourceMiscFlag.TextureCube);
                     return device.CreateTexture2D(description, new SubresourceData[] { fallback, fallback, fallback, fallback, fallback, fallback });
                 }
             }
@@ -582,51 +581,25 @@
 
         #endregion Constructors
 
-        #region IShaderResource
-
-        public RenderTargetViewArray CreateRTVArray(IGraphicsDevice device)
-        {
-            return new RenderTargetViewArray(device, resource, Description.ArraySize, Viewport);
-        }
-
-        public ShaderResourceViewArray CreateSRVArray(IGraphicsDevice device)
-        {
-            return new ShaderResourceViewArray(device, resource, Description.ArraySize);
-        }
-
-        #endregion IShaderResource
-
         #region IRenderTargetView
 
         public readonly Viewport Viewport;
 
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAndSetTarget(IGraphicsContext context, Vector4 color, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
-            if (renderTargetView == null) return;
-            context.ClearRenderTargetView(renderTargetView, color);
+            if (RenderTargetView == null) return;
+            context.ClearRenderTargetView(RenderTargetView, color);
             ClearDepthStencil(context, flags, depth, stencil);
-            context.SetRenderTarget(renderTargetView, DepthStencilView);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearTarget(IGraphicsContext context, Vector4 color, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
-        {
-            if (renderTargetView == null) return;
-            ClearDepthStencil(context, flags, depth, stencil);
-            context.ClearRenderTargetView(renderTargetView, new(color.X, color.Y, color.Z, color.W));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetTarget(IGraphicsContext context)
-        {
-            context.SetRenderTarget(renderTargetView, DepthStencilView);
+            context.SetRenderTarget(RenderTargetView, DepthStencilView);
         }
 
         #endregion IRenderTargetView
 
         #region IDepthStencil
 
+        [Obsolete]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearDepthStencil(IGraphicsContext context, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
@@ -644,7 +617,7 @@
             {
                 resource?.Dispose();
                 ShaderResourceView?.Dispose();
-                renderTargetView?.Dispose();
+                RenderTargetView?.Dispose();
                 depthStencil?.Dispose();
                 if (!overrwittenDSV)
                     DepthStencilView?.Dispose();

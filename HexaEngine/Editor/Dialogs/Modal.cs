@@ -47,7 +47,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected abstract void DrawContent();
 
-        public virtual void Hide()
+        public virtual void Close()
         {
             signalClose = true;
         }

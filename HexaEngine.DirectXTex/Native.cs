@@ -460,7 +460,7 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        internal static unsafe partial int GenerateMipMaps3D2(Image* srcImages, ulong nimages, TexMetadata* metadata, TexFilterFlags filter, ulong levels, void* mipChain);
+        internal static unsafe partial int GenerateMipMaps3D2(Image* srcImages, ulong nimages, TexFilterFlags filter, ulong levels, void* mipChain);
 
         // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
         // Defaults to Fant filtering which is equivalent to a box filter
@@ -588,15 +588,15 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        internal static unsafe partial int CreateTextureEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, [MarshalAs(UnmanagedType.Bool)] bool forceSRGB, ID3D11Resource** ppResource);
+        internal static unsafe partial int CreateTextureEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, CreateTexFlags createTexFlags, ID3D11Resource** ppResource);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        internal static unsafe partial int CreateTextureEx2(ID3D11Device* pDevice, void* img, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, [MarshalAs(UnmanagedType.Bool)] bool forceSRGB, ID3D11Resource** ppResource);
+        internal static unsafe partial int CreateTextureEx2(ID3D11Device* pDevice, void* img, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, CreateTexFlags createTexFlags, ID3D11Resource** ppResource);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        internal static unsafe partial int CreateShaderResourceViewEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, [MarshalAs(UnmanagedType.Bool)] bool forceSRGB, ID3D11ShaderResourceView** ppSRV);
+        internal static unsafe partial int CreateShaderResourceViewEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, CreateTexFlags createTexFlags, ID3D11ShaderResourceView** ppSRV);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
@@ -617,7 +617,7 @@ namespace HexaEngine.DirectXTex
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
-        internal static unsafe partial int CreateTextureExD3D12(ID3D12Device* pDevice, TexMetadata* metadata, ResourceFlags resFlags, [MarshalAs(UnmanagedType.Bool)] bool forceSRGB, ID3D12Resource** ppResource);
+        internal static unsafe partial int CreateTextureExD3D12(ID3D12Device* pDevice, TexMetadata* metadata, ResourceFlags resFlags, CreateTexFlags createTexFlags, ID3D12Resource** ppResource);
 
         [LibraryImport(LibName)]
         [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]

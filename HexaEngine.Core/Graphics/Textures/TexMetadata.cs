@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.Core.Graphics.Textures
 {
     using HexaEngine.Core.Graphics;
+    using System;
 
-    public struct TexMetadata
+    public struct TexMetadata : IEquatable<TexMetadata>
     {
         public int Width;
         public int Height;     // Should be 1 for 1D textures
@@ -62,6 +63,24 @@
             }
         }
 
+        public override bool Equals(object? obj)
+        {
+            return obj is TexMetadata metadata && Equals(metadata);
+        }
+
+        public bool Equals(TexMetadata other)
+        {
+            return Width == other.Width &&
+                   Height == other.Height &&
+                   Depth == other.Depth &&
+                   ArraySize == other.ArraySize &&
+                   MipLevels == other.MipLevels &&
+                   MiscFlags == other.MiscFlags &&
+                   AlphaMode == other.AlphaMode &&
+                   Format == other.Format &&
+                   Dimension == other.Dimension;
+        }
+
         public bool IsCubemap()
         {
             return (MiscFlags & TexMiscFlags.TextureCube) != 0;
@@ -75,6 +94,16 @@
         public bool IsVolumemap()
         {
             return Dimension == TexDimension.Texture3D;
+        }
+
+        public static bool operator ==(TexMetadata left, TexMetadata right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TexMetadata left, TexMetadata right)
+        {
+            return !(left == right);
         }
     }
 }

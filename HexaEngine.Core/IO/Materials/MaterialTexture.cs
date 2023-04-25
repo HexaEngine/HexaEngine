@@ -8,6 +8,15 @@
 
     public struct MaterialTexture
     {
+        public static readonly TextureType[] TextureTypes = Enum.GetValues<TextureType>();
+        public static readonly string[] TextureTypeNames = Enum.GetNames(typeof(TextureType));
+        public static readonly BlendMode[] BlendModes = Enum.GetValues<BlendMode>();
+        public static readonly string[] BlendModeNames = Enum.GetNames(typeof(BlendMode));
+        public static readonly TextureOp[] TextureOps = Enum.GetValues<TextureOp>();
+        public static readonly string[] TextureOpNames = Enum.GetNames(typeof(TextureOp));
+        public static readonly TextureMapMode[] TextureMapModes = Enum.GetValues<TextureMapMode>();
+        public static readonly string[] TextureMapModeNames = Enum.GetNames<TextureMapMode>();
+
         public TextureType Type;
         public string File;
         public BlendMode Blend;
@@ -35,7 +44,7 @@
         {
             MaterialTexture data = new();
             data.Type = (TextureType)stream.ReadInt(endianness);
-            data.File = stream.ReadString(encoding, endianness);
+            data.File = stream.ReadString(encoding, endianness) ?? string.Empty;
             data.Blend = (BlendMode)stream.ReadInt(endianness);
             data.Op = (TextureOp)stream.ReadInt(endianness);
             data.Mapping = stream.ReadInt(endianness);

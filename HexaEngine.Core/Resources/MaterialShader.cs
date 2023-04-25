@@ -5,6 +5,7 @@ namespace HexaEngine.Core.Resources
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.Lights;
     using System.Threading.Tasks;
 
     public class MaterialShader : IDisposable
@@ -14,8 +15,12 @@ namespace HexaEngine.Core.Resources
         private readonly MaterialData material;
         private IGraphicsPipeline pipeline;
         private IGraphicsPipeline depthOnly;
+        private IGraphicsPipeline csm;
+        private IGraphicsPipeline osm;
+        private IGraphicsPipeline psm;
         private volatile bool initialized;
         private bool disposedValue;
+        private MaterialShaderFlags flags;
 
         public MaterialShader(IGraphicsDevice device, MeshData mesh, MaterialData material)
         {
@@ -23,6 +28,8 @@ namespace HexaEngine.Core.Resources
             this.mesh = mesh;
             this.material = material;
         }
+
+        public MaterialShaderFlags Flags => flags;
 
         public void Initialize()
         {
@@ -36,9 +43,10 @@ namespace HexaEngine.Core.Resources
 
         private void Compile()
         {
+            flags = 0;
             var elements = mesh.GetInputElements();
             var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros()).ToArray();
-            var flags = material.Flags;
+            var matflags = material.Flags;
             var custom = material.VertexShader != null && material.PixelShader != null;
 
             bool twoSided = false;
@@ -51,6 +59,17 @@ namespace HexaEngine.Core.Resources
             if (material.TryGetProperty(MaterialPropertyType.BlendFunc, out var blendFuncProp))
             {
                 blendFunc = blendFuncProp.AsBool();
+            }
+
+            var forward = (material.Flags & MaterialFlags.Transparent) != 0;
+            if (forward)
+            {
+                flags |= MaterialShaderFlags.Forward;
+                blendFunc = true;
+            }
+            else
+            {
+                flags |= MaterialShaderFlags.Deferred;
             }
 
             RasterizerDescription rasterizer = RasterizerDescription.CullBack;
@@ -84,7 +103,7 @@ namespace HexaEngine.Core.Resources
                     Topology = PrimitiveTopology.TriangleList,
                 };
 
-                if ((flags & MaterialFlags.Tessellation) != 0)
+                if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
@@ -95,13 +114,15 @@ namespace HexaEngine.Core.Resources
 
                 pipelineDesc.PixelShader = null;
                 depthOnly = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+                flags |= MaterialShaderFlags.Custom | MaterialShaderFlags.Depth;
             }
             else
             {
+                string basePath = forward ? "forward" : "deferred";
                 GraphicsPipelineDesc pipelineDesc = new()
                 {
-                    VertexShader = "deferred/geometry/vs.hlsl",
-                    PixelShader = "deferred/geometry/ps.hlsl"
+                    VertexShader = $"{basePath}/geometry/vs.hlsl",
+                    PixelShader = $"{basePath}/geometry/ps.hlsl"
                 };
 
                 GraphicsPipelineState pipelineState = new()
@@ -112,12 +133,12 @@ namespace HexaEngine.Core.Resources
                     Topology = PrimitiveTopology.TriangleList,
                 };
 
-                if ((flags & MaterialFlags.Tessellation) != 0)
+                if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
-                    pipelineDesc.HullShader = "deferred/geometry/hs.hlsl";
-                    pipelineDesc.DomainShader = "deferred/geometry/ds.hlsl";
+                    pipelineDesc.HullShader = $"{basePath}/geometry/hs.hlsl";
+                    pipelineDesc.DomainShader = $"{basePath}/geometry/ds.hlsl";
                     pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
@@ -125,6 +146,64 @@ namespace HexaEngine.Core.Resources
 
                 pipelineDesc.PixelShader = null;
                 depthOnly = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+
+                var csmPipelineDesc = new GraphicsPipelineDesc()
+                {
+                    VertexShader = "forward/csm/vs.hlsl",
+                    GeometryShader = "forward/csm/gs.hlsl",
+                };
+                var csmPipelineState = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                };
+
+                var osmPipelineDesc = new GraphicsPipelineDesc()
+                {
+                    VertexShader = "forward/osm/vs.hlsl",
+                    GeometryShader = "forward/osm/gs.hlsl",
+                    PixelShader = "forward/osm/ps.hlsl",
+                };
+                var osmPipelineState = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                };
+
+                var psmPipelineDesc = new GraphicsPipelineDesc()
+                {
+                    VertexShader = "forward/psm/vs.hlsl",
+                    PixelShader = "forward/psm/ps.hlsl",
+                };
+                var psmPipelineState = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullFront,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                };
+
+                if ((matflags & MaterialFlags.Tessellation) != 0)
+                {
+                    csmPipelineDesc.HullShader = "forward/csm/hs.hlsl";
+                    csmPipelineDesc.DomainShader = "forward/csm/ds.hlsl";
+                    csmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    osmPipelineDesc.HullShader = "forward/osm/hs.hlsl";
+                    osmPipelineDesc.DomainShader = "forward/osm/ds.hlsl";
+                    osmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    psmPipelineDesc.HullShader = "forward/psm/hs.hlsl";
+                    psmPipelineDesc.DomainShader = "forward/psm/ds.hlsl";
+                    psmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                }
+
+                csm = device.CreateGraphicsPipeline(csmPipelineDesc, csmPipelineState, elements, macros);
+                osm = device.CreateGraphicsPipeline(osmPipelineDesc, osmPipelineState, elements, macros);
+                psm = device.CreateGraphicsPipeline(psmPipelineDesc, psmPipelineState, elements, macros);
+                flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.Depth;
             }
 
             initialized = true;
@@ -132,9 +211,10 @@ namespace HexaEngine.Core.Resources
 
         private async Task CompileAsync()
         {
+            flags = 0;
             var elements = mesh.GetInputElements();
             var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros()).ToArray();
-            var flags = material.Flags;
+            var matflags = material.Flags;
             var custom = material.VertexShader != null && material.PixelShader != null;
 
             bool twoSided = false;
@@ -147,6 +227,17 @@ namespace HexaEngine.Core.Resources
             if (material.TryGetProperty(MaterialPropertyType.BlendFunc, out var blendFuncProp))
             {
                 blendFunc = blendFuncProp.AsBool();
+            }
+
+            var forward = (material.Flags & MaterialFlags.Transparent) != 0;
+            if (forward)
+            {
+                flags |= MaterialShaderFlags.Forward;
+                blendFunc = true;
+            }
+            else
+            {
+                flags |= MaterialShaderFlags.Deferred;
             }
 
             RasterizerDescription rasterizer = RasterizerDescription.CullBack;
@@ -180,7 +271,7 @@ namespace HexaEngine.Core.Resources
                     Topology = PrimitiveTopology.TriangleList,
                 };
 
-                if ((flags & MaterialFlags.Tessellation) != 0)
+                if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
@@ -191,13 +282,15 @@ namespace HexaEngine.Core.Resources
 
                 pipelineDesc.PixelShader = null;
                 depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+                flags |= MaterialShaderFlags.Custom | MaterialShaderFlags.Depth;
             }
             else
             {
+                string basePath = forward ? "forward" : "deferred";
                 GraphicsPipelineDesc pipelineDesc = new()
                 {
-                    VertexShader = "deferred/geometry/vs.hlsl",
-                    PixelShader = "deferred/geometry/ps.hlsl"
+                    VertexShader = $"{basePath}/geometry/vs.hlsl",
+                    PixelShader = $"{basePath}/geometry/ps.hlsl"
                 };
 
                 GraphicsPipelineState pipelineState = new()
@@ -208,12 +301,12 @@ namespace HexaEngine.Core.Resources
                     Topology = PrimitiveTopology.TriangleList,
                 };
 
-                if ((flags & MaterialFlags.Tessellation) != 0)
+                if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
-                    pipelineDesc.HullShader = "deferred/geometry/hs.hlsl";
-                    pipelineDesc.DomainShader = "deferred/geometry/ds.hlsl";
+                    pipelineDesc.HullShader = $"{basePath}/geometry/hs.hlsl";
+                    pipelineDesc.DomainShader = $"{basePath}/geometry/ds.hlsl";
                     pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
@@ -221,6 +314,64 @@ namespace HexaEngine.Core.Resources
 
                 pipelineDesc.PixelShader = null;
                 depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+
+                var csmPipelineDesc = new GraphicsPipelineDesc()
+                {
+                    VertexShader = "forward/csm/vs.hlsl",
+                    GeometryShader = "forward/csm/gs.hlsl",
+                };
+                var csmPipelineState = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullNone,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                };
+
+                var osmPipelineDesc = new GraphicsPipelineDesc()
+                {
+                    VertexShader = "forward/osm/vs.hlsl",
+                    GeometryShader = "forward/osm/gs.hlsl",
+                    PixelShader = "forward/osm/ps.hlsl",
+                };
+                var osmPipelineState = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                };
+
+                var psmPipelineDesc = new GraphicsPipelineDesc()
+                {
+                    VertexShader = "forward/psm/vs.hlsl",
+                    PixelShader = "forward/psm/ps.hlsl",
+                };
+                var psmPipelineState = new GraphicsPipelineState()
+                {
+                    DepthStencil = DepthStencilDescription.Default,
+                    Rasterizer = RasterizerDescription.CullFront,
+                    Blend = BlendDescription.Opaque,
+                    Topology = PrimitiveTopology.TriangleList,
+                };
+
+                if ((matflags & MaterialFlags.Tessellation) != 0)
+                {
+                    csmPipelineDesc.HullShader = "forward/csm/hs.hlsl";
+                    csmPipelineDesc.DomainShader = "forward/csm/ds.hlsl";
+                    csmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    osmPipelineDesc.HullShader = "forward/osm/hs.hlsl";
+                    osmPipelineDesc.DomainShader = "forward/osm/ds.hlsl";
+                    osmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                    psmPipelineDesc.HullShader = "forward/psm/hs.hlsl";
+                    psmPipelineDesc.DomainShader = "forward/psm/ds.hlsl";
+                    psmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
+                }
+
+                csm = await device.CreateGraphicsPipelineAsync(csmPipelineDesc, csmPipelineState, elements, macros);
+                osm = await device.CreateGraphicsPipelineAsync(osmPipelineDesc, osmPipelineState, elements, macros);
+                psm = await device.CreateGraphicsPipelineAsync(psmPipelineDesc, psmPipelineState, elements, macros);
+                flags |= MaterialShaderFlags.Shadow | MaterialShaderFlags.Depth;
             }
 
             initialized = true;
@@ -231,6 +382,9 @@ namespace HexaEngine.Core.Resources
             initialized = false;
             pipeline.Dispose();
             depthOnly.Dispose();
+            csm.Dispose();
+            osm.Dispose();
+            psm.Dispose();
             Compile();
         }
 
@@ -239,6 +393,9 @@ namespace HexaEngine.Core.Resources
             initialized = false;
             pipeline.Dispose();
             depthOnly.Dispose();
+            csm.Dispose();
+            osm.Dispose();
+            psm.Dispose();
             await CompileAsync();
         }
 
@@ -254,6 +411,16 @@ namespace HexaEngine.Core.Resources
             return true;
         }
 
+        public bool BeginDrawForward(IGraphicsContext context)
+        {
+            if (!initialized)
+                return false;
+            if (!pipeline.IsValid)
+                return false;
+            pipeline.BeginDraw(context);
+            return true;
+        }
+
         public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
         {
             if (!initialized)
@@ -266,12 +433,46 @@ namespace HexaEngine.Core.Resources
             return true;
         }
 
+        public bool BeginDrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
+        {
+            if (!initialized)
+                return false;
+            context.DSSetConstantBuffer(light, 1);
+            context.VSSetConstantBuffer(light, 1);
+            context.GSSetConstantBuffer(light, 1);
+            switch (type)
+            {
+                case ShadowType.Perspective:
+                    if (!psm.IsValid)
+                        return false;
+                    context.SetGraphicsPipeline(psm);
+                    return true;
+
+                case ShadowType.Cascaded:
+                    if (!csm.IsValid)
+                        return false;
+                    context.SetGraphicsPipeline(csm);
+                    return true;
+
+                case ShadowType.Omni:
+                    if (!osm.IsValid)
+                        return false;
+                    context.SetGraphicsPipeline(osm);
+                    return true;
+            }
+
+            return false;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 pipeline.Dispose();
                 depthOnly.Dispose();
+                csm.Dispose();
+                osm.Dispose();
+                psm.Dispose();
                 disposedValue = true;
             }
         }

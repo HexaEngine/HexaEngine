@@ -130,7 +130,6 @@
             Sdl.SetWindowFullscreen(window, (uint)mode);
         }
 
-        [SupportedOSPlatform("windows")]
         public IntPtr GetWin32HWND()
         {
             SysWMInfo wmInfo;

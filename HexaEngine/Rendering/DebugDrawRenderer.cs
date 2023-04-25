@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Editor
+﻿using HexaEngine.Editor;
+
+namespace HexaEngine.Rendering
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -45,9 +47,9 @@
             },
             new InputElementDescription[]
             {
-                new("POSITION", 0, Format.RGB32Float, 0),
-                new("TEXCOORD",0, Format.RG32Float, 0),
-                new("COLOR", 0, Format.RGBA8UNorm, 0),
+                new("POSITION", 0, Format.R32G32B32Float, 0),
+                new("TEXCOORD",0, Format.R32G32Float, 0),
+                new("COLOR", 0, Format.R8G8B8A8UNorm, 0),
             });
 
             vertexBuffer = device.CreateBuffer(new BufferDescription(vertexBufferSize * sizeof(DebugDrawVert), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
@@ -65,7 +67,7 @@
             DebugDraw.Render();
             context.SetRenderTarget(swapChain.BackbufferRTV, null);
             context.SetViewport(DebugDraw.GetViewport());
-            Render(DebugDraw.GetQueue(), CameraManager.Current);
+            Render(DebugDraw.GetQueue(), DebugDraw.GetCamera());
         }
 
         private void Render(DebugDrawCommandQueue queue, Camera? camera)

@@ -8,5 +8,6 @@
         Tessellation = 2,
         Geometry = 4,
         Custom = 8,
+        Transparent = 16,
     }
 }

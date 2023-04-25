@@ -3,10 +3,13 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
+    using System.Numerics;
     using System.Text;
 
     public class MaterialData
     {
+        public static readonly MaterialData Empty = new() { Properties = new MaterialProperty[] { new MaterialProperty("BaseColor", MaterialPropertyType.BaseColor, Endianness.LittleEndian, new Vector4(1, 0, 1, 1)) }, Textures = Array.Empty<MaterialTexture>() };
+
         public string Name = string.Empty;
 
         public MaterialProperty[] Properties;
@@ -71,6 +74,21 @@
                     return tex;
             }
             return default;
+        }
+
+        public bool TryGetTexture(TextureType type, out MaterialTexture texture)
+        {
+            for (int i = 0; i < Textures.Length; i++)
+            {
+                var tex = Textures[i];
+                if (tex.Type == type)
+                {
+                    texture = tex;
+                    return true;
+                }
+            }
+            texture = default;
+            return false;
         }
 
         public ShaderMacro[] GetShaderMacros()

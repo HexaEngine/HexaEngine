@@ -43,7 +43,7 @@
 
         public bool IsUsed => instanceTypes.Count > 0;
 
-        internal ModelInstanceType CreateInstanceType(ResourceInstance<Mesh> mesh, Material material)
+        public ModelInstanceType CreateInstanceType(ResourceInstance<Mesh> mesh, Material material)
         {
             lock (materialToType)
             {
@@ -64,7 +64,7 @@
             }
         }
 
-        internal void DestroyInstanceType(ModelInstanceType type)
+        public void DestroyInstanceType(ModelInstanceType type)
         {
             lock (instanceTypes)
             {

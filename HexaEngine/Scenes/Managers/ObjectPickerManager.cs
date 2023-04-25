@@ -11,7 +11,7 @@ namespace HexaEngine.Scenes.Managers
     using System.Numerics;
     using Texture = Texture;
 
-    public struct SelectionData
+    public struct SelectionResult
     {
         public uint InstanceId;
         public uint TypeId;
@@ -43,7 +43,7 @@ namespace HexaEngine.Scenes.Managers
         private static ConstantBuffer<Vector4> mouseBuffer;
 #pragma warning restore CS8618 // Non-nullable field 'mouseBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 #pragma warning disable CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private static StructuredUavBuffer<SelectionData> outputBuffer;
+        private static StructuredUavBuffer<SelectionResult> outputBuffer;
 #pragma warning restore CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static ResourceRef<IBuffer> camera;
 
@@ -62,7 +62,7 @@ namespace HexaEngine.Scenes.Managers
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleList,
             });
-            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.RGBA32UInt), DepthStencilDesc.Default);
+            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32UInt), DepthStencilDesc.Default);
 
             computePipeline = device.CreateComputePipeline(new()
             {
@@ -76,7 +76,7 @@ namespace HexaEngine.Scenes.Managers
         public static void Resize(int width, int height)
         {
             texture.Dispose();
-            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.RGBA32UInt), DepthStencilDesc.Default);
+            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32UInt), DepthStencilDesc.Default);
         }
 
         public static unsafe GameObject? SelectObject(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
@@ -95,7 +95,7 @@ namespace HexaEngine.Scenes.Managers
             return manager.Types[(int)data.TypeId - 1].Instances[(int)data.InstanceId - 1].Parent;
         }
 
-        public static unsafe SelectionData Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
+        public static unsafe SelectionResult Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)

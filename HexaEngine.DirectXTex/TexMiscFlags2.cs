@@ -3,6 +3,6 @@
     [Flags]
     public enum TexMiscFlags2 : uint
     {
-        ALPHA_MODE_MASK = 0x7,
+        AlphaModeMask = 0x7,
     }
 }

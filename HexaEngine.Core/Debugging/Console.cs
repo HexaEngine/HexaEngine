@@ -141,6 +141,7 @@
             {
                 messages.Remove(messages[0]);
             }
+            m_ScrollToBottom = true;
         }
 
         public static void Log(Exception? e)
@@ -151,6 +152,7 @@
             {
                 messages.Remove(messages[0]);
             }
+            m_ScrollToBottom = true;
         }
 
         public static Task HandleError(Task task)
@@ -160,6 +162,7 @@
                 Log(task.Exception);
             }
             task.Dispose();
+            m_ScrollToBottom = true;
             return Task.CompletedTask;
         }
 
@@ -173,6 +176,7 @@
                 messages.Remove(messages[0]);
             }
             semaphore.Release();
+            m_ScrollToBottom = true;
         }
 
         public static void Log(string msg)
@@ -190,6 +194,7 @@
             {
                 messages.Remove(messages[0]);
             }
+            m_ScrollToBottom = true;
         }
 
         public static void WriteLine(string msg)
@@ -201,6 +206,7 @@
             {
                 messages.Remove(messages[0]);
             }
+            m_ScrollToBottom = true;
         }
 
         public static void WriteLine(object msg)
@@ -212,6 +218,7 @@
             {
                 messages.Remove(messages[0]);
             }
+            m_ScrollToBottom = true;
         }
 
         public static async Task LogAsync(string msg)
@@ -231,6 +238,7 @@
                 messages.Remove(messages[0]);
             }
             semaphore.Release();
+            m_ScrollToBottom = true;
         }
 
         public static void Draw()

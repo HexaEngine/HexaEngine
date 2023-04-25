@@ -41,7 +41,7 @@
             this.device = device;
             for (int i = 0; i < bufferCount; i++)
             {
-                buffers.Add(new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.RGBA32Float)));
+                buffers.Add(new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32Float)));
             }
 
             deferredContext = device.CreateDeferredContext();
@@ -199,7 +199,7 @@
             for (int i = 0; i < buffers.Count; i++)
             {
                 buffers[i].Dispose();
-                buffers[i] = new(device, TextureDescription.CreateTexture2D(width, height, 1, Format.RGBA32Float));
+                buffers[i] = new(device, TextureDescription.CreateTexture2D(width, height, 1, Format.R32G32B32A32Float));
             }
 
             isDirty = true;

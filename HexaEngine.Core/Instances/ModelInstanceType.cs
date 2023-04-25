@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
@@ -54,6 +55,8 @@
         public uint ArgBufferOffset => argBufferOffset;
 
         public IReadOnlyList<IInstance> Instances => instances;
+
+        public bool Forward => ((Material.Shader?.Value?.Flags ?? MaterialShaderFlags.None) & MaterialShaderFlags.Forward) != 0;
 
         public event Action<IInstanceType, IInstance>? Updated;
 
@@ -195,6 +198,45 @@
             return count;
         }
 
+        public unsafe bool BeginDraw(IGraphicsContext context)
+        {
+            if (Mesh.Value == null) return false;
+            if (Mesh.Value.VB == null) return false;
+            if (Mesh.Value.IB == null) return false;
+            if (Material == null) return false;
+            if (semaphore.CurrentCount == 0) return false;
+            if (!Material.Bind(context)) return false;
+
+            idBuffer.Update(context);
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+
+            return true;
+        }
+
+        public bool BeginDrawForward(IGraphicsContext context)
+        {
+            if (Mesh.Value == null) return false;
+            if (Mesh.Value.VB == null) return false;
+            if (Mesh.Value.IB == null) return false;
+            if (Material == null) return false;
+            if (semaphore.CurrentCount == 0) return false;
+            if (!Material.Bind(context)) return false;
+
+            idBuffer.Update(context);
+            context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
+            context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
+            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(instanceOffsets.SRV, 1);
+            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
+            Material.Shader.Value.BeginDrawForward(context);
+
+            return true;
+        }
+
         public unsafe bool BeginDrawNoOcculusion(IGraphicsContext context)
         {
             if (Mesh.Value == null) return false;
@@ -234,23 +276,22 @@
             return true;
         }
 
-        public unsafe bool BeginDraw(IGraphicsContext context)
+        public void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            if (Mesh.Value == null) return false;
-            if (Mesh.Value.VB == null) return false;
-            if (Mesh.Value.IB == null) return false;
-            if (Material == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-            if (!Material.Bind(context)) return false;
+            if (Mesh.Value == null) return;
+            if (Mesh.Value.VB == null) return;
+            if (Mesh.Value.IB == null) return;
+            if (Material == null) return;
+            if (semaphore.CurrentCount == 0) return;
+            if (!Material.Bind(context)) return;
 
-            idBuffer.Update(context);
+            frustumInstanceBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
             context.SetIndexBuffer(Mesh.Value.IB, Format.R32UInt, 0);
-            context.VSSetShaderResource(instanceBuffer.SRV, 0);
+            context.VSSetShaderResource(frustumInstanceBuffer.SRV, 0);
             context.VSSetShaderResource(instanceOffsets.SRV, 1);
-            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
-
-            return true;
+            context.VSSetConstantBuffer(zeroIdBuffer.Buffer, 0);
+            Material.DrawShadow(context, light, type, (uint)IndexCount, (uint)Visible);
         }
 
         public unsafe void DrawDepth(IGraphicsContext context, IBuffer camera)
@@ -293,36 +334,6 @@
         {
             if (BeginDrawNoOcculusion(context))
                 context.DrawIndexedInstanced((uint)IndexCount, (uint)Visible, 0, 0, 0);
-        }
-
-        public unsafe bool DrawAuto(IGraphicsContext context, int indexCount)
-        {
-            if (Material == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-            if (!Material.Bind(context)) return false;
-
-            frustumInstanceBuffer.Update(context);
-            idBuffer.Update(context);
-            context.VSSetShaderResource(instanceBuffer.SRV, 0);
-            context.VSSetShaderResource(instanceOffsets.SRV, 1);
-            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
-            context.DrawIndexedInstancedIndirect(argBuffer.Buffer, argBufferOffset);
-            return true;
-        }
-
-        public unsafe void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline, int indexCount)
-        {
-            if (Material == null) return;
-            if (semaphore.CurrentCount == 0) return;
-            if (!Material.Bind(context)) return;
-
-            frustumInstanceBuffer.Update(context);
-            idBuffer.Update(context);
-            context.VSSetShaderResource(instanceBuffer.SRV, 0);
-            context.VSSetShaderResource(instanceOffsets.SRV, 1);
-            context.VSSetConstantBuffer(idBuffer.Buffer, 0);
-            context.SetGraphicsPipeline(pipeline);
-            context.DrawIndexedInstancedIndirect(argBuffer.Buffer, ArgBufferOffset);
         }
 
         public bool Equals(IInstanceType? other)

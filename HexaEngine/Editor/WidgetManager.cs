@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.Materials;
     using HexaEngine.Editor.Meshes;
     using HexaEngine.Editor.Widgets;
@@ -30,6 +31,7 @@
             Register<MaterialEditor>();
             Register<PostProcessWindow>();
             Register<InputWindow>();
+            Register<ImagePainterWindow>();
         }
 
         public static bool Register<T>() where T : IImGuiWindow, new()

@@ -57,7 +57,7 @@
                 rtvHandle.Ptr += rtvDescriptorSize;
             }
 
-            depthStencil = device.CreateTexture2D(Core.Graphics.Format.Depth24UNormStencil8, width, height, 1, 1, null, BindFlags.DepthStencil);
+            depthStencil = device.CreateTexture2D(Core.Graphics.Format.D32FloatS8X24UInt, width, height, 1, 1, null, BindFlags.DepthStencil);
             BackbufferDSV = device.CreateDepthStencilView(depthStencil);
             Width = width;
             Height = height;

@@ -25,7 +25,7 @@
         {
             if (filePicker.Draw())
             {
-                filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
+                filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
             }
 
             if (fileSaver.Draw())
@@ -66,8 +66,8 @@
                     {
                         if (e == SaveFileResult.Ok)
                         {
-                            Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
-                            ProjectManager.Create(Path.Combine(r.CurrentFolder, r.SelectedFile));
+                            Directory.CreateDirectory(r.FullPath);
+                            ProjectManager.Create(r.FullPath);
                             IsShown = false;
                         }
                     };

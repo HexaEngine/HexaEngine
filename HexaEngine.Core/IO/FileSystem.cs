@@ -168,7 +168,6 @@
 
                 if (asset == null)
                 {
-                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {realPath} is missing!");
                     throw new FileNotFoundException(realPath);
                 }
 
@@ -201,7 +200,6 @@
 
                 if (asset == null)
                 {
-                    ImGuiConsole.Log(LogSeverity.Warning, $"Warning asset {realPath} is missing!");
                     stream = default;
                     return false;
                 }

@@ -8,8 +8,5 @@ cbuffer PointLightParams
 
 float main(PixelInput input) : SV_DEPTH
 {
-	float distance = length(input.shadowCoord.xyz - Position);
-	float depth = distance / FarPlane;
-    return depth;
-
+    return input.depth;
 }

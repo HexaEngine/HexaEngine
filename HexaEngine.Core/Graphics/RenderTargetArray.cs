@@ -12,13 +12,13 @@
         private IRenderTargetView[] views;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal RenderTargetViewArray(IRenderTargetView[] views)
+        public RenderTargetViewArray(IRenderTargetView[] views)
         {
             this.views = views;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal RenderTargetViewArray(IGraphicsDevice device, IResource[] resources, Viewport viewport)
+        public RenderTargetViewArray(IGraphicsDevice device, IResource[] resources, Viewport viewport)
         {
             views = new IRenderTargetView[resources.Length];
             for (int i = 0; i < resources.Length; i++)
@@ -29,7 +29,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal RenderTargetViewArray(IGraphicsDevice device, IResource resource, int arraySize, Viewport viewport)
+        public RenderTargetViewArray(IGraphicsDevice device, IResource resource, int arraySize, Viewport viewport)
         {
             Viewport = viewport;
             views = new IRenderTargetView[arraySize];
@@ -113,13 +113,13 @@
         public readonly IShaderResourceView[] Views;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ShaderResourceViewArray(IShaderResourceView[] views)
+        public ShaderResourceViewArray(IShaderResourceView[] views)
         {
             Views = views;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ShaderResourceViewArray(IGraphicsDevice device, IResource[] resources)
+        public ShaderResourceViewArray(IGraphicsDevice device, IResource[] resources)
         {
             Views = new IShaderResourceView[resources.Length];
             for (int i = 0; i < resources.Length; i++)
@@ -130,7 +130,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ShaderResourceViewArray(IGraphicsDevice device, IResource resource, int arraySize)
+        public ShaderResourceViewArray(IGraphicsDevice device, IResource resource, int arraySize)
         {
             Views = new IShaderResourceView[arraySize];
             ShaderResourceViewDescription description = new(ShaderResourceViewDimension.Texture2DArray, arraySize: 1);

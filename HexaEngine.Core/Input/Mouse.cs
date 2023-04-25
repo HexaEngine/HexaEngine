@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Core.Input
 {
     using HexaEngine.Core.Input.Events;
+    using HexaEngine.Core.Scenes;
+    using HexaEngine.Mathematics;
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Numerics;
@@ -126,6 +128,16 @@
             sdl.GetMouseState(ref pos.X, ref pos.Y);
             delta = Vector2.Zero;
             deltaWheel = Vector2.Zero;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 ScreenToWorld(Matrix4x4 proj, Matrix4x4 viewInv, Viewport viewport)
+        {
+            var vx = (2.0f * (pos.X - viewport.X) / viewport.Width - 1.0f) / proj.M11;
+            var vy = (-2.0f * (pos.Y - viewport.Y) / viewport.Height + 1.0f) / proj.M22;
+            Vector3 rayDirViewSpace = new(vx, vy, 1);
+            Vector3 rayDir = Vector3.TransformNormal(rayDirViewSpace, viewInv);
+            return Vector3.Normalize(rayDir);
         }
     }
 }

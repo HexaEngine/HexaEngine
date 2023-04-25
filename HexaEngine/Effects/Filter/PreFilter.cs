@@ -1,27 +1,24 @@
-﻿#nullable disable
-
-namespace HexaEngine.Effects.Filter
+﻿namespace HexaEngine.Effects.Filter
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Graphics.Structs;
     using System;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Pre filter for the env map used in the brfd pipeline.
     /// </summary>
-    public class PreFilter : IEffect
+    public class PreFilter : IFilter
     {
-        private Cube cube;
-        private IGraphicsPipeline pipeline;
-        private IBuffer mvpBuffer;
-        private IBuffer rghbuffer;
-        private ISamplerState sampler;
+        private readonly Cube cube;
+        private readonly IGraphicsPipeline pipeline;
+        private readonly IBuffer mvpBuffer;
+        private readonly IBuffer rghbuffer;
+        private readonly ISamplerState sampler;
 
-        public RenderTargetViewArray Targets;
-        public IShaderResourceView Source;
+        public RenderTargetViewArray? Targets;
+        public IShaderResourceView? Source;
 
         public struct CubeFaceCamera
         {
@@ -35,12 +32,33 @@ namespace HexaEngine.Effects.Filter
             public Vector3 Padd;
         }
 
-#nullable disable
         private CubeFaceCamera[] Cameras;
-#nullable enable
 
         public float Roughness;
         private bool disposedValue;
+
+        public PreFilter(IGraphicsDevice device)
+        {
+            Cameras = new CubeFaceCamera[6];
+            cube = new(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/prefilter/vs.hlsl",
+                PixelShader = "effects/prefilter/ps.hlsl"
+            },
+            new GraphicsPipelineState()
+            {
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = new(CullMode.None, FillMode.Solid) { ScissorEnable = true },
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
+            });
+
+            SetViewPoint(Vector3.Zero);
+            mvpBuffer = device.CreateBuffer(new ViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            rghbuffer = device.CreateBuffer(new RoughnessBuffer(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
+        }
 
         public void SetViewPoint(Vector3 camera)
         {
@@ -66,36 +84,11 @@ namespace HexaEngine.Effects.Filter
                 Vector3.UnitY, // -Z
             };
 
-            Cameras = new CubeFaceCamera[6];
-
             for (int i = 0; i < 6; i++)
             {
                 Cameras[i].View = Matrix4x4.CreateLookAt(camera, targets[i], upVectors[i]) * Matrix4x4.CreateScale(-1, 1, 1);
                 Cameras[i].Projection = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI * 0.5f, 1.0f, 0.1f, 100.0f);
             }
-        }
-
-        public Task Initialize(IGraphicsDevice device, int width, int height)
-        {
-            cube = new(device);
-            pipeline = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "effects/prefilter/vs.hlsl",
-                PixelShader = "effects/prefilter/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = new(CullMode.None, FillMode.Solid) { ScissorEnable = true },
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
-            });
-
-            SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            rghbuffer = device.CreateBuffer(new RoughnessBuffer(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
-            return Task.CompletedTask;
         }
 
         public void Draw(IGraphicsContext context)
@@ -128,16 +121,6 @@ namespace HexaEngine.Effects.Filter
             context.PSSetShaderResource(Source, 0);
             context.PSSetSampler(sampler, 0);
             cube.DrawAuto(context, pipeline);
-        }
-
-        public void BeginResize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndResize(int width, int height)
-        {
-            throw new NotImplementedException();
         }
 
         protected virtual void Dispose(bool disposing)

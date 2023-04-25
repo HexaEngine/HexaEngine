@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using ImGuiNET;
+    using MaterialTexture = Core.IO.Materials.MaterialTexture;
 
     public unsafe class MaterialsWidget : ImGuiWindow
     {
@@ -25,25 +27,21 @@
                 return;
             }
 
-            if (ImGui.Button("Create"))
-            {
-                var name = MaterialManager.GetFreeName("New Material");
-                MaterialManager.Add(new() { Name = name });
-            }
+            var manager = scene.MaterialManager;
 
-            if (MaterialManager.Count == 0)
+            if (manager.Count == 0)
             {
                 current = -1;
             }
 
-            lock (MaterialManager.Materials)
+            lock (manager.Materials)
             {
                 ImGui.PushItemWidth(200);
                 if (ImGui.BeginListBox("##Materials"))
                 {
-                    for (int i = 0; i < MaterialManager.Count; i++)
+                    for (int i = 0; i < manager.Count; i++)
                     {
-                        var material = MaterialManager.Materials[i];
+                        var material = manager.Materials[i];
                         if (ImGui.MenuItem(material.Name))
                         {
                             current = i;
@@ -57,13 +55,13 @@
             ImGui.BeginChild("MaterialEditor");
             if (current != -1)
             {
-                var material = MaterialManager.Materials[current];
+                var material = manager.Materials[current];
 
                 var name = material.Name;
                 isActive = false;
                 if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
                 {
-                    MaterialManager.Rename(material.Name, name);
+                    manager.Rename(material.Name, name);
                 }
 
                 for (int i = 0; i < material.Properties.Length; i++)
@@ -71,7 +69,7 @@
                     var prop = material.Properties[i];
                     switch (prop.ValueType)
                     {
-                        case Core.IO.Materials.MaterialValueType.Float:
+                        case MaterialValueType.Float:
                             {
                                 var value = prop.AsFloat();
                                 if (ImGui.SliderFloat(prop.Name, ref value, 0, 1))
@@ -83,10 +81,10 @@
                             }
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Float2:
+                        case MaterialValueType.Float2:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Float3:
+                        case MaterialValueType.Float3:
                             {
                                 var value = prop.AsFloat3();
                                 if (ImGui.ColorEdit3(prop.Name, ref value, ImGuiColorEditFlags.Float))
@@ -98,7 +96,7 @@
                             }
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Float4:
+                        case MaterialValueType.Float4:
                             {
                                 var value = prop.AsFloat4();
                                 if (ImGui.ColorEdit4(prop.Name, ref value, ImGuiColorEditFlags.Float))
@@ -110,7 +108,7 @@
                             }
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Bool:
+                        case MaterialValueType.Bool:
                             {
                                 var value = prop.AsBool();
                                 if (ImGui.Checkbox(prop.Name, ref value))
@@ -122,36 +120,139 @@
                             }
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.UInt8:
+                        case MaterialValueType.UInt8:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.UInt16:
+                        case MaterialValueType.UInt16:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.UInt32:
+                        case MaterialValueType.UInt32:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.UInt64:
+                        case MaterialValueType.UInt64:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Int8:
+                        case MaterialValueType.Int8:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Int16:
+                        case MaterialValueType.Int16:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Int32:
+                        case MaterialValueType.Int32:
                             break;
 
-                        case Core.IO.Materials.MaterialValueType.Int64:
+                        case MaterialValueType.Int64:
                             break;
+                    }
+                }
+
+                var flags = (int)material.Flags;
+                if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+                {
+                    material.Flags = (MaterialFlags)flags;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                ImGui.Separator();
+
+                for (int i = 0; i < material.Textures.Length; i++)
+                {
+                    var tex = material.Textures[i];
+
+                    var iType = Array.IndexOf(MaterialTexture.TextureTypes, tex.Type);
+                    if (ImGui.Combo("Type", ref iType, MaterialTexture.TextureTypeNames, MaterialTexture.TextureTypeNames.Length))
+                    {
+                        material.Textures[i].Type = MaterialTexture.TextureTypes[iType];
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var file = tex.File;
+                    if (ImGui.InputText("File", ref file, 1024))
+                    {
+                        material.Textures[i].File = file;
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
+                    if (ImGui.Combo("Blend", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
+                    {
+                        material.Textures[i].Blend = MaterialTexture.BlendModes[iBlend];
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var iOp = Array.IndexOf(MaterialTexture.TextureOps, tex.Op);
+                    if (ImGui.Combo("TextureOp", ref iOp, MaterialTexture.TextureOpNames, MaterialTexture.TextureOpNames.Length))
+                    {
+                        material.Textures[i].Op = MaterialTexture.TextureOps[iOp];
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var mapping = tex.Mapping;
+                    if (ImGui.InputInt("Mapping", ref mapping))
+                    {
+                        material.Textures[i].Mapping = mapping;
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var uvwSrc = tex.UVWSrc;
+                    if (ImGui.InputInt("UVWSrc", ref uvwSrc))
+                    {
+                        material.Textures[i].UVWSrc = uvwSrc;
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var iU = Array.IndexOf(MaterialTexture.TextureMapModes, tex.U);
+                    if (ImGui.Combo("U", ref iU, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
+                    {
+                        material.Textures[i].U = MaterialTexture.TextureMapModes[iU];
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var iV = Array.IndexOf(MaterialTexture.TextureMapModes, tex.V);
+                    if (ImGui.Combo("V", ref iV, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
+                    {
+                        material.Textures[i].V = MaterialTexture.TextureMapModes[iV];
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+
+                    var texFlags = (int)tex.Flags;
+                    if (ImGui.CheckboxFlags("Invert", ref texFlags, (int)TextureFlags.Invert))
+                    {
+                        material.Textures[i].Flags ^= TextureFlags.Invert;
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+                    if (ImGui.CheckboxFlags("UseAlpha", ref texFlags, (int)TextureFlags.UseAlpha))
+                    {
+                        material.Textures[i].Flags ^= TextureFlags.UseAlpha;
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+                    if (ImGui.CheckboxFlags("IgnoreAlpha", ref texFlags, (int)TextureFlags.IgnoreAlpha))
+                    {
+                        material.Textures[i].Flags ^= TextureFlags.IgnoreAlpha;
+                        hasChanged = true;
+                    }
+                    isActive |= ImGui.IsItemActive();
+                    if (i < material.Textures.Length - 1)
+                    {
+                        ImGui.Separator();
                     }
                 }
 
                 //TODO: Add new material texture system
                 if (hasChanged && !isActive)
                 {
-                    MaterialManager.Update(material);
+                    manager.Update(material);
                     hasChanged = false;
                 }
                 ImGui.Text($"HasChanged: {hasChanged}, IsActive: {isActive}");

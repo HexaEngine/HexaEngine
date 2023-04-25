@@ -46,10 +46,10 @@
             TextureLoader = new D3D11TextureLoader(this);
         }
 
-        [SupportedOSPlatform("windows")]
         public D3D11GraphicsDevice(DXGIAdapterD3D11 adapter, bool debug)
         {
             this.adapter = adapter;
+
             D3D11 = D3D11.GetApi();
             D3DFeatureLevel[] levelsArr = new D3DFeatureLevel[]
             {
@@ -106,7 +106,6 @@
 
         public D3DFeatureLevel Level { get; protected set; }
 
-        [SupportedOSPlatform("windows")]
         public ISwapChain CreateSwapChain(SdlWindow window)
         {
             return adapter.CreateSwapChainForWindow(this, window);
@@ -119,17 +118,17 @@
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new GraphicsPipeline(this, desc, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, macros, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new GraphicsPipeline(this, desc, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(GraphicsPipeline)}: {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)

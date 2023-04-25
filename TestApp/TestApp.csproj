@@ -1,53 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	  <Platforms>x64</Platforms>
-	  <AnalysisLevel>latest-all</AnalysisLevel>
-	  <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-	  <EnablePreviewFeatures>True</EnablePreviewFeatures>
-	  <Configurations>Debug;Release;TraceLeak</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AnalysisLevel>latest-all</AnalysisLevel>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnablePreviewFeatures>True</EnablePreviewFeatures>
+		<Configurations>Debug;Release;TraceLeak</Configurations>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="SPIRV.Commands.cs" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Format.cs" />
+		<Compile Remove="FormatSilk.cs" />
+		<Compile Remove="SPIRV.Commands.cs" />
+		<Compile Remove="SPIRV.Enumerations.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="SPIRV.Commands.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="FormatSilk.cs">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="Format.cs">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="SPIRV.Commands.cs">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="default-44100.mhr">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="default-48000.mhr">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="env_o.dds">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="piano2.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="test.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="env_o.dds">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 
 
-  <ItemGroup>
-    <ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
-    <ProjectReference Include="..\HexaEngine\HexaEngine.csproj" />
-    <ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <None Include="SPIRV.Enumerations.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 
 
 

@@ -27,6 +27,17 @@
             Endianness = endianness;
         }
 
+        public MaterialProperty(string name, MaterialPropertyType type, Endianness endianness, Vector4 value)
+        {
+            Name = name;
+            Type = type;
+            Length = sizeof(Vector4);
+            Data = new byte[Length];
+            ValueType = MaterialValueType.Float4;
+            Endianness = endianness;
+            SetFloat4(value);
+        }
+
         public void Read(Stream src, Encoding encoding, Endianness endianness)
         {
             Name = src.ReadString(encoding, endianness) ?? string.Empty;

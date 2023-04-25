@@ -88,6 +88,9 @@
 
         public IScratchImage Decompress(Format format);
 
+        bool OverwriteFormat(Format format);
+
         public IImage[] GetImages();
+        void CopyTo(IScratchImage scratchImage);
     }
 }

@@ -5,9 +5,22 @@
     public unsafe struct TexMetadata
     {
         public ulong Width;
-        public ulong Height;     // Should be 1 for 1D textures
-        public ulong Depth;      // Should be 1 for 1D or 2D textures
-        public ulong ArraySize;  // For cubemap, this is a multiple of 6
+
+        /// <summary>
+        /// Should be 1 for 1D textures
+        /// </summary>
+        public ulong Height;
+
+        /// <summary>
+        /// Should be 1 for 1D or 2D textures
+        /// </summary>
+        public ulong Depth;
+
+        /// <summary>
+        /// For cubemap, this is a multiple of 6
+        /// </summary>
+        public ulong ArraySize;
+
         public ulong MipLevels;
         public TexMiscFlags MiscFlags;
         public TexMiscFlags2 MiscFlags2;

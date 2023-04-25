@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HexaEngine.Mathematics.BoundingBoxHelper" Collapsed="true">
+    <Position X="10.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BoundingBox.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.CameraTransform" Collapsed="true">
+    <Position X="8.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gDCAAAAQhACAEAQAwgAgAEAAIAAIAAEACgAAAIEwAAA=</HashCode>
+      <FileName>CameraTransform.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.CSMHelper" Collapsed="true">
+    <Position X="12.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAEAAQAAAAAAEAAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>CSMHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.MathUtil" Collapsed="true">
+    <Position X="16" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FQBAAAAEACCABAwAAAAAIhQIACAFAABQgBQAAAKAQBA=</HashCode>
+      <FileName>Extensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.VertexRef" Collapsed="true">
+    <Position X="10.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAKAAAAgAAAAAAAAAAAIAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Face.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.Face" Collapsed="true">
+    <Position X="14.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAA4AAAAAAAAAAIAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Face.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.OSMHelper" Collapsed="true">
+    <Position X="10.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>OSMHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.PSMHelper" Collapsed="true">
+    <Position X="12.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAAAAAAAAAAAAAAAAgAAAAAAABAAAA=</HashCode>
+      <FileName>PSMHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.SphereHelper" Collapsed="true">
+    <Position X="14.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SphereHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.StreamExtensions" Collapsed="true">
+    <Position X="16" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIAAAQiAAgAAAAAQgEQAAAgAABAAWAAIEBCwAAAAEA=</HashCode>
+      <FileName>StreamExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Mathematics.Transform" Collapsed="true">
+    <Position X="8.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AoMBBgKCIQCC4KBhhCLAYAiCAAJNBAEISySACgElgBI=</HashCode>
+      <FileName>Transform.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Struct Name="HexaEngine.OpenAL.AudioOrientation" Collapsed="true">
+    <Position X="10.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>AudioOrientation.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.BonePalette" Collapsed="true">
+    <Position X="12.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAEAAAAAAACEAAAAAAAAAAAA=</HashCode>
+      <FileName>BonePalette.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.BoundingBox" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAgAAABBAAgQAUkAIAAEQgAAAAAoAgEABAAAEYBuA=</HashCode>
+      <FileName>BoundingBox.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.BoundingSphere" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAIAACAAEAAAAAEgAIAAAQgAAAAAIAAAAAAAAEYAqA=</HashCode>
+      <FileName>BoundingSphere.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.BoundingFrustum" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAEgoAAAEAAAAAAAoAAAAIAAAIABqA=</HashCode>
+      <FileName>Frustum.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.VertexPositionColor" Collapsed="true">
+    <Position X="10.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>LineVertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.OrthoVertex" Collapsed="true">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>OrthoVertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.Point" Collapsed="true">
+    <Position X="14.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAAgAAAAAAAAAAYAA=</HashCode>
+      <FileName>Point.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.Ray" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="16" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAkgCAAAAAAAAAAAIAAAAAAAAAAAqA=</HashCode>
+      <FileName>Ray.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.Rect" Collapsed="true">
+    <Position X="10.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAACACAAAAAAAA=</HashCode>
+      <FileName>Rect.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.SkinnedVertex" Collapsed="true">
+    <Position X="12.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAgAAAAAAAAACAIAAACAAIAAAAAAAA=</HashCode>
+      <FileName>SkinnedVertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.TransformSnapshot" Collapsed="true">
+    <Position X="14.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAKAIQCAIIAhAAIAYAAAAABBBQAACACAAAAlAAI=</HashCode>
+      <FileName>Transform.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.Vertex" Collapsed="true">
+    <Position X="16" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAggAAAAAAAAAAIAIACAAIAAgAAAiA=</HashCode>
+      <FileName>Vertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.Viewport" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAEggBACGAAAAAIAIAAAAIAAAAAYiA=</HashCode>
+      <FileName>Viewport.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Mathematics.Wireframe" Collapsed="true">
+    <Position X="14.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Wireframe.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="HexaEngine.Mathematics.ITransform" Collapsed="true">
+    <Position X="10.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AoAAAAKAIQCAIIAgAAIAYAgAAAJBBAEISgCAAAAFABI=</HashCode>
+      <FileName>ITransform.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="HexaEngine.Mathematics.ContainmentType" Collapsed="true">
+    <Position X="10.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAIA=</HashCode>
+      <FileName>ContainmentType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Mathematics.Endianness" Collapsed="true">
+    <Position X="12.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Endianness.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Mathematics.PlaneIntersectionType" Collapsed="true">
+    <Position X="14.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAA=</HashCode>
+      <FileName>PlaneIntersectionType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Mathematics.ProjectionType" Collapsed="true">
+    <Position X="16" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAABAAA=</HashCode>
+      <FileName>ProjectionType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Mathematics.ViewportScaling" Collapsed="true">
+    <Position X="10.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAQAAEAAAA=</HashCode>
+      <FileName>Viewport.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

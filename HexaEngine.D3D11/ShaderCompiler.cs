@@ -109,11 +109,14 @@
 
             if (vBlob == null)
             {
+                Debug.WriteLine($"Error: {sourceName}");
                 return false;
             }
 
             shaderBlob = new(vBlob->Buffer.ToArray());
             vBlob->Release();
+
+            Debug.WriteLine($"Done: {sourceName}");
 
             return true;
         }
@@ -382,9 +385,9 @@
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.RG32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.RG32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.RG32Float,
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -393,9 +396,9 @@
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.RGB32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.RGB32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.RGB32Float,
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32B32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32B32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32B32Float,
                         _ => Format.Unknown,
                     };
                 }
@@ -404,9 +407,9 @@
                 {
                     inputElement.Format = parameterDesc.ComponentType switch
                     {
-                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.RGBA32UInt,
-                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.RGBA32SInt,
-                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.RGBA32Float,
+                        D3DRegisterComponentType.D3DRegisterComponentUint32 => Format.R32G32B32A32UInt,
+                        D3DRegisterComponentType.D3DRegisterComponentSint32 => Format.R32G32B32A32SInt,
+                        D3DRegisterComponentType.D3DRegisterComponentFloat32 => Format.R32G32B32A32Float,
                         _ => Format.Unknown,
                     };
                 }

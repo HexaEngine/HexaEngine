@@ -6,7 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Platforms>x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<ApplicationIcon>icon.ico</ApplicationIcon>
 	</PropertyGroup>

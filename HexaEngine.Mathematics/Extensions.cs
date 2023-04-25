@@ -287,6 +287,24 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Matrix4x4 LookAtLHRotation(Vector3 target, Vector3 up)
+        {
+            Vector3 zaxis = Vector3.Normalize(target);
+            Vector3 xaxis = Vector3.Normalize(Vector3.Cross(up, zaxis));
+            Vector3 yaxis = Vector3.Cross(zaxis, xaxis);
+
+            Matrix4x4 result = Matrix4x4.Identity;
+            result.M11 = xaxis.X; result.M21 = xaxis.Y; result.M31 = xaxis.Z;
+            result.M12 = yaxis.X; result.M22 = yaxis.Y; result.M32 = yaxis.Z;
+            result.M13 = zaxis.X; result.M23 = zaxis.Y; result.M33 = zaxis.Z;
+
+            result.M41 = -result.M41;
+            result.M42 = -result.M42;
+            result.M43 = -result.M43;
+            return result;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 PerspectiveFovLH(float fov, float aspect, float znear, float zfar)
         {
             float yScale = (float)(1.0f / Math.Tan(fov * 0.5f));

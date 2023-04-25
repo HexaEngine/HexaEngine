@@ -579,13 +579,7 @@
         {
             Image* srcImages = srcImage->GetImages();
             ulong nimages = srcImage->GetImageCount();
-            TexMetadata metadata = srcImage->GetMetadata();
-            Native.GenerateMipMaps3D2(srcImages, nimages, &metadata, filter, levels, mipChain->pScratchImage).ThrowIf();
-        }
-
-        public static unsafe void GenerateMipMaps3D(Image* srcImages, ulong nimages, TexMetadata* metadata, TexFilterFlags filter, ulong levels, ScratchImage* mipChain)
-        {
-            Native.GenerateMipMaps3D2(srcImages, nimages, metadata, filter, levels, mipChain->pScratchImage).ThrowIf();
+            Native.GenerateMipMaps3D2(srcImages, nimages, filter, levels, mipChain->pScratchImage).ThrowIf();
         }
 
         // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
@@ -775,19 +769,19 @@
             Native.CreateShaderResourceView(pDevice, srcImages, nimages, metadata, ppSRV).ThrowIf();
         }
 
-        public static void CreateTextureEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, bool forceSRGB, ID3D11Resource** ppResource)
+        public static void CreateTextureEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, CreateTexFlags createTexFlags, ID3D11Resource** ppResource)
         {
-            Native.CreateTextureEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppResource).ThrowIf();
+            Native.CreateTextureEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, createTexFlags, ppResource).ThrowIf();
         }
 
-        public static void CreateTextureEx(ID3D11Device* pDevice, ScratchImage* img, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, bool forceSRGB, ID3D11Resource** ppResource)
+        public static void CreateTextureEx(ID3D11Device* pDevice, ScratchImage* img, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, CreateTexFlags createTexFlags, ID3D11Resource** ppResource)
         {
-            Native.CreateTextureEx2(pDevice, img->pScratchImage, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppResource).ThrowIf();
+            Native.CreateTextureEx2(pDevice, img->pScratchImage, usage, bindFlags, cpuAccessFlags, miscFlags, createTexFlags, ppResource).ThrowIf();
         }
 
-        public static void CreateShaderResourceViewEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, bool forceSRGB, ID3D11ShaderResourceView** ppSRV)
+        public static void CreateShaderResourceViewEx(ID3D11Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Usage usage, BindFlag bindFlags, CpuAccessFlag cpuAccessFlags, ResourceMiscFlag miscFlags, CreateTexFlags createTexFlags, ID3D11ShaderResourceView** ppSRV)
         {
-            Native.CreateShaderResourceViewEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, forceSRGB, ppSRV).ThrowIf();
+            Native.CreateShaderResourceViewEx(pDevice, srcImages, nimages, metadata, usage, bindFlags, cpuAccessFlags, miscFlags, createTexFlags, ppSRV).ThrowIf();
         }
 
         public static void CaptureTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, ID3D11Resource* pSource, ScratchImage* result)
@@ -809,9 +803,9 @@
             Native.CreateTextureD3D12(pDevice, metadata, ppResource).ThrowIf();
         }
 
-        public static unsafe void CreateTextureEx(ID3D12Device* pDevice, TexMetadata* metadata, ResourceFlags resFlags, bool forceSRGB, ID3D12Resource** ppResource)
+        public static unsafe void CreateTextureEx(ID3D12Device* pDevice, TexMetadata* metadata, ResourceFlags resFlags, CreateTexFlags createTexFlags, ID3D12Resource** ppResource)
         {
-            Native.CreateTextureExD3D12(pDevice, metadata, resFlags, forceSRGB, ppResource).ThrowIf();
+            Native.CreateTextureExD3D12(pDevice, metadata, resFlags, createTexFlags, ppResource).ThrowIf();
         }
 
         public static unsafe void PrepareUpload(ID3D12Device* pDevice, Image* srcImages, ulong nimages, TexMetadata* metadata, Silk.NET.Direct3D12.SubresourceData** subresources, int* count)

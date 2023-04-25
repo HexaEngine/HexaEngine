@@ -9,7 +9,6 @@
 		<DebugType>embedded</DebugType>
 		<StripSymbols>true</StripSymbols>
 		<AnalysisLevel>latest-all</AnalysisLevel>
-		<Platforms>x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
 

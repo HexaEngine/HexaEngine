@@ -129,8 +129,8 @@ namespace HexaEngine.Rendering
             cameraBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write).Value;
             tesselationBuffer = new(device, CpuAccessFlags.Write);
 
-            gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
-            depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
+            gbuffer = new TextureArray(device, width, height, 8, Format.R32G32B32A32Float);
+            depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
             occlusionStencil = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
             hizBuffer = new(device, width, height);
@@ -155,7 +155,7 @@ namespace HexaEngine.Rendering
 
             ssao = new();
 
-            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.RGBA32Float)).Value;
+            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.R32G32B32A32Float)).Value;
 
             window.Dispatcher.InvokeBlocking(() =>
             {
@@ -296,8 +296,8 @@ namespace HexaEngine.Rendering
         {
             if (!initialized) return;
 
-            gbuffer = new TextureArray(device, width, height, 8, Format.RGBA32Float);
-            depthStencil = new(device, width, height, Format.Depth24UNormStencil8);
+            gbuffer = new TextureArray(device, width, height, 8, Format.R32G32B32A32Float);
+            depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
             occlusionStencil = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
 
@@ -397,15 +397,6 @@ namespace HexaEngine.Rendering
 #endif
 
 #if PROFILE
-            profiler.Start(ssao);
-#endif
-            // SSAO Pass
-            ssao.Draw(context);
-#if PROFILE
-            profiler.End(ssao);
-#endif
-
-#if PROFILE
             profiler.Start(lights);
 #endif
 
@@ -415,6 +406,7 @@ namespace HexaEngine.Rendering
             {
                 lights.Update(context, camera);
                 lights.DeferredPass(context, shading, camera);
+                lights.ForwardPass(context, shading, camera);
             }
             else
             {
@@ -423,6 +415,15 @@ namespace HexaEngine.Rendering
             }
 #if PROFILE
             profiler.End(lights);
+#endif
+
+#if PROFILE
+            profiler.Start(ssao);
+#endif
+            // SSAO Pass
+            ssao.Draw(context);
+#if PROFILE
+            profiler.End(ssao);
 #endif
 
             if (shading == ViewportShading.Rendered)

@@ -57,9 +57,9 @@
                         if (dialog.Result == OpenFileResult.Ok)
                         {
                             if (relativeTo != null)
-                                value = Path.GetRelativePath(relativeTo, FileSystem.GetRelativePath(dialog.SelectedFile));
+                                value = Path.GetRelativePath(relativeTo, FileSystem.GetRelativePath(dialog.FullPath));
                             else
-                                value = FileSystem.GetRelativePath(dialog.SelectedFile);
+                                value = FileSystem.GetRelativePath(dialog.FullPath);
                             return true;
                         }
                     }

@@ -5,17 +5,16 @@
     using HexaEngine.Core.Graphics.Structs;
     using System;
     using System.Numerics;
-    using System.Threading.Tasks;
 
-    public class IrradianceFilter : IEffect
+    public class IrradianceFilter : IFilter
     {
-        private Cube cube;
-        private IGraphicsPipeline pipeline;
-        private IBuffer mvpBuffer;
-        private ISamplerState sampler;
+        private readonly Cube cube;
+        private readonly IGraphicsPipeline pipeline;
+        private readonly IBuffer mvpBuffer;
+        private readonly ISamplerState sampler;
 
-        public RenderTargetViewArray Targets;
-        public IShaderResourceView Source;
+        public RenderTargetViewArray? Targets;
+        public IShaderResourceView? Source;
 
         public struct CubeFaceCamera
         {
@@ -25,6 +24,28 @@
 
         private CubeFaceCamera[] Cameras;
         private bool disposedValue;
+
+        public IrradianceFilter(IGraphicsDevice device)
+        {
+            Cameras = new CubeFaceCamera[6];
+            cube = new(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/irradiance/vs.hlsl",
+                PixelShader = "effects/irradiance/ps.hlsl"
+            },
+            new GraphicsPipelineState()
+            {
+                DepthStencil = DepthStencilDescription.None,
+                Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Solid) { ScissorEnable = true },
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleList,
+            });
+
+            SetViewPoint(Vector3.Zero);
+            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write); //CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
+            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
+        }
 
         public void SetViewPoint(Vector3 camera)
         {
@@ -50,35 +71,11 @@
                 Vector3.UnitY, // -Z
             };
 
-            Cameras = new CubeFaceCamera[6];
-
             for (int i = 0; i < 6; i++)
             {
                 Cameras[i].View = Matrix4x4.CreateLookAt(camera, targets[i], upVectors[i]) * Matrix4x4.CreateScale(-1, 1, 1);
                 Cameras[i].Projection = Matrix4x4.CreatePerspectiveFieldOfView((float)Math.PI * 0.5f, 1.0f, 0.1f, 100.0f);
             }
-        }
-
-        public Task Initialize(IGraphicsDevice device, int width, int height)
-        {
-            cube = new(device);
-            pipeline = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "effects/irradiance/vs.hlsl",
-                PixelShader = "effects/irradiance/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.None,
-                Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Solid) { ScissorEnable = true },
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
-            });
-
-            SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write); //CreateConstantBuffer<ModelViewProj>(ShaderStage.Vertex, 0);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
-            return Task.CompletedTask;
         }
 
         public void Draw(IGraphicsContext context)
@@ -123,16 +120,6 @@
             Targets.SetTarget(context, i);
             context.SetViewport(Targets.Viewport);
             cube.DrawAuto(context, pipeline);
-        }
-
-        public void BeginResize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndResize(int width, int height)
-        {
-            throw new NotImplementedException();
         }
 
         protected virtual void Dispose(bool disposing)

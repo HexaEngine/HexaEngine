@@ -3,11 +3,11 @@
     [Flags]
     public enum TexFrFlags
     {
-        ROTATE0 = 0x0,
-        ROTATE90 = 0x1,
-        ROTATE180 = 0x2,
-        ROTATE270 = 0x3,
-        FLIP_HORIZONTAL = 0x08,
-        FLIP_VERTICAL = 0x10,
+        Rotate0 = 0x0,
+        Rotate90 = 0x1,
+        Rotate180 = 0x2,
+        Rotate270 = 0x3,
+        FlipHorizontal = 0x08,
+        FlipVertical = 0x10,
     }
 }

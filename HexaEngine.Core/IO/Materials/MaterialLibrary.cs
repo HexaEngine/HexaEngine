@@ -1,10 +1,15 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Mathematics;
+    using System.Diagnostics;
+    using System.IO;
     using System.Text;
 
     public class MaterialLibrary
     {
+        public static readonly MaterialLibrary Empty = new(string.Empty) { Header = default, Materials = Array.Empty<MaterialData>() };
+
         public string Name;
 
         public MaterialLibraryHeader Header;
@@ -66,6 +71,31 @@
             }
 
             fs.Close();
+        }
+
+        public static MaterialLibrary Load(string path)
+        {
+            return new MaterialLibrary(path);
+        }
+
+        public static MaterialLibrary LoadExternal(string path)
+        {
+            return new MaterialLibrary(path, File.OpenRead(path));
+        }
+
+        public MaterialData GetMaterial(string name)
+        {
+            for (int i = 0; i < Materials.Length; i++)
+            {
+                if (Materials[i].Name == name)
+                {
+                    return Materials[i];
+                }
+            }
+
+            Trace.WriteLine($"Warning couldn't find material {name} in library {Name}");
+
+            return MaterialData.Empty;
         }
     }
 }

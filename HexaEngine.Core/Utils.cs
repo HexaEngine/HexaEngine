@@ -105,6 +105,54 @@
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
+        public static void Memcpy(void* src, void* dst, uint dstLength, uint srcLength)
+        {
+            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void Memcpy(void* src, void* dst, int dstLength, int srcLength)
+        {
+            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void Memcpy(void* src, void* dst, long dstLength, long srcLength)
+        {
+            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
+        public static void Memcpy(void* src, void* dst, ulong dstLength, ulong srcLength)
+        {
+            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+        }
+
+        /// <summary>
+        /// Copies an pointer to another pointer with the specified lengthes.
+        /// </summary>
+        /// <param name="src">The source.</param>
+        /// <param name="dst">The DST.</param>
+        /// <param name="dstLength">Length of the DST.</param>
+        /// <param name="srcLength">Length of the source.</param>
         public static void MemoryCopy(void* src, void* dst, uint dstLength, uint srcLength)
         {
             Buffer.MemoryCopy(src, dst, dstLength, srcLength);
@@ -337,6 +385,28 @@
         public static T* Alloc<T>(int count) where T : unmanaged
         {
             return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
+        }
+
+        /// <summary>
+        /// Allocates the specified count of T.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
+        public static T* Malloc<T>(nint count) where T : unmanaged
+        {
+            return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
+        }
+
+        /// <summary>
+        /// Allocates the specified count of T.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
+        public static void* Malloc(nint count)
+        {
+            return (void*)Marshal.AllocHGlobal(count);
         }
 
         /// <summary>

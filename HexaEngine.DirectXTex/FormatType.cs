@@ -9,5 +9,5 @@
         SNorm,
         UInt,
         SInt,
-    };
+    }
 }

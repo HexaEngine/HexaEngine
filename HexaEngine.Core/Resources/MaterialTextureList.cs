@@ -93,10 +93,9 @@
                 EnsureCapacity((uint)(slot + 1));
                 shaderResourceViews[slot] = (void*)texture.Value.ShaderResourceView.NativePointer;
                 samplers[slot] = (void*)texture.Value.Sampler.NativePointer;
-                count = Math.Max(slot, count);
+                count = Math.Max(slot + 1, count);
                 startSlot = Math.Min(slot, startSlot);
             }
-            count++;
         }
 
         public void Bind(IGraphicsContext context)
@@ -116,8 +115,6 @@
                 context.PSSetShaderResource(texture.Value.ShaderResourceView, slot);
                 context.PSSetSampler(texture.Value.Sampler, slot);
             }
-
-            // context.PSSetShaderResources(shaderResourceViews, (uint)count, 0);
         }
 
         public bool Contains(ResourceInstance<MaterialTexture>? texture)
@@ -163,6 +160,8 @@
                 textures.Clear();
                 Free(shaderResourceViews);
                 Free(samplers);
+                count = 0;
+                capacity = 0;
                 shaderResourceViews = null;
                 samplers = null;
 
@@ -194,10 +193,13 @@
         public void RemoveAt(int index)
         {
             ((IList<ResourceInstance<MaterialTexture>?>)textures).RemoveAt(index);
+            Update();
         }
 
         public void Clear()
         {
+            startSlot = 0;
+            count = 0;
             ((ICollection<ResourceInstance<MaterialTexture>?>)textures).Clear();
         }
 

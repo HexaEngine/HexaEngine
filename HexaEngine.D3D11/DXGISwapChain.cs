@@ -35,7 +35,7 @@
 
             Backbuffer = new D3D11Texture2D(backbuffer, description);
             BackbufferRTV = device.CreateRenderTargetView(Backbuffer, new(description.Width, description.Height));
-            depthStencil = device.CreateTexture2D(Core.Graphics.Format.Depth24UNormStencil8, description.Width, description.Height, 1, 1, null, BindFlags.DepthStencil);
+            depthStencil = device.CreateTexture2D(Core.Graphics.Format.D32FloatS8X24UInt, description.Width, description.Height, 1, 1, null, BindFlags.DepthStencil);
             BackbufferDSV = device.CreateDepthStencilView(depthStencil);
             Width = description.Width;
             Height = description.Height;
@@ -146,7 +146,7 @@
 
             Backbuffer = new D3D11Texture2D(backbuffer, description);
             BackbufferRTV = Device.CreateRenderTargetView(Backbuffer, new(description.Width, description.Height));
-            depthStencil = Device.CreateTexture2D(Core.Graphics.Format.Depth24UNormStencil8, description.Width, description.Height, 1, 1, null, BindFlags.DepthStencil);
+            depthStencil = Device.CreateTexture2D(Core.Graphics.Format.D32FloatS8X24UInt, description.Width, description.Height, 1, 1, null, BindFlags.DepthStencil);
             BackbufferDSV = Device.CreateDepthStencilView(depthStencil);
 
             Resized?.Invoke(this, new(oldWidth, oldHeight, width, height));

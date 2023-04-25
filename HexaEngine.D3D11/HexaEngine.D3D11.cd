@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HexaEngine.D3D11.ComputePipeline" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="41.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAACADAAAAAAAAAAACQAAAAAQABAgBBAAgAAAEQ=</HashCode>
+      <FileName>ComputePipeline.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11Buffer" Collapsed="true">
+    <Position X="14" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAABAAAAAQAAAAABAAAAAAAA=</HashCode>
+      <FileName>D3D11Buffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11ClassInstance" Collapsed="true">
+    <Position X="20.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11ClassInstance.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11ClassLinkage" Collapsed="true">
+    <Position X="25.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgBQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11ClassLinkage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11CommandList" Collapsed="true">
+    <Position X="29.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>D3D11CommandList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11DepthStencilView" Collapsed="true">
+    <Position X="36.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>D3D11DepthStencilView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11Exception" Collapsed="true">
+    <Position X="43" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11Exception.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11GraphicsContext" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FQmogiUKADAhCxwBQZwABRmgIiAAooAOIkBWogcJGEQ=</HashCode>
+      <FileName>D3D11GraphicsContext.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11GraphicsDevice" Collapsed="true">
+    <Position X="11.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgoAgAmEAAwQAAAQWAhCAAAABAAhJMAAAAggCABE=</HashCode>
+      <FileName>D3D11GraphicsDevice.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11On12GraphicsDevice" Collapsed="true">
+    <Position X="11.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQgAAAACEAAAAQAAAAAAAAAAAAAAgAAAIAAAAAAAA=</HashCode>
+      <FileName>D3D11On12GraphicsDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11Query" Collapsed="true">
+    <Position X="32" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>D3D11Query.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11RenderTargetView" Collapsed="true">
+    <Position X="38.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAkAAAAAAAAAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11RenderTargetView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11SamplerState" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAABAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11SamplerState.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11ShaderResourceView" Collapsed="true">
+    <Position X="16.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11ShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11Texture1D" Collapsed="true">
+    <Position X="23" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAAAAAQgAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11Texture1D.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11Texture2D" Collapsed="true">
+    <Position X="27.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAAAAAQgAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11Texture2D.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11Texture3D" Collapsed="true">
+    <Position X="34.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAAAAAQgAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3D11Texture3D.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11TextureLoader" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="46.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AiCAlAACAAAiQwRAAAAAAAgCAAAIAAggAAAQAAAAAAQ=</HashCode>
+      <FileName>D3D11TextureLoader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3D11UnorderedAccessView" Collapsed="true">
+    <Position X="11.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>D3D11UnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3DImage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="41.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAEAAAAAABAGAAAAgAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>D3DImage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.D3DScratchImage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="43" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAIAgAXAEAAAAAICQAAAQAIAAAAAAAAAAAAEEMAA=</HashCode>
+      <FileName>D3DScratchImage.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.DeviceChildBase" Collapsed="true">
+    <Position X="24.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAiAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAAAAAAAA=</HashCode>
+      <FileName>DeviceChildBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.DisposableBase" Collapsed="true">
+    <Position X="24.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAACAAAAAAAAAAABAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>DisposableBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.DXGIAdapterD3D11" Collapsed="true">
+    <Position X="8.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAQEAAQAACAAAAgAAAACAIACAAA=</HashCode>
+      <FileName>DXGIAdapterD3D11.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.DXGIAdapterD3D11On12" Collapsed="true">
+    <Position X="8.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQEAAAAAAAAAAgAAAACAAAAAAA=</HashCode>
+      <FileName>DXGIAdapterD3D11On12.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.D3D11.DXGISwapChain" Collapsed="true">
+    <Position X="18.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgCAABAREAhAAQAAAEUAAQAcAAAAgIgAAIAEAAMY=</HashCode>
+      <FileName>DXGISwapChain.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.GraphicsPipeline" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kAAAAgACADAgABAAAAgBAAAAAAAAAALkIEBDDgABBEU=</HashCode>
+      <FileName>GraphicsPipeline.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.Helper" Collapsed="true">
+    <Position X="46.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAIACAAAAAAgAAAAAAQAAAAAAAAI=</HashCode>
+      <FileName>Helper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.D3D11.ShaderCompiler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="41.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAQAAIAAAAACMAAABAIAAAAZAAAAAAACAgEA=</HashCode>
+      <FileName>ShaderCompiler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.D3D11.Utils" Collapsed="true">
+    <Position X="43" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAECAAgAIAAAAAAAAgBAAAAAAJAAgABgAAAAAAAE=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="HexaEngine.D3D11.ResultCode" Collapsed="true">
+    <Position X="41.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gUAgIQEAQABAgBFQA0AAExAAACgIUAGgAACAAAAAKAA=</HashCode>
+      <FileName>ResultCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.D3D11.ShaderFlags" Collapsed="true">
+    <Position X="43" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAABAAAAABAKABAsAACEAABgQAABAIAAAAgAEgAAA=</HashCode>
+      <FileName>ShaderFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

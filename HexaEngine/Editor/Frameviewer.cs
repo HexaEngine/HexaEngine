@@ -151,30 +151,30 @@
 
                 if (ImGui.BeginMenu("options"))
                 {
-                    if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.TRANSLATE))
+                    if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.Translate))
                     {
-                        Inspector.Operation = ImGuizmoOperation.TRANSLATE;
+                        Inspector.Operation = ImGuizmoOperation.Translate;
                     }
 
-                    if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.ROTATE))
+                    if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.Rotate))
                     {
-                        Inspector.Operation = ImGuizmoOperation.ROTATE;
+                        Inspector.Operation = ImGuizmoOperation.Rotate;
                     }
 
-                    if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.SCALE))
+                    if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.Scale))
                     {
-                        Inspector.Operation = ImGuizmoOperation.SCALE;
+                        Inspector.Operation = ImGuizmoOperation.Scale;
                     }
 
-                    if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoMode.LOCAL))
+                    if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoMode.Local))
                     {
-                        Inspector.Mode = ImGuizmoMode.LOCAL;
+                        Inspector.Mode = ImGuizmoMode.Local;
                     }
 
                     ImGui.SameLine();
-                    if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoMode.WORLD))
+                    if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoMode.World))
                     {
-                        Inspector.Mode = ImGuizmoMode.WORLD;
+                        Inspector.Mode = ImGuizmoMode.World;
                     }
                     ImGui.Separator();
                     ImGui.Text("Shading Mode");

@@ -24,7 +24,7 @@
             if (filePicker.Draw())
             {
                 if (filePicker.Result == OpenFileResult.Ok)
-                    options.Scenes.Add(Path.GetFileName(filePicker.SelectedFile));
+                    options.Scenes.Add(Path.GetFileName(filePicker.FullPath));
             }
 
             bool disable = task != null && !task.IsCompleted;

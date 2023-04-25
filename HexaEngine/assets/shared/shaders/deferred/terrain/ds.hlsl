@@ -43,9 +43,6 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 
 #if (DEPTH != 1)
 	CalculateNormalFromHeightmap(output.ctex, output.tangent, output.normal);
-#if (INSTANCED != 1)
-	output.tangent = mul(output.tangent, (float3x3)world);
-#endif
 	output.tangent = normalize(output.tangent);
 #endif
 

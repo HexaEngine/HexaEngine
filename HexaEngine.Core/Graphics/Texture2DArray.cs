@@ -23,7 +23,7 @@
         public readonly void** PRTVs;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public TextureArray(IGraphicsDevice device, int width, int height, uint count = 1, Format format = Format.RGBA32Float)
+        public TextureArray(IGraphicsDevice device, int width, int height, uint count = 1, Format format = Format.R32G32B32A32Float)
         {
             Count = count;
             Width = width;

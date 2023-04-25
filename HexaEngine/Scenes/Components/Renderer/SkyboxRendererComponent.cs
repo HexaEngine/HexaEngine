@@ -6,9 +6,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Renderers;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Rendering;
     using System;
     using System.Threading.Tasks;
 

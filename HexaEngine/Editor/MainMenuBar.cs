@@ -12,8 +12,10 @@
     {
         private static float height;
         private static bool isShown = true;
-        private static readonly ImportDialog importDialog = new();
+
+        private static ImportDialog importDialog;
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
+
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
         private static Action<OpenFileResult, string>? filePickerCallback;
         private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
@@ -30,11 +32,16 @@
             HotkeyManager.Register("Redo-Action", () => Designer.History.TryRedo(), Key.LCtrl, Key.Y);
         }
 
+        internal static void Init(IGraphicsDevice device)
+        {
+            importDialog = new(device);
+        }
+
         internal static void Draw()
         {
             if (filePicker.Draw())
             {
-                filePickerCallback?.Invoke(filePicker.Result, filePicker.SelectedFile);
+                filePickerCallback?.Invoke(filePicker.Result, filePicker.FullPath);
             }
 
             if (fileSaver.Draw())
@@ -116,8 +123,8 @@
                         {
                             if (e == SaveFileResult.Ok)
                             {
-                                Directory.CreateDirectory(Path.Combine(r.CurrentFolder, r.SelectedFile));
-                                ProjectManager.Create(Path.Combine(r.CurrentFolder, r.SelectedFile));
+                                Directory.CreateDirectory(r.FullPath);
+                                ProjectManager.Create(r.FullPath);
                             }
                             fileSaver.Show();
                         };

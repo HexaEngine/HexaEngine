@@ -1,0 +1,3791 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HexaEngine.Core.AI.Pathfinding.Astar" Collapsed="true">
+    <Position X="54.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AI\Pathfinding\Astar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.AI.Pathfinding.Node" Collapsed="true">
+    <Position X="49.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AI\Pathfinding\Astar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.AI.Pathfinding.Edge" Collapsed="true">
+    <Position X="40.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AI\Pathfinding\Astar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Animations.Animation" Collapsed="true">
+    <Position X="40.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIBgIAAAAACAAAAAAAAAAQAAABAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Animations\Animation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Audio.AudioAdapter" Collapsed="true">
+    <Position X="56.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACBAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Audio\AudioAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Audio.AudioManager" Collapsed="true">
+    <Position X="58.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAoAAAwCAAAAABAAAEAoAAAAAAAAAgBAIMIA=</HashCode>
+      <FileName>Audio\AudioManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Collections.ObservableDictionary&lt;TKey, TValue&gt;" Collapsed="true">
+    <Position X="0.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIAAAAAAAAEABAQiAAABAAAAAgAAAAABAAgAABQIAA=</HashCode>
+      <FileName>Collections\ObservableDictionary.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.Core.Collections.ObservableKeyValuePair&lt;TKey, TValue&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAIAAEAAAAgAAAACAAAAAgAAAAAAA=</HashCode>
+      <FileName>Collections\ObservableKeyValuePair.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Collections.TernarySearchTreeDictionary&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIAAAAACAAUIBEICAAEBBQAAIAIAAAEAIQgAATEAUI=</HashCode>
+      <FileName>Collections\TernarySearchTreeDictionary.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Config" Collapsed="true">
+    <Position X="49.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEACIAAAAAAAAAACAAAAAQAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Configuration\Config.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.ConfigValue" Collapsed="true">
+    <Position X="53" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACIAAAoACJwAABRgAAAAAYAAEBAACQQQAAgQSAAAAE=</HashCode>
+      <FileName>Configuration\Config.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.ConfigKey" Collapsed="true">
+    <Position X="51.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CwgACACAgADECoAACQABCCwCBAAIAAwAABAhCAIAAAA=</HashCode>
+      <FileName>Configuration\Config.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.SourceGenerationContext" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="46" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration\Config.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Application" Collapsed="true">
+    <Position X="46" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAACIAAADAAQBgAAAAUoAAABAJAAAQAAAImAAgwAA4=</HashCode>
+      <FileName>Application.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Clipboard" Collapsed="true">
+    <Position X="46" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAgAAAAAAAAAAAAAAAAAAACAAAAAAAAQAAAAAI=</HashCode>
+      <FileName>Clipboard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.CursorHelper" Collapsed="true">
+    <Position X="42.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAAAAAAAAAAIAAAAEAAAAAAAA=</HashCode>
+      <FileName>Cursor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Display" Collapsed="true">
+    <Position X="56.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAQAAAAAAAhAAAAIASAIAAhAAEAAAAAAAAGABE=</HashCode>
+      <FileName>Display.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.LeakTracer" Collapsed="true">
+    <Position X="60" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAQAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>LeakTracer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Paths" Collapsed="true">
+    <Position X="58.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAkAAAEAABAgAAgCAAAIAAJAAAAA=</HashCode>
+      <FileName>Paths.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Time" Collapsed="true">
+    <Position X="61.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAACAAAAgAAAQAAABAACAAAAAAAAQAAAAAAAAACAgA=</HashCode>
+      <FileName>Time.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Utils" Collapsed="true">
+    <Position X="54.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABgAIAABAAAAACAwACQQAABCCAABAAQAAIBo=</HashCode>
+      <FileName>Utils.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Culling.CullingManager" Collapsed="true">
+    <Position X="40.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>UQAAAAgDgAIAAYAABEAgIgABABIAAAAAgAAgApGAAGg=</HashCode>
+      <FileName>Culling\CullingManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.ConsoleColorPalette" Collapsed="true">
+    <Position X="56.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Debugging\Console.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.ImGuiConsole" Collapsed="true">
+    <Position X="60" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAgRASIACMAAkAIgQIwAAQgAggEAwLrAAAAAAgCQkA=</HashCode>
+      <FileName>Debugging\Console.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.ConsoleAppManager" Collapsed="true">
+    <Position X="54.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAEIEAQAAAAYABICAAIAQBAAAgAIAAAAEAcgAEI=</HashCode>
+      <FileName>Debugging\ConsoleAppManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.CrashLogger" Collapsed="true">
+    <Position X="61.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Debugging\CrashLogger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.DebugListener" Collapsed="true">
+    <Position X="49.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAEAAIAAAAAAAAAAAAAIAACAAAAAEAAAA=</HashCode>
+      <FileName>Debugging\DebugListener.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.OutputTerminal" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAgAIAAIBAhAAAAAEAAIBBAAAAAEEAAA=</HashCode>
+      <FileName>Debugging\OutputTerminal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.ShellTerminal" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="42.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEgAAAgAAAAAgAAAAABAhAAAAAMAAIBFAAAAAaEggA=</HashCode>
+      <FileName>Debugging\ShellTerminal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Debugging.TerminalColorPalette" Collapsed="true">
+    <Position X="54.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Debugging\TerminalColorPalette.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Editor.DebugDraw" Collapsed="true">
+    <Position X="44.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAEABQRAQAAEgBBARAAgYAAAAEABAFAtAAwAGAAAA=</HashCode>
+      <FileName>Debugging\DebugDraw.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Editor.DebugDrawCommand" Collapsed="true">
+    <Position X="46" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAFAAAQAAAAAAAAAAEAAAAAAAEAAQAAAAAAA=</HashCode>
+      <FileName>Debugging\DebugDrawCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Editor.DebugDrawCommandQueue" Collapsed="true">
+    <Position X="47.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAgAAAAAAAgAAAAAAAAEAAQAAAAAAAAAAAARgAAA=</HashCode>
+      <FileName>Debugging\DebugDrawCommand.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorComponentAttribute" Collapsed="true">
+    <Position X="8.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAkAEAAAAAAAAQAAAAAQAAAAAAQAAAQAIAAAAEAA=</HashCode>
+      <FileName>Editor\Attributes\EditorComponentAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorComponentAttribute&lt;T&gt;" Collapsed="true">
+    <Position X="8.5" Y="18" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorComponentAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorEnumAttribute" Collapsed="true">
+    <Position X="16.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAQAgAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorEnumAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorEnumAttribute&lt;T&gt;" Collapsed="true">
+    <Position X="16.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorEnumAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorPropertyAttribute" Collapsed="true">
+    <Position X="1.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAABAAAAJAAAAAAEAAAAAQAABAAABAAAAAAgIEAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorPropertyAttribute&lt;T&gt;" Collapsed="true">
+    <Position X="0.5" Y="18" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorPropertyTypeSelectorAttribute&lt;T&gt;" Collapsed="true">
+    <Position X="2.75" Y="18" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorNodeAttribute" Collapsed="true">
+    <Position X="5.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAQAAAAAAAAAAQAIAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorNodeAttribute&lt;T&gt;" Collapsed="true">
+    <Position X="5.5" Y="18" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Editor.Attributes.EditorButtonAttribute" Collapsed="true">
+    <Position X="42.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Effects.Effect" Collapsed="true">
+    <Position X="44.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Effects\Effect.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Effects.EffectDescriptionFile" Collapsed="true">
+    <Position X="46" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAgAAAAAAgAAAAAAAAAAAAAAAAQEgAAABAAAAAAAA=</HashCode>
+      <FileName>Effects\EffectDescriptionFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Effects.EffectShaderFile" Collapsed="true">
+    <Position X="47.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Effects\EffectShaderFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Extensions.ArrayAccessor&lt;T&gt;" Collapsed="true">
+    <Position X="47.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Extensions\ArrayAccessor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Extensions.FormatExtensions" Collapsed="true">
+    <Position X="51.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Extensions\FormatExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Extensions.ListExtensions" Collapsed="true">
+    <Position X="40.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Extensions\ListExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.ConstantBuffer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAggACACAgAAAALAgAABBAAABAQAAAIABAAAEAQAE=</HashCode>
+      <FileName>Graphics\Buffers\ConstantBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.IndexBuffer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAgggjACAgAAAAPAoBBBRCAAAAQAEAIABAAgBAIAE=</HashCode>
+      <FileName>Graphics\Buffers\IndexBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.StructuredBuffer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="51.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAgggjACAgAAAAPAoABBRCgAAAQgEAIABAAgAAAAE=</HashCode>
+      <FileName>Graphics\Buffers\StructuredBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.StructuredUavBuffer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAkhijACAghAAAPAoABBTigABAQgEAIAhAAgJJIAE=</HashCode>
+      <FileName>Graphics\Buffers\StructuredUavBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.UavBuffer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="46" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAkhCCACAggAAAEEAADBDggAAAQgAAIA1AAgNIYAE=</HashCode>
+      <FileName>Graphics\Buffers\UavBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.UavBuffer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="47.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAkhijACAggAAAHAoABBTigABAQgEAIAhAAgBIIAU=</HashCode>
+      <FileName>Graphics\Buffers\UavBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Buffers.VertexBuffer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAgggjACAgAAAAPAoBBBRCAAAAQQEAIABAAgBAIAE=</HashCode>
+      <FileName>Graphics\Buffers\VertexBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Primitives.Cube" Collapsed="true">
+    <Position X="3.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Primitives\Box.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Primitives.Grid" Collapsed="true">
+    <Position X="6" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAQAAAAAEAgQEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Primitives\Grid.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Primitives.Primitive&lt;T&gt;" Collapsed="true">
+    <Position X="8.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQgAAAACAAAAAAAAAAAAAAABEAAAAAAAAAggAAAAA=</HashCode>
+      <FileName>Graphics\Primitives\Primitive.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Primitives.Quad" Collapsed="true">
+    <Position X="8.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAEAAAAAFAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Graphics\Primitives\Quad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Primitives.Sphere" Collapsed="true">
+    <Position X="10.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Primitives\Sphere.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Primitives.UVSphere" Collapsed="true">
+    <Position X="12.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Primitives\UVSphere.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Blob" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAACAAAAgAAAAAAIAAAAAAIAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Blob.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.DepthMipChain" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="51.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAABCAAA4AABAAAAEAAkAAiAoYBAQAAAEGQkAA=</HashCode>
+      <FileName>Graphics\DepthMipChain.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.DepthStencil" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAICAEAAAAAAAAAAAAgBAAAAAAAAAAAgKAAAA=</HashCode>
+      <FileName>Graphics\DepthStencil.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.DrawIndirectArgsBuffer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAAgjACAAAAAANAoABAACAAAAAAEAAABAAgAAYAE=</HashCode>
+      <FileName>Graphics\DrawIndirectArgsBuffer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.FormatHelper" Collapsed="true">
+    <Position X="53" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEIABQAAAACAoAAkIAAAABCAgAAAAMIAABAhA=</HashCode>
+      <FileName>Graphics\FormatHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.GraphicsAdapter" Collapsed="true">
+    <Position X="51.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\GraphicsAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.PipelineManager" Collapsed="true">
+    <Position X="61.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAiAAAAAQAAAIAAAAAAAIABAAIAAABAAAAAGAA=</HashCode>
+      <FileName>Graphics\PipelineManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.RenderTargetViewArray" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAEAAAAAABAAAAAAAAAAEgAAAIAAgIQAAI=</HashCode>
+      <FileName>Graphics\RenderTargetArray.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.ShaderResourceViewArray" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Graphics\RenderTargetArray.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.ShaderCache" Collapsed="true">
+    <Position X="60" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAoIAAABAAACCAAAAgAAAAAIAAAAAABIBAAABAAAA=</HashCode>
+      <FileName>Graphics\ShaderCache.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.ShaderCompilers" Collapsed="true">
+    <Position X="61.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAABAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ShaderCompilers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.Texture" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kACAAAAAYCAuACAAAARAAQAAQIEAAIAAAAIAAgBQAAI=</HashCode>
+      <FileName>Graphics\Texture.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Graphics.TextureArray" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="60" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABCCEAAAAAACAEEQAAAAAAAAAAAEAAgAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DArray.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.GamepadAxisMotionEventArgs" Collapsed="true">
+    <Position X="56.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Input\Events\GamepadAxisMotionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.GamepadButtonEventArgs" Collapsed="true">
+    <Position X="58.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Input\Events\GamepadButtonEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.GamepadRemappedEventArgs" Collapsed="true">
+    <Position X="60" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Events\GamepadRemappedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.GamepadSensorUpdateEventArgs" Collapsed="true">
+    <Position X="42.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAABAAAUAAAAAAAAA=</HashCode>
+      <FileName>Input\Events\GamepadSensorUpdateEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.GamepadTouchpadEventArgs" Collapsed="true">
+    <Position X="46" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAABgAAYAA=</HashCode>
+      <FileName>Input\Events\GamepadTouchpadEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.GamepadTouchpadMotionEventArgs" Collapsed="true">
+    <Position X="47.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAgAAYAA=</HashCode>
+      <FileName>Input\Events\GamepadTouchpadMotionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.JoystickAxisMotionEventArgs" Collapsed="true">
+    <Position X="46" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Input\Events\JoystickAxisMotionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.JoystickBallMotionEventArgs" Collapsed="true">
+    <Position X="47.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAIA=</HashCode>
+      <FileName>Input\Events\JoystickBallMotionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.JoystickButtonEventArgs" Collapsed="true">
+    <Position X="49.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Input\Events\JoystickButtonEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.JoystickHatMotionEventArgs" Collapsed="true">
+    <Position X="51.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Input\Events\JoystickHatMotionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.KeyboardCharEventArgs" Collapsed="true">
+    <Position X="56.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Events\KeyboardCharEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.KeyboardEventArgs" Collapsed="true">
+    <Position X="58.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAACAA=</HashCode>
+      <FileName>Input\Events\KeyboardEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.MouseButtonEventArgs" Collapsed="true">
+    <Position X="44.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAgA=</HashCode>
+      <FileName>Input\Events\MouseButtonEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.MouseMotionEventArgs" Collapsed="true">
+    <Position X="46" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAAYAA=</HashCode>
+      <FileName>Input\Events\MouseMotionEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Events.MouseWheelEventArgs" Collapsed="true">
+    <Position X="47.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Events\MouseWheelEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Gamepad" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>w4rqAGKIAC1hAQNFKIFAKYQkABCABJhAAQEBBIJoBgg=</HashCode>
+      <FileName>Input\Gamepad.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Gamepads" Collapsed="true">
+    <Position X="61.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIAAAAAAAAAAAAAAoAEAACABABABIAAABECAAAAACA=</HashCode>
+      <FileName>Input\Gamepads.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.GamepadSensor" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAIEAAEAAAAAAAAABQBAAAUFAAgAIBAg=</HashCode>
+      <FileName>Input\GamepadSensor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Input.GamepadTouchpad" Collapsed="true">
+    <Position X="44.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgACAAAAAAAAAAGAIgBACACAAAAAACAgAAEBAABIAgg=</HashCode>
+      <FileName>Input\GamepadTouchpad.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Haptic" Collapsed="true">
+    <Position X="54.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAEAAACAAAAIAAAEAkAQAAAAAQACAABAAAAACAgg=</HashCode>
+      <FileName>Input\Haptic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Helper" Collapsed="true">
+    <Position X="56.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\Helper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Joystick" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QQJiAGIABCEgAQRAKIEEAASkABAEDBBAAQIAJhIAAgg=</HashCode>
+      <FileName>Input\Joystick.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Joysticks" Collapsed="true">
+    <Position X="53" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAgAAAABAEAAAAACAAAAAAAgAAAAAAAAAAABBEgAAQ=</HashCode>
+      <FileName>Input\Joysticks.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Keyboard" Collapsed="true">
+    <Position X="54.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACKgAAACAhAAAAAAALEAACEAAEChAEIAAg=</HashCode>
+      <FileName>Input\Keyboard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.Mouse" Collapsed="true">
+    <Position X="42.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCIgAAAAAAAgAAAgKYBAAIIAAACAABAcAAECDEAIAAg=</HashCode>
+      <FileName>Input\Mouse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.TouchDevice" Collapsed="true">
+    <Position X="40.75" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\TouchDevice.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Input.TouchDevices" Collapsed="true">
+    <Position X="42.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAg=</HashCode>
+      <FileName>Input\TouchDevices.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Instances.InstanceManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="42.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAEBAABIAAQBoJAACCAABAAAABAAAAAQAAAAAIEEAo=</HashCode>
+      <FileName>Instances\InstanceManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Instances.ModelInstance" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="60" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACgAAAACAAAABEAAAAQAQgAACFAAAAQQAAAgAAAAA=</HashCode>
+      <FileName>Instances\ModelInstance.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Instances.ModelInstanceType" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="61.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gEBBBAAAAiCRA6IkgCAASCURAQBAAARoQQAEIiAAAQc=</HashCode>
+      <FileName>Instances\ModelInstanceType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Assets.Asset" Collapsed="true">
+    <Position X="51.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAIAEAgAAAIAAAAAIABAAAAAAQAAAQQAIAAAIAA=</HashCode>
+      <FileName>IO\Assets\Asset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Assets.BinaryAsset" Collapsed="true">
+    <Position X="61.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAIAAAAAAABAAAAAAAAAAQAQAAAAAAA=</HashCode>
+      <FileName>IO\Assets\Asset.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Assets.AssetArchive" Collapsed="true">
+    <Position X="53" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIRAAAIAQAAAAgAAIAAAAAAgAAAACAAgQAAAAAA=</HashCode>
+      <FileName>IO\Assets\AssetArchive.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Json.UnmanagedArrayConverter&lt;T&gt;" Collapsed="true">
+    <Position X="49.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IO\Json\UnmanagedArrayConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Json.UnmanagedConverter&lt;T&gt;" Collapsed="true">
+    <Position X="51.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IO\Json\UnmanagedConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Json.UnmanagedPointerConverter&lt;T&gt;" Collapsed="true">
+    <Position X="53" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQQAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>IO\Json\UnmanagedPointerConverter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Materials.MaterialData" Collapsed="true">
+    <Position X="44.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEEABAACECAAACBAAAIAABQhAAAIAAAAoAAAAAECAAA=</HashCode>
+      <FileName>IO\Materials\MaterialData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Materials.MaterialLibrary" Collapsed="true">
+    <Position X="47.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BEAAgMAAAAAAAAAAAAIAAAQAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IO\Materials\MaterialLibrary.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Meshes.ModelFile" Collapsed="true">
+    <Position X="58.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAoIAAAAABACAAAAABAAQAAAIAQAAAAABAAAAAAAA=</HashCode>
+      <FileName>IO\Meshes\ModelFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.Shaders.ShaderBytecodeFile" Collapsed="true">
+    <Position X="58.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAgIAAAAAAAAAAAAAAAAQAAgAAQQAAAAAAAgAAAAA=</HashCode>
+      <FileName>IO\Shaders\ShaderBytecodeFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.FileSystem" Collapsed="true">
+    <Position X="49.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCAAAEACAABAIQAAAAAACBAAAAAEABAKAAAAAAkQBAA=</HashCode>
+      <FileName>IO\FileSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.StreamExtensions" Collapsed="true">
+    <Position X="49.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgIAAAQiAAgAAAAAQgEQAAAgBABAAWAAIEBCwAAAAUA=</HashCode>
+      <FileName>IO\StreamExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.IO.VirtualStream" Collapsed="true">
+    <Position X="58.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAA4AAgGAAAIABgAAAAAEBAAAAAAAEIICg=</HashCode>
+      <FileName>IO\VirtualStream.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.Probes.GlobalLightProbeComponent" Collapsed="true">
+    <Position X="15.5" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAQAQAAEBGAAAAAABAoAAAAKwAAAAAAAEA=</HashCode>
+      <FileName>Lights\Probes\GlobalLightProbeComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.Probes.IBLLightProbeComponent" Collapsed="true">
+    <Position X="15.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAACAAAAAAAIAgCAAAICAAAAAAAAAAAAAABAAEA=</HashCode>
+      <FileName>Lights\Probes\IBLLightProbeComponent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.Types.DirectionalLight" Collapsed="true">
+    <Position X="18" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQEAAAAAABAAAAAAAAAAAYAAABBAAAAAAAEAAGAQAA=</HashCode>
+      <FileName>Lights\Types\DirectionalLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.Types.PointLight" Collapsed="true">
+    <Position X="20.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQEAAAAAAABAAAAAQAAAAIAAABBAAAAYAAUACCIQAA=</HashCode>
+      <FileName>Lights\Types\PointLight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.Types.Spotlight" Collapsed="true">
+    <Position X="22.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gQQEAAAAAAIFAQACAQAAAAYAQgBBQkAAQQAEASEAQAA=</HashCode>
+      <FileName>Lights\Types\Spotlight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.Light" Collapsed="true">
+    <Position X="20.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQEABAAAAAQAAAAABAAAAIAAAAJEACAAAAAgAAAQBA=</HashCode>
+      <FileName>Lights\Light.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Lights.LightManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="61.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>soQCIQCjSiCQwwSCqgEoAiwBoWpTFKCtEfAEgCziG0Q=</HashCode>
+      <FileName>Lights\LightManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Meshes.MaterialDesc" Collapsed="true">
+    <Position X="46" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hEEAEAAAwAwCABEAAQAAJKQAQJAAAECCEAAAJAQAxFA=</HashCode>
+      <FileName>Meshes\MaterialDesc.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Particles.ParticleSystem" Collapsed="true">
+    <Position X="56.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Particles\ParticleSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Physics.Characters.CharacterControllers" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAIQBAQgACBAQQAgBEAAIABAIAABEAAIAFgABQFAQQI=</HashCode>
+      <FileName>Physics\Characters\CharacterControllers.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Physics.Characters.StaticCharacterMotionTypeProcessor" Collapsed="true">
+    <Position X="47.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Physics.Characters.DynamicCharacterMotionTypeProcessor" Collapsed="true">
+    <Position X="61.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Physics.ContactEvents" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="60" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAMACAAAwAAAAAIAAAAgKAhAAAECAgAAAAIkAA=</HashCode>
+      <FileName>Physics\ContactEvents.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Physics.RayHitHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="46" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAEAAAAIAAAEAKAAAgQEACA=</HashCode>
+      <FileName>Physics\RayHitHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Physics.RayHitHandler2" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="47.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIBAAEAAAAIAAAEAKAAAgAEACA=</HashCode>
+      <FileName>Physics\RayHitHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.PostFx.PostFx" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYghIAAACAAA4AEAAAAAAQAAAAAAAAAAAAQAIEQAAA=</HashCode>
+      <FileName>PostFx\PostFx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.PostFx.PostFxPassCollection" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="42.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAABAAAAAAAAACAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>PostFx\PostFx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.PostFx.GraphicsPass" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAgAQAAAAEAAQBAAAAAAAADABAiBAAAAAA=</HashCode>
+      <FileName>PostFx\PostFx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.PostFx.ComputePass" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="47.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAgAQAAAAEAAABAAAAAAAACABAiAAAAAAA=</HashCode>
+      <FileName>PostFx\PostFx.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.PostFx.PostProcessManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAICAgACCCQEA4QBSASYBASUEAACAIMEKQAAIgAAIAg=</HashCode>
+      <FileName>PostFx\PostProcessManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Renderers.DrawQueue" Collapsed="true">
+    <Position X="60" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAQAABAAAAAAAAAABAAAAAAAAFAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Renderers\DrawQueue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Renderers.ObjectPool&lt;T&gt;" Collapsed="true">
+    <Position X="51.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAQAAAAAAAAgCIAABAAAAQAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Renderers\ObjectPool.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Renderers.RendererHelper" Collapsed="true">
+    <Position X="51.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Renderers\RendererHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.Material" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="42.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>RAQAgAIAICABBoAFIAIAAAQQAABEAABAAAAAAgAAAAA=</HashCode>
+      <FileName>Resources\Material.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.MaterialShader" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="51.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>0CAABAACADAAAwAAAAQAAAAACAABgAAgABFEAgBAAEQ=</HashCode>
+      <FileName>Resources\MaterialShader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.MaterialTexture" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAIAAAAAAAAAAAAAAAAAAAQAAAAQgAAAAA=</HashCode>
+      <FileName>Resources\MaterialTexture.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.MaterialTextureList" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEYAgGAgAGQgABAUHAIABARIAAAAQCAECAAAAhBQIAA=</HashCode>
+      <FileName>Resources\MaterialTextureList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.Mesh" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAIAACACAABAAEAAIAAgUAASAEAQAAABAAAgAEAgA=</HashCode>
+      <FileName>Resources\Mesh.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceInstance" Collapsed="true">
+    <Position X="11.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAIAAAACAABABAAAIAQAQAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Resources\ResourceInstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceInstance&lt;T&gt;" Collapsed="true">
+    <Position X="11.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAACAAAAAAAAAAAAEAABQAACAAAAAgABAQAAA=</HashCode>
+      <FileName>Resources\ResourceInstance.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceManager" Collapsed="true">
+    <Position X="56.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAEGIGAgYwISAAAA0gYAwAgAAoACiAAEABBAABA=</HashCode>
+      <FileName>Resources\ResourceManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceManager2" Collapsed="true">
+    <Position X="58.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hIQyAAAKACAAACAAAICAAgARAQgAEKAAEAQgCAQABBg=</HashCode>
+      <FileName>Resources\ResourceManager2.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceRef" Collapsed="true">
+    <Position X="61.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAACAAAAAAAAAAAAQAAEAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Resources\ResourceRef.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceRefNotNull" Collapsed="true">
+    <Position X="42.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAACAAAAAAAAQAAEAAAAEAAAAgAAAAAAA=</HashCode>
+      <FileName>Resources\ResourceRef.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceRef&lt;T&gt;" Collapsed="true">
+    <Position X="60" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAACAAAAAAAAQAAEAAAAEAAAAgAAAAAAA=</HashCode>
+      <FileName>Resources\ResourceRef.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Resources.ResourceRefNotNull&lt;T&gt;" Collapsed="true">
+    <Position X="40.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAACAAAAAAAAQAAEAAAAEAAAAgAAAAAAA=</HashCode>
+      <FileName>Resources\ResourceRef.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.AnimationManager" Collapsed="true">
+    <Position X="42.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgACAAAAAAAAAAAAAAAQQAAAAEAAIAAAAAABAAAA=</HashCode>
+      <FileName>Scenes\Managers\AnimationManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.CameraManager" Collapsed="true">
+    <Position X="42.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABwAAAAAAoAABACAAAWAAgABAAAAAAAAAAAAAAAIABA=</HashCode>
+      <FileName>Scenes\Managers\CameraManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.MaterialManager" Collapsed="true">
+    <Position X="49.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AGSAgAAAAAAAAAgQBAAAAAQAAAAAAAgAAQAAAAFAgAA=</HashCode>
+      <FileName>Scenes\Managers\MaterialManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.ModelManager" Collapsed="true">
+    <Position X="40.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgACAAAAAAAAAAAAAAAQAAAIAAAACAAEAAABAAAA=</HashCode>
+      <FileName>Scenes\Managers\MeshManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.SortRendererAscending" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\Managers\RenderManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.RenderManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgAACAwAAAgAAAASAAAQAQABBACAAAAABEIAAkEA=</HashCode>
+      <FileName>Scenes\Managers\RenderManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Managers.ScriptManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAAQAAABBAAAEAAAABAAAEEA=</HashCode>
+      <FileName>Scenes\Managers\ScriptManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Serialization.SceneSerializer" Collapsed="true">
+    <Position X="53" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAACBAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\Serialization\SceneSerializer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Systems.AnimationSystem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAIQAAABBEAAAAAAAAAAAEEA=</HashCode>
+      <FileName>Scenes\Systems\AnimationSystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Systems.AudioSystem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="60" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAACAAAQAAABBAAAAAAAAAAAAEEA=</HashCode>
+      <FileName>Scenes\Systems\AudioSystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Systems.PhysicsSystem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="60" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAAQAAABBAAAAAAAAEAAAEEA=</HashCode>
+      <FileName>Scenes\Systems\PhysicsSystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Systems.TransformSystem" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAQgAABAAAAAAAAAQAAQBBAAAAAAAAAAAAEEA=</HashCode>
+      <FileName>Scenes\Systems\TransformSystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Camera" Collapsed="true">
+    <Position X="15.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAACAhEAAAUAAgAAAAEQAIAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Scenes\Camera.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.EntityNotifyBase" Collapsed="true">
+    <Position X="19" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAIAAAAAARgAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\EntityNotifyBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.GameObject" Collapsed="true">
+    <Position X="19" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QoAaEEKgABAKU4VAAAOERoQkAAIFRQAESQAEAgAAEIo=</HashCode>
+      <FileName>Scenes\GameObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.Scene" Collapsed="true">
+    <Position X="44.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EoAggAAoCgCCEScQAjAjQgQEAlKJAQFMEU4ABBLAYB4=</HashCode>
+      <FileName>Scenes\Scene.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.SceneChangedEventArgs" Collapsed="true">
+    <Position X="46" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Scenes\SceneChangedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.SceneDispatcher" Collapsed="true">
+    <Position X="47.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAIAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Scenes\SceneDispatcher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.SceneExensions" Collapsed="true">
+    <Position X="49.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAQCAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\SceneExensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.SceneManager" Collapsed="true">
+    <Position X="51.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgICAAAAAAAAAAAOAAAAAAAQAAAAACAAAAAAAAAE=</HashCode>
+      <FileName>Scenes\SceneManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scenes.SceneVariables" Collapsed="true">
+    <Position X="0.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAIAAAAAAAAEAhBAAAAABACAAAAAAAAAAAAAAABQIAA=</HashCode>
+      <FileName>Scenes\SceneVariables.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Scripts.AssemblyManager" Collapsed="true">
+    <Position X="49.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEBAggCggAAAAAIBAAAAAQAAQgACAAEAAQAAwAAAAAA=</HashCode>
+      <FileName>Scripts\AssemblyManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Dispatcher" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACQIAAAAAABAAACAAABAAAQQABAAggAAAAA=</HashCode>
+      <FileName>Threading\Dispatcher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.RenderDispatcher" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="49.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACQIAAAAAAAAAACAAAAAAAAQABAAggAAAAA=</HashCode>
+      <FileName>Threading\Dispatcher.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.GlfwWindow" Collapsed="true">
+    <Position X="49.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAABAGEQgEEgCTQQAAAAggQBADAAAAFKAJwBAAQQAE=</HashCode>
+      <FileName>Windows\GlfwWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.SdlWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>kiAlPICMR4VFhGWYwIgAFlgWBAHNAMINLNJwBJzVYgU=</HashCode>
+      <FileName>Windows\SdlWindow.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="HexaEngine.Core.UI.ImGuiEnumHelper&lt;T&gt;" Collapsed="true">
+    <Position X="61.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAACAAAAAACAAAAIA=</HashCode>
+      <FileName>UI\ComboHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.UI.Image" Collapsed="true">
+    <Position X="58.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UI\Image.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.CloseEventArgs" Collapsed="true">
+    <Position X="2" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\CloseEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.EnterEventArgs" Collapsed="true">
+    <Position X="4.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\EnterEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.ExposedEventArgs" Collapsed="true">
+    <Position X="6.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\ExposedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.FocusGainedEventArgs" Collapsed="true">
+    <Position X="8.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\FocusGainedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.FocusLostEventArgs" Collapsed="true">
+    <Position X="11" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\FocusLostEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.HiddenEventArgs" Collapsed="true">
+    <Position X="13.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\HiddenEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.HitTestEventArgs" Collapsed="true">
+    <Position X="15.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\HitTestEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.LeaveEventArgs" Collapsed="true">
+    <Position X="17.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\LeaveEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.MaximizedEventArgs" Collapsed="true">
+    <Position X="20" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\MaximizedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.MinimizedEventArgs" Collapsed="true">
+    <Position X="22.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\MinimizedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.MovedEventArgs" Collapsed="true">
+    <Position X="24.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABgAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\MovedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.ResizedEventArgs" Collapsed="true">
+    <Position X="26.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAIAAAAAACAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\ResizedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.RestoredEventArgs" Collapsed="true">
+    <Position X="29" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\RestoredEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.RoutedEventArgs" Collapsed="true">
+    <Position X="19" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\RoutedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.ShownEventArgs" Collapsed="true">
+    <Position X="31.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\ShownEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.SizeChangedEventArgs" Collapsed="true">
+    <Position X="33.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\SizeChangedEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HexaEngine.Core.Windows.Events.TakeFocusEventArgs" Collapsed="true">
+    <Position X="35.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\Events\TakeFocusEventArgs.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="HexaEngine.Core.Animations.MeshChannel" Collapsed="true">
+    <Position X="44.25" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Animations\MeshChannel.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Animations.MeshKeyframe" Collapsed="true">
+    <Position X="47.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAQA=</HashCode>
+      <FileName>Animations\MeshKeyframe.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Animations.MeshMorphKeyframe" Collapsed="true">
+    <Position X="49.5" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAgAAAAAQA=</HashCode>
+      <FileName>Animations\MeshMorphKeyframe.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Animations.MorphMeshChannel" Collapsed="true">
+    <Position X="56.5" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Animations\MorphMeshChannel.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Animations.NodeChannel" Collapsed="true">
+    <Position X="61.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAgAAQAAAAAEAAABgAAAAABAAwAAAAgAAYAACAE=</HashCode>
+      <FileName>Animations\NodeChannel.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Animations.QuatKeyframe" Collapsed="true">
+    <Position X="60" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAQA=</HashCode>
+      <FileName>Animations\QuatKeyframe.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Animations.VectorKeyframe" Collapsed="true">
+    <Position X="49.5" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAQA=</HashCode>
+      <FileName>Animations\VectorKeyframe.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.DisplayMode" Collapsed="true">
+    <Position X="47.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAACAAAAAAgAAAAAAAAAAEAIAAA=</HashCode>
+      <FileName>DisplayInfo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Culling.OcclusionParams" Collapsed="true">
+    <Position X="42.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAQAAAACBAABAAAAAAAAAQAI=</HashCode>
+      <FileName>Culling\OcclusionParams.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Debugging.LogMessage" Collapsed="true">
+    <Position X="58.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAIAQAAAA=</HashCode>
+      <FileName>Debugging\ConsoleMessage.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Debugging.TerminalMessage" Collapsed="true">
+    <Position X="61.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiAAAAAA=</HashCode>
+      <FileName>Debugging\TerminalMessage.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Editor.DebugDrawVert" Collapsed="true">
+    <Position X="58.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAIAAgAAAAAA=</HashCode>
+      <FileName>Debugging\DebugDrawVert.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Effects.EffectConstantBuffer" Collapsed="true">
+    <Position X="56.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAIAAAAAAAAgAAAAAAgA=</HashCode>
+      <FileName>Effects\EffectConstantBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Effects.EffectDescription" Collapsed="true">
+    <Position X="58.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAEAAAAAAAAAAAAAAAAAAAQBBAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Effects\EffectDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Effects.EffectResourceDescription" Collapsed="true">
+    <Position X="60" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAIAAQAAAAAgAAAAAAgA=</HashCode>
+      <FileName>Effects\EffectResourceDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Effects.EffectSamplerDescription" Collapsed="true">
+    <Position X="61.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAIAAAAAAAAgAAAAAAgA=</HashCode>
+      <FileName>Effects\EffectSamplerDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Effects.EffectTargetDescription" Collapsed="true">
+    <Position X="40.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAIAAQAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Effects\EffectTargetDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Reflection.ShaderReflection" Collapsed="true">
+    <Position X="40.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ICIATAEhEYAMBAQEABAAACIAAQAQCCAIOACAgQARCCA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Reflection.SignatureParameterDescription" Collapsed="true">
+    <Position X="49.5" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAEAAAACJAACAAASgAAAAAAA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Reflection.ShaderInputBindDescription" Collapsed="true">
+    <Position X="60" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAgUAAAIQAAABAEAAA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Structs.DrawIndexedInstancedIndirectArgs" Collapsed="true">
+    <Position X="49.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAABAAAAAAAAAQASAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Structs\DrawIndexedInstancedIndriectArgs.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Structs.FogDescription" Collapsed="true">
+    <Position X="44.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIABAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Structs\FogDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Structs.ModelViewProj" Collapsed="true">
+    <Position X="54.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAgAAAAQAAA=</HashCode>
+      <FileName>Graphics\Structs\FrameBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Structs.ViewProj" Collapsed="true">
+    <Position X="53" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Graphics\Structs\FrameBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Structs.PerFrameBuffer2" Collapsed="true">
+    <Position X="46" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Structs\FrameBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Textures.TexMetadata" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAUBAAAAAAAgAAAAEAAACgAQCAgAAAABAAAAyA=</HashCode>
+      <FileName>Graphics\Textures\TexMetadata.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BlendDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="49.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAIoAwAAAAAAAAAAIAAgEAAAAAIAig=</HashCode>
+      <FileName>Graphics\BlendDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BufferDescription" Collapsed="true">
+    <Position X="58.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAEAAAAACAAIAAAIAAIAAA=</HashCode>
+      <FileName>Graphics\BufferDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BufferExtendedShaderResourceView" Collapsed="true">
+    <Position X="60" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAgAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\BufferExtendedShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BufferRenderTargetView" Collapsed="true">
+    <Position X="61.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAgAAAABAAEAAAAAAAA=</HashCode>
+      <FileName>Graphics\BufferRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BufferShaderResourceView" Collapsed="true">
+    <Position X="40.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAgAgAAAABAAEAAAAAAAA=</HashCode>
+      <FileName>Graphics\BufferShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BufferUnorderedAccessView" Collapsed="true">
+    <Position X="42.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAgAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\BufferUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.ComputePipelineDesc" Collapsed="true">
+    <Position X="56.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ComputePipelineDesc.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.DepthStencilDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAIGAAIgAAAgAAAIAQAAAKAAIQAAAAAAgEASiA=</HashCode>
+      <FileName>Graphics\DepthStencilDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.DepthStencilOperationDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="42.5" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAQAAAAAAAAgAAAIAAAEAAAAIgAAAAAAAAAQiA=</HashCode>
+      <FileName>Graphics\DepthStencilOperationDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.DepthStencilViewDescription" Collapsed="true">
+    <Position X="44.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBAARAAAAACAQAAAAAAAAAAgAAAAAAAAAAAAAADA=</HashCode>
+      <FileName>Graphics\DepthStencilViewDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.GraphicsPipelineDesc" Collapsed="true">
+    <Position X="49.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAACAAAAAACAAAAAAAJAAAAAIBAAAIAgAAAEAAAA=</HashCode>
+      <FileName>Graphics\GraphicsPipelineDesc.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.GraphicsPipelineState" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="51.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgABAAAAAIAAAgABAIAAAAAAAAMAAAAAQAAAACiA=</HashCode>
+      <FileName>Graphics\GraphicsPipelineState.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.InputElementDescription" Collapsed="true">
+    <Position X="53" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAQAAAAAAAgAQAAAAgAAgAAICAAAAgAAEAAiA=</HashCode>
+      <FileName>Graphics\InputElementDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.MappedSubresource" Collapsed="true">
+    <Position X="60" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAQAAAKAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\MappedSubresource.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.PointerSize" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAQAAAAAAAQAAF4AUIAAAAAQAAAIAAAABAAAIAAiA=</HashCode>
+      <FileName>Graphics\PointerSize.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.RasterizerDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="61.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAlAAgIAAACAAgAAQICAAiAQEAIBABAACAAAAAiA=</HashCode>
+      <FileName>Graphics\RasterizerDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.RendererProfiler" Collapsed="true">
+    <Position X="42.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACAAhAAACAAAAAAAAAAACAAAAAAAAABAAAA=</HashCode>
+      <FileName>Graphics\RendererProfiler.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.RenderTargetBlendDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAACAAAAQBAAAAAgAAAAAAACAAEAIIAAAAAgAAAAiA=</HashCode>
+      <FileName>Graphics\RenderTargetBlendDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.RenderTargetViewDescription" Collapsed="true">
+    <Position X="46" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAARAAAAACAQBAAAAAAAAAgAAAAAAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\RenderTargetViewDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.SampleDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="47.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABEgAAAIAQAAAAAAIAAAAAAAAAAAiA=</HashCode>
+      <FileName>Graphics\SampleDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.SamplerDescription" Collapsed="true">
+    <Position X="49.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAABQAAgAACAAgAgQAAAAAACABAQACAAQAAAAAAgAIA=</HashCode>
+      <FileName>Graphics\SamplerDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Shader" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAgAAAABAAAAAAQAAAAAAAAAAIBI=</HashCode>
+      <FileName>Graphics\Shader.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.ShaderBinding" Collapsed="true">
+    <Position X="54.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAgA=</HashCode>
+      <FileName>Graphics\ShaderBinding.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BoundResource" Collapsed="true">
+    <Position X="54.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAIAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ShaderBinding.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BoundSampler" Collapsed="true">
+    <Position X="56.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAQAEAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ShaderBinding.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.BoundConstant" Collapsed="true">
+    <Position X="53" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ShaderBinding.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.ShaderCacheEntry" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAACAAAAAAAEggEAAAQgAgAAAYAAAAAAAgEAAmI=</HashCode>
+      <FileName>Graphics\ShaderCache.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.ShaderMacro" Collapsed="true">
+    <Position X="61.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACACEgAAAAAQgAAAAAIAAAAAAAAEAAiA=</HashCode>
+      <FileName>Graphics\ShaderMacro.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.ShaderResourceViewDescription" Collapsed="true">
+    <Position X="42.5" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAARAAAAACAQBAAEAAAAAAgCAAAIAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\ShaderResourceViewDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.SubresourceData" Collapsed="true">
+    <Position X="60" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAKAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\SubresourceData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DArrayDepthStencilView" Collapsed="true">
+    <Position X="46" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture1DArrayDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DArrayRenderTargetView" Collapsed="true">
+    <Position X="47.75" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture1DArrayRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DArrayShaderResourceView" Collapsed="true">
+    <Position X="49.5" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAEQA=</HashCode>
+      <FileName>Graphics\Texture1DArrayShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DArrayUnorderedAccessView" Collapsed="true">
+    <Position X="51.25" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture1DArrayUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DDepthStencilView" Collapsed="true">
+    <Position X="53" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture1DDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DDescription" Collapsed="true">
+    <Position X="54.75" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAEAAgAACAAIAAAJAAAAQA=</HashCode>
+      <FileName>Graphics\Texture1DDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DRenderTargetView" Collapsed="true">
+    <Position X="56.5" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture1DRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DShaderResourceView" Collapsed="true">
+    <Position X="58.25" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Graphics\Texture1DShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture1DUnorderedAccessView" Collapsed="true">
+    <Position X="60" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture1DUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DArrayDepthStencilView" Collapsed="true">
+    <Position X="61.75" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DArrayDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DArrayRenderTargetView" Collapsed="true">
+    <Position X="40.75" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DArrayRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DArrayShaderResourceView" Collapsed="true">
+    <Position X="42.5" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DArrayShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DArrayUnorderedAccessView" Collapsed="true">
+    <Position X="44.25" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DArrayUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DDepthStencilView" Collapsed="true">
+    <Position X="46" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DDescription" Collapsed="true">
+    <Position X="47.75" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAEBGAAgAACAAIAAAJEAAAQA=</HashCode>
+      <FileName>Graphics\Texture2DDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DMultisampledArrayDepthStencilView" Collapsed="true">
+    <Position X="49.5" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DMultisampledArrayDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DMultisampledArrayRenderTargetView" Collapsed="true">
+    <Position X="51.25" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DMultisampledArrayRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DMultisampledArrayShaderResourceView" Collapsed="true">
+    <Position X="53" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEQA=</HashCode>
+      <FileName>Graphics\Texture2DMultisampledArrayShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DMultisampledDepthStencilView" Collapsed="true">
+    <Position X="54.75" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DMultisampledDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DMultisampledRenderTargetView" Collapsed="true">
+    <Position X="56.5" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DMultisampledRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DMultisampledShaderResourceView" Collapsed="true">
+    <Position X="58.25" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DMultisampledShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DRenderTargetView" Collapsed="true">
+    <Position X="60" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DShaderResourceView" Collapsed="true">
+    <Position X="61.75" Y="21.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture2DUnorderedAccessView" Collapsed="true">
+    <Position X="40.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture2DUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture3DDescription" Collapsed="true">
+    <Position X="42.5" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAEAEAAgAACAgIAAAJAAAAAA=</HashCode>
+      <FileName>Graphics\Texture3DDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture3DRenderTargetView" Collapsed="true">
+    <Position X="44.25" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAgAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture3DRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture3DShaderResourceView" Collapsed="true">
+    <Position X="46" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Graphics\Texture3DShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.Texture3DUnorderedAccessView" Collapsed="true">
+    <Position X="47.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAgAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Texture3DUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.TextureCubeArrayShaderResourceView" Collapsed="true">
+    <Position X="49.5" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBAAABAAAAAA=</HashCode>
+      <FileName>Graphics\TextureCubeArrayShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.TextureCubeShaderResourceView" Collapsed="true">
+    <Position X="51.25" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Graphics\TextureCubeShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.TextureDescription" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAJDIBEAAgAgAgAAQAEAGkAgAQKAkIBAEJAAAAyE=</HashCode>
+      <FileName>Graphics\TextureDescription.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.TextureFileDescription" Collapsed="true">
+    <Position X="54.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAQAAAAAAEAAAAQAAAIAAAJAAAAAA=</HashCode>
+      <FileName>Graphics\TextureDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.DepthStencilDesc" Collapsed="true">
+    <Position X="61.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAJAAGAAgAAAAAIAAAIAAAAAA=</HashCode>
+      <FileName>Graphics\TextureDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.DepthStencilBufferDesc" Collapsed="true">
+    <Position X="60" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAIAAAAABEAGAAgAAAAAIAAAIAAAAQA=</HashCode>
+      <FileName>Graphics\TextureDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Graphics.UnorderedAccessViewDescription" Collapsed="true">
+    <Position X="60" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAARAAAAACAABAAAAAAAAAgAAAAAAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\UnorderedAccessViewDescription.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Input.Finger" Collapsed="true">
+    <Position X="42.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgAAYAA=</HashCode>
+      <FileName>Input\Finger.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Instances.InstanceData" Collapsed="true">
+    <Position X="54.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAABAAAAAAEAAAAAAAAAAAAAAAAQAAAAAIAAA=</HashCode>
+      <FileName>Instances\InstanceData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Assets.AssetDesc" Collapsed="true">
+    <Position X="47.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAhAAAAAIAAAAIQAAAAAAAAA=</HashCode>
+      <FileName>IO\Assets\Asset.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Assets.AssetArchiveHeader" Collapsed="true">
+    <Position X="44.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAIAAAAAAAgCAAAAAAAAAggAAAAAAAAAAIAAMAAAA=</HashCode>
+      <FileName>IO\Assets\AssetArchiveHeader.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Assets.AssetArchiveHeaderEntry" Collapsed="true">
+    <Position X="46" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAgAIAAAAAAABgAAAAAQAAAQAAAAEAAAA=</HashCode>
+      <FileName>IO\Assets\AssetArchiveHeaderEntry.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Materials.MaterialLibraryHeader" Collapsed="true">
+    <Position X="61.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAIAAAAAAAAAAAAAAAQAAggAAAAAAAAAAAAAMAAAA=</HashCode>
+      <FileName>IO\Materials\MaterialLibraryHeader.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Materials.MaterialProperty" Collapsed="true">
+    <Position X="40.75" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IEAAAAgAACAAAgAAAAAIAARgAAAAABADAQAAAAMAEAA=</HashCode>
+      <FileName>IO\Materials\MaterialProperty.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Materials.MaterialTexture" Collapsed="true">
+    <Position X="42.5" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IACIBAAAAAARACAFAIAAAACgAAAEAEAAAQAUABUSCAA=</HashCode>
+      <FileName>IO\Materials\MaterialTexture.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Meshes.MeshData" Collapsed="true">
+    <Position X="46" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABBAAAEEAAAAAgAAQAARQgAAJDAAAAgZAAkAEAABI=</HashCode>
+      <FileName>IO\Meshes\MeshData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Meshes.ModelHeader" Collapsed="true">
+    <Position X="53" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAIAAAAAAAAAAAAAAAAAAgwAAAAAAAAABIAAMAAAA=</HashCode>
+      <FileName>IO\Meshes\ModelHeader.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Meshes.Node" Collapsed="true">
+    <Position X="60" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAEAAQAAAIAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>IO\Meshes\Node.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.IO.Shaders.ShaderBytecodeHeader" Collapsed="true">
+    <Position X="56.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAJAAAAAAAAQAgAAAAAAAggAAAAgAAAAAIAAMAAAA=</HashCode>
+      <FileName>IO\Shaders\ShaderBytecodeHeader.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Probes.GlobalProbeData" Collapsed="true">
+    <Position X="47.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAABAAAAAAABAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Lights\Probes\GlobalProbeData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Structs.DirectionalLightData" Collapsed="true">
+    <Position X="46" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAEACAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Lights\Structs\DirectionalLightData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Structs.PointLightData" Collapsed="true">
+    <Position X="54.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAkAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Lights\Structs\PointLightData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Structs.ShadowDirectionalLightData" Collapsed="true">
+    <Position X="44.25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQhgEIEAIBQAKEEADAoBFAAAAAAAAgAAAACgCABBAA=</HashCode>
+      <FileName>Lights\Structs\ShadowDirectionalLightData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Structs.ShadowPointLightData" Collapsed="true">
+    <Position X="46" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAgAAAAAAkAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Lights\Structs\ShadowPointLightData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Structs.ShadowSpotlightData" Collapsed="true">
+    <Position X="47.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAAAAAAAAAkACAAAAAAAAABAIAAAAAAgAAAAAA=</HashCode>
+      <FileName>Lights\Structs\ShadowSpotlightData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.Structs.SpotlightData" Collapsed="true">
+    <Position X="53" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAAAAAAAAAkACAAAAAAAAAAAIAAAAAAgAAAAAA=</HashCode>
+      <FileName>Lights\Structs\SpotlightData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.ProbeBufferParams" Collapsed="true">
+    <Position X="58.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAACAAAAAAQgAAA=</HashCode>
+      <FileName>Lights\LightBufferParams.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.LightBufferParams" Collapsed="true">
+    <Position X="56.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAIAAAAAAAAAIAAAAAAAE=</HashCode>
+      <FileName>Lights\LightBufferParams.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Lights.ForwardLightBufferParams" Collapsed="true">
+    <Position X="46" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAQAAAAAIAIAAAEAACAgAAAASgAAE=</HashCode>
+      <FileName>Lights\LightBufferParams.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.Animature" Collapsed="true">
+    <Position X="42.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meshes\Animature.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.BoneData" Collapsed="true">
+    <Position X="51.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQgAAAAAAAAAEAAAAEAgAA=</HashCode>
+      <FileName>Meshes\BoneData.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.CBWorld" Collapsed="true">
+    <Position X="49.5" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Meshes\CBWorld.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.CBTessellation" Collapsed="true">
+    <Position X="47.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>Meshes\CBWorld.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.MeshVertex" Collapsed="true">
+    <Position X="51.25" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAggAAAAAACAAAIAIACAIAAAAAAAiA=</HashCode>
+      <FileName>Meshes\MeshVertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.SkinnedMeshVertex" Collapsed="true">
+    <Position X="51.25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAggAAAAAACAAAIAIACAEIAAAAAAiA=</HashCode>
+      <FileName>Meshes\SkinnedMeshVertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.TerrainVertex" Collapsed="true">
+    <Position X="40.75" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Meshes\TerrainVertex.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.TerrainVertexStatic" Collapsed="true">
+    <Position X="42.5" Y="20.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAAAIAAACAAIAAAAAAAA=</HashCode>
+      <FileName>Meshes\TerrainVertexStatic.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Meshes.VertexWeight" Collapsed="true">
+    <Position X="51.25" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgACAAIAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Meshes\VertexWeight.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Particles.Particle" Collapsed="true">
+    <Position X="44.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>Particles\Particle.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.CharacterController" Collapsed="true">
+    <Position X="51.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACCAAACEAAgBAAAAAABAACCQgAAYAAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterControllers.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.CharacterInput" Collapsed="true">
+    <Position X="53" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACiAAEAgAAAAAAFAAAAEBAQAIUAAAAAAABAA=</HashCode>
+      <FileName>Physics\Characters\CharacterInput.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.CharacterMotionAccumulatedImpulse" Collapsed="true">
+    <Position X="54.75" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.StaticCharacterMotionConstraint" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="54.75" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAABApAAAAQAgAIAAgAEAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.StaticCharacterMotionPrestep" Collapsed="true">
+    <Position X="58.25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAAAABAAAAQAgAIIAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.StaticCharacterMotionFunctions" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAACAEAAAAAAAIAAAAAIAIAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.DynamicCharacterMotionConstraint" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="51.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAAAAAAAAAAAAABApAAAAQAgAIAAgAEAgAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.DynamicCharacterMotionPrestep" Collapsed="true">
+    <Position X="54.75" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAACAAAAAAAAAAAABAAAAQAgAIIAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.Characters.DynamicCharacterMotionFunctions" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="53" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAACAEAAAAAAAIAAAAAIAIAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\Characters\CharacterMotionConstraint.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.RaycastResult" Collapsed="true">
+    <Position X="40.75" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAIAAAAACAAAAAEACA=</HashCode>
+      <FileName>Physics\RaycastResult.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.NarrowphaseCallbacks" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="16.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAQAAAAAAAAAAAgAAAAAAAQAAAAQEAAA=</HashCode>
+      <FileName>Physics\SimulationCallbacks.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Physics.PoseIntegratorCallbacks" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAQAAAAAAABARAACABAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Physics\SimulationCallbacks.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Renderers.ObjectHandle" Collapsed="true">
+    <Position X="40.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Renderers\ObjectPool.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Scenes.CameraData" Collapsed="true">
+    <Position X="44.25" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAoAAAAAAAAAAABAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Scenes\Camera.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Scenes.CBCamera" Collapsed="true">
+    <Position X="46" Y="13.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAIAoAAgAAAAAAAAAAAAAAABAAAAAAAEAAAAAAA=</HashCode>
+      <FileName>Scenes\CBCamera.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Scenes.SceneProfiler" Collapsed="true">
+    <Position X="51.25" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACAAhAAACAAAAAQAAAAACAAAAAAAAABAAAA=</HashCode>
+      <FileName>Scenes\SceneProfiler.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.Allocator" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAIAAAAAAAAAAAAAAACAAAAAI=</HashCode>
+      <FileName>Unsafes\Allocator.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.Pointer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="49.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQEAAAAAAAAABggAAAAAAAAAAAJAAAAEAAAAAAiA=</HashCode>
+      <FileName>Unsafes\Pointer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.Pointer&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="47.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQEAAAAAAAAAAgAAAQAAAAAgAAJAIAAEAAAAAAiI=</HashCode>
+      <FileName>Unsafes\Pointer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.PointerPointer&lt;T&gt;" Collapsed="true">
+    <Position X="51.25" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAEAAAAAAAAAAAAgAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Unsafes\Pointer.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.UnsafeString" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="47.75" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAABEAAAAAABgQAAAAAAAAADAAAEAAAI=</HashCode>
+      <FileName>Unsafes\StringPtr.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.UnsafeArray&lt;T&gt;" Collapsed="true">
+    <Position X="61.75" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAABgQAAAAAAEAAAAAAFAAAA=</HashCode>
+      <FileName>Unsafes\StringPtr.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.U16String" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.5" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAECAAACABAQAAAAAAAAABAAAEAAAI=</HashCode>
+      <FileName>Unsafes\StringPtr.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.U8String" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.25" Y="22.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAIAAAAAAAAAAECAAgAABAQAAAAAAAAABAAAEAAAI=</HashCode>
+      <FileName>Unsafes\StringPtr.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.UnsafeConcurrentQueue&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="40.75" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAhgAAAgAAQGIoAAAACAAAABAAAAAAAAABRIgI=</HashCode>
+      <FileName>Unsafes\UnsafeConcurrentQueue.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.UnsafeList&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="42.5" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEIAAEAhAAAAgAAAGIIABAACAAAAABAACAASAABVMAI=</HashCode>
+      <FileName>Unsafes\UnsafeList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.UnsafeQueue&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="44.25" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAhgAAAgAAAGIoAAAACAAAABAAAAAACAABRMgI=</HashCode>
+      <FileName>Unsafes\UnsafeQueue.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Struct Name="HexaEngine.Core.Unsafes.UnsafeStack&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="46" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAhAAAEgAAAGIIAAIACAACAAAAAAAASAABROAI=</HashCode>
+      <FileName>Unsafes\UnsafeStack.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Struct>
+  <Interface Name="HexaEngine.Core.Animations.IAnimator" Collapsed="true">
+    <Position X="5.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAAAAAAA=</HashCode>
+      <FileName>Animations\IAnimator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IAudioAdapter" Collapsed="true">
+    <Position X="44.25" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQACEAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Audio\IAudioAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IAudioContext" Collapsed="true">
+    <Position X="46" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Audio\IAudioContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IAudioDevice" Collapsed="true">
+    <Position X="47.75" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAACAAAAACCJAAAEAAAAAAAAAAAAACAICA=</HashCode>
+      <FileName>Audio\IAudioDevice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IAudioStream" Collapsed="true">
+    <Position X="49.5" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAQAAAABRAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Audio\IAudioStream.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IEmitter" Collapsed="true">
+    <Position X="58.25" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAoAAAAAAAAAAgACAABACAAAAEAAAAAAAAAAIEAAE=</HashCode>
+      <FileName>Audio\IEmitter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IListener" Collapsed="true">
+    <Position X="49.5" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAgEAAAAAAAAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Audio\IListener.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.IMasteringVoice" Collapsed="true">
+    <Position X="51.25" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Audio\IMasteringVoice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.ISourceVoice" Collapsed="true">
+    <Position X="53" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAAAABAAAAAAAAAAAAAABBBABAAAAoEBABxAASAA=</HashCode>
+      <FileName>Audio\ISourceVoice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Audio.ISubmixVoice" Collapsed="true">
+    <Position X="54.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAACAAAAAAAQAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Audio\ISubmixVoice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Debugging.ITerminal" Collapsed="true">
+    <Position X="60" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Debugging\ITerminal.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Editor.Properties.IObjectEditor" Collapsed="true">
+    <Position X="53" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAgAAAAAAAAQAAAAAAAAAQQAAAAAAAAA=</HashCode>
+      <FileName>Editor\Properties\IObjectEditor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Editor.Properties.IPropertyEditor" Collapsed="true">
+    <Position X="60" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Properties\IPropertyEditor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Editor.Properties.IPropertyEditorFactory" Collapsed="true">
+    <Position X="61.75" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Properties\IPropertyEditorFactory.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.Buffers.IConstantBuffer" Collapsed="true">
+    <Position X="13.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAQAA=</HashCode>
+      <FileName>Graphics\Buffers\IConstantBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.Buffers.IConstantBuffer&lt;T&gt;" Collapsed="true">
+    <Position X="13.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\Buffers\IConstantBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.Primitives.IPrimitive" Collapsed="true">
+    <Position X="58.25" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Graphics\Primitives\IPrimitive.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IGraphicsAdapter" Collapsed="true">
+    <Position X="61.75" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQEAAAAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IAdapter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IBuffer" Collapsed="true">
+    <Position X="6.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IComputePipeline" Collapsed="true">
+    <Position X="53" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAACQAAAAAQAAAAABAAAAAAAA=</HashCode>
+      <FileName>Graphics\IComputePipeline.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IDepthStencilView" Collapsed="true">
+    <Position X="20.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IDepthStencilView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IDeviceChild" Collapsed="true">
+    <Position X="20.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAggAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IDeviceChild.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IEffect" Collapsed="true">
+    <Position X="56.5" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAwAAAAAAAAAAAAACAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IEffect.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IGraphicsContext" Collapsed="true">
+    <Position X="27" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FQmoACUKABAhChgBQZwABQmgIiAAooAOAkBWoAcJGEQ=</HashCode>
+      <FileName>Graphics\IGraphicsContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IQuery" Collapsed="true">
+    <Position X="29.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IGraphicsContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IPredicate" Collapsed="true">
+    <Position X="31.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IGraphicsContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ICommandList" Collapsed="true">
+    <Position X="36" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IGraphicsContext.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IGraphicsDevice" Collapsed="true">
+    <Position X="38.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAkAABAQAAAAUAgCAAAABAAhIEAAAAAgCAJE=</HashCode>
+      <FileName>Graphics\IGraphicsDevice.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IGraphicsPipeline" Collapsed="true">
+    <Position X="40.75" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAgAAAAAgAAAAAAgBAAAAAAAAAAAAAABABAAAAAA=</HashCode>
+      <FileName>Graphics\IGraphicsPipeline.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IImage" Collapsed="true">
+    <Position X="42.5" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAEAAAAAABAGAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IImage.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IRenderTargetView" Collapsed="true">
+    <Position X="2.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IRenderTargetView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IResource" Collapsed="true">
+    <Position X="9" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABACAAAAAAAAAAAAAAEAQAAEQAAAAAAAAAQ=</HashCode>
+      <FileName>Graphics\IResource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ISamplerState" Collapsed="true">
+    <Position X="15.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ISamplerState.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IShaderCompiler" Collapsed="true">
+    <Position X="51.25" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgEA=</HashCode>
+      <FileName>Graphics\IShaderCompiler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IShaderResourceView" Collapsed="true">
+    <Position X="18" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IShaderResourceView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ISwapChain" Collapsed="true">
+    <Position X="56.5" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAABABEABAAAAAAEUAAAAYAAAAgAAAAAAEAAMA=</HashCode>
+      <FileName>Graphics\ISwapChain.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ITexture1D" Collapsed="true">
+    <Position X="4.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ITexture1D.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ITexture2D" Collapsed="true">
+    <Position X="9" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ITexture2D.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ITexture3D" Collapsed="true">
+    <Position X="11.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ITexture3D.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IClassLinkage" Collapsed="true">
+    <Position X="22.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ITexture3D.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IClassInstance" Collapsed="true">
+    <Position X="24.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ITexture3D.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.ITextureLoader" Collapsed="true">
+    <Position X="61.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AiCAlAAAAAAgQwRAAAAAAAgCAAAAAAggAAAQAAAAAAA=</HashCode>
+      <FileName>Graphics\ITextureLoader.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IScratchImage" Collapsed="true">
+    <Position X="47.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAIAgAVAAAAAAAICQAAAQAAAAAAAAAAAAAAEEMAA=</HashCode>
+      <FileName>Graphics\ITextureLoader.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IUnorderedAccessView" Collapsed="true">
+    <Position X="33.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IUnorderedAccessView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Graphics.IView" Collapsed="true">
+    <Position X="40.75" Y="27.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\IView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Instances.IInstance" Collapsed="true">
+    <Position X="44.25" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAEAAAAQAQgAACAAAAAQQAAAAAAAAA=</HashCode>
+      <FileName>Instances\IInstance.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Instances.IInstanceManager" Collapsed="true">
+    <Position X="46" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAABAABIAAQBABAACAAAAAAAAAAAAAAQAAAAAAEAAI=</HashCode>
+      <FileName>Instances\IInstanceManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Instances.IInstanceType" Collapsed="true">
+    <Position X="47.75" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gABABAAAAAARAoIkACAAAAUAAQAAAAAIQAAEIAAAAQc=</HashCode>
+      <FileName>Instances\IInstanceType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.IO.IBinarySerializable" Collapsed="true">
+    <Position X="51.25" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IO\IBinarySerializable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Lights.Probes.ILightProbeComponent" Collapsed="true">
+    <Position X="3.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAEAEAAAAAAAAIAAAAIQAAAAAAAAA=</HashCode>
+      <FileName>Lights\Probes\LightProbeComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Physics.IContactEventHandler" Collapsed="true">
+    <Position X="54.75" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAgAAAACAAAAAAAAAAAgAAAABAAAAAAAAAQBQAAAA=</HashCode>
+      <FileName>Physics\IContactEventHandler.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.PostFx.IPostFx" Collapsed="true">
+    <Position X="54.75" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYABAAAAAAAA4AEAAAAAAQAAAAAAAAAAAAAAAEQAAA=</HashCode>
+      <FileName>PostFx\IPostFx.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.PostFx.IPostFxPass" Collapsed="true">
+    <Position X="56.5" Y="25.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAQAAAAEAAABAAAAAAAACABAiAAAAAAA=</HashCode>
+      <FileName>PostFx\PostFx.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Renderers.IRenderer" Collapsed="true">
+    <Position X="42.5" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAA4AAIAAAAAAAAAAAEAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Renderers\IRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.Systems.IColliderComponent" Collapsed="true">
+    <Position X="1" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAIAYCAAADAEABAAAABAAAABAAAACISAAgACCAAE=</HashCode>
+      <FileName>Scenes\Systems\IColliderComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.Systems.ICompoundCollider" Collapsed="true">
+    <Position X="1" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Scenes\Systems\ICompoundCollider.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.IComponent" Collapsed="true">
+    <Position X="6.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Scenes\IComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.IAudioComponent" Collapsed="true">
+    <Position X="7.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\IComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.IScriptComponent" Collapsed="true">
+    <Position X="10" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Scenes\IComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.IRenderComponent" Collapsed="true">
+    <Position X="12.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\IComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.ISceneRenderer" Collapsed="true">
+    <Position X="44.25" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAYAAAKAAAAAAYQAAAQAAgAAAAAAAAAAABAAAAAAgAA=</HashCode>
+      <FileName>Scenes\ISceneRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.ISceneUpdateCallbacks" Collapsed="true">
+    <Position X="46" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenes\ISceneUpdateCallbacks.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scenes.ISystem" Collapsed="true">
+    <Position X="58.25" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAAQAAABBAAAAAAAAAAAAEEA=</HashCode>
+      <FileName>Scenes\ISystem.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Scripts.IScript" Collapsed="true">
+    <Position X="49.5" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAgAAAAAAAAAAAAAAAABAAAAAAAAAAAIAAEA=</HashCode>
+      <FileName>Scripts\IScript.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Windows.IRenderDispatcher" Collapsed="true">
+    <Position X="40.75" Y="26.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAIAAAAAAAAAAAAAAAAAAAQABAAAAAAAAA=</HashCode>
+      <FileName>Threading\IRenderDispatcher.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Windows.IApp" Collapsed="true">
+    <Position X="42.5" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAIAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Windows\IApp.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Windows.IRenderWindow" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAwAAAAEAAAAAAACCAAAAABCAAAAAAAg=</HashCode>
+      <FileName>Windows\IWindow.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Windows.IWindow" Collapsed="true">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAhAAAIBYREgEEIAIAAFEAEBAEMAEAAABIQBJyVYgQ=</HashCode>
+      <FileName>Windows\IWindow.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Unsafes.IAllocator" Collapsed="true">
+    <Position X="40.75" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAI=</HashCode>
+      <FileName>Unsafes\IAllocator.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Unsafes.IFreeable" Collapsed="true">
+    <Position X="60" Y="25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Unsafes\IFreeable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="HexaEngine.Core.Unsafes.INative" Collapsed="true">
+    <Position X="20.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Unsafes\INative.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="HexaEngine.Core.Animations.AnimationBehavior" Collapsed="true">
+    <Position X="40.75" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAIAAAAAAAAAgAAAIAAAAAAAA=</HashCode>
+      <FileName>Animations\AnimationBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Audio.AudioBackend" Collapsed="true">
+    <Position X="44.25" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAEAACAAAAA=</HashCode>
+      <FileName>Audio\AudioBackend.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Audio.AudioSourceState" Collapsed="true">
+    <Position X="46" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAIAAAAAAAAAAAQIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Audio\AudioSourceState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.DataType" Collapsed="true">
+    <Position X="51.25" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QkAAAAAAIAAAAAAhSAABAAAAIAACAAAAEEAAAAAgAAA=</HashCode>
+      <FileName>Configuration\DataType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.DisplayOrientation" Collapsed="true">
+    <Position X="61.75" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAABAAAAAAAAAAAAAAAAAAAAAAEAAAAhA=</HashCode>
+      <FileName>DisplayOrientation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Culling.CullingFlags" Collapsed="true">
+    <Position X="47.75" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Culling\CullingFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Debugging.LogSeverity" Collapsed="true">
+    <Position X="58.25" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAQAAAAACBBAAAAgAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Debugging\ConsoleMessageType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Debugging.TerminalColor" Collapsed="true">
+    <Position X="49.5" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAABAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Debugging\TerminalColor.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Editor.Attributes.EditorPropertyMode" Collapsed="true">
+    <Position X="40.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAQAAAAIABAAEAAAAAAAAAAAAAABAg=</HashCode>
+      <FileName>Editor\Attributes\EditorPropertyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.Primitive" Collapsed="true">
+    <Position X="40.75" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAiAADAAQADEAAAAABAAAIABABAoABECA=</HashCode>
+      <FileName>Graphics\Reflection\Primitive.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.MinPrecision" Collapsed="true">
+    <Position X="51.25" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAIAAAAAAgAAAAAAAAAIAAAAAAAACAIQAAgAAAAAAA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.RegisterComponentType" Collapsed="true">
+    <Position X="47.75" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAACAAAAAIAAAABA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.Name" Collapsed="true">
+    <Position X="58.25" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAjAAEJAABAACgAgAQAEAHEAgAIBAAigACAQAAAAACA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.ShaderInputType" Collapsed="true">
+    <Position X="61.75" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAACgEAAAAIACBAkAEAAAEAEAAAAAAAIAACAAAA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.ResourceReturnType" Collapsed="true">
+    <Position X="56.5" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAACAEAAEAAACAAAAAAAAAAAAACAAAABAAAAAEgAAA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.SrvDimension" Collapsed="true">
+    <Position X="46" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAEABQIAAAAAAABIAAAAAAAAgAAAAAAAAAABAAQDA=</HashCode>
+      <FileName>Graphics\Reflection\ShaderReflection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.TessellatorDomain" Collapsed="true">
+    <Position X="51.25" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAEAACA=</HashCode>
+      <FileName>Graphics\Reflection\TessellatorDomain.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.TessellatorOutputPrimitive" Collapsed="true">
+    <Position X="53" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgIAAAAAAAAAAAAAAAAAAAAQAAAABACA=</HashCode>
+      <FileName>Graphics\Reflection\TessellatorOutputPrimitive.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Reflection.TessellatorPartitioning" Collapsed="true">
+    <Position X="54.75" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAgAACAAAAAAAAAAAAAgAAAAAAAAAAACA=</HashCode>
+      <FileName>Graphics\Reflection\TessellatorPartitioning.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.CPFlags" Collapsed="true">
+    <Position X="44.25" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAEABAAgAAAAAAAABJAAAAAAAQAAAAAAAQEAAAA=</HashCode>
+      <FileName>Graphics\Textures\CPFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.DDSFlags" Collapsed="true">
+    <Position X="53" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAIAAABAAAAAAAAAAAAQBAAAAAACAQAAAAiQGAAAA=</HashCode>
+      <FileName>Graphics\Textures\DDSFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TexAlphaMode" Collapsed="true">
+    <Position X="56.5" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAgAAAAAAAIAAAAAAAAAAAAAAAAAAAAAABAABA=</HashCode>
+      <FileName>Graphics\Textures\TexAlphaMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TexCompressFlags" Collapsed="true">
+    <Position X="58.25" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgIAAAAAAAABAAAAgQAIAAAAAIAAAAAAAAAAiAAAgE=</HashCode>
+      <FileName>Graphics\Textures\TexCompressFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TexDimension" Collapsed="true">
+    <Position X="60" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Graphics\Textures\TexDimension.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TexFileFormat" Collapsed="true">
+    <Position X="61.75" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAACAAAAgAAQEAEAIAABAAgAAAAEAAAAAAAACAAAAA=</HashCode>
+      <FileName>Graphics\Textures\TexFileFormat.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TexFilterFlags" Collapsed="true">
+    <Position X="40.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAgACAgQRAAhABBAEQAIAAokAI0AAAAAAAIAACAAAE=</HashCode>
+      <FileName>Graphics\Textures\TexFilterFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TexMiscFlags" Collapsed="true">
+    <Position X="42.5" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAgABAIAAABAAAABAAAAGBjACABEgEEAAUAAAA=</HashCode>
+      <FileName>Graphics\Textures\TexMiscFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.TGAFlags" Collapsed="true">
+    <Position X="56.5" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQEgEAAAA=</HashCode>
+      <FileName>Graphics\Textures\TGAFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Textures.WICFlags" Collapsed="true">
+    <Position X="42.5" Y="34.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIgAACBAAAQAAQAQAAQgAAAgAACAAAgAAEgEAEAA=</HashCode>
+      <FileName>Graphics\Textures\WICFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.BindFlags" Collapsed="true">
+    <Position X="47.75" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAgAABAAAAAAIARgEAIAAAAAAAAAAAAAAAEAEAA=</HashCode>
+      <FileName>Graphics\Bind.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Blend" Collapsed="true">
+    <Position X="49.5" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AhAAAAAAAMAAIEQAAAABCAAAASBgAAAAAAAQAAAAAIA=</HashCode>
+      <FileName>Graphics\Blend.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.BlendOperation" Collapsed="true">
+    <Position X="53" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAQAABAAAAAAEAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\BlendOperation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.BufferExtendedShaderResourceViewFlags" Collapsed="true">
+    <Position X="54.75" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\BufferExtendedShaderResourceViewFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.BufferUnorderedAccessViewFlags" Collapsed="true">
+    <Position X="56.5" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAQAAAQAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\BufferUnorderedAccessViewFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ColorWriteEnable" Collapsed="true">
+    <Position X="61.75" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAgAAAAAAAAAAAAAAABAAAIAAABEAAAA=</HashCode>
+      <FileName>Graphics\ColorWriteEnable.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ComparisonFunction" Collapsed="true">
+    <Position X="40.75" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAgAEAAgAAAAAIAAAAQQAgAAQAAAA=</HashCode>
+      <FileName>Graphics\ComparisonFunction.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.GpuAccessFlags" Collapsed="true">
+    <Position X="61.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\CpuAccess.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.CpuAccessFlags" Collapsed="true">
+    <Position X="46" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\CpuAccess.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.CullMode" Collapsed="true">
+    <Position X="49.5" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\CullMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.DepthStencilClearFlags" Collapsed="true">
+    <Position X="54.75" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAgAIAAAAEAAAA=</HashCode>
+      <FileName>Graphics\DepthStencilClearFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.DepthStencilViewDimension" Collapsed="true">
+    <Position X="56.5" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAACAAAAAIAAAAAAAAEAAAAAAAAAAAADA=</HashCode>
+      <FileName>Graphics\DepthStencilViewDimension.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.DepthStencilViewFlags" Collapsed="true">
+    <Position X="58.25" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAEAQAA=</HashCode>
+      <FileName>Graphics\DepthStencilViewFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.DepthWriteMask" Collapsed="true">
+    <Position X="60" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Graphics\DepthWriteMask.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.FillMode" Collapsed="true">
+    <Position X="42.5" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\FillMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Filter" Collapsed="true">
+    <Position X="44.25" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BgAAAAoGAIARRFIAgAACAYAAAAIEQAAAAIBIUBCDAEI=</HashCode>
+      <FileName>Graphics\Filter.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Format" Collapsed="true">
+    <Position X="47.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BYpBRqpI8ZkRIC4rtVCZggIJNIIs5JgAAygGAIDSCdE=</HashCode>
+      <FileName>Graphics\Format.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.InputClassification" Collapsed="true">
+    <Position X="44.25" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\InputClassification.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ResourceDimension" Collapsed="true">
+    <Position X="53" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\IResource.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.TextureDimension" Collapsed="true">
+    <Position X="46" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAABAAAAAAAAAACAAAAAAAAAAAAADA=</HashCode>
+      <FileName>Graphics\IResource.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.TextureLoaderFlags" Collapsed="true">
+    <Position X="49.5" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\ITextureLoader.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.MapFlags" Collapsed="true">
+    <Position X="61.75" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Graphics\MapFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Map" Collapsed="true">
+    <Position X="60" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAgAAAAAAAIEACAA=</HashCode>
+      <FileName>Graphics\MapFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.MapMode" Collapsed="true">
+    <Position X="40.75" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgAAAAAgAAAAAAAIEACAA=</HashCode>
+      <FileName>Graphics\MapMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.PrimitiveTopology" Collapsed="true">
+    <Position X="42.5" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAFAAQAAAIAGQACAAEACADAAAIARAAAoAIECA=</HashCode>
+      <FileName>Graphics\PrimitiveTopology.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Query" Collapsed="true">
+    <Position X="46" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAIAACAAAAICAgFAAgAAAAAgAAB4QAAQAAA=</HashCode>
+      <FileName>Graphics\Query.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.GraphicsBackend" Collapsed="true">
+    <Position X="40.75" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAQAAAgAAAAAAAQAAAAAAAAAAgAAAAAAAAAACAAAEA=</HashCode>
+      <FileName>Graphics\RenderBackend.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.RenderTargetViewDimension" Collapsed="true">
+    <Position X="51.25" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAACAABAAIAAAAAAAAEAAAAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\RenderTargetViewDimension.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ResourceMiscFlag" Collapsed="true">
+    <Position X="54.75" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAgABAIAAABAAAABAAAAGBjACABEgEEAAUAAAA=</HashCode>
+      <FileName>Graphics\ResourceMisc.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ShaderBackend" Collapsed="true">
+    <Position X="58.25" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAACAAAAAAAAggAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Graphics\ShaderBackend.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ShaderResourceViewDimension" Collapsed="true">
+    <Position X="40.75" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAACAABAAMAIAAAAACEAAAAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\ShaderResourceViewDimension.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.ShaderStage" Collapsed="true">
+    <Position X="42.5" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AMAAAAAAAAABAAAAAAABAAAAAgAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Graphics\ShaderStage.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.StencilOperation" Collapsed="true">
+    <Position X="47.75" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAIAAAAAAAAJAAAAAAAAQAAIAAAAAAAAAACACA=</HashCode>
+      <FileName>Graphics\StencilOperation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.TextureAddressMode" Collapsed="true">
+    <Position X="44.25" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAABAAAAAAAAAEAAAAAAgAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>Graphics\TextureAddressMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.UnorderedAccessViewDimension" Collapsed="true">
+    <Position X="58.25" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAACAABAAAAAAAAAAAAAAAAAAAAAAAQDA=</HashCode>
+      <FileName>Graphics\UnorderedAccessViewDimension.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Graphics.Usage" Collapsed="true">
+    <Position X="60" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAIABAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Graphics\Usage.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.FingerState" Collapsed="true">
+    <Position X="46" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Input\FingerState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.GamepadAxis" Collapsed="true">
+    <Position X="53" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAIAAAABCAAAACAAAAAAAA=</HashCode>
+      <FileName>Input\GamepadAxis.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.GamepadButton" Collapsed="true">
+    <Position X="54.75" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AYAAABAAACAgAAIAAAAAAAAAAAAQAAgAAAAIMQEtYAg=</HashCode>
+      <FileName>Input\GamepadButton.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.GamepadButtonState" Collapsed="true">
+    <Position X="56.5" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Input\GamepadButtonState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.GamepadSensorType" Collapsed="true">
+    <Position X="58.25" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAIAAAAQAAAIAAAJE=</HashCode>
+      <FileName>Input\GamepadSensorType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.GamepadType" Collapsed="true">
+    <Position X="60" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAQAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAIAAABg=</HashCode>
+      <FileName>Input\GamepadType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.HapticEffectFlags" Collapsed="true">
+    <Position X="42.5" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAggBAAkAAAAgAABAAAAAEAEAAAJAAkAQAAAEAAAAAg=</HashCode>
+      <FileName>Input\HapticEffectFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.JoystickButtonState" Collapsed="true">
+    <Position X="46" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Input\JoystickButtonState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.JoystickHatState" Collapsed="true">
+    <Position X="47.75" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAACAIAAABAAAAAAAAAABAAAAAAAAAAGACAAAAAAAI=</HashCode>
+      <FileName>Input\JoystickHatState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.JoystickPowerLevel" Collapsed="true">
+    <Position X="49.5" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAABAAAAAAAAIAAAAAAAgAAAAAAgAAAAAEABA=</HashCode>
+      <FileName>Input\JoystickPowerLevel.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.JoystickType" Collapsed="true">
+    <Position X="51.25" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAACIABAAAAAABAAAAAAEAAAQAAIQAAAAAAAAABA=</HashCode>
+      <FileName>Input\JoystickType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.Key" Collapsed="true">
+    <Position X="53" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>zQbqBvM0VbM+NMT5isP/+QyXm0+OEhoPaXGK////9Vc=</HashCode>
+      <FileName>Input\Keys.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.KeyState" Collapsed="true">
+    <Position X="54.75" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Input\KeyState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.MouseButton" Collapsed="true">
+    <Position X="53" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABAAAAAIAAAAAACACQAAAAAAA=</HashCode>
+      <FileName>Input\MouseButton.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.MouseWheelDirection" Collapsed="true">
+    <Position X="56.5" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Input\MouseButton.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Input.MouseButtonState" Collapsed="true">
+    <Position X="54.75" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Input\MouseButtonState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Assets.AssetType" Collapsed="true">
+    <Position X="42.5" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAEAAAAACAAAAAAAAAAAAEAAAIAAAEAABAAQAAAAA=</HashCode>
+      <FileName>IO\Assets\AssetType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.BlendMode" Collapsed="true">
+    <Position X="51.25" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IO\Materials\BlendMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.MaterialFlags" Collapsed="true">
+    <Position X="42.5" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAEAgAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAEAgAA=</HashCode>
+      <FileName>IO\Materials\MaterialFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.MaterialPropertyType" Collapsed="true">
+    <Position X="44.25" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AcBgEAAqwUwEAAhBAAAAAKAAAAKAAEggAARABKABxEA=</HashCode>
+      <FileName>IO\Materials\MaterialPropertyType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.MaterialValueType" Collapsed="true">
+    <Position X="47.75" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QgAAAAAAIAAAAAAhAAAAAAAAIAAAAAAAEEAAAAAgAAA=</HashCode>
+      <FileName>IO\Materials\MaterialValueType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.TextureFlags" Collapsed="true">
+    <Position X="47.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAGAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IO\Materials\TextureFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.TextureMapMode" Collapsed="true">
+    <Position X="51.25" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAABAAAAAAAAAAAAAAAAgAAAAAAAEAAAAAAAAAA=</HashCode>
+      <FileName>IO\Materials\TextureMapMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.TextureOp" Collapsed="true">
+    <Position X="53" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAQAAAAAEAAADAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IO\Materials\TextureOperation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Materials.TextureType" Collapsed="true">
+    <Position X="54.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEBAEQBARQgAAABAAgBIMAAAAAAIAEACAAAAAEEAgFA=</HashCode>
+      <FileName>IO\Materials\TextureType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Meshes.VertexFlags" Collapsed="true">
+    <Position X="61.75" Y="33.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAgAAAAAAAAAAAAAAAAAJAAgBEAABA=</HashCode>
+      <FileName>IO\Meshes\MeshFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Meshes.MeshType" Collapsed="true">
+    <Position X="49.5" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAEAAABAAAAA=</HashCode>
+      <FileName>IO\Meshes\MeshType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Meshes.NodeFlags" Collapsed="true">
+    <Position X="60" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAgAAAAAEAAAA=</HashCode>
+      <FileName>IO\Meshes\NodeFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Shaders.ShaderFlags" Collapsed="true">
+    <Position X="60" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIMAABAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IO\Shaders\ShaderFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.IO.Compression" Collapsed="true">
+    <Position X="42.5" Y="29" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>IO\Compression.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Lights.Probes.ProbeType" Collapsed="true">
+    <Position X="44.25" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Lights\Probes\ProbeType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Lights.LightType" Collapsed="true">
+    <Position X="56.5" Y="30.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Lights\LightType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Lights.ShadowType" Collapsed="true">
+    <Position X="44.25" Y="32.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAgAAABAAA=</HashCode>
+      <FileName>Lights\ShadowType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Lights.ViewportShading" Collapsed="true">
+    <Position X="40.75" Y="34.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAACAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Lights\ViewportShading.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Physics.ColliderType" Collapsed="true">
+    <Position X="60" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAABAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\ColliderType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.PostFx.FxPrimitive" Collapsed="true">
+    <Position X="51.25" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAEAACA=</HashCode>
+      <FileName>PostFx\PostFx.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.PostFx.PostFxFlags" Collapsed="true">
+    <Position X="61.75" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAIAAEAAAA=</HashCode>
+      <FileName>PostFx\PostFxFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Resources.MaterialShaderFlags" Collapsed="true">
+    <Position X="46" Y="31.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAIAEAAAAAAAAAAAAAAgAAAAAAEAAAI=</HashCode>
+      <FileName>Resources\MaterialShaderFlags.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Scenes.Managers.CameraEditorMode" Collapsed="true">
+    <Position X="58.25" Y="28.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Scenes\Managers\CameraEditorMode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Scenes.Managers.RenderQueueIndex" Collapsed="true">
+    <Position X="49.5" Y="32" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAgAAAAgQA=</HashCode>
+      <FileName>Scenes\Managers\RenderManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Windows.FullscreenMode" Collapsed="true">
+    <Position X="49.5" Y="29.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAAAAAAAAAgA=</HashCode>
+      <FileName>Windows\SdlWindow.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HexaEngine.Core.Windows.WindowState" Collapsed="true">
+    <Position X="44.25" Y="34.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAIAAAAEAgA=</HashCode>
+      <FileName>Windows\WindowState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Delegate Name="HexaEngine.Core.Editor.Attributes.ComponentConstructor" Collapsed="true">
+    <Position X="40.75" Y="35.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Editor\Attributes\EditorComponentAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -117,7 +117,7 @@
                     resformat = Format.R32Typeless;
                     break;
 
-                case Format.Depth24UNormStencil8:
+                case Format.D24UNormS8UInt:
                     resformat = Format.R24G8Typeless;
                     break;
 
@@ -125,7 +125,7 @@
                     resformat = Format.R32Typeless;
                     break;
 
-                case Format.Depth32FloatStencil8:
+                case Format.D32FloatS8X24UInt:
                     resformat = Format.R32G8X24Typeless;
                     break;
             }
@@ -142,7 +142,7 @@
                     srvformat = Format.R16Float;
                     break;
 
-                case Format.Depth24UNormStencil8:
+                case Format.D24UNormS8UInt:
                     srvformat = Format.R24UNormX8Typeless;
                     break;
 
@@ -150,7 +150,7 @@
                     srvformat = Format.R32Float;
                     break;
 
-                case Format.Depth32FloatStencil8X24UInt:
+                case Format.D32FloatS8X24UInt:
                     srvformat = Format.R32FloatX8X24Typeless;
                     break;
             }

@@ -5,7 +5,6 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<Platforms>AnyCPU;x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
 

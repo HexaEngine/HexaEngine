@@ -13,8 +13,6 @@
 		<PackageTags>ImPlot ImGui ImGui.NET Immediate Mode GUI</PackageTags>
 		<PackageProjectUrl>https://github.com/mellinoe/imgui.net</PackageProjectUrl>
 		<RootNamespace>ImPlotNET</RootNamespace>
-		<Platforms>AnyCPU;x64</Platforms>
-		<Configurations>Debug;Release;TraceLeak</Configurations>
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />

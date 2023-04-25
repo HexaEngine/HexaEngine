@@ -2,19 +2,19 @@ namespace ImGuizmoNET
 {
     public enum ImGuizmoOperation
     {
-        TRANSLATE_X = 1,
-        TRANSLATE_Y = 2,
-        TRANSLATE_Z = 4,
-        ROTATE_X = 8,
-        ROTATE_Y = 16,
-        ROTATE_Z = 32,
-        ROTATE_SCREEN = 64,
-        SCALE_X = 128,
-        SCALE_Y = 256,
-        SCALE_Z = 512,
-        BOUNDS = 1024,
-        TRANSLATE = 7,
-        ROTATE = 120,
-        SCALE = 896,
+        TranslateX = 1,
+        TranslateY = 2,
+        TranslateZ = 4,
+        RotateX = 8,
+        RotateY = 16,
+        RotateZ = 32,
+        RotateScreen = 64,
+        ScaleX = 128,
+        ScaleY = 256,
+        ScaleZ = 512,
+        Bounds = 1024,
+        Translate = 7,
+        Rotate = 120,
+        Scale = 896,
     }
 }

@@ -3,6 +3,7 @@
 namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.DirectXTex;
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
@@ -32,7 +33,7 @@ namespace HexaEngine.D3D11
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
             ScratchImage inScImage = scImage;
             ScratchImage outScImage = new();
-            DirectXTex.Compress((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(format), Helper.Convert(flags), 0, &outScImage);
+            DirectXTex.Compress((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(format), Helper.Convert(flags), 1, &outScImage);
             return new D3DScratchImage(outScImage);
         }
 
@@ -71,78 +72,64 @@ namespace HexaEngine.D3D11
         public IScratchImage Resize(int width, int height, TexFilterFlags flags)
         {
             ScratchImage inScImage = scImage;
-            ScratchImage outScImage;
+            ScratchImage outScImage = new();
             DirectXTex.Resize(&inScImage, (ulong)width, (ulong)height, Helper.Convert(flags), &outScImage);
             return new D3DScratchImage(outScImage);
         }
 
+        public bool OverwriteFormat(Format format)
+        {
+            return scImage.OverrideFormat(Helper.Convert(format));
+        }
+
         public ITexture1D CreateTexture1D(IGraphicsDevice device, Usage usage, BindFlags bindFlags, CpuAccessFlags accessFlags, ResourceMiscFlag miscFlag)
         {
-            ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
             ComPtr<ID3D11Texture1D> resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
-            Texture1DDescription texture = new(
-                            Metadata.Format,
-                            Metadata.Width,
-                            Metadata.ArraySize,
-                            Metadata.MipLevels,
-                            bindFlags,
-                            usage,
-                            accessFlags,
-                            miscFlag);
+            var images = scImage.GetImages();
+            var nimages = scImage.GetImageCount();
+            var metadata = scImage.GetMetadata();
+            metadata.MiscFlags = (TexMiscFlags)miscFlag;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, images, nimages, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), CreateTexFlags.Default, (ID3D11Resource**)&resource.Handle);
+            Texture1DDesc desc = default;
+            resource.GetDesc(ref desc);
+            Texture1DDescription texture = Helper.ConvertBack(desc);
 
             return new D3D11Texture1D(resource, texture);
         }
 
         public ITexture2D CreateTexture2D(IGraphicsDevice device, Usage usage, BindFlags bindFlags, CpuAccessFlags accessFlags, ResourceMiscFlag miscFlag)
         {
-            ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
             ComPtr<ID3D11Texture2D> resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
-            Texture2DDescription texture = new(
-                            Metadata.Format,
-                            Metadata.Width,
-                            Metadata.Height,
-                            Metadata.ArraySize,
-                            Metadata.MipLevels,
-                            bindFlags,
-                            usage,
-                            accessFlags,
-                            1,
-                            0,
-                            miscFlag);
+            var images = scImage.GetImages();
+            var nimages = scImage.GetImageCount();
+            var metadata = scImage.GetMetadata();
+            metadata.MiscFlags = (TexMiscFlags)miscFlag;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, images, nimages, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), CreateTexFlags.Default, (ID3D11Resource**)&resource.Handle);
+            Texture2DDesc desc = default;
+            resource.GetDesc(ref desc);
+            Texture2DDescription texture = Helper.ConvertBack(desc);
 
             return new D3D11Texture2D(resource, texture);
         }
 
         public ITexture2D CreateTexture2D(IGraphicsDevice device, int index, Usage usage, BindFlags bindFlags, CpuAccessFlags accessFlags, ResourceMiscFlag miscFlag)
         {
-            ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
             ComPtr<ID3D11Texture2D> resource;
-            var images = inScImage.GetImages();
-            var metadata = inScImage.GetMetadata();
+            var images = scImage.GetImages();
+            var metadata = scImage.GetMetadata();
             var image = images[index];
             metadata.Width = image.Width;
             metadata.Height = image.Height;
             metadata.ArraySize = 1;
             metadata.MipLevels = 1;
-            metadata.MiscFlags = TexMiscFlags.None;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &image, 1, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
-            Texture2DDescription texture = new(
-                            Helper.ConvertBack(metadata.Format),
-                            (int)metadata.Width,
-                            (int)metadata.Height,
-                            (int)metadata.ArraySize,
-                            (int)metadata.MipLevels,
-                            bindFlags,
-                            usage,
-                            accessFlags,
-                            1,
-                            0,
-                            miscFlag);
+            metadata.MiscFlags = (TexMiscFlags)miscFlag;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &image, 1, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), CreateTexFlags.Default, (ID3D11Resource**)&resource.Handle);
+            Texture2DDesc desc = default;
+            resource.GetDesc(ref desc);
+            Texture2DDescription texture = Helper.ConvertBack(desc);
 
             return new D3D11Texture2D(resource, texture);
         }
@@ -152,17 +139,14 @@ namespace HexaEngine.D3D11
             ScratchImage inScImage = scImage;
             D3D11GraphicsDevice graphicsDevice = (D3D11GraphicsDevice)device;
             ComPtr<ID3D11Texture3D> resource;
-            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, &inScImage, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), false, (ID3D11Resource**)&resource.Handle);
-            Texture3DDescription texture = new(
-                            Metadata.Format,
-                            Metadata.Width,
-                            Metadata.Height,
-                            Metadata.Depth,
-                            Metadata.MipLevels,
-                            bindFlags,
-                            usage,
-                            accessFlags,
-                            miscFlag);
+            var images = scImage.GetImages();
+            var nimages = scImage.GetImageCount();
+            var metadata = scImage.GetMetadata();
+            metadata.MiscFlags = (TexMiscFlags)miscFlag;
+            DirectXTex.CreateTextureEx((ID3D11Device*)graphicsDevice.Device.Handle, images, nimages, &metadata, Helper.Convert(usage), Helper.Convert(bindFlags), Helper.Convert(accessFlags), Helper.Convert(miscFlag), CreateTexFlags.Default, (ID3D11Resource**)&resource.Handle);
+            Texture3DDesc desc = default;
+            resource.GetDesc(ref desc);
+            Texture3DDescription texture = Helper.ConvertBack(desc);
 
             return new D3D11Texture3D(resource, texture);
         }
@@ -183,6 +167,34 @@ namespace HexaEngine.D3D11
             ScratchImage image = scImage;
             switch (format)
             {
+                case TexFileFormat.Auto:
+                    var ext = Path.GetExtension(path);
+                    if (ext == ".dds")
+                        SaveToFile(path, TexFileFormat.DDS, flags);
+                    else if (ext == ".tga")
+                        SaveToFile(path, TexFileFormat.TGA, flags);
+                    else if (ext == ".hdr")
+                        SaveToFile(path, TexFileFormat.HDR, flags);
+                    else if (ext == ".bmp")
+                        SaveToFile(path, TexFileFormat.BMP, flags);
+                    else if (ext == ".jpg")
+                        SaveToFile(path, TexFileFormat.JPEG, flags);
+                    else if (ext == ".jpeg")
+                        SaveToFile(path, TexFileFormat.JPEG, flags);
+                    else if (ext == ".png")
+                        SaveToFile(path, TexFileFormat.PNG, flags);
+                    else if (ext == ".tiff")
+                        SaveToFile(path, TexFileFormat.TIFF, flags);
+                    else if (ext == ".gif")
+                        SaveToFile(path, TexFileFormat.GIF, flags);
+                    else if (ext == ".wmp")
+                        SaveToFile(path, TexFileFormat.WMP, flags);
+                    else if (ext == ".ico")
+                        SaveToFile(path, TexFileFormat.ICO, flags);
+                    else
+                        throw new NotSupportedException();
+                    break;
+
                 case TexFileFormat.DDS:
                     DirectXTex.SaveToDDSFile(&image, (DDSFlags)flags, path);
                     break;
@@ -237,6 +249,40 @@ namespace HexaEngine.D3D11
                 images[i] = new D3DImage(pImages[i]);
             }
             return images;
+        }
+
+        public void CopyTo(IScratchImage scratchImage)
+        {
+            var a = this;
+            var b = (D3DScratchImage)scratchImage;
+            var metaA = a.Metadata;
+            var metaB = b.Metadata;
+            if (metaA.Format != metaB.Format)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Format {metaA.Format} doesn't match with {metaB.Format}");
+            if (metaA.Width != metaB.Width)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Width {metaA.Width} doesn't match with {metaB.Width}");
+            if (metaA.Height != metaB.Height)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Height {metaA.Height} doesn't match with {metaB.Height}");
+            if (metaA.Depth != metaB.Depth)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Depth {metaA.Depth} doesn't match with {metaB.Depth}");
+            if (metaA.ArraySize != metaB.ArraySize)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"ArraySize {metaA.ArraySize} doesn't match with {metaB.ArraySize}");
+            if (metaA.MipLevels != metaB.MipLevels)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"MipLevels {metaA.MipLevels} doesn't match with {metaB.MipLevels}");
+            if (metaA.Dimension != metaB.Dimension)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Dimension {metaA.Dimension} doesn't match with {metaB.Dimension}");
+            if (metaA.AlphaMode != metaB.AlphaMode)
+                throw new ArgumentOutOfRangeException(nameof(scratchImage), $"AlphaMode {metaA.AlphaMode} doesn't match with {metaB.AlphaMode}");
+
+            var count = a.ImageCount;
+            var aImages = a.GetImages();
+            var bImages = b.GetImages();
+            for (int i = 0; i < count; i++)
+            {
+                var aImage = aImages[i];
+                var bImage = bImages[i];
+                Memcpy(aImage.Pixels, bImage.Pixels, (long)aImage.RowPitch * aImage.Height, (long)bImage.RowPitch * bImage.Height);
+            }
         }
     }
 }

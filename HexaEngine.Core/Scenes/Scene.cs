@@ -31,6 +31,7 @@
         private LightManager lightManager;
         private RenderManager renderManager;
         private AnimationManager animationManager = new();
+        private MaterialManager materialManager = new();
 
         private readonly SemaphoreSlim semaphore = new(1);
         private string? path;
@@ -87,6 +88,9 @@
 
         [JsonIgnore]
         public RenderManager RenderManager => renderManager;
+
+        [JsonIgnore]
+        public MaterialManager MaterialManager => materialManager;
 
         [JsonIgnore]
         public List<ISystem> Systems => systems;

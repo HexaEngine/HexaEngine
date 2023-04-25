@@ -107,7 +107,7 @@ namespace HexaEngine.Effects
                 PixelShader = "effects/hbao/ps.hlsl",
             });
             cbHBAO = device.CreateBuffer(hbaoParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+            hbaoBuffer = device.CreateTexture2D(Format.R32G32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
 
@@ -168,7 +168,7 @@ namespace HexaEngine.Effects
             hbaoBuffer.Dispose();
             hbaoRTV.Dispose();
             hbaoSRV.Dispose();
-            hbaoBuffer = device.CreateTexture2D(Format.RG32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+            hbaoBuffer = device.CreateTexture2D(Format.R32G32Float, width / 2, height / 2, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
 

@@ -5,7 +5,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-		<Platforms>x64</Platforms>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>

@@ -5,10 +5,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Rendering;
     using System.Collections.Generic;
 
     [EditorComponent(typeof(ModelRendererComponent), "Model Renderer")]
@@ -18,6 +19,7 @@
         private readonly List<IInstance> instances = new();
         private GameObject? gameObject;
         private ModelManager modelManager;
+        private MaterialManager materialManager;
         private ModelRenderer renderer;
 
         static ModelRendererComponent()
@@ -41,6 +43,7 @@
             if (!gameObject.GetScene().TryGetSystem<RenderManager>(out var manager))
                 return;
             modelManager = gameObject.GetScene().ModelManager;
+            materialManager = gameObject.GetScene().MaterialManager;
             renderer = manager.GetRenderer<ModelRenderer>();
             UpdateModel();
         }
@@ -76,11 +79,12 @@
                 if (FileSystem.Exists(path))
                 {
                     ModelFile source = component.modelManager.Load(path);
+                    MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary);
 
                     for (ulong i = 0; i < source.Header.MeshCount; i++)
                     {
                         var mesh = source.GetMesh(i);
-                        var instance = await component.renderer.CreateInstanceAsync(mesh, component.gameObject);
+                        var instance = await component.renderer.CreateInstanceAsync(mesh, library, component.gameObject);
                         lock (component.instances)
                         {
                             component.instances.Add(instance);

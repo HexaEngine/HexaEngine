@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Serialization;
     using System.Threading.Tasks;
@@ -11,6 +12,11 @@
         private static Task? task;
 
         public static History History { get; } = new();
+
+        internal static void Init(IGraphicsDevice device)
+        {
+            MainMenuBar.Init(device);
+        }
 
         internal static void Draw()
         {

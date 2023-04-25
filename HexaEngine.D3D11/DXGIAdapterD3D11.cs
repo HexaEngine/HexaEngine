@@ -38,7 +38,6 @@
 
         public virtual int PlatformScore => 100;
 
-        [SupportedOSPlatform("windows")]
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
             AdapterDesc1 desc;
@@ -50,7 +49,6 @@
             return new D3D11GraphicsDevice(this, debug);
         }
 
-        [SupportedOSPlatform("windows")]
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SdlWindow window)
         {
             SwapChainDesc1 desc = new()

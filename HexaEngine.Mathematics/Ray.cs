@@ -219,11 +219,60 @@
                 return false;
             }
 
-            pointInTriangle.X = Position.X + (Direction.X * det);
-            pointInTriangle.Y = Position.Y + (Direction.Y * det);
-            pointInTriangle.Z = Position.Z + (Direction.Z * det);
+            pointInTriangle.X = Position.X + Direction.X * det;
+            pointInTriangle.Y = Position.Y + Direction.Y * det;
+            pointInTriangle.Z = Position.Z + Direction.Z * det;
 
             return true;
+        }
+
+        /// <summary>
+        /// This does a ray cast on a triangle to see if there is an intersection.
+        /// This ONLY works on CW wound triangles.
+        /// </summary>
+        /// <param name="v0">Triangle Corner 1</param>
+        /// <param name="v1">Triangle Corner 2</param>
+        /// <param name="v2">Triangle Corner 3</param>
+        /// <param name="pointInTriangle">Intersection point if boolean returns true</param>
+        /// <returns></returns>
+        public bool Intersects2(in Vector3 v0, in Vector3 v1, in Vector3 v2, out Vector3 pointInTriangle)
+        {
+            pointInTriangle = default;
+            const float EPSILON = 0.0000001f;
+
+            Vector3 edge1, edge2, h, s, q;
+            float a, f, u, v;
+            edge1 = v1 - v0;
+            edge2 = v2 - v0;
+            h = Vector3.Cross(Direction, edge2);
+            a = Vector3.Dot(edge1, h);
+
+            if (a > -EPSILON && a < EPSILON)
+                return false;    // This ray is parallel to this triangle.
+
+            f = 1.0f / a;
+            s = Position - v0;
+            u = f * Vector3.Dot(s, h);
+
+            if (u < 0.0 || u > 1.0)
+                return false;
+
+            q = Vector3.Cross(s, edge1);
+            v = f * Vector3.Dot(Direction, q);
+
+            if (v < 0.0 || u + v > 1.0)
+                return false;
+
+            // At this stage we can compute t to find out where the intersection point is on the line.
+            float t = f * Vector3.Dot(edge2, q);
+
+            if (t > EPSILON) // ray intersection
+            {
+                pointInTriangle = Position + Direction * t;
+                return true;
+            }
+            else // This means that there is a line intersection but not a ray intersection.
+                return false;
         }
 
         /// <summary>

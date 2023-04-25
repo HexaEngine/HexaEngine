@@ -14,9 +14,19 @@
     public class PointLight : Light
     {
         private static ulong instances;
-        private static IGraphicsPipeline? osmPipeline;
-        private static ConstantBuffer<Matrix4x4>? osmBuffer;
-        private static IBuffer? osmParamBuffer;
+        private static ConstantBuffer<OmniShadowData>? osmBuffer;
+
+        private struct OmniShadowData
+        {
+            public Matrix4x4 M1;
+            public Matrix4x4 M2;
+            public Matrix4x4 M3;
+            public Matrix4x4 M4;
+            public Matrix4x4 M5;
+            public Matrix4x4 M6;
+            public Vector3 Position;
+            public float Far;
+        }
 
         private DepthStencil? osmDepthBuffer;
         private float shadowRange = 100;
@@ -53,23 +63,7 @@
 
             if (Interlocked.Increment(ref instances) == 1)
             {
-                osmBuffer = new(device, 6, CpuAccessFlags.Write);
-                osmParamBuffer = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-                osmPipeline = device.CreateGraphicsPipeline(new()
-                {
-                    VertexShader = "forward/osm/vs.hlsl",
-                    HullShader = "forward/osm/hs.hlsl",
-                    DomainShader = "forward/osm/ds.hlsl",
-                    GeometryShader = "forward/osm/gs.hlsl",
-                    PixelShader = "forward/osm/ps.hlsl",
-                },
-                new GraphicsPipelineState()
-                {
-                    DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullBack,
-                    Blend = BlendDescription.Opaque,
-                    Topology = PrimitiveTopology.PatchListWith3ControlPoints,
-                });
+                osmBuffer = new(device, CpuAccessFlags.Write);
             }
         }
 
@@ -81,10 +75,7 @@
             if (Interlocked.Decrement(ref instances) == 0)
             {
                 osmBuffer?.Dispose();
-                osmParamBuffer?.Dispose();
-                osmPipeline?.Dispose();
                 osmBuffer = null;
-                osmParamBuffer = null;
                 osmBuffer = null;
             }
         }
@@ -94,25 +85,20 @@
             if (osmDepthBuffer == null) return;
 #nullable disable
 
-            OSMHelper.GetLightSpaceMatrices(Transform, ShadowRange, osmBuffer.Local, ref ShadowBox);
+            OSMHelper.GetLightSpaceMatrices(Transform, ShadowRange, (Matrix4x4*)osmBuffer.Local, ref ShadowBox);
+            osmBuffer.Local->Position = Transform.GlobalPosition;
+            osmBuffer.Local->Far = ShadowRange;
             osmBuffer.Update(context);
-            context.Write(osmParamBuffer, new Vector4(Transform.GlobalPosition, ShadowRange));
             context.ClearDepthStencilView(osmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, osmDepthBuffer.DSV);
             context.SetViewport(osmDepthBuffer.Viewport);
-            context.SetGraphicsPipeline(osmPipeline);
-            context.GSSetConstantBuffer(osmBuffer.Buffer, 0);
-            context.PSSetConstantBuffer(osmParamBuffer, 0);
 
             var types = manager.Types;
             for (int j = 0; j < types.Count; j++)
             {
                 var type = types[j];
                 type.UpdateFrustumInstanceBuffer(ShadowBox);
-                if (type.BeginDrawNoOcculusion(context))
-                {
-                    context.DrawIndexedInstanced((uint)type.IndexCount, (uint)type.Visible, 0, 0, 0);
-                }
+                type.DrawShadow(context, osmBuffer, ShadowType.Omni);
             }
             context.ClearState();
 #nullable enable

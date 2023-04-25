@@ -86,7 +86,7 @@ namespace ImGuizmoNET
 
         public static bool IsOver()
         {
-            byte ret = ImGuizmoNative.ImGuizmo_IsOverNil();
+            byte ret = ImGuizmoNative.ImGuizmo_IsOver_Nil();
             return ret != 0;
         }
 

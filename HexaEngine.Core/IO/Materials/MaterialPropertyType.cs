@@ -43,6 +43,6 @@
         Shininess,
         ShininessStrength,
         Reflectivity,
-        Refractive,
+        IOR,
     }
 }

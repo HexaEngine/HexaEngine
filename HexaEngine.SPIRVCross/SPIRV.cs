@@ -114,12 +114,12 @@ namespace HexaEngine.SPIRVCross
         public static T LoadFunction<T>(IntPtr library, string name)
         {
 #if NETSTANDARD2_0
-            IntPtr symbol = GetSymbol(library, name);
+            nint symbol = GetSymbol(library, name);
 #else
-            IntPtr symbol = NativeLibrary.GetExport(library, name);
+            nint symbol = NativeLibrary.GetExport(library, name);
 #endif
 
-            if (symbol == IntPtr.Zero)
+            if (symbol == nint.Zero)
                 throw new EntryPointNotFoundException($"Unable to load symbol '{name}'.");
 
             return Marshal.GetDelegateForFunctionPointer<T>(symbol);

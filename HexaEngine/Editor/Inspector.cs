@@ -22,8 +22,8 @@
         private static bool drawColliders = true;
         private static bool enabled = true;
 
-        private static ImGuizmoOperation operation = ImGuizmoOperation.TRANSLATE;
-        private static ImGuizmoMode mode = ImGuizmoMode.LOCAL;
+        private static ImGuizmoOperation operation = ImGuizmoOperation.Translate;
+        private static ImGuizmoMode mode = ImGuizmoMode.Local;
         private static bool gimbalGrabbed;
         private static Matrix4x4 gimbalBefore;
         private static bool drawLightBounds;

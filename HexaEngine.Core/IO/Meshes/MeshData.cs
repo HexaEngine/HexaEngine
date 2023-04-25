@@ -1,18 +1,19 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
     using System.IO;
     using System.Numerics;
     using System.Text;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public unsafe struct MeshData
     {
         public string Name;
-        public MaterialData Material;
+        public string MaterialName;
         public uint VerticesCount;
         public uint IndicesCount;
         public uint BoneCount;
@@ -28,10 +29,10 @@
         public Vector3[] Bitangents;
         public BoneData[] Bones;
 
-        public MeshData(string name, MaterialData material, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
+        public MeshData(string name, string materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
         {
             Name = name;
-            Material = material;
+            MaterialName = materialName;
             Box = box;
             Sphere = sphere;
 
@@ -88,7 +89,7 @@
         {
             MeshData data = default;
             data.Name = stream.ReadString(encoding, endianness);
-            data.Material = MaterialData.Read(stream, encoding, endianness);
+            data.MaterialName = stream.ReadString(encoding, endianness);
             data.VerticesCount = stream.ReadUInt(endianness);
             data.IndicesCount = stream.ReadUInt(endianness);
             data.BoneCount = stream.ReadUInt(endianness);
@@ -165,7 +166,7 @@
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(Name, encoding, endianness);
-            Material.Write(stream, encoding, endianness);
+            stream.WriteString(MaterialName, encoding, endianness);
             stream.WriteUInt(VerticesCount, endianness);
             stream.WriteUInt(IndicesCount, endianness);
             stream.WriteUInt(BoneCount, endianness);
@@ -237,6 +238,20 @@
             }
         }
 
+        public void WriteIndexBuffer(IGraphicsContext context, IBuffer ib)
+        {
+            var size = sizeof(uint) * (int)IndicesCount;
+            var buffer = (uint*)Alloc(size);
+            for (int i = 0; i < IndicesCount; i++)
+            {
+                buffer[i] = Indices[i];
+            }
+
+            context.Write(ib, buffer, size);
+
+            Free(buffer);
+        }
+
         public IBuffer CreateVertexBuffer(IGraphicsDevice device, Usage usage = Usage.Immutable, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             var stride = (int)GetStride();
@@ -301,6 +316,141 @@
             var result = device.CreateBuffer((void*)buffer, (uint)size, new(size, BindFlags.VertexBuffer, usage, accessFlags));
             Free(buffer);
             return result;
+        }
+
+        public void WriteVertexBuffer(IGraphicsContext context, IBuffer vb)
+        {
+            var stride = (int)GetStride();
+            var size = stride * (int)VerticesCount;
+            var buffer = (byte*)Alloc(size);
+            Zero(buffer, size);
+            int m = 0;
+
+            for (int i = 0; i < VerticesCount; i++)
+            {
+                if ((Flags & VertexFlags.Colors) != 0)
+                {
+                    Colors[i].CopyTo(&m, buffer);
+                }
+
+                if ((Flags & VertexFlags.Positions) != 0)
+                {
+                    Positions[i].CopyTo(&m, buffer);
+                }
+
+                if ((Flags & VertexFlags.UVs) != 0)
+                {
+                    UVs[i].CopyTo(&m, buffer);
+                }
+
+                if ((Flags & VertexFlags.Normals) != 0)
+                {
+                    Normals[i].CopyTo(&m, buffer);
+                }
+
+                if ((Flags & VertexFlags.Tangents) != 0)
+                {
+                    Tangents[i].CopyTo(&m, buffer);
+                }
+
+                if ((Flags & VertexFlags.Bitangents) != 0)
+                {
+                    Bitangents[i].CopyTo(&m, buffer);
+                }
+
+                if ((Flags & VertexFlags.Skinned) != 0)
+                {
+                    var (boneIds, weigths) = GatherBoneData(i);
+                    fixed (uint* p = boneIds)
+                    {
+                        MemoryCopy(p, &buffer[m], sizeof(uint) * 4);
+                        m += sizeof(uint) * 4;
+                    }
+                    fixed (float* p = weigths)
+                    {
+                        MemoryCopy(p, &buffer[m], sizeof(float) * 4);
+                        m += sizeof(float) * 4;
+                    }
+                }
+
+                if (m % stride != 0)
+                    throw new InvalidOperationException();
+                if (m > size)
+                    throw new InternalBufferOverflowException();
+            }
+
+            context.Write(vb, buffer, size);
+
+            Free(buffer);
+        }
+
+        public Face[] GetFacesForVertex(int vertex)
+        {
+            List<Face> faces = new();
+            for (int i = 0; i < IndicesCount;)
+            {
+                var idx1 = Indices[i++];
+                var idx2 = Indices[i++];
+                var idx3 = Indices[i++];
+                if (idx1 == vertex || idx2 == vertex || idx3 == vertex)
+                {
+                    faces.Add(new(idx1, idx2, idx3));
+                }
+            }
+            return faces.ToArray();
+        }
+
+        public void GetFacesForVertex(int vertex, List<Face> faces)
+        {
+            for (int i = 0; i < IndicesCount;)
+            {
+                var idx1 = Indices[i++];
+                var idx2 = Indices[i++];
+                var idx3 = Indices[i++];
+                if (idx1 == vertex || idx2 == vertex || idx3 == vertex)
+                {
+                    faces.Add(new(idx1, idx2, idx3));
+                }
+            }
+        }
+
+        public Face GetFaceForIndex(uint index)
+        {
+            for (uint i = 0; i < IndicesCount;)
+            {
+                var idx1 = Indices[i++];
+                var idx2 = Indices[i++];
+                var idx3 = Indices[i++];
+                if (idx1 == index || idx2 == index || idx3 == index)
+                {
+                    return new(idx1, idx2, idx3);
+                }
+            }
+            return default;
+        }
+
+        public Face[] GetNeighborFaces(Face face)
+        {
+            List<Face> faces = new();
+            for (uint i = 0; i < IndicesCount;)
+            {
+                var idx1 = Indices[i++];
+                var idx2 = Indices[i++];
+                var idx3 = Indices[i++];
+                if (idx1 == face.Index1 || idx2 == face.Index1 || idx3 == face.Index1)
+                {
+                    faces.Add(new(idx1, idx2, idx3));
+                }
+                if (idx1 == face.Index2 || idx2 == face.Index2 || idx3 == face.Index2)
+                {
+                    faces.Add(new(idx1, idx2, idx3));
+                }
+                if (idx1 == face.Index3 || idx2 == face.Index3 || idx3 == face.Index3)
+                {
+                    faces.Add(new(idx1, idx2, idx3));
+                }
+            }
+            return faces.ToArray();
         }
 
         public unsafe uint GetStride()
@@ -382,38 +532,38 @@
             int i = 0;
             if ((Flags & VertexFlags.Colors) != 0)
             {
-                elements[i++] = new InputElementDescription("COLOR", 0, Format.RGBA32Float, 0);
+                elements[i++] = new InputElementDescription("COLOR", 0, Format.R32G32B32A32Float, 0);
             }
 
             if ((Flags & VertexFlags.Positions) != 0)
             {
-                elements[i++] = new InputElementDescription("POSITION", 0, Format.RGB32Float, 0);
+                elements[i++] = new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0);
             }
 
             if ((Flags & VertexFlags.UVs) != 0)
             {
-                elements[i++] = new InputElementDescription("TEXCOORD", 0, Format.RGB32Float, 0);
+                elements[i++] = new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0);
             }
 
             if ((Flags & VertexFlags.Normals) != 0)
             {
-                elements[i++] = new InputElementDescription("NORMAL", 0, Format.RGB32Float, 0);
+                elements[i++] = new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0);
             }
 
             if ((Flags & VertexFlags.Tangents) != 0)
             {
-                elements[i++] = new InputElementDescription("TANGENT", 0, Format.RGB32Float, 0);
+                elements[i++] = new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0);
             }
 
             if ((Flags & VertexFlags.Bitangents) != 0)
             {
-                elements[i++] = new InputElementDescription("BINORMAL", 0, Format.RGB32Float, 0);
+                elements[i++] = new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0);
             }
 
             if ((Flags & VertexFlags.Skinned) != 0)
             {
-                elements[i++] = new InputElementDescription("BLENDINDICES", 0, Format.RGBA32UInt, 0);
-                elements[i++] = new InputElementDescription("BLENDWEIGHT", 0, Format.RGBA32Float, 0);
+                elements[i++] = new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32UInt, 0);
+                elements[i++] = new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 0);
             }
 
             return elements;
@@ -460,6 +610,197 @@
             }
 
             return macros;
+        }
+
+        public long IntersectRay(Ray ray)
+        {
+            if (!Box.Intersects(ray).HasValue)
+                return -1;
+            long id = -1;
+            Vector3 minPos = new(float.MaxValue);
+            for (uint i = 0; i < IndicesCount / 3; i++)
+            {
+                var pos0 = Positions[Indices[i * 3]];
+                var pos1 = Positions[Indices[i * 3 + 1]];
+                var pos2 = Positions[Indices[i * 3 + 2]];
+
+                if (!ray.Intersects(pos0, pos1, pos2, out var pointInTriangle)) continue;
+
+                if (minPos.X < pointInTriangle.X && minPos.Y < pointInTriangle.Y && minPos.Z < pointInTriangle.Z) continue;
+
+                minPos = pointInTriangle;
+
+                var d0 = Vector3.Distance(pos0, pointInTriangle);
+                var d1 = Vector3.Distance(pos1, pointInTriangle);
+                var d2 = Vector3.Distance(pos2, pointInTriangle);
+                var min = Math.Min(d0, Math.Min(d1, d2));
+                if (min == d0)
+                    return Indices[i * 3];
+                if (min == d1)
+                    return Indices[i * 3 + 1];
+                if (min == d2)
+                    return Indices[i * 3 + 2];
+            }
+
+            return id;
+        }
+
+        public void GenerateNTB()
+        {
+            var faces = IndicesCount / 3;
+            UnsafeList<Vector3> tempNormal = new();
+            Vector3 normal;
+            Vector3 edge1, edge2;
+
+            UnsafeList<Vector3> tempTangent = new();
+            Vector3 tangent;
+            float tcU1, tcV1, tcU2, tcV2;
+
+            for (uint i = 0; i < faces; i++)
+            {
+                var face = new Face(Indices[i * 3], Indices[i * 3 + 1], Indices[i * 3 + 2]);
+                var vtxP1 = Positions[face.Index1];
+                var vtxP2 = Positions[face.Index2];
+                var vtxP3 = Positions[face.Index3];
+
+                edge1 = vtxP2 - vtxP1;
+                edge2 = vtxP3 - vtxP1;
+
+                normal = Vector3.Normalize(Vector3.Cross(edge1, edge2));
+
+                tempNormal.Add(normal);
+
+                var vtxUV0 = UVs[face.Index1];
+                var vtxUV1 = UVs[face.Index2];
+                var vtxUV2 = UVs[face.Index3];
+
+                //Find first texture coordinate edge 2d vector
+                tcU1 = vtxUV0.X - vtxUV2.X;
+                tcV1 = vtxUV0.Y - vtxUV2.Y;
+
+                //Find second texture coordinate edge 2d vector
+                tcU2 = vtxUV2.X - vtxUV1.X;
+                tcV2 = vtxUV2.Y - vtxUV1.Y;
+
+                //Find tangent using both tex coord edges and position edges
+                tangent = new Vector3((tcV1 * edge1.X - tcV2 * edge2.X) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
+                                      (tcV1 * edge1.Y - tcV2 * edge2.Y) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
+                                      (tcV1 * edge1.Z - tcV2 * edge2.Z) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)));
+
+                tempTangent.Add(tangent);
+            }
+
+            Vector3 normalSum = default;
+            Vector3 tangentSum = default;
+
+            for (int i = 0; i < VerticesCount; ++i)
+            {
+                // Check which triangles use this vertex
+                for (int j = 0; j < faces; ++j)
+                {
+                    if (Indices[j * 3] == i || Indices[j * 3 + 1] == i || Indices[j * 3 + 2] == i)
+                    {
+                        normalSum += tempNormal[j];
+                        tangentSum += tempTangent[j];
+                    }
+                }
+
+                normalSum = Vector3.Normalize(normalSum);
+                tangentSum = Vector3.Normalize(tangentSum);
+
+                Normals[i] = normalSum;
+                Tangents[i] = tangentSum;
+                Bitangents[i] = Vector3.Cross(normalSum, tangentSum);
+
+                normalSum = default;
+                tangentSum = default;
+            }
+
+            tempNormal.Free();
+            tempTangent.Free();
+        }
+
+        public void RecomputeNormals(Face lface)
+        {
+            UnsafeList<Vector3> tempNormal = new();
+            Vector3 unnormalizedNormal;
+            Vector3 edge1, edge2;
+
+            UnsafeList<Vector3> tempTangent = new();
+            Vector3 tangent;
+            float tcU1, tcV1, tcU2, tcV2;
+
+            Face[] faces = GetNeighborFaces(lface);
+
+            var facesCount = faces.Length;
+
+            for (uint i = 0; i < facesCount;)
+            {
+                var face = faces[i];
+                var vtxP0 = Positions[face.Index1];
+                var vtxP1 = Positions[face.Index2];
+                var vtxP2 = Positions[face.Index3];
+
+                edge1 = vtxP0 - vtxP2;
+                edge2 = vtxP2 - vtxP1;
+
+                unnormalizedNormal = Vector3.Cross(edge1, edge2);
+
+                tempNormal.Add(unnormalizedNormal);
+
+                var vtxUV0 = UVs[face.Index1];
+                var vtxUV1 = UVs[face.Index2];
+                var vtxUV2 = UVs[face.Index3];
+
+                //Find first texture coordinate edge 2d vector
+                tcU1 = vtxUV0.X - vtxUV2.X;
+                tcV1 = vtxUV0.Y - vtxUV2.Y;
+
+                //Find second texture coordinate edge 2d vector
+                tcU2 = vtxUV2.X - vtxUV1.X;
+                tcV2 = vtxUV2.Y - vtxUV1.Y;
+
+                //Find tangent using both tex coord edges and position edges
+                tangent = new Vector3((tcV1 * edge1.X - tcV2 * edge2.X) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
+                                      (tcV1 * edge1.Y - tcV2 * edge2.Y) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
+                                      (tcV1 * edge1.Z - tcV2 * edge2.Z) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)));
+
+                tempTangent.Add(tangent);
+            }
+
+            Vector3 normalSum = default;
+            Vector3 tangentSum = default;
+            int facesUsing = 0;
+
+            for (int i = 0; i < VerticesCount; ++i)
+            {
+                //Check which triangles use this vertex
+                for (int j = 0; j < facesCount; ++j)
+                {
+                    var face = faces[j];
+                    if (face.Index1 == i || face.Index2 == i || face.Index3 == i)
+                    {
+                        normalSum += tempNormal[j];
+                        tangentSum += tempTangent[j];
+
+                        facesUsing++;
+                    }
+                }
+
+                normalSum /= facesUsing;
+                tangentSum /= facesUsing;
+
+                normalSum = Vector3.Normalize(normalSum);
+                tangentSum = Vector3.Normalize(tangentSum);
+
+                Normals[i] = normalSum;
+                Tangents[i] = tangentSum;
+                Bitangents[i] = Vector3.Cross(normalSum, tangentSum);
+
+                normalSum = default;
+                tangentSum = default;
+                facesUsing = 0;
+            }
         }
     }
 }

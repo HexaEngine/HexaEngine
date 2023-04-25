@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
+    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using System;
@@ -27,13 +28,17 @@
 
         int Visible { get; }
 
+        bool Forward { get; }
+
         event Action<IInstanceType, IInstance> Updated;
 
         bool BeginDraw(IGraphicsContext context);
 
-        bool BeginDrawNoCulling(IGraphicsContext context);
+        bool BeginDrawForward(IGraphicsContext context);
 
         bool BeginDrawNoOcculusion(IGraphicsContext context);
+
+        bool BeginDrawNoCulling(IGraphicsContext context);
 
         IInstance CreateInstance(GameObject parent);
 
@@ -41,9 +46,11 @@
 
         void Draw(IGraphicsContext context, IBuffer camera);
 
-        void DrawDepth(IGraphicsContext context, IBuffer camera);
+        void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type);
 
         void DrawNoOcclusion(IGraphicsContext context);
+
+        void DrawDepth(IGraphicsContext context, IBuffer camera);
 
         string ToString();
 

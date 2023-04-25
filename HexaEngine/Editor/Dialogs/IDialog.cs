@@ -5,7 +5,7 @@
         bool Shown { get; }
 
         void Draw();
-        void Hide();
+        void Close();
         void Reset();
         void Show();
     }
