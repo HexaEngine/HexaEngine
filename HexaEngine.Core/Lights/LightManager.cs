@@ -247,13 +247,17 @@
         private void LightTransformed(GameObject gameObject)
         {
             if (gameObject is Light light)
+            {
                 lightUpdateQueue.Enqueue(light);
+            }
         }
 
         private void LightPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (sender is Light light)
+            {
                 lightUpdateQueue.Enqueue(light);
+            }
         }
 
         public void Clear()
@@ -370,7 +374,10 @@
                 {
                     var light = activeLights[i];
                     if (!light.CastShadows)
+                    {
                         continue;
+                    }
+
                     if (light.IntersectFrustum(box) && !light.InUpdateQueue)
                     {
                         light.InUpdateQueue = true;
@@ -428,6 +435,7 @@
 #nullable disable
 
             if (GBuffers != null)
+            {
                 for (int i = 0; i < 8; i++)
                 {
                     if (i < GBuffers.Value.Count)
@@ -435,6 +443,7 @@
                         solidSrvs[i] = shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = (void*)GBuffers.Value.SRVs[i]?.NativePointer;
                     }
                 }
+            }
 
             forwardSrvs[8] = indirectSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
             forwardSrvs[9] = indirectSrvs[9] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
@@ -475,7 +484,10 @@
             {
                 var probe = probes[i];
                 if (!(probe.IsEnabled && probe.IsVaild))
+                {
                     continue;
+                }
+
                 switch (probe.Type)
                 {
                     case ProbeType.Global:
@@ -505,7 +517,10 @@
                     {
                         case LightType.Directional:
                             if (csmCount == MaxDirectionalLightSDs)
+                            {
                                 continue;
+                            }
+
                             light.QueueIndex = csmCount;
                             shadowDirectionalLights.Add(new((DirectionalLight)light));
                             forwardSrvs[nForwardShadowSrvsBase + csmCount] = shadowSrvs[nDirectSrvs + csmCount] = (void*)light.GetShadowMap()?.NativePointer;
@@ -514,7 +529,10 @@
 
                         case LightType.Point:
                             if (osmCount == MaxPointLightSDs)
+                            {
                                 continue;
+                            }
+
                             light.QueueIndex = osmCount;
                             shadowPointLights.Add(new((PointLight)light));
                             forwardSrvs[nForwardShadowSrvsBase + MaxDirectionalLightSDs + osmCount] = shadowSrvs[nDirectSrvs + MaxDirectionalLightSDs + osmCount] = (void*)light.GetShadowMap()?.NativePointer;
@@ -523,7 +541,10 @@
 
                         case LightType.Spot:
                             if (psmCount == MaxSpotlightSDs)
+                            {
                                 continue;
+                            }
+
                             light.QueueIndex = psmCount;
                             shadowSpotlights.Add(new((Spotlight)light));
                             forwardSrvs[nForwardShadowSrvsBase + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = shadowSrvs[nDirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;

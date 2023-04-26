@@ -207,7 +207,9 @@ namespace HexaEngine.Rendering
         {
             // Avoid rendering when minimized
             if (data.DisplaySize.X <= 0.0f || data.DisplaySize.Y <= 0.0f)
+            {
                 return;
+            }
 
             if (data.CmdListsCount == 0)
             {
@@ -323,7 +325,9 @@ namespace HexaEngine.Rendering
         {
             ImGui.SaveIniSettingsToDisk("imgui.ini");
             if (device == null)
+            {
                 return;
+            }
 
             InvalidateDeviceObjects();
         }

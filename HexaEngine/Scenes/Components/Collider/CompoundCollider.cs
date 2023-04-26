@@ -26,7 +26,11 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
+            {
+                return;
+            }
+
             colliderChildren = parent.GetComponentsFromChilds<IColliderComponent>().ToList();
             CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
             for (int i = 0; i < colliderChildren.Count; i++)
@@ -67,7 +71,11 @@
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || colliderChildren == null || !hasShape) return;
+            if (Application.InDesignMode || parent == null || scene == null || colliderChildren == null || !hasShape)
+            {
+                return;
+            }
+
             compound.Dispose(bufferPool);
             scene.Simulation.Shapes.Remove(index);
             for (int i = 0; i < colliderChildren.Count; i++)

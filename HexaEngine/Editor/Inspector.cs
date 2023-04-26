@@ -53,10 +53,15 @@
         public static unsafe void Draw()
         {
             if (!enabled)
+            {
                 return;
+            }
 
             var scene = SceneManager.Current;
-            if (scene == null) return;
+            if (scene == null)
+            {
+                return;
+            }
 
             if (drawGrid)
             {
@@ -114,7 +119,10 @@
                 {
                     var cam = scene.Cameras[i];
                     if (!Application.InDesignMode && CameraManager.Current == cam)
+                    {
                         continue;
+                    }
+
                     DebugDraw.DrawFrustum(cam.Name, cam.Transform.Frustum, Vector4.One);
                 }
             }
@@ -212,8 +220,16 @@
                 Camera? camera = CameraManager.Current;
                 ImGuizmo.Enable(true);
                 ImGuizmo.SetOrthographic(false);
-                if (camera == null) return;
-                if (element == null) return;
+                if (camera == null)
+                {
+                    return;
+                }
+
+                if (element == null)
+                {
+                    return;
+                }
+
                 Matrix4x4 view = camera.Transform.View;
                 Matrix4x4 proj = camera.Transform.Projection;
                 Matrix4x4 transform = element.Transform.Global;
@@ -222,9 +238,13 @@
                 {
                     gimbalGrabbed = true;
                     if (element.Transform.Parent == null)
+                    {
                         element.Transform.Local = transform;
+                    }
                     else
+                    {
                         element.Transform.Local = transform * element.Transform.Parent.GlobalInverse;
+                    }
                 }
                 else if (!ImGuizmo.IsUsing())
                 {

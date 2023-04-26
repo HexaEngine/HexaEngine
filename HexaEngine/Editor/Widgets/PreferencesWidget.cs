@@ -50,9 +50,15 @@
             {
                 ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
                 if (displayedKey == key)
+                {
                     flags |= ImGuiTreeNodeFlags.Selected;
+                }
+
                 if (key.Keys.Count == 0)
+                {
                     flags |= ImGuiTreeNodeFlags.Leaf;
+                }
+
                 bool isOpen = ImGui.TreeNodeEx(key.Name, flags);
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
@@ -82,17 +88,24 @@
                     var value = displayedKey.Values[j];
 
                     if (!string.IsNullOrEmpty(filter) && !value.Name.Contains(filter))
+                    {
                         continue;
+                    }
 
                     var val = value.Value;
                     bool changed = false;
                     if (value.IsReadOnly)
+                    {
                         ImGui.BeginDisabled(true);
+                    }
 
                     if (!value.IsReadOnly)
                     {
                         if (ImGui.SmallButton($"\uE777##{value.Name}"))
+                        {
                             value.SetToDefault();
+                        }
+
                         ImGui.SameLine();
                     }
 
@@ -107,7 +120,9 @@
                                 var v = value.GetBool();
                                 changed = ImGui.Checkbox(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -116,7 +131,9 @@
                                 var v = value.GetUInt8();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.U8, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -125,7 +142,9 @@
                                 var v = value.GetInt8();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.S8, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -134,7 +153,9 @@
                                 var v = value.GetUInt16();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.U16, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -143,7 +164,9 @@
                                 var v = value.GetInt16();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.S16, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -152,7 +175,9 @@
                                 var v = value.GetUInt32();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.U32, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -161,7 +186,9 @@
                                 var v = value.GetInt32();
                                 changed = ImGui.InputInt(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -170,7 +197,9 @@
                                 var v = value.GetUInt64();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.U64, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -179,7 +208,9 @@
                                 var v = value.GetInt64();
                                 changed = ImGui.InputScalar(value.Name, ImGuiDataType.S64, (nint)Unsafe.AsPointer(ref v));
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -188,7 +219,9 @@
                                 var v = value.GetFloat();
                                 changed = ImGui.InputFloat(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -197,7 +230,9 @@
                                 var v = value.GetDouble();
                                 changed = ImGui.InputDouble(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -206,7 +241,9 @@
                                 var v = value.GetVector2();
                                 changed = ImGui.InputFloat2(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -215,7 +252,9 @@
                                 var v = value.GetVector3();
                                 changed = ImGui.InputFloat3(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -224,7 +263,9 @@
                                 var v = value.GetVector4();
                                 changed = ImGui.InputFloat4(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -233,7 +274,9 @@
                                 var v = value.GetVector4();
                                 changed = ImGui.ColorPicker4(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -242,7 +285,9 @@
                                 var v = value.GetVector3();
                                 changed = ImGui.ColorPicker3(value.Name, ref v);
                                 if (changed)
+                                {
                                     val = v.ToString();
+                                }
                             }
                             break;
 
@@ -250,7 +295,9 @@
                             {
                                 changed = ImGui.Button(value.Name);
                                 if (changed)
+                                {
                                     val = null;
+                                }
                             }
                             break;
 
@@ -278,9 +325,13 @@
                                         for (int i = 0; i < keyCodes.Count; i++)
                                         {
                                             if (sb.Length > 0)
+                                            {
                                                 sb.Append("+" + keyCodes[i]);
+                                            }
                                             else
+                                            {
                                                 sb.Append(keyCodes[i]);
+                                            }
                                         }
                                         val = sb.ToString();
                                         changed = true;
@@ -296,10 +347,14 @@
                     }
 
                     if (value.IsReadOnly)
+                    {
                         ImGui.EndDisabled();
+                    }
 
                     if (changed)
+                    {
                         value.Value = val;
+                    }
                 }
             }
             ImGui.EndChild();

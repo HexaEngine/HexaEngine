@@ -30,7 +30,10 @@
         public override void Show()
         {
             if (imagePainter.Source == null)
+            {
                 return;
+            }
+
             format = imagePainter.Source.Metadata.Format;
             base.Show();
         }
@@ -46,7 +49,9 @@
             if (ImGui.Button("Convert"))
             {
                 if (imagePainter.Source == null)
+                {
                     return;
+                }
 
                 var image = imagePainter.Source.ToScratchImage(device);
 

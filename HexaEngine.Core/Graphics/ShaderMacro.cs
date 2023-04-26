@@ -39,7 +39,10 @@
         public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj))
+            {
                 return false;
+            }
+
             return obj is ShaderMacro shaderMacro && Equals(shaderMacro);
         }
 

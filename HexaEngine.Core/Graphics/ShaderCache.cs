@@ -42,7 +42,11 @@
         {
             lock (entries)
             {
-                if (DisableCache) return;
+                if (DisableCache)
+                {
+                    return;
+                }
+
                 var entry = new ShaderCacheEntry(path, macros, inputElements, shader->Clone());
                 entries.RemoveAll(x => x.Equals(entry));
                 entries.Add(entry);
@@ -56,7 +60,10 @@
             {
                 *shader = default;
                 inputElements = null;
-                if (DisableCache) return false;
+                if (DisableCache)
+                {
+                    return false;
+                }
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 var ventry = new ShaderCacheEntry(path, macros, null, null);
@@ -92,7 +99,10 @@
             {
                 *shader = null;
                 inputElements = null;
-                if (DisableCache) return false;
+                if (DisableCache)
+                {
+                    return false;
+                }
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 var ventry = new ShaderCacheEntry(path, macros, null, null);
@@ -110,7 +120,11 @@
 
         private static void Load()
         {
-            if (!File.Exists(file)) return;
+            if (!File.Exists(file))
+            {
+                return;
+            }
+
             lock (entries)
             {
                 var span = (Span<byte>)File.ReadAllBytes(file);
@@ -219,9 +233,14 @@
                 idx += WriteInt32(dest[idx..], element.InstanceDataStepRate);
             }
             if (Shader != null)
+            {
                 BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], (int)Shader->Length);
+            }
             else
+            {
                 BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], 0);
+            }
+
             idx += 4;
 
             if (Shader != null)
@@ -318,16 +337,20 @@
         public int SizeOf(Encoder encoder)
         {
             if (Shader != null)
+            {
                 return 20 +
                     SizeOf(Name, encoder) +
                     Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
                     InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24) +
                     (int)Shader->Length;
+            }
             else
+            {
                 return 20 +
                     SizeOf(Name, encoder) +
                     Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
                     InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24);
+            }
         }
 
         public void Free()
@@ -337,10 +360,26 @@
 
         public bool Equals(ShaderCacheEntry other)
         {
-            if (Name != other.Name) return false;
-            if (Macros == other.Macros && Macros == null && other.Macros == null) return true;
-            if (Macros != other.Macros && (Macros == null || other.Macros == null)) return false;
-            if (Macros.Length != (other.Macros?.Length ?? 0)) return false;
+            if (Name != other.Name)
+            {
+                return false;
+            }
+
+            if (Macros == other.Macros && Macros == null && other.Macros == null)
+            {
+                return true;
+            }
+
+            if (Macros != other.Macros && (Macros == null || other.Macros == null))
+            {
+                return false;
+            }
+
+            if (Macros.Length != (other.Macros?.Length ?? 0))
+            {
+                return false;
+            }
+
             for (int i = 0; i < Macros.Length; i++)
             {
 #nullable disable

@@ -83,12 +83,16 @@ namespace HexaEngine.Scenes.Managers
         {
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
+            {
                 return default;
+            }
 
             var data = Select(context, position, viewport);
 
             if (data.InstanceId == 0 || data.TypeId == 0)
+            {
                 return null;
+            }
 
             ImGuiConsole.Log(LogSeverity.Log, data.ToString());
 
@@ -99,7 +103,9 @@ namespace HexaEngine.Scenes.Managers
         {
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
+            {
                 return default;
+            }
 
             context.ClearDepthStencilView(texture.DepthStencilView, DepthStencilClearFlags.All, 1, 0);
             context.ClearRenderTargetView(texture.RenderTargetView, default);

@@ -68,7 +68,9 @@ namespace DiscordIntegration.Entities.Embeds
             set
             {
                 if (!Regex.IsMatch(value, "(?:[0-9a-fA-F]{3}){1,2}$"))
+                {
                     throw new FormatException("Invalid hexadecimal color code.");
+                }
 
                 _value = int.Parse(value, NumberStyles.HexNumber);
             }

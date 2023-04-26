@@ -35,7 +35,11 @@
                 try
                 {
                     IPlugin? instance = (IPlugin?)Activator.CreateInstance(type);
-                    if (instance is null) continue;
+                    if (instance is null)
+                    {
+                        continue;
+                    }
+
                     instances.Add(instance);
                 }
                 catch (Exception ex)

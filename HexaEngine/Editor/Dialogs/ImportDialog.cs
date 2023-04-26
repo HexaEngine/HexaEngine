@@ -102,13 +102,18 @@
                             var value = model.Name;
                             var invalid = value.Length > 255;
                             if (invalid)
+                            {
                                 ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1, 0, 0, 1));
+                            }
+
                             if (ImGui.InputText($"Model {i}", ref value, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
                             {
                                 importer.ChangeNameOfModel(model, value);
                             }
                             if (invalid)
+                            {
                                 ImGui.PopStyleColor();
+                            }
                         }
                         ImGui.EndTabItem();
                     }
@@ -121,13 +126,18 @@
                             var value = material.Name;
                             var invalid = value.Length > 255;
                             if (invalid)
+                            {
                                 ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1, 0, 0, 1));
+                            }
+
                             if (ImGui.InputText($"Material {i}", ref value, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
                             {
                                 importer.ChangeNameOfMaterial(material, value);
                             }
                             if (invalid)
+                            {
                                 ImGui.PopStyleColor();
+                            }
                         }
                         ImGui.EndTabItem();
                     }
@@ -170,32 +180,44 @@
                             ImGui.CheckboxFlags("Uniform", ref flags, (int)TexCompressFlags.Uniform);
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                            {
                                 ImGui.SetTooltip("Uniform color weighting for BC1-3 compression; by default uses perceptual weighting");
+                            }
 
                             ImGui.CheckboxFlags("DitherA", ref flags, (int)TexCompressFlags.DitherA);
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                            {
                                 ImGui.SetTooltip("Enables dithering alpha for BC1-3 compression");
+                            }
 
                             ImGui.CheckboxFlags("DitherRGB", ref flags, (int)TexCompressFlags.DitherRGB);
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                            {
                                 ImGui.SetTooltip("Enables dithering RGB colors for BC1-3 compression");
+                            }
 
                             ImGui.CheckboxFlags("BC7Use3Sunsets", ref flags, (int)TexCompressFlags.BC7Use3Sunsets);
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                            {
                                 ImGui.SetTooltip("Enables exhaustive search for BC7 compress for mode 0 and 2; by default skips trying these modes");
+                            }
 
                             ImGui.CheckboxFlags("BC7Quick", ref flags, (int)TexCompressFlags.BC7Quick);
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                            {
                                 ImGui.SetTooltip("Minimal modes (usually mode 6) for BC7 compression");
+                            }
 
                             ImGui.CheckboxFlags("SRGB", ref flags, (int)TexCompressFlags.SRGB);
 
                             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+                            {
                                 ImGui.SetTooltip("if the input format type is IsSRGB(), then SRGB_IN is on by default\nif the output format type is IsSRGB(), then SRGB_OUT is on by default");
+                            }
 
                             ImGui.EndDisabled();
 

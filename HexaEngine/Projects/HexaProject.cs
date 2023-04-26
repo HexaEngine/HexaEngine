@@ -34,11 +34,23 @@
 
         public static HexaProject? Load(string path)
         {
-            if (path is null) return null;
-            if (!File.Exists(path)) return null;
+            if (path is null)
+            {
+                return null;
+            }
+
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
             var reader = File.OpenRead(path);
             HexaProject? result = (HexaProject?)serializer.Deserialize(reader);
-            if (result == null) return null;
+            if (result == null)
+            {
+                return null;
+            }
+
             result.ProjectFilePath = Path.GetFullPath(path);
             reader.Close();
             reader.Dispose();
@@ -70,7 +82,10 @@
             set
             {
                 if (selectedItem != null)
+                {
                     selectedItem.IsSelected = false;
+                }
+
                 selectedItem = value;
             }
         }
@@ -82,11 +97,17 @@
         public override T? FindRoot<T>() where T : class
         {
             if (this is T t)
+            {
                 return t;
+            }
             else if (Parent != null)
+            {
                 return Parent.FindRoot<T>();
+            }
             else
+            {
                 return null;
+            }
         }
 
         public override string GetAbsolutePath(string path)
@@ -153,7 +174,11 @@
 
         public override void Move(HexaItem item)
         {
-            if (item.Parent == null) return;
+            if (item.Parent == null)
+            {
+                return;
+            }
+
             string oldPath = item.GetAbsolutePath();
             string newPath = GetAbsolutePath(item.Name);
             File.Move(oldPath, newPath, true);

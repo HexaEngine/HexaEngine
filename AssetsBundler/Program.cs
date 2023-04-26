@@ -73,7 +73,10 @@
                         {
                             AssetArchive bundle = new(o.Path);
                             if (Directory.Exists("assets/"))
+                            {
                                 Directory.Delete("assets/", true);
+                            }
+
                             Directory.CreateDirectory("assets/");
                             bundle.Extract("assets/");
                         }
@@ -86,7 +89,10 @@
         {
             StringBuilder hex = new(ba.Length * 2);
             foreach (byte b in ba)
+            {
                 hex.AppendFormat("{0:x2}", b);
+            }
+
             return hex.ToString();
         }
     }

@@ -22,13 +22,17 @@
         public void Append(StringBuilder builder)
         {
             if (!string.IsNullOrEmpty(Definition))
+            {
                 builder.AppendLine($"{Type.GetTypeName()} {Name} = {Definition};");
+            }
         }
 
         public void AppendInline(StringBuilder builder)
         {
             if (!string.IsNullOrEmpty(Definition))
+            {
                 builder.Append(Definition);
+            }
         }
     }
 }

@@ -147,7 +147,10 @@
             for (int i = 0; i < types.Count; i++)
             {
                 if (types[i].Forward)
+                {
                     continue;
+                }
+
                 types[i].Draw(context, camera);
             }
         }

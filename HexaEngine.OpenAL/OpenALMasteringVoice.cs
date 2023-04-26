@@ -18,7 +18,11 @@
             get => gain;
             set
             {
-                if (gain == value) return;
+                if (gain == value)
+                {
+                    return;
+                }
+
                 gain = value;
                 GainChanged?.Invoke(value);
             }

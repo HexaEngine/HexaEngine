@@ -56,13 +56,17 @@
             for (int i = 0; i < axes.Length; i++)
             {
                 if (sdl.GameControllerHasAxis(controller, Helper.ConvertBack(axes[i])) == SdlBool.True)
+                {
                     axisStates.Add(axes[i], 0);
+                }
             }
             var buttons = Enum.GetValues<GamepadButton>();
             for (int i = 0; i < buttons.Length; i++)
             {
                 if (sdl.GameControllerHasButton(controller, Helper.ConvertBack(buttons[i])) == SdlBool.True)
+                {
                     buttonStates.Add(buttons[i], GamepadButtonState.Up);
+                }
             }
 
             var touchpadCount = sdl.GameControllerGetNumTouchpads(controller);
@@ -75,7 +79,9 @@
             for (int i = 0; i < sensorTypes.Length; i++)
             {
                 if (sdl.GameControllerHasSensor(controller, Helper.ConvertBack(sensorTypes[i])) == SdlBool.True)
+                {
                     sensors.Add(sensorTypes[i], new(controller, sensorTypes[i]));
+                }
             }
 
             var mappingCount = sdl.GameControllerNumMappings();
@@ -85,7 +91,9 @@
             }
 
             if (sdl.JoystickIsHaptic(joystick) == 1)
+            {
                 haptic = Haptic.OpenFromGamepad(this);
+            }
 
             var guid = sdl.JoystickGetGUID(joystick);
             var buffer = Alloc<byte>(33);
@@ -221,7 +229,9 @@
             }
 
             if (even.Value == axisStates[axis])
+            {
                 return;
+            }
 
             axisStates[axis] = even.Value;
             axisMotionEventArgs.Axis = axis;

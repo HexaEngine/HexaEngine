@@ -43,7 +43,10 @@
 
         private void SetIdle()
         {
-            if (rpcClient == null) return;
+            if (rpcClient == null)
+            {
+                return;
+            }
 
             rpcClient.Presence = new RichPresence()
                 .WithState("Idle")
@@ -53,7 +56,11 @@
 
         private void SetSceneState()
         {
-            if (rpcClient == null) return;
+            if (rpcClient == null)
+            {
+                return;
+            }
+
             if (ProjectManager.Project == null)
             {
                 SetIdle();
@@ -89,13 +96,21 @@
 
         private void SceneChanged(object? sender, SceneChangedEventArgs e)
         {
-            if (rpcClient == null) return;
+            if (rpcClient == null)
+            {
+                return;
+            }
+
             SetSceneState();
         }
 
         private void ProjectChanged(HexaProject? obj)
         {
-            if (rpcClient == null) return;
+            if (rpcClient == null)
+            {
+                return;
+            }
+
             if (obj == null)
             {
                 SetIdle();

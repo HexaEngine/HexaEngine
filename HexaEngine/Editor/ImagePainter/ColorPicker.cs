@@ -23,18 +23,30 @@
             get
             {
                 if (mode == ColorMode.Primary)
+                {
                     return colorPrimary;
+                }
+
                 if (mode == ColorMode.Secondary)
+                {
                     return colorSecondary;
+                }
+
                 return default;
             }
 
             set
             {
                 if (mode == ColorMode.Primary)
+                {
                     colorPrimary = value;
+                }
+
                 if (mode == ColorMode.Secondary)
+                {
                     colorSecondary = value;
+                }
+
                 for (int i = history.Length - 1; i != 0; i--)
                 {
                     history[i] = history[i - 1];
@@ -47,9 +59,15 @@
         public void SetColorFromHistory(int index)
         {
             if (mode == ColorMode.Primary)
+            {
                 colorPrimary = history[index];
+            }
+
             if (mode == ColorMode.Secondary)
+            {
                 colorSecondary = history[index];
+            }
+
             internalColor = history[index];
         }
 

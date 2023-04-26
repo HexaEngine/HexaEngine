@@ -209,9 +209,13 @@
 
             float lengthSq = difference.LengthSquared();
             if (lengthSq == 0)
+            {
                 difference = -cameraForwardVector;
+            }
             else
+            {
                 difference *= (float)(1.0 / Math.Sqrt(lengthSq));
+            }
 
             crossed = Vector3.Cross(cameraUpVector, difference);
             crossed = Vector3.Normalize(crossed);
@@ -366,11 +370,20 @@
             float normalizedY = angle.Y % 360;
             float normalizedZ = angle.Z % 360;
             if (normalizedX < 0)
+            {
                 normalizedX += 360;
+            }
+
             if (normalizedY < 0)
+            {
                 normalizedY += 360;
+            }
+
             if (normalizedZ < 0)
+            {
                 normalizedZ += 360;
+            }
+
             return new(normalizedX, normalizedY, normalizedZ);
         }
 
@@ -380,9 +393,15 @@
             float normalizedX = angle.X % 360;
             float normalizedY = angle.Y % 360;
             if (normalizedX < 0)
+            {
                 normalizedX += 360;
+            }
+
             if (normalizedY < 0)
+            {
                 normalizedY += 360;
+            }
+
             return new(normalizedX, normalizedY);
         }
 

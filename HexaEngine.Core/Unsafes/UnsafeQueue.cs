@@ -83,7 +83,10 @@
         {
             int newcapacity = size == 0 ? DefaultCapacity : 2 * size;
 
-            if (newcapacity < capacity) newcapacity = capacity;
+            if (newcapacity < capacity)
+            {
+                newcapacity = capacity;
+            }
 
             Capacity = newcapacity;
         }
@@ -169,7 +172,11 @@
             for (int i = 0; i < size; i++)
             {
                 var current = &items[i];
-                if (current == null) break;
+                if (current == null)
+                {
+                    break;
+                }
+
                 if (current == item)
                 {
                     return true;

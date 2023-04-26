@@ -275,16 +275,26 @@
                         ulong bpp;
 
                         if ((flags & CPFlags.BPP24) != 0)
+                        {
                             bpp = 24;
+                        }
                         else if ((flags & CPFlags.BPP16) != 0)
+                        {
                             bpp = 16;
+                        }
                         else if ((flags & CPFlags.BPP8) != 0)
+                        {
                             bpp = 8;
+                        }
                         else
+                        {
                             bpp = (ulong)BitsPerPixel(fmt);
+                        }
 
                         if (bpp == 0)
+                        {
                             return false;
+                        }
 
                         if ((flags & (CPFlags.LegacyDWORD | CPFlags.Paragraph | CPFlags.YMM | CPFlags.ZMM | CPFlags.Page4K)) != 0)
                         {

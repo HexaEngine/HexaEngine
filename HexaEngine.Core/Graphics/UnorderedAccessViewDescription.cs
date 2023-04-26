@@ -112,9 +112,14 @@
             {
                 Texture1DDescription textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (arraySize == -1)
+                {
                     arraySize = textureDesc.ArraySize - firstArraySlice;
+                }
             }
             Format = format;
             switch (ViewDimension)
@@ -155,9 +160,14 @@
             {
                 Texture2DDescription textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (arraySize == -1)
+                {
                     arraySize = textureDesc.ArraySize - firstArraySlice;
+                }
             }
             Format = format;
             switch (viewDimension)
@@ -197,9 +207,14 @@
             {
                 Texture3DDescription textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (wSize == -1)
+                {
                     wSize = textureDesc.Depth - firstWSlice;
+                }
             }
             Format = format;
             Texture3D.MipSlice = mipSlice;

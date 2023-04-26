@@ -59,10 +59,14 @@ namespace DiscordRPC
             set
             {
                 if (_isDisposed)
+                {
                     throw new ObjectDisposedException("WebhookClient");
+                }
 
                 if (!Regex.IsMatch(value, @"https:\/\/discord\.com\/api\/(v\d+\/)?webhooks\/\d{17,19}\/.{68}"))
+                {
                     throw new Exception("Please provide a valid webhook URL.");
+                }
 
                 _client.BaseAddress = new Uri(value);
             }
@@ -79,7 +83,9 @@ namespace DiscordRPC
         public async Task<ulong> ExecuteAsync(WebhookMessage message, WebhookProfile? profile = null)
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
 #pragma warning disable CS8601 // Possible null reference assignment.
 #pragma warning disable CS8601 // Possible null reference assignment.
@@ -104,7 +110,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
+            }
 
 #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
             return ulong.Parse(JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("id").GetString());
@@ -125,7 +133,9 @@ namespace DiscordRPC
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
 #pragma warning disable CS8601 // Possible null reference assignment.
 #pragma warning disable CS8601 // Possible null reference assignment.
@@ -164,7 +174,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
+            }
 
 #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
             return ulong.Parse(JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("id").GetString());
@@ -185,7 +197,9 @@ namespace DiscordRPC
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
 #pragma warning disable CS8601 // Possible null reference assignment.
 #pragma warning disable CS8601 // Possible null reference assignment.
@@ -212,7 +226,9 @@ namespace DiscordRPC
             };
 
             foreach (var attachment in payload.Attachments)
+            {
                 content.Add(new ByteArrayContent(attachment.FileData), $"files[{attachment.Id}]", attachment.FileName);
+            }
 
             var response = await _client.SendAsync(new HttpRequestMessage()
             {
@@ -222,7 +238,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
+            }
 
 #pragma warning disable CS8604 // Possible null reference argument for parameter 's' in 'ulong ulong.Parse(string s)'.
             return ulong.Parse(JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement.GetProperty("id").GetString());
@@ -240,7 +258,9 @@ namespace DiscordRPC
         public async Task EditMessageAsync(ulong messageId, WebhookMessage newMessage)
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
 #pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
@@ -259,7 +279,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
+            }
         }
 
         /// <summary>
@@ -274,7 +296,9 @@ namespace DiscordRPC
         public async Task EditMessageAsync(ulong messageId, WebhookMessage newMessage, WebhookAttachment newAttachment)
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
 #pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
@@ -307,7 +331,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.");
+            }
         }
 
         /// <summary>
@@ -322,7 +348,9 @@ namespace DiscordRPC
         public async Task EditMessageAsync(ulong messageId, WebhookMessage newMessage, IEnumerable<WebhookAttachment> newAttachments)
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
 #pragma warning disable CS8601 // Possible null reference assignment.
             var payload = new Payload()
@@ -343,7 +371,9 @@ namespace DiscordRPC
             };
 
             foreach (var attachment in payload.Attachments)
+            {
                 content.Add(new ByteArrayContent(attachment.FileData), $"files[{attachment.Id}]", attachment.FileName);
+            }
 
             var response = await _client.SendAsync(new HttpRequestMessage()
             {
@@ -353,7 +383,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.");
+            }
         }
 
         /// <summary>
@@ -366,7 +398,9 @@ namespace DiscordRPC
         public async Task DeleteMessageAsync(ulong messageId)
         {
             if (_isDisposed)
+            {
                 throw new ObjectDisposedException("WebhookClient");
+            }
 
             var response = await _client.SendAsync(new HttpRequestMessage()
             {
@@ -375,7 +409,9 @@ namespace DiscordRPC
             });
 
             if (!response.IsSuccessStatusCode)
+            {
                 throw new Exception($"Request failed with status code {response.StatusCode}.\n\n{await response.Content.ReadAsStringAsync()}");
+            }
         }
 
         public void Dispose()
@@ -419,48 +455,76 @@ namespace DiscordRPC
             public void Validate()
             {
                 if (Content?.Length > 2000)
+                {
                     throw new ArgumentException("Content must be less than 2000 characters.", nameof(Content));
+                }
 
                 if (Username?.Length > 80)
+                {
                     throw new ArgumentException("Username must be less than 80 characters.", nameof(Username));
+                }
 
                 if (string.IsNullOrWhiteSpace(Content) && Embeds.Length == 0 && Attachments.Length == 0)
+                {
                     throw new ArgumentException("Content, embeds, or attachments must be provided.", nameof(Content));
+                }
 
                 if (Embeds != null)
                 {
                     if (Embeds.Any(x => x.Title.Length > 256))
+                    {
                         throw new ArgumentException("Embed title must be less than 256 characters.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Description.Length > 4096))
+                    {
                         throw new ArgumentException("Embed description must be less than 4096 characters.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Fields.Count > 25))
+                    {
                         throw new ArgumentException("Embed must have less than 25 fields.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Fields.Any(y => y.Name.Length > 256)))
+                    {
                         throw new ArgumentException("Embed field name must be less than 256 characters.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Fields.Any(y => y.Value.Length > 1024)))
+                    {
                         throw new ArgumentException("Embed field value must be less than 1024 characters.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Footer.Text.Length > 2048))
+                    {
                         throw new ArgumentException("Embed footer text must be less than 2048 characters.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Author.Name.Length > 256))
+                    {
                         throw new ArgumentException("Embed author name must be less than 256 characters.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => string.IsNullOrEmpty(x.Title) && string.IsNullOrEmpty(x.Description) && x.Fields.Count == 0 && x.Image == null && x.Thumbnail == null && x.Footer == null && x.Author == null))
+                    {
                         throw new ArgumentException("Embed must have a title, description, fields, image, thumbnail, footer, or author.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Fields.Any(y => string.IsNullOrEmpty(y.Name) || string.IsNullOrEmpty(y.Value))))
+                    {
                         throw new ArgumentException("Embed field must have a name and value.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Footer != null && string.IsNullOrEmpty(x.Footer.Text)))
+                    {
                         throw new ArgumentException("Embed footer must have text.", nameof(Embeds));
+                    }
 
                     if (Embeds.Any(x => x.Author != null && string.IsNullOrEmpty(x.Author.Name)))
+                    {
                         throw new ArgumentException("Embed author must have a name.", nameof(Embeds));
+                    }
                 }
             }
         }

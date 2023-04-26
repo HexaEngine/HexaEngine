@@ -12,14 +12,18 @@
             if (backend == GraphicsBackend.Auto)
             {
                 if (Adapters.Count == 1)
+                {
                     return Adapters[0].CreateGraphicsDevice(debug);
+                }
                 else
                 {
                     IGraphicsAdapter audioAdapter = Adapters[0];
                     for (int i = 0; i < Adapters.Count; i++)
                     {
                         if (Adapters[i].PlatformScore > audioAdapter.PlatformScore)
+                        {
                             audioAdapter = Adapters[i];
+                        }
                     }
                     return audioAdapter.CreateGraphicsDevice(debug);
                 }

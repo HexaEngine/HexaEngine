@@ -14,9 +14,13 @@
             for (int i = 0; i < keys.Count; i++)
             {
                 if (sb.Length > 0)
+                {
                     sb.Append("+" + keys[i]);
+                }
                 else
+                {
                     sb.Append(keys[i]);
+                }
             }
             return sb.ToString();
         }
@@ -87,7 +91,10 @@
         private void CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (confValue == null)
+            {
                 return;
+            }
+
             tostring = null;
             confValue.Value = ToString();
         }
@@ -101,11 +108,16 @@
         public bool IsConflicting(Hotkey other)
         {
             if (Keys.Count != other.Keys.Count)
+            {
                 return false;
+            }
+
             for (int i = 0; i < Keys.Count; i++)
             {
                 if (Keys[i] != other.Keys[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -120,7 +132,9 @@
         public bool TryExecute(List<Key> keys)
         {
             if (keys.Count < Keys.Count)
+            {
                 return false;
+            }
 
             for (int i = 0; i < Keys.Count; i++)
             {
@@ -141,9 +155,13 @@
                 for (int i = 0; i < Keys.Count; i++)
                 {
                     if (sb.Length > 0)
+                    {
                         sb.Append("+" + Keys[i]);
+                    }
                     else
+                    {
                         sb.Append(Keys[i]);
+                    }
                 }
                 tostring = sb.ToString();
             }

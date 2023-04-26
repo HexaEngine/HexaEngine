@@ -31,11 +31,17 @@ namespace HexaEngine.SPIRVCross
         static LibraryLoader()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
                 Extension = ".dll";
+            }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
                 Extension = ".dylib";
+            }
             else
+            {
                 Extension = ".so";
+            }
         }
 
         public static string Extension { get; }
@@ -43,7 +49,9 @@ namespace HexaEngine.SPIRVCross
         public static IntPtr LoadLocalLibrary(string libraryName)
         {
             if (!libraryName.EndsWith(Extension, StringComparison.OrdinalIgnoreCase))
+            {
                 libraryName += Extension;
+            }
 
             var osPlatform = GetOSPlatform();
             var architecture = GetArchitecture();
@@ -53,11 +61,17 @@ namespace HexaEngine.SPIRVCross
             static string GetOSPlatform()
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     return "win";
+                }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
                     return "linux";
+                }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
                     return "osx";
+                }
 
                 throw new ArgumentException("Unsupported OS platform.");
             }
@@ -80,7 +94,9 @@ namespace HexaEngine.SPIRVCross
                 var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
                 if (assemblyLocation == null)
+                {
                     throw new Exception();
+                }
 
                 var paths = new[]
                 {
@@ -92,7 +108,9 @@ namespace HexaEngine.SPIRVCross
                 foreach (var path in paths)
                 {
                     if (File.Exists(path))
+                    {
                         return path;
+                    }
                 }
 
                 return libraryName;
@@ -106,7 +124,9 @@ namespace HexaEngine.SPIRVCross
 #endif
 
             if (handle == IntPtr.Zero)
+            {
                 throw new DllNotFoundException($"Unable to load library '{libraryName}'.");
+            }
 
             return handle;
         }
@@ -120,7 +140,9 @@ namespace HexaEngine.SPIRVCross
 #endif
 
             if (symbol == nint.Zero)
+            {
                 throw new EntryPointNotFoundException($"Unable to load symbol '{name}'.");
+            }
 
             return Marshal.GetDelegateForFunctionPointer<T>(symbol);
         }

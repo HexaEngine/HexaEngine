@@ -43,7 +43,9 @@
                 var tool = tools[i];
                 var isActive = tool == current;
                 if (isActive)
+                {
                     ImGui.PushStyleColor(ImGuiCol.Button, ImGui.GetColorU32(ImGuiCol.ButtonActive));
+                }
 
                 if (ImGui.Button(tool.Icon))
                 {
@@ -51,7 +53,9 @@
                 }
 
                 if (isActive)
+                {
                     ImGui.PopStyleColor();
+                }
 
                 if (i % 4 != 0 || i == 0)
                 {

@@ -39,7 +39,9 @@
             {
                 IGraphicsPipeline pipeline = PipelineManager.GraphicsPipelines[i];
                 if (ImGui.Button(pipeline.DebugName))
+                {
                     Recompile(pipeline);
+                }
             }
 
             ImGui.Text("Compute Pipelines");
@@ -47,7 +49,9 @@
             {
                 IComputePipeline pipeline = PipelineManager.ComputePipelines[i];
                 if (ImGui.Button(pipeline.Name))
+                {
                     Recompile(pipeline);
+                }
             }
         }
     }

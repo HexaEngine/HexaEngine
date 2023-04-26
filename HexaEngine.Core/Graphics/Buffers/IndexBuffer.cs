@@ -189,7 +189,10 @@
         {
             uint newcapacity = count == 0 ? DefaultCapacity : 2 * count;
 
-            if (newcapacity < capacity) newcapacity = capacity;
+            if (newcapacity < capacity)
+            {
+                newcapacity = capacity;
+            }
 
             Capacity = newcapacity;
         }

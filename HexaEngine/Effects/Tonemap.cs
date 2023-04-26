@@ -175,7 +175,10 @@
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output is null) return;
+            if (Output is null)
+            {
+                return;
+            }
 
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);

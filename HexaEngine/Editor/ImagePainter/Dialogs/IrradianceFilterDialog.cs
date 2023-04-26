@@ -65,7 +65,9 @@
         protected override void DrawContent()
         {
             if (compute)
+            {
                 ImGui.BeginDisabled(true);
+            }
 
             if (ImGui.Button("Compute"))
             {
@@ -159,7 +161,9 @@
                 {
                     ImGui.Image(irrSRV.Views[i].NativePointer, new(128, 128));
                     if (i != 5)
+                    {
                         ImGui.SameLine();
+                    }
                 }
             }
 

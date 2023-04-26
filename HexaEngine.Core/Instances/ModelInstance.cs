@@ -45,7 +45,10 @@
         public bool VisibilityTest(BoundingFrustum frustum)
         {
             if (Mesh.Value == null)
+            {
                 return false;
+            }
+
             return frustum.Intersects(BoundingBox.Transform(Mesh.Value.BoundingBox, transform));
         }
 

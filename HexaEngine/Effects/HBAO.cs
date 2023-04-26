@@ -185,7 +185,11 @@ namespace HexaEngine.Effects
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output is null) return;
+            if (Output is null)
+            {
+                return;
+            }
+
             if (isDirty)
             {
                 context.Write(cbHBAO, hbaoParams);

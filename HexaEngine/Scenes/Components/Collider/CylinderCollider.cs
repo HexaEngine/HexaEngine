@@ -20,7 +20,11 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || scene == null || hasShape)
+            {
+                return;
+            }
+
             Cylinder cylinder = new(radius, length * 2);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             index = scene.Simulation.Shapes.Add(cylinder);

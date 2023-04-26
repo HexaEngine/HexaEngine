@@ -58,16 +58,27 @@
             XmlDocument xmlDocument = new();
             XmlSerializer serializer = new(typeof(ItemGroup));
             XmlWriter? writer = xmlDocument?.CreateNavigator()?.AppendChild();
-            if (writer == null) return string.Empty;
+            if (writer == null)
+            {
+                return string.Empty;
+            }
+
             serializer.Serialize(writer, group, ns);
             writer.Flush();
             writer.Close();
             xmlDocument?.DocumentElement?.Attributes.RemoveAll();
-            if (xmlDocument == null && xmlDocument?.DocumentElement == null) return string.Empty;
+            if (xmlDocument == null && xmlDocument?.DocumentElement == null)
+            {
+                return string.Empty;
+            }
 #nullable disable
             XmlNode importedNode = root?.OwnerDocument?.ImportNode(xmlDocument.DocumentElement, true);
 #nullable enable
-            if (importedNode == null) return string.Empty;
+            if (importedNode == null)
+            {
+                return string.Empty;
+            }
+
             root?.AppendChild(importedNode);
 
             document?.Save(projectPath);
@@ -93,16 +104,27 @@
             XmlDocument xmlDocument = new();
             XmlSerializer serializer = new(typeof(ItemGroup));
             XmlWriter? writer = xmlDocument?.CreateNavigator()?.AppendChild();
-            if (writer == null) return string.Empty;
+            if (writer == null)
+            {
+                return string.Empty;
+            }
+
             serializer.Serialize(writer, group, ns);
             writer.Flush();
             writer.Close();
             xmlDocument?.DocumentElement?.Attributes.RemoveAll();
-            if (xmlDocument == null && xmlDocument?.DocumentElement == null) return string.Empty;
+            if (xmlDocument == null && xmlDocument?.DocumentElement == null)
+            {
+                return string.Empty;
+            }
 #nullable disable
             XmlNode importedNode = root?.OwnerDocument?.ImportNode(xmlDocument.DocumentElement, true);
 #nullable enable
-            if (importedNode == null) return string.Empty;
+            if (importedNode == null)
+            {
+                return string.Empty;
+            }
+
             root?.AppendChild(importedNode);
 
             document?.Save(projectPath);
@@ -117,7 +139,9 @@
             XmlNode? root = document.DocumentElement;
 
             if (root is null)
+            {
                 throw new InvalidDataException();
+            }
 
             XmlNode? target = null;
             Stack<XmlNode> stack = new();
@@ -134,16 +158,26 @@
                     for (int i = 0; i < node.ChildNodes.Count; i++)
                     {
                         XmlNode? childNode = node.ChildNodes[i];
-                        if (childNode == null) continue;
+                        if (childNode == null)
+                        {
+                            continue;
+                        }
+
                         stack.Push(childNode);
                     }
                 }
             }
 
             if (target is null)
+            {
                 throw new InvalidDataException();
+            }
+
             if (target.FirstChild is null)
+            {
                 throw new InvalidDataException();
+            }
+
             target.FirstChild.Value = outputType;
 
             document.Save(projectPath);

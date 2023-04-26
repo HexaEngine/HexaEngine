@@ -56,7 +56,10 @@ namespace HexaEngine.Rendering
         private static unsafe char* GetClipboardText(void* user_data)
         {
             if (g_ClipboardTextData != null)
+            {
                 Clipboard.Free(g_ClipboardTextData);
+            }
+
             g_ClipboardTextData = Clipboard.GetClipboardText();
             return g_ClipboardTextData;
         }
@@ -106,9 +109,13 @@ namespace HexaEngine.Rendering
             io.MouseDown[index] = e.State == MouseButtonState.Down;
 
             if (e.State == MouseButtonState.Down)
+            {
                 window.Capture();
+            }
             else
+            {
                 window.ReleaseCapture();
+            }
         }
 
         public void Update()
@@ -136,11 +143,15 @@ namespace HexaEngine.Rendering
         {
             var io = ImGui.GetIO();
             if ((io.ConfigFlags & ImGuiConfigFlags.NoMouseCursorChange) != 0)
+            {
                 return false;
+            }
 
             var requestedcursor = ImGui.GetMouseCursor();
             if (requestedcursor == ImGuiMouseCursor.None || io.MouseDrawCursor)
+            {
                 CursorHelper.SetCursor(IntPtr.Zero);
+            }
             else
             {
                 var cursor = SystemCursor.SystemCursorArrow;
@@ -169,7 +180,9 @@ namespace HexaEngine.Rendering
             var io = ImGui.GetIO();
             Memset(io.NavInputs.Data, 0, io.NavInputs.Count);
             if ((io.ConfigFlags & ImGuiConfigFlags.NavEnableGamepad) == 0)
+            {
                 return;
+            }
 
             // Get gamepad
             GameController* game_controller = Sdl.GameControllerOpen(0);
@@ -188,11 +201,18 @@ namespace HexaEngine.Rendering
             {
                 float vn = (float)(Sdl.GameControllerGetAxis(game_controller, AXIS_NO) - V0) / (V1 - V0);
                 if (vn > 1.0f)
+                {
                     vn = 1.0f;
+                }
+
                 if (vn > 0.0f && io.NavInputs[(int)NAV_NO] < vn)
+                {
                     io.NavInputs[(int)NAV_NO] = vn;
+                }
                 else
+                {
                     io.NavInputs[(int)NAV_NO] = 0;
+                }
             }
 
             const int thumb_dead_zone = 8000;           // SDL_gamecontroller.h suggests using this value.
@@ -230,7 +250,10 @@ namespace HexaEngine.Rendering
                 window.KeyboardInput -= KeyboardInput;
                 window.KeyboardCharInput -= KeyboardCharInput;
                 if (g_ClipboardTextData != null)
+                {
                     Clipboard.Free(g_ClipboardTextData);
+                }
+
                 disposedValue = true;
             }
         }

@@ -40,7 +40,9 @@
             if (ImGui.Button("Convert"))
             {
                 if (imagePainter.Source == null)
+                {
                     return;
+                }
 
                 var image = imagePainter.Source.ToScratchImage(device);
                 var meta = image.Metadata;

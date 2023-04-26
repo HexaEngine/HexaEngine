@@ -98,7 +98,10 @@
         {
             var type = AssemblyManager.GetAssignableType<IApp>();
             if (type != null)
+            {
                 App = (IApp?)Activator.CreateInstance(type);
+            }
+
             App?.Startup();
 
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
@@ -131,13 +134,17 @@
             windows.Add(window);
             windowIdToWindow.Add(window.WindowID, window);
             if (initialized)
+            {
                 window.Initialize(audioDevice, graphicsDevice);
+            }
         }
 
         private static void MainWindow_Closing(object? sender, CloseEventArgs e)
         {
             if (!e.Handled)
+            {
                 exiting = true;
+            }
         }
 
         public static void RegisterHook(Action<Event> hook)
@@ -462,7 +469,9 @@
                     }
 
                     for (int i = 0; i < hooks.Count; i++)
+                    {
                         hooks[i](evnt);
+                    }
                 }
 
                 for (int i = 0; i < windows.Count; i++)

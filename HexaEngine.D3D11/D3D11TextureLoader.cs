@@ -225,7 +225,10 @@
             }
             ScratchImage image = new();
             fixed (Image* pImages = images1)
+            {
                 image.Initialize3DFromImages(pImages, (ulong)depth, Helper.Convert(flags));
+            }
+
             return new D3DScratchImage(image);
         }
 
@@ -238,7 +241,10 @@
             }
             ScratchImage image = new();
             fixed (Image* pImages = images1)
+            {
                 image.InitializeArrayFromImages(pImages, (ulong)images.Length, allow1D, Helper.Convert(flags));
+            }
+
             return new D3DScratchImage(image);
         }
 
@@ -258,7 +264,10 @@
             }
             ScratchImage image = new();
             fixed (Image* pImages = images1)
+            {
                 image.InitializeCubeFromImages(pImages, (ulong)images.Length, Helper.Convert(flags));
+            }
+
             return new D3DScratchImage(image);
         }
 
@@ -375,7 +384,9 @@
 
             Core.Graphics.ResourceMiscFlag miscFlag = 0;
             if (image.Metadata.IsCubemap())
+            {
                 miscFlag = Core.Graphics.ResourceMiscFlag.TextureCube;
+            }
 
             var tex = image.CreateTexture2D(device, Core.Graphics.Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, miscFlag);
 

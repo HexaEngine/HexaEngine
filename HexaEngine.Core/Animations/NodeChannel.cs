@@ -32,7 +32,9 @@
             for (int index = 0; index < PositionKeyframes.Count - 1; ++index)
             {
                 if (animationTime < PositionKeyframes[index + 1].Time)
+                {
                     return index;
+                }
             }
             return 0;
         }
@@ -43,7 +45,9 @@
             for (int index = 0; index < RotationKeyframes.Count - 1; ++index)
             {
                 if (animationTime < RotationKeyframes[index + 1].Time)
+                {
                     return index;
+                }
             }
             return 0;
         }
@@ -54,7 +58,9 @@
             for (int index = 0; index < ScaleKeyframes.Count - 1; ++index)
             {
                 if (animationTime < ScaleKeyframes[index + 1].Time)
+                {
                     return index;
+                }
             }
             return 0;
         }
@@ -72,7 +78,9 @@
         public Matrix4x4 InterpolatePosition(float animationTime)
         {
             if (1 == PositionKeyframes.Count)
+            {
                 return Matrix4x4.CreateTranslation(PositionKeyframes[0].Value);
+            }
 
             int p0Index = GetPositionIndex(animationTime);
             int p1Index = p0Index + 1;
@@ -85,7 +93,9 @@
         public Matrix4x4 InterpolateRotation(float animationTime)
         {
             if (1 == RotationKeyframes.Count)
+            {
                 return Matrix4x4.CreateFromQuaternion(Quaternion.Normalize(RotationKeyframes[0].Value));
+            }
 
             int p0Index = GetRotationIndex(animationTime);
             int p1Index = p0Index + 1;
@@ -99,7 +109,9 @@
         public Matrix4x4 InterpolateScaling(float animationTime)
         {
             if (1 == ScaleKeyframes.Count)
+            {
                 return Matrix4x4.CreateScale(ScaleKeyframes[0].Value);
+            }
 
             int p0Index = GetScaleIndex(animationTime);
             int p1Index = p0Index + 1;

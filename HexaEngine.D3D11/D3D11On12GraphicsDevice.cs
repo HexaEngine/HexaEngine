@@ -43,7 +43,9 @@
             CreateDeviceFlag flags = CreateDeviceFlag.BgraSupport;
 
             if (debug)
+            {
                 flags |= CreateDeviceFlag.Debug;
+            }
 
             ID3D11Device* tempDevice;
             ID3D11DeviceContext* tempContext;

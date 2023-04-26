@@ -28,7 +28,11 @@
         public static Assembly? Load(string path)
         {
             string? folder = Path.GetDirectoryName(path);
-            if (folder == null) return null;
+            if (folder == null)
+            {
+                return null;
+            }
+
             string filename = Path.GetFileName(path);
             string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
             Assembly assembly;
@@ -56,7 +60,11 @@
         public static async Task<Assembly?> LoadAsync(string path)
         {
             string? folder = Path.GetDirectoryName(path);
-            if (folder == null) return null;
+            if (folder == null)
+            {
+                return null;
+            }
+
             string filename = Path.GetFileName(path);
             string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
             Assembly assembly;
@@ -163,7 +171,9 @@
             {
                 Type? type = assembly.GetType(name, false, false);
                 if (type != null)
+                {
                     return type;
+                }
             }
             return null;
         }

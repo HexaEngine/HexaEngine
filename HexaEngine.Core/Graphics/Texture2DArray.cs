@@ -69,9 +69,14 @@
             if (!disposedValue)
             {
                 foreach (IRenderTargetView rtv in RTVs)
+                {
                     rtv.Dispose();
+                }
+
                 foreach (IShaderResourceView srv in SRVs)
+                {
                     srv.Dispose();
+                }
 
                 Free(PSRVs);
                 Free(PRTVs);

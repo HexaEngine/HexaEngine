@@ -21,7 +21,11 @@
             Type = SourceType.Streaming;
             Header = new(stream);
             Format = Header.GetBufferFormat();
-            if (Header.AudioFormat != WaveFormatEncoding.Pcm) throw new NotSupportedException("Wav PCM only");
+            if (Header.AudioFormat != WaveFormatEncoding.Pcm)
+            {
+                throw new NotSupportedException("Wav PCM only");
+            }
+
             this.stream = stream;
             this.bufferCount = bufferCount;
             this.bufferSize = bufferSize;
@@ -49,7 +53,10 @@
             stream.Position = Header.DataBegin;
             var data = stream.Read(Header.DataSize);
             fixed (byte* buffer = data)
+            {
                 al.BufferData(buffers[0], Format, buffer, Header.DataSize, Header.SampleRate);
+            }
+
             al.SetSourceProperty(source, SourceInteger.Buffer, buffers[0]);
         }
 
@@ -57,12 +64,19 @@
         {
             for (int i = 0; i < bufferCount; i++)
             {
-                if (reachedEnd) return;
+                if (reachedEnd)
+                {
+                    return;
+                }
+
                 var absPosition = Header.DataBegin + position;
 
                 long dataSizeToCopy = bufferSize;
                 if (absPosition + bufferSize > stream.Length)
+                {
                     dataSizeToCopy = stream.Length - absPosition;
+                }
+
                 stream.Position = absPosition;
                 stream.Read(buffer, 0, (int)dataSizeToCopy);
                 position += (int)dataSizeToCopy;
@@ -95,10 +109,17 @@
 
         public override void Update(uint source)
         {
-            if (reachedEnd) return;
+            if (reachedEnd)
+            {
+                return;
+            }
+
             al.GetSourceProperty(source, GetSourceInteger.BuffersProcessed, out int buffersProcessed);
             if (buffersProcessed <= 0)
+            {
                 return;
+            }
+
             while (buffersProcessed-- != 0)
             {
                 uint bufferId;
@@ -108,7 +129,10 @@
 
                 long dataSizeToCopy = bufferSize;
                 if (absPosition + bufferSize > stream.Length)
+                {
                     dataSizeToCopy = stream.Length - absPosition;
+                }
+
                 stream.Position = absPosition;
                 stream.Read(buffer, 0, (int)dataSizeToCopy);
                 position += (int)dataSizeToCopy;

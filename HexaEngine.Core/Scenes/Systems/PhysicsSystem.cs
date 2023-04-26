@@ -25,7 +25,11 @@
 
         public void Update(ThreadDispatcher dispatcher)
         {
-            if (Application.InDesignMode) return;
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
             for (int i = 0; i < colliders.Count; i++)
             {
                 colliders[i].Update();

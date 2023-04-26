@@ -56,7 +56,9 @@
         public void ClearTargets(IGraphicsContext context)
         {
             foreach (IRenderTargetView view in views)
+            {
                 context.ClearRenderTargetView(view, new(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W));
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -87,7 +89,9 @@
             if (!disposedValue)
             {
                 foreach (IRenderTargetView view in views)
+                {
                     view.Dispose();
+                }
 
                 disposedValue = true;
             }
@@ -147,7 +151,9 @@
             if (!disposedValue)
             {
                 foreach (IShaderResourceView view in Views)
+                {
                     view.Dispose();
+                }
 
                 disposedValue = true;
             }

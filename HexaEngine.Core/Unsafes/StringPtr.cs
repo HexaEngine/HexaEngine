@@ -35,11 +35,17 @@
 
         public bool Compare(UnsafeString* other)
         {
-            if (Length != other->Length) return false;
+            if (Length != other->Length)
+            {
+                return false;
+            }
+
             for (uint i = 0; i < Length; i++)
             {
                 if (Ptr[i] != other->Ptr[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -49,9 +55,15 @@
             Span<char> srcChars = new(str->Ptr, str->Length + 1);
             Span<byte> src = MemoryMarshal.AsBytes(srcChars);
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteInt32LittleEndian(dest, src.Length);
+            }
+
             if (endianness == Endianness.BigEndian)
+            {
                 BinaryPrimitives.WriteInt32BigEndian(dest, src.Length);
+            }
+
             src.CopyTo(dest[4..]);
             return src.Length + 4;
         }
@@ -122,9 +134,15 @@
             Span<T> srcChars = new(str->Ptr, str->Length);
             Span<byte> src = MemoryMarshal.AsBytes(srcChars);
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteInt32LittleEndian(dest, src.Length);
+            }
+
             if (endianness == Endianness.BigEndian)
+            {
                 BinaryPrimitives.WriteInt32BigEndian(dest, src.Length);
+            }
+
             src.CopyTo(dest[4..]);
             return src.Length + 4;
         }
@@ -190,11 +208,17 @@
 
         public bool Compare(U16String* other)
         {
-            if (Length != other->Length) return false;
+            if (Length != other->Length)
+            {
+                return false;
+            }
+
             for (uint i = 0; i < Length; i++)
             {
                 if (Ptr[i] != other->Ptr[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -263,11 +287,17 @@
 
         public bool Compare(U8String* other)
         {
-            if (Length != other->Length) return false;
+            if (Length != other->Length)
+            {
+                return false;
+            }
+
             for (uint i = 0; i < Length; i++)
             {
                 if (Ptr[i] != other->Ptr[i])
+                {
                     return false;
+                }
             }
             return true;
         }

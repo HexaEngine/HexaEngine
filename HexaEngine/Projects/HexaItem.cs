@@ -32,7 +32,9 @@
                 {
                     var root = FindRoot<HexaProject>();
                     if (root != null)
+                    {
                         root.SelectedItem = this;
+                    }
                 }
             }
         }
@@ -46,7 +48,10 @@
             get => isVisible;
             set
             {
-                if (isVisible == value) return;
+                if (isVisible == value)
+                {
+                    return;
+                }
 
                 if (!value && this is HexaParent parent)
                 {

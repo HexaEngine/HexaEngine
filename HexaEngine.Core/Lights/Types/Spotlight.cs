@@ -52,7 +52,9 @@
             {
                 var target = Transform.Far;
                 if (SetAndNotifyWithEqualsTest(ref target, value))
+                {
                     Transform.Far = target;
+                }
             }
         }
 
@@ -80,7 +82,11 @@
 
         public override void CreateShadowMap(IGraphicsDevice device)
         {
-            if (psmDepthBuffer != null) return;
+            if (psmDepthBuffer != null)
+            {
+                return;
+            }
+
             psmDepthBuffer = new(device, 2048, 2048, Format.D32Float); //new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
 
             if (Interlocked.Increment(ref instances) == 1)
@@ -91,7 +97,11 @@
 
         public override void DestroyShadowMap()
         {
-            if (psmDepthBuffer == null) return;
+            if (psmDepthBuffer == null)
+            {
+                return;
+            }
+
             psmDepthBuffer?.Dispose();
             psmDepthBuffer = null;
             if (Interlocked.Decrement(ref instances) == 0)
@@ -103,7 +113,10 @@
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowSpotlightData> buffer, IInstanceManager manager)
         {
-            if (psmDepthBuffer == null) return;
+            if (psmDepthBuffer == null)
+            {
+                return;
+            }
 #nullable disable
 
             view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);

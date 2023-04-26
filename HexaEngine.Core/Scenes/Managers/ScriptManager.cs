@@ -24,7 +24,11 @@
 
         public void Update(ThreadDispatcher dispatcher)
         {
-            if (Application.InDesignMode) return;
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
             for (int i = 0; i < scripts.Count; i++)
             {
                 scripts[i].Update();
@@ -42,7 +46,11 @@
 
         public void FixedUpdate(ThreadDispatcher dispatcher)
         {
-            if (Application.InDesignMode) return;
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
             dispatcher.DispatchWorkers(FixedUpdate, scripts.Count);
         }
 

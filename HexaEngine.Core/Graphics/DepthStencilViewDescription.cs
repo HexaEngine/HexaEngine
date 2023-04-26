@@ -93,9 +93,14 @@
             {
                 var textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (arraySize == -1)
+                {
                     arraySize = textureDesc.ArraySize - firstArraySlice;
+                }
             }
 
             Format = format;
@@ -143,9 +148,14 @@
             {
                 var textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (arraySize == -1)
+                {
                     arraySize = textureDesc.ArraySize - firstArraySlice;
+                }
             }
             Format = format;
             switch (viewDimension)

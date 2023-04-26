@@ -50,7 +50,10 @@
                     var nameWithoutLastPart = name[..la];
                     var newDef = code[start..i].Replace(name, string.Empty, StringComparison.InvariantCultureIgnoreCase).Replace(nameWithoutLastPart, string.Empty, StringComparison.InvariantCultureIgnoreCase);
                     if (!string.IsNullOrEmpty(nameWithoutSecLastPart))
+                    {
                         newDef = newDef.Replace(nameWithoutSecLastPart, string.Empty, StringComparison.InvariantCultureIgnoreCase);
+                    }
+
                     sb.Append($"    public enum {name}\r\n");
                     sb.Append("    {");
                     sb.Append(newDef);

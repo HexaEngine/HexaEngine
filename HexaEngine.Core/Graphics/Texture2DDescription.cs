@@ -41,16 +41,24 @@
             ResourceMiscFlag miscFlags = ResourceMiscFlag.None)
         {
             if (format == Format.Unknown)
+            {
                 throw new ArgumentException($"format need to be valid", nameof(format));
+            }
 
             if (width < 1 || width > IResource.MaximumTexture2DSize)
+            {
                 throw new ArgumentException($"Width need to be in range 1-{IResource.MaximumTexture2DSize}", nameof(width));
+            }
 
             if (height < 1 || height > IResource.MaximumTexture2DSize)
+            {
                 throw new ArgumentException($"Height need to be in range 1-{IResource.MaximumTexture2DSize}", nameof(height));
+            }
 
             if (arraySize < 1 || arraySize > IResource.MaximumTexture2DArraySize)
+            {
                 throw new ArgumentException($"Array size need to be in range 1-{IResource.MaximumTexture2DArraySize}", nameof(arraySize));
+            }
 
             Width = width;
             Height = height;

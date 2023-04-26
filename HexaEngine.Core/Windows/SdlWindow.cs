@@ -98,7 +98,10 @@
         public void Show()
         {
             if (!created)
+            {
                 PlatformConstruct();
+            }
+
             Application.RegisterWindow((IRenderWindow)this);
             Sdl.ShowWindow(window);
         }
@@ -106,7 +109,9 @@
         public void ShowHidden()
         {
             if (!created)
+            {
                 PlatformConstruct();
+            }
         }
 
         public void Close()
@@ -441,7 +446,9 @@
                         shownEventArgs.Handled = false;
                         OnShown(shownEventArgs);
                         if (shownEventArgs.Handled)
+                        {
                             Sdl.HideWindow(window);
+                        }
                     }
                     break;
 
@@ -454,7 +461,9 @@
                         hiddenEventArgs.Handled = false;
                         OnHidden(hiddenEventArgs);
                         if (hiddenEventArgs.Handled)
+                        {
                             Sdl.ShowWindow(window);
+                        }
                     }
                     break;
 
@@ -477,7 +486,9 @@
                         movedEventArgs.Handled = false;
                         OnMoved(movedEventArgs);
                         if (movedEventArgs.Handled)
+                        {
                             Sdl.SetWindowPosition(window, xold, yold);
+                        }
                     }
                     break;
 
@@ -495,7 +506,9 @@
                         resizedEventArgs.Handled = false;
                         OnResized(resizedEventArgs);
                         if (resizedEventArgs.Handled)
+                        {
                             Sdl.SetWindowSize(window, widthOld, heightOld);
+                        }
                     }
                     break;
 
@@ -514,7 +527,9 @@
                         minimizedEventArgs.Handled = false;
                         OnMinimized(minimizedEventArgs);
                         if (minimizedEventArgs.Handled)
+                        {
                             State = oldState;
+                        }
                     }
                     break;
 
@@ -527,7 +542,9 @@
                         maximizedEventArgs.Handled = false;
                         OnMaximized(maximizedEventArgs);
                         if (maximizedEventArgs.Handled)
+                        {
                             State = oldState;
+                        }
                     }
                     break;
 
@@ -540,7 +557,9 @@
                         restoredEventArgs.Handled = false;
                         OnRestored(restoredEventArgs);
                         if (restoredEventArgs.Handled)
+                        {
                             State = oldState;
+                        }
                     }
                     break;
 
@@ -577,7 +596,9 @@
                         closeEventArgs.Handled = false;
                         OnClose(closeEventArgs);
                         if (!closeEventArgs.Handled)
+                        {
                             Close();
+                        }
                     }
                     break;
 
@@ -586,7 +607,9 @@
                         takeFocusEventArgs.Handled = false;
                         OnTakeFocus(takeFocusEventArgs);
                         if (!takeFocusEventArgs.Handled)
+                        {
                             Sdl.SetWindowInputFocus(window);
+                        }
                     }
                     break;
 
@@ -627,7 +650,10 @@
         internal void ProcessInputMouse(MouseMotionEvent evnt)
         {
             if (lockCursor)
+            {
                 Sdl.WarpMouseInWindow(window, 0, 0);
+            }
+
             mouseMotionEventArgs.X = evnt.X;
             mouseMotionEventArgs.Y = evnt.Y;
             mouseMotionEventArgs.RelX = evnt.Xrel;

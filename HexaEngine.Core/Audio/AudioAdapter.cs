@@ -9,14 +9,18 @@
             if (backend == AudioBackend.Auto)
             {
                 if (Adapters.Count == 1)
+                {
                     return Adapters[0].CreateAudioDevice(name);
+                }
                 else
                 {
                     IAudioAdapter audioAdapter = Adapters[0];
                     for (int i = 0; i < Adapters.Count; i++)
                     {
                         if (Adapters[i].PlatformScore > audioAdapter.PlatformScore)
+                        {
                             audioAdapter = Adapters[i];
+                        }
                     }
                     return audioAdapter.CreateAudioDevice(name);
                 }

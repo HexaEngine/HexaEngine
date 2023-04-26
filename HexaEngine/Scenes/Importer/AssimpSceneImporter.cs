@@ -156,7 +156,9 @@ namespace HexaEngine.Scenes.Importer
         public bool ChangeNameOfModel(ModelFile source, string newName)
         {
             if (meshes.Any(x => x.Name == newName))
+            {
                 return false;
+            }
 
             source.Name = newName;
             return true;
@@ -165,7 +167,10 @@ namespace HexaEngine.Scenes.Importer
         public bool ChangeNameOfMaterial(MaterialData material, string newName)
         {
             if (materials.Any(x => x.Name == newName))
+            {
                 return false;
+            }
+
             string oldName = material.Name;
             for (int i = 0; i < meshes.Length; i++)
             {
@@ -192,7 +197,10 @@ namespace HexaEngine.Scenes.Importer
         public bool ChangeNameOfTexture(string oldName, string newName)
         {
             if (textures.Contains(newName))
+            {
                 return false;
+            }
+
             for (int i = 0; i < materials.Length; i++)
             {
                 var mat = materials[i];
@@ -215,9 +223,13 @@ namespace HexaEngine.Scenes.Importer
             InjectResources(device, device.TextureLoader);
 
             if (root.Name == "ROOT")
+            {
                 scene.Merge(root);
+            }
             else
+            {
                 scene.AddChild(root);
+            }
         }
 
         public unsafe void Clear()
@@ -251,7 +263,11 @@ namespace HexaEngine.Scenes.Importer
                 for (int j = 0; j < mat->MNumProperties; j++)
                 {
                     AssimpMaterialProperty* prop = mat->MProperties[j];
-                    if (prop == null) continue;
+                    if (prop == null)
+                    {
+                        continue;
+                    }
+
                     Span<byte> buffer = new(prop->MData, (int)prop->MDataLength);
                     string key = prop->MKey;
                     int semantic = (int)prop->MSemantic;
@@ -430,7 +446,10 @@ namespace HexaEngine.Scenes.Importer
                         case Assimp.MatkeyTextureBase:
                             var file = FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
                             if (!this.textures.Contains(file))
+                            {
                                 this.textures.Add(file);
+                            }
+
                             break;
 
                         case Assimp.MatkeyUvwsrcBase:
@@ -494,7 +513,9 @@ namespace HexaEngine.Scenes.Importer
                 }
 
                 if (material.Name == string.Empty)
+                {
                     material.Name = i.ToString();
+                }
 
                 material.Properties = properties.ToArray();
                 material.Textures = textures.ToArray();
@@ -522,9 +543,14 @@ namespace HexaEngine.Scenes.Importer
                     for (int k = 0; k < material.Textures.Length; k++)
                     {
                         if (material.Textures[k].Type == Core.IO.Materials.TextureType.Metalness)
+                        {
                             material.Textures[k].File = string.Empty;
+                        }
+
                         if (material.Textures[k].Type == Core.IO.Materials.TextureType.Roughness)
+                        {
                             material.Textures[k].File = string.Empty;
+                        }
                     }
                 }
 
@@ -533,11 +559,19 @@ namespace HexaEngine.Scenes.Importer
                     for (int k = 0; k < material.Textures.Length; k++)
                     {
                         if (material.Textures[k].Type == Core.IO.Materials.TextureType.Metalness)
+                        {
                             material.Textures[k].File = string.Empty;
+                        }
+
                         if (material.Textures[k].Type == Core.IO.Materials.TextureType.Roughness)
+                        {
                             material.Textures[k].File = string.Empty;
+                        }
+
                         if (material.Textures[k].Type == Core.IO.Materials.TextureType.RoughnessMetalness)
+                        {
                             material.Textures[k].File = string.Empty;
+                        }
                     }
                 }
             }
@@ -641,6 +675,7 @@ namespace HexaEngine.Scenes.Importer
                 uint numWeights = mesh->MBones[boneIndex]->MNumWeights;
 
                 fixed (SkinnedMeshVertex* pVertices = &vertices[0])
+                {
                     for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
                     {
                         uint vertexId = weights[weightIndex].MVertexId;
@@ -648,6 +683,7 @@ namespace HexaEngine.Scenes.Importer
                         Trace.Assert(vertexId <= vertices.Length);
                         SetVertexBoneData(&pVertices[vertexId], boneID, weight);
                     }
+                }
             }
         }
 
@@ -748,7 +784,10 @@ namespace HexaEngine.Scenes.Importer
                 GameObject node = nodes[x];
                 Node* p = nodesP[node];
                 if (p->MNumMeshes == 0)
+                {
                     continue;
+                }
+
                 MeshData[] meshes = new MeshData[p->MNumMeshes];
                 MaterialData[] materials = new MaterialData[p->MNumMeshes];
                 for (int i = 0; i < p->MNumMeshes; i++)

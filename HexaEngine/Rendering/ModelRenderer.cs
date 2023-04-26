@@ -61,7 +61,10 @@ namespace HexaEngine.Rendering
         public void Draw(IGraphicsContext context)
         {
             if (camera.Value == null)
+            {
                 return;
+            }
+
             instanceManager.Draw(context, camera.Value);
             context.ClearState();
         }

@@ -87,9 +87,14 @@
         public void Update(IGraphicsContext context, bool ib, bool vb)
         {
             if (ib)
+            {
                 Data.WriteIndexBuffer(context, IB);
+            }
+
             if (vb)
+            {
                 Data.WriteVertexBuffer(context, VB);
+            }
         }
 
         public void Bind(IGraphicsContext context)

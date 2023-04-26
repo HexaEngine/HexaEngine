@@ -15,14 +15,18 @@
         {
             HResult result = hresult;
             if (!result.IsSuccess)
+            {
                 result.Throw();
+            }
         }
 
         internal static void ThrowIf(this uint hresult)
         {
             HResult result = unchecked((int)hresult);
             if (!result.IsSuccess)
+            {
                 result.Throw();
+            }
         }
 
         #endregion Internal Utils

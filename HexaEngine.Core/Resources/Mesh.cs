@@ -54,7 +54,9 @@
                         type = new(mesh, material);
                         type.Initialize(device, CullingManager.DrawIndirectArgs, CullingManager.InstanceDataOutBuffer, CullingManager.InstanceOffsets, CullingManager.InstanceDataNoCull, CullingManager.InstanceOffsetsNoCull);
                         if (!materialToType.TryAdd(material.Name, type))
+                        {
                             throw new InvalidOperationException();
+                        }
 
                         instanceTypes.Add(type);
                     }

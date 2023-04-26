@@ -25,7 +25,11 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || hasShape)
+            {
+                return;
+            }
+
             Box box = new(width * 2, height * 2, depth * 2);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             index = simulation.Shapes.Add(box);

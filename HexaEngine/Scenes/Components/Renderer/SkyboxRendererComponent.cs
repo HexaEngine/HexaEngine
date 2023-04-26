@@ -35,7 +35,10 @@
             {
                 environment = value;
                 if (device == null)
+                {
                     return;
+                }
+
                 Volatile.Write(ref drawable, false);
                 UpdateEnvAsync(device);
             }
@@ -46,7 +49,10 @@
             this.gameObject = gameObject;
             this.device = device;
             if (!gameObject.GetScene().TryGetSystem<RenderManager>(out var manager))
+            {
                 return;
+            }
+
             renderer = manager.GetRenderer<SkyboxRenderer>();
 
             data = new(null);
@@ -65,7 +71,10 @@
         public void Draw()
         {
             if (!Volatile.Read(ref drawable) || !gameObject.IsEnabled)
+            {
                 return;
+            }
+
             renderer.Draw(handle);
         }
 

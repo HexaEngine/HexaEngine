@@ -79,7 +79,11 @@
 
         public override void Move(HexaItem item)
         {
-            if (item.Parent == null) return;
+            if (item.Parent == null)
+            {
+                return;
+            }
+
             string oldPath = item.GetAbsolutePath();
             string newPath = GetAbsolutePath(item.Name);
             File.Move(oldPath, newPath, true);
@@ -100,7 +104,11 @@
         {
             string oldPath = GetAbsolutePath();
             string? newPath = Parent?.GetAbsolutePath(newName);
-            if (newPath == null) return;
+            if (newPath == null)
+            {
+                return;
+            }
+
             Directory.Move(oldPath, newPath);
             Name = newName;
             Save();
@@ -127,16 +135,23 @@
             {
                 item.Parent = this;
                 if (item is HexaParent parent)
+                {
                     parent.BuildParentTree();
+                }
             }
         }
 
         public override T? FindRoot<T>() where T : class
         {
             if (this is T t)
+            {
                 return t;
+            }
             else if (Parent is not null)
+            {
                 return Parent.FindRoot<T>();
+            }
+
             return null;
         }
     }

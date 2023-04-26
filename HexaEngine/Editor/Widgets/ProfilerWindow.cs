@@ -30,7 +30,10 @@
         public void Add(double value)
         {
             if (value < 0)
+            {
                 value = 0;
+            }
+
             values[tail] = value;
 
             tail++;
@@ -47,7 +50,9 @@
             head = (tail - length) % length;
 
             if (head < 0)
+            {
                 head += length;
+            }
         }
     }
 
@@ -85,7 +90,10 @@
             double fill = shade_mode == 0 ? -double.PositiveInfinity : shade_mode == 1 ? double.PositiveInfinity : fill_ref;
 
             Scene? scene = SceneManager.Current;
-            if (scene == null) return;
+            if (scene == null)
+            {
+                return;
+            }
 
             var renderer = Application.MainWindow.Renderer;
             var simulation = scene.Simulation;

@@ -29,7 +29,10 @@
 
         public bool Bind(IGraphicsContext context)
         {
-            if (!loaded) return false;
+            if (!loaded)
+            {
+                return false;
+            }
 
             context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
             context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
@@ -39,7 +42,10 @@
 
         public void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type, uint indexCount, uint instanceCount)
         {
-            if (!loaded) return;
+            if (!loaded)
+            {
+                return;
+            }
 
             if (!Shader.Value.BeginDrawShadow(context, light, type))
             {
@@ -54,7 +60,10 @@
 
         public void DrawDepth(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
-            if (!loaded) return;
+            if (!loaded)
+            {
+                return;
+            }
 
             if (!Shader.Value.BeginDrawDepth(context, camera))
             {
@@ -69,7 +78,10 @@
 
         public void Draw(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
-            if (!loaded) return;
+            if (!loaded)
+            {
+                return;
+            }
 
             if (!Shader.Value.BeginDraw(context, camera))
             {
@@ -83,7 +95,11 @@
 
         public void DrawIndirect(IGraphicsContext context, IBuffer camera, IBuffer argBuffer, uint offset)
         {
-            if (!loaded) return;
+            if (!loaded)
+            {
+                return;
+            }
+
             if (!Shader.Value.BeginDraw(context, camera))
             {
                 return;

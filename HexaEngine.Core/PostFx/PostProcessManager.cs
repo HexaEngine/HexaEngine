@@ -103,7 +103,9 @@
                 {
                     var effect = effectsSorted[i];
                     if (effect.Name == name)
+                    {
                         return effect;
+                    }
                 }
             }
             return null;
@@ -117,7 +119,9 @@
                 {
                     var effect = effectsSorted[i];
                     if (effect is T t && effect.Name == name)
+                    {
                         return t;
+                    }
                 }
             }
             return null;
@@ -131,7 +135,9 @@
                 {
                     var effect = effectsSorted[i];
                     if (effect is T t)
+                    {
                         return t;
+                    }
                 }
             }
             return null;
@@ -189,7 +195,9 @@
             this.width = width;
             this.height = height;
             if (!isInitialized)
+            {
                 return;
+            }
 
             for (int i = 0; i < effectsSorted.Count; i++)
             {
@@ -213,7 +221,10 @@
         public void SetViewport(Viewport viewport)
         {
             if (Viewport == viewport)
+            {
                 return;
+            }
+
             Viewport = viewport;
             isDirty = true;
         }
@@ -250,7 +261,9 @@
             }
 
             if (Input.Value == null || Output.Value == null)
+            {
                 return;
+            }
 
             lock (effectsSorted)
             {
@@ -309,7 +322,9 @@
                     {
                         var effect = effectsSorted[i];
                         if (!effect.Enabled)
+                        {
                             continue;
+                        }
 
                         if ((effect.Flags & PostFxFlags.NoInput) == 0)
                         {
@@ -323,11 +338,15 @@
                             var buffer = buffers[swapIndex];
 
                             if (i != effectsSorted.Count - 1)
+                            {
 #pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
                                 effect.SetOutput(buffer.RenderTargetView, buffers[swapIndex].Viewport);
+                            }
 #pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
                             else
+                            {
                                 effect.SetOutput(Output.Value, Viewport);
+                            }
 
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             previous = buffer.ShaderResourceView;
@@ -335,7 +354,9 @@
 
                             swapIndex++;
                             if (swapIndex == buffers.Count)
+                            {
                                 swapIndex = 0;
+                            }
                         }
 
                         effect.Draw(context);
@@ -349,7 +370,9 @@
                     {
                         var effect = effectsSorted[i];
                         if (!effect.Enabled)
+                        {
                             continue;
+                        }
 
                         effect.Draw(context);
                     }

@@ -34,7 +34,9 @@
             DrawContent();
 
             if (!windowEnded)
+            {
                 ImGui.EndPopup();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

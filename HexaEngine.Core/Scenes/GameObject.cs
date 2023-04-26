@@ -58,9 +58,13 @@
             set
             {
                 if (initialized)
+                {
                     name = GetScene().GetAvailableName(value);
+                }
                 else
+                {
                     name = value;
+                }
             }
         }
 
@@ -69,7 +73,11 @@
             get => isEnabled;
             set
             {
-                if (isEnabled == value) return;
+                if (isEnabled == value)
+                {
+                    return;
+                }
+
                 SetAndNotify(ref isEnabled, value);
                 for (int i = 0; i < Children.Count; i++)
                 {
@@ -113,7 +121,11 @@
             get => isEditorVisible;
             set
             {
-                if (isEditorVisible == value) return;
+                if (isEditorVisible == value)
+                {
+                    return;
+                }
+
                 isEditorVisible = value;
                 if (!value)
                 {
@@ -169,15 +181,25 @@
                 if (node.initialized)
                 {
                     foreach (var child in childs)
+                    {
                         node.RemoveChild(child);
+                    }
+
                     foreach (var comp in comps)
+                    {
                         node.RemoveComponent(comp);
+                    }
                 }
                 node.Parent?.RemoveChild(node);
                 foreach (var child in childs)
+                {
                     AddChild(child);
+                }
+
                 foreach (var comp in comps)
+                {
                     AddComponent(comp);
+                }
             }
             else
             {
@@ -213,13 +235,18 @@
         {
             components.Add(component);
             if (initialized)
+            {
                 component.Awake(Device, this);
+            }
         }
 
         public virtual void RemoveComponent(IComponent component)
         {
             if (initialized)
+            {
                 component.Destory();
+            }
+
             components.Remove(component);
         }
 
@@ -259,7 +286,10 @@
         public virtual Scene GetScene()
         {
             if (scene != null)
+            {
                 return scene;
+            }
+
             return parent?.GetScene() ?? throw new("Node tree invalid");
         }
 
@@ -285,11 +315,17 @@
             while (true)
             {
                 if (current is T t)
+                {
                     return t;
+                }
                 else if (current?.parent is not null)
+                {
                     current = current.parent;
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
@@ -298,7 +334,9 @@
             for (int i = 0; i < components.Count; i++)
             {
                 if (components[i] is T t)
+                {
                     return t;
+                }
             }
             T t1 = new();
             components.Add(t1);
@@ -310,7 +348,9 @@
             for (int i = 0; i < components.Count; i++)
             {
                 if (components[i] is T t)
+                {
                     return t;
+                }
             }
             return default;
         }
@@ -334,7 +374,9 @@
             for (int i = 0; i < components.Count; i++)
             {
                 if (components[i] is T t)
+                {
                     yield return t;
+                }
             }
         }
 
@@ -356,7 +398,9 @@
             {
                 var child = children[i];
                 if (child is T t)
+                {
                     return t;
+                }
             }
             return null;
         }
@@ -382,7 +426,9 @@
             {
                 var child = children[i];
                 if (child is T t)
+                {
                     yield return t;
+                }
             }
         }
 

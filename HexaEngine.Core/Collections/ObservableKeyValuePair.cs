@@ -48,7 +48,10 @@
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(name));
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
         }
 
         #endregion INotifyPropertyChanged Members

@@ -20,7 +20,11 @@
 
         internal static void Draw()
         {
-            if (!Application.InEditorMode) return;
+            if (!Application.InEditorMode)
+            {
+                return;
+            }
+
             MainMenuBar.Draw();
             Inspector.Draw();
         }

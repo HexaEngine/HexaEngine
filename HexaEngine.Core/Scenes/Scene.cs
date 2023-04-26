@@ -187,7 +187,9 @@
             foreach (var node in nodes)
             {
                 if (nodes.Any(x => node != x && x.Name == x.Name))
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -259,8 +261,15 @@
 
         public void Simulate(float delta)
         {
-            if (Application.InDesignMode) return;
-            if (!IsSimulating) return;
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
+            if (!IsSimulating)
+            {
+                return;
+            }
 
             interpol += delta;
             while (interpol > stepsize)
@@ -272,7 +281,11 @@
 
         public GameObject? Find(string? name)
         {
-            if (string.IsNullOrEmpty(name)) return null;
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
             semaphore.Wait();
             for (int i = 0; i < nodes.Count; i++)
             {
@@ -294,7 +307,9 @@
         private string GetNewName(string name)
         {
             if (Find(name) == null)
+            {
                 return name;
+            }
 
             string result = name;
 
@@ -423,7 +438,9 @@
                     }
                 }
                 if (collect && current.IsEditorVisible)
+                {
                     yield return current;
+                }
             }
         }
 

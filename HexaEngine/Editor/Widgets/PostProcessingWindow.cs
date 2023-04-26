@@ -12,7 +12,10 @@
         {
             var renderer = Application.MainWindow.Renderer;
             if (renderer == null)
+            {
                 return;
+            }
+
             var manager = renderer.PostProcess;
 
             var effects = manager.Effects;

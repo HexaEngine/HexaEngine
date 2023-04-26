@@ -15,56 +15,80 @@
             {
                 var name = val.ToString().ToLowerInvariant();
                 if (name == "unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<VectorType>())
             {
                 var name = val.ToString().ToLowerInvariant();
                 if (name == "unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<MatrixType>())
             {
                 var name = val.ToString().ToLowerInvariant();
                 if (name == "unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<SamplerType>())
             {
                 var name = val.ToString();
                 if (name == "Unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<BufferType>())
             {
                 var name = val.ToString();
                 if (name == "Unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<TextureType>())
             {
                 var name = val.ToString();
                 if (name == "Unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<UavBufferType>())
             {
                 var name = val.ToString();
                 if (name == "Unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
             foreach (var val in Enum.GetValues<UavTextureType>())
             {
                 var name = val.ToString();
                 if (name == "Unknown")
+                {
                     continue;
+                }
+
                 map.Add(name, new(val));
             }
         }
@@ -312,9 +336,15 @@
         public static bool operator ==(SType? left, SType? right)
         {
             if (left is null && right is null)
+            {
                 return true;
+            }
+
             if (left is null || right is null)
+            {
                 return false;
+            }
+
             return left.Equals(right);
         }
 

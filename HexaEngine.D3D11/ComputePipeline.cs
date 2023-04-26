@@ -27,22 +27,44 @@
 
         public virtual void BeginDispatch(IGraphicsContext context)
         {
-            if (!valid) return;
-            if (!initialized) return;
-            ((D3D11GraphicsContext)context).DeviceContext.CSSetShader(cs, null, 0);
+            if (!valid)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            } ((D3D11GraphicsContext)context).DeviceContext.CSSetShader(cs, null, 0);
         }
 
         public virtual void BeginDispatch(ID3D11DeviceContext1* context)
         {
-            if (!valid) return;
-            if (!initialized) return;
+            if (!valid)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            }
+
             context->CSSetShader(cs, null, 0);
         }
 
         public void Dispatch(IGraphicsContext context, int x, int y, int z)
         {
-            if (!valid) return;
-            if (!initialized) return;
+            if (!valid)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            }
+
             BeginDispatch(context);
             context.Dispatch(x, y, z);
             EndDispatch(context);
@@ -50,8 +72,16 @@
 
         public void Dispatch(ID3D11DeviceContext1* context, uint x, uint y, uint z)
         {
-            if (!valid) return;
-            if (!initialized) return;
+            if (!valid)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            }
+
             BeginDispatch(context);
             context->Dispatch(x, y, z);
             EndDispatch(context);
@@ -59,15 +89,31 @@
 
         public virtual void EndDispatch(IGraphicsContext context)
         {
-            if (!valid) return;
-            if (!initialized) return;
+            if (!valid)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            }
+
             context.ClearState();
         }
 
         public virtual void EndDispatch(ID3D11DeviceContext1* context)
         {
-            if (!valid) return;
-            if (!initialized) return;
+            if (!valid)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            }
+
             context->ClearState();
         }
 
@@ -76,7 +122,10 @@
             initialized = false;
 
             if (cs.Handle != null)
+            {
                 cs.Release();
+            }
+
             cs = null;
 
             Compile(true);
@@ -117,7 +166,10 @@
             {
                 PipelineManager.Unregister(this);
                 if (cs.Handle != null)
+                {
                     cs.Release();
+                }
+
                 disposedValue = true;
             }
         }

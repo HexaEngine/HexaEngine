@@ -51,14 +51,21 @@
 
         protected override void DrawContent()
         {
-            if (Texture == null) return;
+            if (Texture == null)
+            {
+                return;
+            }
+
             ImGui.Image(Texture.ShaderResourceView?.NativePointer ?? 0, new(256, 256));
 
             if (IsHovered && ImGui.IsMouseDown(ImGuiMouseButton.Middle) || first)
             {
                 Vector2 delta = Vector2.Zero;
                 if (Mouse.IsDown(MouseButton.Middle))
+                {
                     delta = Mouse.Delta;
+                }
+
                 float wheel = Mouse.DeltaWheel.Y;
 
                 // Only update the camera's position if the mouse got moved in either direction

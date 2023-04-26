@@ -44,7 +44,10 @@
         public override bool Equals(object? obj)
         {
             if (obj is MeshVertex vertex)
+            {
                 return this == vertex;
+            }
+
             return false;
         }
 

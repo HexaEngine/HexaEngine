@@ -72,8 +72,15 @@ namespace HexaEngine.Rendering
 
         private void Render(DebugDrawCommandQueue queue, Camera? camera)
         {
-            if (!Application.InEditorMode) return;
-            if (camera == null) return;
+            if (!Application.InEditorMode)
+            {
+                return;
+            }
+
+            if (camera == null)
+            {
+                return;
+            }
 
             if (queue.VertexCount > vertexBufferSize)
             {

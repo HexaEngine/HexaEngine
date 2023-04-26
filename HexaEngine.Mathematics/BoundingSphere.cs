@@ -143,10 +143,14 @@
             float distance = Vector3.Distance(Center, sphere.Center);
 
             if (Radius + sphere.Radius < distance)
+            {
                 return ContainmentType.Disjoint;
+            }
 
             if (Radius - sphere.Radius < distance)
+            {
                 return ContainmentType.Intersects;
+            }
 
             return ContainmentType.Contains;
         }
@@ -176,7 +180,9 @@
             float distance = -b - (float)Math.Sqrt(discriminant);
 
             if (distance < 0f)
+            {
                 distance = 0f;
+            }
 
             return distance;
         }
@@ -218,10 +224,14 @@
             distance += plane.D;
 
             if (distance > Radius)
+            {
                 return PlaneIntersectionType.Front;
+            }
 
             if (distance < -Radius)
+            {
                 return PlaneIntersectionType.Back;
+            }
 
             return PlaneIntersectionType.Intersecting;
         }

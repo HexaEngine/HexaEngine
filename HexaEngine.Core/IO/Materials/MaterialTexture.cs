@@ -77,7 +77,10 @@
         {
             var type = Type;
             if (type == TextureType.Diffuse)
+            {
                 type = TextureType.BaseColor;
+            }
+
             return new($"Has{type}Tex", (!string.IsNullOrWhiteSpace(File)).ToHLSL());
         }
 

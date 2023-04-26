@@ -348,7 +348,9 @@
         {
             byte* pointerCopy = (byte*)pointer;
             for (nint i = 0; i < size; i++)
+            {
                 pointerCopy[i] = 0;
+            }
         }
 
         /// <summary>
@@ -421,7 +423,10 @@
             int length = source.Length;
             T* result = Alloc<T>(length);
             fixed (T* pointer = source)
+            {
                 MemoryCopy(pointer, result, length, length);
+            }
+
             return result;
         }
 
@@ -646,7 +651,10 @@
             ReadOnlySpan<char> chars1 = new(a, n1);
             ReadOnlySpan<char> chars2 = new(b, n2);
             if (n1 != n2)
+            {
                 return false;
+            }
+
             return chars1.SequenceEqual(chars2);
         }
 
@@ -665,7 +673,10 @@
             {
                 ReadOnlySpan<char> chars2 = new(bp, n2);
                 if (n1 != n2)
+                {
                     return false;
+                }
+
                 return chars1.SequenceEqual(chars2);
             }
         }
@@ -678,7 +689,11 @@
         public static int StringSizeNullTerminated(char* str)
         {
             int ret = 0;
-            while (str[ret] != '\0') ret++;
+            while (str[ret] != '\0')
+            {
+                ret++;
+            }
+
             return (ret + 1) * 2;
         }
 
@@ -690,7 +705,11 @@
         public static int StringSizeNullTerminated(ReadOnlySpan<char> str)
         {
             int ret = 0;
-            while (str[ret] != '\0') ret++;
+            while (str[ret] != '\0')
+            {
+                ret++;
+            }
+
             return (ret + 1) * 2;
         }
 
@@ -702,14 +721,21 @@
         public static int StringSizeNullTerminated(byte* str)
         {
             int ret = 0;
-            while (str[ret] != (byte)'\0') ret++;
+            while (str[ret] != (byte)'\0')
+            {
+                ret++;
+            }
+
             return ret + 1;
         }
 
         public static T[]? ToManaged<T>(T* src, int length) where T : unmanaged
         {
             if (src == null)
+            {
                 return null;
+            }
+
             T[] values = new T[length];
             fixed (T* dst = values)
             {
@@ -721,7 +747,10 @@
         public static T[]? ToManaged<T>(T* src, uint length) where T : unmanaged
         {
             if (src == null)
+            {
                 return null;
+            }
+
             T[] values = new T[length];
             fixed (T* dst = values)
             {

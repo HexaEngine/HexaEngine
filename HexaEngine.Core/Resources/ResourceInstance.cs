@@ -83,7 +83,11 @@
 
         public void Wait()
         {
-            if (value != null) return;
+            if (value != null)
+            {
+                return;
+            }
+
             SpinWait.SpinUntil(waitDelegate);
         }
 

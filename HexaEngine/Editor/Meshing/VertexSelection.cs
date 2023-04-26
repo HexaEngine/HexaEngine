@@ -59,7 +59,9 @@
         public void Add(uint id)
         {
             if (!indices.Contains(id))
+            {
                 indices.Add(id);
+            }
         }
 
         public void Remove(uint id)

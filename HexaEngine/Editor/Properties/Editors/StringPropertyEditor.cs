@@ -30,7 +30,11 @@
         public bool Draw(object instance, ref object? value)
         {
             string? val = (string?)value;
-            if (val == null) return false;
+            if (val == null)
+            {
+                return false;
+            }
+
             switch (mode)
             {
                 case EditorPropertyMode.Default:
@@ -57,9 +61,14 @@
                         if (dialog.Result == OpenFileResult.Ok)
                         {
                             if (relativeTo != null)
+                            {
                                 value = Path.GetRelativePath(relativeTo, FileSystem.GetRelativePath(dialog.FullPath));
+                            }
                             else
+                            {
                                 value = FileSystem.GetRelativePath(dialog.FullPath);
+                            }
+
                             return true;
                         }
                     }

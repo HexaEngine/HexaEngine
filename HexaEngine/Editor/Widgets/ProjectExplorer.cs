@@ -70,9 +70,14 @@
             {
                 ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
                 if (element.IsSelected)
+                {
                     flags |= ImGuiTreeNodeFlags.Selected;
+                }
+
                 if (directory.Items.Count == 0)
+                {
                     flags |= ImGuiTreeNodeFlags.Leaf;
+                }
 
                 bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
                 directory.IsExpanded = isOpen;
@@ -116,7 +121,10 @@
         public override void DrawContent(IGraphicsContext context)
         {
             HexaProject? project = ProjectManager.Project;
-            if (project == null) return;
+            if (project == null)
+            {
+                return;
+            }
 
             for (int i = 0; i < project.Items.Count; i++)
             {

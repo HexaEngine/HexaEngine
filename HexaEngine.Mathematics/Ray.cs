@@ -49,12 +49,16 @@
             float c = Vector3.Dot(m, m) - float.Epsilon;
 
             if (c > 0f && b > 0f)
+            {
                 return false;
+            }
 
             float discriminant = b * b - c;
 
             if (discriminant < 0f)
+            {
                 return false;
+            }
 
             return true;
         }
@@ -248,20 +252,26 @@
             a = Vector3.Dot(edge1, h);
 
             if (a > -EPSILON && a < EPSILON)
+            {
                 return false;    // This ray is parallel to this triangle.
+            }
 
             f = 1.0f / a;
             s = Position - v0;
             u = f * Vector3.Dot(s, h);
 
             if (u < 0.0 || u > 1.0)
+            {
                 return false;
+            }
 
             q = Vector3.Cross(s, edge1);
             v = f * Vector3.Dot(Direction, q);
 
             if (v < 0.0 || u + v > 1.0)
+            {
                 return false;
+            }
 
             // At this stage we can compute t to find out where the intersection point is on the line.
             float t = f * Vector3.Dot(edge2, q);
@@ -272,7 +282,9 @@
                 return true;
             }
             else // This means that there is a line intersection but not a ray intersection.
+            {
                 return false;
+            }
         }
 
         /// <summary>

@@ -105,7 +105,10 @@
 
         unsafe void IRenderer.Draw(IGraphicsContext context)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
 
             if (drawQueue.IsEmpty)
             {
@@ -115,16 +118,23 @@
 
             var camera = CameraManager.Current;
             if (camera == null)
+            {
                 return;
+            }
 
             while (drawQueue.TryDequeue(out var handle))
             {
                 if (!handle.Data->IsValid)
+                {
                     continue;
+                }
 
                 var data = pool[handle];
                 if (data.Enviornment == null)
+                {
                     continue;
+                }
+
                 cb[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
                 cb.Update(context);
 

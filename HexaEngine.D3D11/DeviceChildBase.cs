@@ -16,7 +16,11 @@
             get
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
-                if (child == null) return null;
+                if (child == null)
+                {
+                    return null;
+                }
+
                 uint len;
                 Guid guid = D3DDebugObjectName;
                 child->GetPrivateData(&guid, &len, null);
@@ -29,7 +33,11 @@
             set
             {
                 ID3D11DeviceChild* child = (ID3D11DeviceChild*)nativePointer;
-                if (child == null) return;
+                if (child == null)
+                {
+                    return;
+                }
+
                 Guid guid = D3DDebugObjectName;
                 if (value != null)
                 {

@@ -10,16 +10,24 @@
         static ProjectHistory()
         {
             if (File.Exists("projectHistory.json"))
+            {
                 entries = JsonConvert.DeserializeObject<List<HistoryEntry>>(File.ReadAllText("projectHistory.json")) ?? new();
+            }
             else
+            {
                 entries = new();
+            }
         }
 
         public static IReadOnlyList<HistoryEntry> Entries => entries;
 
         internal static void AddEntry(string name, string path)
         {
-            if (entries.Any(entry => entry.Path == path)) return;
+            if (entries.Any(entry => entry.Path == path))
+            {
+                return;
+            }
+
             entries.Add(new HistoryEntry { Name = name, Path = path });
             Save();
         }

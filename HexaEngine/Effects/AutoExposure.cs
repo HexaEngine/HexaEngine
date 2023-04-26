@@ -221,7 +221,10 @@ namespace HexaEngine.Effects
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output == null) return;
+            if (Output == null)
+            {
+                return;
+            }
 
             context.CSSetShaderResource(Input, 0);
             context.CSSetConstantBuffer(lumaParams, 0);

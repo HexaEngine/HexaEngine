@@ -21,7 +21,9 @@
         public void Draw(object instance)
         {
             if (ImGui.Button(name))
+            {
                 info.Invoke(instance, null);
+            }
         }
     }
 
@@ -94,8 +96,16 @@
 
         public void Draw()
         {
-            if (instance == null) return;
-            if (isHidden) return;
+            if (instance == null)
+            {
+                return;
+            }
+
+            if (isHidden)
+            {
+                return;
+            }
+
             for (int i = 0; i < editors.Count; i++)
             {
                 var editor = editors[i];

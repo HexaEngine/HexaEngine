@@ -53,7 +53,9 @@ namespace DiscordRPC
             catch { throw new Exception("Failed to connect to Discord."); }
 
             if (steamId != null)
+            {
                 _client.GetActivityManager().RegisterSteam(steamId.Value);
+            }
         }
 
         /// <summary>
@@ -64,12 +66,16 @@ namespace DiscordRPC
             set
             {
                 if (_isDisposed)
+                {
                     throw new ObjectDisposedException("RpcClient");
+                }
 
                 _client.GetActivityManager().UpdateActivity(value.ToActivity(), (result) =>
                 {
                     if (result != Result.Ok)
+                    {
                         throw new Exception($"Failed to update presence: {result}");
+                    }
                 });
 
                 // Start the callbacks if not started already.
@@ -95,7 +101,9 @@ namespace DiscordRPC
             _client.GetActivityManager().ClearActivity((result) =>
             {
                 if (result != Result.Ok)
+                {
                     Debug.WriteLine($"Failed to clear presence: {result}");
+                }
             });
 
             _client.Dispose();

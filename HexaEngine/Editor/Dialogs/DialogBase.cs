@@ -16,7 +16,11 @@
 
         public void Draw()
         {
-            if (!shown) return;
+            if (!shown)
+            {
+                return;
+            }
+
             if (!ImGui.Begin(Name, ref shown, Flags))
             {
                 ImGui.End();
@@ -27,7 +31,9 @@
             DrawContent();
 
             if (!windowEnded)
+            {
                 ImGui.End();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -50,7 +50,10 @@
             semaphore.Wait();
             var buffer = new byte[Length];
             if (_baseStream.CanSeek && _start != 0)
+            {
                 _baseStream.Position = _start;
+            }
+
             _ = _baseStream.Read(buffer);
             semaphore.Release();
             return buffer;
@@ -66,15 +69,23 @@
             }
 
             if (buffer.Length - offset < count)
+            {
                 throw new ArgumentException(null, nameof(buffer));
+            }
+
             if (_baseStream.CanSeek && _start != 0)
+            {
                 _baseStream.Position = _start + Position;
+            }
 
             var result = _baseStream.Read(buffer, offset, (int)(count + Position > Length ? Length - Position : count));
 
             Position += result;
             if (Position > Length)
+            {
                 Position = Length;
+            }
+
             semaphore.Release();
             return result;
         }

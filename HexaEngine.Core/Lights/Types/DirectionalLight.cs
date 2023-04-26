@@ -46,7 +46,11 @@
 
         public override void CreateShadowMap(IGraphicsDevice device)
         {
-            if (csmDepthBuffer != null) return;
+            if (csmDepthBuffer != null)
+            {
+                return;
+            }
+
             csmDepthBuffer = new(device, 4096, 4096, 3, Format.D32Float);
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -56,7 +60,11 @@
 
         public override void DestroyShadowMap()
         {
-            if (csmDepthBuffer == null) return;
+            if (csmDepthBuffer == null)
+            {
+                return;
+            }
+
             csmDepthBuffer?.Dispose();
             csmDepthBuffer = null;
 
@@ -69,7 +77,10 @@
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowDirectionalLightData> buffer, Camera camera, IInstanceManager manager)
         {
-            if (csmDepthBuffer == null) return;
+            if (csmDepthBuffer == null)
+            {
+                return;
+            }
 #nullable disable
             var data = buffer.Local + QueueIndex;
 

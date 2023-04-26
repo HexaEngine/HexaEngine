@@ -14,7 +14,9 @@
         {
             Format format = desc.Format;
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
+            {
                 format = Format.R32Typeless;
+            }
 
             Texture2DDescription depthStencilDesc = new(
             format,
@@ -47,7 +49,9 @@
         {
             Format format = desc.Format;
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
+            {
                 format = Format.R32Typeless;
+            }
 
             Texture2DDescription depthStencilDesc = new(
             format,

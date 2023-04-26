@@ -93,9 +93,16 @@
 
         public virtual void Update()
         {
-            if (Application.InDesignMode) return;
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
             if (update)
+            {
                 CreateBody();
+            }
+
             if (type != ColliderType.Static && parent != null)
             {
                 parent.Transform.PositionRotation = (bodyReference.Pose.Position, bodyReference.Pose.Orientation);
@@ -106,14 +113,22 @@
 
         public virtual void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || !hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || !hasShape)
+            {
+                return;
+            }
+
             simulation.Shapes.Remove(index);
             hasShape = false;
         }
 
         public virtual void CreateBody()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || inCompound || hasBody) return;
+            if (Application.InDesignMode || parent == null || simulation == null || inCompound || hasBody)
+            {
+                return;
+            }
+
             DestroyBody();
             CreateShape();
 
@@ -142,18 +157,31 @@
 
         public virtual void DestroyBody()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || !hasBody) return;
+            if (Application.InDesignMode || parent == null || simulation == null || !hasBody)
+            {
+                return;
+            }
+
             hasBody = false;
             if (Type == ColliderType.Static)
+            {
                 simulation.Statics.Remove(staticHandle);
+            }
             else
+            {
                 simulation.Bodies.Remove(bodyHandle);
+            }
+
             DestroyShape();
         }
 
         public virtual void BuildCompound(ref CompoundBuilder builder)
         {
-            if (Application.InDesignMode || parent == null || inCompound) return;
+            if (Application.InDesignMode || parent == null || inCompound)
+            {
+                return;
+            }
+
             if (hasBody)
             {
                 DestroyBody();
@@ -176,7 +204,11 @@
 
         public virtual void DestroyCompound()
         {
-            if (parentCollider == null || compoundChild == null || !inCompound) return;
+            if (parentCollider == null || compoundChild == null || !inCompound)
+            {
+                return;
+            }
+
             DestroyShape();
             parentCollider = null;
             compoundChild = null;

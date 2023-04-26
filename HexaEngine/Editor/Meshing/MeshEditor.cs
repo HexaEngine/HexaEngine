@@ -85,9 +85,13 @@
                     if (id > -1)
                     {
                         if (ImGui.GetIO().KeyCtrl)
+                        {
                             selection.Add((uint)id);
+                        }
                         else
+                        {
                             selection.OverrideAdd((uint)id);
+                        }
                     }
                     else
                     {
@@ -98,11 +102,15 @@
                 {
                     Vector2 delta = Vector2.Zero;
                     if (Mouse.IsDown(MouseButton.Middle))
+                    {
                         delta = Mouse.Delta;
+                    }
 
                     float wheel = 0;
                     if (Keyboard.IsDown(Key.LCtrl))
+                    {
                         wheel = Mouse.DeltaWheel.Y;
+                    }
 
                     // Only update the camera's position if the mouse got moved in either direction
                     if (delta.X != 0f || delta.Y != 0f || wheel != 0f || first)
@@ -197,7 +205,10 @@
             DrawMenuBar();
             DrawWindows(context);
 
-            if (meshSource == null || !meshSource.Overlay.IsValid || !meshSource.Overlay.IsInitialized || !meshSource.Solid.IsValid || !meshSource.Solid.IsInitialized) return;
+            if (meshSource == null || !meshSource.Overlay.IsValid || !meshSource.Overlay.IsInitialized || !meshSource.Solid.IsValid || !meshSource.Solid.IsInitialized)
+            {
+                return;
+            }
 
             var position = ImGui.GetWindowPos();
             var size = ImGui.GetWindowSize();

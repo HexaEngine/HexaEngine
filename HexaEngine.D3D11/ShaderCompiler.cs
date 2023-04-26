@@ -208,7 +208,9 @@
             }
 
             if (errorBlob != null)
+            {
                 ImGuiConsole.Log(errorBlob.AsString());
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -241,7 +243,9 @@
                 *shader = pShader;
             }
             if (errorBlob != null)
+            {
                 ImGuiConsole.Log(errorBlob.AsString());
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -279,7 +283,11 @@
             if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
             {
                 CompileFromFile(path, macros, entry, profile, &pShader);
-                if (pShader == null) return;
+                if (pShader == null)
+                {
+                    return;
+                }
+
                 ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
@@ -293,7 +301,11 @@
                 CompileFromFile(path, macros, entry, profile, &pShader);
                 signature = null;
                 inputElements = null;
-                if (pShader == null) return;
+                if (pShader == null)
+                {
+                    return;
+                }
+
                 signature = GetInputSignature(pShader);
                 inputElements = GetInputElementsFromSignature(pShader, signature);
                 ShaderCache.CacheShader(path, macros, inputElements, pShader);

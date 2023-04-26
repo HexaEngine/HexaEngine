@@ -22,7 +22,11 @@
 
         public void Load()
         {
-            if (!Directory.Exists(path)) return;
+            if (!Directory.Exists(path))
+            {
+                return;
+            }
+
             foreach (string file in Directory.GetFiles(path, "*.dll"))
             {
                 LoadAssembly(file);
@@ -35,7 +39,11 @@
             {
                 string? folder = Path.GetDirectoryName(path);
                 string filename = Path.GetFileName(path);
-                if (string.IsNullOrEmpty(folder)) return null;
+                if (string.IsNullOrEmpty(folder))
+                {
+                    return null;
+                }
+
                 string pdb = Path.Combine(folder, Path.GetFileNameWithoutExtension(filename) + ".pdb");
                 Assembly assembly;
                 if (File.Exists(pdb))

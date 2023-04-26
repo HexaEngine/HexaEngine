@@ -114,7 +114,9 @@
 
             var index = joystick.PlayerIndex;
             if (ImGui.InputInt("PlayerIndex", ref index))
+            {
                 joystick.PlayerIndex = index;
+            }
 
             ImGui.Separator();
 
@@ -122,15 +124,21 @@
             {
                 var lofreq = lowFreq;
                 if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, (nint)(&lofreq)))
+                {
                     lowFreq = lofreq;
+                }
 
                 var hifreq = highFreq;
                 if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, (nint)(&hifreq)))
+                {
                     highFreq = hifreq;
+                }
 
                 var duraMs = durationMs;
                 if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, (nint)(&duraMs)))
+                {
                     durationMs = duraMs;
+                }
 
                 if (ImGui.Button("Rumble##BUt"))
                 {
@@ -161,7 +169,9 @@
             {
                 var dead = joystick.Deadzone;
                 if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, (nint)(&dead)))
+                {
                     joystick.Deadzone = dead;
+                }
 
                 ImGui.Separator();
 
@@ -273,7 +283,9 @@
 
             var index = gamepad.PlayerIndex;
             if (ImGui.InputInt("PlayerIndex", ref index))
+            {
                 gamepad.PlayerIndex = index;
+            }
 
             ImGui.Separator();
 
@@ -281,15 +293,21 @@
             {
                 var lofreq = lowFreq;
                 if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, (nint)(&lofreq)))
+                {
                     lowFreq = lofreq;
+                }
 
                 var hifreq = highFreq;
                 if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, (nint)(&hifreq)))
+                {
                     highFreq = hifreq;
+                }
 
                 var duraMs = durationMs;
                 if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, (nint)(&duraMs)))
+                {
                     durationMs = duraMs;
+                }
 
                 if (ImGui.Button("Rumble##BUt"))
                 {
@@ -320,7 +338,9 @@
             {
                 var dead = gamepad.Deadzone;
                 if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, (nint)(&dead)))
+                {
                     gamepad.Deadzone = dead;
+                }
 
                 ImGui.Separator();
 
@@ -411,7 +431,9 @@
                             var touchpadFinger = touchpad.GetFinger(j);
                             touchpadFinger.Y = 1 - touchpadFinger.Y;
                             if (touchpadFinger.State == FingerState.Down)
+                            {
                                 ImPlot.PlotScatter($"Finger {j}", ref touchpadFinger.X, ref touchpadFinger.Y, 1);
+                            }
                         }
                         ImPlot.EndPlot();
                     }
@@ -427,11 +449,15 @@
                         ImGui.Text($"Y: {touchpadFinger.Y}");
                         ImGui.Text($"Pressure: {touchpadFinger.Pressure}");
                         if (j < touchpad.FingerCount - 1)
+                        {
                             ImGui.Separator();
+                        }
                     }
 
                     if (i < touchpadCount - 1)
+                    {
                         ImGui.Separator();
+                    }
                 }
             }
 
@@ -447,7 +473,9 @@
                     {
                         var enable = sensor.Enabled;
                         if (ImGui.Checkbox($"Enabled##{i}", ref enable))
+                        {
                             sensor.Enabled = enable;
+                        }
 
                         ImGui.Text($"{sensorType}: {sensor.Vector}");
 
@@ -462,7 +490,9 @@
                         }
 
                         if (i < sensorCount - 1)
+                        {
                             ImGui.Separator();
+                        }
                     }
                 }
             }

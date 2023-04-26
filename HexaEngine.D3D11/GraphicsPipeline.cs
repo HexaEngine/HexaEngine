@@ -134,13 +134,22 @@
             {
                 state = value;
                 if (rasterizerState.Handle != null)
+                {
                     rasterizerState.Release();
+                }
+
                 rasterizerState = null;
                 if (depthStencilState.Handle != null)
+                {
                     depthStencilState.Release();
+                }
+
                 depthStencilState.Handle = null;
                 if (blendState.Handle != null)
+                {
                     blendState.Release();
+                }
+
                 blendState = null;
 
                 ComPtr<ID3D11RasterizerState> rs;
@@ -168,19 +177,34 @@
             initialized = false;
 
             if (vs.Handle != null)
+            {
                 vs.Release();
+            }
+
             vs = null;
             if (hs.Handle != null)
+            {
                 hs.Release();
+            }
+
             hs = null;
             if (ds.Handle != null)
+            {
                 ds.Release();
+            }
+
             ds = null;
             if (gs.Handle != null)
+            {
                 gs.Release();
+            }
+
             gs = null;
             if (ps.Handle != null)
+            {
                 ps.Release();
+            }
+
             ps = null;
             layout.Release();
             layout = null;
@@ -299,9 +323,20 @@
 
         public void BeginDraw(IGraphicsContext context)
         {
-            if (context is not D3D11GraphicsContext contextd3d11) return;
-            if (!initialized) return;
-            if (!valid) return;
+            if (context is not D3D11GraphicsContext contextd3d11)
+            {
+                return;
+            }
+
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             ComPtr<ID3D11DeviceContext1> ctx = contextd3d11.DeviceContext;
             ctx.VSSetShader(vs, null, 0);
@@ -323,8 +358,15 @@
 
         public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext1> context, Viewport viewport)
         {
-            if (!initialized) return;
-            if (!valid) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             context.VSSetShader(vs, null, 0);
             context.HSSetShader(hs, null, 0);
@@ -347,8 +389,15 @@
 
         public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext1> context)
         {
-            if (!initialized) return;
-            if (!valid) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             context.VSSetShader(vs, null, 0);
             context.HSSetShader(hs, null, 0);
@@ -373,8 +422,15 @@
 
         public void DrawInstanced(IGraphicsContext context, uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
         {
-            if (!initialized) return;
-            if (!valid) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             BeginDraw(context);
             context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
@@ -383,8 +439,15 @@
 
         public void DrawIndexedInstanced(IGraphicsContext context, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
         {
-            if (!initialized) return;
-            if (!valid) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             BeginDraw(context);
             context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
@@ -393,8 +456,15 @@
 
         public void DrawInstanced(IGraphicsContext context, IBuffer args, uint stride)
         {
-            if (!initialized) return;
-            if (!valid) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             BeginDraw(context);
             context.DrawInstancedIndirect(args, stride);
@@ -403,8 +473,15 @@
 
         public void DrawIndexedInstancedIndirect(IGraphicsContext context, IBuffer args, uint stride)
         {
-            if (!initialized) return;
-            if (!valid) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (!valid)
+            {
+                return;
+            }
 
             BeginDraw(context);
             context.DrawIndexedInstancedIndirect(args, stride);
@@ -418,23 +495,50 @@
                 PipelineManager.Unregister(this);
 
                 if (vs.Handle != null)
+                {
                     vs.Release();
+                }
+
                 if (hs.Handle != null)
+                {
                     hs.Release();
+                }
+
                 if (ds.Handle != null)
+                {
                     ds.Release();
+                }
+
                 if (gs.Handle != null)
+                {
                     gs.Release();
+                }
+
                 if (ps.Handle != null)
+                {
                     ps.Release();
+                }
+
                 if (layout.Handle != null)
+                {
                     layout.Release();
+                }
+
                 if (rasterizerState.Handle != null)
+                {
                     rasterizerState.Release();
+                }
+
                 if (rasterizerState.Handle != null)
+                {
                     depthStencilState.Release();
+                }
+
                 if (rasterizerState.Handle != null)
+                {
                     blendState.Release();
+                }
+
                 disposedValue = true;
             }
         }

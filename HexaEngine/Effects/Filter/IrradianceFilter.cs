@@ -80,7 +80,11 @@
 
         public void Draw(IGraphicsContext context)
         {
-            if (Targets == null) return;
+            if (Targets == null)
+            {
+                return;
+            }
+
             int width = (int)Targets.Viewport.Width;
             int height = (int)Targets.Viewport.Height;
             int xTileSize = width / 8;
@@ -110,7 +114,10 @@
 
         public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xSize, int ySize)
         {
-            if (Targets == null) return;
+            if (Targets == null)
+            {
+                return;
+            }
 
             context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
             context.SetScissorRect(x, y, x + xSize, y + ySize);

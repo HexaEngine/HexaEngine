@@ -16,7 +16,10 @@
 
             var gain = AudioManager.Master.Gain;
             if (ImGui.VSliderFloat("##Master", new(30, 200), ref gain, 0, 1))
+            {
                 AudioManager.Master.Gain = gain;
+            }
+
             float[] data = new float[2] { -80, -80 };
             ImGui.SameLine();
             ImGui.PlotLines("L", ref data[0], 2, 0, null, -80, 0, new(15, 200));

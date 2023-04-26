@@ -34,7 +34,9 @@
             for (int i = 0; i < list.Count; i++)
             {
                 if (list[i] is T1 item)
+                {
                     return item;
+                }
             }
 
             T1 value = new();
@@ -47,7 +49,9 @@
             for (int i = 0; i < list.Count; i++)
             {
                 if (list[i] is T1 item)
+                {
                     return item;
+                }
             }
 
             T1 value = constructor();

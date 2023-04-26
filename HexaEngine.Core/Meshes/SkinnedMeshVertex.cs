@@ -41,7 +41,9 @@
             for (int i = 0; i < sizeof(SkinnedMeshVertex); i++)
             {
                 if (ap[i] != bp[i])
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -54,7 +56,10 @@
         public override bool Equals(object? obj)
         {
             if (obj is SkinnedMeshVertex vertex)
+            {
                 return this == vertex;
+            }
+
             return false;
         }
 

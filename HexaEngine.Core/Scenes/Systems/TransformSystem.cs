@@ -34,8 +34,12 @@
         private void TransformChanged(object? sender, EventArgs e)
         {
             if (sender is Transform transform)
+            {
                 if (!updateQueue.Contains(transform))
+                {
                     updateQueue.Enqueue(transform);
+                }
+            }
         }
 
         public void Unregister(GameObject gameObject)
@@ -46,7 +50,11 @@
 
         public void Update(ThreadDispatcher dispatcher)
         {
-            if (updateQueue.IsEmpty) return;
+            if (updateQueue.IsEmpty)
+            {
+                return;
+            }
+
             while (updateQueue.TryDequeue(out Transform? transform))
             {
                 transform.Recalculate();

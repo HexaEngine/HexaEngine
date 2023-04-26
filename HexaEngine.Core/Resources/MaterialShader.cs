@@ -402,9 +402,15 @@ namespace HexaEngine.Core.Resources
         public bool BeginDraw(IGraphicsContext context, IBuffer camera)
         {
             if (!initialized)
+            {
                 return false;
+            }
+
             if (!pipeline.IsValid)
+            {
                 return false;
+            }
+
             pipeline.BeginDraw(context);
             context.DSSetConstantBuffer(camera, 1);
             context.VSSetConstantBuffer(camera, 1);
@@ -414,9 +420,15 @@ namespace HexaEngine.Core.Resources
         public bool BeginDrawForward(IGraphicsContext context)
         {
             if (!initialized)
+            {
                 return false;
+            }
+
             if (!pipeline.IsValid)
+            {
                 return false;
+            }
+
             pipeline.BeginDraw(context);
             return true;
         }
@@ -424,9 +436,15 @@ namespace HexaEngine.Core.Resources
         public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
         {
             if (!initialized)
+            {
                 return false;
+            }
+
             if (!depthOnly.IsValid)
+            {
                 return false;
+            }
+
             context.DSSetConstantBuffer(camera, 1);
             context.VSSetConstantBuffer(camera, 1);
             depthOnly.BeginDraw(context);
@@ -436,7 +454,10 @@ namespace HexaEngine.Core.Resources
         public bool BeginDrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!initialized)
+            {
                 return false;
+            }
+
             context.DSSetConstantBuffer(light, 1);
             context.VSSetConstantBuffer(light, 1);
             context.GSSetConstantBuffer(light, 1);
@@ -444,19 +465,28 @@ namespace HexaEngine.Core.Resources
             {
                 case ShadowType.Perspective:
                     if (!psm.IsValid)
+                    {
                         return false;
+                    }
+
                     context.SetGraphicsPipeline(psm);
                     return true;
 
                 case ShadowType.Cascaded:
                     if (!csm.IsValid)
+                    {
                         return false;
+                    }
+
                     context.SetGraphicsPipeline(csm);
                     return true;
 
                 case ShadowType.Omni:
                     if (!osm.IsValid)
+                    {
                         return false;
+                    }
+
                     context.SetGraphicsPipeline(osm);
                     return true;
             }

@@ -29,7 +29,10 @@
         public override void Show()
         {
             if (imagePainter.Source == null)
+            {
                 return;
+            }
+
             format = imagePainter.Source.Metadata.Format;
             base.Show();
         }
@@ -46,7 +49,9 @@
             if (ImGui.Button("Overwrite"))
             {
                 if (imagePainter.Source == null)
+                {
                     return;
+                }
 
                 IScratchImage image = imagePainter.Source.ToScratchImage(device);
 

@@ -20,7 +20,11 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || hasShape)
+            {
+                return;
+            }
+
             Capsule capsule = new(radius, length);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             inertia = capsule.ComputeInertia(Mass);

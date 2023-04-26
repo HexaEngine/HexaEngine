@@ -41,7 +41,10 @@
         {
             this.gameObject = gameObject;
             if (!gameObject.GetScene().TryGetSystem<RenderManager>(out var manager))
+            {
                 return;
+            }
+
             modelManager = gameObject.GetScene().ModelManager;
             materialManager = gameObject.GetScene().MaterialManager;
             renderer = manager.GetRenderer<ModelRenderer>();
@@ -62,11 +65,20 @@
             Task.Factory.StartNew(async state =>
             {
                 if (state is not ModelRendererComponent component)
+                {
                     return;
+                }
+
                 if (component.gameObject == null)
+                {
                     return;
+                }
+
                 if (component.modelManager == null)
+                {
                     return;
+                }
+
                 lock (component.instances)
                 {
                     for (int i = 0; i < component.instances.Count; i++)

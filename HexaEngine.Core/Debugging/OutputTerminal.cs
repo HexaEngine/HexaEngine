@@ -41,7 +41,10 @@
             public override void Write(string? message)
             {
                 if (message == null)
+                {
                     return;
+                }
+
                 string[] lines = message.Split(Environment.NewLine);
                 if (outputTerminal.messages.Count != 0 && !outputTerminal.messages[^1].Text.EndsWith(Environment.NewLine))
                 {
@@ -79,7 +82,10 @@
             public override void WriteLine(string? message)
             {
                 if (message == null)
+                {
                     return;
+                }
+
                 outputTerminal.AddMessage(message);
             }
         }
@@ -121,15 +127,30 @@
         {
             var color = TerminalColor.Text;
             if (text.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Error;
+            }
+
             if (text.Contains("err", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Error;
+            }
+
             if (text.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Warning;
+            }
+
             if (text.Contains("wrn", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Warning;
+            }
+
             if (text.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Warning;
+            }
+
             lock (messages)
             {
                 messages.Add(new TerminalMessage() { Text = text, Color = color });
@@ -206,7 +227,10 @@
                     }
                 }
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
+                {
                     ImGui.SetScrollHereY(1.0f);
+                }
+
                 scrollToBottom = false;
                 ImGui.EndChild();
             }

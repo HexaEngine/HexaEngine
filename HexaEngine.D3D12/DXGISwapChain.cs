@@ -135,7 +135,11 @@
             while ((frame - fpsStartTime) * fps < freq * fpsFrameCount)
             {
                 int sleepTime = (int)((fpsStartTime * fps + freq * fpsFrameCount - frame * fps) * 1000 / (freq * fps));
-                if (sleepTime > 0) Thread.Sleep(sleepTime);
+                if (sleepTime > 0)
+                {
+                    Thread.Sleep(sleepTime);
+                }
+
                 frame = Stopwatch.GetTimestamp();
             }
             if (++fpsFrameCount > fps)

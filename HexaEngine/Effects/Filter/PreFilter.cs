@@ -93,7 +93,11 @@
 
         public void Draw(IGraphicsContext context)
         {
-            if (Targets == null) return;
+            if (Targets == null)
+            {
+                return;
+            }
+
             context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
             for (int i = 0; i < 6; i++)
             {
@@ -110,7 +114,11 @@
 
         public void DrawSlice(IGraphicsContext context, int i, int x, int y, int xsize, int ysize)
         {
-            if (Targets == null) return;
+            if (Targets == null)
+            {
+                return;
+            }
+
             context.Write(rghbuffer, new RoughnessBuffer() { Roughness = Roughness });
             context.Write(mvpBuffer, new ViewProj(Cameras[i].View, Cameras[i].Projection));
             context.SetScissorRect(x, y, xsize + x, ysize + y);

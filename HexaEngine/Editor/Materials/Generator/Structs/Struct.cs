@@ -21,9 +21,13 @@
             {
                 StructDef def = Defs[i];
                 if (def.Type.Semantic != null)
+                {
                     builder.AppendLine($"{def.Type.GetTypeName()} {def.Name} : {def.Type.Semantic};");
+                }
                 else
+                {
                     builder.AppendLine($"{def.Type.GetTypeName()} {def.Name};");
+                }
             }
             builder.AppendLine("};");
         }

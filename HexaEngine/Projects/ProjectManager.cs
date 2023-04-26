@@ -58,7 +58,10 @@
             CurrentProjectPath = path;
             Project = HexaProject.Load(CurrentProjectPath);
             if (Project == null)
+            {
                 return;
+            }
+
             CurrentFolder = Path.GetDirectoryName(CurrentProjectPath);
             var assets = Project.Items.FirstOrDefault(x => x.Name == "assets");
             if (assets == null)
@@ -100,7 +103,11 @@
 
         private static void GenerateProject()
         {
-            if (CurrentFolder == null) return;
+            if (CurrentFolder == null)
+            {
+                return;
+            }
+
             string projectName = Path.GetFileName(CurrentFolder);
             CurrentProjectPath = Path.Combine(CurrentFolder, $"{projectName}.hexproj");
             Project = HexaProject.Create(CurrentProjectPath);
@@ -115,7 +122,11 @@
 
         private static void GenerateSolution()
         {
-            if (CurrentFolder == null) return;
+            if (CurrentFolder == null)
+            {
+                return;
+            }
+
             string solutionName = Path.GetFileName(CurrentFolder);
             string solutionPath = Path.Combine(CurrentFolder, solutionName + ".sln");
             Dotnet.New(DotnetTemplate.Sln, CurrentFolder, solutionName);
@@ -128,7 +139,11 @@
 
         public static void OpenVisualStudio()
         {
-            if (CurrentFolder == null) return;
+            if (CurrentFolder == null)
+            {
+                return;
+            }
+
             string? solutionName = Path.GetFileName(CurrentFolder);
             string solutionPath = Path.Combine(CurrentFolder, solutionName + ".sln");
             ProcessStartInfo psi = new();
@@ -142,7 +157,11 @@
         public static Task UpdateScripts()
         {
             AssemblyManager.Unload();
-            if (CurrentFolder == null) return Task.CompletedTask;
+            if (CurrentFolder == null)
+            {
+                return Task.CompletedTask;
+            }
+
             string solutionName = Path.GetFileName(CurrentFolder);
             Build();
             string outputFilePath = Path.Combine(CurrentFolder, "bin", $"{solutionName}.dll");
@@ -176,16 +195,34 @@
         public static Task Publish(PublishSettings settings)
         {
             var debugType = settings.StripDebugInfo ? DebugType.None : DebugType.Full;
-            if (settings.StartupScene == null) return Task.CompletedTask;
-            if (CurrentFolder == null) return Task.CompletedTask;
-            if (CurrentProjectPath == null) return Task.CompletedTask;
-            if (CurrentProjectAssetsFolder == null) return Task.CompletedTask;
+            if (settings.StartupScene == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (CurrentFolder == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (CurrentProjectPath == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (CurrentProjectAssetsFolder == null)
+            {
+                return Task.CompletedTask;
+            }
 
             for (int i = 0; i < settings.Scenes.Count; i++)
             {
                 var scene = settings.Scenes[i];
                 var path = Path.Combine(CurrentProjectAssetsFolder, scene);
-                if (!File.Exists(path)) return Task.CompletedTask;
+                if (!File.Exists(path))
+                {
+                    return Task.CompletedTask;
+                }
             }
 
             Debug.WriteLine("Publishing Project");
@@ -231,7 +268,9 @@
             string assemblyPathRelative = Path.GetRelativePath(buildPath, assemblyBuildPath);
             File.Copy(assemblyPath, assemblyBuildPath);
             if (!settings.StripDebugInfo)
+            {
                 File.Copy(assemblyPdbPath, assemblyPdbBuildPath);
+            }
 
             // app assets
             List<AssetDesc> assets = new();
@@ -276,7 +315,10 @@
             Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName);
             Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.D3D11.dll"));
             if (settings.RuntimeIdentifier?.Contains("win") ?? false)
+            {
                 Dotnet.ChangeOutputType(appTempProjPath, "WinExe");
+            }
+
             File.WriteAllText(appTempProgramPath, PublishProgram);
             PublishOptions appPublishOptions = new()
             {
@@ -302,7 +344,9 @@
             CopyDirectory(appTempPublishPath, buildPath, true);
 
             if (settings.StripDebugInfo)
+            {
                 DeleteFile(buildPath, "*.pdb", true);
+            }
 
             Debug.WriteLine("Published Project");
 
@@ -333,7 +377,9 @@
 
             // Check if the source directory exists
             if (!dir.Exists)
+            {
                 throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+            }
 
             // Cache directories before we start copying
             DirectoryInfo[] dirs = dir.GetDirectories();
@@ -366,7 +412,9 @@
 
             // Check if the source directory exists
             if (!dir.Exists)
+            {
                 throw new DirectoryNotFoundException($"Source directory not found: {dir.FullName}");
+            }
 
             // Cache directories before we start copying
             DirectoryInfo[] dirs = dir.GetDirectories();
@@ -377,7 +425,11 @@
             // Get the files in the source directory and copy to the destination directory
             foreach (FileInfo file in dir.GetFiles())
             {
-                if (file.Extension != filter) continue;
+                if (file.Extension != filter)
+                {
+                    continue;
+                }
+
                 string targetFilePath = Path.Combine(destinationDir, file.Name);
                 file.CopyTo(targetFilePath);
             }

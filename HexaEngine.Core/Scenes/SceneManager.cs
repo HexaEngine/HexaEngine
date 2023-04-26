@@ -28,8 +28,16 @@
 
         public static void Save()
         {
-            if (Current == null) return;
-            if (Current.Path == null) return;
+            if (Current == null)
+            {
+                return;
+            }
+
+            if (Current.Path == null)
+            {
+                return;
+            }
+
             SceneSerializer.Serialize(Current, Current.Path);
         }
 

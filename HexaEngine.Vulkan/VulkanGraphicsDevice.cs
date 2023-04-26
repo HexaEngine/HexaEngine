@@ -137,7 +137,9 @@
                     }
 
                     if (!found)
+                    {
                         return false;
+                    }
                 }
             }
 
@@ -306,7 +308,10 @@
             Instance instance;
             result = Vk.CreateInstance(&createInfo, null, &instance);
             if (result != Result.Success)
+            {
                 throw new VulkanException(result);
+            }
+
             this.Instance = instance;
 
             uint extensionCount = 0;
@@ -341,17 +346,23 @@
             uint count;
             result = Vk.EnumeratePhysicalDevices(Instance, &count, null);
             if (result != Result.Success)
+            {
                 throw new VulkanException(result);
+            }
 
             PhysicalDevice[] physicalDevices = new PhysicalDevice[count];
             result = Vk.EnumeratePhysicalDevices(Instance, &count, (PhysicalDevice*)Unsafe.AsPointer(ref physicalDevices[0]));
             if (result != Result.Success)
+            {
                 throw new VulkanException(result);
+            }
 
             PhysicalDevice = PickPhysicalDevice(physicalDevices);
 
             if (PhysicalDevice.Handle is 0)
+            {
                 throw new Exception();
+            }
 
             uint devExtensionCount = 0;
             Vk.EnumerateDeviceExtensionProperties(PhysicalDevice, (byte*)null, &devExtensionCount, (ExtensionProperties*)null);
@@ -383,7 +394,9 @@
                 if ((queue_props[i].QueueFlags & QueueFlags.GraphicsBit) != 0)
                 {
                     if (graphicsQueueNodeIndex == uint.MaxValue)
+                    {
                         graphicsQueueNodeIndex = i;
+                    }
                 }
             }
             uint graphics_queue_node_index = graphicsQueueNodeIndex;
@@ -416,7 +429,10 @@
             Device device = default;
             result = Vk.CreateDevice(PhysicalDevice, &deviceInfo, null, &device);
             if (result != Result.Success)
+            {
                 throw new VulkanException(result);
+            }
+
             Device = device;
 
             Queue queue;
@@ -446,15 +462,30 @@
             info.Size = (ulong)description.ByteWidth;
 
             if ((description.BindFlags & BindFlags.VertexBuffer) != 0)
+            {
                 info.Usage |= BufferUsageFlags.VertexBufferBit;
+            }
+
             if ((description.BindFlags & BindFlags.IndexBuffer) != 0)
+            {
                 info.Usage |= BufferUsageFlags.IndexBufferBit;
+            }
+
             if ((description.BindFlags & BindFlags.ConstantBuffer) != 0)
+            {
                 info.Usage |= BufferUsageFlags.UniformBufferBit;
+            }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 info.Usage |= BufferUsageFlags.ShaderBindingTableBitKhr;
+            }
+
             if ((description.MiscFlags & ResourceMiscFlag.DrawIndirectArguments) == 0)
+            {
                 info.Usage |= BufferUsageFlags.IndirectBufferBit;
+            }
+
             Silk.NET.Vulkan.Buffer buffer;
             Vk.CreateBuffer(Device, &info, null, &buffer);
 

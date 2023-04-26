@@ -22,7 +22,11 @@
 
         public override void CreateShape()
         {
-            if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape) return;
+            if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape)
+            {
+                return;
+            }
+
             var data = scene.ModelManager.Load(Paths.CurrentAssetsPath + meshPath);
             ulong vertexCount = 0;
             for (ulong i = 0; i < data.Header.MeshCount; i++)
@@ -54,7 +58,11 @@
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || !hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || !hasShape)
+            {
+                return;
+            }
+
             simulation.Shapes.Remove(index);
             hasShape = false;
             mesh.Dispose(bufferPool);

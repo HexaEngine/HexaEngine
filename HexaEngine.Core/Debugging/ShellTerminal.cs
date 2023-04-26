@@ -115,15 +115,30 @@
         {
             var color = TerminalColor.Text;
             if (text.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Error;
+            }
+
             if (text.Contains("err", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Error;
+            }
+
             if (text.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Warning;
+            }
+
             if (text.Contains("wrn", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Warning;
+            }
+
             if (text.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
                 color = TerminalColor.Warning;
+            }
+
             lock (messages)
             {
                 messages.Add(new TerminalMessage() { Text = text, Color = color });
@@ -200,7 +215,10 @@
                     }
                 }
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
+                {
                     ImGui.SetScrollHereY(1.0f);
+                }
+
                 scrollToBottom = false;
                 ImGui.EndChild();
             }
@@ -222,7 +240,9 @@
 
             ImGui.SetItemDefaultFocus();
             if (reclaimFocus)
+            {
                 ImGui.SetKeyboardFocusHere(-1);
+            }
         }
 
         private unsafe int InputCallback(ImGuiInputTextCallbackData* data)
@@ -259,9 +279,13 @@
                             for (int i = 0; i < data->BufSize; i++)
                             {
                                 if (i < prevCommand.Length)
+                                {
                                     data->Buf[i] = (byte)prevCommand[i];
+                                }
                                 else
+                                {
                                     data->Buf[i] = 0;
+                                }
                             }
 
                             data->BufTextLen = prevCommand.Length;

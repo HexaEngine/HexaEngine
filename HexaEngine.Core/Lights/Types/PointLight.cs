@@ -58,7 +58,11 @@
 
         public override void CreateShadowMap(IGraphicsDevice device)
         {
-            if (osmDepthBuffer != null) return;
+            if (osmDepthBuffer != null)
+            {
+                return;
+            }
+
             osmDepthBuffer = new(device, 2048, 2048, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
 
             if (Interlocked.Increment(ref instances) == 1)
@@ -69,7 +73,11 @@
 
         public override void DestroyShadowMap()
         {
-            if (osmDepthBuffer == null) return;
+            if (osmDepthBuffer == null)
+            {
+                return;
+            }
+
             osmDepthBuffer?.Dispose();
             osmDepthBuffer = null;
             if (Interlocked.Decrement(ref instances) == 0)
@@ -82,7 +90,10 @@
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowPointLightData> buffer, IInstanceManager manager)
         {
-            if (osmDepthBuffer == null) return;
+            if (osmDepthBuffer == null)
+            {
+                return;
+            }
 #nullable disable
 
             OSMHelper.GetLightSpaceMatrices(Transform, ShadowRange, (Matrix4x4*)osmBuffer.Local, ref ShadowBox);

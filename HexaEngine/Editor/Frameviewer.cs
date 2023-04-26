@@ -78,7 +78,9 @@
                 {
                     bool modeSwitched = false;
                     if (!Application.InDesignMode && scene.IsSimulating)
+                    {
                         ImGui.BeginDisabled(true);
+                    }
 
                     if (ImGui.Button("\xE768"))
                     {
@@ -104,13 +106,17 @@
                     }
 
                     if (!Application.InDesignMode && scene.IsSimulating && !modeSwitched)
+                    {
                         ImGui.EndDisabled();
+                    }
                 }
 
                 {
                     bool modeSwitched = false;
                     if (Application.InDesignMode || !scene.IsSimulating)
+                    {
                         ImGui.BeginDisabled(true);
+                    }
 
                     if (ImGui.Button("\xE769"))
                     {
@@ -119,13 +125,17 @@
                     }
 
                     if ((Application.InDesignMode || !scene.IsSimulating) && !modeSwitched)
+                    {
                         ImGui.EndDisabled();
+                    }
                 }
 
                 {
                     bool modeSwitched = false;
                     if (Application.InDesignMode)
+                    {
                         ImGui.BeginDisabled(true);
+                    }
 
                     if (ImGui.Button("\xE71A") || ImGui.IsKeyDown(ImGuiKey.Escape) && !Application.InDesignMode)
                     {
@@ -138,7 +148,9 @@
                     }
 
                     if (Application.InDesignMode && !modeSwitched)
+                    {
                         ImGui.EndDisabled();
+                    }
                 }
 
                 int cameraIndex = scene.ActiveCamera;

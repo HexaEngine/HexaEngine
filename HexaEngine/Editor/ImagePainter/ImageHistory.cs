@@ -51,7 +51,10 @@
 
         private void UndoPushInternal(IGraphicsContext context)
         {
-            if (source == null || stagingTextures == null) return;
+            if (source == null || stagingTextures == null)
+            {
+                return;
+            }
 
             var last = undoHistory[^1];
             for (int i = undoHistory.Length - 1; i != 0; i--)
@@ -89,7 +92,10 @@
 
         private void RedoPushInternal(ImageHistoryEntry entry)
         {
-            if (source == null || stagingTextures == null) return;
+            if (source == null || stagingTextures == null)
+            {
+                return;
+            }
 
             var last = redoHistory[^1];
             for (int i = redoHistory.Length - 1; i != 0; i--)
@@ -119,8 +125,15 @@
 
         public void Undo(IGraphicsContext context)
         {
-            if (undoHistoryCount == 0) return;
-            if (source == null || stagingTextures == null) return;
+            if (undoHistoryCount == 0)
+            {
+                return;
+            }
+
+            if (source == null || stagingTextures == null)
+            {
+                return;
+            }
 
             var first = undoHistory[0];
             for (int i = 0; i < undoHistory.Length - 1; i++)
@@ -155,8 +168,15 @@
 
         public void Redo(IGraphicsContext context)
         {
-            if (redoHistoryCount == 0) return;
-            if (source == null || stagingTextures == null) return;
+            if (redoHistoryCount == 0)
+            {
+                return;
+            }
+
+            if (source == null || stagingTextures == null)
+            {
+                return;
+            }
 
             var first = redoHistory[0];
             for (int i = 0; i < redoHistory.Length - 1; i++)

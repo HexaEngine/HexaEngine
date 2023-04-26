@@ -60,7 +60,9 @@
             CreateDeviceFlag flags = CreateDeviceFlag.BgraSupport;
 
             if (debug)
+            {
                 flags |= CreateDeviceFlag.Debug;
+            }
 
             ID3D11Device* tempDevice;
             ID3D11DeviceContext* tempContext;
@@ -237,12 +239,19 @@
                 if (texture2d.Description.ArraySize > 1)
                 {
                     if (texture2d.Description.SampleDescription.Count > 1)
+                    {
                         dimension = DepthStencilViewDimension.Texture2DMultisampledArray;
+                    }
                     else
+                    {
                         dimension = DepthStencilViewDimension.Texture2DArray;
+                    }
                 }
                 else
+                {
                     dimension = DepthStencilViewDimension.Texture2D;
+                }
+
                 description = new(texture2d, dimension);
             }
             else
@@ -280,12 +289,19 @@
                 if (texture2d.Description.ArraySize > 1)
                 {
                     if (texture2d.Description.SampleDescription.Count > 1)
+                    {
                         dimension = RenderTargetViewDimension.Texture2DMultisampledArray;
+                    }
                     else
+                    {
                         dimension = RenderTargetViewDimension.Texture2DArray;
+                    }
                 }
                 else
+                {
                     dimension = RenderTargetViewDimension.Texture2D;
+                }
+
                 description = new(texture2d, dimension);
             }
             else if (resource is ITexture3D texture3d)
@@ -336,12 +352,19 @@
                 if (texture2d.Description.ArraySize > 1)
                 {
                     if (texture2d.Description.SampleDescription.Count > 1)
+                    {
                         dimension = ShaderResourceViewDimension.Texture2DMultisampledArray;
+                    }
                     else
+                    {
                         dimension = ShaderResourceViewDimension.Texture2DArray;
+                    }
                 }
                 else
+                {
                     dimension = ShaderResourceViewDimension.Texture2D;
+                }
+
                 if ((texture2d.Description.MiscFlags & ResourceMiscFlag.TextureCube) != 0)
                 {
                     dimension = texture2d.Description.ArraySize / 6 > 1 ? ShaderResourceViewDimension.TextureCubeArray : ShaderResourceViewDimension.TextureCube;

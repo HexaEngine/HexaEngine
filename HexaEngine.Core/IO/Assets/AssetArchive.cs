@@ -179,11 +179,20 @@
             foreach (var file in dir.GetFiles("*.*", SearchOption.AllDirectories))
             {
                 if (file.Extension == ".assets")
+                {
                     continue;
+                }
+
                 if (file.Extension == ".dll")
+                {
                     continue;
+                }
+
                 if (file.Extension == ".hexlvl")
+                {
                     continue;
+                }
+
                 files.Add(file);
             }
 
@@ -265,7 +274,10 @@
                 foreach (var file in dir.GetFiles("*.*", SearchOption.AllDirectories))
                 {
                     if (file.Extension == ".assets")
+                    {
                         continue;
+                    }
+
                     files.Add(file);
                 }
 

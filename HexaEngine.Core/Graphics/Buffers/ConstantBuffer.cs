@@ -203,7 +203,11 @@
 
         public void Update(IGraphicsContext context)
         {
-            if (description.Usage != Usage.Dynamic) throw new InvalidOperationException();
+            if (description.Usage != Usage.Dynamic)
+            {
+                throw new InvalidOperationException();
+            }
+
             context.Write(buffer, items, buffer.Description.ByteWidth);
         }
 
@@ -211,7 +215,10 @@
         {
             count = 0;
             if (items != null)
+            {
                 Free(items);
+            }
+
             items = null;
             buffer.Dispose();
             GC.SuppressFinalize(this);

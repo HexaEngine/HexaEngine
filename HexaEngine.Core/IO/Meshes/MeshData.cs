@@ -308,9 +308,14 @@
                 }
 
                 if (m % stride != 0)
+                {
                     throw new InvalidOperationException();
+                }
+
                 if (m > size)
+                {
                     throw new InternalBufferOverflowException();
+                }
             }
 
             var result = device.CreateBuffer((void*)buffer, (uint)size, new(size, BindFlags.VertexBuffer, usage, accessFlags));
@@ -374,9 +379,14 @@
                 }
 
                 if (m % stride != 0)
+                {
                     throw new InvalidOperationException();
+                }
+
                 if (m > size)
+                {
                     throw new InternalBufferOverflowException();
+                }
             }
 
             context.Write(vb, buffer, size);
@@ -511,11 +521,15 @@
                         weigths[m] = weight.Weight;
                         m++;
                         if (m == 4)
+                        {
                             break;
+                        }
                     }
                 }
                 if (m == 4)
+                {
                     break;
+                }
             }
 
             return (boneIds, weigths);
@@ -615,7 +629,10 @@
         public long IntersectRay(Ray ray)
         {
             if (!Box.Intersects(ray).HasValue)
+            {
                 return -1;
+            }
+
             long id = -1;
             Vector3 minPos = new(float.MaxValue);
             for (uint i = 0; i < IndicesCount / 3; i++)
@@ -624,9 +641,15 @@
                 var pos1 = Positions[Indices[i * 3 + 1]];
                 var pos2 = Positions[Indices[i * 3 + 2]];
 
-                if (!ray.Intersects(pos0, pos1, pos2, out var pointInTriangle)) continue;
+                if (!ray.Intersects(pos0, pos1, pos2, out var pointInTriangle))
+                {
+                    continue;
+                }
 
-                if (minPos.X < pointInTriangle.X && minPos.Y < pointInTriangle.Y && minPos.Z < pointInTriangle.Z) continue;
+                if (minPos.X < pointInTriangle.X && minPos.Y < pointInTriangle.Y && minPos.Z < pointInTriangle.Z)
+                {
+                    continue;
+                }
 
                 minPos = pointInTriangle;
 
@@ -635,11 +658,19 @@
                 var d2 = Vector3.Distance(pos2, pointInTriangle);
                 var min = Math.Min(d0, Math.Min(d1, d2));
                 if (min == d0)
+                {
                     return Indices[i * 3];
+                }
+
                 if (min == d1)
+                {
                     return Indices[i * 3 + 1];
+                }
+
                 if (min == d2)
+                {
                     return Indices[i * 3 + 2];
+                }
             }
 
             return id;

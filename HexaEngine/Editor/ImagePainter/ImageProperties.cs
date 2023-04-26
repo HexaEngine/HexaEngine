@@ -26,7 +26,10 @@
         public override void DrawContent(IGraphicsContext context)
         {
             if (image == null)
+            {
                 return;
+            }
+
             var metadata = image.Metadata;
             ImGui.InputInt2("Size", ref metadata.Width, ImGuiInputTextFlags.ReadOnly);
 
@@ -48,7 +51,9 @@
             }
 
             if ((metadata.MiscFlags & TexMiscFlags.TextureCube) != 0)
+            {
                 ImGui.Text("HasCubeFlag");
+            }
         }
     }
 }

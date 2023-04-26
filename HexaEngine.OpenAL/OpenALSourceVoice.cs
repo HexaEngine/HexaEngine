@@ -43,7 +43,10 @@
             set
             {
                 if (submix == value)
+                {
                     return;
+                }
+
                 if (submix != null)
                 {
                     submix.GainChanged -= Submix_GainChanged;

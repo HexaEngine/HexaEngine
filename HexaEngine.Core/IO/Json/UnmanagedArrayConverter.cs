@@ -11,7 +11,10 @@
         {
             JToken token = JToken.ReadFrom(reader);
             if (token.Type != JTokenType.Bytes)
+            {
                 throw new InvalidDataException();
+            }
+
             byte[] value = token.Value<byte[]>();
 
             return MemoryMarshal.Cast<byte, T>(value.AsSpan()).ToArray();

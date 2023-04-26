@@ -34,7 +34,11 @@
                     !x.IsAbstract)))
             {
                 var attr = type.GetCustomAttribute<EditorNodeAttribute>();
-                if (attr == null) continue;
+                if (attr == null)
+                {
+                    continue;
+                }
+
                 cache.Add(attr.Name, attr);
             }
             cache.Add("Object", new EditorNodeAttribute("Object", typeof(GameObject), () => new GameObject(), x => x is GameObject));
@@ -111,9 +115,14 @@
 
             ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags.OpenOnArrow;
             if (element.IsEditorSelected)
+            {
                 flags |= ImGuiTreeNodeFlags.Selected;
+            }
+
             if (element.Children.Count == 0)
+            {
                 flags |= ImGuiTreeNodeFlags.Leaf;
+            }
 
             bool isOpen = ImGui.TreeNodeEx(element.Name, flags);
             element.IsEditorOpen = isOpen;
@@ -232,7 +241,9 @@
                         string id = *(UnsafeString*)payload.Data;
                         var child = scene.Find(id);
                         if (child != null)
+                        {
                             scene.AddChild(child);
+                        }
                     }
                 }
                 ImGui.EndDragDropTarget();

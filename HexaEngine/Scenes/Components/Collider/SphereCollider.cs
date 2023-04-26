@@ -15,7 +15,11 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || scene == null || hasShape)
+            {
+                return;
+            }
+
             Sphere sphere = new(radius);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             inertia = sphere.ComputeInertia(Mass);

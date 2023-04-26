@@ -101,7 +101,9 @@ namespace HexaEngine.Windows
             }
 
             if ((Flags & RendererFlags.ImGuiWidgets) != 0)
+            {
                 WidgetManager.Init(graphicsDevice);
+            }
 
             if ((Flags & RendererFlags.DebugDraw) != 0)
             {
@@ -203,12 +205,18 @@ namespace HexaEngine.Windows
             OnRender(context);
 
             if (Application.InEditorMode)
+            {
                 debugDrawRenderer?.EndDraw();
+            }
+
             imGuiRenderer?.EndDraw();
 
             swapChain.Present();
             if (drawing)
+            {
                 sceneRenderer.Profiler.End(sceneRenderer);
+            }
+
             swapChain.Wait();
         }
 
@@ -217,17 +225,25 @@ namespace HexaEngine.Windows
             OnRendererDispose();
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
+            {
                 WidgetManager.Dispose();
+            }
 
             if (imGuiRenderer is not null)
+            {
                 imGuiRenderer?.Dispose();
+            }
 
             if ((Flags & RendererFlags.DebugDraw) != 0)
+            {
                 debugDrawRenderer?.Dispose();
+            }
 
             SceneManager.Unload();
             if (!initTask.IsCompleted)
+            {
                 initTask.Wait();
+            }
 
             sceneRenderer.Dispose();
             renderDispatcher.Dispose();

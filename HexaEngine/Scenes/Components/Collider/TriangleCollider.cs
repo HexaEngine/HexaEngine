@@ -26,7 +26,11 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || scene == null || hasShape)
+            {
+                return;
+            }
+
             Triangle triangle = new(pos1, pos2, pos3);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             inertia = triangle.ComputeInertia(Mass);

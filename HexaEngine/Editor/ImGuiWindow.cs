@@ -18,7 +18,11 @@
 
         public virtual void DrawWindow(IGraphicsContext context)
         {
-            if (!IsShown) return;
+            if (!IsShown)
+            {
+                return;
+            }
+
             if (!ImGui.Begin(Name, ref IsShown, Flags))
             {
                 ImGui.End();
@@ -30,14 +34,20 @@
             DrawContent(context);
 
             if (!windowEnded)
+            {
                 ImGui.End();
+            }
         }
 
         public abstract void DrawContent(IGraphicsContext context);
 
         protected void EndWindow()
         {
-            if (!IsShown) return;
+            if (!IsShown)
+            {
+                return;
+            }
+
             ImGui.End();
             windowEnded = true;
         }

@@ -30,7 +30,10 @@
             {
                 index = list.IndexOf(t);
                 if (index == -1)
+                {
                     return false;
+                }
+
                 list.RemoveAt(index);
                 return true;
             }
@@ -56,8 +59,10 @@
                 if (obj.Components[i] is T t)
                 {
                     if (awake)
+                    {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                         t.Awake(null, obj);
+                    }
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     list.Add(t);
                 }
@@ -82,7 +87,10 @@
                 if (obj.Components[i] is T t)
                 {
                     if (destroy)
+                    {
                         t.Destory();
+                    }
+
                     list.Remove(t);
                 }
             }

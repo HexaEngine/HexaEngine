@@ -51,7 +51,10 @@
 
             importDialog.Draw();
 
-            if (!isShown) return;
+            if (!isShown)
+            {
+                return;
+            }
 
             if (ImGui.BeginMainMenuBar())
             {
@@ -163,31 +166,45 @@
                 {
                     var enabled = Inspector.Enabled;
                     if (ImGui.Checkbox("Enabled", ref enabled))
+                    {
                         Inspector.Enabled = enabled;
+                    }
 
                     var drawGrid = Inspector.DrawGrid;
                     if (ImGui.Checkbox("Draw Grid", ref drawGrid))
+                    {
                         Inspector.DrawGrid = drawGrid;
+                    }
 
                     var drawLights = Inspector.DrawLights;
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
+                    {
                         Inspector.DrawLights = drawLights;
+                    }
 
                     var drawLightBounds = Inspector.DrawLightBounds;
                     if (ImGui.Checkbox("Draw Light Bounds", ref drawLightBounds))
+                    {
                         Inspector.DrawLightBounds = drawLightBounds;
+                    }
 
                     var drawSkeletons = Inspector.DrawSkeletons;
                     if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
+                    {
                         Inspector.DrawSkeletons = drawSkeletons;
+                    }
 
                     var drawColliders = Inspector.DrawColliders;
                     if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
+                    {
                         Inspector.DrawColliders = drawColliders;
+                    }
 
                     var drawBoundingBoxes = Inspector.DrawBoundingBoxes;
                     if (ImGui.Checkbox("Draw Bounding Boxes", ref drawBoundingBoxes))
+                    {
                         Inspector.DrawBoundingBoxes = drawBoundingBoxes;
+                    }
 
                     ImGui.EndMenu();
                 }

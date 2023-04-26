@@ -170,29 +170,54 @@ namespace HexaEngine.D3D11
                 case TexFileFormat.Auto:
                     var ext = Path.GetExtension(path);
                     if (ext == ".dds")
+                    {
                         SaveToFile(path, TexFileFormat.DDS, flags);
+                    }
                     else if (ext == ".tga")
+                    {
                         SaveToFile(path, TexFileFormat.TGA, flags);
+                    }
                     else if (ext == ".hdr")
+                    {
                         SaveToFile(path, TexFileFormat.HDR, flags);
+                    }
                     else if (ext == ".bmp")
+                    {
                         SaveToFile(path, TexFileFormat.BMP, flags);
+                    }
                     else if (ext == ".jpg")
+                    {
                         SaveToFile(path, TexFileFormat.JPEG, flags);
+                    }
                     else if (ext == ".jpeg")
+                    {
                         SaveToFile(path, TexFileFormat.JPEG, flags);
+                    }
                     else if (ext == ".png")
+                    {
                         SaveToFile(path, TexFileFormat.PNG, flags);
+                    }
                     else if (ext == ".tiff")
+                    {
                         SaveToFile(path, TexFileFormat.TIFF, flags);
+                    }
                     else if (ext == ".gif")
+                    {
                         SaveToFile(path, TexFileFormat.GIF, flags);
+                    }
                     else if (ext == ".wmp")
+                    {
                         SaveToFile(path, TexFileFormat.WMP, flags);
+                    }
                     else if (ext == ".ico")
+                    {
                         SaveToFile(path, TexFileFormat.ICO, flags);
+                    }
                     else
+                    {
                         throw new NotSupportedException();
+                    }
+
                     break;
 
                 case TexFileFormat.DDS:
@@ -258,21 +283,44 @@ namespace HexaEngine.D3D11
             var metaA = a.Metadata;
             var metaB = b.Metadata;
             if (metaA.Format != metaB.Format)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Format {metaA.Format} doesn't match with {metaB.Format}");
+            }
+
             if (metaA.Width != metaB.Width)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Width {metaA.Width} doesn't match with {metaB.Width}");
+            }
+
             if (metaA.Height != metaB.Height)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Height {metaA.Height} doesn't match with {metaB.Height}");
+            }
+
             if (metaA.Depth != metaB.Depth)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Depth {metaA.Depth} doesn't match with {metaB.Depth}");
+            }
+
             if (metaA.ArraySize != metaB.ArraySize)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"ArraySize {metaA.ArraySize} doesn't match with {metaB.ArraySize}");
+            }
+
             if (metaA.MipLevels != metaB.MipLevels)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"MipLevels {metaA.MipLevels} doesn't match with {metaB.MipLevels}");
+            }
+
             if (metaA.Dimension != metaB.Dimension)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"Dimension {metaA.Dimension} doesn't match with {metaB.Dimension}");
+            }
+
             if (metaA.AlphaMode != metaB.AlphaMode)
+            {
                 throw new ArgumentOutOfRangeException(nameof(scratchImage), $"AlphaMode {metaA.AlphaMode} doesn't match with {metaB.AlphaMode}");
+            }
 
             var count = a.ImageCount;
             var aImages = a.GetImages();

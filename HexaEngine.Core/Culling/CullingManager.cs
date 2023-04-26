@@ -118,7 +118,11 @@
 
         public static void UpdateCamera(IGraphicsContext context)
         {
-            if (CameraManager.Culling == null) return;
+            if (CameraManager.Culling == null)
+            {
+                return;
+            }
+
             occlusionCameraBuffer[0] = new(CameraManager.Culling);
             occlusionCameraBuffer.Update(context);
         }
@@ -155,7 +159,10 @@
 
         public static unsafe void DoOcclusionCulling(IGraphicsContext context, InstanceManager manager, Camera camera, int instanceCount, DepthMipChain mipChain)
         {
-            if (instanceCount == 0) return;
+            if (instanceCount == 0)
+            {
+                return;
+            }
 
             occlusionParamBuffer[0] = new()
             {
@@ -223,7 +230,10 @@
                 for (int i = 0; i < instanceCount; i++)
                 {
                     if (i > 100)
+                    {
                         break;
+                    }
+
                     ImGui.Text($"Idx: {i}, {instanceDataOutBuffer[i]}");
                 }
             }
@@ -233,8 +243,15 @@
         {
             var camera = CameraManager.Culling;
             var instanceManager = InstanceManager.Current;
-            if (camera == null) return;
-            if (instanceManager == null) return;
+            if (camera == null)
+            {
+                return;
+            }
+
+            if (instanceManager == null)
+            {
+                return;
+            }
 
             DoFrustumCulling(context, instanceManager, camera.Transform.Frustum, out var count);
             DoOcclusionCulling(context, instanceManager, camera, count, mipChain);
@@ -243,8 +260,15 @@
         public static void DoCulling(IGraphicsContext context, InstanceManager instanceManager, DepthMipChain mipChain)
         {
             var camera = CameraManager.Culling;
-            if (camera == null) return;
-            if (instanceManager == null) return;
+            if (camera == null)
+            {
+                return;
+            }
+
+            if (instanceManager == null)
+            {
+                return;
+            }
 
             DoFrustumCulling(context, instanceManager, camera.Transform.Frustum, out var count);
             DoOcclusionCulling(context, instanceManager, camera, count, mipChain);

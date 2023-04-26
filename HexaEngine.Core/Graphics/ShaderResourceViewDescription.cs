@@ -139,11 +139,19 @@
             {
                 Texture1DDescription textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (mipLevels == -1)
+                {
                     mipLevels = textureDesc.MipLevels - mostDetailedMip;
+                }
+
                 if (arraySize == -1)
+                {
                     arraySize = textureDesc.ArraySize - firstArraySlice;
+                }
             }
 
             Format = format;
@@ -193,14 +201,22 @@
             {
                 Texture2DDescription textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (-1 == mipLevels)
+                {
                     mipLevels = textureDesc.MipLevels - mostDetailedMip;
+                }
+
                 if (-1 == arraySize)
                 {
                     arraySize = textureDesc.ArraySize - firstArraySlice;
                     if (viewDimension == ShaderResourceViewDimension.TextureCubeArray)
+                    {
                         arraySize /= 6;
+                    }
                 }
             }
             Format = format;
@@ -262,9 +278,14 @@
             {
                 Texture3DDescription textureDesc = texture.Description;
                 if (format == Format.Unknown)
+                {
                     format = textureDesc.Format;
+                }
+
                 if (mipLevels == -1)
+                {
                     mipLevels = textureDesc.MipLevels - mostDetailedMip;
+                }
             }
 
             Format = format;

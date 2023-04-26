@@ -61,7 +61,10 @@
         public void OnRayHit(in RayData ray, ref float maximumT, float t, in Vector3 normal, CollidableReference collidable, int childIndex)
         {
             if (t < maximumT)
+            {
                 maximumT = t;
+            }
+
             if (t < T)
             {
                 Collidable = collidable;
@@ -128,7 +131,10 @@
         public void OnRayHit(in RayData ray, ref float maximumT, float t, in Vector3 normal, CollidableReference collidable, int childIndex)
         {
             if (t < maximumT)
+            {
                 maximumT = t;
+            }
+
             if (t < T)
             {
                 Collidable = collidable;

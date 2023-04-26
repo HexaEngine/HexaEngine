@@ -37,7 +37,9 @@
             if (ImGui.Button("Generate"))
             {
                 if (imagePainter.Source == null)
+                {
                     return;
+                }
 
                 var image = imagePainter.Source.ToScratchImage(device);
 

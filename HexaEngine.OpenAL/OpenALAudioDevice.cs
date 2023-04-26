@@ -34,12 +34,25 @@
             get => current;
             set
             {
-                if (value is not OpenALAudioContext context) return;
-                if (current == value) return;
+                if (value is not OpenALAudioContext context)
+                {
+                    return;
+                }
+
+                if (current == value)
+                {
+                    return;
+                }
+
                 if (value != null)
+                {
                     alc.MakeContextCurrent(context.Context);
+                }
                 else
+                {
                     alc.MakeContextCurrent(null);
+                }
+
                 CheckError(Device);
                 current = context;
             }

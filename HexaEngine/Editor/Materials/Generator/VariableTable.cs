@@ -70,7 +70,10 @@
         public static string FromCastTo(SType from, SType to)
         {
             if (from == to)
+            {
                 return string.Empty;
+            }
+
             return CastTo(to);
         }
 
@@ -101,7 +104,9 @@
             {
                 var include = includes[i];
                 if (include.Name == name)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -112,7 +117,9 @@
             {
                 var include = includes[i];
                 if (include.Name == name)
+                {
                     return i;
+                }
             }
             return -1;
         }
@@ -120,14 +127,18 @@
         public void AddInclude(string name)
         {
             if (!IsIncluded(name))
+            {
                 includes.Add(new() { Name = name });
+            }
         }
 
         public void RemoveInclude(string name)
         {
             var index = IndexOfInclude(name);
             if (index != -1)
+            {
                 includes.RemoveAt(index);
+            }
         }
 
         public UnorderedAccessView AddUnorderedAccessView(UnorderedAccessView unorderedAccessView)
@@ -181,7 +192,9 @@
             for (int i = 0; i < unorderedAccessViews.Count; i++)
             {
                 if (unorderedAccessViews[i].Name == name)
+                {
                     return unorderedAccessViews[i];
+                }
             }
             return default;
         }
@@ -191,7 +204,9 @@
             for (int i = 0; i < shaderResourceViews.Count; i++)
             {
                 if (shaderResourceViews[i].Name == name)
+                {
                     return shaderResourceViews[i];
+                }
             }
             return default;
         }
@@ -201,7 +216,9 @@
             for (int i = 0; i < constantBuffers.Count; i++)
             {
                 if (constantBuffers[i].Name == name)
+                {
                     return constantBuffers[i];
+                }
             }
             return default;
         }
@@ -211,7 +228,9 @@
             for (int i = 0; i < samplers.Count; i++)
             {
                 if (samplers[i].Name == name)
+                {
                     return samplers[i];
+                }
             }
             return default;
         }
@@ -221,7 +240,9 @@
             for (int i = 0; i < operations.Count; i++)
             {
                 if (operations[i].Name == name)
+                {
                     return operations[i];
+                }
             }
             return default;
         }
@@ -244,7 +265,9 @@
             for (int i = 0; i < operations.Count; i++)
             {
                 if (operations[i].Id == id)
+                {
                     return operations[i];
+                }
             }
             return default;
         }
@@ -254,7 +277,9 @@
             for (int i = 0; i < structs.Count; i++)
             {
                 if (structs[i].Name == name)
+                {
                     return structs[i];
+                }
             }
             return default;
         }
@@ -264,7 +289,9 @@
             for (int i = 0; i < identifiers.Count; i++)
             {
                 if (identifiers[i].Name == name)
+                {
                     return true;
+                }
             }
             return false;
         }

@@ -83,12 +83,16 @@
                 var texture = textures[i];
 
                 if (texture == null || texture.Value == null)
+                {
                     continue;
+                }
 
                 var slot = GetIndexFor(texture.Value.Desc.Type);
 
                 if (slot == -1)
+                {
                     continue;
+                }
 
                 EnsureCapacity((uint)(slot + 1));
                 shaderResourceViews[slot] = (void*)texture.Value.ShaderResourceView.NativePointer;
@@ -105,12 +109,16 @@
                 var texture = textures[i];
 
                 if (texture == null || texture.Value == null)
+                {
                     continue;
+                }
 
                 var slot = GetIndexFor(texture.Value.Desc.Type);
 
                 if (slot == -1)
+                {
                     continue;
+                }
 
                 context.PSSetShaderResource(texture.Value.ShaderResourceView, slot);
                 context.PSSetSampler(texture.Value.Sampler, slot);

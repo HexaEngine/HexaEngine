@@ -45,7 +45,9 @@ namespace HexaEngine.Editor.Dialogs
             {
                 startingPath = Environment.CurrentDirectory;
                 if (string.IsNullOrEmpty(startingPath))
+                {
                     startingPath = AppContext.BaseDirectory;
+                }
             }
 
             currentDir = new DirectoryInfo(startingPath);
@@ -64,7 +66,9 @@ namespace HexaEngine.Editor.Dialogs
             {
                 startingPath = Environment.CurrentDirectory;
                 if (string.IsNullOrEmpty(startingPath))
+                {
                     startingPath = AppContext.BaseDirectory;
+                }
             }
 
             currentDir = new DirectoryInfo(startingPath);
@@ -83,15 +87,21 @@ namespace HexaEngine.Editor.Dialogs
             {
                 startingPath = Environment.CurrentDirectory;
                 if (string.IsNullOrEmpty(startingPath))
+                {
                     startingPath = AppContext.BaseDirectory;
+                }
             }
 
             if (searchFilter != null)
             {
                 if (AllowedExtensions != null)
+                {
                     AllowedExtensions.Clear();
+                }
                 else
+                {
                     AllowedExtensions = new List<string>();
+                }
 
                 AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
             }
@@ -137,7 +147,11 @@ namespace HexaEngine.Editor.Dialogs
 
         public bool Draw()
         {
-            if (!shown) return false;
+            if (!shown)
+            {
+                return false;
+            }
+
             if (ImGui.Begin("File picker", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse))
             {
                 ImGui.SetWindowFocus();
@@ -173,15 +187,19 @@ namespace HexaEngine.Editor.Dialogs
                     void Display(string? rel, string str)
                     {
                         if (File.Exists(str))
+                        {
                             return;
+                        }
 
                         if (ImGui.TreeNodeEx(rel != null ? Path.GetRelativePath(rel, str) : str, ImGuiTreeNodeFlags.OpenOnArrow))
                         {
                             if (Directory.Exists(str))
+                            {
                                 foreach (var item in GetFileSystemEntries(str))
                                 {
                                     Display(str, item);
                                 }
+                            }
 
                             ImGui.TreePop();
                         }
@@ -215,7 +233,9 @@ namespace HexaEngine.Editor.Dialogs
                         {
                             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
                             if (ImGui.Selectable("../", false, ImGuiSelectableFlags.DontClosePopups))
+                            {
                                 SetFolder(currentDir.Parent.FullName);
+                            }
 
                             ImGui.PopStyleColor();
                         }
@@ -225,7 +245,10 @@ namespace HexaEngine.Editor.Dialogs
                             var dir = dirs[i];
                             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
                             if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.DontClosePopups))
+                            {
                                 SetFolder(dir.Path);
+                            }
+
                             ImGui.PopStyleColor();
                         }
 
@@ -235,7 +258,9 @@ namespace HexaEngine.Editor.Dialogs
 
                             bool isSelected = selectedFile == file.Path;
                             if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.DontClosePopups))
+                            {
                                 selectedFile = file.Filename;
+                            }
 
                             if (ImGui.IsItemClicked(0) && ImGui.IsMouseDoubleClicked(0))
                             {
@@ -348,11 +373,20 @@ namespace HexaEngine.Editor.Dialogs
             foreach (var fse in Directory.GetFileSystemEntries(currentFolder, string.Empty))
             {
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.System))
+                {
                     continue;
+                }
+
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden))
+                {
                     continue;
+                }
+
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
+                {
                     continue;
+                }
+
                 if (Directory.Exists(fse))
                 {
                     dirs.Add(new("\xe8b7" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
@@ -363,7 +397,9 @@ namespace HexaEngine.Editor.Dialogs
                     {
                         var ext = Path.GetExtension(fse);
                         if (AllowedExtensions.Contains(ext))
+                        {
                             files.Add(new("\xe8a5" + Path.GetFileName(fse), Path.GetFileName(fse), fse));
+                        }
                     }
                     else
                     {
@@ -380,11 +416,20 @@ namespace HexaEngine.Editor.Dialogs
             foreach (var fse in Directory.GetFileSystemEntries(fullName, string.Empty))
             {
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.System))
+                {
                     continue;
+                }
+
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden))
+                {
                     continue;
+                }
+
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
+                {
                     continue;
+                }
+
                 if (Directory.Exists(fse))
                 {
                     dirs.Add(fse);
@@ -395,7 +440,9 @@ namespace HexaEngine.Editor.Dialogs
                     {
                         var ext = Path.GetExtension(fse);
                         if (AllowedExtensions.Contains(ext))
+                        {
                             files.Add(fse);
+                        }
                     }
                     else
                     {

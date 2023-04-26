@@ -47,7 +47,10 @@
         public static void Shutdown()
         {
             if (!editor)
+            {
                 return;
+            }
+
             PluginManager.Unload();
         }
     }

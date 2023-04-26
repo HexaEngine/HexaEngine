@@ -33,7 +33,10 @@
         [EditorButton("Bake shape")]
         public void BakeShape()
         {
-            if (bufferPool == null || scene == null) return;
+            if (bufferPool == null || scene == null)
+            {
+                return;
+            }
 
             var data = scene.ModelManager.Load(mesh);
             points = data.GetAllPoints();
@@ -46,7 +49,10 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || convexHull == null || hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || convexHull == null || hasShape)
+            {
+                return;
+            }
 
             var ull = convexHull.Value;
             inertia = ull.ComputeInertia(Mass);
@@ -57,7 +63,11 @@
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || !hasShape) return;
+            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || !hasShape)
+            {
+                return;
+            }
+
             simulation.Shapes.Remove(index);
             hasShape = false;
             convexHull?.Dispose(bufferPool);

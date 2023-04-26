@@ -141,7 +141,9 @@
                     {
                         var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
+                        {
                             stack1.Push(node.Links[i].OutputNode);
+                        }
                     }
                 }
             }
@@ -156,7 +158,10 @@
             {
                 var val = values.Pop();
                 if (val.Equals(value))
+                {
                     break;
+                }
+
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -176,7 +181,10 @@
         public Definition GetVariable(Pin target, Node? other)
         {
             if (other == null)
+            {
                 throw new NullReferenceException();
+            }
+
             var op = Find(other);
             if (!op.Type.IsStruct)
             {
@@ -186,7 +194,10 @@
             {
                 var link = Node.FindSourceLink(target, other);
                 if (link == null)
+                {
                     throw new NullReferenceException();
+                }
+
                 return new($"{op.Type.Name}.{link.Output.Name}", op.Type);
             }
         }
@@ -222,7 +233,10 @@
         public Definition GetVariable(Link? link)
         {
             if (link == null)
+            {
                 throw new NullReferenceException();
+            }
+
             var op = Find(link.OutputNode);
             if (!op.Type.IsStruct)
             {
@@ -386,9 +400,14 @@
             var type = outputDef.Type;
 
             if (type.IsStruct)
+            {
                 builder.AppendLine($"{outputDef.Type.Name} main({input.Name} {inputVar.Name})");
+            }
             else
+            {
                 builder.AppendLine($"{outputDef.Type.Name} main({input.Name} {inputVar.Name}) : SV_TARGET");
+            }
+
             builder.AppendLine("{");
             for (int i = 0; i < table.OperationCount; i++)
             {

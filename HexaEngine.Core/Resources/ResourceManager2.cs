@@ -139,7 +139,10 @@
             lock (sharedResources)
             {
                 if (!sharedResources.ContainsKey(name))
+                {
                     return;
+                }
+
                 var resource = sharedResources[name];
                 resources.Remove(resource);
                 sharedResources.Remove(name);

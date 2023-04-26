@@ -17,7 +17,11 @@ namespace HexaEngine.Effects
 
         public void Draw(IGraphicsContext context)
         {
-            if (Target == null) return;
+            if (Target == null)
+            {
+                return;
+            }
+
             context.ClearRenderTargetView(Target, default);
             context.SetRenderTarget(Target, null);
             context.SetViewport(Target.Viewport);

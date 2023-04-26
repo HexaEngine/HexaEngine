@@ -69,11 +69,17 @@ namespace HexaEngine.Core.Collections
             _comparer = comparer;
 
             if (_comparer == StringComparer.Ordinal)
+            {
                 _compare = (x, y) => x - y;
+            }
             else if (_comparer == StringComparer.OrdinalIgnoreCase)
+            {
                 _compare = (x, y) => char.ToLower(x) - char.ToLower(y);
+            }
             else
+            {
                 _compare = (x, y) => _comparer.Compare(x.ToString(), y.ToString());
+            }
         }
 
         /// <summary>
@@ -122,7 +128,10 @@ namespace HexaEngine.Core.Collections
                 var en = GetEnumerator();
                 int n = 0;
                 while (en.MoveNext())
+                {
                     ++n;
+                }
+
                 return n;
             }
         }
@@ -139,7 +148,9 @@ namespace HexaEngine.Core.Collections
             {
                 var keys = new List<string>();
                 foreach (var kvp in this)
+                {
                     keys.Add(kvp.Key);
+                }
 
                 return keys;
             }
@@ -157,7 +168,9 @@ namespace HexaEngine.Core.Collections
             {
                 var values = new List<T>();
                 foreach (var kvp in this)
+                {
                     values.Add(kvp.Value);
+                }
 
                 return values;
             }
@@ -184,25 +197,40 @@ namespace HexaEngine.Core.Collections
             get
             {
                 if (!TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? entry))
+                {
                     throw new KeyNotFoundException();
+                }
+
                 if (entry == null)
+                {
                     throw new KeyNotFoundException();
+                }
+
                 return entry.Value.Value;
             }
             set
             {
                 if (key == null)
+                {
                     throw new ArgumentNullException("key");
+                }
+
                 if (key.Length == 0)
+                {
                     throw new ArgumentException("key is an empty string");
+                }
                 // updating version
                 ++_version;
 
                 var de = Find(key);
                 if (de == null)
+                {
                     Add(key, value);
+                }
                 else
+                {
                     de.Value = new KeyValuePair<string, T>(key, value);
+                }
             }
         }
 
@@ -239,15 +267,22 @@ namespace HexaEngine.Core.Collections
         public void Add(KeyValuePair<string, T> item)
         {
             if (item.Key == null)
+            {
                 throw new ArgumentNullException("key is null");
+            }
+
             if (item.Key.Length == 0)
+            {
                 throw new ArgumentException("trying to add empty key");
+            }
             // updating version
             ++_version;
 
             // creating root node if needed.
             if (_root == null)
+            {
                 _root = new TstDictionaryEntry<T>(item.Key[0]);
+            }
 
             // adding key
             var p = _root;
@@ -283,7 +318,9 @@ namespace HexaEngine.Core.Collections
                     if (i == item.Key.Length)
                     {
                         if (p.IsKey && p.Value.Key.Length == i)
+                        {
                             throw new ArgumentException("key already in dictionary");
+                        }
                     }
 
                     if (p.EqChild == null && p.IsKey)
@@ -340,7 +377,10 @@ namespace HexaEngine.Core.Collections
         public virtual bool ContainsKey(string key)
         {
             if (key == null)
+            {
                 throw new ArgumentNullException("key");
+            }
+
             var de = Find(key);
             return de != null && de.IsKey;
         }
@@ -365,44 +405,69 @@ namespace HexaEngine.Core.Collections
         public virtual bool Remove(string key)
         {
             if (key == null)
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
+
             if (key.Length == 0)
+            {
                 throw new ArgumentException("key length cannot be 0");
+            }
             // updating version
             ++_version;
 
             var stack = new Stack<TstDictionaryEntry<T>>();
             if (!TryGetNode(key, stack, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? p))
+            {
                 return false;
+            }
+
             stack.Pop();
 
             if (p == null)
+            {
                 return false;
+            }
 
             p.Value = default;
 
             while (!p.IsKey && !p.HasChildren && stack.Count > 0)
             {
                 if (stack.Peek().LowChild == p)
+                {
                     stack.Peek().LowChild = null;
+                }
                 else if (stack.Peek().HighChild == p)
+                {
                     stack.Peek().HighChild = null;
+                }
                 else
+                {
                     stack.Peek().EqChild = null;
+                }
+
                 p = stack.Pop();
             }
 
             if (!p.IsKey && !p.HasChildren && p == _root)
+            {
                 _root = null;
+            }
+
             return true;
         }
 
         public IEnumerable<KeyValuePair<string, T>> StartingWith(string key)
         {
             if (_root == null)
+            {
                 return Enumerable.Empty<KeyValuePair<string, T>>();
+            }
+
             if (string.IsNullOrEmpty(key))
+            {
                 return this;
+            }
 
             var result = new List<KeyValuePair<string, T>>();
             StartingWith(_root.SplitChar, _root.LowChild, _root.EqChild, _root.HighChild, _root.Value, key, 0, result);
@@ -422,20 +487,30 @@ namespace HexaEngine.Core.Collections
             var cmp = _compare(c, split);
 
             if ((c == '\0' || cmp < 0) && low != null)
+            {
                 StartingWith(low.SplitChar, low.LowChild, low.EqChild, low.HighChild, low.Value, key, index, matches);
+            }
 
             if (c == '\0' || cmp == 0)
             {
                 if (eq != null)
+                {
                     StartingWith(eq.SplitChar, eq.LowChild, eq.EqChild, eq.HighChild, eq.Value, key, index + 1, matches);
+                }
                 else if (value.Key != null && index < value.Key.Length - 1)
+                {
                     StartingWith(value.Key[index + 1], null, null, null, value, key, index + 1, matches);
+                }
                 else if (value.Key != null && value.Key.Length >= key.Length)
+                {
                     matches.Add(value);
+                }
             }
 
             if ((c == '\0' || cmp > 0) && high != null)
+            {
                 StartingWith(high.SplitChar, high.LowChild, high.EqChild, high.HighChild, high.Value, key, index, matches);
+            }
         }
 
         /// <summary>Gets the value associated with the specified key.</summary>
@@ -451,15 +526,24 @@ namespace HexaEngine.Core.Collections
             value = default;
 #pragma warning restore CS8601 // Possible null reference assignment.
             if (key == null)
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
 
             if (!TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? entry))
+            {
                 return false;
+            }
 
             if (entry == null)
+            {
                 return false;
+            }
             else
+            {
                 value = entry.Value.Value;
+            }
+
             return true;
         }
 
@@ -471,7 +555,10 @@ namespace HexaEngine.Core.Collections
         protected virtual TstDictionaryEntry<T>? Find(string key)
         {
             if (TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? result))
+            {
                 return result;
+            }
+
             return null;
         }
 
@@ -483,10 +570,15 @@ namespace HexaEngine.Core.Collections
         protected virtual bool TryGetNode(string key, Stack<TstDictionaryEntry<T>>? stack, out TstDictionaryEntry<T>? entry)
         {
             if (key == null)
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
+
             var n = key.Length;
             if (n == 0)
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
 
             var p = _root;
             var index = 0;
@@ -494,7 +586,9 @@ namespace HexaEngine.Core.Collections
             while (index < n && p != null)
             {
                 if (stack != null)
+                {
                     stack.Push(p);
+                }
 
                 cmp = _compare(key[index], p.SplitChar);
                 if (cmp < 0)
@@ -627,19 +721,32 @@ namespace HexaEngine.Core.Collections
         void ICollection.CopyTo(Array array, int arrayIndex)
         {
             if (array == null)
+            {
                 throw new ArgumentNullException("array");
+            }
+
             if (arrayIndex < 0)
+            {
                 throw new ArgumentOutOfRangeException("index is negative");
+            }
+
             if (array.Rank > 1)
+            {
                 throw new ArgumentException("array is multi-dimensional");
+            }
+
             if (arrayIndex >= array.Length)
+            {
                 throw new ArgumentException("index >= array.Length");
+            }
 
             var i = arrayIndex;
             foreach (var de in this)
             {
                 if (i > array.Length)
+                {
                     throw new ArgumentException("The number of elements in the source ICollection is greater than the available space from index to the end of the destination array.");
+                }
 
                 array.SetValue(de, i++);
             }
@@ -658,19 +765,33 @@ namespace HexaEngine.Core.Collections
         void ICollection<KeyValuePair<string, T>>.CopyTo(KeyValuePair<string, T>[] array, int arrayIndex)
         {
             if (array == null)
+            {
                 throw new ArgumentNullException("array");
+            }
+
             if (arrayIndex < 0)
+            {
                 throw new ArgumentOutOfRangeException("index is negative");
+            }
+
             if (array.Rank > 1)
+            {
                 throw new ArgumentException("array is multi-dimensional");
+            }
+
             if (arrayIndex >= array.Length)
+            {
                 throw new ArgumentException("index >= array.Length");
+            }
 
             var i = arrayIndex;
             foreach (var de in this)
             {
                 if (i > array.Length)
+                {
                     throw new ArgumentException("The number of elements in the source ICollection is greater than the available space from index to the end of the destination array.");
+                }
+
                 array[i++] = de;
             }
         }
@@ -723,7 +844,10 @@ namespace HexaEngine.Core.Collections
                 {
                     ThrowIfChanged();
                     if (_currentNode == null)
+                    {
                         throw new InvalidOperationException();
+                    }
+
                     return _currentNode.Value;
                 }
             }
@@ -760,23 +884,37 @@ namespace HexaEngine.Core.Collections
                 }
                 // we are at the end node, finished
                 else if (_currentNode == null)
+                {
                     throw new InvalidOperationException("out of range");
+                }
 
                 if (_stack.Count == 0)
+                {
                     _currentNode = null;
+                }
 
                 while (_stack.Count > 0)
                 {
                     _currentNode = _stack.Pop();
                     if (_currentNode.HighChild != null)
+                    {
                         _stack.Push(_currentNode.HighChild);
+                    }
+
                     if (_currentNode.EqChild != null)
+                    {
                         _stack.Push(_currentNode.EqChild);
+                    }
+
                     if (_currentNode.LowChild != null)
+                    {
                         _stack.Push(_currentNode.LowChild);
+                    }
 
                     if (_currentNode.IsKey)
+                    {
                         break;
+                    }
                 }
 
                 return _currentNode != null;
@@ -785,7 +923,9 @@ namespace HexaEngine.Core.Collections
             internal void ThrowIfChanged()
             {
                 if (_version != _dictionary?._version)
+                {
                     throw new InvalidOperationException("Collection changed");
+                }
             }
 
             public void Dispose()
@@ -903,9 +1043,13 @@ namespace HexaEngine.Core.Collections
             public override string ToString()
             {
                 if (IsKey)
+                {
                     return string.Format("{0} {1}", SplitChar, _value.Key);
+                }
                 else
+                {
                     return string.Format("{0}", SplitChar);
+                }
             }
         }
     }

@@ -12,7 +12,10 @@
         public override void DrawContent(IGraphicsContext context)
         {
             Scene? scene = SceneManager.Current;
-            if (scene == null) return;
+            if (scene == null)
+            {
+                return;
+            }
 
             var vars = scene.Variables;
 
@@ -23,7 +26,9 @@
             if (ImGui.SmallButton("add"))
             {
                 if (!vars.ContainsKey(_newKeyName))
+                {
                     vars.Add(_newKeyName, string.Empty);
+                }
             }
 
             if (ImGui.BeginListBox("Variables"))

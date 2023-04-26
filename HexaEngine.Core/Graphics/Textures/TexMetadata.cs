@@ -18,17 +18,23 @@
         public int ComputeIndex(int mip, int item, int slice)
         {
             if (mip >= MipLevels)
+            {
                 return -1;
+            }
 
             switch (Dimension)
             {
                 case TexDimension.Texture1D:
                 case TexDimension.Texture2D:
                     if (slice > 0)
+                    {
                         return -1;
+                    }
 
                     if (item >= ArraySize)
+                    {
                         return -1;
+                    }
 
                     return item * MipLevels + mip;
 
@@ -47,11 +53,15 @@
                         {
                             index += d;
                             if (d > 1)
+                            {
                                 d >>= 1;
+                            }
                         }
 
                         if (slice >= d)
+                        {
                             return -1;
+                        }
 
                         index += slice;
 

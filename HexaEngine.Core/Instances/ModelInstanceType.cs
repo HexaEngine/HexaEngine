@@ -200,12 +200,35 @@
 
         public unsafe bool BeginDraw(IGraphicsContext context)
         {
-            if (Mesh.Value == null) return false;
-            if (Mesh.Value.VB == null) return false;
-            if (Mesh.Value.IB == null) return false;
-            if (Material == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-            if (!Material.Bind(context)) return false;
+            if (Mesh.Value == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return false;
+            }
+
+            if (Material == null)
+            {
+                return false;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return false;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return false;
+            }
 
             idBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
@@ -219,12 +242,35 @@
 
         public bool BeginDrawForward(IGraphicsContext context)
         {
-            if (Mesh.Value == null) return false;
-            if (Mesh.Value.VB == null) return false;
-            if (Mesh.Value.IB == null) return false;
-            if (Material == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-            if (!Material.Bind(context)) return false;
+            if (Mesh.Value == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return false;
+            }
+
+            if (Material == null)
+            {
+                return false;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return false;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return false;
+            }
 
             idBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
@@ -239,12 +285,35 @@
 
         public unsafe bool BeginDrawNoOcculusion(IGraphicsContext context)
         {
-            if (Mesh.Value == null) return false;
-            if (Mesh.Value.VB == null) return false;
-            if (Mesh.Value.IB == null) return false;
-            if (Material == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-            if (!Material.Bind(context)) return false;
+            if (Mesh.Value == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return false;
+            }
+
+            if (Material == null)
+            {
+                return false;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return false;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return false;
+            }
 
             frustumInstanceBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
@@ -258,12 +327,35 @@
 
         public unsafe bool BeginDrawNoCulling(IGraphicsContext context)
         {
-            if (Mesh.Value == null) return false;
-            if (Mesh.Value.VB == null) return false;
-            if (Mesh.Value.IB == null) return false;
-            if (Material == null) return false;
-            if (semaphore.CurrentCount == 0) return false;
-            if (!Material.Bind(context)) return false;
+            if (Mesh.Value == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return false;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return false;
+            }
+
+            if (Material == null)
+            {
+                return false;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return false;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return false;
+            }
 
             noCullInstanceBuffer.Update(context);
             noCullInstanceOffsets.Update(context);
@@ -278,12 +370,35 @@
 
         public void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            if (Mesh.Value == null) return;
-            if (Mesh.Value.VB == null) return;
-            if (Mesh.Value.IB == null) return;
-            if (Material == null) return;
-            if (semaphore.CurrentCount == 0) return;
-            if (!Material.Bind(context)) return;
+            if (Mesh.Value == null)
+            {
+                return;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return;
+            }
+
+            if (Material == null)
+            {
+                return;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return;
+            }
 
             frustumInstanceBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
@@ -296,12 +411,35 @@
 
         public unsafe void DrawDepth(IGraphicsContext context, IBuffer camera)
         {
-            if (Mesh.Value == null) return;
-            if (Mesh.Value.VB == null) return;
-            if (Mesh.Value.IB == null) return;
-            if (Material == null) return;
-            if (semaphore.CurrentCount == 0) return;
-            if (!Material.Bind(context)) return;
+            if (Mesh.Value == null)
+            {
+                return;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return;
+            }
+
+            if (Material == null)
+            {
+                return;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return;
+            }
 
             idBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
@@ -314,12 +452,35 @@
 
         public unsafe void Draw(IGraphicsContext context, IBuffer camera)
         {
-            if (Mesh.Value == null) return;
-            if (Mesh.Value.VB == null) return;
-            if (Mesh.Value.IB == null) return;
-            if (Material == null) return;
-            if (semaphore.CurrentCount == 0) return;
-            if (!Material.Bind(context)) return;
+            if (Mesh.Value == null)
+            {
+                return;
+            }
+
+            if (Mesh.Value.VB == null)
+            {
+                return;
+            }
+
+            if (Mesh.Value.IB == null)
+            {
+                return;
+            }
+
+            if (Material == null)
+            {
+                return;
+            }
+
+            if (semaphore.CurrentCount == 0)
+            {
+                return;
+            }
+
+            if (!Material.Bind(context))
+            {
+                return;
+            }
 
             idBuffer.Update(context);
             context.SetVertexBuffer(0, Mesh.Value.VB, Mesh.Value.Stride);
@@ -333,13 +494,23 @@
         public void DrawNoOcclusion(IGraphicsContext context)
         {
             if (BeginDrawNoOcculusion(context))
+            {
                 context.DrawIndexedInstanced((uint)IndexCount, (uint)Visible, 0, 0, 0);
+            }
         }
 
         public bool Equals(IInstanceType? other)
         {
-            if (other == null) return false;
-            if (other is not ModelInstanceType type) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (other is not ModelInstanceType type)
+            {
+                return false;
+            }
+
             return type.Mesh.Name == Mesh.Name && type.Material.Name == Material.Name;
         }
 

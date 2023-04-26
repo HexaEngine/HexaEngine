@@ -68,7 +68,9 @@
         protected override void DrawContent()
         {
             if (compute)
+            {
                 ImGui.BeginDisabled(true);
+            }
 
             if (ImGui.SliderFloat("Roughness", ref roughness, 0, 1))
             {
@@ -160,7 +162,9 @@
                 {
                     ImGui.Image(pfSRV.Views[i].NativePointer, new(128, 128));
                     if (i != 5)
+                    {
                         ImGui.SameLine();
+                    }
                 }
             }
 

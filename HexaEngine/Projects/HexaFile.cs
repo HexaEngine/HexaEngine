@@ -22,9 +22,14 @@
         public override T? FindRoot<T>() where T : class
         {
             if (this is T t)
+            {
                 return t;
+            }
             else if (Parent is not null)
+            {
                 return Parent?.FindRoot<T>();
+            }
+
             return null;
         }
 
@@ -47,7 +52,11 @@
 
         public override void Rename(string newName)
         {
-            if (Parent is null) return;
+            if (Parent is null)
+            {
+                return;
+            }
+
             string oldPath = GetAbsolutePath();
             string newPath = Parent.GetAbsolutePath(newName);
             File.Move(oldPath, newPath);

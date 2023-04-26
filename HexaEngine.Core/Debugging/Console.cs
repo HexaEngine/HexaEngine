@@ -77,7 +77,10 @@
             public override void Write(string? message)
             {
                 if (message == null)
+                {
                     return;
+                }
+
                 if (messages.Count > 0)
                 {
                     if (messages[^1].Message.EndsWith(Environment.NewLine))
@@ -93,13 +96,18 @@
                     }
                 }
                 else
+                {
                     messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
+                }
             }
 
             public override void WriteLine(string? message)
             {
                 if (message == null)
+                {
                     return;
+                }
+
                 messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
                 m_ScrollToBottom = true;
             }
@@ -135,7 +143,11 @@
 
         public static void Log(LogSeverity type, string msg)
         {
-            if (Redirect) Debug.WriteLine(msg);
+            if (Redirect)
+            {
+                Debug.WriteLine(msg);
+            }
+
             messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
@@ -146,7 +158,11 @@
 
         public static void Log(Exception? e)
         {
-            if (Redirect) Debug.WriteLine(e);
+            if (Redirect)
+            {
+                Debug.WriteLine(e);
+            }
+
             messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e?.ToString() ?? string.Empty, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
@@ -169,7 +185,11 @@
         public static async Task LogAsync(LogSeverity type, string msg)
         {
             await semaphore.WaitAsync();
-            if (Redirect) Debug.WriteLine(msg);
+            if (Redirect)
+            {
+                Debug.WriteLine(msg);
+            }
+
             messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
@@ -181,14 +201,27 @@
 
         public static void Log(string msg)
         {
-            if (Redirect) Debug.WriteLine(msg);
+            if (Redirect)
+            {
+                Debug.WriteLine(msg);
+            }
+
             LogSeverity type = LogSeverity.Log;
             if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
                 type = LogSeverity.Error;
+            }
+
             if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
                 type = LogSeverity.Warning;
+            }
+
             if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
                 type = LogSeverity.Warning;
+            }
+
             messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
@@ -199,7 +232,10 @@
 
         public static void WriteLine(string msg)
         {
-            if (Redirect) Debug.WriteLine(msg);
+            if (Redirect)
+            {
+                Debug.WriteLine(msg);
+            }
 
             messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
@@ -211,7 +247,10 @@
 
         public static void WriteLine(object msg)
         {
-            if (Redirect) Debug.WriteLine(msg);
+            if (Redirect)
+            {
+                Debug.WriteLine(msg);
+            }
 
             messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
@@ -223,15 +262,28 @@
 
         public static async Task LogAsync(string msg)
         {
-            if (Redirect) Debug.WriteLine(msg);
+            if (Redirect)
+            {
+                Debug.WriteLine(msg);
+            }
+
             await semaphore.WaitAsync();
             LogSeverity type = LogSeverity.Log;
             if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
                 type = LogSeverity.Error;
+            }
+
             if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
                 type = LogSeverity.Warning;
+            }
+
             if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
                 type = LogSeverity.Warning;
+            }
+
             messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
@@ -311,16 +363,23 @@
 
                     // Exit if word is filtered.
                     if (m_TextFilter.Length != 0 && !item.Message.Contains(m_TextFilter))
+                    {
                         continue;
+                    }
 
                     if (m_TimeStamps)
+                    {
                         ImGui.PushTextWrapPos(ImGui.GetColumnWidth() - timestamp_width);
+                    }
 
                     // Spacing between commands.
                     if (item.Severity == LogSeverity.Command)
                     {
                         // Wrap before timestamps start.
-                        if (count++ != 0) ImGui.Dummy(new(-1, ImGui.GetFontSize()));                            // No space for the first command.
+                        if (count++ != 0)
+                        {
+                            ImGui.Dummy(new(-1, ImGui.GetFontSize()));                            // No space for the first command.
+                        }
                     }
 
                     // Items.
@@ -353,11 +412,16 @@
 
                 // Stop wrapping since we are done displaying console items.
                 if (!m_TimeStamps)
+                {
                     ImGui.PopTextWrapPos();
+                }
 
                 // Auto-scroll logs.
                 if (m_ScrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || m_AutoScroll))
+                {
                     ImGui.SetScrollHereY(1.0f);
+                }
+
                 m_ScrollToBottom = false;
 
                 // Loop through command string vector.
@@ -415,7 +479,9 @@
             // Auto-focus on window apparition
             ImGui.SetItemDefaultFocus();
             if (reclaimFocus)
+            {
                 ImGui.SetKeyboardFocusHere(-1); // Focus on command line after clearing.
+            }
         }
 
         private static void HelpMaker(string desc)
@@ -460,7 +526,9 @@
 
                     // Reset to default settings
                     if (ImGui.Button("Reset settings", new(ImGui.GetColumnWidth(), 0)))
+                    {
                         ImGui.OpenPopup("Reset Settings?");
+                    }
 
                     // Confirmation
                     if (ImGui.BeginPopupModal("Reset Settings?", ref m_resetModal, ImGuiWindowFlags.AlwaysAutoResize))
@@ -518,7 +586,9 @@
         {
             // Exit if no buffer.
             if (data->BufTextLen == 0 && data->EventFlag != ImGuiInputTextFlags.CallbackHistory)
+            {
                 return 0;
+            }
 
             // Get input string and console.
             string input_str = Encoding.UTF8.GetString(data->Buf, data->BufTextLen);
@@ -547,7 +617,9 @@
                             {
                                 Log(LogSeverity.Command, "Suggestions: ");
                                 foreach (var suggestion in m_CmdSuggestions)
+                                {
                                     Log(LogSeverity.Log, suggestion);
+                                }
 
                                 m_CmdSuggestions.Clear();
                             }
@@ -593,11 +665,17 @@
                         // Traverse history.
                         if (data->EventKey == ImGuiKey.UpArrow)
                         {
-                            if (m_HistoryIndex > 0) --m_HistoryIndex;
+                            if (m_HistoryIndex > 0)
+                            {
+                                --m_HistoryIndex;
+                            }
                         }
                         else
                         {
-                            if (m_HistoryIndex < history.Count) ++m_HistoryIndex;
+                            if (m_HistoryIndex < history.Count)
+                            {
+                                ++m_HistoryIndex;
+                            }
                         }
 
                         // Get history.

@@ -50,8 +50,16 @@
 
         public void Update(Scene scene, float deltaTime)
         {
-            if (!playing) return;
-            if (currentAnimation == null) return;
+            if (!playing)
+            {
+                return;
+            }
+
+            if (currentAnimation == null)
+            {
+                return;
+            }
+
             currentTime += deltaTime * (float)currentAnimation.TicksPerSecond;
             for (int i = 0; i < currentAnimation.NodeChannels.Count; i++)
             {

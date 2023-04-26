@@ -30,7 +30,11 @@
             get => projectionType;
             set
             {
-                if (value == projectionType) return;
+                if (value == projectionType)
+                {
+                    return;
+                }
+
                 projectionType = value;
                 dirty = true;
             }
@@ -41,7 +45,11 @@
             get => width;
             set
             {
-                if (value == width) return;
+                if (value == width)
+                {
+                    return;
+                }
+
                 width = value;
                 dirty = true;
             }
@@ -52,7 +60,11 @@
             get => height;
             set
             {
-                if (value == height) return;
+                if (value == height)
+                {
+                    return;
+                }
+
                 height = value;
                 dirty = true;
             }
@@ -65,9 +77,17 @@
             get => fov;
             set
             {
-                if (value == fov) return;
+                if (value == fov)
+                {
+                    return;
+                }
+
                 fov = value;
-                if (projectionType == ProjectionType.Othro) return;
+                if (projectionType == ProjectionType.Othro)
+                {
+                    return;
+                }
+
                 dirty = true;
             }
         }
@@ -77,7 +97,11 @@
             get => near;
             set
             {
-                if (value == near) return;
+                if (value == near)
+                {
+                    return;
+                }
+
                 near = value;
                 dirty = true;
             }
@@ -88,7 +112,11 @@
             get => far;
             set
             {
-                if (value == far) return;
+                if (value == far)
+                {
+                    return;
+                }
+
                 far = value;
                 dirty = true;
             }
@@ -100,7 +128,11 @@
 
         public override bool Recalculate()
         {
-            if (!dirty) return false;
+            if (!dirty)
+            {
+                return false;
+            }
+
             base.Recalculate();
             aspectRatio = width / height;
             switch (projectionType)

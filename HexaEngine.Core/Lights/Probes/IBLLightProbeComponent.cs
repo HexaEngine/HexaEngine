@@ -21,7 +21,9 @@
             {
                 diffuse = value;
                 if (device != null)
+                {
                     UpdateDiffuseAsync(device);
+                }
             }
         }
 
@@ -33,7 +35,9 @@
             {
                 specular = value;
                 if (device != null)
+                {
                     UpdateSpecularAsync(device);
+                }
             }
         }
 

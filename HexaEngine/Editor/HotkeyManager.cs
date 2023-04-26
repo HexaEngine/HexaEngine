@@ -17,7 +17,10 @@
         {
             config = Config.Global.GetOrCreateKey("Hotkeys");
             if (File.Exists(Filename))
+            {
                 JsonConvert.DeserializeObject(File.ReadAllText(Filename));
+            }
+
             Keyboard.KeyDown += KeyboardPressed;
             Keyboard.KeyUp += KeyboardReleased;
         }
@@ -41,7 +44,9 @@
                 for (int i = 0; i < hotkeys.Count; i++)
                 {
                     if (hotkeys[i].Name == name)
+                    {
                         return i;
+                    }
                 }
             }
 
@@ -56,7 +61,9 @@
                 {
                     var hotkey = hotkeys[i];
                     if (hotkey.Name == name)
+                    {
                         return hotkey;
+                    }
                 }
             }
 
@@ -121,7 +128,9 @@
             {
                 var index = IndexOf(name);
                 if (index == -1)
+                {
                     return;
+                }
 
                 hotkeys.RemoveAt(index);
             }

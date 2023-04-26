@@ -34,7 +34,9 @@
             {
                 var tex = Textures[i];
                 if (tex.Type == type && !string.IsNullOrWhiteSpace(tex.File))
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -45,7 +47,9 @@
             {
                 var prop = Properties[i];
                 if (prop.Type == type)
+                {
                     return prop;
+                }
             }
             return default;
         }
@@ -71,7 +75,9 @@
             {
                 var tex = Textures[i];
                 if (tex.Type == type)
+                {
                     return tex;
+                }
             }
             return default;
         }

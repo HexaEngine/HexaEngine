@@ -23,7 +23,10 @@
             lock (this)
             {
                 if (base.ContainsKey(key))
+                {
                     return false;
+                }
+
                 base.Add(key, value);
                 return true;
             }

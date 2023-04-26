@@ -97,7 +97,10 @@ namespace HexaEngine.Core.Physics
         {
             this.simulation = simulation;
             if (pool == null)
+            {
                 pool = simulation.BufferPool;
+            }
+
             simulation.Timestepper.BeforeCollisionDetection += SetFreshnessForCurrentActivityStatus;
             listenerIndices = new CollidableProperty<int>(simulation, pool);
             pendingWorkerAdds = new QuickList<PendingWorkerAdd>[threadDispatcher == null ? 1 : threadDispatcher.ThreadCount];
@@ -112,9 +115,14 @@ namespace HexaEngine.Core.Physics
         {
             Debug.Assert(!IsListener(collidable), "Should only try to register listeners that weren't previously registered");
             if (collidable.Mobility == CollidableMobility.Static)
+            {
                 staticListenerFlags.Add(collidable.RawHandleValue, pool);
+            }
             else
+            {
                 bodyListenerFlags.Add(collidable.RawHandleValue, pool);
+            }
+
             if (listenerCount > listeners.Length)
             {
                 Array.Resize(ref listeners, listeners.Length * 2);
@@ -164,7 +172,10 @@ namespace HexaEngine.Core.Physics
             --listenerCount;
             ref var removedSlot = ref listeners[index];
             if (removedSlot.PreviousCollisions.Span.Allocated)
+            {
                 removedSlot.PreviousCollisions.Dispose(pool);
+            }
+
             ref var lastSlot = ref listeners[listenerCount];
             if (index < listenerCount)
             {
@@ -307,7 +318,9 @@ namespace HexaEngine.Core.Physics
                                 listener.Handler.OnContactAdded(source, pair, ref manifold, offset, normal, depth, featureId, contactIndex, workerIndex);
                             }
                             if (manifold.GetDepth(ref manifold, contactIndex) >= 0)
+                            {
                                 isTouching = true;
+                            }
                         }
                         if (previousContactsStillExist != (1 << collision.ContactCount) - 1)
                         {
@@ -352,7 +365,9 @@ namespace HexaEngine.Core.Physics
                         manifold.GetContact(i, out var offset, out var normal, out var depth, out var featureId);
                         listener.Handler.OnContactAdded(source, pair, ref manifold, offset, normal, depth, featureId, i, workerIndex);
                         if (depth >= 0)
+                        {
                             isTouching = true;
+                        }
                     }
                     if (isTouching)
                     {
@@ -424,7 +439,9 @@ namespace HexaEngine.Core.Physics
                                 listener.Handler.OnContactRemoved(listener.Source, pair, ref emptyManifold, Unsafe.Add(ref collision.FeatureId0, previousContactCount), 0);
                             }
                             if (collision.WasTouching)
+                            {
                                 listener.Handler.OnStoppedTouching(listener.Source, pair, ref emptyManifold, 0);
+                            }
                         }
                         listener.Handler.OnPairEnded(collision.Collidable, pair);
                         //This collision was not updated since the last flush despite being active. It should be removed.
@@ -454,7 +471,9 @@ namespace HexaEngine.Core.Physics
                     collisions.AllocateUnsafely() = pendingAdds[j].Collision;
                 }
                 if (pendingAdds.Span.Allocated)
+                {
                     pendingAdds.Dispose(threadDispatcher == null ? pool : threadDispatcher.GetThreadMemoryPool(i));
+                }
                 //We rely on zeroing out the count for lazy initialization.
                 pendingAdds = default;
             }
@@ -463,9 +482,15 @@ namespace HexaEngine.Core.Physics
         public void Dispose()
         {
             if (bodyListenerFlags.Flags.Allocated)
+            {
                 bodyListenerFlags.Dispose(pool);
+            }
+
             if (staticListenerFlags.Flags.Allocated)
+            {
                 staticListenerFlags.Dispose(pool);
+            }
+
             listenerIndices.Dispose();
             simulation.Timestepper.BeforeCollisionDetection -= SetFreshnessForCurrentActivityStatus;
             for (int i = 0; i < pendingWorkerAdds.Length; ++i)

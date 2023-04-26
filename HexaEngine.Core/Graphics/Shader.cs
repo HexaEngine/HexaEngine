@@ -28,7 +28,10 @@
         {
             Shader* result = Alloc<Shader>();
             fixed (byte* ptr = bytes)
+            {
                 result->Bytecode = AllocCopy(ptr, bytes.Length);
+            }
+
             result->Length = (nuint)bytes.Length;
             return result;
         }

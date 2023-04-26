@@ -38,14 +38,18 @@ namespace DiscordRPC.Entities
             if (displayType == TimestampDisplayType.Left)
             {
                 if (timestamp < DateTime.Now)
+                {
                     throw new ArgumentException("Timestamp must be in the future when using TimestampDisplayType.Left.", nameof(timestamp));
+                }
 
                 End = timestamp;
             }
             else if (displayType == TimestampDisplayType.Elapsed)
             {
                 if (timestamp > DateTime.Now)
+                {
                     throw new ArgumentException("Timestamp must be in the past when using TimestampDisplayType.Elapsed.", nameof(timestamp));
+                }
 
                 Start = timestamp;
             }

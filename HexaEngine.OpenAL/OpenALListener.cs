@@ -27,7 +27,10 @@
         {
             gain = value;
             if (!isActive)
+            {
                 return;
+            }
+
             al.SetListenerProperty(ListenerFloat.Gain, value);
         }
 
@@ -38,7 +41,10 @@
             {
                 orientation = value;
                 if (!isActive)
+                {
                     return;
+                }
+
                 unsafe
                 {
                     var valu = value;
@@ -55,7 +61,10 @@
             {
                 position = value;
                 if (!isActive)
+                {
                     return;
+                }
+
                 al.SetListenerProperty(ListenerVector3.Position, new(value.X, value.Y, value.Z));
             }
         }
@@ -67,7 +76,10 @@
             {
                 velocity = value;
                 if (!isActive)
+                {
                     return;
+                }
+
                 al.SetListenerProperty(ListenerVector3.Velocity, value);
             }
         }
@@ -77,7 +89,11 @@
             get => isActive;
             set
             {
-                if (isActive == value) return;
+                if (isActive == value)
+                {
+                    return;
+                }
+
                 if (value)
                 {
                     Active = this;
@@ -95,7 +111,9 @@
             set
             {
                 if (active == value)
+                {
                     return;
+                }
 
                 if (active != null)
                 {
@@ -143,7 +161,10 @@
             if (!disposedValue)
             {
                 if (isActive)
+                {
                     Active = null;
+                }
+
                 masteringVoice.GainChanged -= MasteringVoice_GainChanged;
                 disposedValue = true;
             }

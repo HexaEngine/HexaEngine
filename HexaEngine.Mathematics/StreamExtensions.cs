@@ -50,9 +50,14 @@
             var bytes = count + 4;
             Span<byte> dst = bytes < 2048 ? stackalloc byte[bytes] : new byte[bytes];
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteInt32LittleEndian(dst, count);
+            }
             else
+            {
                 BinaryPrimitives.WriteInt32BigEndian(dst, count);
+            }
+
             encoder.GetBytes(str, dst[4..]);
             stream.Write(dst);
         }
@@ -63,9 +68,13 @@
             stream.Read(buf);
             int len = 0;
             if (endianness == Endianness.LittleEndian)
+            {
                 len = BinaryPrimitives.ReadInt32LittleEndian(buf);
+            }
             else
+            {
                 len = BinaryPrimitives.ReadInt32BigEndian(buf);
+            }
 
             Span<byte> src = len < 2048 ? stackalloc byte[len] : new byte[len];
             stream.Read(src);
@@ -80,9 +89,14 @@
         {
             Span<byte> buf = stackalloc byte[4];
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteInt32LittleEndian(buf, val);
+            }
             else
+            {
                 BinaryPrimitives.WriteInt32BigEndian(buf, val);
+            }
+
             stream.Write(buf);
         }
 
@@ -91,9 +105,13 @@
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
             if (endianness == Endianness.LittleEndian)
+            {
                 return BinaryPrimitives.ReadInt32LittleEndian(buf);
+            }
             else
+            {
                 return BinaryPrimitives.ReadInt32BigEndian(buf);
+            }
         }
 
         public static uint ReadUInt(this Stream stream, Endianness endianness)
@@ -101,18 +119,27 @@
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
             if (endianness == Endianness.LittleEndian)
+            {
                 return BinaryPrimitives.ReadUInt32LittleEndian(buf);
+            }
             else
+            {
                 return BinaryPrimitives.ReadUInt32BigEndian(buf);
+            }
         }
 
         public static void WriteUInt(this Stream stream, uint val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteUInt32LittleEndian(buf, val);
+            }
             else
+            {
                 BinaryPrimitives.WriteUInt32BigEndian(buf, val);
+            }
+
             stream.Write(buf);
         }
 
@@ -120,9 +147,14 @@
         {
             Span<byte> buf = stackalloc byte[8];
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteUInt64LittleEndian(buf, val);
+            }
             else
+            {
                 BinaryPrimitives.WriteUInt64BigEndian(buf, val);
+            }
+
             stream.Write(buf);
         }
 
@@ -130,9 +162,14 @@
         {
             Span<byte> buf = stackalloc byte[8];
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteInt64LittleEndian(buf, val);
+            }
             else
+            {
                 BinaryPrimitives.WriteInt64BigEndian(buf, val);
+            }
+
             stream.Write(buf);
         }
 
@@ -141,9 +178,13 @@
             Span<byte> buf = stackalloc byte[8];
             stream.Read(buf);
             if (endianness == Endianness.LittleEndian)
+            {
                 return BinaryPrimitives.ReadInt64LittleEndian(buf);
+            }
             else
+            {
                 return BinaryPrimitives.ReadInt64BigEndian(buf);
+            }
         }
 
         public static ulong ReadUInt64(this Stream stream, Endianness endianness)
@@ -151,9 +192,13 @@
             Span<byte> buf = stackalloc byte[8];
             stream.Read(buf);
             if (endianness == Endianness.LittleEndian)
+            {
                 return BinaryPrimitives.ReadUInt64LittleEndian(buf);
+            }
             else
+            {
                 return BinaryPrimitives.ReadUInt64BigEndian(buf);
+            }
         }
 
         public static byte[] Read(this Stream stream, long length)
@@ -172,7 +217,10 @@
             stream.Read(buffer);
             var result = buffer.SequenceEqual(compare);
             if (pool)
+            {
                 ArrayPool<byte>.Shared.Return(array);
+            }
+
             return result;
 #nullable enable
         }
@@ -280,9 +328,14 @@
         {
             Span<byte> dst = stackalloc byte[4];
             if (endianness == Endianness.LittleEndian)
+            {
                 BinaryPrimitives.WriteSingleLittleEndian(dst, value);
+            }
             else
+            {
                 BinaryPrimitives.WriteSingleBigEndian(dst, value);
+            }
+
             stream.Write(dst);
         }
 
@@ -291,9 +344,13 @@
             Span<byte> src = stackalloc byte[4];
             stream.Read(src);
             if (endianness == Endianness.LittleEndian)
+            {
                 return BinaryPrimitives.ReadSingleLittleEndian(src);
+            }
             else
+            {
                 return BinaryPrimitives.ReadSingleBigEndian(src);
+            }
         }
     }
 }

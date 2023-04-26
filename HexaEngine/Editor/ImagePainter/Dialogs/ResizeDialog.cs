@@ -30,7 +30,10 @@
         public override void Show()
         {
             if (imagePainter.Source == null)
+            {
                 return;
+            }
+
             width = imagePainter.Source.Metadata.Width;
             height = imagePainter.Source.Metadata.Height;
             base.Show();
@@ -48,7 +51,9 @@
             if (ImGui.Button("Resize"))
             {
                 if (imagePainter.Source == null)
+                {
                     return;
+                }
 
                 var image = imagePainter.Source.ToScratchImage(device);
 

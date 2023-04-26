@@ -39,7 +39,9 @@
                 var isActive = current == mask;
 
                 if (isActive)
+                {
                     ImGui.BeginDisabled();
+                }
 
                 mask.DrawPreview(new(32));
 
@@ -50,7 +52,9 @@
                 }
 
                 if (isActive)
+                {
                     ImGui.EndDisabled();
+                }
 
                 if (i % 4 != 0 || i == 0)
                 {

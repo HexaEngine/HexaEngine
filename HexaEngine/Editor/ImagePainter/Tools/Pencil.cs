@@ -54,7 +54,10 @@
         public override void Draw(Vector2 position, Vector2 ratio, IGraphicsContext context)
         {
             if (position - oldPos == Vector2.Zero)
+            {
                 return;
+            }
+
             var size = brushSize;
             var pos = position * ratio - size / 2f;
 

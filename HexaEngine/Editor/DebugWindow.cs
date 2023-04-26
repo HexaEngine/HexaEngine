@@ -12,7 +12,9 @@
         {
             var scene = SceneManager.Current;
             if (scene == null)
+            {
                 return;
+            }
 
             var lightManager = scene.Lights;
 

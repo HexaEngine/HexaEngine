@@ -28,7 +28,11 @@
 
         protected bool SetAndNotifyWithEqualsTest<T>(ref T field, T value, [CallerMemberName] string name = "") where T : IEquatable<T>
         {
-            if (field.Equals(value)) return false;
+            if (field.Equals(value))
+            {
+                return false;
+            }
+
             PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(name));
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

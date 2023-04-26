@@ -276,13 +276,19 @@
         public ContainmentType Contains(in BoundingBox box)
         {
             if (Max.X < box.Min.X || Min.X > box.Max.X)
+            {
                 return ContainmentType.Disjoint;
+            }
 
             if (Max.Y < box.Min.Y || Min.Y > box.Max.Y)
+            {
                 return ContainmentType.Disjoint;
+            }
 
             if (Max.Z < box.Min.Z || Min.Z > box.Max.Z)
+            {
                 return ContainmentType.Disjoint;
+            }
 
             if (Min.X <= box.Min.X && (box.Max.X <= Max.X &&
                 Min.Y <= box.Min.Y && box.Max.Y <= Max.Y) &&
@@ -300,7 +306,9 @@
             float distance = Vector3.DistanceSquared(sphere.Center, vector);
 
             if (distance > sphere.Radius * sphere.Radius)
+            {
                 return ContainmentType.Disjoint;
+            }
 
             if (((Min.X + sphere.Radius <= sphere.Center.X) && (sphere.Center.X <= Max.X - sphere.Radius) && (Max.X - Min.X > sphere.Radius)) &&
                ((Min.Y + sphere.Radius <= sphere.Center.Y) && (sphere.Center.Y <= Max.Y - sphere.Radius) && (Max.Y - Min.Y > sphere.Radius)) &&
@@ -464,12 +472,16 @@
             float distance = Vector3.Dot(plane.Normal, max);
 
             if (distance + plane.D > 0.0f)
+            {
                 return PlaneIntersectionType.Front;
+            }
 
             distance = Vector3.Dot(plane.Normal, min);
 
             if (distance + plane.D < 0.0f)
+            {
                 return PlaneIntersectionType.Back;
+            }
 
             return PlaneIntersectionType.Intersecting;
         }

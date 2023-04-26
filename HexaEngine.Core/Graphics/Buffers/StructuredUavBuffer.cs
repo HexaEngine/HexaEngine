@@ -170,9 +170,21 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                if (value == 0) return;
-                if (value == capacity) return;
-                if (value < capacity) return;
+                if (value == 0)
+                {
+                    return;
+                }
+
+                if (value == capacity)
+                {
+                    return;
+                }
+
+                if (value < capacity)
+                {
+                    return;
+                }
+
                 var tmp = Alloc<T>((int)value);
                 Zero(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
@@ -289,7 +301,10 @@
         {
             uint newcapacity = count == 0 ? DefaultCapacity : 2 * count;
 
-            if (newcapacity < capacity) newcapacity = capacity;
+            if (newcapacity < capacity)
+            {
+                newcapacity = capacity;
+            }
 
             Capacity = newcapacity;
         }
@@ -337,8 +352,16 @@
 
         public bool Update(IGraphicsContext context)
         {
-            if (copyBuffer == null) throw new InvalidOperationException();
-            if (!canWrite) throw new InvalidOperationException();
+            if (copyBuffer == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!canWrite)
+            {
+                throw new InvalidOperationException();
+            }
+
             if (isDirty)
             {
                 if (canRead)
@@ -360,8 +383,16 @@
 
         public void Read(IGraphicsContext context)
         {
-            if (copyBuffer == null) throw new InvalidOperationException();
-            if (!canRead) throw new InvalidOperationException();
+            if (copyBuffer == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!canRead)
+            {
+                throw new InvalidOperationException();
+            }
+
             context.CopyResource(copyBuffer, buffer);
             context.Read(copyBuffer, items, capacity);
         }

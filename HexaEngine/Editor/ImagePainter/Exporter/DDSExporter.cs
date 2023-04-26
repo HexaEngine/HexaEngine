@@ -16,7 +16,9 @@
             ImGui.Checkbox("GenerateMipMaps", ref generateMipMaps);
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("Enables generation of MipMaps");
+            }
 
             ImGui.EndListBox();
 
@@ -28,7 +30,9 @@
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("Uniform color weighting for BC1-3 compression; by default uses perceptual weighting");
+            }
 
             if (ImGui.CheckboxFlags("DitherA", ref compressFlagsi, (int)TexCompressFlags.DitherA))
             {
@@ -36,7 +40,9 @@
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("Enables dithering alpha for BC1-3 compression");
+            }
 
             if (ImGui.CheckboxFlags("DitherRGB", ref compressFlagsi, (int)TexCompressFlags.DitherRGB))
             {
@@ -44,7 +50,9 @@
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("Enables dithering RGB colors for BC1-3 compression");
+            }
 
             if (ImGui.CheckboxFlags("BC7Use3Sunsets", ref compressFlagsi, (int)TexCompressFlags.BC7Use3Sunsets))
             {
@@ -52,7 +60,9 @@
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("Enables exhaustive search for BC7 compress for mode 0 and 2; by default skips trying these modes");
+            }
 
             if (ImGui.CheckboxFlags("BC7Quick", ref compressFlagsi, (int)TexCompressFlags.BC7Quick))
             {
@@ -60,7 +70,9 @@
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("Minimal modes (usually mode 6) for BC7 compression");
+            }
 
             if (ImGui.CheckboxFlags("SRGB", ref compressFlagsi, (int)TexCompressFlags.SRGB))
             {
@@ -68,7 +80,9 @@
             }
 
             if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
+            {
                 ImGui.SetTooltip("if the input format type is IsSRGB(), then SRGB_IN is on by default\nif the output format type is IsSRGB(), then SRGB_OUT is on by default");
+            }
 
             ImGui.EndListBox();
         }
@@ -76,7 +90,10 @@
         protected override void Export(IGraphicsDevice device)
         {
             if (Image == null || Path == null)
+            {
                 return;
+            }
+
             var baseFormat = Image.Metadata.Format;
             var image = Image;
             bool recreated = false;

@@ -19,10 +19,15 @@
         public void Read(Stream stream)
         {
             if (!stream.Compare(MagicNumber))
+            {
                 throw new InvalidDataException("Magic number mismatch");
+            }
+
             Endianness = (Endianness)stream.ReadByte();
             if (!stream.Compare(Version, Endianness))
+            {
                 throw new InvalidDataException("Version mismatch");
+            }
 
             Encoding = Encoding.GetEncoding(stream.ReadInt(Endianness));
             Compression = (Compression)stream.ReadInt(Endianness);

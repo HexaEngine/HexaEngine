@@ -41,7 +41,9 @@
         public override void Write(string? message)
         {
             if (message == null)
+            {
                 return;
+            }
 #if DEBUG
             stream.Write(Encoding.UTF8.GetBytes(message));
 #endif
@@ -50,7 +52,9 @@
         public override void WriteLine(string? message)
         {
             if (message == null)
+            {
                 return;
+            }
 #if DEBUG
             stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
 #endif

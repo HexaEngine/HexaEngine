@@ -144,7 +144,9 @@
             }
 
             if (even.Value == axes[even.Axis])
+            {
                 return;
+            }
 
             axes[even.Axis] = even.Value;
             axisMotionEventArgs.Axis = even.Axis;

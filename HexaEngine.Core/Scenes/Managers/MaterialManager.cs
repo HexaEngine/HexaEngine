@@ -25,13 +25,18 @@ namespace HexaEngine.Core.Scenes.Managers
         public string GetFreeName(string name)
         {
             if (!Exists(name))
+            {
                 return name;
+            }
+
             int i = 1;
             while (true)
             {
                 string newName = $"{name} {i++}";
                 if (!Exists(newName))
+                {
                     return newName;
+                }
             }
         }
 
@@ -40,7 +45,9 @@ namespace HexaEngine.Core.Scenes.Managers
             for (int i = 0; i < materials.Count; i++)
             {
                 if (materials[i].Name == name)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -82,7 +89,9 @@ namespace HexaEngine.Core.Scenes.Managers
             lock (lockObject)
             {
                 if (!materials.Contains(desc))
+                {
                     return;
+                }
             }
 
             ResourceManager.UpdateMaterial(desc);
@@ -93,7 +102,9 @@ namespace HexaEngine.Core.Scenes.Managers
             lock (lockObject)
             {
                 if (!materials.Contains(desc))
+                {
                     return;
+                }
             }
 
             await ResourceManager.UpdateMaterialAsync(desc);

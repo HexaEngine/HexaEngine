@@ -249,26 +249,42 @@ namespace HexaEngine.Rendering
             {
                 configKey.TryGetOrAddKeyValue("Frustum culling", true.ToString(), DataType.Bool, false, out var val);
                 if (val.GetBool())
+                {
                     CullingManager.CullingFlags |= CullingFlags.Frustum;
+                }
+
                 val.ValueChanged += (ss, ee) =>
                 {
                     if (val.GetBool())
+                    {
                         CullingManager.CullingFlags |= CullingFlags.Frustum;
+                    }
                     else
+                    {
                         CullingManager.CullingFlags &= ~CullingFlags.Frustum;
+                    }
+
                     Config.Global.Save();
                 };
             }
             {
                 configKey.TryGetOrAddKeyValue("Occlusion culling", true.ToString(), DataType.Bool, false, out var val);
                 if (val.GetBool())
+                {
                     CullingManager.CullingFlags |= CullingFlags.Occlusion;
+                }
+
                 val.ValueChanged += (ss, ee) =>
                 {
                     if (val.GetBool())
+                    {
                         CullingManager.CullingFlags |= CullingFlags.Occlusion;
+                    }
                     else
+                    {
                         CullingManager.CullingFlags &= ~CullingFlags.Occlusion;
+                    }
+
                     Config.Global.Save();
                 };
             }
@@ -286,7 +302,11 @@ namespace HexaEngine.Rendering
 
         private void OnRendererResizeBegin()
         {
-            if (!initialized) return;
+            if (!initialized)
+            {
+                return;
+            }
+
             depthStencil.Dispose();
             occlusionStencil.Dispose();
             gbuffer.Dispose();
@@ -294,7 +314,10 @@ namespace HexaEngine.Rendering
 
         private void OnRendererResizeEnd(int width, int height)
         {
-            if (!initialized) return;
+            if (!initialized)
+            {
+                return;
+            }
 
             gbuffer = new TextureArray(device, width, height, 8, Format.R32G32B32A32Float);
             depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
@@ -313,7 +336,10 @@ namespace HexaEngine.Rendering
             postProcessing.EndResize(width, height);
 
             var scene = SceneManager.Current;
-            if (scene == null) return;
+            if (scene == null)
+            {
+                return;
+            }
 
             scene.Lights.BeginResize();
             scene.Lights.EndResize(width, height);
@@ -342,8 +368,15 @@ namespace HexaEngine.Rendering
 
             postProcessing.SetViewport(viewport);
 
-            if (!initialized) return;
-            if (camera == null) return;
+            if (!initialized)
+            {
+                return;
+            }
+
+            if (camera == null)
+            {
+                return;
+            }
 
 #if PROFILE
             profiler.Start(update);
@@ -456,28 +489,43 @@ namespace HexaEngine.Rendering
 
         public void DrawSettings()
         {
-            if (!initialized) return;
+            if (!initialized)
+            {
+                return;
+            }
+
             var size = ImGui.GetWindowContentRegionMax();
             size.Y = size.X / 16 * 9;
             ImGui.DragFloat("Zoom", ref zoom, 0.01f, 0, 1);
             if (ImGui.CollapsingHeader("Color"))
+            {
                 ImGui.Image(gbuffer.SRVs[0].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+            }
 
             if (ImGui.CollapsingHeader("Position"))
+            {
                 ImGui.Image(gbuffer.SRVs[1].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+            }
 
             if (ImGui.CollapsingHeader("Normals"))
+            {
                 ImGui.Image(gbuffer.SRVs[2].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+            }
 
             if (ImGui.CollapsingHeader("SSAO"))
+            {
                 ImGui.Image(ssao.Output.Value.ShaderResourceView.NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                if (!initialized) return;
+                if (!initialized)
+                {
+                    return;
+                }
 
                 dsv.Dispose();
                 depthStencil.Dispose();

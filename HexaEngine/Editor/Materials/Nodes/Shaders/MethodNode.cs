@@ -29,7 +29,9 @@
             if (pin is FloatPin floatPin)
             {
                 if (floatPin.Kind == PinKind.Input)
+                {
                     pins.Add(floatPin);
+                }
             }
             return base.AddPin(pin);
         }
@@ -39,7 +41,9 @@
             if (pin is FloatPin floatPin)
             {
                 if (floatPin.Kind == PinKind.Input)
+                {
                     pins.Remove(floatPin);
+                }
             }
             base.DestroyPin(pin);
         }

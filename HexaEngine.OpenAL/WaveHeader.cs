@@ -59,13 +59,21 @@
         {
             BufferFormat format;
             if (NumChannels == 1 && BitsPerSample == 8)
+            {
                 format = BufferFormat.Mono8;
+            }
             else if (NumChannels == 1 && BitsPerSample == 16)
+            {
                 format = BufferFormat.Mono16;
+            }
             else if (NumChannels == 2 && BitsPerSample == 8)
+            {
                 format = BufferFormat.Stereo8;
+            }
             else if (NumChannels == 2 && BitsPerSample == 16)
+            {
                 format = BufferFormat.Stereo16;
+            }
             else
             {
                 throw new InvalidDataException();

@@ -110,6 +110,7 @@
             }
 
             if (adapter == null)
+            {
                 for (uint adapterIndex = 0;
                     (ResultCode)IDXGIFactory.EnumAdapters1(adapterIndex, &adapter) != ResultCode.DXGI_ERROR_NOT_FOUND;
                     adapterIndex++)
@@ -129,6 +130,7 @@
 
                     return adapter;
                 }
+            }
 
             return adapter;
         }

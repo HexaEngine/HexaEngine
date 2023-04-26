@@ -28,7 +28,11 @@
         /// </summary>
         public static void BeginPauseCleanup()
         {
-            if (suppressCleanup) return;
+            if (suppressCleanup)
+            {
+                return;
+            }
+
             suppressCleanup = true;
         }
 
@@ -37,7 +41,11 @@
         /// </summary>
         public static void EndPauseCleanup()
         {
-            if (!suppressCleanup) return;
+            if (!suppressCleanup)
+            {
+                return;
+            }
+
             suppressCleanup = false;
             foreach (var mesh in meshes.ToArray())
             {
@@ -96,8 +104,16 @@
         public static void UnloadMesh(ResourceInstance<Mesh> mesh)
         {
             mesh.RemoveRef();
-            if (mesh.IsUsed) return;
-            if (suppressCleanup) return;
+            if (mesh.IsUsed)
+            {
+                return;
+            }
+
+            if (suppressCleanup)
+            {
+                return;
+            }
+
             lock (meshes)
             {
                 meshes.Remove(mesh.Name, out _);
@@ -231,8 +247,15 @@
         public static void UnloadMaterial(Material desc)
         {
             desc.RemoveRef();
-            if (desc.IsUsed) return;
-            if (suppressCleanup) return;
+            if (desc.IsUsed)
+            {
+                return;
+            }
+
+            if (suppressCleanup)
+            {
+                return;
+            }
 
             lock (materials)
             {
@@ -250,7 +273,11 @@
         public static ResourceInstance<MaterialTexture>? LoadTexture(IO.Materials.MaterialTexture desc)
         {
             string fullname = Paths.CurrentTexturePath + desc.File;
-            if (string.IsNullOrWhiteSpace(desc.File)) return null;
+            if (string.IsNullOrWhiteSpace(desc.File))
+            {
+                return null;
+            }
+
             ResourceInstance<MaterialTexture>? texture;
             lock (textures)
             {
@@ -281,7 +308,11 @@
 
         public static void UnloadTexture(ResourceInstance<MaterialTexture>? texture)
         {
-            if (texture == null) return;
+            if (texture == null)
+            {
+                return;
+            }
+
             texture.RemoveRef();
             if (!texture.IsUsed)
             {
@@ -296,7 +327,11 @@
         public static void UpdateTexture(ref ResourceInstance<MaterialTexture>? texture, IO.Materials.MaterialTexture desc)
         {
             string fullname = Paths.CurrentTexturePath + desc.File;
-            if (texture?.Name == fullname) return;
+            if (texture?.Name == fullname)
+            {
+                return;
+            }
+
             UnloadTexture(texture);
             texture = LoadTexture(desc);
         }
@@ -304,7 +339,11 @@
         public static async Task<ResourceInstance<MaterialTexture>?> UpdateTextureAsync(ResourceInstance<MaterialTexture>? texture, IO.Materials.MaterialTexture desc)
         {
             string fullname = Paths.CurrentTexturePath + desc.File;
-            if (texture?.Name == fullname) return texture;
+            if (texture?.Name == fullname)
+            {
+                return texture;
+            }
+
             UnloadTexture(texture);
             return await LoadTextureAsync(desc);
         }
@@ -312,7 +351,11 @@
         public static ResourceInstance<IGraphicsPipeline>? LoadPipeline(string name, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros)
         {
             string fullname = Paths.CurrentTexturePath + name;
-            if (string.IsNullOrEmpty(name)) return null;
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
             ResourceInstance<IGraphicsPipeline>? pipeline;
             lock (pipelines)
             {
@@ -340,7 +383,11 @@
 
         public static void UnloadPipeline(ResourceInstance<IGraphicsPipeline>? pipeline)
         {
-            if (pipeline == null) return;
+            if (pipeline == null)
+            {
+                return;
+            }
+
             pipeline.RemoveRef();
             if (!pipeline.IsUsed)
             {
@@ -428,7 +475,11 @@
 
         public static void UnloadMaterialShader(ResourceInstance<MaterialShader>? shader)
         {
-            if (shader == null) return;
+            if (shader == null)
+            {
+                return;
+            }
+
             shader.RemoveRef();
             if (!shader.IsUsed)
             {

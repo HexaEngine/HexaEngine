@@ -24,7 +24,11 @@
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
-            if (ScriptType == null) return;
+            if (ScriptType == null)
+            {
+                return;
+            }
+
             if (!Application.InDesignMode)
             {
                 Type? type = AssemblyManager.GetType(ScriptType);

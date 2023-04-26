@@ -64,18 +64,31 @@
             FileSystem.Refresh();
             files.Clear();
             dirs.Clear();
-            if (CurrentFolder == null) return;
+            if (CurrentFolder == null)
+            {
+                return;
+            }
+
             currentDir = new(CurrentFolder);
             parentDir = currentDir?.Parent;
 
             foreach (var fse in Directory.GetFileSystemEntries(CurrentFolder, string.Empty))
             {
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.System))
+                {
                     continue;
+                }
+
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Hidden))
+                {
                     continue;
+                }
+
                 if (File.GetAttributes(fse).HasFlag(FileAttributes.Device))
+                {
                     continue;
+                }
+
                 if (Directory.Exists(fse))
                 {
                     dirs.Add(new("\xe8b7" + Path.GetFileName(fse), fse));
@@ -90,7 +103,10 @@
         public void SetFolder(string? path)
         {
             if (CurrentFolder != null)
+            {
                 backHistory.Push(CurrentFolder);
+            }
+
             CurrentFolder = path;
             forwardHistory.Clear();
             Refresh();
@@ -107,7 +123,10 @@
             if (backHistory.TryPop(out var historyItem))
             {
                 if (CurrentFolder != null)
+                {
                     forwardHistory.Push(CurrentFolder);
+                }
+
                 CurrentFolder = historyItem;
                 Refresh();
             }
@@ -118,7 +137,10 @@
             if (forwardHistory.TryPop(out var historyItem))
             {
                 if (CurrentFolder != null)
+                {
                     backHistory.Push(CurrentFolder);
+                }
+
                 CurrentFolder = historyItem;
                 Refresh();
             }
@@ -128,7 +150,10 @@
         {
             ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
             if (ImGui.Selectable(dir.Name, false, ImGuiSelectableFlags.DontClosePopups))
+            {
                 SetFolder(dir.Path);
+            }
+
             ImGui.PopStyleColor();
 
             ImGui.PushID(dir.Path);
@@ -189,7 +214,9 @@
         {
             bool isSelected = SelectedFile == file.Path;
             if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.DontClosePopups))
+            {
                 SelectedFile = file.Path;
+            }
 
             ImGui.PushID(file.Path);
             if (ImGui.BeginPopupContextItem(file.Path))
@@ -234,7 +261,11 @@
 
         private void DisplayContextMenu()
         {
-            if (currentDir == null) return;
+            if (currentDir == null)
+            {
+                return;
+            }
+
             if (ImGui.BeginPopupContextWindow("AssetExplorerContextMenu"))
             {
                 if (ImGui.MenuItem("Home"))
@@ -268,7 +299,9 @@
         private static string GetNewFilename(string filename)
         {
             if (!File.Exists(filename))
+            {
                 return filename;
+            }
 
             string result = filename;
 
@@ -288,7 +321,11 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
-            if (currentDir == null) return;
+            if (currentDir == null)
+            {
+                return;
+            }
+
             if (dialog.Draw())
             {
                 Refresh();
@@ -303,7 +340,9 @@
                 {
                     ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.87f, 0.37f, 1.0f));
                     if (ImGui.Selectable("../", false, ImGuiSelectableFlags.DontClosePopups))
+                    {
                         SetFolder(parentDir.FullName);
+                    }
 
                     if (ImGui.BeginDragDropTarget())
                     {

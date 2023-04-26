@@ -32,7 +32,9 @@
             {
                 mode = value;
                 if (initialized)
+                {
                     UpdateMode();
+                }
             }
         }
 

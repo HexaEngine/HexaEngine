@@ -341,7 +341,9 @@
             {
                 var val = Values[i];
                 if (val.Name == key)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -352,7 +354,9 @@
             {
                 var val = values[i];
                 if (val.Name == key)
+                {
                     return val;
+                }
             }
             return null;
         }
@@ -469,7 +473,9 @@
             for (int i = 0; i < keys.Count; i++)
             {
                 if (keys[i].Name == name)
+                {
                     return keys[i];
+                }
             }
             return null;
         }
@@ -811,105 +817,135 @@
                 {
                     val = new(t, property, DataType.String, property.GetValue(t) as string, !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += StringValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(bool))
                 {
                     val = new(t, property, DataType.Bool, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += BoolValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(byte))
                 {
                     val = new(t, property, DataType.UInt8, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += ByteValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(sbyte))
                 {
                     val = new(t, property, DataType.Int8, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += SByteValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(ushort))
                 {
                     val = new(t, property, DataType.UInt16, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += UShortValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(short))
                 {
                     val = new(property.Name, DataType.Int16, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += ShortValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(uint))
                 {
                     val = new(t, property, DataType.UInt32, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += UIntValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(int))
                 {
                     val = new(t, property, DataType.Int32, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += IntValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(ulong))
                 {
                     val = new(t, property, DataType.UInt64, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += ULongValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(long))
                 {
                     val = new(t, property, DataType.Int64, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += LongValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(float))
                 {
                     val = new(t, property, DataType.Float, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += FloatValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(double))
                 {
                     val = new(t, property, DataType.Double, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += DoubleValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(Vector2))
                 {
                     val = new(t, property, DataType.Float2, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += Vector2ValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(Vector3))
                 {
                     val = new(t, property, DataType.Float3, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += Vector3ValueChanged;
+                    }
                 }
 
                 if (property.PropertyType == typeof(Vector4))
                 {
                     val = new(t, property, DataType.Float4, property.GetValue(t)?.ToString(), !property.CanWrite);
                     if (property.CanWrite)
+                    {
                         val.ValueChanged += Vector4ValueChanged;
+                    }
                 }
 
                 if (val == null)

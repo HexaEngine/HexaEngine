@@ -15,11 +15,19 @@
         internal static string? GetDebugName(void* target)
         {
             ID3D12DeviceChild* child = (ID3D12DeviceChild*)target;
-            if (child == null) return null;
+            if (child == null)
+            {
+                return null;
+            }
+
             uint len;
             Guid guid = D3DDebugObjectName;
             child->GetPrivateData(&guid, &len, null);
-            if (len == 0) return string.Empty;
+            if (len == 0)
+            {
+                return string.Empty;
+            }
+
             byte* pName = Alloc<byte>(len);
             child->GetPrivateData(&guid, &len, pName);
             string str = ToStr(pName, len);
@@ -30,7 +38,11 @@
         internal static void SetDebugName(void* target, string name)
         {
             ID3D12DeviceChild* child = (ID3D12DeviceChild*)target;
-            if (child == null) return;
+            if (child == null)
+            {
+                return;
+            }
+
             Guid guid = D3DDebugObjectName;
             if (name != null)
             {
@@ -52,7 +64,11 @@
         [Obsolete]
         public static T2** ToPointerArray<T1, T2>(T1[]? values) where T1 : IDeviceChild where T2 : unmanaged
         {
-            if (values == null) return null;
+            if (values == null)
+            {
+                return null;
+            }
+
             T2*[] ptrs = new T2*[values.Length];
             for (int i = 0; i < values.Length; i++)
             {
@@ -142,7 +158,9 @@
         {
             ResultCode resultCode = (ResultCode)code;
             if (resultCode != ResultCode.S_OK)
+            {
                 throw new D3D12Exception(resultCode);
+            }
         }
 
         internal static string ToStr(byte* name)

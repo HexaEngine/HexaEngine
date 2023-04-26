@@ -57,7 +57,11 @@
 
         public bool Draw()
         {
-            if (!shown) return false;
+            if (!shown)
+            {
+                return false;
+            }
+
             bool result = false;
             if (ImGui.Begin("Rename file", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize))
             {

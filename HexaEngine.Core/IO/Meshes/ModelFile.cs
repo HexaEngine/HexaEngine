@@ -29,9 +29,14 @@
 
             var stream = fs;
             if (Header.Compression == Compression.Deflate)
+            {
                 stream = new DeflateStream(fs, CompressionMode.Decompress, true);
+            }
+
             if (Header.Compression == Compression.LZ4)
+            {
                 stream = LZ4Stream.Decode(fs, 0, true);
+            }
 
             for (ulong i = 0; i < Header.MeshCount; i++)
             {
@@ -66,9 +71,14 @@
 
             var stream = fs;
             if (compression == Compression.Deflate)
+            {
                 stream = new DeflateStream(fs, CompressionLevel.SmallestSize, true);
+            }
+
             if (compression == Compression.LZ4)
+            {
                 stream = LZ4Stream.Encode(fs, LZ4Level.L12_MAX, 0, true);
+            }
 
             for (ulong i = 0; i < Header.MeshCount; i++)
             {

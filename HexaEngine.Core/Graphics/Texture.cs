@@ -41,9 +41,14 @@
             this.resource = resource;
 
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             DepthStencilView = depthStencil;
             overrwittenDSV = true;
@@ -167,9 +172,14 @@
             }
 
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
             Viewport = Description.GetViewport();
@@ -182,9 +192,14 @@
             this.resource = resource;
 
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
         }
 
         public Texture(IResource resource, IShaderResourceView srv, IRenderTargetView rtv)
@@ -194,9 +209,14 @@
             this.resource = resource;
 
             if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = srv;
+            }
+
             if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = rtv;
+            }
         }
 
         public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
@@ -212,9 +232,14 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             Viewport = Description.GetViewport();
             overrwittenDSV = true;
@@ -338,9 +363,14 @@
             }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
             Viewport = Description.GetViewport();
@@ -359,9 +389,14 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             Viewport = Description.GetViewport();
         }
@@ -439,9 +474,14 @@
             }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             Viewport = Description.GetViewport();
         }
@@ -467,9 +507,14 @@
                 };
             }
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             Viewport = Description.GetViewport();
         }
@@ -493,9 +538,14 @@
                 };
             }
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             Viewport = Description.GetViewport();
         }
@@ -523,9 +573,14 @@
                 _ => throw new ArgumentOutOfRangeException(nameof(description)),
             };
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
                 ShaderResourceView = device.CreateShaderResourceView(resource);
+            }
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
                 RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
+            }
 
             Viewport = Description.GetViewport();
         }
@@ -589,7 +644,11 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearAndSetTarget(IGraphicsContext context, Vector4 color, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
-            if (RenderTargetView == null) return;
+            if (RenderTargetView == null)
+            {
+                return;
+            }
+
             context.ClearRenderTargetView(RenderTargetView, color);
             ClearDepthStencil(context, flags, depth, stencil);
             context.SetRenderTarget(RenderTargetView, DepthStencilView);
@@ -604,7 +663,9 @@
         public void ClearDepthStencil(IGraphicsContext context, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
         {
             if (DepthStencilView != null && flags != DepthStencilClearFlags.None)
+            {
                 context.ClearDepthStencilView(DepthStencilView, flags, depth, stencil);
+            }
         }
 
         #endregion IDepthStencil
@@ -620,7 +681,10 @@
                 RenderTargetView?.Dispose();
                 depthStencil?.Dispose();
                 if (!overrwittenDSV)
+                {
                     DepthStencilView?.Dispose();
+                }
+
                 disposedValue = true;
             }
         }

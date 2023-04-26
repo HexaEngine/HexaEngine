@@ -104,7 +104,10 @@
         internal static void OnMotion(MouseMotionEvent mouseButtonEvent)
         {
             if (mouseButtonEvent.Xrel == 0 && mouseButtonEvent.Yrel == 0)
+            {
                 return;
+            }
+
             delta += new Vector2(mouseButtonEvent.Xrel, mouseButtonEvent.Yrel);
             motionEventArgs.RelX = delta.X;
             motionEventArgs.RelY = delta.Y;

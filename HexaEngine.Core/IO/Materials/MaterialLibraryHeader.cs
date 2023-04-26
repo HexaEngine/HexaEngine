@@ -15,10 +15,16 @@
         public void Read(Stream stream)
         {
             if (!stream.Compare(MagicNumber))
+            {
                 throw new InvalidDataException();
+            }
+
             Endianness = (Endianness)stream.ReadByte();
             if (!stream.Compare(Version, Endianness))
+            {
                 throw new InvalidDataException();
+            }
+
             Encoding = Encoding.GetEncoding(stream.ReadInt(Endianness));
             Compression = (Compression)stream.ReadInt(Endianness);
             MaterialCount = stream.ReadUInt(Endianness);
