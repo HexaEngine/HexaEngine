@@ -1,32 +1,56 @@
-﻿using HexaEngine.Core.Lights.Types;
-
-namespace HexaEngine.Core.Lights.Structs
+﻿namespace HexaEngine.Core.Lights.Structs
 {
-    using System.Numerics;
+    using HexaEngine.Core.Lights.Types;
+    using System;
 
-    public struct ShadowPointLightData
+    public struct ShadowPointLightData : IEquatable<ShadowPointLightData>
     {
-        public Vector4 Color;
-        public Vector3 Position;
+        public PointLightData Data;
         public float Far;
 
         public ShadowPointLightData(PointLight point) : this()
         {
-            Color = point.Color * point.Strength;
-            Position = point.Transform.GlobalPosition;
+            Data.Color = point.Color * point.Strength;
+            Data.Position = point.Transform.GlobalPosition;
             Far = point.ShadowRange;
         }
 
         public void Update(PointLight point)
         {
-            Color = point.Color * point.Strength;
-            Position = point.Transform.GlobalPosition;
+            Data.Color = point.Color * point.Strength;
+            Data.Position = point.Transform.GlobalPosition;
             Far = point.ShadowRange;
         }
 
         public override string ToString()
         {
-            return Color.ToString();
+            return Data.Color.ToString();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ShadowPointLightData data && Equals(data);
+        }
+
+        public bool Equals(ShadowPointLightData other)
+        {
+            return Data.Equals(other.Data) &&
+                   Far == other.Far;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Data, Far);
+        }
+
+        public static bool operator ==(ShadowPointLightData left, ShadowPointLightData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(ShadowPointLightData left, ShadowPointLightData right)
+        {
+            return !(left == right);
         }
     }
 }

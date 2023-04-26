@@ -1,9 +1,10 @@
 ﻿namespace HexaEngine.Core.Lights.Structs
 {
     using HexaEngine.Core.Lights.Types;
+    using System;
     using System.Numerics;
 
-    public struct DirectionalLightData
+    public struct DirectionalLightData : IEquatable<DirectionalLightData>
     {
         public Vector4 Color;
         public Vector3 Direction;
@@ -23,6 +24,32 @@
         public override string ToString()
         {
             return Color.ToString();
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is DirectionalLightData data && Equals(data);
+        }
+
+        public bool Equals(DirectionalLightData other)
+        {
+            return Color.Equals(other.Color) &&
+                   Direction.Equals(other.Direction);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Color, Direction);
+        }
+
+        public static bool operator ==(DirectionalLightData left, DirectionalLightData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(DirectionalLightData left, DirectionalLightData right)
+        {
+            return !(left == right);
         }
     }
 }

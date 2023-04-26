@@ -2,14 +2,14 @@
 {
     public enum RenderTargetViewDimension : int
     {
-        Unknown = unchecked(0),
-        Buffer = unchecked(1),
-        Texture1D = unchecked(2),
-        Texture1DArray = unchecked(3),
-        Texture2D = unchecked(4),
-        Texture2DArray = unchecked(5),
-        Texture2DMultisampled = unchecked(6),
-        Texture2DMultisampledArray = unchecked(7),
-        Texture3D = unchecked(8)
+        Unknown = 0,
+        Buffer = 1,
+        Texture1D = 2,
+        Texture1DArray = 3,
+        Texture2D = 4,
+        Texture2DArray = 5,
+        Texture2DMultisampled = 6,
+        Texture2DMultisampledArray = 7,
+        Texture3D = 8
     }
 }
