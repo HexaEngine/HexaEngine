@@ -13,36 +13,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Remove="Format.cs" />
-		<Compile Remove="FormatSilk.cs" />
-		<Compile Remove="SPIRV.Commands.cs" />
-		<Compile Remove="SPIRV.Enumerations.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="FormatSilk.cs">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Include="Format.cs">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Include="SPIRV.Commands.cs">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Update="env_o.dds">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-	</ItemGroup>
-
-
-
-	<ItemGroup>
-	  <None Include="SPIRV.Enumerations.cs">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 
