@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using BepuUtilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Renderers;
@@ -50,6 +49,8 @@
         private readonly InstanceManager instanceManager;
 
         public string Name => "Renderers";
+
+        public SystemFlags Flags => SystemFlags.Update | SystemFlags.Destory;
 
         public RenderManager(IGraphicsDevice device, InstanceManager instanceManager)
         {
@@ -107,11 +108,11 @@
             components.RemoveComponentIfIs(gameObject);
         }
 
-        public void Awake(ThreadDispatcher dispatcher)
+        public void Awake()
         {
         }
 
-        public void Update(ThreadDispatcher dispatcher)
+        public void Update(float dt)
         {
             Parallel.ForEach(components, c =>
             {
@@ -119,11 +120,11 @@
             });
         }
 
-        public void FixedUpdate(ThreadDispatcher dispatcher)
+        public void FixedUpdate()
         {
         }
 
-        public void Destroy(ThreadDispatcher dispatcher)
+        public void Destroy()
         {
             for (int i = 0; i < renderers.Count; i++)
             {

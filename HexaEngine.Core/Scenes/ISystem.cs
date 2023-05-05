@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
-    using BepuUtilities;
+    using HexaEngine.Core.Collections;
 
-    public interface ISystem
+    public interface ISystem : IHasFlags<SystemFlags>
     {
         public string Name { get; }
 
@@ -10,12 +10,12 @@
 
         public void Unregister(GameObject gameObject);
 
-        public void Awake(ThreadDispatcher dispatcher);
+        public void Awake();
 
-        public void Update(ThreadDispatcher dispatcher);
+        public void Update(float delta);
 
-        public void FixedUpdate(ThreadDispatcher dispatcher);
+        public void FixedUpdate();
 
-        public void Destroy(ThreadDispatcher dispatcher);
+        public void Destroy();
     }
 }

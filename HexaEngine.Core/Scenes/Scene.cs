@@ -4,6 +4,9 @@
     using BepuUtilities;
     using BepuUtilities.Memory;
     using HexaEngine.Core;
+    using HexaEngine.Core.Animations;
+    using HexaEngine.Core.Audio;
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
@@ -21,7 +24,7 @@
 
     public class Scene
     {
-        private readonly List<ISystem> systems = new();
+        private readonly FlaggedList<SystemFlags, ISystem> systems = new();
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
         private string[] cameraNames = Array.Empty<string>();
@@ -35,15 +38,6 @@
 
         private readonly SemaphoreSlim semaphore = new(1);
         private string? path;
-
-        [JsonIgnore]
-        public Simulation Simulation;
-
-        [JsonIgnore]
-        public BufferPool BufferPool;
-
-        [JsonIgnore]
-        public ThreadDispatcher ThreadDispatcher;
 
         private readonly GameObject root;
         public int ActiveCamera;
@@ -93,7 +87,7 @@
         public MaterialManager MaterialManager => materialManager;
 
         [JsonIgnore]
-        public List<ISystem> Systems => systems;
+        public FlaggedList<SystemFlags, ISystem> Systems => systems;
 
         [JsonIgnore]
         public ModelManager ModelManager { get => meshManager; set => meshManager = value; }
@@ -103,12 +97,6 @@
 
         [JsonIgnore]
         public SceneProfiler Profiler { get; } = new(10);
-
-        [JsonIgnore]
-        public CharacterControllers CharacterControllers => characterControllers;
-
-        [JsonIgnore]
-        public ContactEvents ContactEvents => contactEvents;
 
         public SceneVariables Variables { get; } = new();
 
@@ -131,15 +119,6 @@
             systems.Add(renderManager = new(device, instanceManager));
 
             semaphore.Wait();
-
-            BufferPool = new BufferPool();
-            var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
-            ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
-
-            characterControllers = new(BufferPool);
-            contactEvents = new(ThreadDispatcher, BufferPool);
-
-            Simulation = Simulation.Create(BufferPool, new NarrowphaseCallbacks(characterControllers, contactEvents), new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
 
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
@@ -164,15 +143,6 @@
             systems.Add(renderManager = new(device, instanceManager));
 
             await semaphore.WaitAsync();
-
-            BufferPool = new BufferPool();
-            var targetThreadCount = Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1);
-            ThreadDispatcher = new ThreadDispatcher(targetThreadCount);
-
-            characterControllers = new(BufferPool);
-            contactEvents = new(ThreadDispatcher, BufferPool);
-
-            Simulation = Simulation.Create(BufferPool, new NarrowphaseCallbacks(characterControllers, contactEvents), new PoseIntegratorCallbacks(new Vector3(0, -9.81f, 0)), new SolveDescription(8, 1));
 
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
@@ -209,21 +179,49 @@
             Profiler.Clear();
             semaphore.Wait();
             CameraManager.Update();
-            Simulate(Time.Delta);
+
             Dispatcher.ExecuteInvokes();
             semaphore.Release();
+
+            var early = systems[SystemFlags.Update];
 
 #if PROFILE
             Profiler.Start(systems);
 #endif
-            for (int i = 0; i < systems.Count; i++)
+            for (int i = 0; i < early.Count; i++)
             {
 #if PROFILE
-                Profiler.Start(systems[i]);
+                Profiler.Start(early[i]);
 #endif
-                systems[i].Update(ThreadDispatcher);
+                early[i].Update(Time.Delta);
 #if PROFILE
-                Profiler.End(systems[i]);
+                Profiler.End(early[i]);
+#endif
+            }
+
+            var physics = systems[SystemFlags.PhysicsUpdate];
+
+            for (int i = 0; i < physics.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(physics[i]);
+#endif
+                physics[i].Update(Time.Delta);
+#if PROFILE
+                Profiler.End(physics[i]);
+#endif
+            }
+
+            var late = systems[SystemFlags.LateUpdate];
+
+            for (int i = 0; i < late.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(late[i]);
+#endif
+                late[i].Update(Time.Delta);
+#if PROFILE
+                Profiler.End(late[i]);
 #endif
             }
 #if PROFILE
@@ -238,45 +236,22 @@
 #if PROFILE
             Profiler.Start(systems);
 #endif
-            for (int i = 0; i < systems.Count; i++)
+            var fixedUpdate = systems[SystemFlags.FixedUpdate];
+
+            for (int i = 0; i < fixedUpdate.Count; i++)
             {
 #if PROFILE
-                Profiler.Start(systems[i]);
+                Profiler.Start(fixedUpdate[i]);
 #endif
-                systems[i].Update(ThreadDispatcher);
+                fixedUpdate[i].Update(Time.Delta);
 #if PROFILE
-                Profiler.End(systems[i]);
+                Profiler.End(fixedUpdate[i]);
 #endif
             }
 #if PROFILE
             Profiler.End(systems);
 #endif
             semaphore.Release();
-        }
-
-        private const float stepsize = 0.016f;
-        private float interpol;
-        private CharacterControllers characterControllers;
-        private ContactEvents contactEvents;
-
-        public void Simulate(float delta)
-        {
-            if (Application.InDesignMode)
-            {
-                return;
-            }
-
-            if (!IsSimulating)
-            {
-                return;
-            }
-
-            interpol += delta;
-            while (interpol > stepsize)
-            {
-                interpol -= stepsize;
-                Simulation.Timestep(stepsize, ThreadDispatcher);
-            }
         }
 
         public GameObject? Find(string? name)
@@ -408,12 +383,10 @@
             semaphore.Wait();
             Time.FixedUpdate -= FixedUpdate;
             root.Uninitialize();
-            Simulation.Dispose();
-            ThreadDispatcher.Dispose();
             lightManager.Dispose();
             for (int i = 0; i < systems.Count; i++)
             {
-                systems[i].Destroy(ThreadDispatcher);
+                systems[i].Destroy();
             }
             systems.Clear();
             semaphore.Release();
@@ -463,6 +436,15 @@
         {
             system = GetSystem<T>();
             return system != null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T GetRequiredSystem<T>() where T : class, ISystem
+        {
+            var sys = GetSystem<T>();
+            if (sys == null)
+                throw new NullReferenceException(nameof(sys));
+            return sys;
         }
     }
 }

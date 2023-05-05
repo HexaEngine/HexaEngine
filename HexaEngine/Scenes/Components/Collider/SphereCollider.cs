@@ -15,7 +15,7 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || hasShape)
+            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
             {
                 return;
             }
@@ -23,7 +23,7 @@
             Sphere sphere = new(radius);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             inertia = sphere.ComputeInertia(Mass);
-            index = scene.Simulation.Shapes.Add(sphere);
+            index = simulation.Shapes.Add(sphere);
             hasShape = true;
         }
     }

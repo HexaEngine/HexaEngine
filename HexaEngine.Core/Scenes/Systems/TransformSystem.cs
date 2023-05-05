@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Scenes.Systems
 {
-    using BepuUtilities;
     using HexaEngine.Mathematics;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -12,15 +11,17 @@
 
         public string Name => "TransformUpdate";
 
-        public void Awake(ThreadDispatcher dispatcher)
+        public SystemFlags Flags => SystemFlags.LateUpdate;
+
+        public void Awake()
         {
         }
 
-        public void Destroy(ThreadDispatcher dispatcher)
+        public void Destroy()
         {
         }
 
-        public void FixedUpdate(ThreadDispatcher dispatcher)
+        public void FixedUpdate()
         {
         }
 
@@ -48,7 +49,7 @@
             gameObject.Transform.Changed -= TransformChanged;
         }
 
-        public void Update(ThreadDispatcher dispatcher)
+        public void Update(float dt)
         {
             if (updateQueue.IsEmpty)
             {
@@ -59,12 +60,6 @@
             {
                 transform.Recalculate();
             }
-        }
-
-        private void Update(int i)
-        {
-            updateQueue.TryDequeue(out var transform);
-            transform?.Recalculate();
         }
     }
 }

@@ -15,15 +15,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\DirectXTex\build\bin\CMake\Debug\DirectXTex.dll" Condition="'$(Configuration)'=='DEBUG'">
-			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		<Content Include="..\native\linux-x64\libDirectXTex.so">
+			<Link>runtimes\linux-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
-		<Content Include="..\DirectXTex\build\bin\CMake\Debug\DirectXTex.pdb" Condition="'$(Configuration)'=='DEBUG'">
-			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\DirectXTex\build\bin\CMake\Release\DirectXTex.dll" Condition="'$(Configuration)'=='RELEASE'">
+		<Content Include="..\native\win-x64\DirectXTex.dll">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

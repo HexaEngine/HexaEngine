@@ -50,12 +50,12 @@ namespace HexaEngine.Core.Physics.Characters
             this.shape = shape;
         }
 
-        private static Key MoveForward = Key.W;
-        private static Key MoveBackward = Key.S;
-        private static Key MoveRight = Key.D;
-        private static Key MoveLeft = Key.A;
-        private static Key Sprint = Key.LShift;
-        private static Key Jump = Key.Space;
+        public Key MoveForward = Key.W;
+        public Key MoveBackward = Key.S;
+        public Key MoveRight = Key.D;
+        public Key MoveLeft = Key.A;
+        public Key Sprint = Key.LShift;
+        public Key Jump = Key.Space;
 
         public void UpdateCharacterGoals(Camera camera, float simulationTimestepDuration)
         {

@@ -84,8 +84,8 @@
 #nullable disable
             var data = buffer.Local + QueueIndex;
 
-            data->Color = color;
-            data->Direction = Transform.Forward;
+            data->Data.Color = color;
+            data->Data.Direction = Transform.Forward;
             Matrix4x4* views = data->GetViews();
             float* cascades = data->GetCascades();
 

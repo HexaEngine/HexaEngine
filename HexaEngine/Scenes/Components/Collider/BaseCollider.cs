@@ -8,7 +8,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Systems;
 
     public abstract class BaseCollider : IColliderComponent
     {
@@ -23,9 +22,11 @@
         protected BodyReference bodyReference;
         protected RigidPose pose;
         protected BodyInertia inertia;
+        protected PhysicsMaterial material;
 
         protected GameObject? parent;
         protected Scene? scene;
+        protected PhysicsSystem? system;
         protected Simulation? simulation;
         protected BufferPool? bufferPool;
         protected ColliderType type;
@@ -36,6 +37,10 @@
         private float mass = 1;
         private float sleepThreshold = 0.01f;
         private bool lockRotation;
+        private float springFrequency = 1;
+        private float springDampingRatio = 30;
+        private float frictionCoefficient = 1;
+        private float maximumRecoveryVelocity = 2;
 
         [EditorProperty<ColliderType>("Type")]
         public ColliderType Type
@@ -53,6 +58,22 @@
         public bool LockRotation
         { get => lockRotation; set { lockRotation = value; update = true; } }
 
+        [EditorProperty("Spring Frequency")]
+        public float SpringFrequency
+        { get => springFrequency; set { springFrequency = value; } }
+
+        [EditorProperty("Spring Damping Ratio")]
+        public float SpringDampingRatio
+        { get => springDampingRatio; set { springDampingRatio = value; } }
+
+        [EditorProperty("Friction Coefficient")]
+        public float FrictionCoefficient
+        { get => frictionCoefficient; set { frictionCoefficient = value; } }
+
+        [EditorProperty("Max Recovery Velocity")]
+        public float MaximumRecoveryVelocity
+        { get => maximumRecoveryVelocity; set { maximumRecoveryVelocity = value; } }
+
         [JsonIgnore]
         public TypedIndex ShapeIndex => index;
 
@@ -61,6 +82,9 @@
 
         [JsonIgnore]
         public BodyHandle BodyHandle => bodyHandle;
+
+        [JsonIgnore]
+        public PhysicsMaterial Material => material;
 
         [JsonIgnore]
         public ICompoundCollider? ParentCollider => parentCollider;
@@ -81,8 +105,9 @@
         {
             parent = gameObject;
             scene = gameObject.GetScene();
-            simulation = scene.Simulation;
-            bufferPool = scene.BufferPool;
+            system = scene.GetRequiredSystem<PhysicsSystem>();
+            simulation = system.Simulation;
+            bufferPool = system.BufferPool;
             CreateBody();
         }
 
@@ -91,13 +116,21 @@
             DestroyBody();
         }
 
-        public virtual void Update()
+        public virtual void BeginUpdate()
         {
-            if (Application.InDesignMode)
+            if (update)
             {
-                return;
+                CreateBody();
             }
 
+            if (type != ColliderType.Static && parent != null)
+            {
+                (bodyReference.Pose.Position, bodyReference.Pose.Orientation) = parent.Transform.PositionRotation;
+            }
+        }
+
+        public virtual void EndUpdate()
+        {
             if (update)
             {
                 CreateBody();
@@ -140,17 +173,21 @@
             if (Type == ColliderType.Static)
             {
                 staticHandle = simulation.Statics.Add(new(pose, index));
+                system.Materials.Allocate(staticHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
             }
             if (Type == ColliderType.Dynamic)
             {
                 bodyHandle = simulation.Bodies.Add(BodyDescription.CreateDynamic(pose, default, inertia, new CollidableDescription(index), new(SleepThreshold)));
                 bodyReference = simulation.Bodies.GetBodyReference(bodyHandle);
+                system.Materials.Allocate(bodyHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
             }
             if (Type == ColliderType.Kinematic)
             {
                 bodyHandle = simulation.Bodies.Add(BodyDescription.CreateKinematic(pose, default, new CollidableDescription(index), new(SleepThreshold)));
                 bodyReference = simulation.Bodies.GetBodyReference(bodyHandle);
+                system.Materials.Allocate(bodyHandle) = new(new(springFrequency, springDampingRatio), frictionCoefficient, maximumRecoveryVelocity);
             }
+
             hasBody = true;
             update = false;
         }

@@ -13,18 +13,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="runtimes\linux-x64\native\discord_game_sdk.so">
+		<Content Include="..\native\linux-x64\discord_game_sdk.so">
+			<Link>runtimes\linux-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="runtimes\osx-x64\native\discord_game_sdk.bundle">
+		</Content>
+		<Content Include="..\native\osx-x64\discord_game_sdk.bundle">
+			<Link>runtimes\osx-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="runtimes\osx-x64\native\discord_game_sdk.dylib">
+		</Content>
+		<Content Include="..\native\osx-x64\discord_game_sdk.dylib">
+			<Link>runtimes\osx-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="runtimes\win-x64\native\discord_game_sdk.dll">
+		</Content>
+		<Content Include="..\native\win-x64\discord_game_sdk.dll">
+			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
+		</Content>
 	</ItemGroup>
 
 </Project>

@@ -3,7 +3,6 @@
     using BepuPhysics;
     using BepuPhysics.Collidables;
     using BepuPhysics.CollisionDetection;
-    using BepuPhysics.Constraints;
     using BepuUtilities;
     using HexaEngine.Core.Physics.Characters;
     using System.Numerics;
@@ -13,11 +12,13 @@
     {
         public CharacterControllers Characters;
         public ContactEvents Events;
+        public CollidableProperty<PhysicsMaterial> Materials;
 
-        public NarrowphaseCallbacks(CharacterControllers characters, ContactEvents events)
+        public NarrowphaseCallbacks(CharacterControllers characters, ContactEvents events, CollidableProperty<PhysicsMaterial> materials)
         {
             Characters = characters;
             Events = events;
+            Materials = materials;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -35,7 +36,11 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public unsafe bool ConfigureContactManifold<TManifold>(int workerIndex, CollidablePair pair, ref TManifold manifold, out PairMaterialProperties pairMaterial) where TManifold : unmanaged, IContactManifold<TManifold>
         {
-            pairMaterial = new PairMaterialProperties { FrictionCoefficient = 1, MaximumRecoveryVelocity = 2, SpringSettings = new SpringSettings(30, 1) };
+            var a = Materials[pair.A];
+            var b = Materials[pair.B];
+            pairMaterial.FrictionCoefficient = a.FrictionCoefficient * b.FrictionCoefficient;
+            pairMaterial.MaximumRecoveryVelocity = MathF.Max(a.MaximumRecoveryVelocity, b.MaximumRecoveryVelocity);
+            pairMaterial.SpringSettings = pairMaterial.MaximumRecoveryVelocity == a.MaximumRecoveryVelocity ? a.SpringSettings : b.SpringSettings;
             Characters.TryReportContacts(pair, ref manifold, workerIndex, ref pairMaterial);
             Events.HandleManifold(workerIndex, pair, ref manifold);
             return true;
@@ -59,6 +64,7 @@
         {
             Characters.Initialize(simulation);
             Events.Initialize(simulation);
+            Materials.Initialize(simulation);
         }
     }
 

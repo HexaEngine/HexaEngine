@@ -5,7 +5,6 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Physics;
-    using HexaEngine.Core.Scenes.Systems;
     using System.Linq;
 
     [EditorComponent(typeof(BigCompoundCollider), "Big Compound Collider")]
@@ -60,18 +59,18 @@
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || colliderChildren == null || !hasShape)
+            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || colliderChildren == null || !hasShape)
             {
                 return;
             }
 
             compound.Dispose(bufferPool);
-            scene.Simulation.Shapes.Remove(index);
+            simulation.Shapes.Remove(index);
             for (int i = 0; i < colliderChildren.Count; i++)
             {
                 colliderChildren[i].DestroyCompound();
             }
-            scene.BufferPool.Return(ref compoundChildren);
+            bufferPool.Return(ref compoundChildren);
             hasShape = false;
         }
     }

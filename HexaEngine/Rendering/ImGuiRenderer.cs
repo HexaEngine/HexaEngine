@@ -173,6 +173,7 @@ namespace HexaEngine.Rendering
             ncolors[(int)ColorStyle.Pin] = new Vector4(0.92f, 0.26f, 0.98f, 0.31f).Pack();
             ncolors[(int)ColorStyle.PinHovered] = new Vector4(0.92f, 0.26f, 0.98f, 0.80f).Pack();*/
 
+            //ImGui.LoadIniSettingsFromDisk("");
             inputHandler = new(window);
         }
 

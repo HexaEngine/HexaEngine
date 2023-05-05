@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scripts;
 
     public interface IComponent
     {
@@ -14,7 +16,7 @@
         public void Update();
     }
 
-    public interface IScriptComponent : IComponent
+    public interface IScriptComponent : IComponent, INotifyFlagsChanged<ScriptFlags>
     {
         public void Awake()
         {

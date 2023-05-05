@@ -1,70 +1,73 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using BepuUtilities;
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Scenes;
-    using System.Collections.Generic;
+    using HexaEngine.Core.Scripts;
 
     public class ScriptManager : ISystem
     {
-        private readonly List<IScriptComponent> scripts = new();
-
-        public IReadOnlyList<IScriptComponent> Scripts => scripts;
+        private readonly FlaggedList<ScriptFlags, IScriptComponent> scripts = new();
 
         public string Name => "Scripts";
 
+        public SystemFlags Flags { get; } = SystemFlags.Update | SystemFlags.FixedUpdate;
+
+        public IReadOnlyList<IScriptComponent> Scripts => (IReadOnlyList<IScriptComponent>)scripts;
+
         public void Register(GameObject gameObject)
         {
-            scripts.AddComponentIfIs(gameObject);
+            scripts.AddComponentIfIs<IScriptComponent>(gameObject);
         }
 
         public void Unregister(GameObject gameObject)
         {
-            scripts.RemoveComponentIfIs(gameObject);
+            scripts.RemoveComponentIfIs<IScriptComponent>(gameObject);
         }
 
-        public void Update(ThreadDispatcher dispatcher)
+        public void Update(float delta)
         {
             if (Application.InDesignMode)
             {
                 return;
             }
 
-            for (int i = 0; i < scripts.Count; i++)
+            var scriptList = scripts[ScriptFlags.Update];
+            for (int i = 0; i < scriptList.Count; i++)
             {
-                scripts[i].Update();
+                scriptList[i].Update();
             }
-            //dispatcher.DispatchWorkers(Update, scripts.Count);
         }
 
         public void FixedUpdate()
         {
-            for (int i = 0; i < scripts.Count; i++)
-            {
-                scripts[i].FixedUpdate();
-            }
-        }
-
-        public void FixedUpdate(ThreadDispatcher dispatcher)
-        {
             if (Application.InDesignMode)
             {
                 return;
             }
 
-            dispatcher.DispatchWorkers(FixedUpdate, scripts.Count);
+            var scriptList = scripts[ScriptFlags.FixedUpdate];
+            for (int i = 0; i < scriptList.Count; i++)
+            {
+                scriptList[i].Update();
+            }
         }
 
-        private void FixedUpdate(int i)
+        public void Awake()
         {
-            scripts[i].FixedUpdate();
+            var scriptList = scripts[ScriptFlags.Awake];
+            for (int i = 0; i < scriptList.Count; i++)
+            {
+                scriptList[i].Awake();
+            }
         }
 
-        public void Awake(ThreadDispatcher dispatcher)
+        public void Destroy()
         {
-        }
-
-        public void Destroy(ThreadDispatcher dispatcher)
-        {
+            var scriptList = scripts[ScriptFlags.Destroy];
+            for (int i = 0; i < scriptList.Count; i++)
+            {
+                scriptList[i].Destory();
+            }
         }
     }
 }

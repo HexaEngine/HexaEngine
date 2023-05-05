@@ -41,10 +41,10 @@
 		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine.ImGuizmo\HexaEngine.ImGuizmo.csproj" />
+		<ProjectReference Include="..\HexaEngine.ImGui\HexaEngine.ImGui.csproj" />
+		<ProjectReference Include="..\HexaEngine.ImNodes\HexaEngine.ImNodes.csproj" />
+		<ProjectReference Include="..\HexaEngine.ImPlot\HexaEngine.ImPlot.csproj" />
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
-		<ProjectReference Include="..\ImGui.NET\ImGui.NET.csproj" />
-		<ProjectReference Include="..\ImGuizmo.NET\ImGuizmo.NET.csproj" />
-		<ProjectReference Include="..\ImNodes.NET\ImNodes.NET.csproj" />
-		<ProjectReference Include="..\ImPlot.NET\ImPlot.NET.csproj" />
 	</ItemGroup>
 </Project>

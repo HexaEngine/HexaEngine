@@ -26,7 +26,7 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || scene == null || hasShape)
+            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
             {
                 return;
             }
@@ -34,7 +34,7 @@
             Triangle triangle = new(pos1, pos2, pos3);
             pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
             inertia = triangle.ComputeInertia(Mass);
-            index = scene.Simulation.Shapes.Add(triangle);
+            index = simulation.Shapes.Add(triangle);
             hasShape = true;
         }
     }

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
@@ -13,6 +14,7 @@
     [EditorComponent<CSharpScriptComponent>("C# Script")]
     public class CSharpScriptComponent : IScriptComponent
     {
+        private ScriptFlags flags;
         private IScript? instance;
 
         static CSharpScriptComponent()
@@ -21,6 +23,11 @@
         }
 
         public string? ScriptType { get; set; }
+
+        [JsonIgnore]
+        public ScriptFlags Flags => flags;
+
+        public event Action<IHasFlags<ScriptFlags>, ScriptFlags>? FlagsChanged;
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
@@ -40,6 +47,36 @@
 
                 try
                 {
+                    var methods = type.GetMethods();
+                    flags = ScriptFlags.None;
+                    for (int i = 0; i < methods.Length; i++)
+                    {
+                        var method = methods[i];
+                        switch (method.Name)
+                        {
+                            case "Awake":
+                                flags |= ScriptFlags.Awake;
+                                break;
+
+                            case "Update":
+                                flags |= ScriptFlags.Update;
+                                break;
+
+                            case "FixedUpdate":
+                                flags |= ScriptFlags.FixedUpdate;
+                                break;
+
+                            case "Destroy":
+                                flags |= ScriptFlags.Destroy;
+                                break;
+
+                            default:
+                                continue;
+                        }
+                    }
+
+                    FlagsChanged?.Invoke(this, flags);
+
                     instance = Activator.CreateInstance(type) as IScript;
                 }
                 catch (Exception e)

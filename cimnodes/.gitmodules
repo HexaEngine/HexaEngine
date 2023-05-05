@@ -1,4 +1,0 @@
-[submodule "imnodes"]
-	path = imnodes
-	url = https://github.com/Nelarius/imnodes
-	branch = master

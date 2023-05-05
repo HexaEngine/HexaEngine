@@ -108,6 +108,8 @@
 
         public string Name => "Lights";
 
+        public SystemFlags Flags { get; } = SystemFlags.None;
+
         public async Task Initialize(IGraphicsDevice device)
         {
             this.device = device;
@@ -825,22 +827,22 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Awake(BepuUtilities.ThreadDispatcher dispatcher)
+        public void Awake()
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Update(BepuUtilities.ThreadDispatcher dispatcher)
+        public void Update(float dt)
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void FixedUpdate(BepuUtilities.ThreadDispatcher dispatcher)
+        public void FixedUpdate()
         {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Destroy(BepuUtilities.ThreadDispatcher dispatcher)
+        public void Destroy()
         {
         }
     }

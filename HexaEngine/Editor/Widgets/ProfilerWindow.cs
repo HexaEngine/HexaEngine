@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes;
     using ImPlotNET;
     using System.Numerics;
@@ -96,7 +97,7 @@
             }
 
             var renderer = Application.MainWindow.Renderer;
-            var simulation = scene.Simulation;
+            var simulation = scene.GetRequiredSystem<PhysicsSystem>().Simulation;
 
             Frame.Add(Time.Delta * 1000);
             Graphics.Add(renderer.Profiler[renderer] * 1000);

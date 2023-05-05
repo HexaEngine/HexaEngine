@@ -56,7 +56,7 @@
                 }
 
                 float wheel = 0;
-                if (Keyboard.IsDown(Key.LShift))
+                if (Keyboard.IsDown(Key.LCtrl))
                 {
                     wheel = Mouse.DeltaWheel.Y;
                 }
