@@ -1,0 +1,1 @@
+﻿A .NET wrapper for the SPIRV-Cross compiler. (modified version of SPIRV-Cross.NET)

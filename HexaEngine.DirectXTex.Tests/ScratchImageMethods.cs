@@ -1,7 +1,5 @@
 namespace HexaEngine.DirectXTex.Tests
 {
-    using HexaEngine.Core.Graphics.Textures;
-
     public unsafe class ScratchImageMethods
     {
         [Fact]
@@ -133,7 +131,7 @@ namespace HexaEngine.DirectXTex.Tests
                 Depth = 1,
                 ArraySize = 6,
                 MipLevels = 2,
-                MiscFlags = TexMiscFlags.TEXTURECUBE,
+                MiscFlags = TexMiscFlags.TextureCube,
                 MiscFlags2 = 0,
             };
 

@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
-    using HexaEngine.Core.Graphics.Textures;
-
     public unsafe class TextureUtils
     {
         [Fact]
@@ -24,7 +22,7 @@
             image.Initialize(metadata, CPFlags.None);
 
             ScratchImage image1 = new();
-            DirectXTex.FlipRotate(&image, TexFrFlags.ROTATE90, &image1);
+            DirectXTex.FlipRotate(&image, TexFrFlags.Rotate90, &image1);
 
             Assert.Equal(metadata, image.GetMetadata());
             Assert.Equal(metadata, image1.GetMetadata());
@@ -303,7 +301,7 @@
 
             ScratchImage destImage = new();
 
-            DirectXTex.PremultiplyAlpha(&srcImage, TexPmAlphaFlags.DEFAULT, &destImage);
+            DirectXTex.PremultiplyAlpha(&srcImage, TexPmAlphaFlags.Default, &destImage);
 
             srcImage.Release();
             destImage.Release();

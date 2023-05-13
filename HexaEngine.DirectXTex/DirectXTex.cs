@@ -1,14 +1,19 @@
 ﻿namespace HexaEngine.DirectXTex
 {
     using Silk.NET.Core.Native;
+    using Silk.NET.Direct2D;
     using Silk.NET.Direct3D11;
     using Silk.NET.Direct3D12;
     using Silk.NET.DXGI;
     using System;
-    using System.Runtime.InteropServices;
 
-    public static unsafe class DirectXTex
+    public static unsafe partial class DirectXTex
     {
+        static DirectXTex()
+        {
+            LibraryLoader.SetImportResolver();
+        }
+
         #region Internal Utils
 
         internal static void ThrowIf(this int hresult)

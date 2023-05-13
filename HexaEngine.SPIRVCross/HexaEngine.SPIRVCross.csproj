@@ -2,6 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
+		<PackageVersion>1.0.0</PackageVersion>
+		<Description>A .NET wrapper for the SPIRV-Cross compiler. (modified version of SPIRV-Cross.NET)</Description>
+		<Authors>Juna Meinhold, Faber Leonardo</Authors>
+		<RepositoryUrl>https://github.com/JunaMeinhold/HexaEngine</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -9,18 +14,29 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="..\native\linux-x64\libspirv-cross-c-shared.so">
+		<None Include="..\native\linux-x64\libspirv-cross-c-shared.so">
 			<Link>runtimes\linux-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\native\osx-x64\libspirv-cross-c-shared.dylib">
+			<PackagePath>runtimes/linux-x64/native</PackagePath>
+			<Pack>true</Pack>
+		</None>
+		<None Include="..\native\osx-x64\libspirv-cross-c-shared.dylib">
 			<Link>runtimes\osx-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\native\win-x64\spirv-cross-c-shared.dll">
+			<PackagePath>runtimes/osx-x64/native</PackagePath>
+			<Pack>true</Pack>
+		</None>
+		<None Include="..\native\win-x64\spirv-cross-c-shared.dll">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
+			<PackagePath>runtimes/win-x64/native</PackagePath>
+			<Pack>true</Pack>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md" Pack="true" PackagePath="\" />
+		<None Update="LICENSE.txt" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 </Project>

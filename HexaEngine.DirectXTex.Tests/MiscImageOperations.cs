@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
-    using HexaEngine.Core.Graphics.Textures;
     using System.Numerics;
 
     public unsafe class MiscImageOperations

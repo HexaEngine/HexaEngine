@@ -1,12 +1,5 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
-    using HexaEngine.Core.Graphics.Textures;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
     public unsafe class MetadataIO
     {
         private const string DDSFilename = "assets\\textures\\test.dds";
@@ -62,8 +55,8 @@
             TexMetadata metadata2;
 
             Span<byte> bytes = LoadTexture(WICFilename);
-            DirectXTex.GetMetadataFromWICMemory(bytes, WICFlags.NONE, &metadata1);
-            DirectXTex.GetMetadataFromWICFile(WICFilename, WICFlags.NONE, &metadata2);
+            DirectXTex.GetMetadataFromWICMemory(bytes, WICFlags.None, &metadata1);
+            DirectXTex.GetMetadataFromWICFile(WICFilename, WICFlags.None, &metadata2);
 
             Assert.Equal(metadata1, metadata2);
         }

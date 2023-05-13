@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
-    using HexaEngine.Core.Graphics.Textures;
-
     public unsafe class TexMetadataMethods
     {
         private TexMetadata texVol = new()
@@ -26,7 +24,7 @@
             Height = 64,
             Width = 64,
             MipLevels = 4,
-            MiscFlags = TexMiscFlags.TEXTURECUBE,
+            MiscFlags = TexMiscFlags.TextureCube,
             MiscFlags2 = 0,
         };
 

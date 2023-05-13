@@ -7,7 +7,6 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Mathematics;
-    using ImGuiNET;
     using System.Numerics;
 
     public static class CullingManager
@@ -192,7 +191,7 @@
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);
             swapBuffer.Read(context);
-
+            /*
             uint drawCalls = 0;
             uint vertexCount = 0;
 
@@ -213,30 +212,7 @@
                 0 => ' ',
                 1 => 'K',
                 _ => 'M',
-            };
-            ImGui.Text($"DrawCalls {drawCalls}, Vertices {vertexCount}{suffix}");
-
-            if (ImGui.CollapsingHeader("DrawCalls"))
-            {
-                for (int i = 0; i < manager.TypeCount; i++)
-                {
-                    ImGui.Text($"DrawCall: {i}, {swapBuffer[i].InstanceCount}, {swapBuffer[i].IndexCountPerInstance}");
-                }
-            }
-
-            if (ImGui.CollapsingHeader("Transforms"))
-            {
-                instanceDataOutBuffer.Read(context);
-                for (int i = 0; i < instanceCount; i++)
-                {
-                    if (i > 100)
-                    {
-                        break;
-                    }
-
-                    ImGui.Text($"Idx: {i}, {instanceDataOutBuffer[i]}");
-                }
-            }
+            };*/
         }
 
         public static void DoCulling(IGraphicsContext context, DepthMipChain mipChain)

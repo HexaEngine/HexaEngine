@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
-    using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.D3D11;
     using Silk.NET.Direct3D11;
     using System;
@@ -14,8 +13,8 @@
         public Direct3D11Functions()
         {
             graphicsDevice = new(new(), true);
-            device = (ID3D11Device*)graphicsDevice.Device;
-            context = (ID3D11DeviceContext*)graphicsDevice.DeviceContext;
+            device = (ID3D11Device*)graphicsDevice.Device.Handle;
+            context = (ID3D11DeviceContext*)graphicsDevice.DeviceContext.Handle;
         }
 
         [Fact]
@@ -102,7 +101,7 @@
             ScratchImage image = new();
             image.Initialize(metadata, CPFlags.None);
             ID3D11Resource* resource;
-            DirectXTex.CreateTextureEx(device, image.GetImages(), image.GetImageCount(), &metadata, Usage.Immutable, BindFlag.ShaderResource, CpuAccessFlag.None, ResourceMiscFlag.None, false, &resource);
+            DirectXTex.CreateTextureEx(device, image.GetImages(), image.GetImageCount(), &metadata, Usage.Immutable, BindFlag.ShaderResource, CpuAccessFlag.None, ResourceMiscFlag.None, CreateTexFlags.Default, &resource);
             if (resource == null)
                 Assert.Fail("Fail");
             resource->Release();
@@ -126,7 +125,7 @@
             ScratchImage image = new();
             image.Initialize(metadata, CPFlags.None);
             ID3D11ShaderResourceView* srv;
-            DirectXTex.CreateShaderResourceViewEx(device, image.GetImages(), image.GetImageCount(), &metadata, Usage.Immutable, BindFlag.ShaderResource, CpuAccessFlag.None, ResourceMiscFlag.None, false, &srv);
+            DirectXTex.CreateShaderResourceViewEx(device, image.GetImages(), image.GetImageCount(), &metadata, Usage.Immutable, BindFlag.ShaderResource, CpuAccessFlag.None, ResourceMiscFlag.None, CreateTexFlags.Default, &srv);
             if (srv == null)
                 Assert.Fail("Fail");
             srv->Release();

@@ -1,4 +1,5 @@
-﻿using Silk.NET.Direct3D11;
+﻿using Silk.NET.Direct2D;
+using Silk.NET.Direct3D11;
 using Silk.NET.Direct3D12;
 using Silk.NET.DXGI;
 using System.Numerics;
@@ -18,7 +19,7 @@ namespace HexaEngine.DirectXTex
 
     internal static partial class Native
     {
-        internal const string LibName = "DirectXTex.dll";
+        internal const string LibName = "DirectXTex";
 
         #region ScratchImage Methods
 

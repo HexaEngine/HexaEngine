@@ -33,6 +33,10 @@
 		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="HexaEngine.ImGui" Version="1.0.0" />
+		<PackageReference Include="HexaEngine.ImGuizmo" Version="1.0.0" />
+		<PackageReference Include="HexaEngine.ImNodes" Version="1.0.0" />
+		<PackageReference Include="HexaEngine.ImPlot" Version="1.0.0" />
 		<PackageReference Include="Silk.NET.GLFW" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.17.1" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
@@ -41,10 +45,6 @@
 		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\HexaEngine.ImGuizmo\HexaEngine.ImGuizmo.csproj" />
-		<ProjectReference Include="..\HexaEngine.ImGui\HexaEngine.ImGui.csproj" />
-		<ProjectReference Include="..\HexaEngine.ImNodes\HexaEngine.ImNodes.csproj" />
-		<ProjectReference Include="..\HexaEngine.ImPlot\HexaEngine.ImPlot.csproj" />
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
 	</ItemGroup>
 </Project>

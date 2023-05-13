@@ -13,6 +13,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="SPIRV.Commands.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="SPIRV.Commands.cs">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="HexaEngine.DirectXTex" Version="1.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="env_o.dds">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

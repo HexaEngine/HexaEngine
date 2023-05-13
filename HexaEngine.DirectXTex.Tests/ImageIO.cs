@@ -1,7 +1,5 @@
 ﻿namespace HexaEngine.DirectXTex.Tests
 {
-    using System.Runtime.Versioning;
-
     public unsafe class ImageIO : IDisposable
     {
         private const string DDSFilename = "assets\\textures\\test.dds";
@@ -132,8 +130,8 @@
             Span<byte> src = LoadTexture(WICFilename);
             TexBlob blob = new();
 
-            DirectXTex.LoadFromWICMemory(src, WICFlags.NONE, &image, null);
-            DirectXTex.SaveToWICMemory(&image, WICFlags.NONE, DirectXTex.GetWICCodec(WICCodecs.PNG), &blob);
+            DirectXTex.LoadFromWICMemory(src, WICFlags.None, &image, null);
+            DirectXTex.SaveToWICMemory(&image, WICFlags.None, DirectXTex.GetWICCodec(WICCodecs.PNG), &blob);
 
             Span<byte> dest = blob.ToBytes();
             Assert.True(src.SequenceEqual(dest));
@@ -151,7 +149,7 @@
             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? string.Empty);
             ScratchImage image = new();
 
-            DirectXTex.LoadFromWICFile(WICFilename, WICFlags.NONE, &image);
+            DirectXTex.LoadFromWICFile(WICFilename, WICFlags.None, &image);
             DirectXTex.SaveToWICFile(&image, 0, DirectXTex.GetWICCodec(WICCodecs.PNG), path);
 
             Span<byte> src = LoadTexture(WICFilename);

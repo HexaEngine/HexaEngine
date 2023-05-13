@@ -20,7 +20,8 @@
                 ImGui.OpenPopup(Name);
                 signalShow = false;
             }
-            if (!ImGui.BeginPopupModal(Name, null, Flags))
+            bool so = true;
+            if (!ImGui.BeginPopupModal(Name, ref so, Flags))
             {
                 return;
             }

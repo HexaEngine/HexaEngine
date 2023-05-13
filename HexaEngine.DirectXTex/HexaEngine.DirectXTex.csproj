@@ -1,27 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<AssemblyVersion>1.9.8</AssemblyVersion>
+		<PackageVersion>1.0.5</PackageVersion>
+		<Authors>Juna Meinhold</Authors>
+		<Description>A .NET wrapper for the DirectXTex library.</Description>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/JunaMeinhold/HexaEngine</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 		<TargetFramework>net7.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<DebugType>portable</DebugType>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
+		
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Silk.NET.Direct2D" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.Direct3D11" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.Direct3D12" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.DXGI" Version="2.17.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="..\native\linux-x64\libDirectXTex.so">
+		<None Include="..\native\linux-x64\libDirectXTex.so">
 			<Link>runtimes\linux-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\native\win-x64\DirectXTex.dll">
+			<PackagePath>runtimes/linux-x64/native</PackagePath>
+			<Pack>true</Pack>
+		</None>
+		<None Include="..\native\win-x64\DirectXTex.dll">
 			<Link>runtimes\win-x64\native\%(RecursiveDir)%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
+			<PackagePath>runtimes/win-x64/native</PackagePath>
+			<Pack>true</Pack>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md" Pack="true" PackagePath="\" />
+		<None Update="LICENSE.txt" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>

@@ -15,7 +15,7 @@
 
     public interface INotifyFlagsChanged<T> : IHasFlags<T> where T : Enum
     {
-        public event Action<IHasFlags<T>, ScriptFlags>? FlagsChanged;
+        public event Action<IHasFlags<T>, T>? FlagsChanged;
     }
 
     public class FlaggedList<TFlags, TItem> : IList<TItem>, IDictionary<TFlags, IList<TItem>> where TFlags : unmanaged, Enum where TItem : IHasFlags<TFlags>
@@ -56,7 +56,7 @@
             set { values[index] = value; }
         }
 
-        private void FlagsChanged(IHasFlags<TFlags> sender, ScriptFlags e)
+        private void FlagsChanged(IHasFlags<TFlags> sender, TFlags e)
         {
             Remove((TItem)sender);
             Add((TItem)sender);
