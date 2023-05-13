@@ -3,6 +3,11 @@
   <img width="300" height="300" src="https://raw.githubusercontent.com/JunaMeinhold/HexaEngine/master/icon.png">
 </p>
 
+# Build
+- .NET SDK 7.0
+- CMake<br/>
+Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine.Native
+
 # Features
 - Principled BSDF
 - IBL
