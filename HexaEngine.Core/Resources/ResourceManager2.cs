@@ -6,6 +6,7 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Numerics;
+    using System.Resources;
 
     public class ResourceManager2
     {
@@ -116,10 +117,18 @@
         {
             lock (sharedResources)
             {
-                ResourceRef resourceRef = new(name) { Value = resource };
-                resources.Add(resourceRef);
-                sharedResources.Add(name, resourceRef);
-                return new(resourceRef);
+                if (sharedResources.TryGetValue(name, out var resourceRef))
+                {
+                    resourceRef.Value = resource;
+                    return new(resourceRef);
+                }
+                else
+                {
+                    resourceRef = new(name) { Value = resource };
+                    resources.Add(resourceRef);
+                    sharedResources.Add(name, resourceRef);
+                    return new(resourceRef);
+                }
             }
         }
 

@@ -21,5 +21,5 @@ float4 main(PixelInput input, uint primitiveId : SV_PrimitiveID) : SV_Target
             return float4(0, 1, 0, 1);
         }
     }
-    return float4(1, 0, 0, 1);
+    return float4(0.8, 0.8, 0.8, 1);
 }

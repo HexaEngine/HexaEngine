@@ -3,7 +3,7 @@
     using ImGuiNET;
     using System;
 
-    public static class ImGuiEnumHelper<T> where T : struct, Enum
+    public static class ComboEnumHelper<T> where T : struct, Enum
     {
         private static readonly T[] values = Enum.GetValues<T>();
         private static readonly string[] names = Enum.GetNames<T>();
@@ -23,6 +23,20 @@
         {
             int index = Array.IndexOf(values, value);
             ImGui.Text(names[index]);
+        }
+    }
+
+    public static class TooltipHelper
+    {
+        public static void Tooltip(string desc)
+        {
+            if (ImGui.IsItemHovered(ImGuiHoveredFlags.DelayShort) && ImGui.BeginTooltip())
+            {
+                ImGui.PushTextWrapPos(ImGui.GetFontSize() * 35.0f);
+                ImGui.TextUnformatted(desc);
+                ImGui.PopTextWrapPos();
+                ImGui.EndTooltip();
+            }
         }
     }
 }

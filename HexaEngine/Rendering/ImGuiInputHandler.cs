@@ -1,7 +1,7 @@
 ﻿using HexaEngine.Core;
 using HexaEngine.Core.Input;
 using HexaEngine.Core.Windows;
-using ImGuiNET;
+using HexaEngine.ImGuiNET;
 using Silk.NET.SDL;
 
 namespace HexaEngine.Rendering
@@ -23,9 +23,9 @@ namespace HexaEngine.Rendering
 
             var io = ImGui.GetIO();
 
-            io.SetClipboardTextFn = (nint)(delegate*<void*, char*, void>)&SetClipboardText;
-            io.GetClipboardTextFn = (nint)(delegate*<void*, char*>)&GetClipboardText;
-            io.ClipboardUserData = (nint)null;
+            //io->SetClipboardTextFn = (nint)(delegate*<void*, char*, void>)&SetClipboardText;
+            //io->GetClipboardTextFn = (nint)(delegate*<void*, char*>)&GetClipboardText;
+            //io->ClipboardUserData = (nint)null;
 
             io.KeyMap[(int)ImGuiKey.Tab] = (int)Scancode.ScancodeTab;
             io.KeyMap[(int)ImGuiKey.LeftArrow] = (int)Scancode.ScancodeLeft;
@@ -69,13 +69,13 @@ namespace HexaEngine.Rendering
             Clipboard.SetClipboardText(text);
         }
 
-        private void KeyboardCharInput(object? sender, Core.Input.Events.KeyboardCharEventArgs e)
+        private unsafe void KeyboardCharInput(object? sender, Core.Input.Events.KeyboardCharEventArgs e)
         {
             var io = ImGui.GetIO();
             io.AddInputCharactersUTF8(e.Char.ToString());
         }
 
-        private void KeyboardInput(object? sender, Core.Input.Events.KeyboardEventArgs e)
+        private unsafe void KeyboardInput(object? sender, Core.Input.Events.KeyboardEventArgs e)
         {
             var io = ImGui.GetIO();
             int key = (int)e.Scancode;
@@ -87,13 +87,13 @@ namespace HexaEngine.Rendering
             io.KeyCtrl = (Keyboard.GetModState() & Keymod.Ctrl) != 0;
             io.KeyAlt = (Keyboard.GetModState() & Keymod.Alt) != 0;
 #if WINDOWS
-            io.KeySuper = false;
+            io->KeySuper = false;
 #else
             io.KeySuper = (Keyboard.GetModState() & Keymod.Gui) != 0;
 #endif
         }
 
-        private void MouseButtonInput(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        private unsafe void MouseButtonInput(object? sender, Core.Input.Events.MouseButtonEventArgs e)
         {
             var io = ImGui.GetIO();
 
@@ -118,7 +118,7 @@ namespace HexaEngine.Rendering
             }
         }
 
-        public void Update()
+        public unsafe void Update()
         {
             var io = ImGui.GetIO();
             io.DisplaySize = new(window.Width, window.Height);
@@ -139,7 +139,7 @@ namespace HexaEngine.Rendering
             UpdateGamepads();
         }
 
-        public static bool UpdateMouseCursor()
+        public static unsafe bool UpdateMouseCursor()
         {
             var io = ImGui.GetIO();
             if ((io.ConfigFlags & ImGuiConfigFlags.NoMouseCursorChange) != 0)
@@ -160,10 +160,10 @@ namespace HexaEngine.Rendering
                     case ImGuiMouseCursor.Arrow: cursor = SystemCursor.SystemCursorArrow; break;
                     case ImGuiMouseCursor.TextInput: cursor = SystemCursor.SystemCursorIbeam; break;
                     case ImGuiMouseCursor.ResizeAll: cursor = SystemCursor.SystemCursorSizeall; break;
-                    case ImGuiMouseCursor.ResizeEW: cursor = SystemCursor.SystemCursorSizewe; break;
-                    case ImGuiMouseCursor.ResizeNS: cursor = SystemCursor.SystemCursorSizens; break;
-                    case ImGuiMouseCursor.ResizeNESW: cursor = SystemCursor.SystemCursorSizenesw; break;
-                    case ImGuiMouseCursor.ResizeNWSE: cursor = SystemCursor.SystemCursorSizenwse; break;
+                    case ImGuiMouseCursor.ResizeEw: cursor = SystemCursor.SystemCursorSizewe; break;
+                    case ImGuiMouseCursor.ResizeNs: cursor = SystemCursor.SystemCursorSizens; break;
+                    case ImGuiMouseCursor.ResizeNesw: cursor = SystemCursor.SystemCursorSizenesw; break;
+                    case ImGuiMouseCursor.ResizeNwse: cursor = SystemCursor.SystemCursorSizenwse; break;
                     case ImGuiMouseCursor.Hand: cursor = SystemCursor.SystemCursorHand; break;
                     case ImGuiMouseCursor.NotAllowed: cursor = SystemCursor.SystemCursorNo; break;
                 }
@@ -178,7 +178,7 @@ namespace HexaEngine.Rendering
         public static unsafe void UpdateGamepads()
         {
             var io = ImGui.GetIO();
-            Memset(io.NavInputs.Data, 0, io.NavInputs.Count);
+            io.NavInputs.Clear();
             if ((io.ConfigFlags & ImGuiConfigFlags.NavEnableGamepad) == 0)
             {
                 return;
@@ -236,7 +236,7 @@ namespace HexaEngine.Rendering
             io.BackendFlags |= ImGuiBackendFlags.HasGamepad;
         }
 
-        private static void UpdateMousePosition()
+        private static unsafe void UpdateMousePosition()
         {
             var io = ImGui.GetIO();
             io.MousePos = Mouse.Position;

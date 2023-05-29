@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using System.Collections.Generic;
+    using System.Numerics;
 
     [EditorComponent(typeof(Animator), "Animator")]
     public class Animator : IComponent, IAnimator
@@ -13,6 +14,9 @@
         private Animation? currentAnimation;
         private float currentTime;
         private bool playing;
+        private Vector3 translation = default;
+        private Quaternion rotation = Quaternion.Identity;
+        private Vector3 scale = Vector3.One;
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
@@ -72,7 +76,11 @@
                 }
 
                 channel.Update(ct);
-                node.Transform.Local = channel.Local;
+
+                Matrix4x4.Decompose(channel.Local, out scale, out rotation, out translation);
+                node.Transform.Scale *= scale;
+                node.Transform.Orientation *= rotation;
+                node.Transform.Position += translation;
             }
         }
     }

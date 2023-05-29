@@ -39,7 +39,7 @@
 
         protected override void DrawContent()
         {
-            ImGuiEnumHelper<Format>.Combo("Format", ref format);
+            ComboEnumHelper<Format>.Combo("Format", ref format);
 
             if (ImGui.Button("Cancel"))
             {

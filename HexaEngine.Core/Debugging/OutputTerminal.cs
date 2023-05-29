@@ -206,7 +206,7 @@
             }
         }
 
-        private void DrawMessages()
+        private unsafe void DrawMessages()
         {
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             lock (messages)

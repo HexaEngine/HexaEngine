@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
 
-    public class RendererWidget : ImGuiWindow
+    public class RendererWidget : EditorWindow
     {
         private readonly ISceneRenderer renderer;
 

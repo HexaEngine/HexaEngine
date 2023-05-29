@@ -7,7 +7,7 @@
     using System;
     using System.Threading.Tasks;
 
-    public class PublishProjectWindow : ImGuiWindow
+    public class PublishProjectWindow : EditorWindow
     {
         private readonly PublishSettings options = new();
         private static readonly string[] profiles = { "Release", "Debug" };

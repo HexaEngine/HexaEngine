@@ -6,11 +6,10 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
-    using HexaEngine.Editor.Widgets;
     using ImGuiNET;
     using System.Numerics;
 
-    public class ImagePainterWindow : ImGuiWindow
+    public class ImagePainterWindow : EditorWindow
     {
         private IGraphicsDevice device;
         private readonly OpenFileDialog openDialog = new();

@@ -5,7 +5,7 @@
     using HexaEngine.Editor.ImagePainter.Tools;
     using ImGuiNET;
 
-    public class Toolbox : ImGuiWindow
+    public class Toolbox : EditorWindow
     {
         private readonly List<Tool> tools = new();
         private Tool? current;

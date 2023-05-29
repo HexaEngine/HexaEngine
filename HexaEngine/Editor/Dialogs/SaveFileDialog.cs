@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+﻿using HexaEngine.ImGuiNET;
 using System.Numerics;
 
 namespace HexaEngine.Editor.Dialogs
@@ -145,14 +145,14 @@ namespace HexaEngine.Editor.Dialogs
             shown = false;
         }
 
-        public bool Draw()
+        public unsafe bool Draw()
         {
             if (!shown)
             {
                 return false;
             }
 
-            if (ImGui.Begin("File picker", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse))
+            if (ImGui.Begin("File picker", ref shown, ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse))
             {
                 ImGui.SetWindowFocus();
 
@@ -181,7 +181,9 @@ namespace HexaEngine.Editor.Dialogs
                 float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
 
                 float widthDrives = 100 + ImGui.GetStyle().ItemSpacing.X * 2;
-                float width = ImGui.GetContentRegionAvail().X - ImGui.GetStyle().ItemSpacing.X - widthDrives;
+                Vector2 contentRegion = default;
+                ImGui.GetContentRegionAvail(ref contentRegion);
+                float width = contentRegion.X - ImGui.GetStyle().ItemSpacing.X - widthDrives;
                 if (ImGui.BeginChild(1, new Vector2(widthDrives, -footerHeightToReserve), false, ImGuiWindowFlags.HorizontalScrollbar))
                 {
                     void Display(string? rel, string str)

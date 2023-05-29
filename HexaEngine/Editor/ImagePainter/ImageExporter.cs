@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
-    using ImagePainter.Exporter;
+    using HexaEngine.Editor.ImagePainter.Exporter;
     using ImGuiNET;
     using System;
     using System.Numerics;
@@ -96,7 +96,7 @@
             exporter = null;
         }
 
-        protected override void DrawContent()
+        protected override unsafe void DrawContent()
         {
             if (isExporterOpen)
             {

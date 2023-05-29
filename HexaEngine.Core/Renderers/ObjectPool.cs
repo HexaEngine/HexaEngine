@@ -46,6 +46,8 @@
 
         public unsafe void Remove(Pointer<ObjectHandle> handle)
         {
+            if (handle.IsNull)
+                return;
             var hnd = (ObjectHandle*)handle;
             objects.RemoveAt(hnd->Id - 1);
             DestroyHandle(handle);

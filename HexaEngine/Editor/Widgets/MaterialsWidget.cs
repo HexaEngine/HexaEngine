@@ -7,7 +7,7 @@
     using ImGuiNET;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
 
-    public unsafe class MaterialsWidget : ImGuiWindow
+    public unsafe class MaterialsWidget : EditorWindow
     {
         private int current = -1;
         private bool hasChanged;

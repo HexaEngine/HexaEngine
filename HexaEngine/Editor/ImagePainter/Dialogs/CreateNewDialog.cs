@@ -49,7 +49,7 @@
                 dimension = dimensions[dim];
             }
 
-            ImGuiEnumHelper<Format>.Combo("Format", ref format);
+            ComboEnumHelper<Format>.Combo("Format", ref format);
 
             switch (dimension)
             {

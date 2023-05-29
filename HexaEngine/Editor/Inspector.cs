@@ -11,28 +11,31 @@
     using ImGuizmoNET;
     using System.Numerics;
 
-    public static class Inspector
+    public partial class Frameviewer
     {
+        private static bool inspectorEnabled = true;
+        private static bool drawGimbal = true;
         private static bool drawGrid = true;
         private static bool drawLights = true;
+        private static bool drawLightBounds = false;
         private static bool drawCameras = true;
         private static bool drawSkeletons = true;
         private static bool drawBoundingBoxes = false;
         private static bool drawBoundingSpheres = false;
         private static bool drawColliders = true;
-        private static bool enabled = true;
 
         private static ImGuizmoOperation operation = ImGuizmoOperation.Translate;
         private static ImGuizmoMode mode = ImGuizmoMode.Local;
         private static bool gimbalGrabbed;
         private static Matrix4x4 gimbalBefore;
-        private static bool drawLightBounds;
 
         public static ImGuizmoOperation Operation { get => operation; set => operation = value; }
 
         public static ImGuizmoMode Mode { get => mode; set => mode = value; }
 
-        public static bool Enabled { get => enabled; set => enabled = value; }
+        public static bool InspectorEnabled { get => inspectorEnabled; set => inspectorEnabled = value; }
+
+        public static bool DrawGimbal { get => drawGimbal; set => drawGimbal = value; }
 
         public static bool DrawGrid { get => drawGrid; set => drawGrid = value; }
 
@@ -50,9 +53,9 @@
 
         public static bool DrawBoundingSpheres { get => drawBoundingSpheres; set => drawBoundingSpheres = value; }
 
-        public static unsafe void Draw()
+        public static unsafe void InspectorDraw()
         {
-            if (!enabled)
+            if (!inspectorEnabled)
             {
                 return;
             }
@@ -65,6 +68,7 @@
 
             if (drawGrid)
             {
+                DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, 100, new Vector4(1, 1, 1, 0.2f));
             }
 
             if (drawLights)
@@ -211,10 +215,7 @@
                 }
             }
 
-            if (true)
-            {
-            }
-
+            if (drawGimbal)
             {
                 GameObject? element = GameObject.Selected.First();
                 Camera? camera = CameraManager.Current;

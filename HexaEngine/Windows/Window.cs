@@ -176,7 +176,7 @@ namespace HexaEngine.Windows
                 frameviewer.Draw();
                 drawing &= frameviewer.IsVisible;
                 renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
-                DebugDraw.SetViewport(renderViewport);
+
                 DebugDraw.SetCamera(CameraManager.Current);
 
                 Designer.Draw();

@@ -2,12 +2,15 @@
 
 namespace HexaEngine.Rendering
 {
+    using BepuPhysics.Collidables;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using System;
     using System.Numerics;
+    using System.Security.Cryptography;
 
     public unsafe class DebugDrawRenderer : IDisposable
     {
@@ -16,6 +19,8 @@ namespace HexaEngine.Rendering
         private readonly IGraphicsContext context;
         private readonly IGraphicsPipeline pipeline;
         private readonly IBuffer constantBuffer;
+        private readonly ResourceRef<IDepthStencilView> dsv;
+        private readonly ResourceRef<Texture> rtv;
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
 
@@ -39,7 +44,7 @@ namespace HexaEngine.Rendering
             },
             new GraphicsPipelineState()
             {
-                DepthStencil = DepthStencilDescription.None,
+                DepthStencil = DepthStencilDescription.Default,
                 Blend = BlendDescription.NonPremultiplied,
                 Rasterizer = desc,
                 BlendFactor = Vector4.One,
@@ -55,6 +60,9 @@ namespace HexaEngine.Rendering
             vertexBuffer = device.CreateBuffer(new BufferDescription(vertexBufferSize * sizeof(DebugDrawVert), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             indexBuffer = device.CreateBuffer(new BufferDescription(indexBufferSize * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(Matrix4x4), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
+
+            dsv = ResourceManager2.Shared.GetDepthStencilView("SwapChain.DSV");
+            rtv = ResourceManager2.Shared.GetTexture("LightBuffer");
         }
 
         public void BeginDraw()
@@ -65,6 +73,10 @@ namespace HexaEngine.Rendering
         public void EndDraw()
         {
             DebugDraw.Render();
+            if (rtv.Value == null)
+            {
+                return;
+            }
             context.SetRenderTarget(swapChain.BackbufferRTV, null);
             context.SetViewport(DebugDraw.GetViewport());
             Render(DebugDraw.GetQueue(), DebugDraw.GetCamera());
@@ -123,9 +135,11 @@ namespace HexaEngine.Rendering
 
                 int voffset = 0;
                 uint ioffset = 0;
+                bool hadDepth = false;
                 for (int i = 0; i < queue.Commands.Count; i++)
                 {
                     var cmd = queue.Commands[i];
+
                     context.SetPrimitiveTopology(cmd.Topology);
                     context.DrawIndexedInstanced(cmd.nIndices, 1, ioffset, voffset, 0);
                     voffset += (int)cmd.nVertices;

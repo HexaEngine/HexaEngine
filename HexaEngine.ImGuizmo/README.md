@@ -1,1 +1,0 @@
-﻿A .NET wrapper for the ImGuizmo library. (modified version of ImGuizmo.NET)

@@ -7,6 +7,7 @@
     using HexaEngine.Core.Animations;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Collections;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
@@ -27,7 +28,7 @@
         private readonly FlaggedList<SystemFlags, ISystem> systems = new();
         private readonly List<GameObject> nodes = new();
         private readonly List<Camera> cameras = new();
-        private string[] cameraNames = Array.Empty<string>();
+        private readonly List<string> cameraNames = new();
         private readonly ScriptManager scriptManager = new();
         private InstanceManager instanceManager;
         private ModelManager meshManager;
@@ -63,7 +64,7 @@
         public List<Camera> Cameras => cameras;
 
         [JsonIgnore]
-        public string[] CameraNames => cameraNames;
+        public string[] CameraNames => cameraNames.GetInternalArray();
 
         [JsonIgnore]
         public LightManager Lights => lightManager;
@@ -111,10 +112,10 @@
             meshManager ??= new();
             lightManager.Initialize(device).Wait();
             systems.Add(new AudioSystem());
-            systems.Add(new PhysicsSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
+            systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(renderManager = new(device, instanceManager));
 
@@ -135,10 +136,10 @@
             meshManager ??= new();
             await lightManager.Initialize(device);
             systems.Add(new AudioSystem());
-            systems.Add(new PhysicsSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
             systems.Add(lightManager);
+            systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(renderManager = new(device, instanceManager));
 
@@ -303,13 +304,7 @@
             nodes.Add(node);
             if (cameras.AddIfIs(node))
             {
-                if (cameraNames.Length != cameras.Capacity)
-                {
-                    var old = cameraNames;
-                    cameraNames = new string[cameras.Capacity];
-                    Array.Copy(old, cameraNames, old.Length);
-                }
-                cameraNames[cameras.Count - 1] = node.Name;
+                cameraNames.Add(node.Name);
             }
 
             for (int i = 0; i < systems.Count; i++)
@@ -321,9 +316,9 @@
         internal void UnregisterChild(GameObject node)
         {
             nodes.Remove(node);
-            if (cameras.RemoveIfIs(node, out int index))
+            if (cameras.RemoveIfIs(node))
             {
-                Array.Copy(cameraNames, index + 1, cameraNames, index, cameras.Count - index);
+                cameraNames.Remove(node.Name);
             }
 
             for (int i = 0; i < systems.Count; i++)

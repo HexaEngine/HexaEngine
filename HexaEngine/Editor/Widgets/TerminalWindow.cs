@@ -5,7 +5,7 @@
     using HexaEngine.Editor;
     using ImGuiNET;
 
-    public class TerminalWindow : ImGuiWindow
+    public class TerminalWindow : EditorWindow
     {
         private readonly List<ITerminal> terminals = new();
         private readonly List<string> terminalNames = new();

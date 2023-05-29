@@ -5,10 +5,10 @@ using HexaEngine.Core.Graphics;
 using HexaEngine.Core.IO;
 using HexaEngine.Core.Windows;
 using HexaEngine.Mathematics;
-using ImGuiNET;
-using ImGuizmoNET;
-using ImNodesNET;
-using ImPlotNET;
+using HexaEngine.ImGuiNET;
+using HexaEngine.ImGuizmoNET;
+using HexaEngine.ImNodesNET;
+using HexaEngine.ImPlotNET;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ImDrawIdx = System.UInt16;
@@ -30,9 +30,9 @@ namespace HexaEngine.Rendering
         private ISamplerState fontSampler;
         private IShaderResourceView fontTextureView;
         private int vertexBufferSize = 5000, indexBufferSize = 10000;
-        private nint guiContext;
-        private nint nodesContext;
-        private nint plotContext;
+        private ImGuiContext* guiContext;
+        private ImNodesContext* nodesContext;
+        private ImPlotContext* plotContext;
         public static readonly Dictionary<nint, ISamplerState> Samplers = new();
 
         public ImGuiRenderer(SdlWindow window, IGraphicsDevice device, ISwapChain swapChain)
@@ -45,11 +45,11 @@ namespace HexaEngine.Rendering
 
             nodesContext = ImNodes.CreateContext();
             ImNodes.SetCurrentContext(nodesContext);
-            ImNodes.StyleColorsDark();
+            ImNodes.StyleColorsDark(ImNodes.GetStyle());
 
             plotContext = ImPlot.CreateContext();
             ImPlot.SetCurrentContext(plotContext);
-            ImPlot.StyleColorsDark();
+            ImPlot.StyleColorsDark(ImPlot.GetStyle());
 
             this.device = device;
             this.swapChain = swapChain;
@@ -57,19 +57,19 @@ namespace HexaEngine.Rendering
 
             var io = ImGui.GetIO();
 
-            var config = new ImFontConfigPtr(ImGuiNative.ImFontConfig_ImFontConfig());
-
+            var config = ImGui.ImFontConfig();
             io.Fonts.AddFontDefault(config);
+
             config.MergeMode = true;
             config.GlyphMinAdvanceX = 18;
             config.GlyphOffset = new(0, 4);
-            var range = new char[] { (char)0xE700, (char)0xF800, (char)0 };
+            var range = new char[] { (char)0xE700, (char)0xF8B3, (char)0 };
             fixed (char* buffer = range)
             {
                 var bytes = FileSystem.ReadAllBytes("assets/fonts/SEGMDL2.TTF");
                 fixed (byte* buffer2 = bytes)
                 {
-                    io.Fonts.AddFontFromMemoryTTF((nint)buffer2, bytes.Length, 14, config, (IntPtr)buffer);
+                    io.Fonts.AddFontFromMemoryTTF(buffer2, bytes.Length, 14, config, ref range[0]);
                 }
             }
 
@@ -159,7 +159,6 @@ namespace HexaEngine.Rendering
             style.LogSliderDeadzone = 4;
             style.TabRounding = 4;
 
-            ImNodes.StyleColorsDark();
             /*var ncolors = ImNodes.GetStyle()->colors;
             ncolors[(int)ColorStyle.NodeBackground] = new Vector4(0.10f, 0.10f, 0.10f, 1.00f).Pack();
             ncolors[(int)ColorStyle.NodeBackgroundHovered] = new Vector4(0.00f, 0.00f, 0.00f, 0.36f).Pack();
@@ -204,26 +203,26 @@ namespace HexaEngine.Rendering
             Render(ImGui.GetDrawData());
         }
 
-        public void Render(ImDrawDataPtr data)
+        public void Render(ImDrawData* data)
         {
             // Avoid rendering when minimized
-            if (data.DisplaySize.X <= 0.0f || data.DisplaySize.Y <= 0.0f)
+            if (data->DisplaySize.X <= 0.0f || data->DisplaySize.Y <= 0.0f)
             {
                 return;
             }
 
-            if (data.CmdListsCount == 0)
+            if (data->CmdListsCount == 0)
             {
                 return;
             }
 
             IGraphicsContext ctx = context;
 
-            if (vertexBuffer == null || vertexBufferSize < data.TotalVtxCount)
+            if (vertexBuffer == null || vertexBufferSize < data->TotalVtxCount)
             {
                 vertexBuffer?.Dispose();
 
-                vertexBufferSize = (int)(data.TotalVtxCount * 1.5f);
+                vertexBufferSize = (int)(data->TotalVtxCount * 1.5f);
                 BufferDescription desc = new();
                 desc.Usage = Usage.Dynamic;
                 desc.ByteWidth = vertexBufferSize * sizeof(ImDrawVert);
@@ -232,11 +231,11 @@ namespace HexaEngine.Rendering
                 vertexBuffer = device.CreateBuffer(desc);
             }
 
-            if (indexBuffer == null || indexBufferSize < data.TotalIdxCount)
+            if (indexBuffer == null || indexBufferSize < data->TotalIdxCount)
             {
                 indexBuffer?.Dispose();
 
-                indexBufferSize = (int)(data.TotalIdxCount * 1.5f);
+                indexBufferSize = (int)(data->TotalIdxCount * 1.5f);
 
                 BufferDescription desc = new();
                 desc.Usage = Usage.Dynamic;
@@ -251,18 +250,18 @@ namespace HexaEngine.Rendering
             var indexResource = ctx.Map(indexBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
             var vertexResourcePointer = (ImDrawVert*)vertexResource.PData;
             var indexResourcePointer = (ImDrawIdx*)indexResource.PData;
-            for (int n = 0; n < data.CmdListsCount; n++)
+            for (int n = 0; n < data->CmdListsCount; n++)
             {
-                var cmdlList = data.CmdListsRange[n];
+                var cmdlList = data->CmdLists[n];
 
-                var vertBytes = cmdlList.VtxBuffer.Size * sizeof(ImDrawVert);
-                Buffer.MemoryCopy((void*)cmdlList.VtxBuffer.Data, vertexResourcePointer, vertBytes, vertBytes);
+                var vertBytes = cmdlList->VtxBuffer.Size * sizeof(ImDrawVert);
+                Buffer.MemoryCopy(cmdlList->VtxBuffer.Data, vertexResourcePointer, vertBytes, vertBytes);
 
-                var idxBytes = cmdlList.IdxBuffer.Size * sizeof(ImDrawIdx);
-                Buffer.MemoryCopy((void*)cmdlList.IdxBuffer.Data, indexResourcePointer, idxBytes, idxBytes);
+                var idxBytes = cmdlList->IdxBuffer.Size * sizeof(ImDrawIdx);
+                Buffer.MemoryCopy(cmdlList->IdxBuffer.Data, indexResourcePointer, idxBytes, idxBytes);
 
-                vertexResourcePointer += cmdlList.VtxBuffer.Size;
-                indexResourcePointer += cmdlList.IdxBuffer.Size;
+                vertexResourcePointer += cmdlList->VtxBuffer.Size;
+                indexResourcePointer += cmdlList->IdxBuffer.Size;
             }
             ctx.Unmap(vertexBuffer, 0);
             ctx.Unmap(indexBuffer, 0);
@@ -272,38 +271,37 @@ namespace HexaEngine.Rendering
 
             var constResource = ctx.Map(constantBuffer, 0, MapMode.WriteDiscard, MapFlags.None);
             var span = constResource.AsSpan<byte>(VertexConstantBufferSize);
-            ImGuiIOPtr io = ImGui.GetIO();
-            Matrix4x4 mvp = MathUtil.OrthoOffCenterLH(0f, io.DisplaySize.X, io.DisplaySize.Y, 0, -1, 1);
+            ImGuiIO* io = ImGui.GetIO();
+            Matrix4x4 mvp = MathUtil.OrthoOffCenterLH(0f, io->DisplaySize.X, io->DisplaySize.Y, 0, -1, 1);
             MemoryMarshal.Write(span, ref mvp);
             ctx.Unmap(constantBuffer, 0);
 
             SetupRenderState(data, ctx);
 
-            data.ScaleClipRects(io.DisplayFramebufferScale);
+            data->ScaleClipRects(io->DisplayFramebufferScale);
 
             // Render command lists
             // (Because we merged all buffers into a single one, we maintain our own offset into them)
             int vtx_offset = 0;
             uint idx_offset = 0;
 
-            for (int n = 0; n < data.CmdListsCount; n++)
+            for (int n = 0; n < data->CmdListsCount; n++)
             {
-                var cmdList = data.CmdListsRange[n];
-                ImGuizmo.SetDrawlist(cmdList);
+                var cmdList = data->CmdLists[n];
 
-                for (int i = 0; i < cmdList.CmdBuffer.Size; i++)
+                for (int i = 0; i < cmdList->CmdBuffer.Size; i++)
                 {
-                    var cmd = cmdList.CmdBuffer[i];
-                    if (cmd.UserCallback != IntPtr.Zero)
+                    var cmd = cmdList->CmdBuffer.Data[i];
+                    if (cmd.UserCallback != null)
                     {
-                        throw new NotImplementedException("user callbacks not implemented");
+                        cmd.UserCallback(cmdList, &cmd);
                     }
                     else
                     {
                         ctx.SetScissorRect((int)cmd.ClipRect.X, (int)cmd.ClipRect.Y, (int)cmd.ClipRect.Z, (int)cmd.ClipRect.W);
 
-                        ctx.PSSetShaderResource((void*)cmd.TextureId, 0);
-                        if (Samplers.TryGetValue(cmd.TextureId, out var sampler))
+                        ctx.PSSetShaderResource((void*)cmd.TextureId.Handle, 0);
+                        if (Samplers.TryGetValue(cmd.TextureId.Handle, out var sampler))
                         {
                             ctx.PSSetSampler(sampler, 0);
                         }
@@ -316,7 +314,7 @@ namespace HexaEngine.Rendering
                     }
                     idx_offset += cmd.ElemCount;
                 }
-                vtx_offset += cmdList.VtxBuffer.Size;
+                vtx_offset += cmdList->VtxBuffer.Size;
             }
 
             ctx.ClearState();
@@ -333,9 +331,9 @@ namespace HexaEngine.Rendering
             InvalidateDeviceObjects();
         }
 
-        private void SetupRenderState(ImDrawDataPtr drawData, IGraphicsContext ctx)
+        private void SetupRenderState(ImDrawData* drawData, IGraphicsContext ctx)
         {
-            var viewport = new Viewport(drawData.DisplaySize.X, drawData.DisplaySize.Y);
+            var viewport = new Viewport(drawData->DisplaySize.X, drawData->DisplaySize.Y);
 
             uint stride = (uint)sizeof(ImDrawVert);
             uint offset = 0;
@@ -351,7 +349,10 @@ namespace HexaEngine.Rendering
         private void CreateFontsTexture()
         {
             var io = ImGui.GetIO();
-            io.Fonts.GetTexDataAsRGBA32(out byte* pixels, out int width, out int height);
+            byte* pixels;
+            int width;
+            int height;
+            io.Fonts.GetTexDataAsRGBA32(&pixels, &width, &height);
 
             var texDesc = new Texture2DDescription
             {

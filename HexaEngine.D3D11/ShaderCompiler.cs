@@ -163,35 +163,11 @@
             }
         }
 
-        public unsafe void Reflect<T>(Blob blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
-        {
-            lock (D3DCompiler)
-            {
-                D3DCompiler.Reflect((void*)blob.BufferPointer, (nuint)(int)blob.PointerSize, out reflector);
-            }
-        }
-
         public unsafe void Reflect<T>(Shader* blob, out ComPtr<T> reflector) where T : unmanaged, IComVtbl<T>
         {
             lock (D3DCompiler)
             {
                 D3DCompiler.Reflect(blob->Bytecode, blob->Length, out reflector);
-            }
-        }
-
-        public unsafe void Reflect(Blob blob, Guid guid, void** reflector)
-        {
-            lock (D3DCompiler)
-            {
-                D3DCompiler.Reflect((void*)blob.BufferPointer, (nuint)(int)blob.PointerSize, Utils.Guid(guid), reflector);
-            }
-        }
-
-        public unsafe void Reflect(Shader* blob, Guid guid, void** reflector)
-        {
-            lock (D3DCompiler)
-            {
-                D3DCompiler.Reflect(blob->Bytecode, blob->Length, Utils.Guid(guid), reflector);
             }
         }
 
@@ -266,17 +242,6 @@
             CompileFromFile(path, entry, profile, shader, out _);
         }
 
-        public unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
-        {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
-            {
-                Compile(code, macros, entry, path, profile, &pShader);
-                ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
-            }
-            *shader = pShader;
-        }
-
         public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader;
@@ -314,63 +279,19 @@
             signature = GetInputSignature(pShader);
         }
 
-        public unsafe void GetShaderOrCompile(string code, string entry, string path, string profile, Shader** shader, bool bypassCache = false)
-        {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
-            {
-                Compile(code, entry, path, profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
-            }
-            *shader = pShader;
-        }
-
-        public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, Shader** shader, bool bypassCache = false)
-        {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
-            {
-                CompileFromFile(path, entry, profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
-            }
-            *shader = pShader;
-        }
-
-        public unsafe void GetShaderOrCompile(string code, string path, string profile, Shader** shader, bool bypassCache = false)
-        {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
-            {
-                Compile(code, "main", path, profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
-            }
-            *shader = pShader;
-        }
-
-        public unsafe void GetShaderOrCompileFile(string path, string profile, Shader** shader, bool bypassCache = false)
-        {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, Array.Empty<ShaderMacro>(), &pShader, out _))
-            {
-                CompileFromFile(path, "main", profile, &pShader);
-                ShaderCache.CacheShader(path, Array.Empty<ShaderMacro>(), Array.Empty<InputElementDescription>(), pShader);
-            }
-            *shader = pShader;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal unsafe InputElementDescription[] GetInputElementsFromSignature(Shader* shader, Blob signature)
         {
-            ID3D11ShaderReflection* reflection;
-            Compiler.Reflect(shader, ID3D11ShaderReflection.Guid, (void**)&reflection);
+            ComPtr<ID3D11ShaderReflection> reflection;
+            Compiler.Reflect(shader, out reflection);
             ShaderDesc desc;
-            reflection->GetDesc(&desc);
+            reflection.GetDesc(&desc);
 
             var inputElements = new InputElementDescription[desc.InputParameters];
             for (uint i = 0; i < desc.InputParameters; i++)
             {
                 SignatureParameterDesc parameterDesc;
-                reflection->GetInputParameterDesc(i, &parameterDesc);
+                reflection.GetInputParameterDesc(i, &parameterDesc);
 
                 InputElementDescription inputElement = new()
                 {
@@ -429,7 +350,7 @@
                 inputElements[i] = inputElement;
             }
 
-            reflection->Release();
+            reflection.Release();
             return inputElements;
         }
     }

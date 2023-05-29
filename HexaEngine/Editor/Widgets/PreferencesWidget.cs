@@ -5,10 +5,11 @@
     using HexaEngine.Core.Input;
     using ImGuiNET;
     using System.Collections.Generic;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
 
-    public class PreferencesWidget : ImGuiWindow
+    public class PreferencesWidget : EditorWindow
     {
         private ConfigKey? displayedKey;
         private List<Key> keyCodes = new();
@@ -39,7 +40,7 @@
         {
             Config config = Config.Global;
             List<ConfigKey> keys = config.Keys;
-            ImGui.BeginChild("Keys", new(100, 0));
+            ImGui.BeginChild("Keys", new Vector2(100, 0));
             for (int i = 0; i < keys.Count; i++)
             {
                 DisplayKeyNode(keys[i]);
@@ -129,7 +130,7 @@
                         case DataType.UInt8:
                             {
                                 var v = value.GetUInt8();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U8, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U8, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();
@@ -140,7 +141,7 @@
                         case DataType.Int8:
                             {
                                 var v = value.GetInt8();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.S8, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.S8, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();
@@ -151,7 +152,7 @@
                         case DataType.UInt16:
                             {
                                 var v = value.GetUInt16();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U16, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U16, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();
@@ -162,7 +163,7 @@
                         case DataType.Int16:
                             {
                                 var v = value.GetInt16();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.S16, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.S16, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();
@@ -173,7 +174,7 @@
                         case DataType.UInt32:
                             {
                                 var v = value.GetUInt32();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U32, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U32, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();
@@ -195,7 +196,7 @@
                         case DataType.UInt64:
                             {
                                 var v = value.GetUInt64();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U64, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.U64, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();
@@ -206,7 +207,7 @@
                         case DataType.Int64:
                             {
                                 var v = value.GetInt64();
-                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.S64, (nint)Unsafe.AsPointer(ref v));
+                                changed = ImGui.InputScalar(value.Name, ImGuiDataType.S64, Unsafe.AsPointer(ref v));
                                 if (changed)
                                 {
                                     val = v.ToString();

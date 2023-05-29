@@ -5,6 +5,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.UI;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Managers;
@@ -13,7 +14,7 @@
     using System;
     using System.Numerics;
 
-    public class Frameviewer
+    public partial class Frameviewer
     {
         private readonly IGraphicsDevice device;
         private bool isShown;
@@ -42,16 +43,18 @@
         internal void Update()
         {
             ImGuizmo.SetRect(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height);
+            DebugDraw.SetViewport(Viewport);
         }
 
-        internal void Draw()
+        internal unsafe void Draw()
         {
-            if (!ImGui.Begin("Scene", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar))
+            if (!ImGui.Begin("Scene", ref isShown, ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.MenuBar))
             {
                 isVisible = false;
                 ImGui.End();
                 return;
             }
+            ImGuizmo.SetDrawlist();
             isVisible = true;
             var scene = SceneManager.Current;
             if (ImGui.IsWindowHovered() && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
@@ -163,32 +166,6 @@
 
                 if (ImGui.BeginMenu("options"))
                 {
-                    if (ImGui.RadioButton("Translate", Inspector.Operation == ImGuizmoOperation.Translate))
-                    {
-                        Inspector.Operation = ImGuizmoOperation.Translate;
-                    }
-
-                    if (ImGui.RadioButton("Rotate", Inspector.Operation == ImGuizmoOperation.Rotate))
-                    {
-                        Inspector.Operation = ImGuizmoOperation.Rotate;
-                    }
-
-                    if (ImGui.RadioButton("Scale", Inspector.Operation == ImGuizmoOperation.Scale))
-                    {
-                        Inspector.Operation = ImGuizmoOperation.Scale;
-                    }
-
-                    if (ImGui.RadioButton("Local", Inspector.Mode == ImGuizmoMode.Local))
-                    {
-                        Inspector.Mode = ImGuizmoMode.Local;
-                    }
-
-                    ImGui.SameLine();
-                    if (ImGui.RadioButton("World", Inspector.Mode == ImGuizmoMode.World))
-                    {
-                        Inspector.Mode = ImGuizmoMode.World;
-                    }
-                    ImGui.Separator();
                     ImGui.Text("Shading Mode");
                     if (ImGui.RadioButton("Wireframe", Application.MainWindow.Renderer.Shading == ViewportShading.Wireframe))
                     {
@@ -226,6 +203,42 @@
                 var y = (size.Y - h) / 2;
                 Viewport = new(position.X + x, position.Y + y, w, h);
             }
+
+            ImGui.PushItemWidth(100);
+
+            var mode = Mode;
+            if (ComboEnumHelper<ImGuizmoMode>.Combo("##Mode", ref mode))
+            {
+                Mode = mode;
+            }
+
+            ImGui.PopItemWidth();
+
+            if (ImGui.Button("\xECE9", new(32, 32)))
+            {
+                Operation = ImGuizmoOperation.Translate;
+            }
+            TooltipHelper.Tooltip("Translate");
+
+            if (ImGui.Button("\xE7AD", new(32, 32)))
+            {
+                Operation = ImGuizmoOperation.Rotate;
+            }
+            TooltipHelper.Tooltip("Rotate");
+
+            if (ImGui.Button("\xE740", new(32, 32)))
+            {
+                Operation = ImGuizmoOperation.Scale;
+            }
+            TooltipHelper.Tooltip("Scale");
+
+            if (ImGui.Button("\xE759", new(32, 32)))
+            {
+                Operation = ImGuizmoOperation.Universal;
+            }
+            TooltipHelper.Tooltip("Translate & Rotate & Scale");
+
+            InspectorDraw();
 
             ImGui.End();
         }

@@ -345,6 +345,8 @@ namespace HexaEngine.Rendering
             scene.Lights.EndResize(width, height);
         }
 
+        public event Action? OnMainPassEnd;
+
         public unsafe void LoadScene(Scene scene)
         {
             scene.Lights.BeginResize();
@@ -461,6 +463,7 @@ namespace HexaEngine.Rendering
 
             if (shading == ViewportShading.Rendered)
             {
+                OnMainPassEnd?.Invoke();
                 context.SetRenderTarget(lightBuffer.Value.RenderTargetView, dsv);
                 context.SetViewport(lightBuffer.Value.RenderTargetView.Viewport);
                 scene.RenderManager.Draw(context, RenderQueueIndex.Background);

@@ -4,7 +4,7 @@
     using HexaEngine.Core.Scenes;
     using ImGuiNET;
 
-    public class MeshesWidget : ImGuiWindow
+    public class MeshesWidget : EditorWindow
     {
         private int current = -1;
 

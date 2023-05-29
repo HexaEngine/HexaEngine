@@ -12,6 +12,7 @@ namespace HexaEngine.Editor
         public uint nIndices;
         public uint nVertices;
         public nint TextureId;
+        public bool EnableDepth;
     }
 
     public unsafe class DebugDrawCommandQueue

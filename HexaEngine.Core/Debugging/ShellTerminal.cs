@@ -194,7 +194,7 @@
             }
         }
 
-        private void DrawMessages()
+        private unsafe void DrawMessages()
         {
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             lock (messages)
@@ -228,7 +228,7 @@
         {
             bool reclaimFocus = false;
             ImGui.PushItemWidth(-ImGui.GetStyle().ItemSpacing.X * 7);
-            if (ImGui.InputText("Input", ref inBuffer, 1024, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory, textCallback))
+            if (ImGui.InputText("Input", ref inBuffer, 1024, ImGuiInputTextFlags.EnterReturnsTrue | ImGuiInputTextFlags.CallbackHistory))
             {
                 consoleAppManager.Write(inBuffer + Environment.NewLine);
                 history.Add(inBuffer);

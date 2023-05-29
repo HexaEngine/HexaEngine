@@ -37,7 +37,7 @@
             importDialog = new(device);
         }
 
-        internal static void Draw()
+        internal static unsafe void Draw()
         {
             if (filePicker.Draw())
             {
@@ -84,11 +84,11 @@
 
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("Undo (CTRL+Z)", Designer.History.CanUndo))
+                    if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, Designer.History.CanUndo))
                     {
                         Designer.History.Undo();
                     }
-                    if (ImGui.MenuItem("Redo (CTRL+Y)", Designer.History.CanRedo))
+                    if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, Designer.History.CanRedo))
                     {
                         Designer.History.Redo();
                     }
@@ -164,46 +164,46 @@
 
                 if (ImGui.BeginMenu("Inspector"))
                 {
-                    var enabled = Inspector.Enabled;
+                    var enabled = Frameviewer.InspectorEnabled;
                     if (ImGui.Checkbox("Enabled", ref enabled))
                     {
-                        Inspector.Enabled = enabled;
+                        Frameviewer.InspectorEnabled = enabled;
                     }
 
-                    var drawGrid = Inspector.DrawGrid;
+                    var drawGrid = Frameviewer.DrawGrid;
                     if (ImGui.Checkbox("Draw Grid", ref drawGrid))
                     {
-                        Inspector.DrawGrid = drawGrid;
+                        Frameviewer.DrawGrid = drawGrid;
                     }
 
-                    var drawLights = Inspector.DrawLights;
+                    var drawLights = Frameviewer.DrawLights;
                     if (ImGui.Checkbox("Draw Lights", ref drawLights))
                     {
-                        Inspector.DrawLights = drawLights;
+                        Frameviewer.DrawLights = drawLights;
                     }
 
-                    var drawLightBounds = Inspector.DrawLightBounds;
+                    var drawLightBounds = Frameviewer.DrawLightBounds;
                     if (ImGui.Checkbox("Draw Light Bounds", ref drawLightBounds))
                     {
-                        Inspector.DrawLightBounds = drawLightBounds;
+                        Frameviewer.DrawLightBounds = drawLightBounds;
                     }
 
-                    var drawSkeletons = Inspector.DrawSkeletons;
+                    var drawSkeletons = Frameviewer.DrawSkeletons;
                     if (ImGui.Checkbox("Draw Skeletons", ref drawSkeletons))
                     {
-                        Inspector.DrawSkeletons = drawSkeletons;
+                        Frameviewer.DrawSkeletons = drawSkeletons;
                     }
 
-                    var drawColliders = Inspector.DrawColliders;
+                    var drawColliders = Frameviewer.DrawColliders;
                     if (ImGui.Checkbox("Draw Colliders", ref drawColliders))
                     {
-                        Inspector.DrawColliders = drawColliders;
+                        Frameviewer.DrawColliders = drawColliders;
                     }
 
-                    var drawBoundingBoxes = Inspector.DrawBoundingBoxes;
+                    var drawBoundingBoxes = Frameviewer.DrawBoundingBoxes;
                     if (ImGui.Checkbox("Draw Bounding Boxes", ref drawBoundingBoxes))
                     {
-                        Inspector.DrawBoundingBoxes = drawBoundingBoxes;
+                        Frameviewer.DrawBoundingBoxes = drawBoundingBoxes;
                     }
 
                     ImGui.EndMenu();
@@ -211,7 +211,7 @@
                 if (ImGui.BeginMenu("Debug"))
                 {
                     ImGui.TextDisabled("Shaders");
-                    if (ImGui.MenuItem("Recompile Shaders", recompileShadersTaskIsComplete))
+                    if (ImGui.MenuItem("Recompile Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
                     {
                         recompileShadersTaskIsComplete = false;
                         recompileShadersTask = Task.Run(() =>

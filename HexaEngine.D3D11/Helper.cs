@@ -20,7 +20,7 @@
 
             if ((flags & CPFlags.LegacyDWORD) != 0)
             {
-                result |= DirectXTex.CPFlags.LegacyDWORD;
+                result |= DirectXTex.CPFlags.LegacyDword;
             }
 
             if ((flags & CPFlags.Paragraph) != 0)
@@ -30,12 +30,12 @@
 
             if ((flags & CPFlags.YMM) != 0)
             {
-                result |= DirectXTex.CPFlags.YMM;
+                result |= DirectXTex.CPFlags.Ymm;
             }
 
             if ((flags & CPFlags.ZMM) != 0)
             {
-                result |= DirectXTex.CPFlags.ZMM;
+                result |= DirectXTex.CPFlags.Zmm;
             }
 
             if ((flags & CPFlags.Page4K) != 0)
@@ -45,22 +45,22 @@
 
             if ((flags & CPFlags.BadDXTNTails) != 0)
             {
-                result |= DirectXTex.CPFlags.BadDXTNTails;
+                result |= DirectXTex.CPFlags.BadDxtnTails;
             }
 
             if ((flags & CPFlags.BPP24) != 0)
             {
-                result |= DirectXTex.CPFlags.BPP24;
+                result |= DirectXTex.CPFlags.Flags24Bpp;
             }
 
             if ((flags & CPFlags.BPP16) != 0)
             {
-                result |= DirectXTex.CPFlags.BPP16;
+                result |= DirectXTex.CPFlags.Flags16Bpp;
             }
 
             if ((flags & CPFlags.BPP8) != 0)
             {
-                result |= DirectXTex.CPFlags.BPP8;
+                result |= DirectXTex.CPFlags.Flags8Bpp;
             }
 
             return result;
@@ -73,13 +73,13 @@
                 TexFileFormat.DDS => throw new NotSupportedException(),
                 TexFileFormat.TGA => throw new NotSupportedException(),
                 TexFileFormat.HDR => throw new NotSupportedException(),
-                TexFileFormat.BMP => DirectXTex.WICCodecs.BMP,
-                TexFileFormat.JPEG => DirectXTex.WICCodecs.JPEG,
-                TexFileFormat.PNG => DirectXTex.WICCodecs.PNG,
-                TexFileFormat.TIFF => DirectXTex.WICCodecs.TIFF,
-                TexFileFormat.GIF => DirectXTex.WICCodecs.GIF,
-                TexFileFormat.WMP => DirectXTex.WICCodecs.WMP,
-                TexFileFormat.ICO => DirectXTex.WICCodecs.ICO,
+                TexFileFormat.BMP => DirectXTex.WICCodecs.WicCodecBmp,
+                TexFileFormat.JPEG => DirectXTex.WICCodecs.WicCodecJpeg,
+                TexFileFormat.PNG => DirectXTex.WICCodecs.WicCodecPng,
+                TexFileFormat.TIFF => DirectXTex.WICCodecs.WicCodecTiff,
+                TexFileFormat.GIF => DirectXTex.WICCodecs.WicCodecGif,
+                TexFileFormat.WMP => DirectXTex.WICCodecs.WicCodecWmp,
+                TexFileFormat.ICO => DirectXTex.WICCodecs.WicCodecIco,
                 _ => throw new NotSupportedException(),
             };
         }
@@ -144,17 +144,17 @@
 
             if ((flags & TexFilterFlags.RGBCopyRed) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.RGBCopyRed;
+                result |= DirectXTex.TexFilterFlags.RgbCopyRed;
             }
 
             if ((flags & TexFilterFlags.RGBCopyGreen) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.RGBCopyGreen;
+                result |= DirectXTex.TexFilterFlags.RgbCopyGreen;
             }
 
             if ((flags & TexFilterFlags.RGBCopyBlue) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.RGBCopyBlue;
+                result |= DirectXTex.TexFilterFlags.RgbCopyBlue;
             }
 
             if ((flags & TexFilterFlags.Dither) != 0)
@@ -194,27 +194,27 @@
 
             if ((flags & TexFilterFlags.SRGBIn) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.SRGBIn;
+                result |= DirectXTex.TexFilterFlags.SrgbIn;
             }
 
             if ((flags & TexFilterFlags.SRGBOut) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.SRGBOut;
+                result |= DirectXTex.TexFilterFlags.SrgbOut;
             }
 
             if ((flags & TexFilterFlags.SRGB) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.SRGB;
+                result |= DirectXTex.TexFilterFlags.Srgb;
             }
 
             if ((flags & TexFilterFlags.ForceNonWIC) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.ForceNonWIC;
+                result |= DirectXTex.TexFilterFlags.ForceNonWic;
             }
 
             if ((flags & TexFilterFlags.ForceWIC) != 0)
             {
-                result |= DirectXTex.TexFilterFlags.ForceWIC;
+                result |= DirectXTex.TexFilterFlags.ForceWic;
             }
 
             return result;
@@ -230,12 +230,12 @@
 
             if ((flags & TexCompressFlags.DitherRGB) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.DitherRGB;
+                result |= DirectXTex.TexCompressFlags.RgbDither;
             }
 
             if ((flags & TexCompressFlags.DitherA) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.DitherA;
+                result |= DirectXTex.TexCompressFlags.ADither;
             }
 
             if ((flags & TexCompressFlags.Dither) != 0)
@@ -250,22 +250,22 @@
 
             if ((flags & TexCompressFlags.BC7Use3Sunsets) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.BC7Use3Sunsets;
+                result |= DirectXTex.TexCompressFlags.Bc7Use3Subsets;
             }
 
             if ((flags & TexCompressFlags.BC7Quick) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.BC7Quick;
+                result |= DirectXTex.TexCompressFlags.Bc7Quick;
             }
 
             if ((flags & TexCompressFlags.SRGBIn) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.SRGBIn;
+                result |= DirectXTex.TexCompressFlags.SrgbIn;
             }
 
             if ((flags & TexCompressFlags.SRGBOut) != 0)
             {
-                result |= DirectXTex.TexCompressFlags.SRGBOut;
+                result |= DirectXTex.TexCompressFlags.SrgbOut;
             }
 
             if ((flags & TexCompressFlags.Parallel) != 0)
@@ -2178,14 +2178,14 @@
         public static DirectXTex.TexMetadata Convert(TexMetadata metadata)
         {
             DirectXTex.TexMetadata texMetadata;
-            texMetadata.Format = Convert(metadata.Format);
-            texMetadata.ArraySize = (ulong)metadata.ArraySize;
-            texMetadata.Width = (ulong)metadata.Width;
-            texMetadata.Height = (ulong)metadata.Height;
-            texMetadata.Depth = (ulong)metadata.Depth;
-            texMetadata.MipLevels = (ulong)metadata.MipLevels;
+            texMetadata.Format = (int)Convert(metadata.Format);
+            texMetadata.ArraySize = (nuint)metadata.ArraySize;
+            texMetadata.Width = (nuint)metadata.Width;
+            texMetadata.Height = (nuint)metadata.Height;
+            texMetadata.Depth = (nuint)metadata.Depth;
+            texMetadata.MipLevels = (nuint)metadata.MipLevels;
             texMetadata.Dimension = Convert(metadata.Dimension);
-            texMetadata.MiscFlags = Convert(metadata.MiscFlags);
+            texMetadata.MiscFlags = (uint)Convert(metadata.MiscFlags);
             texMetadata.MiscFlags2 = 0;
             texMetadata.SetAlphaMode(Convert(metadata.AlphaMode));
             return texMetadata;
@@ -2204,107 +2204,13 @@
             };
         }
 
-        public static DirectXTex.TexMiscFlags Convert(TexMiscFlags flags)
+        public static DirectXTex.TexMiscFlag Convert(TexMiscFlags flags)
         {
-            DirectXTex.TexMiscFlags result = 0;
-            if ((flags & TexMiscFlags.GenerateMips) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.GenerateMips;
-            }
-
-            if ((flags & TexMiscFlags.Shared) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.Shared;
-            }
+            DirectXTex.TexMiscFlag result = 0;
 
             if ((flags & TexMiscFlags.TextureCube) != 0)
             {
-                result |= DirectXTex.TexMiscFlags.TextureCube;
-            }
-
-            if ((flags & TexMiscFlags.DrawIndirectArguments) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.DrawIndirectArguments;
-            }
-
-            if ((flags & TexMiscFlags.BufferAllowRawViews) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.BufferAllowRawViews;
-            }
-
-            if ((flags & TexMiscFlags.BufferStructured) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.BufferStructured;
-            }
-
-            if ((flags & TexMiscFlags.ResourceClamp) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.ResourceClamp;
-            }
-
-            if ((flags & TexMiscFlags.SharedKeyedMutex) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.SharedKeyedMutex;
-            }
-
-            if ((flags & TexMiscFlags.GdiCompatible) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.GdiCompatible;
-            }
-
-            if ((flags & TexMiscFlags.SharedNTHandle) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.SharedNTHandle;
-            }
-
-            if ((flags & TexMiscFlags.RestrictedContent) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.RestrictedContent;
-            }
-
-            if ((flags & TexMiscFlags.RestrictSharedResource) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.RestrictSharedResource;
-            }
-
-            if ((flags & TexMiscFlags.RestrictSharedResourceDriver) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.RestrictSharedResourceDriver;
-            }
-
-            if ((flags & TexMiscFlags.Guarded) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.Guarded;
-            }
-
-            if ((flags & TexMiscFlags.TilePool) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.TilePool;
-            }
-
-            if ((flags & TexMiscFlags.Tiled) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.Tiled;
-            }
-
-            if ((flags & TexMiscFlags.HardwareProtected) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.HardwareProtected;
-            }
-
-            if ((flags & TexMiscFlags.SharedDisplayable) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.SharedDisplayable;
-            }
-
-            if ((flags & TexMiscFlags.SharedExclusiveWriter) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.SharedExclusiveWriter;
-            }
-
-            if ((flags & TexMiscFlags.None) != 0)
-            {
-                result |= DirectXTex.TexMiscFlags.None;
+                result |= DirectXTex.TexMiscFlag.Texturecube;
             }
 
             return result;
@@ -2324,14 +2230,14 @@
         public static TexMetadata ConvertBack(DirectXTex.TexMetadata metadata)
         {
             TexMetadata texMetadata;
-            texMetadata.Format = ConvertBack(metadata.Format);
+            texMetadata.Format = ConvertBack((Silk.NET.DXGI.Format)metadata.Format);
             texMetadata.ArraySize = (int)metadata.ArraySize;
             texMetadata.Width = (int)metadata.Width;
             texMetadata.Height = (int)metadata.Height;
             texMetadata.Depth = (int)metadata.Depth;
             texMetadata.MipLevels = (int)metadata.MipLevels;
             texMetadata.Dimension = ConvertBack(metadata.Dimension);
-            texMetadata.MiscFlags = ConvertBack(metadata.MiscFlags);
+            texMetadata.MiscFlags = ConvertBack((DirectXTex.TexMiscFlag)metadata.MiscFlags);
             texMetadata.AlphaMode = ConvertBack(metadata.GetAlphaMode());
             return texMetadata;
         }
@@ -2347,107 +2253,13 @@
             };
         }
 
-        private static TexMiscFlags ConvertBack(DirectXTex.TexMiscFlags flags)
+        private static TexMiscFlags ConvertBack(DirectXTex.TexMiscFlag flags)
         {
             TexMiscFlags result = 0;
-            if ((flags & DirectXTex.TexMiscFlags.GenerateMips) != 0)
-            {
-                result |= TexMiscFlags.GenerateMips;
-            }
 
-            if ((flags & DirectXTex.TexMiscFlags.Shared) != 0)
-            {
-                result |= TexMiscFlags.Shared;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.TextureCube) != 0)
+            if ((flags & DirectXTex.TexMiscFlag.Texturecube) != 0)
             {
                 result |= TexMiscFlags.TextureCube;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.DrawIndirectArguments) != 0)
-            {
-                result |= TexMiscFlags.DrawIndirectArguments;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.BufferAllowRawViews) != 0)
-            {
-                result |= TexMiscFlags.BufferAllowRawViews;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.BufferStructured) != 0)
-            {
-                result |= TexMiscFlags.BufferStructured;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.ResourceClamp) != 0)
-            {
-                result |= TexMiscFlags.ResourceClamp;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.SharedKeyedMutex) != 0)
-            {
-                result |= TexMiscFlags.SharedKeyedMutex;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.GdiCompatible) != 0)
-            {
-                result |= TexMiscFlags.GdiCompatible;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.SharedNTHandle) != 0)
-            {
-                result |= TexMiscFlags.SharedNTHandle;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.RestrictedContent) != 0)
-            {
-                result |= TexMiscFlags.RestrictedContent;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.RestrictSharedResource) != 0)
-            {
-                result |= TexMiscFlags.RestrictSharedResource;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.RestrictSharedResourceDriver) != 0)
-            {
-                result |= TexMiscFlags.RestrictSharedResourceDriver;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.Guarded) != 0)
-            {
-                result |= TexMiscFlags.Guarded;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.TilePool) != 0)
-            {
-                result |= TexMiscFlags.TilePool;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.Tiled) != 0)
-            {
-                result |= TexMiscFlags.Tiled;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.HardwareProtected) != 0)
-            {
-                result |= TexMiscFlags.HardwareProtected;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.SharedDisplayable) != 0)
-            {
-                result |= TexMiscFlags.SharedDisplayable;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.SharedExclusiveWriter) != 0)
-            {
-                result |= TexMiscFlags.SharedExclusiveWriter;
-            }
-
-            if ((flags & DirectXTex.TexMiscFlags.None) != 0)
-            {
-                result |= TexMiscFlags.None;
             }
 
             return result;

@@ -345,13 +345,15 @@
             ImGui.Separator();
         }
 
-        private static void LogWindow()
+        private static unsafe void LogWindow()
         {
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
             if (ImGui.BeginChild("ScrollRegion##", new Vector2(0, -footerHeightToReserve), false, 0))
             {
                 // Display colored command output.
-                float timestamp_width = ImGui.CalcTextSize("00:00:00:0000").X;    // Timestamp.
+                Vector2 size = default;
+                ImGui.CalcTextSize(ref size, "00:00:00:0000");    // Timestamp.
+                float timestamp_width = size.X;
                 int count = 0;                                                                       // Item count.
 
                 // Wrap items.
@@ -441,7 +443,7 @@
 
             // Input widget. (Width an always fixed width)
             ImGui.PushItemWidth(-ImGui.GetStyle().ItemSpacing.X * 7);
-            if (ImGui.InputText("Input", ref m_Buffer, m_Buffer_size, inputTextFlags, InputCallback))
+            if (ImGui.InputText("Input", ref m_Buffer, m_Buffer_size, inputTextFlags))
             {
                 // Validate.
                 if (!string.IsNullOrWhiteSpace(m_Buffer))

@@ -6,7 +6,7 @@
     using ImGuiNET;
     using System;
 
-    public class OpenProjectWindow : ImGuiWindow
+    public class OpenProjectWindow : EditorWindow
     {
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
@@ -36,7 +36,7 @@
             base.DrawWindow(context);
         }
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             ImGui.SetWindowPos(new(0, 0));
             ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);

@@ -5,7 +5,7 @@
     using HexaEngine.Projects;
     using ImGuiNET;
 
-    public class ProjectExplorer : ImGuiWindow
+    public class ProjectExplorer : EditorWindow
     {
         private struct Item
         {
@@ -43,7 +43,7 @@
                 unsafe
                 {
                     var payload = ImGui.AcceptDragDropPayload(nameof(HexaItem));
-                    if (payload.NativePtr != null)
+                    if (!payload.IsNull)
                     {
                         string path = *(UnsafeString*)payload.Data;
                         // TODO: Add global drag drop handler
@@ -57,7 +57,7 @@
                 unsafe
                 {
                     var str = new UnsafeString(item.GetAbsolutePath());
-                    ImGui.SetDragDropPayload(nameof(HexaItem), (nint)(&str), (uint)sizeof(nint));
+                    ImGui.SetDragDropPayload(nameof(HexaItem), &str, (uint)sizeof(nint));
                 }
                 ImGui.Text(item.Name);
                 ImGui.EndDragDropSource();

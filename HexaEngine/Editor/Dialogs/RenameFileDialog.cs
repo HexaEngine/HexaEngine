@@ -63,7 +63,7 @@
             }
 
             bool result = false;
-            if (ImGui.Begin("Rename file", ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize))
+            if (ImGui.Begin("Rename file", ref shown, ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize))
             {
                 ImGui.SetWindowFocus();
 

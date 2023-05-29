@@ -13,7 +13,7 @@
     using System.Numerics;
     using System.Reflection;
 
-    public class LayoutWidget : ImGuiWindow
+    public class LayoutWidget : EditorWindow
     {
         private readonly Dictionary<string, EditorNodeAttribute> cache = new();
 
@@ -151,7 +151,7 @@
                 unsafe
                 {
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
-                    if (payload.NativePtr != null)
+                    if (!payload.IsNull)
                     {
                         string id = *(UnsafeString*)payload.Data;
                         var gameObject = SceneManager.Current.Find(id);
@@ -165,25 +165,28 @@
                 unsafe
                 {
                     var str = new UnsafeString(element.Name);
-                    ImGui.SetDragDropPayload(nameof(GameObject), (nint)(&str), (uint)sizeof(Guid));
+                    ImGui.SetDragDropPayload(nameof(GameObject), (&str), (uint)sizeof(Guid));
                 }
                 ImGui.Text(element.Name);
                 ImGui.EndDragDropSource();
             }
             if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
             {
-                if (ImGui.GetIO().KeyCtrl)
+                unsafe
                 {
-                    GameObject.Selected.AddSelection(element);
-                }
-                else if (ImGui.GetIO().KeyShift)
-                {
-                    var last = GameObject.Selected.Last();
-                    GameObject.Selected.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
-                }
-                else if (!element.IsEditorSelected)
-                {
-                    GameObject.Selected.AddOverwriteSelection(element);
+                    if (ImGui.GetIO().KeyCtrl)
+                    {
+                        GameObject.Selected.AddSelection(element);
+                    }
+                    else if (ImGui.GetIO().KeyShift)
+                    {
+                        var last = GameObject.Selected.Last();
+                        GameObject.Selected.AddMultipleSelection(SceneManager.Current.GetRange(last, element));
+                    }
+                    else if (!element.IsEditorSelected)
+                    {
+                        GameObject.Selected.AddOverwriteSelection(element);
+                    }
                 }
             }
 
@@ -236,7 +239,7 @@
                 unsafe
                 {
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
-                    if (payload.NativePtr != null)
+                    if (!payload.IsNull)
                     {
                         string id = *(UnsafeString*)payload.Data;
                         var child = scene.Find(id);

@@ -1,4 +1,4 @@
-﻿using ImGuiNET;
+﻿using HexaEngine.ImGuiNET;
 using System.Numerics;
 
 namespace HexaEngine.Editor.Dialogs
@@ -155,14 +155,14 @@ namespace HexaEngine.Editor.Dialogs
             shown = false;
         }
 
-        public bool Draw()
+        public unsafe bool Draw()
         {
             if (!shown)
             {
                 return false;
             }
 
-            if (ImGui.Begin("File picker", ImGuiWindowFlags.NoDocking))
+            if (ImGui.Begin("File picker", ref shown, ImGuiWindowFlags.NoDocking))
             {
                 ImGui.SetWindowFocus();
                 if (ImGui.Button("\xe80f"))

@@ -1,1 +1,0 @@
-﻿A .NET wrapper for the ImNodes library. (modified version of ImNodes.NET)

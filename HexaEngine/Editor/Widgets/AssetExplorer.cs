@@ -12,7 +12,7 @@
     using System.Collections.Generic;
     using System.Numerics;
 
-    public class AssetExplorer : ImGuiWindow
+    public class AssetExplorer : EditorWindow
     {
         private DirectoryInfo? currentDir;
         private DirectoryInfo? parentDir;
@@ -177,7 +177,7 @@
                 unsafe
                 {
                     var payload = ImGui.AcceptDragDropPayload(nameof(String));
-                    if (payload.NativePtr != null)
+                    if (!payload.IsNull)
                     {
                         string ft = *(UnsafeString*)payload.Data;
                         if (Directory.Exists(ft))
@@ -203,7 +203,7 @@
                 unsafe
                 {
                     var str = new UnsafeString(dir.Path);
-                    ImGui.SetDragDropPayload(nameof(String), (nint)(&str), (uint)sizeof(UnsafeString));
+                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeString));
                 }
                 ImGui.Text(dir.Name);
                 ImGui.EndDragDropSource();
@@ -252,7 +252,7 @@
                 unsafe
                 {
                     var str = new UnsafeString(file.Path);
-                    ImGui.SetDragDropPayload(nameof(String), (nint)(&str), (uint)sizeof(UnsafeString));
+                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeString));
                 }
                 ImGui.Text(file.Name);
                 ImGui.EndDragDropSource();
@@ -349,7 +349,7 @@
                         unsafe
                         {
                             var payload = ImGui.AcceptDragDropPayload(nameof(String));
-                            if (payload.NativePtr != null)
+                            if (!payload.IsNull)
                             {
                                 string ft = *(UnsafeString*)payload.Data;
                                 if (Directory.Exists(ft))

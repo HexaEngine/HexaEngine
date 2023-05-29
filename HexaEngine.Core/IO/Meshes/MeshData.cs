@@ -1,13 +1,17 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
+    using Microsoft.VisualBasic;
+    using Silk.NET.Maths;
     using System;
     using System.IO;
     using System.Numerics;
+    using System.Runtime.InteropServices;
     using System.Text;
+    using System.Threading.Tasks;
     using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public unsafe struct MeshData
@@ -439,6 +443,16 @@
             return default;
         }
 
+        public readonly Face GetFaceAtIndex(uint index)
+        {
+            var i = index * 3;
+            var idx1 = Indices[i];
+            var idx2 = Indices[i + 1];
+            var idx3 = Indices[i + 2];
+
+            return new(idx1, idx2, idx3);
+        }
+
         public Face[] GetNeighborFaces(Face face)
         {
             List<Face> faces = new();
@@ -678,6 +692,9 @@
 
         public void GenerateNTB()
         {
+            GenVertexNormalsProcess.GenMeshVertexNormals(ref this);
+            CalcTangentsProcess.ProcessMesh(ref this);
+            return;
             var faces = IndicesCount / 3;
             UnsafeList<Vector3> tempNormal = new();
             UnsafeList<Vector3> tempTangent = new();
@@ -747,89 +764,6 @@
 
             tempNormal.Free();
             tempTangent.Free();
-        }
-
-        public void RecomputeNormals(Face lface)
-        {
-            UnsafeList<Vector3> tempNormal = new();
-            Vector3 unnormalizedNormal;
-            Vector3 edge1, edge2;
-
-            UnsafeList<Vector3> tempTangent = new();
-            Vector3 tangent;
-            float tcU1, tcV1, tcU2, tcV2;
-
-            Face[] faces = GetNeighborFaces(lface);
-
-            var facesCount = faces.Length;
-
-            for (uint i = 0; i < facesCount;)
-            {
-                var face = faces[i];
-                var vtxP0 = Positions[face.Index1];
-                var vtxP1 = Positions[face.Index2];
-                var vtxP2 = Positions[face.Index3];
-
-                edge1 = vtxP0 - vtxP2;
-                edge2 = vtxP2 - vtxP1;
-
-                unnormalizedNormal = Vector3.Cross(edge1, edge2);
-
-                tempNormal.Add(unnormalizedNormal);
-
-                var vtxUV0 = UVs[face.Index1];
-                var vtxUV1 = UVs[face.Index2];
-                var vtxUV2 = UVs[face.Index3];
-
-                //Find first texture coordinate edge 2d vector
-                tcU1 = vtxUV0.X - vtxUV2.X;
-                tcV1 = vtxUV0.Y - vtxUV2.Y;
-
-                //Find second texture coordinate edge 2d vector
-                tcU2 = vtxUV2.X - vtxUV1.X;
-                tcV2 = vtxUV2.Y - vtxUV1.Y;
-
-                //Find tangent using both tex coord edges and position edges
-                tangent = new Vector3((tcV1 * edge1.X - tcV2 * edge2.X) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
-                                      (tcV1 * edge1.Y - tcV2 * edge2.Y) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)),
-                                      (tcV1 * edge1.Z - tcV2 * edge2.Z) * (1.0f / (tcU1 * tcV2 - tcU2 * tcV1)));
-
-                tempTangent.Add(tangent);
-            }
-
-            Vector3 normalSum = default;
-            Vector3 tangentSum = default;
-            int facesUsing = 0;
-
-            for (int i = 0; i < VerticesCount; ++i)
-            {
-                //Check which triangles use this vertex
-                for (int j = 0; j < facesCount; ++j)
-                {
-                    var face = faces[j];
-                    if (face.Index1 == i || face.Index2 == i || face.Index3 == i)
-                    {
-                        normalSum += tempNormal[j];
-                        tangentSum += tempTangent[j];
-
-                        facesUsing++;
-                    }
-                }
-
-                normalSum /= facesUsing;
-                tangentSum /= facesUsing;
-
-                normalSum = Vector3.Normalize(normalSum);
-                tangentSum = Vector3.Normalize(tangentSum);
-
-                Normals[i] = normalSum;
-                Tangents[i] = tangentSum;
-                Bitangents[i] = Vector3.Cross(normalSum, tangentSum);
-
-                normalSum = default;
-                tangentSum = default;
-                facesUsing = 0;
-            }
         }
     }
 }

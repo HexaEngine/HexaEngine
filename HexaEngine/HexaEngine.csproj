@@ -511,4 +511,11 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</PixelShader>
 	</ItemGroup>
+
+
+
+	<ItemGroup>
+	  <Folder Include="Editor\MeshEditor\Exporters\" />
+	  <Folder Include="Editor\MeshEditor\Dialogs\" />
+	</ItemGroup>
 </Project>

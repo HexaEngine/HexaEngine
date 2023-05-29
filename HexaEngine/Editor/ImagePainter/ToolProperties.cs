@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
 
-    public class ToolProperties : ImGuiWindow
+    public class ToolProperties : EditorWindow
     {
         private readonly Toolbox toolbox;
 

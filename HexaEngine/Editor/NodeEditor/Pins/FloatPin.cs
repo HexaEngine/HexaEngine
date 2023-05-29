@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Editor.NodeEditor.Pins
 {
-    using HexaEngine.Editor.Materials.Nodes;
-    using ImGuiNET;
-    using ImNodesNET;
+    using HexaEngine.Editor.MaterialEditor.Nodes;
+    using HexaEngine.ImGuiNET;
+    using HexaEngine.ImNodesNET;
     using System.Globalization;
     using System.Numerics;
 
@@ -14,7 +14,7 @@
         private readonly string nameW;
         private readonly PinFlags flags;
 
-        public FloatPin(int id, string name, PinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None) : base(id, name, shape, kind, type, maxLinks)
+        public FloatPin(int id, string name, ImNodesPinShape shape, PinKind kind, PinType type, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None) : base(id, name, shape, kind, type, maxLinks)
         {
             this.name = $"{name}##Value{Id.ToString(CultureInfo.InvariantCulture)}";
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
@@ -23,7 +23,7 @@
             this.flags = flags;
         }
 
-        public FloatPin(int id, string name, PinShape shape, PinKind kind, PinType type, Vector4 value, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None) : base(id, name, shape, kind, type, maxLinks)
+        public FloatPin(int id, string name, ImNodesPinShape shape, PinKind kind, PinType type, Vector4 value, uint maxLinks = uint.MaxValue, PinFlags flags = PinFlags.None) : base(id, name, shape, kind, type, maxLinks)
         {
             this.name = $"{name}##Value{Id.ToString(CultureInfo.InvariantCulture)}";
             nameY = $"##Value1{Id.ToString(CultureInfo.InvariantCulture)}";
@@ -90,7 +90,7 @@
                 if (Type == PinType.Float3 && flags == PinFlags.ColorEdit)
                 {
                     var val = new Vector3(ValueX, ValueY, ValueZ);
-                    if (ImGui.ColorEdit3(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.HDR))
+                    if (ImGui.ColorEdit3(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.Hdr))
                     {
                         ValueX = val.X;
                         ValueY = val.Y;
@@ -100,7 +100,7 @@
                 if (Type == PinType.Float3 && flags == PinFlags.ColorPicker)
                 {
                     var val = new Vector3(ValueX, ValueY, ValueZ);
-                    if (ImGui.ColorPicker3(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.HDR))
+                    if (ImGui.ColorPicker3(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.Hdr))
                     {
                         ValueX = val.X;
                         ValueY = val.Y;
@@ -127,7 +127,7 @@
                 if (Type == PinType.Float4 && flags == PinFlags.ColorEdit)
                 {
                     var val = new Vector4(ValueX, ValueY, ValueZ, ValueW);
-                    if (ImGui.ColorEdit4(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.HDR))
+                    if (ImGui.ColorEdit4(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.Hdr))
                     {
                         ValueX = val.X;
                         ValueY = val.Y;
@@ -138,7 +138,7 @@
                 if (Type == PinType.Float4 && flags == PinFlags.ColorPicker)
                 {
                     var val = new Vector4(ValueX, ValueY, ValueZ, ValueW);
-                    if (ImGui.ColorPicker4(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.HDR))
+                    if (ImGui.ColorPicker4(name, ref val, ImGuiColorEditFlags.DisplayHex | ImGuiColorEditFlags.Hdr))
                     {
                         ValueX = val.X;
                         ValueY = val.Y;

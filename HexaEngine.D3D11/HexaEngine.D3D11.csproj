@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HexaEngine.DirectXTex" Version="1.0.4" />
+		<PackageReference Include="HexaEngine.DirectXTex" Version="2.0.0" />
 		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.Direct3D11" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.Direct3D11.Extensions.D3D11On12" Version="2.17.1" />

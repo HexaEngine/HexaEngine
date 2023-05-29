@@ -5,7 +5,7 @@
     using ImGuiNET;
     using System.Numerics;
 
-    public class ColorPicker : ImGuiWindow
+    public class ColorPicker : EditorWindow
     {
         private readonly Vector4[] history = new Vector4[10];
 

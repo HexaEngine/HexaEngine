@@ -498,11 +498,11 @@ namespace HexaEngine.Core.Resources
         {
             if (!disposedValue)
             {
-                pipeline.Dispose();
-                depthOnly.Dispose();
-                csm.Dispose();
-                osm.Dispose();
-                psm.Dispose();
+                pipeline?.Dispose();
+                depthOnly?.Dispose();
+                csm?.Dispose();
+                osm?.Dispose();
+                psm?.Dispose();
                 disposedValue = true;
             }
         }

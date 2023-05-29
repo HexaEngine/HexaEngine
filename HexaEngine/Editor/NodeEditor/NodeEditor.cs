@@ -4,10 +4,10 @@
     using ImNodesNET;
     using System.Collections.Generic;
 
-    public class NodeEditor
+    public unsafe class NodeEditor
     {
         private string? state;
-        private nint context;
+        private ImNodesEditorContext* context;
 
         private readonly List<Node> nodes = new();
         private readonly List<Link> links = new();
@@ -37,7 +37,7 @@
 
         public virtual void Initialize()
         {
-            if (context == 0)
+            if (context == null)
             {
                 context = ImNodes.EditorContextCreate();
 
@@ -106,7 +106,7 @@
 
         public void AddNode(Node node)
         {
-            if (context != 0)
+            if (context != null)
             {
                 node.Initialize(this);
             }
@@ -123,7 +123,7 @@
 
         public void AddLink(Link link)
         {
-            if (context != 0)
+            if (context != null)
             {
                 link.Initialize(this);
             }
@@ -147,12 +147,12 @@
 
         public string SaveState()
         {
-            return ImNodes.SaveEditorStateToIniString(context);
+            return ImNodes.SaveEditorStateToIniStringS(context);
         }
 
         public void RestoreState(string state)
         {
-            if (context == 0)
+            if (context == null)
             {
                 this.state = state;
                 return;
@@ -188,10 +188,10 @@
                     CreateLink(pini, pino);
                 }
             }
-            int idLink = 0;
+            int idLink = -1;
             if (ImNodes.IsLinkDestroyed(ref idLink))
             {
-                GetLink(idLink).Destroy();
+                //GetLink(idLink).Destroy();
             }
             if (ImGui.IsKeyPressed(ImGuiKey.Delete))
             {
@@ -231,7 +231,7 @@
                 Nodes[i].IsHovered = ImNodes.IsNodeHovered(ref id);
             }
 
-            ImNodes.EditorContextSet((nint)null);
+            ImNodes.EditorContextSet(null);
 
             if (state != null)
             {
@@ -249,7 +249,7 @@
             }
             this.nodes.Clear();
             ImNodes.EditorContextFree(context);
-            context = 0;
+            context = null;
         }
 
         public static bool Validate(Pin startPin, Pin endPin)

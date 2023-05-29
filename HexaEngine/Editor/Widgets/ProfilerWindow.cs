@@ -57,7 +57,7 @@
         }
     }
 
-    public class ProfilerWindow : ImGuiWindow
+    public class ProfilerWindow : EditorWindow
     {
         protected override string Name => "SceneProfiler";
 

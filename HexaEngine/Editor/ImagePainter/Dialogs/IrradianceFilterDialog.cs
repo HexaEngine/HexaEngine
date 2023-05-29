@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.Widgets
+﻿namespace HexaEngine.Editor.ImagePainter.Dialogs
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;

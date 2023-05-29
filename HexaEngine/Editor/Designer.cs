@@ -26,7 +26,6 @@
             }
 
             MainMenuBar.Draw();
-            Inspector.Draw();
         }
 
         public static void OpenFile(string? path)

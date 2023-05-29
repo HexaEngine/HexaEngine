@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Editor.Materials.Generator.Structs;
     using HexaEngine.Rendering;
 
     public class ImageSourceOverlay

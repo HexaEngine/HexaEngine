@@ -31,7 +31,7 @@
 
         protected override void DrawContent()
         {
-            ImGuiEnumHelper<CubemapType>.Combo("Type", ref type);
+            ComboEnumHelper<CubemapType>.Combo("Type", ref type);
             if (ImGui.Button("Cancel"))
             {
                 Close();

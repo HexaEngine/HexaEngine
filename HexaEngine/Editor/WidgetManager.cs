@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.MeshEditor;
     using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Editor.Materials;
-    using HexaEngine.Editor.Meshes;
     using HexaEngine.Editor.Widgets;
+    using HexaEngine.Editor.MaterialEditor;
 
     public static class WidgetManager
     {
@@ -27,8 +27,8 @@
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
-            Register<MeshEditor>();
-            Register<MaterialEditor>();
+            Register<MeshEditorWindow>();
+            Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();
             Register<ImagePainterWindow>();

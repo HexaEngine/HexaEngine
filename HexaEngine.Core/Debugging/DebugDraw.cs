@@ -1004,5 +1004,42 @@ new Vector3(+1, +1, +1),
             cmd.Vertices[2] = new(Vector3.Transform(c, orientation) + origin, Vector2.Zero, color);
             cmd.Vertices[3] = cmd.Vertices[0];
         }
+
+        public static void DrawGrid(string id, Matrix4x4 matrix, int size, Vector4 col)
+        {
+            uint vertexCount = 2u * (uint)size * 2u + 4;
+            uint color = ColorConvertFloat4ToU32(col);
+            if (queue.Draw(id, PrimitiveTopology.LineList, vertexCount, vertexCount, out var cmd))
+            {
+                cmd.EnableDepth = true;
+                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Indices = Alloc<ushort>(vertexCount);
+
+                int half = size / 2;
+
+                int i = 0;
+                for (int x = -half; x <= half; x++)
+                {
+                    var pos0 = Vector3.Transform(new Vector3(x, 0, -half), matrix);
+                    var pos1 = Vector3.Transform(new Vector3(x, 0, half), matrix);
+                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
+                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
+                    cmd.Indices[i] = (ushort)i;
+                    cmd.Indices[i + 1] = (ushort)(i + 1);
+                    i += 2;
+                }
+
+                for (int z = -half; z <= half; z++)
+                {
+                    var pos0 = Vector3.Transform(new Vector3(-half, 0, z), matrix);
+                    var pos1 = Vector3.Transform(new Vector3(half, 0, z), matrix);
+                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
+                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
+                    cmd.Indices[i] = (ushort)i;
+                    cmd.Indices[i + 1] = (ushort)(i + 1);
+                    i += 2;
+                }
+            }
+        }
     }
 }

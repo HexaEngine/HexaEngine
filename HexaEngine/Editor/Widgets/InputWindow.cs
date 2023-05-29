@@ -6,7 +6,7 @@
     using ImPlotNET;
     using System.Numerics;
 
-    public class InputWindow : ImGuiWindow
+    public class InputWindow : EditorWindow
     {
         protected override string Name => "Input Window";
 
@@ -123,19 +123,19 @@
             if (ImGui.CollapsingHeader("Rumble"))
             {
                 var lofreq = lowFreq;
-                if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, (nint)(&lofreq)))
+                if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, &lofreq))
                 {
                     lowFreq = lofreq;
                 }
 
                 var hifreq = highFreq;
-                if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, (nint)(&hifreq)))
+                if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, &hifreq))
                 {
                     highFreq = hifreq;
                 }
 
                 var duraMs = durationMs;
-                if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, (nint)(&duraMs)))
+                if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, &duraMs))
                 {
                     durationMs = duraMs;
                 }
@@ -168,7 +168,7 @@
             if (ImGui.CollapsingHeader("Axes"))
             {
                 var dead = joystick.Deadzone;
-                if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, (nint)(&dead)))
+                if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, &dead))
                 {
                     joystick.Deadzone = dead;
                 }
@@ -292,19 +292,19 @@
             if (ImGui.CollapsingHeader("Rumble"))
             {
                 var lofreq = lowFreq;
-                if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, (nint)(&lofreq)))
+                if (ImGui.InputScalar("Low Freq (Right)", ImGuiDataType.U16, &lofreq))
                 {
                     lowFreq = lofreq;
                 }
 
                 var hifreq = highFreq;
-                if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, (nint)(&hifreq)))
+                if (ImGui.InputScalar("High Freq (Left)", ImGuiDataType.U16, &hifreq))
                 {
                     highFreq = hifreq;
                 }
 
                 var duraMs = durationMs;
-                if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, (nint)(&duraMs)))
+                if (ImGui.InputScalar("Duration (ms)", ImGuiDataType.U32, &duraMs))
                 {
                     durationMs = duraMs;
                 }
@@ -337,7 +337,7 @@
             if (ImGui.CollapsingHeader("Axes"))
             {
                 var dead = gamepad.Deadzone;
-                if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, (nint)(&dead)))
+                if (ImGui.InputScalar("Deadzone", ImGuiDataType.S16, &dead))
                 {
                     gamepad.Deadzone = dead;
                 }

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "HexaEngine.DirectXTex.Tests": {
-      "commandName": "Project",
-      "nativeDebugging": true
-    }
-  }
-}

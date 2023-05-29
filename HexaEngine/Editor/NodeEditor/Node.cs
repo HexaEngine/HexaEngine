@@ -18,13 +18,13 @@
         public string Name;
 
         [JsonIgnore]
-        public ImCol32 TitleColor = new(0x6930c3ff);
+        public uint TitleColor = 0x6930c3ff;
 
         [JsonIgnore]
-        public ImCol32 TitleHoveredColor = new(0x5e60ceff);
+        public uint TitleHoveredColor = 0x5e60ceff;
 
         [JsonIgnore]
-        public ImCol32 TitleSelectedColor = new(0x7400b8ff);
+        public uint TitleSelectedColor = 0x7400b8ff;
 
         public Node(int id, string name, bool removable, bool isStatic)
         {
@@ -161,13 +161,13 @@
             return null;
         }
 
-        public virtual Pin CreatePin(NodeEditor editor, string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue)
+        public virtual Pin CreatePin(NodeEditor editor, string name, PinKind kind, PinType type, ImNodesPinShape shape, uint maxLinks = uint.MaxValue)
         {
             Pin pin = new(editor.GetUniqueId(), name, shape, kind, type, maxLinks);
             return AddPin(pin);
         }
 
-        public virtual Pin CreateOrGetPin(NodeEditor editor, string name, PinKind kind, PinType type, PinShape shape, uint maxLinks = uint.MaxValue)
+        public virtual Pin CreateOrGetPin(NodeEditor editor, string name, PinKind kind, PinType type, ImNodesPinShape shape, uint maxLinks = uint.MaxValue)
         {
             Pin pin = new(editor.GetUniqueId(), name, shape, kind, type, maxLinks);
             return AddOrGetPin(pin);
@@ -260,9 +260,9 @@
 
         public virtual void Draw()
         {
-            ImNodes.PushColorStyle(ColorStyle.TitleBar, TitleColor);
-            ImNodes.PushColorStyle(ColorStyle.TitleBarHovered, TitleHoveredColor);
-            ImNodes.PushColorStyle(ColorStyle.TitleBarSelected, TitleSelectedColor);
+            ImNodes.PushColorStyle(ImNodesCol.TitleBar, TitleColor);
+            ImNodes.PushColorStyle(ImNodesCol.TitleBarHovered, TitleHoveredColor);
+            ImNodes.PushColorStyle(ImNodesCol.TitleBarSelected, TitleSelectedColor);
             ImNodes.BeginNode(id);
             ImNodes.BeginNodeTitleBar();
             if (isEditing)

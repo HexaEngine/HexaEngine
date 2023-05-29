@@ -7,7 +7,7 @@
     using ImGuiNET;
     using System;
 
-    public class ImageProperties : ImGuiWindow
+    public class ImageProperties : EditorWindow
     {
         private static readonly Format[] formats = Enum.GetValues<Format>();
         private static readonly string[] formatNames = Enum.GetNames<Format>();
@@ -33,7 +33,7 @@
             var metadata = image.Metadata;
             ImGui.InputInt2("Size", ref metadata.Width, ImGuiInputTextFlags.ReadOnly);
 
-            ImGuiEnumHelper<Format>.Text(metadata.Format);
+            ComboEnumHelper<Format>.Text(metadata.Format);
 
             ImGui.InputInt("ArraySize", ref metadata.ArraySize, 0, 0, ImGuiInputTextFlags.ReadOnly);
 

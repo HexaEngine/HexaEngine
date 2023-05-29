@@ -4,7 +4,7 @@
     using HexaEngine.Core.Scenes;
     using ImGuiNET;
 
-    public class DebugWindow : ImGuiWindow
+    public class DebugWindow : EditorWindow
     {
         protected override string Name => "Debug";
 

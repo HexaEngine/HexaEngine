@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Objects
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Scenes;
 
     public class Animature : IComponent

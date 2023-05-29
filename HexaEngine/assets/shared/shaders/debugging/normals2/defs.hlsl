@@ -11,10 +11,10 @@
 #define VtxNormal 1
 #endif
 #ifndef VtxTangent
-#define VtxTangent 1
+#define VtxTangent 0
 #endif
 #ifndef VtxBitangent
-#define VtxBitangent 1
+#define VtxBitangent 0
 #endif
 #ifndef VtxSkinned
 #define VtxSkinned 0

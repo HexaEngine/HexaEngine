@@ -16,7 +16,7 @@ namespace HexaEngine.Editor.Widgets
     using System.Numerics;
     using System.Reflection;
 
-    public class PropertiesWidget : ImGuiWindow
+    public class PropertiesWidget : EditorWindow
     {
         private readonly List<EditorComponentAttribute> componentCache = new();
         private readonly Dictionary<Type, EditorComponentAttribute[]> typeFilterComponentCache = new();

@@ -4,8 +4,9 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Editor;
     using ImGuiNET;
+    using System.Numerics;
 
-    public class Brushes : ImGuiWindow
+    public class Brushes : EditorWindow
     {
         private static readonly List<BrushMask> masks = new();
         private IGraphicsDevice device;
@@ -34,7 +35,8 @@
             for (int i = 0; i < masks.Count; i++)
             {
                 var mask = masks[i];
-                var cur = ImGui.GetCursorPos();
+                Vector2 cur = default;
+                ImGui.GetCursorPos(ref cur);
 
                 var isActive = current == mask;
 

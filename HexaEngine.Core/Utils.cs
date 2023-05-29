@@ -62,6 +62,7 @@
             {
                 MemoryCopy(src, dst, str.Length, str.Length);
             }
+            dst[str.Length] = '\0';
             return dst;
         }
 
@@ -95,6 +96,7 @@
             {
                 Encoding.UTF8.GetBytes(src, str.Length, dst, str.Length);
             }
+            dst[str.Length] = 0;
             return dst;
         }
 

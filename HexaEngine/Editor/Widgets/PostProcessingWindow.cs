@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using ImGuiNET;
 
-    public class PostProcessWindow : ImGuiWindow
+    public class PostProcessWindow : EditorWindow
     {
         protected override string Name => "Post Process";
 
