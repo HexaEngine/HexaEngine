@@ -1,10 +1,6 @@
 ﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Mathematics;
-    using ImGuiNET;
-    using Silk.NET.Direct2D;
     using System.Numerics;
 
     public class VertexSelection
@@ -49,8 +45,7 @@
                 data.Positions[vertex] = Vector3.Transform(data.Positions[vertex] - center, transform);
             }
             GenVertexNormalsProcess.GenMeshVertexNormals2(data);
-            CalcTangentsProcess.ProcessMesh(ref data);
-            //data.GenerateNTB();
+            CalcTangentsProcess.ProcessMesh2(data);
         }
 
         public void OverrideAdd(uint id)

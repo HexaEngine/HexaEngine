@@ -16,6 +16,7 @@
         public readonly IGraphicsPipeline Solid;
         public readonly IGraphicsPipeline Overlay;
         public readonly IGraphicsPipeline Normals;
+        public readonly IGraphicsPipeline Points;
         public readonly uint TypeId;
         private bool disposedValue;
 
@@ -82,6 +83,23 @@
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
             }, inputElements, macros);
+
+            Points = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "forward/point/vs.hlsl",
+                GeometryShader = "forward/point/gs.hlsl",
+                PixelShader = "forward/point/ps.hlsl",
+            },
+            new GraphicsPipelineState()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = Vector4.Zero,
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullBack,
+                Topology = PrimitiveTopology.PointList,
+                SampleMask = uint.MaxValue,
+                StencilRef = 0,
+            }, inputElements, macros);
         }
 
         public void Update(IGraphicsContext context, bool ib, bool vb)
@@ -118,7 +136,12 @@
             {
                 VB.Dispose();
                 IB.Dispose();
+                IDB.Dispose();
+                Solid.Dispose();
                 Overlay.Dispose();
+                Normals.Dispose();
+                Points.Dispose();
+
                 disposedValue = true;
             }
         }

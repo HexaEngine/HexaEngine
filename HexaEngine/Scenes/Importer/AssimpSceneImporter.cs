@@ -85,7 +85,7 @@ namespace HexaEngine.Scenes.Importer
 
         public IReadOnlyList<string> Textures => textures;
 
-        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.Triangulate | PostProcessSteps.FindInvalidData;
+        public PostProcessSteps PostProcessSteps = PostProcessSteps.CalculateTangentSpace | PostProcessSteps.MakeLeftHanded | PostProcessSteps.FindInvalidData;
 
         public TexPostProcessSteps TexPostProcessSteps = TexPostProcessSteps.None;
 

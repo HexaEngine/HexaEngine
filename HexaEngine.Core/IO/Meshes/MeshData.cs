@@ -428,6 +428,21 @@
             }
         }
 
+        public void GetFacesForVertex(uint vertex, List<Face> faces)
+        {
+            faces.Clear();
+            for (int i = 0; i < IndicesCount;)
+            {
+                var idx1 = Indices[i++];
+                var idx2 = Indices[i++];
+                var idx3 = Indices[i++];
+                if (idx1 == vertex || idx2 == vertex || idx3 == vertex)
+                {
+                    faces.Add(new(idx1, idx2, idx3));
+                }
+            }
+        }
+
         public Face GetFaceForIndex(uint index)
         {
             for (uint i = 0; i < IndicesCount;)

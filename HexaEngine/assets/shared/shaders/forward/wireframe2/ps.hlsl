@@ -10,16 +10,5 @@ cbuffer selection
 
 float4 main(PixelInput input, uint primitiveId : SV_PrimitiveID) : SV_Target
 {
-    if (primitiveId == PrimitiveId - 1)
-    {
-        if (input.vertexId == VertexId - 1)
-        {
-            return float4(0, 0, 1, 1);
-        }
-        else
-        {
-            return float4(0, 1, 0, 1);
-        }
-    }
-    return float4(0.8, 0.8, 0.8, 1);
+    return float4(0, 0, 0, 1);
 }

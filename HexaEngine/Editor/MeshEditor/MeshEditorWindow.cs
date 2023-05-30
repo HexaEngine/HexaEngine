@@ -13,6 +13,7 @@
     using ImGuiNET;
     using ImGuizmoNET;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public struct CBNTBView
     {
@@ -30,6 +31,7 @@
 
         private bool drawGimbal = true;
         private bool drawGrid = true;
+        private bool drawObject = true;
         private bool drawWireframe = true;
         private bool drawNormals = false;
         private bool drawTangents = false;
@@ -46,7 +48,7 @@
         private ConstantBuffer<CBNTBView> ntbView;
         private Vector3 center;
         private Vector3 sc = new(2, 0, 0);
-        private const float speed = 10;
+        private const float speed = 2;
         private static bool first = true;
 
         private VertexSelection selection = new();
@@ -83,6 +85,10 @@
 
         public override void Dispose()
         {
+            cameraBuffer.Dispose();
+            selectionBuffer.Dispose();
+            ntbView.Dispose();
+            selector.Release();
             UnloadModel();
         }
 
@@ -106,13 +112,25 @@
 
                     if (id > -1)
                     {
+                        var pos = meshSource.Data.Positions[id];
+                        List<uint> foundVerts = new();
+                        SpatialSort sort = new(meshSource.Data.Positions, sizeof(Vector3));
+                        var epsilon = ProcessingHelper.ComputePositionEpsilon(meshSource.Data);
+                        sort.FindPositions(pos, epsilon, foundVerts);
                         if (ImGui.GetIO().KeyCtrl)
                         {
-                            selection.Add((uint)id);
+                            for (int i = 0; i < foundVerts.Count; i++)
+                            {
+                                selection.Add(foundVerts[i]);
+                            }
                         }
                         else
                         {
-                            selection.OverrideAdd((uint)id);
+                            selection.Clear();
+                            for (int i = 0; i < foundVerts.Count; i++)
+                            {
+                                selection.Add(foundVerts[i]);
+                            }
                         }
                     }
                     else
@@ -198,6 +216,7 @@
 
                 ImGui.Checkbox("Gimbal", ref drawGimbal);
                 ImGui.Checkbox("Grid", ref drawGrid);
+                ImGui.Checkbox("Object", ref drawObject);
                 ImGui.Checkbox("Wireframe", ref drawWireframe);
 
                 ImGui.Separator();
@@ -297,8 +316,13 @@
             context.GSSetConstantBuffer(cameraBuffer, 1);
             context.PSSetConstantBuffer(cameraBuffer, 1);
             context.PSSetConstantBuffer(selectionBuffer, 0);
-            context.SetGraphicsPipeline(meshSource.Solid);
-            meshSource.Draw(context);
+
+            if (drawObject)
+            {
+                context.SetGraphicsPipeline(meshSource.Solid);
+                meshSource.Draw(context);
+            }
+
             if (drawWireframe)
             {
                 context.SetGraphicsPipeline(meshSource.Overlay);
@@ -307,6 +331,9 @@
 
             context.GSSetConstantBuffer(ntbView, 0);
             context.SetGraphicsPipeline(meshSource.Normals);
+            meshSource.Draw(context);
+
+            context.SetGraphicsPipeline(meshSource.Points);
             meshSource.Draw(context);
 
             context.ClearState();
@@ -328,7 +355,15 @@
                 ImGuizmo.SetOrthographic(false);
                 ImGuizmo.SetRect(x, y, w, h);
 
-                if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform))
+                float* snap = null;
+
+                if (ImGui.GetIO().KeyCtrl)
+                {
+                    float[] snaps = { 1, 1, 1 };
+                    snap = (float*)Unsafe.AsPointer(ref snaps[0]);
+                }
+
+                if (ImGuizmo.Manipulate(ref view, ref proj, operation, mode, ref transform, null, snap))
                 {
                     gimbalGrabbed = true;
                     selection.Transform(ref meshSource.Data, center, transform);

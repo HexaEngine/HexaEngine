@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -7,7 +8,7 @@
 
     public static class GenVertexNormalsProcess
     {
-        private static float configMaxAngle = 35f.ToRad();
+        private static float configMaxAngle = 90f.ToRad();
 
         public static unsafe bool GenMeshVertexNormals(ref MeshData pMesh)
         {
@@ -94,7 +95,7 @@
                         // (v*v is not guaranteed to be 1.0 for all unit vectors v)
                         if (!float.IsNaN(v.X) && (verticesFound[(int)a] == i || Vector3.Dot(v, vr) >= fLimit))
                         {
-                            pcNor += v;
+                            pcNor += v * MathF.Acos(Vector3.Dot(v, vr));
                         }
                     }
                     pcNew[i] = Vector3.Normalize(pcNor);
@@ -125,7 +126,9 @@
                 Vector3 u = p1 - p0;
                 Vector3 v = p2 - p0;
 
-                Vector3 faceNormal = Vector3.Normalize(Vector3.Cross(u, v));
+                Vector3 normal = Vector3.Cross(u, v);
+                Vector3 n1 = Vector3.Cross(v, u);
+                Vector3 faceNormal = Vector3.Normalize(normal);
 
                 Vector3 a = Vector3.Normalize(u);
                 Vector3 b = Vector3.Normalize(v);
@@ -145,12 +148,14 @@
                 w2 = Math.Clamp(w2, -1, 1);
                 w2 = MathF.Acos(w2);
 
-                if (Math.Abs(w0) > configMaxAngle)
-                    vertNormals[i0] = faceNormal * w0 + vertNormals[i0];
-                if (Math.Abs(w1) > configMaxAngle)
-                    vertNormals[i1] = faceNormal * w1 + vertNormals[i1];
-                if (Math.Abs(w2) > configMaxAngle)
-                    vertNormals[i2] = faceNormal * w2 + vertNormals[i2];
+                if (faceNormal.IsAnyNan())
+                {
+                    continue;
+                }
+
+                vertNormals[i0] = faceNormal * w0 + vertNormals[i0];
+                vertNormals[i1] = faceNormal * w1 + vertNormals[i1];
+                vertNormals[i2] = faceNormal * w2 + vertNormals[i2];
             }
 
             for (int i = 0; i < pMesh.VerticesCount; i++)
@@ -169,6 +174,11 @@
             var m1 = a.Length();
             var m2 = b.Length();
             return MathF.Acos(d / (m1 * m2));
+        }
+
+        public static bool IsAnyNan(this Vector3 vector)
+        {
+            return float.IsNaN(vector.X) || float.IsNaN(vector.Y) || float.IsNaN(vector.Z);
         }
     }
 }
