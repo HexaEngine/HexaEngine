@@ -7,13 +7,15 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
-    public unsafe struct UnsafeString : IFreeable
+    public unsafe struct UnsafeString : IFreeable, IEquatable<UnsafeString>
     {
         public UnsafeString(string str)
         {
+            nint len = str.Length * sizeof(char);
+            Ptr = (char*)Marshal.AllocHGlobal(len);
             fixed (char* strPtr = str)
             {
-                Ptr = strPtr;
+                Memcpy(strPtr, Ptr, len, len);
             }
             Length = str.Length;
         }
@@ -83,9 +85,10 @@
             return length + 4;
         }
 
-        public void Free()
+        public void Release()
         {
-            Utils.Free(Ptr);
+            Free(Ptr);
+            Ptr = null;
         }
 
         public int Sizeof()
@@ -103,9 +106,92 @@
             return new(str);
         }
 
-        public override string ToString()
+        public static implicit operator ReadOnlySpan<char>(UnsafeString ptr)
+        {
+            return new(ptr.Ptr, ptr.Length);
+        }
+
+        public static implicit operator Span<char>(UnsafeString ptr)
+        {
+            return new(ptr.Ptr, ptr.Length);
+        }
+
+        public static implicit operator char*(UnsafeString ptr)
+        {
+            return ptr.Ptr;
+        }
+
+        public static bool operator ==(UnsafeString left, UnsafeString right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(UnsafeString left, UnsafeString right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(UnsafeString left, string right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            ReadOnlySpan<char> chars1 = new(left.Ptr, left.Length);
+            ReadOnlySpan<char> chars2 = right;
+
+            return chars1.SequenceEqual(chars2);
+        }
+
+        public static bool operator !=(UnsafeString left, string right)
+        {
+            return !(left == right);
+        }
+
+        public static bool operator ==(string left, UnsafeString right)
+        {
+            if (left.Length != right.Length)
+                return false;
+
+            ReadOnlySpan<char> chars1 = left;
+            ReadOnlySpan<char> chars2 = new(right.Ptr, right.Length);
+
+            return chars1.SequenceEqual(chars2);
+        }
+
+        public static bool operator !=(string left, UnsafeString right)
+        {
+            return !(left == right);
+        }
+
+        public override readonly string ToString()
         {
             return this;
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is UnsafeString @string && Equals(@string);
+        }
+
+        public readonly bool Equals(UnsafeString other)
+        {
+            if (Length != other.Length)
+                return false;
+
+            ReadOnlySpan<char> chars1 = new(Ptr, Length);
+            ReadOnlySpan<char> chars2 = new(other.Ptr, Length);
+
+            return chars1.SequenceEqual(chars2);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return string.GetHashCode(this);
+        }
+
+        public readonly int GetHashCode(StringComparison comparison)
+        {
+            return string.GetHashCode(this, comparison);
         }
     }
 
@@ -232,7 +318,7 @@
             Ptr = newPtr;
         }
 
-        public void Free()
+        public void Release()
         {
             Utils.Free(Ptr);
         }
@@ -311,7 +397,7 @@
             Ptr = newPtr;
         }
 
-        public void Free()
+        public void Release()
         {
             Utils.Free(Ptr);
         }

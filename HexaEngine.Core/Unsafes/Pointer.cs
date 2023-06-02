@@ -70,6 +70,11 @@
     {
         public T* Data;
 
+        public Pointer()
+        {
+            Data = Alloc<T>();
+        }
+
         public Pointer(T* pointer)
         {
             Data = pointer;

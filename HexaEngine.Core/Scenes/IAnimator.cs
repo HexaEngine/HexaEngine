@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Core.Animations
-{
-    using HexaEngine.Core.Scenes;
+﻿using HexaEngine.Core.IO.Animations;
 
+namespace HexaEngine.Core.Scenes
+{
     public interface IAnimator : IComponent
     {
         void Play(Animation animation);

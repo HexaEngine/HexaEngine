@@ -81,6 +81,7 @@ namespace HexaEngine.Scenes.Managers
 
         public static unsafe GameObject? SelectObject(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
+            /*
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
             {
@@ -97,10 +98,13 @@ namespace HexaEngine.Scenes.Managers
             ImGuiConsole.Log(LogSeverity.Log, data.ToString());
 
             return manager.Types[(int)data.TypeId - 1].Instances[(int)data.InstanceId - 1].Parent;
+            */
+            return null;
         }
 
         public static unsafe SelectionResult Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
+            /*
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
             {
@@ -134,6 +138,8 @@ namespace HexaEngine.Scenes.Managers
             outputBuffer.Read(context);
 
             return outputBuffer[0];
+            */
+            return default;
         }
 
         public static void Release()

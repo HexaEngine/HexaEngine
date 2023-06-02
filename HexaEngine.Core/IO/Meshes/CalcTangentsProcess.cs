@@ -9,7 +9,7 @@
     {
         public static float ConfigMaxAngle = 45f.ToRad();
 
-        public static unsafe bool ProcessMesh(ref MeshData pMesh)
+        public static unsafe bool ProcessMesh(MeshData pMesh)
         {
             const float angleEpsilon = 0.9999f;
             UnsafeList<bool> vertexDone = new((int)pMesh.VerticesCount);
@@ -162,7 +162,7 @@
                 }
             }
 
-            vertexDone.Free();
+            vertexDone.Release();
 
             return true;
         }
@@ -171,22 +171,28 @@
         {
             var nFace = pMesh.IndicesCount / 3;
 
-            Vector3* vertTangents = Alloc<Vector3>(nFace);
+            Vector3* vertTangents = Alloc<Vector3>(pMesh.VerticesCount);
+            Vector3* vertBitangents = Alloc<Vector3>(pMesh.VerticesCount);
+            Memset(vertTangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            Memset(vertBitangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
 
-            for (uint i = 0; i < nFace; i++)
+            for (uint i = 0; i < nFace; ++i)
             {
-                var face = new Face(pMesh.Indices[i * 3], pMesh.Indices[i * 3 + 1], pMesh.Indices[i * 3 + 2]);
-                var vtxP1 = pMesh.Positions[face.Index1];
-                var vtxP2 = pMesh.Positions[face.Index2];
-                var vtxP3 = pMesh.Positions[face.Index3];
+                var i0 = pMesh.Indices[i * 3];
+                var i1 = pMesh.Indices[i * 3 + 1];
+                var i2 = pMesh.Indices[i * 3 + 2];
+
+                var vtxP1 = pMesh.Positions[i0];
+                var vtxP2 = pMesh.Positions[i1];
+                var vtxP3 = pMesh.Positions[i2];
 
                 Vector3 v = vtxP2 - vtxP1;
                 Vector3 w = vtxP3 - vtxP1;
 
-                float sx = pMesh.UVs[face.Index2].X - pMesh.UVs[face.Index1].X, sy = pMesh.UVs[face.Index2].Y - pMesh.UVs[face.Index1].Y;
-                float tx = pMesh.UVs[face.Index3].X - pMesh.UVs[face.Index1].X, ty = pMesh.UVs[face.Index3].Y - pMesh.UVs[face.Index1].Y;
+                float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
+                float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
 
-                float dirCorrection = (tx * sy - ty * sx) < 0.0f ? -1.0f : 1.0f;
+                float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
 
                 if (sx * ty == sy * tx)
                 {
@@ -203,31 +209,22 @@
                 bitangent.X = (-w.X * sx + v.X * tx) * dirCorrection;
                 bitangent.Y = (-w.Y * sx + v.Y * tx) * dirCorrection;
                 bitangent.Z = (-w.Z * sx + v.Z * tx) * dirCorrection;
-                vertTangents[i] = tangent;
+                vertTangents[i0] += tangent;
+                vertTangents[i1] += tangent;
+                vertTangents[i2] += tangent;
+                vertBitangents[i0] += bitangent;
+                vertBitangents[i1] += bitangent;
+                vertBitangents[i2] += bitangent;
             }
-
-            Vector3 tangentSum = default;
 
             for (int i = 0; i < pMesh.VerticesCount; ++i)
             {
-                // Check which triangles use this vertex
-                for (int j = 0; j < nFace; ++j)
-                {
-                    if (pMesh.Indices[j * 3] == i || pMesh.Indices[j * 3 + 1] == i || pMesh.Indices[j * 3 + 2] == i)
-                    {
-                        tangentSum += vertTangents[j];
-                    }
-                }
-
-                tangentSum = Vector3.Normalize(tangentSum);
-
-                pMesh.Tangents[i] = tangentSum;
-                pMesh.Bitangents[i] = Vector3.Cross(pMesh.Normals[i], tangentSum);
-
-                tangentSum = default;
+                pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
+                pMesh.Bitangents[i] = Vector3.Normalize(vertBitangents[i]);
             }
 
             Free(vertTangents);
+            Free(vertBitangents);
 
             return true;
         }

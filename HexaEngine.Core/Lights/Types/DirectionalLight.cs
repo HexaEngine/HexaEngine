@@ -3,7 +3,6 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Structs;
     using HexaEngine.Core.Scenes;
@@ -75,7 +74,7 @@
             }
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowDirectionalLightData> buffer, Camera camera, IInstanceManager manager)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowDirectionalLightData> buffer, Camera camera)
         {
             if (csmDepthBuffer == null)
             {
@@ -95,15 +94,6 @@
             context.ClearDepthStencilView(csmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
             context.SetRenderTarget(null, csmDepthBuffer.DSV);
             context.SetViewport(csmDepthBuffer.Viewport);
-
-            var types = manager.Types;
-            for (int j = 0; j < types.Count; j++)
-            {
-                var type = types[j];
-                type.UpdateFrustumInstanceBuffer(ShadowFrustra);
-                type.DrawShadow(context, csmBuffer, ShadowType.Cascaded);
-            }
-            context.ClearState();
 #nullable enable
         }
 

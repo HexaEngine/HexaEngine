@@ -152,7 +152,7 @@ GeometryData main(PixelInput input)
     float3 normal = normalize(input.normal);
 #endif
 #if VtxTangent
-    float3 tangent = normalize(input.tangent);
+    float3 tangent = normalize(input.tangent);    
 #endif
 #if VtxBitangent
     float3 bitangent = normalize(input.bitangent);
@@ -217,6 +217,9 @@ GeometryData main(PixelInput input)
 #endif
     if (baseColor.a == 0)
         discard;
+#if !VtxTangent
+    float3 tangent = float3(0, 1, 0);
+#endif
 
     return PackGeometryData(baseColor.rgb, baseColor.a, pos, input.depth, normal, roughness, metalness, tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
 }

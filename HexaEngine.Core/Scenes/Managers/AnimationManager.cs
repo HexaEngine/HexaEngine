@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
-    using HexaEngine.Core.Animations;
+    using HexaEngine.Core.IO.Animations;
     using System.Collections.Generic;
 
     public class AnimationManager

@@ -13,11 +13,11 @@ cbuffer options : register(b0)
 void main(point GeometryInput input[1], inout TriangleStream<PixelInput> triStream)
 {
     float4 n = float4(input[0].normal * 0.00005f, 0);
-    float3 up = float3(0, 1, 0);
-    float3 look = normalize(GetCameraPos() - input[0].pos);
+    float3 up = input[0].bitangent;
+    float3 look = input[0].normal;
     float3 right = cross(up, look);
 
-    float halfS = 0.5f;
+    float halfS = 0.5f * size;
 
     float4 v[4];
     v[0] = float4(input[0].pos + halfS * right - halfS * up, 1.0f) + n;

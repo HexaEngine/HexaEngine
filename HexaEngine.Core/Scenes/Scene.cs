@@ -1,18 +1,13 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
-    using BepuPhysics;
-    using BepuUtilities;
-    using BepuUtilities.Memory;
     using HexaEngine.Core;
-    using HexaEngine.Core.Animations;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Collections;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Instances;
+    using HexaEngine.Core.IO.Animations;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
-    using HexaEngine.Core.Physics.Characters;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Scenes.Systems;
     using Newtonsoft.Json;
@@ -20,7 +15,6 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Numerics;
     using System.Runtime.CompilerServices;
 
     public class Scene
@@ -30,7 +24,6 @@
         private readonly List<Camera> cameras = new();
         private readonly List<string> cameraNames = new();
         private readonly ScriptManager scriptManager = new();
-        private InstanceManager instanceManager;
         private ModelManager meshManager;
         private LightManager lightManager;
         private RenderManager renderManager;
@@ -76,9 +69,6 @@
         public Camera? CurrentCamera => ActiveCamera >= 0 && ActiveCamera < cameras.Count ? cameras[ActiveCamera] : null;
 
         [JsonIgnore]
-        public InstanceManager InstanceManager => instanceManager;
-
-        [JsonIgnore]
         public ScriptManager Scripts => scriptManager;
 
         [JsonIgnore]
@@ -107,8 +97,7 @@
 
         public void Initialize(IGraphicsDevice device)
         {
-            instanceManager = new();
-            lightManager = new(instanceManager);
+            lightManager = new();
             meshManager ??= new();
             lightManager.Initialize(device).Wait();
             systems.Add(new AudioSystem());
@@ -117,7 +106,7 @@
             systems.Add(lightManager);
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
-            systems.Add(renderManager = new(device, instanceManager));
+            systems.Add(renderManager = new(device));
 
             semaphore.Wait();
 
@@ -127,12 +116,17 @@
             root.Initialize(device);
             Validate();
             semaphore.Release();
+
+            var awake = systems[SystemFlags.Awake];
+            for (int i = 0; i < awake.Count; i++)
+            {
+                awake[i].Awake();
+            }
         }
 
         public async Task InitializeAsync(IGraphicsDevice device)
         {
-            instanceManager = new();
-            lightManager = new(instanceManager);
+            lightManager = new();
             meshManager ??= new();
             await lightManager.Initialize(device);
             systems.Add(new AudioSystem());
@@ -141,7 +135,7 @@
             systems.Add(lightManager);
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
-            systems.Add(renderManager = new(device, instanceManager));
+            systems.Add(renderManager = new(device));
 
             await semaphore.WaitAsync();
 
@@ -151,6 +145,12 @@
             root.Initialize(device);
             Validate();
             semaphore.Release();
+
+            var awake = systems[SystemFlags.Awake];
+            for (int i = 0; i < awake.Count; i++)
+            {
+                awake[i].Awake();
+            }
         }
 
         public bool Validate()

@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Mathematics;
     using K4os.Compression.LZ4;
     using K4os.Compression.LZ4.Streams;
@@ -10,7 +9,7 @@
     using System.Numerics;
     using System.Text;
 
-    public class ModelFile
+    public unsafe class ModelFile
     {
         public ModelHeader Header;
         public string Name;
@@ -43,6 +42,8 @@
                 Meshes[i] = MeshData.Read(stream, Encoding.UTF8, Header.Endianness);
             }
 
+            Root = Node.ReadFrom(stream, Encoding.UTF8, Header.Endianness);
+
             fs.Close();
         }
 
@@ -50,18 +51,18 @@
         {
         }
 
-        public ModelFile(string path, string materialLibrary, MeshData[] meshes)
+        public ModelFile(string path, string materialLibrary, MeshData[] meshes, Node root)
         {
             Name = path;
             MaterialLibrary = materialLibrary;
             Header.MeshCount = (ulong)meshes.LongLength;
             Meshes = meshes;
+            Root = root;
         }
 
-        public void Save(string dir, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.LZ4)
+        public void Save(string path, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.LZ4)
         {
-            Directory.CreateDirectory(dir);
-            Stream fs = File.Create(Path.Combine(dir, Path.GetFileNameWithoutExtension(Name) + ".model"));
+            Stream fs = File.Create(path);
 
             Header.Encoding = encoding;
             Header.Endianness = endianness;
@@ -84,6 +85,9 @@
             {
                 Meshes[i].Write(stream, Header.Encoding, Header.Endianness);
             }
+
+            Root.Write(stream, Header.Encoding, Header.Endianness);
+
             stream.Close();
             fs.Close();
         }
@@ -98,14 +102,14 @@
             return new ModelFile(path, File.OpenRead(path));
         }
 
-        public ref MeshData GetMesh(int index)
+        public MeshData GetMesh(int index)
         {
-            return ref Meshes[index];
+            return Meshes[index];
         }
 
-        public ref MeshData GetMesh(ulong index)
+        public MeshData GetMesh(ulong index)
         {
-            return ref Meshes[index];
+            return Meshes[index];
         }
 
         public Vector3[] GetPoints(int index)

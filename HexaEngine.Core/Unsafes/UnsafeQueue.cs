@@ -187,7 +187,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Free()
+        public void Release()
         {
             allocator->Free(items);
             items = null;

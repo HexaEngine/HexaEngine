@@ -126,14 +126,10 @@
             occlusionCameraBuffer.Update(context);
         }
 
-        public static void DoFrustumCulling(IGraphicsContext context, InstanceManager manager, BoundingFrustum frustum, out int count)
+        public static void DoFrustumCulling(IGraphicsContext context, BoundingFrustum frustum, out int count)
         {
-            if (manager.InstanceCount == 0)
-            {
-                count = 0;
-                return;
-            }
-
+            count = 0;
+            /*
             instanceDataBuffer.ResetCounter();
             instanceDataNoCull.ResetCounter();
             instanceOffsetsNoCull.ResetCounter();
@@ -154,9 +150,10 @@
             instanceDataOutBuffer.Capacity = instanceDataBuffer.Capacity;
             instanceDataBuffer.Update(context);
             count = (int)instanceDataBuffer.Count;
+            */
         }
 
-        public static unsafe void DoOcclusionCulling(IGraphicsContext context, InstanceManager manager, Camera camera, int instanceCount, DepthMipChain mipChain)
+        public static unsafe void DoOcclusionCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain)
         {
             if (instanceCount == 0)
             {
@@ -167,7 +164,7 @@
             {
                 ActivateCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
                 NoofInstances = (uint)instanceCount,
-                NoofPropTypes = (uint)manager.TypeCount,
+                NoofPropTypes = (uint)typeCount,
                 MaxMipLevel = (uint)mipChain.Mips,
                 RTSize = new(mipChain.Width, mipChain.Height),
                 P00 = camera.Transform.Projection.M11,
@@ -217,37 +214,17 @@
 
         public static void DoCulling(IGraphicsContext context, DepthMipChain mipChain)
         {
+            /*
             var camera = CameraManager.Culling;
-            var instanceManager = InstanceManager.Current;
+
             if (camera == null)
             {
                 return;
             }
 
-            if (instanceManager == null)
-            {
-                return;
-            }
-
-            DoFrustumCulling(context, instanceManager, camera.Transform.Frustum, out var count);
-            DoOcclusionCulling(context, instanceManager, camera, count, mipChain);
-        }
-
-        public static void DoCulling(IGraphicsContext context, InstanceManager instanceManager, DepthMipChain mipChain)
-        {
-            var camera = CameraManager.Culling;
-            if (camera == null)
-            {
-                return;
-            }
-
-            if (instanceManager == null)
-            {
-                return;
-            }
-
-            DoFrustumCulling(context, instanceManager, camera.Transform.Frustum, out var count);
-            DoOcclusionCulling(context, instanceManager, camera, count, mipChain);
+            DoFrustumCulling(context, camera.Transform.Frustum, out var count);
+            DoOcclusionCulling(context, camera, count, mipChain);
+            */
         }
 
         public static unsafe void Release()

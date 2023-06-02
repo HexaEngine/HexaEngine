@@ -1,20 +1,14 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
-    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
-    using Microsoft.VisualBasic;
-    using Silk.NET.Maths;
     using System;
     using System.IO;
     using System.Numerics;
-    using System.Runtime.InteropServices;
     using System.Text;
-    using System.Threading.Tasks;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
-    public unsafe struct MeshData
+    public unsafe class MeshData
     {
         public string Name;
         public string MaterialName;
@@ -32,6 +26,10 @@
         public Vector3[] Tangents;
         public Vector3[] Bitangents;
         public BoneData[] Bones;
+
+        private MeshData()
+        {
+        }
 
         public MeshData(string name, string materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
         {
@@ -91,7 +89,7 @@
 
         public static MeshData Read(Stream stream, Encoding encoding, Endianness endianness)
         {
-            MeshData data = default;
+            MeshData data = new();
             data.Name = stream.ReadString(encoding, endianness);
             data.MaterialName = stream.ReadString(encoding, endianness);
             data.VerticesCount = stream.ReadUInt(endianness);
@@ -299,10 +297,10 @@
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
                     var (boneIds, weigths) = GatherBoneData(i);
-                    fixed (uint* p = boneIds)
+                    fixed (int* p = boneIds)
                     {
-                        MemoryCopy(p, &buffer[m], sizeof(uint) * 4);
-                        m += sizeof(uint) * 4;
+                        MemoryCopy(p, &buffer[m], sizeof(int) * 4);
+                        m += sizeof(int) * 4;
                     }
                     fixed (float* p = weigths)
                     {
@@ -370,10 +368,10 @@
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
                     var (boneIds, weigths) = GatherBoneData(i);
-                    fixed (uint* p = boneIds)
+                    fixed (int* p = boneIds)
                     {
-                        MemoryCopy(p, &buffer[m], sizeof(uint) * 4);
-                        m += sizeof(uint) * 4;
+                        MemoryCopy(p, &buffer[m], sizeof(int) * 4);
+                        m += sizeof(int) * 4;
                     }
                     fixed (float* p = weigths)
                     {
@@ -458,7 +456,7 @@
             return default;
         }
 
-        public readonly Face GetFaceAtIndex(uint index)
+        public Face GetFaceAtIndex(uint index)
         {
             var i = index * 3;
             var idx1 = Indices[i];
@@ -533,12 +531,12 @@
             return (uint)result;
         }
 
-        public (uint[] boneIds, float[] weigths) GatherBoneData(int vertexId)
+        public (int[] boneIds, float[] weigths) GatherBoneData(int vertexId)
         {
-            uint[] boneIds = new uint[4];
+            int[] boneIds = new int[4];
             float[] weigths = new float[4];
             uint m = 0;
-            for (uint i = 0; i < Bones.Length; i++)
+            for (int i = 0; i < Bones.Length; i++)
             {
                 var bone = Bones[i];
                 for (uint j = 0; j < bone.Weights.Length; j++)
@@ -546,13 +544,17 @@
                     var weight = bone.Weights[j];
                     if (weight.VertexId == vertexId)
                     {
-                        boneIds[m] = i + 1;
+                        boneIds[m] = i;
                         weigths[m] = weight.Weight;
                         m++;
                         if (m == 4)
                         {
                             break;
                         }
+                    }
+                    else
+                    {
+                        boneIds[m] = -1;
                     }
                 }
                 if (m == 4)
@@ -707,8 +709,8 @@
 
         public void GenerateNTB()
         {
-            GenVertexNormalsProcess.GenMeshVertexNormals(ref this);
-            CalcTangentsProcess.ProcessMesh(ref this);
+            GenVertexNormalsProcess.GenMeshVertexNormals(this);
+            CalcTangentsProcess.ProcessMesh(this);
             return;
             var faces = IndicesCount / 3;
             UnsafeList<Vector3> tempNormal = new();
@@ -777,8 +779,8 @@
                 tangentSum = default;
             }
 
-            tempNormal.Free();
-            tempTangent.Free();
+            tempNormal.Release();
+            tempTangent.Release();
         }
     }
 }

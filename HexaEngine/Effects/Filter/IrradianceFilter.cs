@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Graphics.Structs;
+    using Silk.NET.Core.Native;
     using System;
     using System.Numerics;
 

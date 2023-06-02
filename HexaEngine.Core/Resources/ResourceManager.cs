@@ -8,7 +8,7 @@
 
     public static class ResourceManager
     {
-        private static readonly ConcurrentDictionary<string, ResourceInstance<Mesh>> meshes = new();
+        private static readonly ConcurrentDictionary<string, Mesh> meshes = new();
         private static readonly ConcurrentDictionary<string, Material> materials = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialTexture>> textures = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialShader>> shaders = new();
@@ -73,9 +73,9 @@
             }
         }
 
-        public static unsafe ResourceInstance<Mesh> LoadMesh(MeshData mesh)
+        public static unsafe Mesh LoadMesh(MeshData mesh)
         {
-            ResourceInstance<Mesh> instance;
+            Mesh instance;
             lock (meshes)
             {
                 if (meshes.TryGetValue(mesh.Name, out var value))
@@ -84,24 +84,19 @@
                     return value;
                 }
 
-                instance = new(mesh.Name, 1);
+                instance = new(device, mesh);
                 meshes.TryAdd(mesh.Name, instance);
             }
-
-            // TODO: Handle different vertex types.
-            Mesh model = new(device, mesh);
-            instance.BeginLoad();
-            instance.EndLoad(model);
 
             return instance;
         }
 
-        public static async Task<ResourceInstance<Mesh>> LoadMeshAsync(MeshData mesh)
+        public static async Task<Mesh> LoadMeshAsync(MeshData mesh)
         {
             return await Task.Factory.StartNew(() => LoadMesh(mesh));
         }
 
-        public static void UnloadMesh(ResourceInstance<Mesh> mesh)
+        public static void UnloadMesh(Mesh mesh)
         {
             mesh.RemoveRef();
             if (mesh.IsUsed)

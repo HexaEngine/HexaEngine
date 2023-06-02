@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Animations
+﻿namespace HexaEngine.Core.IO.Animations
 {
     public enum AnimationBehavior
     {

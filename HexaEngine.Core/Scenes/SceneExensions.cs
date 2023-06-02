@@ -95,5 +95,27 @@
                 }
             }
         }
+
+        public static void AddComponentIfIs<T>(this GameObject obj, Action<T> add) where T : IComponent
+        {
+            for (int i = 0; i < obj.Components.Count; i++)
+            {
+                if (obj.Components[i] is T t)
+                {
+                    add(t);
+                }
+            }
+        }
+
+        public static void RemoveComponentIfIs<T>(this GameObject obj, Action<T> remove) where T : IComponent
+        {
+            for (int i = 0; i < obj.Components.Count; i++)
+            {
+                if (obj.Components[i] is T t)
+                {
+                    remove(t);
+                }
+            }
+        }
     }
 }

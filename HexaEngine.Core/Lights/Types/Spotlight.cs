@@ -111,7 +111,7 @@
             }
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowSpotlightData> buffer, IInstanceManager manager)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowSpotlightData> buffer)
         {
             if (psmDepthBuffer == null)
             {
@@ -125,14 +125,6 @@
             context.SetRenderTarget(null, psmDepthBuffer.DSV);
             context.SetViewport(psmDepthBuffer.Viewport);
 
-            var types = manager.Types;
-            for (int j = 0; j < types.Count; j++)
-            {
-                var type = types[j];
-                type.UpdateFrustumInstanceBuffer(ShadowFrustum);
-                type.DrawShadow(context, psmBuffer, ShadowType.Perspective);
-            }
-            context.ClearState();
 #nullable enable
         }
 

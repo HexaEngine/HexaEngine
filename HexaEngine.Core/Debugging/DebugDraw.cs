@@ -405,6 +405,22 @@ namespace HexaEngine.Editor
             cmd.Vertices[1].Color = color;
         }
 
+        public static void DrawLine(string id, Vector3 origin, Vector3 destination, Vector4 col)
+        {
+            uint color = ColorConvertFloat4ToU32(col);
+            if (queue.Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
+            {
+                cmd.Vertices = Alloc<DebugDrawVert>(2);
+                cmd.Indices = AllocCopy(new ushort[] { 0, 1 });
+            }
+
+            cmd.Vertices[0].Position = origin;
+            cmd.Vertices[1].Position = destination;
+
+            cmd.Vertices[0].Color = color;
+            cmd.Vertices[1].Color = color;
+        }
+
         public static void DrawRing(string id, Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);

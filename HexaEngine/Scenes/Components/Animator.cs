@@ -1,25 +1,33 @@
 ﻿namespace HexaEngine.Scenes.Components
 {
-    using HexaEngine.Core.Animations;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO.Animations;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Scenes.Components.Renderer;
     using System.Collections.Generic;
-    using System.Numerics;
 
     [EditorComponent(typeof(Animator), "Animator")]
     public class Animator : IComponent, IAnimator
     {
-        private readonly Dictionary<string, GameObject> _cache = new();
+        private readonly Dictionary<string, NodeId> _cache = new();
         private Animation? currentAnimation;
         private float currentTime;
         private bool playing;
-        private Vector3 translation = default;
-        private Quaternion rotation = Quaternion.Identity;
-        private Vector3 scale = Vector3.One;
+        private bool invalid = false;
+        private ModelRendererComponent? renderer;
+
+        private struct NodeId
+        {
+            public uint Id;
+            public string Name;
+            public bool IsBone;
+        }
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
+            invalid = false;
+            renderer = gameObject.GetComponent<ModelRendererComponent>();
         }
 
         public void Destory()
@@ -54,12 +62,17 @@
 
         public void Update(Scene scene, float deltaTime)
         {
+            if (invalid)
+            {
+                return;
+            }
+
             if (!playing)
             {
                 return;
             }
 
-            if (currentAnimation == null)
+            if (currentAnimation == null || renderer == null)
             {
                 return;
             }
@@ -72,15 +85,34 @@
 
                 if (!_cache.TryGetValue(channel.NodeName, out var node))
                 {
-                    _cache.Add(channel.NodeName, node = scene.Find(channel.NodeName) ?? throw new Exception());
+                    var nodeId = renderer.GetNodeIdByName(channel.NodeName);
+                    var boneId = renderer.GetBoneIdByName(channel.NodeName);
+                    if (boneId != -1)
+                    {
+                        node = new() { Id = (uint)boneId, Name = channel.NodeName, IsBone = true };
+                    }
+                    else if (nodeId != -1)
+                    {
+                        node = new() { Id = (uint)nodeId, Name = channel.NodeName, IsBone = false };
+                    }
+                    else
+                    {
+                        invalid = true;
+                        break;
+                    }
+                    _cache.Add(channel.NodeName, node);
                 }
 
                 channel.Update(ct);
 
-                Matrix4x4.Decompose(channel.Local, out scale, out rotation, out translation);
-                node.Transform.Scale *= scale;
-                node.Transform.Orientation *= rotation;
-                node.Transform.Position += translation;
+                if (node.IsBone)
+                {
+                    renderer.SetBoneLocal(channel.Local, node.Id);
+                }
+                else
+                {
+                    renderer.SetLocal(channel.Local, node.Id);
+                }
             }
         }
     }

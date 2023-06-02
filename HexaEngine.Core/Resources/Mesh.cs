@@ -1,115 +1,52 @@
 ﻿namespace HexaEngine.Core.Resources
 {
-    using HexaEngine.Core.Culling;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Instances;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Mathematics;
-    using System.Collections.Concurrent;
+    using System.Numerics;
 
-    /// <summary>
-    /// TODO: Handle different vertex types.
-    /// </summary>
-    public class Mesh : IDisposable
+    public class Mesh : ResourceInstance
     {
-        private readonly ConcurrentDictionary<string, ModelInstanceType> materialToType = new();
-        private readonly List<ModelInstanceType> instanceTypes = new();
-        private readonly IGraphicsDevice device;
         private readonly string name;
         private bool disposedValue;
-        public IBuffer? VB;
-        public IBuffer? IB;
+        public readonly MeshData Data;
+        public IBuffer? VertexBuffer;
+        public IBuffer? IndexBuffer;
         public int VertexCount;
         public int IndexCount;
         public BoundingBox BoundingBox;
         public BoundingSphere BoundingSphere;
         public uint Stride;
 
-        public unsafe Mesh(IGraphicsDevice device, MeshData data)
+        public unsafe Mesh(IGraphicsDevice device, MeshData data) : base(data.Name, 1)
         {
-            // TODO: Handle different vertex types.
-            this.device = device;
             name = data.Name;
+            Data = data;
             BoundingBox = data.Box;
             BoundingSphere = data.Sphere;
-            IB = data.CreateIndexBuffer(device);
-            VB = data.CreateVertexBuffer(device);
+            IndexBuffer = data.CreateIndexBuffer(device);
+            VertexBuffer = data.CreateVertexBuffer(device);
             IndexCount = (int)data.IndicesCount;
             VertexCount = (int)data.VerticesCount;
             Stride = data.GetStride();
         }
 
-        public string Name => name;
-
-        public bool IsUsed => instanceTypes.Count > 0;
-
-        public ModelInstanceType CreateInstanceType(ResourceInstance<Mesh> mesh, Material material)
+        public void BeginDraw(IGraphicsContext context)
         {
-            lock (materialToType)
-            {
-                lock (instanceTypes)
-                {
-                    if (!materialToType.TryGetValue(material.Name, out var type))
-                    {
-                        type = new(mesh, material);
-                        type.Initialize(device, CullingManager.DrawIndirectArgs, CullingManager.InstanceDataOutBuffer, CullingManager.InstanceOffsets, CullingManager.InstanceDataNoCull, CullingManager.InstanceOffsetsNoCull);
-                        if (!materialToType.TryAdd(material.Name, type))
-                        {
-                            throw new InvalidOperationException();
-                        }
-
-                        instanceTypes.Add(type);
-                    }
-
-                    return type;
-                }
-            }
+            context.SetIndexBuffer(IndexBuffer, Format.R32UInt, 0);
+            context.SetVertexBuffer(VertexBuffer, Stride);
         }
 
-        public void DestroyInstanceType(ModelInstanceType type)
-        {
-            lock (instanceTypes)
-            {
-                if (instanceTypes.Contains(type))
-                {
-                    instanceTypes.Remove(type);
-                    materialToType.Remove(type.Material.Name, out _);
-                }
-                else
-                {
-                    throw new InvalidOperationException();
-                }
-            }
-        }
-
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                VB?.Dispose();
-                IB?.Dispose();
-                lock (instanceTypes)
-                {
-                    for (int i = 0; i < instanceTypes.Count; i++)
-                    {
-                        instanceTypes[i].Dispose();
-                    }
-                    instanceTypes.Clear();
-                    materialToType.Clear();
-                }
+                VertexBuffer?.Dispose();
+                IndexBuffer?.Dispose();
+
                 disposedValue = true;
             }
-        }
-
-        ~Mesh()
-        {
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
 
         public override string ToString()

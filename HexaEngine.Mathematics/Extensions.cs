@@ -446,5 +446,12 @@
             q.Y = (cz * cx * sy) + (sz * sx * cy);
             q.Z = (sz * cx * cy) - (cz * sx * sy);
         }
+
+        public static void AnglesFromNormal(Vector3 normal, out float yaw, out float pitch, out float roll)
+        {
+            yaw = MathF.Atan2(normal.X, normal.Z);
+            pitch = MathF.Asin(-normal.Y);
+            roll = 0;
+        }
     }
 }

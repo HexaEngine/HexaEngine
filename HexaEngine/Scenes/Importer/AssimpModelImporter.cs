@@ -1,83 +1,56 @@
-﻿using HexaEngine.Core.IO.Meshes;
-using HexaEngine.Core.Scenes;
-
-namespace HexaEngine.Scenes.Importer
+﻿namespace HexaEngine.Scenes.Importer
 {
-    using HexaEngine.Core;
-    using HexaEngine.Core.Animations;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Animations;
     using HexaEngine.Core.IO.Materials;
-    using HexaEngine.Core.Lights.Types;
+    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
-    using HexaEngine.Scenes.Components.Renderer;
     using Silk.NET.Assimp;
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Animation = Core.Animations.Animation;
+    using Animation = Core.IO.Animations.Animation;
     using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
+    using AssimpNode = Silk.NET.Assimp.Node;
     using AssimpScene = Silk.NET.Assimp.Scene;
     using BlendMode = Silk.NET.Assimp.BlendMode;
     using MaterialProperty = Core.IO.Materials.MaterialProperty;
-    using Scene = Scene;
+    using Node = HexaEngine.Core.IO.Meshes.Node;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
     using TextureOp = Silk.NET.Assimp.TextureOp;
     using TextureType = Silk.NET.Assimp.TextureType;
 
-    public struct BoneInfo
-    {
-        /*id is index in finalBoneMatrices*/
-        public int Id;
-
-        /*offset matrix transforms vertex from model space to bone space*/
-        public Matrix4x4 Offset;
-    }
-
-    [Flags]
-    public enum TexPostProcessSteps
-    {
-        None = 0,
-        Scale = 1,
-        Convert = 2,
-        GenerateMips = 4,
-    }
-
-    public class AssimpSceneImporter
+    public class AssimpModelImporter
     {
         private static readonly Assimp assimp = Assimp.GetApi();
 
-        private readonly Dictionary<Pointer<Node>, GameObject> nodesT = new();
-        private readonly Dictionary<GameObject, Pointer<Node>> nodesP = new();
-        private readonly Dictionary<Pointer<Mesh>, Objects.Animature> animatureT = new();
+        private readonly Dictionary<Pointer<AssimpNode>, Node> nodesT = new();
+        private readonly Dictionary<Node, Pointer<AssimpNode>> nodesP = new();
+        private readonly Dictionary<string, Node> nodesN = new();
         private readonly Dictionary<Pointer<Mesh>, MeshData> meshesT = new();
-        private readonly Dictionary<Pointer<Node>, ModelFile> modelsT = new();
-        private readonly Dictionary<string, Core.Scenes.Camera> camerasT = new();
-        private readonly Dictionary<string, Core.Lights.Light> lightsT = new();
+
         private readonly Dictionary<string, Animation> animationsT = new();
 
+        private string name;
         private string dir;
-        private List<GameObject> nodes;
-        private List<ModelFile> models;
-        private List<MaterialLibrary> libraries;
+        private List<Node> nodes;
         private List<string> textures;
         private MeshData[] meshes;
         private MaterialData[] materials;
         private Animation[] animations;
-        private Core.Scenes.Camera[] cameras;
-        private Core.Lights.Light[] lights;
-        private GameObject root;
+        private Node root;
+        private MaterialLibrary materialLibrary;
+        private ModelFile modelFile;
         private unsafe AssimpScene* scene;
-
-        public IReadOnlyList<ModelFile> Models => models;
 
         public MeshData[] Meshes => meshes;
 
@@ -102,21 +75,17 @@ namespace HexaEngine.Scenes.Importer
             return Task.Run(() => Load(path));
         }
 
-        public Task ImportAsync(IGraphicsDevice device, Scene scene)
-        {
-            return Task.Run(() => Import(device, scene));
-        }
-
         public Task ImportAsync(IGraphicsDevice device)
         {
-            return Task.Run(() => Import(device, SceneManager.Current));
+            return Task.Run(() => Import(device));
         }
 
         public unsafe void Load(string path)
         {
+            name = Path.GetFileNameWithoutExtension(path);
             dir = Path.GetDirectoryName(path);
-            var name = "HexaEngine".ToUTF8();
-            LogStream stream = new(new(Log), name);
+
+            LogStream stream = new(new(Log));
             assimp.AttachLogStream(&stream);
             assimp.EnableVerboseLogging(Assimp.True);
 
@@ -129,15 +98,7 @@ namespace HexaEngine.Scenes.Importer
 
             LoadMeshes(scene);
 
-            LoadModels(scene);
-
             LoadAnimations(scene);
-
-            LoadCameras(scene);
-
-            LoadLights(scene);
-
-            Free(name);
         }
 
         public bool CheckForProblems()
@@ -153,17 +114,6 @@ namespace HexaEngine.Scenes.Importer
             return false;
         }
 
-        public bool ChangeNameOfModel(ModelFile source, string newName)
-        {
-            if (meshes.Any(x => x.Name == newName))
-            {
-                return false;
-            }
-
-            source.Name = newName;
-            return true;
-        }
-
         public bool ChangeNameOfMaterial(MaterialData material, string newName)
         {
             if (materials.Any(x => x.Name == newName))
@@ -172,16 +122,14 @@ namespace HexaEngine.Scenes.Importer
             }
 
             string oldName = material.Name;
-            for (int i = 0; i < meshes.Length; i++)
+
+            ModelFile source = modelFile;
+            for (ulong j = 0; j < source.Header.MeshCount; j++)
             {
-                ModelFile source = models[i];
-                for (ulong j = 0; j < source.Header.MeshCount; j++)
+                MeshData data = source.GetMesh(j);
+                if (data.MaterialName == oldName)
                 {
-                    MeshData data = source.GetMesh(j);
-                    if (data.MaterialName == oldName)
-                    {
-                        source.GetMesh(j).MaterialName = newName;
-                    }
+                    source.GetMesh(j).MaterialName = newName;
                 }
             }
 
@@ -218,18 +166,9 @@ namespace HexaEngine.Scenes.Importer
             return true;
         }
 
-        public unsafe void Import(IGraphicsDevice device, Scene scene)
+        public unsafe void Import(IGraphicsDevice device)
         {
             InjectResources(device, device.TextureLoader);
-
-            if (root.Name == "ROOT")
-            {
-                scene.Merge(root);
-            }
-            else
-            {
-                scene.AddChild(root);
-            }
         }
 
         public unsafe void Clear()
@@ -237,8 +176,6 @@ namespace HexaEngine.Scenes.Importer
             nodesT.Clear();
             nodesP.Clear();
             meshesT.Clear();
-            camerasT.Clear();
-            lightsT.Clear();
 
             if (scene != null)
             {
@@ -648,45 +585,6 @@ namespace HexaEngine.Scenes.Importer
             }
         }
 
-        private unsafe void ExtractBoneWeightForVertices(SkinnedMeshVertex[] vertices, Mesh* mesh, AssimpScene* scene)
-        {
-            Dictionary<string, BoneInfo> boneInfoMap = new();
-            int boneCount = 0;
-
-            for (int boneIndex = 0; boneIndex < mesh->MNumBones; ++boneIndex)
-            {
-                int boneID = -1;
-                var boneName = mesh->MBones[boneIndex]->MName;
-                if (!boneInfoMap.ContainsKey(boneName))
-                {
-                    BoneInfo newBoneInfo;
-                    newBoneInfo.Id = boneCount;
-                    newBoneInfo.Offset = mesh->MBones[boneIndex]->MOffsetMatrix;
-                    boneInfoMap[boneName] = newBoneInfo;
-                    boneID = boneCount;
-                    boneCount++;
-                }
-                else
-                {
-                    boneID = boneInfoMap[boneName].Id;
-                }
-                Trace.Assert(boneID != -1);
-                var weights = mesh->MBones[boneIndex]->MWeights;
-                uint numWeights = mesh->MBones[boneIndex]->MNumWeights;
-
-                fixed (SkinnedMeshVertex* pVertices = &vertices[0])
-                {
-                    for (int weightIndex = 0; weightIndex < numWeights; ++weightIndex)
-                    {
-                        uint vertexId = weights[weightIndex].MVertexId;
-                        float weight = weights[weightIndex].MWeight;
-                        Trace.Assert(vertexId <= vertices.Length);
-                        SetVertexBoneData(&pVertices[vertexId], boneID, weight);
-                    }
-                }
-            }
-        }
-
         private unsafe void SetVertexBoneData(SkinnedMeshVertex* vertex, int boneID, float weight)
         {
             for (int i = 0; i < 4; ++i)
@@ -732,37 +630,26 @@ namespace HexaEngine.Scenes.Importer
                     sphere = BoundingSphere.CreateFromBoundingBox(box);
                 }
 
-                Objects.Animature? animature = null;
-
                 BoneData[] bones = new BoneData[msh->MNumBones];
-                List<Core.Meshes.VertexWeight> weightList = new();
                 if (msh->MNumBones > 0)
                 {
-                    Queue<GameObject> queue = new();
-
-                    animature = new(msh->MName);
-                    Stack<Pointer<Node>> walkstack = new();
-
                     for (int j = 0; j < bones.Length; j++)
                     {
                         var bn = msh->MBones[j];
-                        var node = FindNode(scene, bn->MName);
+                        nodesN[bn->MName].Flags |= NodeFlags.Bone;
 
                         Core.Meshes.VertexWeight[] weights = new Core.Meshes.VertexWeight[bn->MNumWeights];
                         for (int x = 0; x < weights.Length; x++)
                         {
                             weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
                         }
-                        weightList.AddRange(weights);
-                        bones[j] = new BoneData(bn->MName, weights, bn->MOffsetMatrix);
-                        animature.AddBone(bones[j]);
-                    }
 
-                    animatureT.Add(msh, animature);
+                        bones[j] = new BoneData(bn->MName, weights, Matrix4x4.Transpose(bn->MOffsetMatrix));
+                    }
                 }
-                if (weightList.Count > 0)
+                if (bones.Length > 0)
                 {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)weightList.Count, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
+                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
                 }
                 else
                 {
@@ -775,163 +662,33 @@ namespace HexaEngine.Scenes.Importer
             FileSystem.Refresh();
         }
 
-        private unsafe void LoadModels(AssimpScene* scene)
-        {
-            libraries = new();
-            models = new();
-            for (int x = 0; x < nodes.Count; x++)
-            {
-                GameObject node = nodes[x];
-                Node* p = nodesP[node];
-                if (p->MNumMeshes == 0)
-                {
-                    continue;
-                }
-
-                MeshData[] meshes = new MeshData[p->MNumMeshes];
-                MaterialData[] materials = new MaterialData[p->MNumMeshes];
-                for (int i = 0; i < p->MNumMeshes; i++)
-                {
-                    materials[i] = this.materials[scene->MMeshes[p->MMeshes[i]]->MMaterialIndex];
-                    meshes[i] = this.meshes[(int)p->MMeshes[i]];
-                }
-
-                MaterialLibrary library = new(p->MName, materials);
-                libraries.Add(library);
-
-                ModelFile model = new(p->MName, library.Name + ".matlib", meshes);
-                models.Add(model);
-                modelsT.Add(p, model);
-            }
-        }
-
-        private unsafe void LoadCameras(AssimpScene* scene)
-        {
-            cameras = new Core.Scenes.Camera[scene->MNumCameras];
-
-            for (int i = 0; i < scene->MNumCameras; i++)
-            {
-                var cam = scene->MCameras[i];
-                var camera = cameras[i] = new()
-                {
-                    Name = cam->MName,
-                };
-                camera.Transform.Fov = cam->MHorizontalFOV.ToDeg();
-                camera.Transform.Width = cam->MOrthographicWidth;
-                camera.Transform.Height = 1f / cam->MOrthographicWidth * cam->MAspect;
-                camera.Transform.Far = cam->MClipPlaneFar;
-                camera.Transform.Near = cam->MClipPlaneNear;
-                camerasT.Add(camera.Name, camera);
-            }
-        }
-
-        private unsafe void LoadLights(AssimpScene* scene)
-        {
-            lights = new Core.Lights.Light[scene->MNumLights];
-            for (int i = 0; i < scene->MNumLights; i++)
-            {
-                var lig = scene->MLights[i];
-                Core.Lights.Light light;
-                switch (lig->MType)
-                {
-                    case LightSourceType.Undefined:
-                        throw new NotSupportedException();
-
-                    case LightSourceType.Directional:
-                        var dir = new DirectionalLight();
-                        dir.Color = new Vector4(lig->MColorDiffuse, 1);
-                        light = dir;
-                        break;
-
-                    case LightSourceType.Point:
-                        var point = new PointLight();
-                        point.Color = new Vector4(Vector3.Normalize(lig->MColorDiffuse), 1);
-                        point.Strength = lig->MColorDiffuse.Length();
-                        light = point;
-                        break;
-
-                    case LightSourceType.Spot:
-                        var spot = new Spotlight();
-                        spot.Color = new Vector4(lig->MColorDiffuse, 1);
-                        spot.Strength = 1;
-                        spot.ConeAngle = lig->MAngleOuterCone.ToDeg();
-                        spot.Blend = lig->MAngleInnerCone.ToDeg() / spot.ConeAngle;
-                        light = spot;
-                        break;
-
-                    case LightSourceType.Ambient:
-                        throw new NotSupportedException();
-
-                    case LightSourceType.Area:
-                        throw new NotSupportedException();
-
-                    default:
-                        throw new NotSupportedException();
-                }
-
-                light.Name = lig->MName;
-                lights[i] = light;
-                lightsT.Add(light.Name, light);
-            }
-        }
-
         private unsafe void LoadSceneGraph(AssimpScene* scene)
         {
             nodes = new();
             root = WalkNode(scene->MRootNode, null);
         }
 
-        private readonly Stack<Pointer<Node>> findWalkStack = new();
-
-        private unsafe Node* FindNode(AssimpScene* scene, string name)
-        {
-            findWalkStack.Clear();
-            findWalkStack.Push(scene->MRootNode);
-            while (findWalkStack.Count > 0)
-            {
-                Node* node = findWalkStack.Pop();
-                if (node->MName == name)
-                {
-                    return node;
-                }
-                else
-                {
-                    for (int i = 0; i < node->MNumChildren; i++)
-                    {
-                        findWalkStack.Push(node->MChildren[i]);
-                    }
-                }
-            }
-            return null;
-        }
-
-        private unsafe GameObject WalkNode(Node* node, GameObject? parent)
+        private unsafe Node WalkNode(AssimpNode* node, Node parent)
         {
             string name = node->MName;
-            GameObject sceneNode = new();
+            Matrix4x4 transform = Matrix4x4.Transpose(node->MTransformation);
 
-            if (camerasT.TryGetValue(name, out var camera))
+            Node sceneNode = new(name, transform, node->MNumMeshes == 0 ? NodeFlags.None : NodeFlags.Drawable, parent, new(new()));
+
+            for (int i = 0; i < node->MNumMeshes; i++)
             {
-                sceneNode = camera;
+                sceneNode.Meshes.Add(node->MMeshes[i]);
             }
-
-            if (lightsT.TryGetValue(name, out var light))
-            {
-                sceneNode = light;
-            }
-
-            sceneNode.Name = name;
-            Matrix4x4.Decompose(Matrix4x4.Transpose(node->MTransformation), out var scale, out var orientation, out var position);
-            sceneNode.Transform.PositionRotationScale = (position, orientation, scale);
 
             for (int i = 0; i < node->MNumChildren; i++)
             {
                 var child = WalkNode(node->MChildren[i], sceneNode);
-                sceneNode.AddChild(child);
+                sceneNode.Children.Add(child);
             }
 
             nodesT.Add(node, sceneNode);
             nodesP.Add(sceneNode, node);
+            nodesN.Add(name, sceneNode);
             nodes.Add(sceneNode);
             return sceneNode;
         }
@@ -953,7 +710,7 @@ namespace HexaEngine.Scenes.Importer
                 {
                     var destFile = Path.Combine(dest, textures[i]);
                     Directory.CreateDirectory(Path.GetDirectoryName(destFile));
-                    System.IO.File.Copy(srcFile, destFile);
+                    System.IO.File.Copy(srcFile, destFile, true);
                 }
                 else
                 {
@@ -990,40 +747,23 @@ namespace HexaEngine.Scenes.Importer
                 }
             }
 
-            for (int i = 0; i < models.Count; i++)
-            {
-                models[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes"), Encoding.UTF8);
-            }
-
-            for (int i = 0; i < libraries.Count; i++)
-            {
-                libraries[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials"), Encoding.UTF8);
-            }
-
             for (int i = 0; i < animations.Length; i++)
             {
-                animations[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "animations"));
+                if (animations[i].Name == string.Empty)
+                    animations[i].Name = name;
+                animations[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "animations", animations[i].Name + ".anim"), Encoding.UTF8);
             }
+
+            materialLibrary = new(name, materials);
+            materialLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", materialLibrary.Name + ".matlib"), Encoding.UTF8);
+            modelFile = new(name, name, meshes, root);
+            modelFile.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes", modelFile.Name + ".model"), Encoding.UTF8);
 
             FileSystem.Refresh();
-
-            for (int x = 0; x < nodes.Count; x++)
-            {
-                GameObject node = nodes[x];
-                Node* p = nodesP[node];
-
-                if (modelsT.TryGetValue(p, out ModelFile? value))
-                {
-                    var component = node.GetOrCreateComponent<ModelRendererComponent>();
-                    var model = value;
-                    component.Model = "meshes/" + model.Name + ".model";
-                }
-            }
         }
 
         private static unsafe void Log(byte* a, byte* b)
         {
-            string user = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(b));
             string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(a));
             ImGuiConsole.Log(msg);
         }

@@ -66,7 +66,7 @@
 
         public unsafe void Free<T>(T* ptr) where T : unmanaged, IFreeable
         {
-            ptr->Free();
+            ptr->Release();
             Marshal.FreeHGlobal((nint)ptr);
         }
     }

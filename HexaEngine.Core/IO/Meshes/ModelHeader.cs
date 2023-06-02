@@ -8,7 +8,7 @@
     public struct ModelHeader
     {
         public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6e, 0x73, 0x4d, 0x65, 0x73, 0x68, 0x00 };
-        public const ulong Version = 6;
+        public const ulong Version = 7;
         public Endianness Endianness;
         public Encoding Encoding;
         public Compression Compression;

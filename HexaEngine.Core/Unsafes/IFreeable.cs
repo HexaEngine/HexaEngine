@@ -2,6 +2,6 @@
 {
     public interface IFreeable
     {
-        void Free();
+        void Release();
     }
 }

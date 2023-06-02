@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights.Probes;
     using HexaEngine.Core.Lights.Structs;
     using HexaEngine.Core.Lights.Types;
@@ -21,10 +20,9 @@
         private readonly List<Light> lights = new();
         private readonly List<Light> activeLights = new();
         private IGraphicsDevice device;
-        private readonly IInstanceManager instanceManager;
         private readonly ConcurrentQueue<ILightProbeComponent> probeUpdateQueue = new();
         private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
-        private readonly ConcurrentQueue<IInstance> modelUpdateQueue = new();
+        private readonly ConcurrentQueue<GameObject> modelUpdateQueue = new();
 
         private StructuredUavBuffer<GlobalProbeData> globalProbes;
 
@@ -91,9 +89,8 @@
         public IShaderResourceView[] PSMs;
         public ResourceRef<IBuffer> Camera;
 
-        public LightManager(IInstanceManager instanceManager)
+        public LightManager()
         {
-            this.instanceManager = instanceManager;
         }
 
         public IReadOnlyList<ILightProbeComponent> Probes => probes;
@@ -113,9 +110,6 @@
         public async Task Initialize(IGraphicsDevice device)
         {
             this.device = device;
-            instanceManager.Updated += InstanceUpdated;
-            instanceManager.InstanceCreated += InstanceCreated;
-            instanceManager.InstanceDestroyed += InstanceDestroyed;
             probeParamsBuffer = new(device, CpuAccessFlags.Write);
             lightParamsBuffer = new(device, CpuAccessFlags.Write);
             forwardLightParamsBuffer = new(device, CpuAccessFlags.Write);
@@ -229,21 +223,6 @@
                 Rasterizer = RasterizerDescription.Wireframe,
                 Topology = PrimitiveTopology.PatchListWith3ControlPoints
             });
-        }
-
-        private void InstanceUpdated(IInstanceType type, IInstance instance)
-        {
-            modelUpdateQueue.Enqueue(instance);
-        }
-
-        private void InstanceDestroyed(IInstance instance)
-        {
-            modelUpdateQueue.Enqueue(instance);
-        }
-
-        private void InstanceCreated(IInstance instance)
-        {
-            modelUpdateQueue.Enqueue(instance);
         }
 
         private void LightTransformed(GameObject gameObject)
@@ -371,6 +350,8 @@
 
             while (modelUpdateQueue.TryDequeue(out var instance))
             {
+                // TODO: FIX
+                /*
                 instance.GetBoundingBox(out BoundingBox box);
                 for (int i = 0; i < activeLights.Count; i++)
                 {
@@ -386,6 +367,7 @@
                         updateShadowLightQueue.Enqueue(light);
                     }
                 }
+                */
             }
 
             for (int i = 0; i < activeLights.Count; i++)
@@ -650,6 +632,7 @@
 
         public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera)
         {
+            /*
             var types = instanceManager.Types;
             if (shading == ViewportShading.Solid)
             {
@@ -724,10 +707,12 @@
 
                 context.ClearState();
             }
+            */
         }
 
         public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera, IRenderTargetView rtv, IDepthStencilView dsv, Viewport viewport)
         {
+            /*
             var types = instanceManager.Types;
             if (shading == ViewportShading.Solid && forwardSoild.IsValid)
             {
@@ -767,14 +752,11 @@
                 }
                 context.ClearState();
             }
+            */
         }
 
         public unsafe void Dispose()
         {
-            instanceManager.Updated -= InstanceUpdated;
-            instanceManager.InstanceCreated -= InstanceCreated;
-            instanceManager.InstanceDestroyed -= InstanceDestroyed;
-
             globalProbes.Dispose();
 
             directionalLights.Dispose();
@@ -811,15 +793,15 @@
                 switch (light.LightType)
                 {
                     case LightType.Directional:
-                        ((DirectionalLight)light).UpdateShadowMap(context, shadowDirectionalLights, camera, instanceManager);
+                        ((DirectionalLight)light).UpdateShadowMap(context, shadowDirectionalLights, camera);
                         break;
 
                     case LightType.Point:
-                        ((PointLight)light).UpdateShadowMap(context, shadowPointLights, instanceManager);
+                        ((PointLight)light).UpdateShadowMap(context, shadowPointLights);
                         break;
 
                     case LightType.Spot:
-                        ((Spotlight)light).UpdateShadowMap(context, shadowSpotlights, instanceManager);
+                        ((Spotlight)light).UpdateShadowMap(context, shadowSpotlights);
                         break;
                 }
                 light.InUpdateQueue = false;

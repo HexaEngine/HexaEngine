@@ -158,24 +158,10 @@
 
             if (drawBoundingBoxes)
             {
-                InstanceManager manager = scene.InstanceManager;
-                for (int i = 0; i < manager.Instances.Count; i++)
-                {
-                    var instance = manager.Instances[i];
-                    instance.GetBoundingBox(out var boundingBox);
-                    DebugDraw.DrawBoundingBox(instance.ToString(), boundingBox, new(1, 1, 1, 0.4f));
-                }
             }
 
             if (drawBoundingSpheres)
             {
-                InstanceManager manager = scene.InstanceManager;
-                for (int i = 0; i < manager.Instances.Count; i++)
-                {
-                    var instance = manager.Instances[i];
-                    instance.GetBoundingSphere(out var sphere);
-                    DebugDraw.DrawBoundingSphere(instance.ToString(), sphere, Vector4.One);
-                }
             }
 
             if (drawColliders)

@@ -10,7 +10,7 @@
     {
         private static float configMaxAngle = 90f.ToRad();
 
-        public static unsafe bool GenMeshVertexNormals(ref MeshData pMesh)
+        public static unsafe bool GenMeshVertexNormals(MeshData pMesh)
         {
             // Allocate the array to hold the output normals
             pMesh.Normals = new Vector3[pMesh.VerticesCount];
@@ -126,9 +126,12 @@
                 Vector3 u = p1 - p0;
                 Vector3 v = p2 - p0;
 
-                Vector3 normal = Vector3.Cross(u, v);
-                Vector3 n1 = Vector3.Cross(v, u);
-                Vector3 faceNormal = Vector3.Normalize(normal);
+                Vector3 faceNormal = Vector3.Normalize(Vector3.Cross(u, v));
+
+                if (float.IsNaN(faceNormal.X))
+                {
+                    continue;
+                }
 
                 Vector3 a = Vector3.Normalize(u);
                 Vector3 b = Vector3.Normalize(v);
@@ -148,17 +151,12 @@
                 w2 = Math.Clamp(w2, -1, 1);
                 w2 = MathF.Acos(w2);
 
-                if (faceNormal.IsAnyNan())
-                {
-                    continue;
-                }
-
                 vertNormals[i0] = faceNormal * w0 + vertNormals[i0];
                 vertNormals[i1] = faceNormal * w1 + vertNormals[i1];
                 vertNormals[i2] = faceNormal * w2 + vertNormals[i2];
             }
 
-            for (int i = 0; i < pMesh.VerticesCount; i++)
+            for (int i = 0; i < pMesh.VerticesCount; ++i)
             {
                 pMesh.Normals[i] = Vector3.Normalize(vertNormals[i]);
             }
@@ -166,19 +164,6 @@
             Free(vertNormals);
 
             return true;
-        }
-
-        public static float AngleBetween(Vector3 a, Vector3 b)
-        {
-            var d = Vector3.Dot(a, b);
-            var m1 = a.Length();
-            var m2 = b.Length();
-            return MathF.Acos(d / (m1 * m2));
-        }
-
-        public static bool IsAnyNan(this Vector3 vector)
-        {
-            return float.IsNaN(vector.X) || float.IsNaN(vector.Y) || float.IsNaN(vector.Z);
         }
     }
 }

@@ -384,8 +384,6 @@ namespace HexaEngine.Rendering
             profiler.Start(update);
 #endif
 
-            var types = scene.InstanceManager.Types;
-
             cameraBuffer[0] = new CBCamera(camera);
             cameraBuffer.Update(context);
 
@@ -397,6 +395,8 @@ namespace HexaEngine.Rendering
             profiler.Start(culling);
 #endif
             CullingManager.UpdateCamera(context);
+
+            scene.RenderManager.Update(context);
 
             context.ClearDepthStencilView(occlusionStencil.DSV, DepthStencilClearFlags.Depth, 1, 0);
             context.SetRenderTargets(null, 0, occlusionStencil.DSV);

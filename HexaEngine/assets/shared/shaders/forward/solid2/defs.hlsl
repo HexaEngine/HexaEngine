@@ -1,5 +1,5 @@
 #ifndef VtxColor
-#define VtxColor 0
+#define VtxColor 1
 #endif
 #ifndef VtxPosition
 #define VtxPosition 1
@@ -18,6 +18,14 @@
 #endif
 #ifndef VtxSkinned
 #define VtxSkinned 0
+#endif
+
+#ifndef MaxBones
+#define MaxBones 100
+#endif
+
+#ifndef MaxBoneInfluence
+#define MaxBoneInfluence 4
 #endif
 
 
@@ -43,7 +51,7 @@ struct VertexInput
 #endif
     
 #if VtxSkinned
-    uint4 boneIds : BLENDINDICES;
+    int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
 #endif
 };

@@ -45,7 +45,7 @@
                 Blend = BlendDescription.Opaque,
                 BlendFactor = Vector4.Zero,
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
+                Rasterizer = RasterizerDescription.CullNone,
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,

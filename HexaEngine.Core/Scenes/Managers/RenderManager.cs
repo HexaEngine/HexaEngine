@@ -13,9 +13,9 @@
         Transparency = 1000,
     }
 
-    public class SortRendererAscending : IComparer<IRenderer>
+    public class SortRendererAscending : IComparer<IRendererComponent>
     {
-        int IComparer<IRenderer>.Compare(IRenderer? a, IRenderer? b)
+        int IComparer<IRendererComponent>.Compare(IRendererComponent? a, IRendererComponent? b)
         {
             if (a == null || b == null)
             {
@@ -40,22 +40,20 @@
 
     public class RenderManager : ISystem
     {
-        private readonly List<IRenderer> renderers = new();
-        private readonly List<IRenderer> backgroundQueue = new();
-        private readonly List<IRenderer> geometryQueue = new();
+        private readonly List<IRendererComponent> renderers = new();
+        private readonly List<IRendererComponent> backgroundQueue = new();
+        private readonly List<IRendererComponent> geometryQueue = new();
         private readonly List<IRenderComponent> components = new();
         private readonly SortRendererAscending comparer = new();
         private readonly IGraphicsDevice device;
-        private readonly InstanceManager instanceManager;
 
         public string Name => "Renderers";
 
-        public SystemFlags Flags => SystemFlags.Update | SystemFlags.Destory;
+        public SystemFlags Flags => SystemFlags.None;
 
-        public RenderManager(IGraphicsDevice device, InstanceManager instanceManager)
+        public RenderManager(IGraphicsDevice device)
         {
             this.device = device;
-            this.instanceManager = instanceManager;
         }
 
         public void VisibilityTest(IGraphicsContext context, RenderQueueIndex index)
@@ -82,7 +80,7 @@
             }
         }
 
-        private static void DrawList(IGraphicsContext context, List<IRenderer> renderers)
+        private static void DrawList(IGraphicsContext context, List<IRendererComponent> renderers)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -90,7 +88,7 @@
             }
         }
 
-        private static void VisibilityTestList(IGraphicsContext context, List<IRenderer> renderers)
+        private static void VisibilityTestList(IGraphicsContext context, List<IRendererComponent> renderers)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
@@ -100,59 +98,34 @@
 
         public void Register(GameObject gameObject)
         {
-            components.AddComponentIfIs(gameObject);
+            gameObject.AddComponentIfIs<IRendererComponent>(AddRenderer);
         }
 
         public void Unregister(GameObject gameObject)
         {
-            components.RemoveComponentIfIs(gameObject);
+            gameObject.RemoveComponentIfIs<IRendererComponent>(RemoveRenderer);
         }
 
-        public void Awake()
+        public void Update(IGraphicsContext context)
         {
-        }
-
-        public void Update(float dt)
-        {
-            Parallel.ForEach(components, c =>
+            for (int i = 0; i < renderers.Count; i++)
             {
-                c.Draw();
-            });
-        }
-
-        public void FixedUpdate()
-        {
+                renderers[i].Update(context);
+            }
         }
 
         public void Destroy()
         {
             for (int i = 0; i < renderers.Count; i++)
             {
-                renderers[i].Uninitialize();
+                renderers[i].Destory();
             }
             renderers.Clear();
             backgroundQueue.Clear();
             geometryQueue.Clear();
         }
 
-        public T GetRenderer<T>() where T : class, IRenderer, new()
-        {
-            for (int i = 0; i < renderers.Count; i++)
-            {
-                var renderer = renderers[i];
-                if (renderer is T t)
-                {
-                    return t;
-                }
-            }
-
-            T r = new();
-            r.Initialize(device, instanceManager);
-            AddRenderer(r);
-            return r;
-        }
-
-        public void AddRenderer(IRenderer renderer)
+        public void AddRenderer(IRendererComponent renderer)
         {
             renderers.Add(renderer);
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
@@ -169,7 +142,7 @@
             }
         }
 
-        public void RemoveRenderer(IRenderer renderer)
+        public void RemoveRenderer(IRendererComponent renderer)
         {
             renderers.Remove(renderer);
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
@@ -182,6 +155,21 @@
                 geometryQueue.Remove(renderer);
                 return;
             }
+        }
+
+        public void Awake()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(float delta)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void FixedUpdate()
+        {
+            throw new NotImplementedException();
         }
     }
 }

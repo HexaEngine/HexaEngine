@@ -76,6 +76,22 @@
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
         }
 
+        public void Draw(IGraphicsContext context)
+        {
+            if (!loaded)
+            {
+                return;
+            }
+
+            if (!Shader.Value.BeginDraw(context))
+            {
+                return;
+            }
+
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+        }
+
         public void Draw(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
             if (!loaded)

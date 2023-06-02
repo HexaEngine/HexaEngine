@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
 
-    public class ResourceInstance
+    public class ResourceInstance : IDisposable
     {
         public string _name;
         private bool disposedValue;

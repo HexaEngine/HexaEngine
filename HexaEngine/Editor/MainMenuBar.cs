@@ -5,6 +5,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
+    using HexaEngine.Editor.MeshEditor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
 
@@ -13,7 +14,6 @@
         private static float height;
         private static bool isShown = true;
 
-        private static ImportDialog importDialog;
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
 
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
@@ -34,7 +34,6 @@
 
         internal static void Init(IGraphicsDevice device)
         {
-            importDialog = new(device);
         }
 
         internal static unsafe void Draw()
@@ -48,8 +47,6 @@
             {
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
-
-            importDialog.Draw();
 
             if (!isShown)
             {
@@ -68,15 +65,6 @@
                     if (ImGui.MenuItem("Unload Scene"))
                     {
                         SceneManager.Unload();
-                    }
-
-                    if (ImGui.MenuItem("Import"))
-                    {
-                        if (!importDialog.Shown)
-                        {
-                            importDialog.Reset();
-                            importDialog.Show();
-                        }
                     }
 
                     ImGui.EndMenu();

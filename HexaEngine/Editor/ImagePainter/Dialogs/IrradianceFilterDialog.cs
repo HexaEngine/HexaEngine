@@ -87,7 +87,7 @@
 
                         var desc = srcTex.Description;
                         desc.Usage = Usage.Default;
-                        desc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource;
+                        desc.BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource | BindFlags.UnorderedAccess;
                         desc.MipLevels = 1;
 
                         dstTex = device.CreateTexture2D(desc);

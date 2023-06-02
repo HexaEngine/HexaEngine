@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.Editor.Dialogs
+﻿using HexaEngine.Editor.Dialogs;
+
+namespace HexaEngine.Editor.MeshEditor.Dialogs
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
@@ -9,24 +11,24 @@
     using Silk.NET.Assimp;
     using System.Numerics;
 
-    public class ImportDialog : Modal, IDialog
+    public class ModelImportDialog : Modal, IDialog
     {
         private static readonly TexFileFormat[] fileFormats = Enum.GetValues<TexFileFormat>();
         private static readonly string[] fileFormatNames = Enum.GetNames<TexFileFormat>();
         private static readonly Format[] formats = Enum.GetValues<Format>();
         private static readonly string[] formatNames = Enum.GetNames<Format>();
-        private readonly AssimpSceneImporter importer = new();
+        private readonly AssimpModelImporter importer = new();
         private readonly IGraphicsDevice device;
         private string path = string.Empty;
         private OpenFileDialog dialog = new();
         private bool loaded = false;
 
-        public ImportDialog(IGraphicsDevice device)
+        public ModelImportDialog(IGraphicsDevice device)
         {
             this.device = device;
         }
 
-        public override string Name => "Import Scene";
+        public override string Name => "Import Model";
 
         public bool Shown { get; }
 
@@ -69,6 +71,7 @@
                 ImGui.CheckboxFlags("Find Instances", ref flags, (int)PostProcessSteps.FindInstances);
                 ImGui.CheckboxFlags("Flip UVs", ref flags, (int)PostProcessSteps.FlipUVs);
                 ImGui.CheckboxFlags("Generate UVs", ref flags, (int)PostProcessSteps.GenerateUVCoords);
+                ImGui.CheckboxFlags("Generate Normals", ref flags, (int)PostProcessSteps.GenerateNormals);
                 importer.PostProcessSteps = (PostProcessSteps)flags;
 
                 if (ImGui.Button("Load"))
@@ -84,9 +87,9 @@
             {
                 if (ImGui.Button("Import"))
                 {
-                    if (!importer.CheckForProblems() && SceneManager.Current != null)
+                    if (!importer.CheckForProblems())
                     {
-                        importer.Import(device, SceneManager.Current);
+                        importer.Import(device);
 
                         Close();
                         Reset();
@@ -94,30 +97,6 @@
                 }
                 if (ImGui.BeginTabBar("ImporterTabs"))
                 {
-                    if (ImGui.BeginTabItem("Models"))
-                    {
-                        for (int i = 0; i < importer.Models.Count; i++)
-                        {
-                            var model = importer.Models[i];
-                            var value = model.Name;
-                            var invalid = value.Length > 255;
-                            if (invalid)
-                            {
-                                ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1, 0, 0, 1));
-                            }
-
-                            if (ImGui.InputText($"Model {i}", ref value, 1024, ImGuiInputTextFlags.EnterReturnsTrue))
-                            {
-                                importer.ChangeNameOfModel(model, value);
-                            }
-                            if (invalid)
-                            {
-                                ImGui.PopStyleColor();
-                            }
-                        }
-                        ImGui.EndTabItem();
-                    }
-
                     if (ImGui.BeginTabItem("Materials"))
                     {
                         for (int i = 0; i < importer.Materials.Length; i++)

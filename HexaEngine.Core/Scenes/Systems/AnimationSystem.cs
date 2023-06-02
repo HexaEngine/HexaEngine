@@ -1,8 +1,5 @@
-﻿using HexaEngine.Core.Scenes;
-
-namespace HexaEngine.Core.Animations
+﻿namespace HexaEngine.Core.Scenes.Systems
 {
-    using BepuUtilities;
     using System.Collections.Generic;
 
     public class AnimationSystem : ISystem

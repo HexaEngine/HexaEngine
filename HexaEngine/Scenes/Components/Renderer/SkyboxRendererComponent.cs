@@ -4,28 +4,33 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Rendering;
     using System;
+    using System.Numerics;
     using System.Threading.Tasks;
 
     [EditorComponent<SkyboxRendererComponent>("Skybox", false, true)]
-    public class SkyboxRendererComponent : IRenderComponent
+    public class SkyboxRendererComponent : IRendererComponent
     {
         private GameObject gameObject;
         private IGraphicsDevice? device;
-        private SkyboxRenderer renderer;
+        private Sphere sphere;
+        private IGraphicsPipeline pipeline;
+        private ISamplerState sampler;
+        private ConstantBuffer<CBWorld> cb;
+        private unsafe void** cbs;
         private Texture? env;
         private string environment = string.Empty;
         private bool drawable;
 
-        private SkyboxData data;
-        private Pointer<ObjectHandle> handle;
+        public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
 
         [EditorProperty("Env", null)]
         public string Environment
@@ -53,29 +58,94 @@
                 return;
             }
 
-            renderer = manager.GetRenderer<SkyboxRenderer>();
+            sphere = new(device);
+            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "forward/skybox/vs.hlsl",
+                PixelShader = "forward/skybox/ps.hlsl",
+            },
+            new GraphicsPipelineState()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = default,
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullNone,
+                SampleMask = 0,
+                StencilRef = 0,
+                Topology = PrimitiveTopology.TriangleList
+            });
 
-            data = new(null);
-            handle = renderer.CreateInstance(data);
+            sampler = ResourceManager2.Shared.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp).Value;
+
+            unsafe
+            {
+                cb = new(device, CpuAccessFlags.Write);
+                cbs = AllocArray(2);
+                cbs[0] = (void*)cb.NativePointer;
+                cbs[1] = (void*)(ResourceManager2.Shared.GetBuffer("CBCamera")?.Value.NativePointer ?? 0);
+            }
+
             await UpdateEnvAsync(device);
         }
 
         public unsafe void Destory()
         {
             Volatile.Write(ref drawable, false);
-            renderer.DestroyInstance(handle);
+
             env?.Dispose();
-            handle = default;
+            sphere.Dispose();
+            pipeline.Dispose();
+            cb.Dispose();
+            Free(cbs);
         }
 
-        public void Draw()
+        public void Update(IGraphicsContext context)
+        {
+            if (!drawable)
+                return;
+            var camera = CameraManager.Current;
+            if (camera == null)
+            {
+                return;
+            }
+
+            cb[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
+            cb.Update(context);
+        }
+
+        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        {
+        }
+
+        public void VisibilityTest(IGraphicsContext context)
+        {
+        }
+
+        public void Draw(IGraphicsContext context)
         {
             if (!Volatile.Read(ref drawable) || !gameObject.IsEnabled)
             {
                 return;
             }
 
-            renderer.Draw(handle);
+            var camera = CameraManager.Current;
+            if (camera == null)
+            {
+                return;
+            }
+
+            if (env == null)
+            {
+                return;
+            }
+
+            unsafe
+            {
+                context.VSSetConstantBuffers(cbs, 2, 0);
+                context.PSSetShaderResource(env.ShaderResourceView, 0);
+                context.PSSetSampler(sampler, 0);
+                sphere.DrawAuto(context, pipeline);
+            }
         }
 
         private Task UpdateEnvAsync(IGraphicsDevice device)
@@ -92,8 +162,6 @@
                 {
                     // Inform renderer to stop render the skybox.
                     Volatile.Write(ref component.drawable, false);
-                    component.data.Enviornment = null;
-                    component.renderer.UpdateInstance(component.handle, component.data);
                 }
 
                 component.env?.Dispose();
@@ -113,11 +181,7 @@
                 {
                     component.env = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                 }
-                unsafe
-                {
-                    component.data.Enviornment = (void*)(component.env.ShaderResourceView?.NativePointer ?? 0);
-                    component.renderer.UpdateInstance(component.handle, component.data);
-                }
+
                 Volatile.Write(ref component.drawable, true);
             }, state);
         }

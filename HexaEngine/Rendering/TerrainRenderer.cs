@@ -6,7 +6,7 @@
     using HexaEngine.Core.Scenes.Managers;
     using System;
 
-    public class TerrainRenderer : IRenderer
+    public class TerrainRenderer
     {
         private IGraphicsPipeline pipeline;
 
@@ -16,7 +16,7 @@
 
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
-        public void Initialize(IGraphicsDevice device, InstanceManager manager)
+        public void Initialize(IGraphicsDevice device)
         {
             pipeline = device.CreateGraphicsPipeline(new()
             {

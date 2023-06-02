@@ -27,7 +27,7 @@
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
-            Register<MeshEditorWindow>();
+            Register<ModelEditorWindow>();
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();

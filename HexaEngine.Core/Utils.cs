@@ -5,6 +5,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
+    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public static unsafe class Utils
     {
@@ -575,6 +576,42 @@
         }
 
         /// <summary>
+        /// Resizes the array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array">The array.</param>
+        /// <param name="oldLength">The old length.</param>
+        /// <param name="newLength">The new length.</param>
+        public static void ResizeArray<T>(ref T* array, int oldLength, int newLength) where T : unmanaged
+        {
+            var oldArray = array;
+            var newArray = Alloc<T>(newLength);
+
+            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
+            Free(oldArray);
+
+            array = newArray;
+        }
+
+        /// <summary>
+        /// Resizes the array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array">The array.</param>
+        /// <param name="oldLength">The old length.</param>
+        /// <param name="newLength">The new length.</param>
+        public static void ResizeArray<T>(ref T* array, uint oldLength, uint newLength) where T : unmanaged
+        {
+            var oldArray = array;
+            var newArray = Alloc<T>(newLength);
+
+            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
+            Free(oldArray);
+
+            array = newArray;
+        }
+
+        /// <summary>
         /// Allocates an pointer array.
         /// </summary>
         /// <param name="length">The length.</param>
@@ -584,13 +621,13 @@
         }
 
         /// <summary>
-        /// Frees the specified pointer. And automatically calls <see cref="IFreeable.Free"/>
+        /// Frees the specified pointer. And automatically calls <see cref="IFreeable.Release"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
         public static void Free<T>(T* pointer) where T : unmanaged, IFreeable
         {
-            pointer->Free();
+            pointer->Release();
             Marshal.FreeHGlobal((nint)pointer);
         }
 

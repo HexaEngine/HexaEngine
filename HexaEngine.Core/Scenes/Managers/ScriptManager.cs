@@ -7,21 +7,22 @@
     public class ScriptManager : ISystem
     {
         private readonly FlaggedList<ScriptFlags, IScriptComponent> scripts = new();
+        private bool awaked;
 
         public string Name => "Scripts";
 
-        public SystemFlags Flags { get; } = SystemFlags.Update | SystemFlags.FixedUpdate;
+        public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Update | SystemFlags.FixedUpdate | SystemFlags.Destory;
 
         public IReadOnlyList<IScriptComponent> Scripts => (IReadOnlyList<IScriptComponent>)scripts;
 
         public void Register(GameObject gameObject)
         {
-            scripts.AddComponentIfIs<IScriptComponent>(gameObject);
+            scripts.AddComponentIfIs<IScriptComponent>(gameObject, awaked);
         }
 
         public void Unregister(GameObject gameObject)
         {
-            scripts.RemoveComponentIfIs<IScriptComponent>(gameObject);
+            scripts.RemoveComponentIfIs<IScriptComponent>(gameObject, awaked);
         }
 
         public void Update(float delta)
@@ -54,6 +55,13 @@
 
         public void Awake()
         {
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
+            awaked = true;
+
             var scriptList = scripts[ScriptFlags.Awake];
             for (int i = 0; i < scriptList.Count; i++)
             {
@@ -63,6 +71,13 @@
 
         public void Destroy()
         {
+            if (Application.InDesignMode)
+            {
+                return;
+            }
+
+            awaked = false;
+
             var scriptList = scripts[ScriptFlags.Destroy];
             for (int i = 0; i < scriptList.Count; i++)
             {

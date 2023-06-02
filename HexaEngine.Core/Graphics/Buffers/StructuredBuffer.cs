@@ -42,6 +42,28 @@
             this.device = device;
         }
 
+        public StructuredBuffer(IGraphicsDevice device, int initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"StructuredBuffer: {filename}, Line:{lineNumber}";
+            description = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Read))
+            {
+                description.Usage = Usage.Staging;
+            }
+            capacity = (uint)initialCapacity;
+            items = Alloc<T>(initialCapacity);
+            Zero(items, initialCapacity * sizeof(T));
+            buffer = device.CreateBuffer(items, (uint)initialCapacity, description);
+            buffer.DebugName = dbgName;
+            srv = device.CreateShaderResourceView(buffer);
+            srv.DebugName = dbgName + ".SRV";
+            this.device = device;
+        }
+
         public event EventHandler? OnDisposed
         {
             add
@@ -111,6 +133,12 @@
         public void ResetCounter()
         {
             count = 0;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetCounter(uint count)
+        {
+            this.count = count;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

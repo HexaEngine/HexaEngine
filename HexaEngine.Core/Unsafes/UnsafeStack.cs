@@ -192,7 +192,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Free()
+        public void Release()
         {
             allocator->Free(data);
             data = null;

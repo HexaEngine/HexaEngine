@@ -36,7 +36,7 @@
             return result;
         }
 
-        public void Free()
+        public void Release()
         {
             Marshal.FreeHGlobal((nint)Bytecode);
         }

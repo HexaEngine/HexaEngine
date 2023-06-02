@@ -59,7 +59,7 @@ struct VertexInput
 #endif
     
 #if VtxSkinned
-    uint4 boneIds : BLENDINDICES;
+    int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
 #endif
 };
@@ -85,7 +85,7 @@ struct HullInput
     float3 bitangent : BINORMAL;
 #endif
 #if VtxSkinned
-    uint4 boneIds : BLENDINDICES;
+    int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
 #endif
     float TessFactor : TESS;
@@ -112,7 +112,7 @@ struct DomainInput
     float3 bitangent : BINORMAL;
 #endif
 #if VtxSkinned
-    uint4 boneIds : BLENDINDICES;
+    int4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
 #endif
 };

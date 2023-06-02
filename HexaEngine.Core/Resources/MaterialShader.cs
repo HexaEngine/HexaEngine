@@ -399,6 +399,22 @@ namespace HexaEngine.Core.Resources
             await CompileAsync();
         }
 
+        public bool BeginDraw(IGraphicsContext context)
+        {
+            if (!initialized)
+            {
+                return false;
+            }
+
+            if (!pipeline.IsValid)
+            {
+                return false;
+            }
+
+            context.SetGraphicsPipeline(pipeline);
+            return true;
+        }
+
         public bool BeginDraw(IGraphicsContext context, IBuffer camera)
         {
             if (!initialized)
@@ -411,7 +427,7 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            pipeline.BeginDraw(context);
+            context.SetGraphicsPipeline(pipeline);
             context.DSSetConstantBuffer(camera, 1);
             context.VSSetConstantBuffer(camera, 1);
             return true;
@@ -429,7 +445,7 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            pipeline.BeginDraw(context);
+            context.SetGraphicsPipeline(pipeline);
             return true;
         }
 
@@ -447,7 +463,7 @@ namespace HexaEngine.Core.Resources
 
             context.DSSetConstantBuffer(camera, 1);
             context.VSSetConstantBuffer(camera, 1);
-            depthOnly.BeginDraw(context);
+            context.SetGraphicsPipeline(depthOnly);
             return true;
         }
 

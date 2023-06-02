@@ -470,10 +470,10 @@
 		<None Update="assets\shared\shaders\forward\line\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\line\PixelShader.hlsl">
+		<None Update="assets\shared\shaders\forward\line\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\line\VertexShader.hlsl">
+		<None Update="assets\shared\shaders\forward\line\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\common.hlsl">
@@ -527,7 +527,6 @@
 
 
 	<ItemGroup>
-	  <Folder Include="Editor\MeshEditor\Exporters\" />
-	  <Folder Include="Editor\MeshEditor\Dialogs\" />
+	  <Folder Include="Editor\ModelEditor\Exporters\" />
 	</ItemGroup>
 </Project>

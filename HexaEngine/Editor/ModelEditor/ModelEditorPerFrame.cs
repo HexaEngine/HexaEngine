@@ -2,7 +2,7 @@
 {
     using System.Numerics;
 
-    public struct MeshEditorPerFrame
+    public struct ModelEditorPerFrame
     {
         public Matrix4x4 ViewProjection;
         public Vector3 CameraPosWorld;

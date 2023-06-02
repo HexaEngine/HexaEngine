@@ -1,8 +1,10 @@
-﻿namespace HexaEngine.Core.Animations
+﻿namespace HexaEngine.Core.IO.Animations
 {
+    using HexaEngine.Mathematics;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Text;
 
     public struct NodeChannel
     {
@@ -23,7 +25,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float deltaTime)
         {
-            Local = InterpolatePosition(deltaTime) * InterpolateRotation(deltaTime) * InterpolateScaling(deltaTime);
+            Local = InterpolateScaling(deltaTime) * InterpolateRotation(deltaTime) * InterpolatePosition(deltaTime);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -118,6 +120,60 @@
             float scaleFactor = GetScaleFactor((float)ScaleKeyframes[p0Index].Time, (float)ScaleKeyframes[p1Index].Time, animationTime);
             Vector3 finalScale = Vector3.Lerp(ScaleKeyframes[p0Index].Value, ScaleKeyframes[p1Index].Value, scaleFactor);
             return Matrix4x4.CreateScale(finalScale);
+        }
+
+        public void Write(Stream stream, Encoding encoding, Endianness endianness)
+        {
+            stream.WriteString(NodeName, encoding, endianness);
+            stream.WriteInt((int)PreState, endianness);
+            stream.WriteInt((int)PostState, endianness);
+            stream.WriteInt(PositionKeyframes.Count, endianness);
+            for (int i = 0; i < PositionKeyframes.Count; i++)
+            {
+                PositionKeyframes[i].Write(stream, endianness);
+            }
+            stream.WriteInt(RotationKeyframes.Count, endianness);
+            for (int i = 0; i < RotationKeyframes.Count; i++)
+            {
+                RotationKeyframes[i].Write(stream, endianness);
+            }
+            stream.WriteInt(ScaleKeyframes.Count, endianness);
+            for (int i = 0; i < ScaleKeyframes.Count; i++)
+            {
+                ScaleKeyframes[i].Write(stream, endianness);
+            }
+        }
+
+        public void Read(Stream stream, Encoding encoding, Endianness endianness)
+        {
+            NodeName = stream.ReadString(encoding, endianness) ?? string.Empty;
+            PreState = (AnimationBehavior)stream.ReadInt(endianness);
+            PostState = (AnimationBehavior)stream.ReadInt(endianness);
+            var positionKeyframesCount = stream.ReadInt(endianness);
+            PositionKeyframes = new(positionKeyframesCount);
+            for (int i = 0; i < positionKeyframesCount; i++)
+            {
+                PositionKeyframes.Add(VectorKeyframe.ReadFrom(stream, endianness));
+            }
+            var rotationKeyframesCount = stream.ReadInt(endianness);
+            RotationKeyframes = new(rotationKeyframesCount);
+            for (int i = 0; i < rotationKeyframesCount; i++)
+            {
+                RotationKeyframes.Add(QuatKeyframe.ReadFrom(stream, endianness));
+            }
+            var scaleKeyframesCount = stream.ReadInt(endianness);
+            ScaleKeyframes = new(scaleKeyframesCount);
+            for (int i = 0; i < scaleKeyframesCount; i++)
+            {
+                ScaleKeyframes.Add(VectorKeyframe.ReadFrom(stream, endianness));
+            }
+        }
+
+        public static NodeChannel ReadFrom(Stream stream, Encoding encoding, Endianness endianness)
+        {
+            NodeChannel channel = default;
+            channel.Read(stream, encoding, endianness);
+            return channel;
         }
     }
 }
