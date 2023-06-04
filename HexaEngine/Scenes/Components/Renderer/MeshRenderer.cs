@@ -12,6 +12,7 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Threading.Tasks;
 
@@ -35,6 +36,8 @@
         private Matrix4x4[]? globals;
         private PlainNode[]? plainNodes;
 
+        private BoundingBox boundingBox;
+
         static MeshRenderer()
         {
         }
@@ -50,14 +53,20 @@
             }
         }
 
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
+        [JsonIgnore]
         public RendererFlags Flags { get; } = RendererFlags.All;
+
+        [JsonIgnore]
+        public BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, gameObject.Transform); }
 
         public void SetLocal(Matrix4x4 local, uint nodeId)
         {
             if (locals != null)
                 locals[nodeId] = local;
+            gameObject.SendUpdateTransformed();
         }
 
         public Matrix4x4 GetLocal(uint nodeId)
@@ -322,7 +331,10 @@
 
                         component.materials[i] = material;
                         component.meshes[i] = mesh;
+                        component.boundingBox = BoundingBox.CreateMerged(component.boundingBox, mesh.BoundingBox);
                     }
+
+                    component.gameObject.SendUpdateTransformed();
                 }
             }, this);
         }

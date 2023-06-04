@@ -8,6 +8,7 @@
     using HexaEngine.Core.IO.Animations;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Physics;
+    using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Scenes.Systems;
     using Newtonsoft.Json;

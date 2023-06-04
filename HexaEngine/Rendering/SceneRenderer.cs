@@ -10,9 +10,9 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.PostFx;
+    using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;

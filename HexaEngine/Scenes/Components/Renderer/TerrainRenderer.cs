@@ -8,7 +8,7 @@
     using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Mathematics;
     using System.Numerics;
 
     [EditorComponent<TerrainRenderer>("Terrain", false, true)]
@@ -27,6 +27,7 @@
         private IGraphicsPipeline psm;
         private IGraphicsPipeline osm;
         private IGraphicsPipeline csm;
+        private BoundingBox boundingBox;
 
         private bool drawable;
 
@@ -34,9 +35,14 @@
         {
         }
 
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
+        [JsonIgnore]
         public RendererFlags Flags { get; } = RendererFlags.All;
+
+        [JsonIgnore]
+        public BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, gameObject.Transform); }
 
         [EditorProperty("HeightMap", null)]
         public string HeightMap { get; } = "";
@@ -47,6 +53,7 @@
             heightMap = new(32, 32);
             heightMap.GenerateEmpty();
             terrain = new(heightMap);
+            boundingBox = terrain.Box;
             VertexBuffer = terrain.CreateVertexBuffer(device);
             IndexBuffer = terrain.CreateIndexBuffer(device);
             Stride = terrain.GetStride();

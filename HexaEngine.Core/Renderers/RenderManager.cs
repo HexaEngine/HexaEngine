@@ -1,46 +1,15 @@
-﻿namespace HexaEngine.Core.Scenes.Managers
+﻿namespace HexaEngine.Core.Renderers
 {
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Types;
-    using HexaEngine.Core.Renderers;
+    using HexaEngine.Core.Scenes;
     using System.Collections.Generic;
-
-    public enum RenderQueueIndex
-    {
-        Background = 0,
-        Geometry = 100,
-        AlphaTest = 500,
-        Transparency = 1000,
-    }
-
-    public class SortRendererAscending : IComparer<IRendererComponent>
-    {
-        int IComparer<IRendererComponent>.Compare(IRendererComponent? a, IRendererComponent? b)
-        {
-            if (a == null || b == null)
-            {
-                return 0;
-            }
-
-            if (a.QueueIndex < b.QueueIndex)
-            {
-                return -1;
-            }
-
-            if (a.QueueIndex > b.QueueIndex)
-            {
-                return 1;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-    }
 
     public class RenderManager : ISystem
     {
+        private readonly FlaggedList<RendererFlags, IRendererComponent> rendererComponents = new();
         private readonly List<IRendererComponent> renderers = new();
         private readonly List<IRendererComponent> backgroundQueue = new();
         private readonly List<IRendererComponent> geometryQueue = new();
@@ -101,12 +70,23 @@
 
         public void Register(GameObject gameObject)
         {
-            gameObject.AddComponentIfIs<IRendererComponent>(AddRenderer);
+            if (gameObject.AddComponentIfIs<IRendererComponent>(AddRenderer))
+            {
+                gameObject.Transformed += GameObjectTransformed;
+            }
         }
 
         public void Unregister(GameObject gameObject)
         {
-            gameObject.RemoveComponentIfIs<IRendererComponent>(RemoveRenderer);
+            if (gameObject.RemoveComponentIfIs<IRendererComponent>(RemoveRenderer))
+            {
+                gameObject.Transformed -= GameObjectTransformed;
+            }
+        }
+
+        private void GameObjectTransformed(GameObject obj)
+        {
+            lights.RendererUpdateQueue.EnqueueComponentIfIs(obj);
         }
 
         public void Update(IGraphicsContext context)
@@ -124,35 +104,54 @@
                 switch (light.LightType)
                 {
                     case LightType.Directional:
-                        var directionalLight = ((DirectionalLight)light);
+                        var directionalLight = (DirectionalLight)light;
                         directionalLight.UpdateShadowMap(context, lights.ShadowDirectionalLights, camera);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
                             if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                                renderer.DrawShadows(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
+                            {
+                                for (int j = 0; j < directionalLight.ShadowFrustra.Length; j++)
+                                {
+                                    if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
+                                    {
+                                        renderer.DrawShadows(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                         break;
 
                     case LightType.Point:
-                        var pointLight = ((PointLight)light);
+                        var pointLight = (PointLight)light;
                         pointLight.UpdateShadowMap(context, lights.ShadowPointLights);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
                             if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                                renderer.DrawShadows(context, PointLight.OSMBuffer, ShadowType.Omni);
+                            {
+                                if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
+                                {
+                                    renderer.DrawShadows(context, PointLight.OSMBuffer, ShadowType.Omni);
+                                }
+                            }
                         }
                         break;
 
                     case LightType.Spot:
-                        var spotlight = ((Spotlight)light);
+                        var spotlight = (Spotlight)light;
                         spotlight.UpdateShadowMap(context, lights.ShadowSpotlights);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
                             if ((renderer.Flags & RendererFlags.CastShadows) != 0)
-                                renderer.DrawShadows(context, Spotlight.PSMBuffer, ShadowType.Perspective);
+                            {
+                                if (spotlight.ShadowFrustum.Intersects(renderer.BoundingBox))
+                                {
+                                    renderer.DrawShadows(context, Spotlight.PSMBuffer, ShadowType.Perspective);
+                                }
+                            }
                         }
                         break;
                 }

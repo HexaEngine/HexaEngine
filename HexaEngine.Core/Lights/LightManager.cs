@@ -6,6 +6,7 @@
     using HexaEngine.Core.Lights.Probes;
     using HexaEngine.Core.Lights.Structs;
     using HexaEngine.Core.Lights.Types;
+    using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
@@ -22,7 +23,7 @@
         private IGraphicsDevice device;
         private readonly ConcurrentQueue<ILightProbeComponent> probeUpdateQueue = new();
         private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
-        private readonly ConcurrentQueue<GameObject> modelUpdateQueue = new();
+        public readonly ConcurrentQueue<IRendererComponent> RendererUpdateQueue = new();
 
         private StructuredUavBuffer<GlobalProbeData> globalProbes;
 
@@ -349,11 +350,8 @@
 
             UpdateLights(context);
 
-            while (modelUpdateQueue.TryDequeue(out var instance))
+            while (RendererUpdateQueue.TryDequeue(out var renderer))
             {
-                // TODO: FIX
-                /*
-                instance.GetBoundingBox(out BoundingBox box);
                 for (int i = 0; i < activeLights.Count; i++)
                 {
                     var light = activeLights[i];
@@ -362,13 +360,12 @@
                         continue;
                     }
 
-                    if (light.IntersectFrustum(box) && !light.InUpdateQueue)
+                    if (light.IntersectFrustum(renderer.BoundingBox) && !light.InUpdateQueue)
                     {
                         light.InUpdateQueue = true;
-                        updateShadowLightQueue.Enqueue(light);
+                        UpdateShadowLightQueue.Enqueue(light);
                     }
                 }
-                */
             }
 
             for (int i = 0; i < activeLights.Count; i++)
@@ -380,8 +377,6 @@
                     UpdateShadowLightQueue.Enqueue(light);
                 }
             }
-
-            UpdateShadowMaps(context, camera, UpdateShadowLightQueue);
 
             globalProbes.Update(context);
 
@@ -785,10 +780,6 @@
             Free(smps);
             Free(cbs);
             Free(forwardRtvs);
-        }
-
-        public unsafe void UpdateShadowMaps(IGraphicsContext context, Camera camera, Queue<Light> lights)
-        {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]

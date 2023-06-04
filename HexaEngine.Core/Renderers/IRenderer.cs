@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core.Renderers
 {
+    using HexaEngine.Core.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Mathematics;
 
     [Flags]
     public enum RendererFlags
@@ -16,11 +18,11 @@
         All = Update | Depth | Geometry | Culling | CastShadows,
     }
 
-    public interface IRendererComponent : IComponent
+    public interface IRendererComponent : IComponent, IHasFlags<RendererFlags>
     {
         public uint QueueIndex { get; }
 
-        public RendererFlags Flags { get; }
+        public BoundingBox BoundingBox { get; }
 
         public void Update(IGraphicsContext context);
 

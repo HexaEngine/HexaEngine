@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
+    using Silk.NET.Core.Native;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
 
     public static class SceneExensions
@@ -39,6 +41,28 @@
             }
             index = -1;
             return false;
+        }
+
+        public static void EnqueueComponentIfIs<T>(this Queue<T> queue, GameObject obj) where T : IComponent
+        {
+            for (int i = 0; i < obj.Components.Count; i++)
+            {
+                if (obj.Components[i] is T t)
+                {
+                    queue.Enqueue(t);
+                }
+            }
+        }
+
+        public static void EnqueueComponentIfIs<T>(this ConcurrentQueue<T> queue, GameObject obj) where T : IComponent
+        {
+            for (int i = 0; i < obj.Components.Count; i++)
+            {
+                if (obj.Components[i] is T t)
+                {
+                    queue.Enqueue(t);
+                }
+            }
         }
 
         public static void AddComponentIfIs<T>(this IList<T> list, GameObject obj) where T : IComponent
@@ -96,26 +120,32 @@
             }
         }
 
-        public static void AddComponentIfIs<T>(this GameObject obj, Action<T> add) where T : IComponent
+        public static bool AddComponentIfIs<T>(this GameObject obj, Action<T> add) where T : IComponent
         {
+            bool result = false;
             for (int i = 0; i < obj.Components.Count; i++)
             {
                 if (obj.Components[i] is T t)
                 {
                     add(t);
+                    result = true;
                 }
             }
+            return result;
         }
 
-        public static void RemoveComponentIfIs<T>(this GameObject obj, Action<T> remove) where T : IComponent
+        public static bool RemoveComponentIfIs<T>(this GameObject obj, Action<T> remove) where T : IComponent
         {
+            bool result = false;
             for (int i = 0; i < obj.Components.Count; i++)
             {
                 if (obj.Components[i] is T t)
                 {
                     remove(t);
+                    result = true;
                 }
             }
+            return result;
         }
     }
 }

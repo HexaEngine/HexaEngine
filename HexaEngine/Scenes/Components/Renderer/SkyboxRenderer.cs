@@ -13,6 +13,7 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
     using System.Threading.Tasks;
@@ -31,9 +32,14 @@
         private string environment = string.Empty;
         private bool drawable;
 
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
 
+        [JsonIgnore]
         public RendererFlags Flags { get; } = RendererFlags.Update | RendererFlags.Depth | RendererFlags.Geometry;
+
+        [JsonIgnore]
+        public BoundingBox BoundingBox { get; }
 
         [EditorProperty("Env", null)]
         public string Environment

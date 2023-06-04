@@ -154,6 +154,11 @@
             Transformed?.Invoke(this);
         }
 
+        public void SendUpdateTransformed()
+        {
+            Transformed?.Invoke(this);
+        }
+
         public void SaveState()
         {
             Transform.SaveState();
