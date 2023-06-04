@@ -49,7 +49,7 @@
         private Animation[] animations;
         private Node root;
         private MaterialLibrary materialLibrary;
-        private ModelFile modelFile;
+        private Model modelFile;
         private unsafe AssimpScene* scene;
 
         public MeshData[] Meshes => meshes;
@@ -123,7 +123,7 @@
 
             string oldName = material.Name;
 
-            ModelFile source = modelFile;
+            Model source = modelFile;
             for (ulong j = 0; j < source.Header.MeshCount; j++)
             {
                 MeshData data = source.GetMesh(j);
@@ -704,6 +704,8 @@
             for (int i = 0; i < textures.Count; i++)
             {
                 var srcFile = Path.Combine(dir, textures[i]);
+                if (!System.IO.File.Exists(srcFile))
+                    continue;
                 var dest = Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "textures");
 
                 if (TexPostProcessSteps == TexPostProcessSteps.None)

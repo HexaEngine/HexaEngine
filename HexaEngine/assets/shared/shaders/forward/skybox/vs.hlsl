@@ -6,6 +6,7 @@ struct VertexInputType
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
+    float3 bitangent : BINORMAL;
 };
 
 struct PixelInputType

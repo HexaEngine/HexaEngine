@@ -2,10 +2,8 @@
 
 namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System.Numerics;

@@ -29,6 +29,7 @@ namespace HexaEngine.Rendering
         private ViewportShading shading = Application.InDesignMode ? ViewportShading.Solid : ViewportShading.Rendered;
         private readonly object update = new();
         private readonly object culling = new();
+        private readonly object shadows = new();
         private readonly object debug = new();
         private readonly object geometry = new();
 #nullable disable
@@ -411,6 +412,13 @@ namespace HexaEngine.Rendering
 #endif
             context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             context.ClearRenderTargetView(lightBuffer.Value.RenderTargetView, default);
+#if PROFILE
+            profiler.Start(shadows);
+#endif
+            scene.RenderManager.UpdateShadows(context, camera);
+#if PROFILE
+            profiler.End(shadows);
+#endif
 
 #if PROFILE
             profiler.Start(geometry);

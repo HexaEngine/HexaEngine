@@ -3,7 +3,6 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Structs;
     using HexaEngine.Mathematics;
@@ -69,6 +68,9 @@
 
         [JsonIgnore]
         public override bool HasShadowMap => psmDepthBuffer != null;
+
+        [JsonIgnore]
+        internal static IBuffer PSMBuffer => psmBuffer;
 
         public override void Initialize(IGraphicsDevice device)
         {

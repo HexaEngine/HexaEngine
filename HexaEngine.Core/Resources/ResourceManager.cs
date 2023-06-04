@@ -73,7 +73,7 @@
             }
         }
 
-        public static unsafe Mesh LoadMesh(MeshData mesh)
+        public static unsafe Mesh LoadMesh(MeshData mesh, bool debone)
         {
             Mesh instance;
             lock (meshes)
@@ -84,16 +84,16 @@
                     return value;
                 }
 
-                instance = new(device, mesh);
+                instance = new(device, mesh, debone);
                 meshes.TryAdd(mesh.Name, instance);
             }
 
             return instance;
         }
 
-        public static async Task<Mesh> LoadMeshAsync(MeshData mesh)
+        public static async Task<Mesh> LoadMeshAsync(MeshData mesh, bool debone = false)
         {
-            return await Task.Factory.StartNew(() => LoadMesh(mesh));
+            return await Task.Factory.StartNew(() => LoadMesh(mesh, debone));
         }
 
         public static void UnloadMesh(Mesh mesh)
@@ -116,7 +116,7 @@
             }
         }
 
-        public static Material LoadMaterial(MeshData mesh, MaterialData desc)
+        public static Material LoadMaterial(MeshData mesh, MaterialData desc, bool debone = false)
         {
             Material? modelMaterial;
             lock (materials)
@@ -132,7 +132,7 @@
                 materials.TryAdd(desc.Name, modelMaterial);
             }
 
-            modelMaterial.Shader = LoadMaterialShader(mesh, desc);
+            modelMaterial.Shader = LoadMaterialShader(mesh, desc, debone);
             for (int i = 0; i < desc.Textures.Length; i++)
             {
                 modelMaterial.TextureList.Add(LoadTexture(desc.Textures[i]));
@@ -143,7 +143,7 @@
             return modelMaterial;
         }
 
-        public static async Task<Material> LoadMaterialAsync(MeshData mesh, MaterialData desc)
+        public static async Task<Material> LoadMaterialAsync(MeshData mesh, MaterialData desc, bool debone = false)
         {
             Material? modelMaterial;
             lock (materials)
@@ -159,7 +159,7 @@
                 materials.TryAdd(desc.Name, modelMaterial);
             }
 
-            modelMaterial.Shader = await LoadMaterialShaderAsync(mesh, desc);
+            modelMaterial.Shader = await LoadMaterialShaderAsync(mesh, desc, debone);
 
             for (int i = 0; i < desc.Textures.Length; i++)
             {
@@ -422,7 +422,7 @@
 
         #region Shader
 
-        public static ResourceInstance<MaterialShader>? LoadMaterialShader(MeshData mesh, MaterialData material)
+        public static ResourceInstance<MaterialShader>? LoadMaterialShader(MeshData mesh, MaterialData material, bool debone = false)
         {
             ResourceInstance<MaterialShader>? shader;
             lock (shaders)
@@ -438,14 +438,14 @@
                 shaders.TryAdd(material.Name, shader);
             }
 
-            var shad = new MaterialShader(device, mesh, material);
+            var shad = new MaterialShader(device, mesh, material, debone);
             shad.Initialize();
             shader.EndLoad(shad);
 
             return shader;
         }
 
-        public static async Task<ResourceInstance<MaterialShader>?> LoadMaterialShaderAsync(MeshData mesh, MaterialData material)
+        public static async Task<ResourceInstance<MaterialShader>?> LoadMaterialShaderAsync(MeshData mesh, MaterialData material, bool debone = false)
         {
             ResourceInstance<MaterialShader>? shader;
             lock (shaders)
@@ -461,7 +461,7 @@
                 shaders.TryAdd(material.Name, shader);
             }
 
-            var shad = new MaterialShader(device, mesh, material);
+            var shad = new MaterialShader(device, mesh, material, debone);
             await shad.InitializeAsync();
             shader.EndLoad(shad);
 

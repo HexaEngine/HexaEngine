@@ -1,10 +1,8 @@
 ﻿namespace HexaEngine.Core.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Mathematics;
-    using System.Numerics;
 
     public class Mesh : ResourceInstance
     {
@@ -19,17 +17,17 @@
         public BoundingSphere BoundingSphere;
         public uint Stride;
 
-        public unsafe Mesh(IGraphicsDevice device, MeshData data) : base(data.Name, 1)
+        public unsafe Mesh(IGraphicsDevice device, MeshData data, bool debone = true) : base(data.Name, 1)
         {
             name = data.Name;
             Data = data;
             BoundingBox = data.Box;
             BoundingSphere = data.Sphere;
             IndexBuffer = data.CreateIndexBuffer(device);
-            VertexBuffer = data.CreateVertexBuffer(device);
+            VertexBuffer = data.CreateVertexBuffer(device, debone: debone);
             IndexCount = (int)data.IndicesCount;
             VertexCount = (int)data.VerticesCount;
-            Stride = data.GetStride();
+            Stride = data.GetStride(debone);
         }
 
         public void BeginDraw(IGraphicsContext context)

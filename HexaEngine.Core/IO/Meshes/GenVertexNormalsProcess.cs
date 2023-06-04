@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -108,6 +109,65 @@
         }
 
         public static unsafe bool GenMeshVertexNormals2(MeshData pMesh)
+        {
+            Vector3* vertNormals = Alloc<Vector3>(pMesh.VerticesCount);
+            Memset(vertNormals, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            uint nFaces = pMesh.IndicesCount / 3;
+
+            for (int face = 0; face < nFaces; ++face)
+            {
+                uint i0 = pMesh.Indices[face * 3];
+                uint i1 = pMesh.Indices[face * 3 + 1];
+                uint i2 = pMesh.Indices[face * 3 + 2];
+
+                Vector3 p0 = pMesh.Positions[i0];
+                Vector3 p1 = pMesh.Positions[i1];
+                Vector3 p2 = pMesh.Positions[i2];
+
+                Vector3 u = p1 - p0;
+                Vector3 v = p2 - p0;
+
+                Vector3 faceNormal = Vector3.Normalize(Vector3.Cross(u, v));
+
+                if (float.IsNaN(faceNormal.X))
+                {
+                    continue;
+                }
+
+                Vector3 a = Vector3.Normalize(u);
+                Vector3 b = Vector3.Normalize(v);
+                float w0 = Vector3.Dot(a, b);
+                w0 = Math.Clamp(w0, -1, 1);
+                w0 = MathF.Acos(w0);
+
+                Vector3 c = Vector3.Normalize(p2 - p1);
+                Vector3 d = Vector3.Normalize(p0 - p1);
+                float w1 = Vector3.Dot(c, d);
+                w1 = Math.Clamp(w1, -1, 1);
+                w1 = MathF.Acos(w1);
+
+                Vector3 e = Vector3.Normalize(p0 - p2);
+                Vector3 f = Vector3.Normalize(p1 - p2);
+                float w2 = Vector3.Dot(e, f);
+                w2 = Math.Clamp(w2, -1, 1);
+                w2 = MathF.Acos(w2);
+
+                vertNormals[i0] = faceNormal * w0 + vertNormals[i0];
+                vertNormals[i1] = faceNormal * w1 + vertNormals[i1];
+                vertNormals[i2] = faceNormal * w2 + vertNormals[i2];
+            }
+
+            for (int i = 0; i < pMesh.VerticesCount; ++i)
+            {
+                pMesh.Normals[i] = Vector3.Normalize(vertNormals[i]);
+            }
+
+            Free(vertNormals);
+
+            return true;
+        }
+
+        public static unsafe bool GenMeshVertexNormals2(Terrain pMesh)
         {
             Vector3* vertNormals = Alloc<Vector3>(pMesh.VerticesCount);
             Memset(vertNormals, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));

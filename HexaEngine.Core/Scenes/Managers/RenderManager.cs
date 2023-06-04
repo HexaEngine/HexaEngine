@@ -1,7 +1,8 @@
 ﻿namespace HexaEngine.Core.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Instances;
+    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Renderers;
     using System.Collections.Generic;
 
@@ -46,14 +47,16 @@
         private readonly List<IRenderComponent> components = new();
         private readonly SortRendererAscending comparer = new();
         private readonly IGraphicsDevice device;
+        private readonly LightManager lights;
 
         public string Name => "Renderers";
 
         public SystemFlags Flags => SystemFlags.None;
 
-        public RenderManager(IGraphicsDevice device)
+        public RenderManager(IGraphicsDevice device, LightManager lights)
         {
             this.device = device;
+            this.lights = lights;
         }
 
         public void VisibilityTest(IGraphicsContext context, RenderQueueIndex index)
@@ -111,6 +114,49 @@
             for (int i = 0; i < renderers.Count; i++)
             {
                 renderers[i].Update(context);
+            }
+        }
+
+        public void UpdateShadows(IGraphicsContext context, Camera camera)
+        {
+            while (lights.UpdateShadowLightQueue.TryDequeue(out var light))
+            {
+                switch (light.LightType)
+                {
+                    case LightType.Directional:
+                        var directionalLight = ((DirectionalLight)light);
+                        directionalLight.UpdateShadowMap(context, lights.ShadowDirectionalLights, camera);
+                        for (int i = 0; i < renderers.Count; i++)
+                        {
+                            var renderer = renderers[i];
+                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                                renderer.DrawShadows(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
+                        }
+                        break;
+
+                    case LightType.Point:
+                        var pointLight = ((PointLight)light);
+                        pointLight.UpdateShadowMap(context, lights.ShadowPointLights);
+                        for (int i = 0; i < renderers.Count; i++)
+                        {
+                            var renderer = renderers[i];
+                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                                renderer.DrawShadows(context, PointLight.OSMBuffer, ShadowType.Omni);
+                        }
+                        break;
+
+                    case LightType.Spot:
+                        var spotlight = ((Spotlight)light);
+                        spotlight.UpdateShadowMap(context, lights.ShadowSpotlights);
+                        for (int i = 0; i < renderers.Count; i++)
+                        {
+                            var renderer = renderers[i];
+                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                                renderer.DrawShadows(context, Spotlight.PSMBuffer, ShadowType.Perspective);
+                        }
+                        break;
+                }
+                light.InUpdateQueue = false;
             }
         }
 

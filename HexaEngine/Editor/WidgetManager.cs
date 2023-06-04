@@ -5,6 +5,7 @@
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Editor.MaterialEditor;
+    using HexaEngine.Editor.PoseEditor;
 
     public static class WidgetManager
     {
@@ -27,7 +28,8 @@
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
-            Register<ModelEditorWindow>();
+            Register<MeshEditorWindow>();
+            Register<PoseEditorWindow>();
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();

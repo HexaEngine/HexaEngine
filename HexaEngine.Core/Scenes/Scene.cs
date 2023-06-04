@@ -106,7 +106,7 @@
             systems.Add(lightManager);
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
-            systems.Add(renderManager = new(device));
+            systems.Add(renderManager = new(device, lightManager));
 
             semaphore.Wait();
 
@@ -135,7 +135,7 @@
             systems.Add(lightManager);
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
-            systems.Add(renderManager = new(device));
+            systems.Add(renderManager = new(device, lightManager));
 
             await semaphore.WaitAsync();
 

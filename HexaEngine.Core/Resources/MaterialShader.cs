@@ -13,6 +13,7 @@ namespace HexaEngine.Core.Resources
         private readonly IGraphicsDevice device;
         private readonly MeshData mesh;
         private readonly MaterialData material;
+        private readonly bool debone;
         private IGraphicsPipeline pipeline;
         private IGraphicsPipeline depthOnly;
         private IGraphicsPipeline csm;
@@ -22,11 +23,12 @@ namespace HexaEngine.Core.Resources
         private bool disposedValue;
         private MaterialShaderFlags flags;
 
-        public MaterialShader(IGraphicsDevice device, MeshData mesh, MaterialData material)
+        public MaterialShader(IGraphicsDevice device, MeshData mesh, MaterialData material, bool debone)
         {
             this.device = device;
             this.mesh = mesh;
             this.material = material;
+            this.debone = debone;
         }
 
         public MaterialShaderFlags Flags => flags;
@@ -44,8 +46,8 @@ namespace HexaEngine.Core.Resources
         private void Compile()
         {
             flags = 0;
-            var elements = mesh.GetInputElements();
-            var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros()).ToArray();
+            var elements = mesh.GetInputElements(debone);
+            var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros(debone)).ToArray();
             var matflags = material.Flags;
             var custom = material.VertexShader != null && material.PixelShader != null;
 
@@ -212,8 +214,8 @@ namespace HexaEngine.Core.Resources
         private async Task CompileAsync()
         {
             flags = 0;
-            var elements = mesh.GetInputElements();
-            var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros()).ToArray();
+            var elements = mesh.GetInputElements(debone);
+            var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros(debone)).ToArray();
             var matflags = material.Flags;
             var custom = material.VertexShader != null && material.PixelShader != null;
 

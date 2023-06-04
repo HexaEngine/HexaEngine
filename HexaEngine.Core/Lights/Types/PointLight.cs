@@ -3,7 +3,6 @@
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Structs;
     using HexaEngine.Mathematics;
@@ -50,6 +49,9 @@
 
         [JsonIgnore]
         public override bool HasShadowMap => osmDepthBuffer != null;
+
+        [JsonIgnore]
+        public static IBuffer OSMBuffer => osmBuffer;
 
         public override IShaderResourceView? GetShadowMap()
         {

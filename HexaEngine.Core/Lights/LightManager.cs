@@ -30,9 +30,9 @@
         private StructuredUavBuffer<PointLightData> pointLights;
         private StructuredUavBuffer<SpotlightData> spotlights;
 
-        private StructuredUavBuffer<ShadowDirectionalLightData> shadowDirectionalLights;
-        private StructuredUavBuffer<ShadowPointLightData> shadowPointLights;
-        private StructuredUavBuffer<ShadowSpotlightData> shadowSpotlights;
+        public StructuredUavBuffer<ShadowDirectionalLightData> ShadowDirectionalLights;
+        public StructuredUavBuffer<ShadowPointLightData> ShadowPointLights;
+        public StructuredUavBuffer<ShadowSpotlightData> ShadowSpotlights;
 
         private ConstantBuffer<ProbeBufferParams> probeParamsBuffer;
         private ConstantBuffer<LightBufferParams> lightParamsBuffer;
@@ -120,9 +120,9 @@
             pointLights = new(device, true, false);
             spotlights = new(device, true, false);
 
-            shadowDirectionalLights = new(device, true, false);
-            shadowPointLights = new(device, true, false);
-            shadowSpotlights = new(device, true, false);
+            ShadowDirectionalLights = new(device, true, false);
+            ShadowPointLights = new(device, true, false);
+            ShadowSpotlights = new(device, true, false);
 
             quad = new(device);
             deferredDirect = await device.CreateGraphicsPipelineAsync(new()
@@ -313,9 +313,10 @@
             }
         }
 
+        public readonly Queue<Light> UpdateShadowLightQueue = new();
+
         public unsafe void Update(IGraphicsContext context, Camera camera)
         {
-            Queue<Light> updateShadowLightQueue = new();
             while (lightUpdateQueue.TryDequeue(out var light))
             {
                 if (light.IsEnabled)
@@ -337,7 +338,7 @@
                     if (!light.InUpdateQueue)
                     {
                         light.InUpdateQueue = true;
-                        updateShadowLightQueue.Enqueue(light);
+                        UpdateShadowLightQueue.Enqueue(light);
                     }
                 }
                 else
@@ -376,11 +377,11 @@
                 if (light.CastShadows && light is DirectionalLight && !light.InUpdateQueue)
                 {
                     light.InUpdateQueue = true;
-                    updateShadowLightQueue.Enqueue(light);
+                    UpdateShadowLightQueue.Enqueue(light);
                 }
             }
 
-            UpdateShadowMaps(context, camera, updateShadowLightQueue);
+            UpdateShadowMaps(context, camera, UpdateShadowLightQueue);
 
             globalProbes.Update(context);
 
@@ -388,9 +389,9 @@
             pointLights.Update(context);
             spotlights.Update(context);
 
-            shadowDirectionalLights.Update(context);
-            shadowPointLights.Update(context);
-            shadowSpotlights.Update(context);
+            ShadowDirectionalLights.Update(context);
+            ShadowPointLights.Update(context);
+            ShadowSpotlights.Update(context);
         }
 
         public void BeginResize()
@@ -439,9 +440,9 @@
             forwardSrvs[13] = directSrvs[11] = (void*)spotlights.SRV.NativePointer;
 
             shadowSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
-            forwardSrvs[14] = shadowSrvs[9] = (void*)shadowDirectionalLights.SRV.NativePointer;
-            forwardSrvs[15] = shadowSrvs[10] = (void*)shadowPointLights.SRV.NativePointer;
-            forwardSrvs[16] = shadowSrvs[11] = (void*)shadowSpotlights.SRV.NativePointer;
+            forwardSrvs[14] = shadowSrvs[9] = (void*)ShadowDirectionalLights.SRV.NativePointer;
+            forwardSrvs[15] = shadowSrvs[10] = (void*)ShadowPointLights.SRV.NativePointer;
+            forwardSrvs[16] = shadowSrvs[11] = (void*)ShadowSpotlights.SRV.NativePointer;
 
             forwardRtvs[0] = (void*)Output.NativePointer;
             forwardRtvs[1] = GBuffers.Value.PRTVs[1];
@@ -456,9 +457,9 @@
             directionalLights.ResetCounter();
             pointLights.ResetCounter();
             spotlights.ResetCounter();
-            shadowDirectionalLights.ResetCounter();
-            shadowPointLights.ResetCounter();
-            shadowSpotlights.ResetCounter();
+            ShadowDirectionalLights.ResetCounter();
+            ShadowPointLights.ResetCounter();
+            ShadowSpotlights.ResetCounter();
             uint globalProbesCount = 0;
             uint csmCount = 0;
             uint osmCount = 0;
@@ -506,7 +507,7 @@
                             }
 
                             light.QueueIndex = csmCount;
-                            shadowDirectionalLights.Add(new((DirectionalLight)light));
+                            ShadowDirectionalLights.Add(new((DirectionalLight)light));
                             forwardSrvs[nForwardShadowSrvsBase + csmCount] = shadowSrvs[nDirectSrvs + csmCount] = (void*)light.GetShadowMap()?.NativePointer;
                             csmCount++;
                             break;
@@ -518,7 +519,7 @@
                             }
 
                             light.QueueIndex = osmCount;
-                            shadowPointLights.Add(new((PointLight)light));
+                            ShadowPointLights.Add(new((PointLight)light));
                             forwardSrvs[nForwardShadowSrvsBase + MaxDirectionalLightSDs + osmCount] = shadowSrvs[nDirectSrvs + MaxDirectionalLightSDs + osmCount] = (void*)light.GetShadowMap()?.NativePointer;
                             osmCount++;
                             break;
@@ -530,7 +531,7 @@
                             }
 
                             light.QueueIndex = psmCount;
-                            shadowSpotlights.Add(new((Spotlight)light));
+                            ShadowSpotlights.Add(new((Spotlight)light));
                             forwardSrvs[nForwardShadowSrvsBase + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = shadowSrvs[nDirectSrvs + MaxDirectionalLightSDs + MaxPointLightSDs + psmCount] = (void*)light.GetShadowMap()?.NativePointer;
                             psmCount++;
                             break;
@@ -577,9 +578,9 @@
             forwardSrvs[12] = directSrvs[10] = (void*)pointLights.SRV.NativePointer;
             forwardSrvs[13] = directSrvs[11] = (void*)spotlights.SRV.NativePointer;
 
-            forwardSrvs[14] = shadowSrvs[9] = (void*)shadowDirectionalLights.SRV.NativePointer;
-            forwardSrvs[15] = shadowSrvs[10] = (void*)shadowPointLights.SRV.NativePointer;
-            forwardSrvs[16] = shadowSrvs[11] = (void*)shadowSpotlights.SRV.NativePointer;
+            forwardSrvs[14] = shadowSrvs[9] = (void*)ShadowDirectionalLights.SRV.NativePointer;
+            forwardSrvs[15] = shadowSrvs[10] = (void*)ShadowPointLights.SRV.NativePointer;
+            forwardSrvs[16] = shadowSrvs[11] = (void*)ShadowSpotlights.SRV.NativePointer;
         }
 
         public unsafe void DeferredPass(IGraphicsContext context, ViewportShading shading, Camera camera)
@@ -615,9 +616,9 @@
                 quad.DrawAuto(context, deferredDirect);
 
                 // Shadow light pass
-                lightParams->DirectionalLights = shadowDirectionalLights.Count;
-                lightParams->PointLights = shadowPointLights.Count;
-                lightParams->Spotlights = shadowSpotlights.Count;
+                lightParams->DirectionalLights = ShadowDirectionalLights.Count;
+                lightParams->PointLights = ShadowPointLights.Count;
+                lightParams->Spotlights = ShadowSpotlights.Count;
                 lightParamsBuffer.Update(context);
                 cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
 
@@ -763,9 +764,9 @@
             pointLights.Dispose();
             spotlights.Dispose();
 
-            shadowDirectionalLights.Dispose();
-            shadowPointLights.Dispose();
-            shadowSpotlights.Dispose();
+            ShadowDirectionalLights.Dispose();
+            ShadowPointLights.Dispose();
+            ShadowSpotlights.Dispose();
 
             forwardLightParamsBuffer.Dispose();
             probeParamsBuffer.Dispose();
@@ -788,24 +789,6 @@
 
         public unsafe void UpdateShadowMaps(IGraphicsContext context, Camera camera, Queue<Light> lights)
         {
-            while (lights.TryDequeue(out var light))
-            {
-                switch (light.LightType)
-                {
-                    case LightType.Directional:
-                        ((DirectionalLight)light).UpdateShadowMap(context, shadowDirectionalLights, camera);
-                        break;
-
-                    case LightType.Point:
-                        ((PointLight)light).UpdateShadowMap(context, shadowPointLights);
-                        break;
-
-                    case LightType.Spot:
-                        ((Spotlight)light).UpdateShadowMap(context, shadowSpotlights);
-                        break;
-                }
-                light.InUpdateQueue = false;
-            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]

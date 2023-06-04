@@ -10,7 +10,7 @@
     {
         public Skybox()
         {
-            AddComponent(new SkyboxRendererComponent());
+            AddComponent(new SkyboxRenderer());
             AddComponent(new IBLLightProbeComponent());
         }
 

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
+    using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
@@ -168,6 +169,68 @@
         }
 
         public static unsafe bool ProcessMesh2(MeshData pMesh)
+        {
+            var nFace = pMesh.IndicesCount / 3;
+
+            Vector3* vertTangents = Alloc<Vector3>(pMesh.VerticesCount);
+            Vector3* vertBitangents = Alloc<Vector3>(pMesh.VerticesCount);
+            Memset(vertTangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            Memset(vertBitangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+
+            for (uint i = 0; i < nFace; ++i)
+            {
+                var i0 = pMesh.Indices[i * 3];
+                var i1 = pMesh.Indices[i * 3 + 1];
+                var i2 = pMesh.Indices[i * 3 + 2];
+
+                var vtxP1 = pMesh.Positions[i0];
+                var vtxP2 = pMesh.Positions[i1];
+                var vtxP3 = pMesh.Positions[i2];
+
+                Vector3 v = vtxP2 - vtxP1;
+                Vector3 w = vtxP3 - vtxP1;
+
+                float sx = pMesh.UVs[i1].X - pMesh.UVs[i0].X, sy = pMesh.UVs[i1].Y - pMesh.UVs[i0].Y;
+                float tx = pMesh.UVs[i2].X - pMesh.UVs[i0].X, ty = pMesh.UVs[i2].Y - pMesh.UVs[i0].Y;
+
+                float dirCorrection = tx * sy - ty * sx < 0.0f ? -1.0f : 1.0f;
+
+                if (sx * ty == sy * tx)
+                {
+                    sx = 0.0f;
+                    sy = 1.0f;
+                    tx = 1.0f;
+                    ty = 0.0f;
+                }
+
+                Vector3 tangent, bitangent;
+                tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
+                tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
+                tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
+                bitangent.X = (-w.X * sx + v.X * tx) * dirCorrection;
+                bitangent.Y = (-w.Y * sx + v.Y * tx) * dirCorrection;
+                bitangent.Z = (-w.Z * sx + v.Z * tx) * dirCorrection;
+                vertTangents[i0] += tangent;
+                vertTangents[i1] += tangent;
+                vertTangents[i2] += tangent;
+                vertBitangents[i0] += bitangent;
+                vertBitangents[i1] += bitangent;
+                vertBitangents[i2] += bitangent;
+            }
+
+            for (int i = 0; i < pMesh.VerticesCount; ++i)
+            {
+                pMesh.Tangents[i] = Vector3.Normalize(vertTangents[i]);
+                pMesh.Bitangents[i] = Vector3.Normalize(vertBitangents[i]);
+            }
+
+            Free(vertTangents);
+            Free(vertBitangents);
+
+            return true;
+        }
+
+        public static unsafe bool ProcessMesh2(Terrain pMesh)
         {
             var nFace = pMesh.IndicesCount / 3;
 

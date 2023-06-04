@@ -38,6 +38,9 @@
         [JsonIgnore]
         public override bool HasShadowMap => csmDepthBuffer != null;
 
+        [JsonIgnore]
+        public static IBuffer CSMBuffer => csmBuffer;
+
         public override IShaderResourceView? GetShadowMap()
         {
             return csmDepthBuffer?.SRV;

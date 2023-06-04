@@ -15,7 +15,7 @@
         private float currentTime;
         private bool playing;
         private bool invalid = false;
-        private ModelRendererComponent? renderer;
+        private SkinnedMeshRenderer? renderer;
 
         private struct NodeId
         {
@@ -27,7 +27,7 @@
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
             invalid = false;
-            renderer = gameObject.GetComponent<ModelRendererComponent>();
+            renderer = gameObject.GetComponent<SkinnedMeshRenderer>();
         }
 
         public void Destory()

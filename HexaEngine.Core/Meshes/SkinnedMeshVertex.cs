@@ -3,12 +3,13 @@
     using System;
     using System.Numerics;
 
-    public unsafe struct SkinnedMeshVertex
+    public unsafe struct SkinnedMeshVertex : IEquatable<SkinnedMeshVertex>
     {
         public Vector3 Position;
         public Vector3 Texture;
         public Vector3 Normal;
         public Vector3 Tangent;
+        public Vector3 Bitangent;
 
         public fixed int BoneIds[4];
         public fixed float Weights[4];
@@ -29,43 +30,43 @@
             Tangent = vertex.Tangent;
         }
 
-        public SkinnedMeshVertex InvertTex()
+        public readonly SkinnedMeshVertex InvertTex()
         {
             return new SkinnedMeshVertex(Position, new(Math.Abs(Texture.X - 1), Math.Abs(Texture.Y - 1), 0), Normal, Tangent);
         }
 
-        public static unsafe bool operator ==(SkinnedMeshVertex a, SkinnedMeshVertex b)
-        {
-            byte* ap = (byte*)&a;
-            byte* bp = (byte*)&b;
-            for (int i = 0; i < sizeof(SkinnedMeshVertex); i++)
-            {
-                if (ap[i] != bp[i])
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public static bool operator !=(SkinnedMeshVertex a, SkinnedMeshVertex b)
-        {
-            return !(a == b);
-        }
-
         public override bool Equals(object? obj)
         {
-            if (obj is SkinnedMeshVertex vertex)
-            {
-                return this == vertex;
-            }
+            return obj is SkinnedMeshVertex vertex && Equals(vertex);
+        }
 
-            return false;
+        public bool Equals(SkinnedMeshVertex other)
+        {
+            return Position.Equals(other.Position) &&
+                   Texture.Equals(other.Texture) &&
+                   Normal.Equals(other.Normal) &&
+                   Tangent.Equals(other.Tangent) &&
+                   Bitangent.Equals(other.Bitangent);
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this);
+            return base.GetHashCode();
+        }
+
+        public override string? ToString()
+        {
+            return base.ToString();
+        }
+
+        public static bool operator ==(SkinnedMeshVertex left, SkinnedMeshVertex right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(SkinnedMeshVertex left, SkinnedMeshVertex right)
+        {
+            return !(left == right);
         }
     }
 }

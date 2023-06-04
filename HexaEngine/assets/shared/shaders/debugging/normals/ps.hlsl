@@ -1,8 +1,4 @@
-struct PixelInput
-{
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
-};
+#include "defs.hlsl"
 
 float4 main(PixelInput input) : SV_Target
 {
