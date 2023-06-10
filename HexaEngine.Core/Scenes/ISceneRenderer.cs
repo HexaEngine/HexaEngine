@@ -9,25 +9,10 @@
 
     public interface ISceneRenderer : IDisposable
     {
-        CpuProfiler Profiler { get; }
+        CPUProfiler Profiler { get; }
 
-        object Update { get; }
+        PostProcessingManager PostProcessing { get; }
 
-        object Prepass { get; }
-
-        object ObjectCulling { get; }
-
-        object LightCulling { get; }
-
-        object Geometry { get; }
-
-        object SSAO { get; }
-
-        object Lights { get; }
-
-        PostProcessManager PostProcess { get; }
-
-        object Debug { get; }
         ViewportShading Shading { get; set; }
 
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window);

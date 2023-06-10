@@ -90,6 +90,7 @@
 
             Context = new D3D11GraphicsContext(this);
             TextureLoader = new D3D11TextureLoader(this);
+            Profiler = new D3D11GPUProfiler(Device);
         }
 
         public virtual GraphicsBackend Backend => GraphicsBackend.D3D11;
@@ -97,6 +98,8 @@
         public IGraphicsContext Context { get; protected set; }
 
         public ITextureLoader TextureLoader { get; }
+
+        public IGPUProfiler Profiler { get; }
 
         public long GraphicsMemoryUsage => graphicsMemoryUsage;
 

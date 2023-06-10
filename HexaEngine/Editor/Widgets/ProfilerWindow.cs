@@ -8,7 +8,7 @@
     using System.Diagnostics;
     using System.Numerics;
 
-    public unsafe struct RingBuffer<T> where T : unmanaged
+    public unsafe struct RingBuffer
     {
         private readonly double[] values;
         private readonly int length;
@@ -62,33 +62,44 @@
     {
         protected override string Name => "SceneProfiler";
 
-        public RingBuffer<double> Frame = new(512);
-        public RingBuffer<double> Graphics = new(512);
-        public RingBuffer<double> Updates = new(512);
+        public RingBuffer Frame = new(512);
 
-        public RingBuffer<double> Systems = new(512);
-        private readonly Dictionary<object, RingBuffer<double>> systems = new();
+        public RingBuffer Updates = new(512);
 
-        public RingBuffer<double> Update = new(512);
-        public RingBuffer<double> Prepass = new(512);
-        public RingBuffer<double> ObjectCulling = new(512);
-        public RingBuffer<double> LightCulling = new(512);
-        public RingBuffer<double> Geometry = new(512);
-        public RingBuffer<double> SSAO = new(512);
-        public RingBuffer<double> Lights = new(512);
-        public RingBuffer<double> PostProcess = new(512);
+        public RingBuffer Systems = new(512);
+        private readonly Dictionary<object, RingBuffer> systems = new();
 
-        public RingBuffer<double> Simulation = new(512);
-        public RingBuffer<double> PoseIntegrator = new(512);
-        public RingBuffer<double> Sleeper = new(512);
-        public RingBuffer<double> BroadPhaseUpdate = new(512);
-        public RingBuffer<double> CollisionTesting = new(512);
-        public RingBuffer<double> NarrowPhaseFlush = new(512);
-        public RingBuffer<double> Solver = new(512);
-        public RingBuffer<double> BatchCompressor = new(512);
+        public RingBuffer Graphics = new(512);
+        public RingBuffer Update = new(512);
+        public RingBuffer Prepass = new(512);
+        public RingBuffer ObjectCulling = new(512);
+        public RingBuffer LightCulling = new(512);
+        public RingBuffer Geometry = new(512);
+        public RingBuffer SSAO = new(512);
+        public RingBuffer Lights = new(512);
+        public RingBuffer PostProcessing = new(512);
 
-        public RingBuffer<double> MemoryUsage = new(512);
-        public RingBuffer<double> VideoMemoryUsage = new(512);
+        public RingBuffer GpuTotal = new(512);
+        public RingBuffer GpuUpdate = new(512);
+        public RingBuffer GpuPrepass = new(512);
+        public RingBuffer GpuObjectCulling = new(512);
+        public RingBuffer GpuLightCulling = new(512);
+        public RingBuffer GpuGeometry = new(512);
+        public RingBuffer GpuSSAO = new(512);
+        public RingBuffer GpuLights = new(512);
+        public RingBuffer GpuPostProcessing = new(512);
+
+        public RingBuffer Simulation = new(512);
+        public RingBuffer PoseIntegrator = new(512);
+        public RingBuffer Sleeper = new(512);
+        public RingBuffer BroadPhaseUpdate = new(512);
+        public RingBuffer CollisionTesting = new(512);
+        public RingBuffer NarrowPhaseFlush = new(512);
+        public RingBuffer Solver = new(512);
+        public RingBuffer BatchCompressor = new(512);
+
+        public RingBuffer MemoryUsage = new(512);
+        public RingBuffer VideoMemoryUsage = new(512);
 
         public override void DrawContent(IGraphicsContext context)
         {
@@ -135,17 +146,27 @@
             var renderer = Application.MainWindow.Renderer;
             var simulation = scene.GetRequiredSystem<PhysicsSystem>().Simulation;
 
-            Graphics.Add(renderer.Profiler[renderer] * 1000);
+            Graphics.Add(renderer.Profiler["Total"] * 1000);
             Systems.Add(scene.Profiler[scene.Systems] * 1000);
 
-            Update.Add(renderer.Profiler[renderer.Update] * 1000);
-            ObjectCulling.Add(renderer.Profiler[renderer.ObjectCulling] * 1000);
-            LightCulling.Add(renderer.Profiler[renderer.LightCulling] * 1000);
-            Prepass.Add(renderer.Profiler[renderer.Prepass] * 1000);
-            Geometry.Add(renderer.Profiler[renderer.Geometry] * 1000);
-            SSAO.Add(renderer.Profiler[renderer.SSAO] * 1000);
-            Lights.Add(renderer.Profiler[renderer.Lights] * 1000);
-            PostProcess.Add(renderer.Profiler[renderer.PostProcess] * 1000);
+            Update.Add(renderer.Profiler["Update"] * 1000);
+            ObjectCulling.Add(renderer.Profiler["ObjectCulling"] * 1000);
+            LightCulling.Add(renderer.Profiler["LightCulling"] * 1000);
+            Prepass.Add(renderer.Profiler["PrePass"] * 1000);
+            Geometry.Add(renderer.Profiler["Geometry"] * 1000);
+            SSAO.Add(renderer.Profiler["SSAO"] * 1000);
+            Lights.Add(renderer.Profiler["Lights"] * 1000);
+            PostProcessing.Add(renderer.Profiler["PostProcessing"] * 1000);
+
+            GpuTotal.Add(context.Device.Profiler["Total"] * 1000);
+            GpuUpdate.Add(context.Device.Profiler["Update"] * 1000);
+            GpuObjectCulling.Add(context.Device.Profiler["ObjectCulling"] * 1000);
+            GpuLightCulling.Add(context.Device.Profiler["LightCulling"] * 1000);
+            GpuPrepass.Add(context.Device.Profiler["PrePass"] * 1000);
+            GpuGeometry.Add(context.Device.Profiler["Geometry"] * 1000);
+            GpuSSAO.Add(context.Device.Profiler["SSAO"] * 1000);
+            GpuLights.Add(context.Device.Profiler["Lights"] * 1000);
+            GpuPostProcessing.Add(context.Device.Profiler["PostProcessing"] * 1000);
 
             Simulation.Add(simulation.Profiler[simulation] * 1000);
             PoseIntegrator.Add(simulation.Profiler[simulation.PoseIntegrator] * 1000);
@@ -189,7 +210,7 @@
                     var value = scene.Profiler[system];
                     if (!systems.TryGetValue(system, out var buffer))
                     {
-                        buffer = new RingBuffer<double>(512);
+                        buffer = new RingBuffer(512);
                         systems.Add(system, buffer);
                     }
                     buffer.Add(value * 1000);
@@ -217,7 +238,7 @@
                 ImPlot.PlotShaded("Geometry", ref Geometry.Values[0], Geometry.Length, fill, 1, 0, ImPlotShadedFlags.None, Geometry.Head);
                 ImPlot.PlotShaded("SSAO", ref SSAO.Values[0], SSAO.Length, fill, 1, 0, ImPlotShadedFlags.None, SSAO.Head);
                 ImPlot.PlotShaded("Lights", ref Lights.Values[0], Lights.Length, fill, 1, 0, ImPlotShadedFlags.None, Lights.Head);
-                ImPlot.PlotShaded("PostProcess", ref PostProcess.Values[0], PostProcess.Length, fill, 1, 0, ImPlotShadedFlags.None, PostProcess.Head);
+                ImPlot.PlotShaded("PostProcess", ref PostProcessing.Values[0], PostProcessing.Length, fill, 1, 0, ImPlotShadedFlags.None, PostProcessing.Head);
                 ImPlot.PopStyleVar();
 
                 ImPlot.PlotLine("Total", ref Graphics.Values[0], Graphics.Length, 1, 0, ImPlotLineFlags.None, Graphics.Head);
@@ -228,7 +249,34 @@
                 ImPlot.PlotLine("Geometry", ref Geometry.Values[0], Geometry.Length, 1, 0, ImPlotLineFlags.None, Geometry.Head);
                 ImPlot.PlotLine("SSAO", ref SSAO.Values[0], SSAO.Length, 1, 0, ImPlotLineFlags.None, SSAO.Head);
                 ImPlot.PlotLine("Lights", ref Lights.Values[0], Lights.Length, 1, 0, ImPlotLineFlags.None, Lights.Head);
-                ImPlot.PlotLine("PostProcess", ref PostProcess.Values[0], PostProcess.Length, 1, 0, ImPlotLineFlags.None, PostProcess.Head);
+                ImPlot.PlotLine("PostProcess", ref PostProcessing.Values[0], PostProcessing.Length, 1, 0, ImPlotLineFlags.None, PostProcessing.Head);
+                ImPlot.EndPlot();
+            }
+
+            ImPlot.SetNextAxesToFit();
+            if (ImPlot.BeginPlot("Graphics (GPU Latency)", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+            {
+                ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                ImPlot.PlotShaded("Total", ref GpuTotal.Values[0], GpuTotal.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuTotal.Head);
+                ImPlot.PlotShaded("Update", ref GpuUpdate.Values[0], GpuUpdate.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuUpdate.Head);
+                ImPlot.PlotShaded("Prepass", ref GpuPrepass.Values[0], GpuPrepass.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuPrepass.Head);
+                ImPlot.PlotShaded("Object Culling", ref GpuObjectCulling.Values[0], GpuObjectCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuObjectCulling.Head);
+                ImPlot.PlotShaded("Light Culling", ref GpuLightCulling.Values[0], GpuLightCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLightCulling.Head);
+                ImPlot.PlotShaded("Geometry", ref GpuGeometry.Values[0], GpuGeometry.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuGeometry.Head);
+                ImPlot.PlotShaded("SSAO", ref GpuSSAO.Values[0], GpuSSAO.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuSSAO.Head);
+                ImPlot.PlotShaded("Lights", ref GpuLights.Values[0], GpuLights.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuLights.Head);
+                ImPlot.PlotShaded("PostProcess", ref GpuPostProcessing.Values[0], GpuPostProcessing.Length, fill, 1, 0, ImPlotShadedFlags.None, GpuPostProcessing.Head);
+                ImPlot.PopStyleVar();
+
+                ImPlot.PlotLine("Total", ref GpuTotal.Values[0], GpuTotal.Length, 1, 0, ImPlotLineFlags.None, GpuTotal.Head);
+                ImPlot.PlotLine("Update", ref GpuUpdate.Values[0], GpuUpdate.Length, 1, 0, ImPlotLineFlags.None, GpuUpdate.Head);
+                ImPlot.PlotLine("Prepass", ref GpuPrepass.Values[0], GpuPrepass.Length, 1, 0, ImPlotLineFlags.None, GpuPrepass.Head);
+                ImPlot.PlotLine("Object Culling", ref GpuObjectCulling.Values[0], GpuObjectCulling.Length, 1, 0, ImPlotLineFlags.None, GpuObjectCulling.Head);
+                ImPlot.PlotLine("Light Culling", ref GpuLightCulling.Values[0], GpuLightCulling.Length, 1, 0, ImPlotLineFlags.None, GpuLightCulling.Head);
+                ImPlot.PlotLine("Geometry", ref GpuGeometry.Values[0], GpuGeometry.Length, 1, 0, ImPlotLineFlags.None, GpuGeometry.Head);
+                ImPlot.PlotLine("SSAO", ref GpuSSAO.Values[0], GpuSSAO.Length, 1, 0, ImPlotLineFlags.None, GpuSSAO.Head);
+                ImPlot.PlotLine("Lights", ref GpuLights.Values[0], GpuLights.Length, 1, 0, ImPlotLineFlags.None, GpuLights.Head);
+                ImPlot.PlotLine("PostProcess", ref GpuPostProcessing.Values[0], GpuPostProcessing.Length, 1, 0, ImPlotLineFlags.None, GpuPostProcessing.Head);
                 ImPlot.EndPlot();
             }
 

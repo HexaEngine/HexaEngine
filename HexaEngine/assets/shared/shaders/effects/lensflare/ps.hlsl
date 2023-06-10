@@ -28,8 +28,7 @@ float4 main(VertextoPixel PSIn) : SV_TARGET
     switch (PSIn.sel)
     {
         case 0:
-            //color = lens0.SampleLevel(clampPointSampler, PSIn.texPos.xy, 0);
-            color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+            color = lens0.SampleLevel(point_clamp_sampler, PSIn.texPos.xy, 0);
             break;
         case 1:
             color = lens1.SampleLevel(point_clamp_sampler, PSIn.texPos.xy, 0);

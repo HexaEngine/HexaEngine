@@ -7,6 +7,7 @@
     using HexaEngine.Core.Scenes;
     using System;
     using System.Collections.Generic;
+    using System.Numerics;
 
     public class RenderManager : ISystem
     {
@@ -16,7 +17,6 @@
         private readonly List<IRendererComponent> geometryQueue = new();
         private readonly List<IRendererComponent> alphaTestQueue = new();
         private readonly List<IRendererComponent> transparencyQueue = new();
-        private readonly List<IRenderComponent> components = new();
         private readonly SortRendererAscending comparer = new();
         private readonly IGraphicsDevice device;
         private readonly LightManager lights;

@@ -22,6 +22,17 @@
         [DefaultValue(0)]
         public uint StencilRef;
 
+        public GraphicsPipelineState()
+        {
+            Rasterizer = RasterizerDescription.CullBack;
+            DepthStencil = DepthStencilDescription.Default;
+            Blend = BlendDescription.Opaque;
+            Topology = PrimitiveTopology.TriangleList;
+            BlendFactor = default;
+            SampleMask = int.MaxValue;
+            StencilRef = 0;
+        }
+
         public static GraphicsPipelineState Default => new() { DepthStencil = DepthStencilDescription.Default, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleList, BlendFactor = default, SampleMask = int.MaxValue };
 
         public override bool Equals(object? obj)

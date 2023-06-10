@@ -3,18 +3,18 @@
     using System.Collections.Generic;
     using System.Diagnostics;
 
-    public readonly struct CpuProfiler
+    public class CPUProfiler
     {
-        private readonly Dictionary<object, double> stages;
-        private readonly Dictionary<object, long> startTimeStamps;
+        private readonly Dictionary<string, double> stages;
+        private readonly Dictionary<string, long> startTimeStamps;
 
-        public CpuProfiler(int initialStageCount)
+        public CPUProfiler(int initialStageCount)
         {
-            stages = new Dictionary<object, double>(initialStageCount);
-            startTimeStamps = new Dictionary<object, long>(initialStageCount);
+            stages = new Dictionary<string, double>(initialStageCount);
+            startTimeStamps = new Dictionary<string, long>(initialStageCount);
         }
 
-        public double this[object stage]
+        public double this[string stage]
         {
             get
             {
@@ -27,12 +27,12 @@
             }
         }
 
-        public void Start(object o)
+        public void Begin(string o)
         {
             startTimeStamps.Add(o, Stopwatch.GetTimestamp());
         }
 
-        public void End(object o)
+        public void End(string o)
         {
             long timestamp = Stopwatch.GetTimestamp();
             if (!stages.TryGetValue(o, out var value))
@@ -41,12 +41,6 @@
             }
 
             stages[o] = value + (timestamp - startTimeStamps[o]) / (double)Stopwatch.Frequency;
-            startTimeStamps.Remove(o);
-        }
-
-        public void Set(object o, double value)
-        {
-            stages[o] = value;
             startTimeStamps.Remove(o);
         }
 

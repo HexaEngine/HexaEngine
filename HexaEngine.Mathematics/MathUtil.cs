@@ -425,6 +425,11 @@
             roll = 0;
         }
 
+        public static float Exp2(float x)
+        {
+            return MathF.Pow(2, x);
+        }
+
         public static Vector2 Ceiling(this Vector2 value)
         {
             return new Vector2(MathF.Ceiling(value.X), MathF.Ceiling(value.Y));
@@ -438,6 +443,66 @@
         public static Vector4 Ceiling(this Vector4 value)
         {
             return new Vector4(MathF.Ceiling(value.X), MathF.Ceiling(value.Y), MathF.Ceiling(value.Z), MathF.Ceiling(value.W));
+        }
+
+        public static Vector2 Pow(Vector2 a, float b)
+        {
+            return new(MathF.Pow(a.X, b), MathF.Pow(a.Y, b));
+        }
+
+        public static Vector3 Pow(Vector3 a, float b)
+        {
+            return new(MathF.Pow(a.X, b), MathF.Pow(a.Y, b), MathF.Pow(a.Z, b));
+        }
+
+        public static Vector4 Pow(Vector4 a, float b)
+        {
+            return new(MathF.Pow(a.X, b), MathF.Pow(a.Y, b), MathF.Pow(a.Z, b), MathF.Pow(a.W, b));
+        }
+
+        public static Vector2 Pow(Vector2 a, Vector2 b)
+        {
+            return new(MathF.Pow(a.X, b.X), MathF.Pow(a.Y, b.Y));
+        }
+
+        public static Vector3 Pow(Vector3 a, Vector3 b)
+        {
+            return new(MathF.Pow(a.X, b.X), MathF.Pow(a.Y, b.Y), MathF.Pow(a.Z, b.Z));
+        }
+
+        public static Vector4 Pow(Vector4 a, Vector4 b)
+        {
+            return new(MathF.Pow(a.X, b.X), MathF.Pow(a.Y, b.Y), MathF.Pow(a.Z, b.Z), MathF.Pow(a.W, b.W));
+        }
+
+        public static Vector2 Exp(Vector2 a)
+        {
+            return new(MathF.Exp(a.X), MathF.Exp(a.Y));
+        }
+
+        public static Vector3 Exp(Vector3 a)
+        {
+            return new(MathF.Exp(a.X), MathF.Exp(a.Y), MathF.Exp(a.Z));
+        }
+
+        public static Vector4 Exp(Vector4 a)
+        {
+            return new(MathF.Exp(a.X), MathF.Exp(a.Y), MathF.Exp(a.Z), MathF.Exp(a.W));
+        }
+
+        public static Vector2 Exp2(Vector2 a)
+        {
+            return new(Exp2(a.X), Exp2(a.Y));
+        }
+
+        public static Vector3 Exp2(Vector3 a)
+        {
+            return new(Exp2(a.X), Exp2(a.Y), Exp2(a.Z));
+        }
+
+        public static Vector4 Exp2(Vector4 a)
+        {
+            return new(Exp2(a.X), Exp2(a.Y), Exp2(a.Z), Exp2(a.W));
         }
     }
 }

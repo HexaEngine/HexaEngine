@@ -54,6 +54,8 @@
 
         public GraphicsBackend Backend => GraphicsBackend.D3D12;
 
+        public IGPUProfiler Profiler { get; }
+
         public event EventHandler? OnDisposed;
 
         public IBuffer CreateBuffer(BufferDescription description)

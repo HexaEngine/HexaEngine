@@ -7,14 +7,11 @@
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
 
-Texture2D colorTexture : register(t0);
-Texture2D positionTexture : register(t1);
-Texture2D normalTexture : register(t2);
-Texture2D cleancoatNormalTexture : register(t3);
-Texture2D emissionTexture : register(t4);
-Texture2D misc0Texture : register(t5);
-Texture2D misc1Texture : register(t6);
-Texture2D misc2Texture : register(t7);
+Texture2D GBufferA : register(t0);
+Texture2D GBufferB : register(t1);
+Texture2D GBufferC : register(t2);
+Texture2D GBufferD : register(t3);
+Texture2D<float> Depth : register(t4);
 Texture2D ssao : register(t8);
 Texture2D brdfLUT : register(t9);
 StructuredBuffer<GlobalProbe> globalProbes : register(t10);
@@ -46,26 +43,17 @@ struct VSOut
     float2 Tex : TEXCOORD;
 };
 
-float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
+float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs)
 {
-    float3 position = attrs.pos;
-    float3 baseColor = attrs.albedo;
+    float3 baseColor = attrs.baseColor;
 
-    float specular = attrs.specular;
-    float specularTint = attrs.speculartint;
-    float sheen = attrs.sheen;
-    float sheenTint = attrs.sheentint;
-    float clearcoat = attrs.clearcoat;
-    float clearcoatGloss = attrs.clearcoatGloss;
-    float anisotropic = attrs.anisotropic;
-    float subsurface = attrs.subsurface;
     float roughness = attrs.roughness;
-    float metallic = attrs.metalness;
+    float metallic = attrs.metallic;
 
     float3 N = normalize(attrs.normal);
     float3 V = normalize(GetCameraPos() - position);
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
-    float3 ambient = 0;
+    float3 ambient = attrs.emission * attrs.emissionStrength;
     
     float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
     
@@ -73,31 +61,18 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
     for (uint i = 0; i < params.globalProbeCount; i++)
     {
         ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, F0, N, V, baseColor, roughness, ao);
-        //ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
     }
 
     
-    return float4(ambient + attrs.emission, 1);
+    return float4(ambient, 1);
 }
 
 float4 main(VSOut pixel) : SV_TARGET
 {
+    float depth = Depth.Sample(SampleTypePoint, pixel.Tex);
+    float3 position = GetPositionWS(pixel.Tex, depth);
     GeometryAttributes attrs;
-    ExtractGeometryData(
-	pixel.Tex,
-	colorTexture,
-	positionTexture,
-	normalTexture,
-	cleancoatNormalTexture,
-	emissionTexture,
-	misc0Texture,
-	misc1Texture,
-	misc2Texture,
-	SampleTypeAnsio,
-	attrs);
+    ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, SampleTypePoint, attrs);
 
-    if (attrs.opacity < 0.1)
-        discard;
-
-    return ComputeLightingPBR(pixel, attrs);
+    return ComputeLightingPBR(pixel, position, attrs);
 }

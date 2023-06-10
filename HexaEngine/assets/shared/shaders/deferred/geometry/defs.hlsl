@@ -3,13 +3,13 @@
 #define VtxColor 0
 #endif
 #ifndef VtxPosition
-#define VtxPosition 0
+#define VtxPosition 1
 #endif
 #ifndef VtxUV
 #define VtxUV 0
 #endif
 #ifndef VtxNormal
-#define VtxNormal 0
+#define VtxNormal 1
 #endif
 #ifndef VtxTangent
 #define VtxTangent 0

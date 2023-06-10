@@ -10,30 +10,6 @@
 #ifndef Metalness
 #define Metalness 0
 #endif
-#ifndef Specular
-#define Specular 0.5
-#endif
-#ifndef SpecularTint
-#define SpecularTint 0
-#endif
-#ifndef Sheen
-#define Sheen 0
-#endif
-#ifndef SheenTint
-#define SheenTint 1
-#endif
-#ifndef Clearcoat
-#define Clearcoat 0
-#endif
-#ifndef ClearcoatGloss
-#define ClearcoatGloss 1
-#endif
-#ifndef Anisotropic
-#define Anisotropic 0
-#endif
-#ifndef Subsurface
-#define Subsurface 0
-#endif
 #ifndef Ao
 #define Ao 1
 #endif
@@ -162,14 +138,6 @@ GeometryData main(PixelInput input)
     float opacity = 1;
 
     float ao = Ao;
-    float specular = Specular;
-    float specularTint = SpecularTint;
-    float sheen = Sheen;
-    float sheenTint = SheenTint;
-    float clearcoat = Clearcoat;
-    float clearcoatGloss = ClearcoatGloss;
-    float anisotropic = Anisotropic;
-    float subsurface = Subsurface;
     float roughness = Roughness;
     float metalness = Metalness;
 #if VtxUV
@@ -218,9 +186,7 @@ GeometryData main(PixelInput input)
 #endif
     if (baseColor.a == 0)
         discard;
-#if !VtxTangent
-    float3 tangent = float3(0, 1, 0);
-#endif
 
-    return PackGeometryData(baseColor.rgb, baseColor.a, pos, 1, normal, roughness, metalness, tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
+    int matID  = -1;
+    return PackGeometryData(matID, baseColor.rgb, normal, roughness, metalness, 0, ao, 0, emissive, 1);
 }

@@ -16,6 +16,8 @@
 
         ITextureLoader TextureLoader { get; }
 
+        IGPUProfiler Profiler { get; }
+
         public ISwapChain CreateSwapChain(SdlWindow window);
 
         /// <summary>

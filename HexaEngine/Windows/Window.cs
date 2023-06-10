@@ -15,6 +15,7 @@ namespace HexaEngine.Windows
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
+    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
     using CullingManager = CullingManager;
@@ -75,6 +76,7 @@ namespace HexaEngine.Windows
         {
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
+            graphicsDevice.Profiler.CreateBlock("Total");
             graphicsContext = graphicsDevice.Context;
             swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             swapChain.Active = true;
@@ -197,10 +199,14 @@ namespace HexaEngine.Windows
                         Time.Initialize();
                         firstFrame = false;
                     }
+                    Device.Profiler.BeginFrame();
+                    Device.Profiler.Begin(Context, "Total");
                     sceneRenderer.Profiler.Clear();
-                    sceneRenderer.Profiler.Start(sceneRenderer);
+                    sceneRenderer.Profiler.Begin("Total");
                     sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
-                    sceneRenderer.Profiler.End(sceneRenderer);
+                    sceneRenderer.Profiler.End("Total");
+                    Device.Profiler.End(Context, "Total");
+                    Device.Profiler.EndFrame(context);
                 }
             }
 

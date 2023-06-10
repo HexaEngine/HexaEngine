@@ -163,6 +163,8 @@
 
         public IShaderResourceView? SRV => srv;
 
+        public IRenderTargetView? RTV => rtv;
+
         public nint NativePointer => texture.NativePointer;
 
         public string? DebugName { get => texture.DebugName; set => texture.DebugName = value; }

@@ -13,6 +13,7 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Effects;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;

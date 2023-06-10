@@ -8,8 +8,4 @@
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Folder Include="HosekWilkie\" />
-	</ItemGroup>
 </Project>

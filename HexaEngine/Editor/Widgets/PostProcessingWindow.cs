@@ -16,7 +16,7 @@
                 return;
             }
 
-            var manager = renderer.PostProcess;
+            var manager = renderer.PostProcessing;
 
             var effects = manager.Effects;
 

@@ -7,14 +7,11 @@
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
 
-Texture2D colorTexture : register(t0);
-Texture2D positionTexture : register(t1);
-Texture2D normalTexture : register(t2);
-Texture2D cleancoatNormalTexture : register(t3);
-Texture2D emissionTexture : register(t4);
-Texture2D misc0Texture : register(t5);
-Texture2D misc1Texture : register(t6);
-Texture2D misc2Texture : register(t7);
+Texture2D GBufferA : register(t0);
+Texture2D GBufferB : register(t1);
+Texture2D GBufferC : register(t2);
+Texture2D GBufferD : register(t3);
+Texture2D<float> Depth : register(t4);
 Texture2D ssao : register(t8);
 
 StructuredBuffer<DirectionalLightSD> directionalLights : register(t9);
@@ -227,31 +224,16 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, floa
 #endif
 }
 
-float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
+float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs)
 {
-    float3 position = attrs.pos;
-    float3 baseColor = attrs.albedo;
-
-    float specular = attrs.specular;
-    float specularTint = attrs.speculartint;
-    float sheen = attrs.sheen;
-    float sheenTint = attrs.sheentint;
-    float clearcoat = attrs.clearcoat;
-    float clearcoatGloss = attrs.clearcoatGloss;
-    float anisotropic = attrs.anisotropic;
-    float subsurface = attrs.subsurface;
+    float3 baseColor = attrs.baseColor;
     float roughness = attrs.roughness;
-    float metalness = attrs.metalness;
+    float metallic = attrs.metallic;
 
     float3 N = normalize(attrs.normal);
-    float3 X = normalize(attrs.tangent);
-    float3 Y = normalize(cross(N, X));
-
     float3 V = normalize(GetCameraPos() - position);
 
-	//float IOR = 1.5;
-	//float3 F0 = float3(pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0), pow(IOR - 1.0, 2.0) / pow(IOR + 1.0, 2.0));
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metalness);
+	float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
 
     float3 Lo = float3(0, 0, 0);
 
@@ -260,13 +242,12 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
     {
         DirectionalLightSD light = directionalLights[y];
         float bias = max(0.05f * (1.0 - dot(N, V)), 0.005f);
-        float shadow = ShadowCalculation(light, attrs.pos, N, depthCSM, SampleTypeAnsio);
+        float shadow = ShadowCalculation(light, position, N, depthCSM, SampleTypeAnsio);
         float3 L = normalize(-light.dir);
         float3 radiance = light.color.rgb;
         if (shadow == 1)
             continue;
-        Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
-        //Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
     }
 
 	[unroll(32)]
@@ -279,11 +260,10 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
-        float shadow = ShadowCalculation(light, attrs.pos, V, depthOSM[zd], SampleTypeAnsio);
+        float shadow = ShadowCalculation(light, position, V, depthOSM[zd], SampleTypeAnsio);
         if (shadow == 1)
             continue;
-        Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
-        //Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
     }
 
 	[unroll(32)]
@@ -304,11 +284,10 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
                 falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
             float3 radiance = light.color.rgb * attenuation * falloff;
             float bias = max(0.00025f * (1.0f - dot(N, L)), 0.000005f);
-            float shadow = ShadowCalculation(light, attrs.pos, bias, depthPSM[wd], SampleTypeAnsio);
+            float shadow = ShadowCalculation(light, position, bias, depthPSM[wd], SampleTypeAnsio);
             if (shadow == 1)
                 continue;
-            Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
-            //Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+            Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
         }
     }
 
@@ -318,22 +297,10 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
 
 float4 main(VSOut pixel) : SV_TARGET
 {
+    float depth = Depth.Sample(SampleTypePoint, pixel.Tex);
+    float3 position = GetPositionWS(pixel.Tex, depth);
     GeometryAttributes attrs;
-    ExtractGeometryData(
-	pixel.Tex,
-	colorTexture,
-	positionTexture,
-	normalTexture,
-	cleancoatNormalTexture,
-	emissionTexture,
-	misc0Texture,
-	misc1Texture,
-	misc2Texture,
-	SampleTypeAnsio,
-	attrs);
+    ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, SampleTypePoint, attrs);
 
-    if (attrs.opacity < 0.1)
-        discard;
-
-    return ComputeLightingPBR(pixel, attrs);
+    return ComputeLightingPBR(pixel, position, attrs);
 }

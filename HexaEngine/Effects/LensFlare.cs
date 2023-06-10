@@ -83,13 +83,13 @@
             lightBuffer = new(device, CpuAccessFlags.Write);
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("PrePass.SRV");
 
-            lens0 = new Texture2D(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/Flare_Hex.dds"));
-            lens1 = lens0;
-            lens2 = lens0;
-            lens3 = lens0;
-            lens4 = lens0;
-            lens5 = lens0;
-            lens6 = lens0;
+            lens0 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex1.png"));
+            lens1 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex2.png"));
+            lens2 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex3.png"));
+            lens3 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex4.png"));
+            lens4 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex5.png"));
+            lens5 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex6.png"));
+            lens6 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex7.png"));
 
             Viewport = new(width, height);
         }

@@ -339,8 +339,7 @@ GeometryData main(PixelInput input)
 
     float opacity = mask.x + mask.y + mask.z + mask.w;
     
-    if (opacity == 0)
-        discard;
+    int matID = -1;
 
-    return PackGeometryData(baseColor0.rgb, opacity, pos, input.depth, normal, roughness0, metalness0, tangent, emissive0, 0, specular0, specularTint0, ao0, 1, anisotropic0, 0, clearcoat0, clearcoatGloss0, 0, 0, sheen0, sheenTint0);
+    return PackGeometryData(matID, baseColor0.rgb, normal, roughness0, metalness0, 0, ao0, 0, emissive0, 1);
 }

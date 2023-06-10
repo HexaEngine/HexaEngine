@@ -261,8 +261,8 @@
 
             var csmPipelineDesc = new GraphicsPipelineDesc()
             {
-                VertexShader = "deferred/terrain/csm/vs.hlsl",
-                GeometryShader = "deferred/terrain/csm/gs.hlsl",
+                VertexShader = "forward/terrain/csm/vs.hlsl",
+                GeometryShader = "forward/terrain/csm/gs.hlsl",
             };
             var csmPipelineState = new GraphicsPipelineState()
             {
@@ -274,9 +274,9 @@
 
             var osmPipelineDesc = new GraphicsPipelineDesc()
             {
-                VertexShader = "deferred/terrain/osm/vs.hlsl",
-                GeometryShader = "deferred/terrain/osm/gs.hlsl",
-                PixelShader = "deferred/terrain/osm/ps.hlsl",
+                VertexShader = "forward/terrain/osm/vs.hlsl",
+                GeometryShader = "forward/terrain/osm/gs.hlsl",
+                PixelShader = "forward/terrain/osm/ps.hlsl",
             };
             var osmPipelineState = new GraphicsPipelineState()
             {
@@ -288,8 +288,8 @@
 
             var psmPipelineDesc = new GraphicsPipelineDesc()
             {
-                VertexShader = "deferred/terrain/psm/vs.hlsl",
-                PixelShader = "deferred/terrain/psm/ps.hlsl",
+                VertexShader = "forward/terrain/psm/vs.hlsl",
+                PixelShader = "forward/terrain/psm/ps.hlsl",
             };
             var psmPipelineState = new GraphicsPipelineState()
             {

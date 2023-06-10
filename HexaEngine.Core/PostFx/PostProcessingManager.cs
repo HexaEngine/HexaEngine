@@ -7,7 +7,7 @@
     using System.Diagnostics.CodeAnalysis;
     using Texture = Graphics.Texture;
 
-    public class PostProcessManager : IDisposable
+    public class PostProcessingManager : IDisposable
     {
         private ShaderMacro[] macros;
         private readonly List<IPostFx> effectsSorted = new();
@@ -19,9 +19,9 @@
         private int width;
         private int height;
 
-#pragma warning disable CS0649 // Field 'PostProcessManager.list' is never assigned to, and will always have its default value null
+#if PostFX_Deferred
         private ICommandList? list;
-#pragma warning restore CS0649 // Field 'PostProcessManager.list' is never assigned to, and will always have its default value null
+#endif
         private bool isDirty = true;
         private bool isInitialized = false;
         private int swapIndex;
@@ -36,7 +36,7 @@
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessManager(IGraphicsDevice device, int width, int height, int bufferCount = 2)
+        public PostProcessingManager(IGraphicsDevice device, int width, int height, int bufferCount = 2)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
@@ -231,7 +231,9 @@
 
         public void BeginResize()
         {
+#if PostFX_Deferred
             list?.Dispose();
+#endif
             isDirty = true;
         }
 
@@ -464,7 +466,9 @@
                     buffers[i].Dispose();
                 }
                 buffers.Clear();
+#if PostFX_Deferred
                 list?.Dispose();
+#endif
                 deferredContext.Dispose();
                 quad.Dispose();
                 copy.Dispose();
@@ -472,7 +476,7 @@
             }
         }
 
-        ~PostProcessManager()
+        ~PostProcessingManager()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
