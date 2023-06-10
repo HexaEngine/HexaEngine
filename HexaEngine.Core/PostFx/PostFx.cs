@@ -23,9 +23,7 @@
 
         public PrimitiveTopology Topology { get; set; }
 
-#pragma warning disable CS8618 // Non-nullable property 'Name' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         public string Name { get; set; }
-#pragma warning restore CS8618 // Non-nullable property 'Name' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
         public PostFxFlags Flags { get; set; }
 
@@ -36,6 +34,10 @@
         public int Priority { get; set; }
 
         public PostFxPassCollection Passes { get; set; } = new();
+
+        public event Action<bool> OnEnabledChanged;
+
+        public event Action<int> OnPriorityChanged;
 
         public void Save(string path)
         {
@@ -78,12 +80,12 @@
             throw new NotImplementedException();
         }
 
-        public void SetInput(IShaderResourceView view)
+        public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             throw new NotImplementedException();
         }
 
-        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             throw new NotImplementedException();
         }

@@ -49,7 +49,7 @@
             for (int i = 0; i < PipelineManager.ComputePipelines.Count; i++)
             {
                 IComputePipeline pipeline = PipelineManager.ComputePipelines[i];
-                if (ImGui.Button(pipeline.Name))
+                if (ImGui.Button(pipeline.DebugName))
                 {
                     Recompile(pipeline);
                 }

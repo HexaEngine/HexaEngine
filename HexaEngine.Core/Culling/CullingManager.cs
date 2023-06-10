@@ -182,7 +182,7 @@
             context.CSSetUnorderedAccessViews(occlusionUavs, 3, 0);
             context.CSSetSampler(sampler, 0);
             context.CSSetConstantBuffers(occlusionCbs, 2, 0);
-            occlusion.Dispatch(context, instanceCount / 1024 + 1, 1, 1);
+            occlusion.Dispatch(context, (uint)instanceCount / 1024 + 1, 1, 1);
             context.ClearState();
 
             swapBuffer.CopyTo(context, drawIndirectArgs.Buffer);

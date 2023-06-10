@@ -128,8 +128,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
 #endif
 
 #if VtxPosition
-    output.position = mul(output.position, view);
-    output.position = mul(output.position, proj);
+    output.position = mul(output.position, viewProj);
 #endif
 
     output.vertexId = vertexId;
@@ -193,8 +192,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
     
     output.pos = output.position;
     output.position = mul(output.position, world);
-    output.position = mul(output.position, view);
-    output.position = mul(output.position, proj);
+    output.position = mul(output.position, viewProj);
     output.vertexId = vertexId;
     
     return output;

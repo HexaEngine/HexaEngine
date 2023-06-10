@@ -11,6 +11,8 @@
 
         public void SetGraphicsPipeline(IGraphicsPipeline pipeline);
 
+        public void SetComputePipeline(IComputePipeline pipeline);
+
         void CopyResource(IResource dst, IResource src);
 
         unsafe void Write(IBuffer buffer, void* value, int size);
@@ -159,7 +161,7 @@
 
         void Flush();
 
-        void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ);
+        void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ);
 
         void GenerateMips(IShaderResourceView resourceView);
 
@@ -172,6 +174,8 @@
         unsafe void CSSetUnorderedAccessViews(uint offset, void** views, uint count, int uavInitialCounts = -1);
 
         unsafe void CSSetUnorderedAccessViews(void** views, uint count, int uavInitialCounts = -1);
+
+        unsafe void CSSetUnorderedAccessView(void* view, uint offset, int uavInitialCounts = -1);
 
         unsafe void SetRenderTargets(void** views, uint count, IDepthStencilView? depthStencilView);
 

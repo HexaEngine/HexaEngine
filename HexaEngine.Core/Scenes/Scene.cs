@@ -61,7 +61,7 @@
         public string[] CameraNames => cameraNames.GetInternalArray();
 
         [JsonIgnore]
-        public LightManager Lights => lightManager;
+        public LightManager LightManager => lightManager;
 
         [JsonIgnore]
         public List<GameObject> Nodes => nodes;

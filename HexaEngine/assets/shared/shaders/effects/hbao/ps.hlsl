@@ -5,7 +5,7 @@ struct VSOut
     float2 Tex : TEXCOORD;
 };
 
-Texture2D positionTexture : register(t0);
+Texture2D<float> depthTexture : register(t0);
 Texture2D normalTexture : register(t1);
 
 SamplerState samplerState;
@@ -59,7 +59,7 @@ float4 main(VSOut input) : SV_Target
     }
 
     // reconstruct the view space position from the depth map
-    float start_Z = positionTexture.Sample(samplerState, input.Tex).r;
+    float start_Z = depthTexture.Sample(samplerState, input.Tex);
     float start_Y = 1.0 - input.Tex.y; // texture coordinates for D3D have origin in top left, but in camera space origin is in bottom left
     float2 start_Pos = float2(input.Tex.x, start_Y);
     float2 ndc_Pos = (2.0 * start_Pos) - 1.0;
@@ -87,7 +87,7 @@ float4 main(VSOut input) : SV_Target
             float2 sampleOffset = float(j + 1) * SAMPLING_STEP * sampleDir;
             float2 offTex = input.Tex + float2(sampleOffset.x, -sampleOffset.y);
 
-            float off_start_Z = positionTexture.Sample(samplerState, offTex).r;
+            float off_start_Z = depthTexture.Sample(samplerState, offTex);
             float2 off_start_Pos = float2(offTex.x, start_Y + sampleOffset.y);
             float2 off_ndc_Pos = (2.0 * off_start_Pos) - 1.0;
             float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_start_Z, 1.0), projInv);

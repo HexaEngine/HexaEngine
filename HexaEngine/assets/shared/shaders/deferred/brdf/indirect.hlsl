@@ -2,7 +2,8 @@
 // Filename: light.ps
 ////////////////////////////////////////////////////////////////////////////////
 #include "../../gbuffer.hlsl"
-#include "../../brdf.hlsl"
+//#include "../../brdf.hlsl"
+#include "../../brdf2.hlsl"
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
 
@@ -66,10 +67,13 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
     float3 ambient = 0;
     
+    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
+    
     [unroll(4)]
     for (uint i = 0; i < params.globalProbeCount; i++)
     {
-        ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
+        ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, F0, N, V, baseColor, roughness, ao);
+        //ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor, metallic, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
     }
 
     

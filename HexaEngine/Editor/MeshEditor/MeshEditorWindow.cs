@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Meshes.Processing;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
@@ -405,7 +406,7 @@
                 return;
             }
 
-            *cameraBuffer.Local = new(camera);
+            *cameraBuffer.Local = new(camera, new(Viewport.Width, Viewport.Height));
             cameraBuffer.Update(context);
 
             RecalculateTransforms();

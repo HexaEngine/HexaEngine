@@ -222,12 +222,13 @@
 
             if (pipeline != null)
             {
-                view[0] = new(outputNode.Camera);
+                view[0] = new(outputNode.Camera, new(256, 256));
                 view.Update(context);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                outputNode.Texture.ClearAndSetTarget(context, default, DepthStencilClearFlags.All);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                context.ClearRenderTargetView(outputNode.Texture.RenderTargetView, default);
+                context.ClearDepthStencilView(outputNode.DepthStencil.DSV, DepthStencilClearFlags.All, 1, 0);
+                context.SetRenderTarget(outputNode.Texture.RenderTargetView, outputNode.DepthStencil.DSV);
+
                 for (int i = 0; i < textureFiles.Count; i++)
                 {
                     context.PSSetShaderResource(textureFiles[i].Image, i);

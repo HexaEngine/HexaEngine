@@ -28,7 +28,7 @@
 
         public void VisibilityTest(IGraphicsContext context);
 
-        public void DrawDepth(IGraphicsContext context, IBuffer camera);
+        public void DrawDepth(IGraphicsContext context);
 
         public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type);
 

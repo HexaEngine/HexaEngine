@@ -28,10 +28,10 @@ void main(point GeometryInput input[1], inout TriangleStream<PixelInput> triStre
     
     PixelInput output = (PixelInput) 0;
     output.color = float4(0, 0, 0, 1);
-    float4 pos0 = mul(mul(v[0], view), proj);
-    float4 pos1 = mul(mul(v[1], view), proj);
-    float4 pos2 = mul(mul(v[3], view), proj);
-    float4 pos3 = mul(mul(v[2], view), proj);
+    float4 pos0 = mul(v[0], viewProj);
+    float4 pos1 = mul(v[1], viewProj);
+    float4 pos2 = mul(v[3], viewProj);
+    float4 pos3 = mul(v[2], viewProj);
     
     output.position = pos0;
     triStream.Append(output);

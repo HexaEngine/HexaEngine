@@ -14,6 +14,8 @@
 
         void Recompile();
 
+        ShaderMacro[]? Macros { get; set; }
+
         /// <summary>
         /// Indicates that the pipeline is initialized.
         /// </summary>

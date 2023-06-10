@@ -180,6 +180,17 @@
             context.Write(buffer, items, buffer.Description.ByteWidth);
         }
 
+        public void Set(IGraphicsContext context, T value)
+        {
+            *items = value;
+            if (description.Usage != Usage.Dynamic)
+            {
+                throw new InvalidOperationException();
+            }
+
+            context.Write(buffer, items, buffer.Description.ByteWidth);
+        }
+
         public void Dispose()
         {
             count = 0;

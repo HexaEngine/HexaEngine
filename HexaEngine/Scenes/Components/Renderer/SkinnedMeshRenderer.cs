@@ -231,7 +231,7 @@
             boneMatrixBuffer.Update(context);
         }
 
-        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        public void DrawDepth(IGraphicsContext context)
         {
             if (drawables == null) return;
 
@@ -259,7 +259,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, camera, (uint)mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDepth(context, camera.Value, (uint)mesh.IndexCount, (uint)drawable.Length);
 
                 matrixOffset += (uint)drawable.Length;
                 boneMatrixOffset += mesh.Data.BoneCount;

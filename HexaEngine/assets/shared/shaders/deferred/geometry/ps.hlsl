@@ -138,6 +138,7 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
     return bumpedNormalW;
 }
 
+[earlydepthstencil]
 GeometryData main(PixelInput input)
 {
 #if VtxColor
@@ -221,5 +222,5 @@ GeometryData main(PixelInput input)
     float3 tangent = float3(0, 1, 0);
 #endif
 
-    return PackGeometryData(baseColor.rgb, baseColor.a, pos, input.depth, normal, roughness, metalness, tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
+    return PackGeometryData(baseColor.rgb, baseColor.a, pos, 1, normal, roughness, metalness, tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
 }

@@ -10,6 +10,8 @@ cbuffer WorldBuffer
     float4x4 world;
 };
 
+Texture2D<float> Heightmap;
+
 PixelInput main(VertexInput input)
 {
     PixelInput output;

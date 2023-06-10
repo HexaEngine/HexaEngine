@@ -9,11 +9,15 @@
 
     public interface ISceneRenderer : IDisposable
     {
-        RendererProfiler Profiler { get; }
+        CpuProfiler Profiler { get; }
 
         object Update { get; }
 
-        object Culling { get; }
+        object Prepass { get; }
+
+        object ObjectCulling { get; }
+
+        object LightCulling { get; }
 
         object Geometry { get; }
 

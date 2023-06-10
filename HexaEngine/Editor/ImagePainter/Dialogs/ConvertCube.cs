@@ -5,7 +5,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Effects.Filter;
+    using HexaEngine.Filters;
     using ImGuiNET;
     using Silk.NET.DirectStorage;
 

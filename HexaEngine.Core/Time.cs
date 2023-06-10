@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Debugging;
     using System;
     using System.Diagnostics;
 
@@ -31,12 +32,13 @@
         public static void FrameUpdate()
         {
             long now = Stopwatch.GetTimestamp();
-            double deltaTime = ((double)now - last) / Stopwatch.Frequency;
+            double deltaTime = (double)(now - last) / Stopwatch.Frequency;
+            last = now;
 
-            // Calculate the frame time by the time difference over the timer speed resolution.
             Delta = (float)deltaTime;
             cumulativeFrameTime += Delta;
             fixedTime += Delta;
+
             if (deltaTime == 0 || deltaTime < 0)
             {
                 throw new InvalidOperationException();
@@ -47,8 +49,6 @@
                 fixedTime -= FixedUpdatePerSecond;
                 FixedUpdate?.Invoke(null, EventArgs.Empty);
             }
-
-            last = now;
         }
     }
 }

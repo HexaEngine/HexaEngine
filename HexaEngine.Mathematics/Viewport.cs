@@ -137,6 +137,10 @@
             }
         }
 
+        public Vector2 Offset => new(X, Y);
+
+        public Vector2 Size => new(Width, Height);
+
         /// <summary>
         /// Projects a 3D vector from object space into screen space.
         /// </summary>

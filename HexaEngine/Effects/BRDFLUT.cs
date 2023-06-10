@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
@@ -41,8 +40,8 @@ namespace HexaEngine.Effects
             quad = new Quad(device);
             pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
-                VertexShader = "effects/lut/vs.hlsl",
-                PixelShader = "effects/lut/brdf.hlsl"
+                VertexShader = "effects/brdf/vs.hlsl",
+                PixelShader = "effects/brdf/brdf.hlsl"
             });
         }
 

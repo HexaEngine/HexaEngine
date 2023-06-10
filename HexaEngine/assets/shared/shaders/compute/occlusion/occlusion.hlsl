@@ -74,7 +74,7 @@ void main(uint3 threadID : SV_DispatchThreadID)
         for (int i = 0; i < 8; i++)
         {
 		    //transform world space aaBox to NDC
-            float4 clipPos = mul(float4(boxCorners[i], 1), mul(view, proj));
+            float4 clipPos = mul(float4(boxCorners[i], 1), viewProj);
 
             clipPos.z = max(clipPos.z, 0);
 

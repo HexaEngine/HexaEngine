@@ -136,7 +136,7 @@
                 context.CSSetUnorderedAccessViews(&pUavs[i], (uint)Mips);
                 context.CSSetShaderResource(srvs[i - 1], 0);
                 context.CSSetSampler(samplerState, 0);
-                downsample.Dispatch(context, (int)viewports[i].Width, (int)viewports[i].Height, 1);
+                downsample.Dispatch(context, (uint)viewports[i].Width, (uint)viewports[i].Height, 1);
             }
 
             context.ClearState();
@@ -158,7 +158,7 @@
                 context.CSSetUnorderedAccessViews(&pUavs[i], 1);
                 context.CSSetShaderResource(srvs[i - 1], 0);
                 context.CSSetSampler(samplerState, 0);
-                downsample.Dispatch(context, (int)viewports[i].Width / 32 + 1, (int)viewports[i].Height / 32 + 1, 1);
+                downsample.Dispatch(context, (uint)viewports[i].Width / 32 + 1, (uint)viewports[i].Height / 32 + 1, 1);
             }
 
             context.ClearState();

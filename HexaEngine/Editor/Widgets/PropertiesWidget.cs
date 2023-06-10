@@ -135,7 +135,7 @@ namespace HexaEngine.Editor.Widgets
 
                 if (!editor.IsEmpty)
                 {
-                    editor.Draw();
+                    editor.Draw(context);
                 }
             }
 
@@ -204,19 +204,24 @@ namespace HexaEngine.Editor.Widgets
                 var component = element.Components[i];
                 var editor = ObjectEditorFactory.CreateEditor(component.GetType());
                 editor.Instance = component;
-                if (ImGui.CollapsingHeader(editor.Name))
+                if (ImGui.BeginChild(editor.Name, ImGuiWindowFlags.AlwaysAutoResize))
                 {
-                    if (ImGui.BeginPopupContextWindow(editor.Name))
+                    if (ImGui.CollapsingHeader(editor.Name))
                     {
-                        if (ImGui.MenuItem("Delete"))
+                        if (ImGui.BeginPopupContextWindow(editor.Name))
                         {
-                            scene.Dispatcher.Invoke((element, component), GameObject.RemoveComponent);
+                            if (ImGui.MenuItem("Delete"))
+                            {
+                                scene.Dispatcher.Invoke((element, component), GameObject.RemoveComponent);
+                            }
+                            ImGui.EndPopup();
                         }
-                        ImGui.EndPopup();
-                    }
 
-                    editor?.Draw();
+                        editor?.Draw(context);
+                    }
                 }
+
+                ImGui.EndChild();
             }
 
             EndWindow();

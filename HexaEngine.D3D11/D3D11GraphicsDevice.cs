@@ -27,7 +27,7 @@
         protected bool disposedValue;
 
         public static readonly ShaderCompiler Compiler;
-
+        private long graphicsMemoryUsage;
         public ComPtr<ID3D11Device1> Device;
         public ComPtr<ID3D11DeviceContext1> DeviceContext;
 
@@ -98,6 +98,8 @@
 
         public ITextureLoader TextureLoader { get; }
 
+        public long GraphicsMemoryUsage => graphicsMemoryUsage;
+
         public string? DebugName { get; set; } = string.Empty;
 
         public nint NativePointer { get; protected set; }
@@ -113,9 +115,14 @@
             return adapter.CreateSwapChainForWindow(this, window);
         }
 
-        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc)
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new ComputePipeline(this, desc);
+            return new ComputePipeline(this, desc, $"({nameof(ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return new ComputePipeline(this, desc, macros, $"({nameof(ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)

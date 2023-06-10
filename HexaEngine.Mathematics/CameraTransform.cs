@@ -7,6 +7,8 @@
         protected Matrix4x4 projection;
         protected Matrix4x4 projectionInv;
         protected Matrix4x4 viewProjection;
+        protected Matrix4x4 viewProjectionInv;
+        protected Matrix4x4 prevViewProjection;
         protected ProjectionType projectionType;
         protected float width = 16;
         protected float height = 9;
@@ -21,9 +23,15 @@
             Recalculate();
         }
 
-        public Matrix4x4 Projection { get => projection; }
+        public Matrix4x4 Projection => projection;
 
         public Matrix4x4 ProjectionInv => projectionInv;
+
+        public Matrix4x4 ViewProjection => viewProjection;
+
+        public Matrix4x4 ViewProjectionInv => viewProjectionInv;
+
+        public Matrix4x4 PrevViewProjection => prevViewProjection;
 
         public ProjectionType ProjectionType
         {
@@ -124,15 +132,8 @@
 
         public BoundingFrustum Frustum => frustum;
 
-        public Matrix4x4 ViewProjection => viewProjection;
-
         public override bool Recalculate()
         {
-            if (!dirty)
-            {
-                return false;
-            }
-
             base.Recalculate();
             aspectRatio = width / height;
             switch (projectionType)
@@ -148,14 +149,16 @@
             Matrix4x4.Invert(projection, out projectionInv);
 
             OnUpdated();
-            dirty = false;
+            dirty = true;
             return true;
         }
 
         protected override void OnUpdated()
         {
+            prevViewProjection = viewProjection;
             viewProjection = view * projection;
             frustum.Initialize(viewProjection);
+            Matrix4x4.Invert(viewProjection, out viewProjectionInv);
             base.OnUpdated();
         }
     }

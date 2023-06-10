@@ -23,12 +23,13 @@ namespace HexaEngine.Rendering
     using System.Numerics;
     using Texture = Texture;
 
-    // TODO: Cleanup and specialization
     public class SceneRenderer : ISceneRenderer
     {
         private ViewportShading shading = Application.InDesignMode ? ViewportShading.Solid : ViewportShading.Rendered;
         private readonly object update = new();
-        private readonly object culling = new();
+        private readonly object prepass = new();
+        private readonly object objectCulling = new();
+        private readonly object lightCulling = new();
         private readonly object shadows = new();
         private readonly object debug = new();
         private readonly object geometry = new();
@@ -48,10 +49,9 @@ namespace HexaEngine.Rendering
         private ConstantBuffer<CBTessellation> tesselationBuffer;
 
         private DepthStencil depthStencil;
-        private DepthStencil occlusionStencil;
         private ResourceRef<Texture> lightBuffer;
         private IDepthStencilView dsv;
-        private TextureArray gbuffer;
+        private GBuffer gbuffer;
 
         private DepthMipChain hizBuffer;
 
@@ -69,12 +69,16 @@ namespace HexaEngine.Rendering
         private int rendererHeight;
         private bool windowResized;
         private bool sceneChanged;
-        private readonly RendererProfiler profiler = new(10);
+        private readonly CpuProfiler profiler = new(10);
 
-        public RendererProfiler Profiler => profiler;
+        public CpuProfiler Profiler => profiler;
         public object Update => update;
 
-        public object Culling => culling;
+        public object Prepass => prepass;
+
+        public object ObjectCulling => objectCulling;
+
+        public object LightCulling => lightCulling;
 
         public object Geometry => geometry;
 
@@ -87,6 +91,10 @@ namespace HexaEngine.Rendering
         public object Debug => debug;
 
         public ViewportShading Shading { get => shading; set => shading = value; }
+
+        public int Width => width;
+
+        public int Height => height;
 
 #nullable enable
 
@@ -112,6 +120,7 @@ namespace HexaEngine.Rendering
             swapChain.Resizing += OnWindowResizeBegin;
             swapChain.Resized += OnWindowResizeEnd;
             ResourceManager2.Shared.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+            ResourceManager2.Shared.SetOrAddResource("SwapChain", swapChain.Backbuffer);
             SceneManager.SceneChanged += SceneChanged;
 
             configKey = Config.Global.GetOrCreateKey("Renderer");
@@ -130,33 +139,48 @@ namespace HexaEngine.Rendering
             cameraBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write).Value;
             tesselationBuffer = new(device, CpuAccessFlags.Write);
 
-            gbuffer = new TextureArray(device, width, height, 8, Format.R32G32B32A32Float);
+            gbuffer = new GBuffer(device, width, height,
+                Format.R16G16B16A16Float,   // Color(RGB)       Opacity(A)
+                Format.R32G32B32A32Float,   // Position(XYZ)    Depth(W)
+                Format.R16G16B16A16Float,   // Normal(XYZ)      Roughness(W)
+                Format.R16G16B16A16Float,   // Tangent(XYZ)     Metallic(W)
+                Format.R16G16B16A16Float,   // Emission(XYZ)    Emission Strength(W)
+                Format.R8G8B8A8UNorm,       // Specular         SpecularTint + AO + IOR
+                Format.R8G8B8A8UNorm,       // Anisotropic      AnisotropicRotation + Clearcoat + ClearcoatGloss
+                Format.R8G8B8A8UNorm);      // Transmission     TransmissionRoughness + Sheen + SheenTint
+
             depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
-            occlusionStencil = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
             hizBuffer = new(device, width, height);
 
-            ResourceManager2.Shared.AddTextureArray("GBuffer", gbuffer);
+            ResourceManager2.Shared.AddGBuffer("GBuffer", gbuffer);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Position", gbuffer.SRVs[1]);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[2]);
             ResourceManager2.Shared.AddDepthStencilView("SwapChain.DSV", depthStencil.DSV);
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'srv' in 'void ResourceManager.AddShaderResourceView(string name, IShaderResourceView srv)'.
+            ResourceManager2.Shared.AddDepthStencilView("PrePass.DSV", depthStencil.DSV);
+            ResourceManager2.Shared.AddShaderResourceView("PrePass.SRV", depthStencil.SRV);
             ResourceManager2.Shared.AddShaderResourceView("SwapChain.SRV", depthStencil.SRV);
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'srv' in 'void ResourceManager.AddShaderResourceView(string name, IShaderResourceView srv)'.
-            lightBuffer = ResourceManager2.Shared.AddTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
+            lightBuffer = ResourceManager2.Shared.AddTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float));
 
             postProcessing = new(device, width, height);
 
+            postProcessing.Add(new VelocityBuffer());
+            postProcessing.Add(new SSR());
+            postProcessing.Add(new MotionBlur());
             postProcessing.Add(new DepthOfField());
             postProcessing.Add(new AutoExposure());
             postProcessing.Add(new Bloom());
+            //postProcessing.Add(new LensFlare());
+            //postProcessing.Add(new GodRays());
+            postProcessing.Add(new LUT());
             postProcessing.Add(new Tonemap());
+            postProcessing.Add(new TAA());
             postProcessing.Add(new FXAA());
 
             ssao = new();
 
-            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.R32G32B32A32Float)).Value;
+            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.R16G16Float)).Value;
 
             window.Dispatcher.InvokeBlocking(() =>
             {
@@ -169,7 +193,7 @@ namespace HexaEngine.Rendering
                 brdfLUT = null;
             });
 
-            postProcessing.Initialize(width, height);
+            await postProcessing.InitializeAsync(width, height);
             postProcessing.Enabled = true;
 
             deferredContext = device.CreateDeferredContext();
@@ -309,8 +333,6 @@ namespace HexaEngine.Rendering
             }
 
             depthStencil.Dispose();
-            occlusionStencil.Dispose();
-            gbuffer.Dispose();
         }
 
         private void OnRendererResizeEnd(int width, int height)
@@ -320,17 +342,17 @@ namespace HexaEngine.Rendering
                 return;
             }
 
-            gbuffer = new TextureArray(device, width, height, 8, Format.R32G32B32A32Float);
+            gbuffer.Resize(width, height, 8, Format.R32G32B32A32Float);
             depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
-            occlusionStencil = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
 
-            lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1));
-            ResourceManager2.Shared.SetOrAddResource("GBuffer", gbuffer);
+            lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float));
             ResourceManager2.Shared.SetOrAddResource("GBuffer.Color", gbuffer.SRVs[0]);
             ResourceManager2.Shared.SetOrAddResource("GBuffer.Position", gbuffer.SRVs[1]);
             ResourceManager2.Shared.SetOrAddResource("GBuffer.Normal", gbuffer.SRVs[2]);
             ResourceManager2.Shared.SetOrAddResource("SwapChain.DSV", depthStencil.DSV);
+            ResourceManager2.Shared.SetOrAddResource("PrePass.DSV", depthStencil.DSV);
+            ResourceManager2.Shared.SetOrAddResource("PrePass.SRV", depthStencil.SRV);
 
             hizBuffer.Resize(device, width, height);
 
@@ -342,16 +364,16 @@ namespace HexaEngine.Rendering
                 return;
             }
 
-            scene.Lights.BeginResize();
-            scene.Lights.EndResize(width, height);
+            scene.LightManager.BeginResize();
+            scene.LightManager.EndResize(width, height);
         }
 
         public event Action? OnMainPassEnd;
 
         public unsafe void LoadScene(Scene scene)
         {
-            scene.Lights.BeginResize();
-            scene.Lights.EndResize(width, height).Wait();
+            scene.LightManager.BeginResize();
+            scene.LightManager.EndResize(width, height).Wait();
         }
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera? camera)
@@ -366,6 +388,7 @@ namespace HexaEngine.Rendering
             {
                 windowResized = false;
                 ResourceManager2.Shared.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+                ResourceManager2.Shared.SetOrAddResource("SwapChain", swapChain.Backbuffer);
                 postProcessing.ResizeOutput();
             }
 
@@ -381,36 +404,62 @@ namespace HexaEngine.Rendering
                 return;
             }
 
+            var lights = scene.LightManager;
+            this.lights = lights;
+
 #if PROFILE
             profiler.Start(update);
 #endif
 
-            cameraBuffer[0] = new CBCamera(camera);
+            cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
+
+            scene.RenderManager.Update(context);
+            lights.Update(context, camera);
 
 #if PROFILE
             profiler.End(update);
 #endif
-
+            if (prepassEnabled)
+            {
 #if PROFILE
-            profiler.Start(culling);
+                profiler.Start(prepass);
+#endif
+                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+                context.SetRenderTargets(null, 0, dsv);
+                context.SetViewport(gbuffer.Viewport);
+                scene.RenderManager.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
+                context.ClearState();
+#if PROFILE
+                profiler.End(prepass);
+#endif
+            }
+#if PROFILE
+            profiler.Start(objectCulling);
 #endif
             CullingManager.UpdateCamera(context);
-
-            scene.RenderManager.Update(context);
-
-            context.ClearDepthStencilView(occlusionStencil.DSV, DepthStencilClearFlags.Depth, 1, 0);
-            context.SetRenderTargets(null, 0, occlusionStencil.DSV);
-            context.SetViewport(gbuffer.Viewport);
-            scene.RenderManager.VisibilityTest(context, RenderQueueIndex.Geometry);
-            context.ClearState();
-            hizBuffer.Generate(context, occlusionStencil.SRV);
+            hizBuffer.Generate(context, depthStencil.SRV);
             CullingManager.DoCulling(context, hizBuffer);
 
 #if PROFILE
-            profiler.End(culling);
+            profiler.End(objectCulling);
 #endif
-            context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+
+#if PROFILE
+            profiler.Start(lightCulling);
+#endif
+            lights.CullLights(context);
+#if PROFILE
+            profiler.End(lightCulling);
+#endif
+
+            lights.ShowHeatmap();
+
+            if (!prepassEnabled)
+            {
+                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+            }
+
             context.ClearRenderTargetView(lightBuffer.Value.RenderTargetView, default);
 #if PROFILE
             profiler.Start(shadows);
@@ -424,8 +473,6 @@ namespace HexaEngine.Rendering
             profiler.Start(geometry);
 #endif
 
-            var lights = scene.Lights;
-            this.lights = lights;
             if (shading == ViewportShading.Rendered)
             {
                 // Fill Geometry Buffer
@@ -447,7 +494,6 @@ namespace HexaEngine.Rendering
             // Light Pass
             if (shading == ViewportShading.Rendered)
             {
-                lights.Update(context, camera);
                 lights.DeferredPass(context, shading, camera);
                 lights.ForwardPass(context, shading, camera);
             }
@@ -497,6 +543,7 @@ namespace HexaEngine.Rendering
 
         private float zoom = 1;
         private object lights;
+        private bool prepassEnabled = true;
 
         public void DrawSettings()
         {
@@ -540,7 +587,6 @@ namespace HexaEngine.Rendering
 
                 dsv.Dispose();
                 depthStencil.Dispose();
-                occlusionStencil.Dispose();
 
                 hizBuffer.Dispose();
                 deferredContext.Dispose();

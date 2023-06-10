@@ -31,6 +31,7 @@
 
         public ResourceRef<Texture> Input;
         public ResourceRef<IRenderTargetView> Output;
+        public ResourceRef<ITexture2D> OutputTex;
         public Viewport Viewport;
         private bool enabled;
         private bool disposedValue;
@@ -41,7 +42,7 @@
             this.device = device;
             for (int i = 0; i < bufferCount; i++)
             {
-                buffers.Add(new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32Float)));
+                buffers.Add(new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float)));
             }
 
             deferredContext = device.CreateDeferredContext();
@@ -56,6 +57,7 @@
 
             Input = ResourceManager2.Shared.GetTexture("LightBuffer");
             Output = ResourceManager2.Shared.GetResource<IRenderTargetView>("SwapChain.RTV");
+            OutputTex = ResourceManager2.Shared.GetResource<ITexture2D>("SwapChain");
             Input.ValueChanged += InputValueChanged;
             Output.ValueChanged += OutputValueChanged;
         }
@@ -78,21 +80,62 @@
 
         public void Initialize(int width, int height)
         {
+            for (int i = 0; i < effects.Count; i++)
+            {
+                effects[i].OnEnabledChanged += OnEnabledChanged;
+                effects[i].OnPriorityChanged += OnPriorityChanged;
+            }
+
             this.width = width;
             this.height = height;
-            macros = new ShaderMacro[effectsSorted.Count];
-            for (int i = 0; i < effectsSorted.Count; i++)
+            macros = new ShaderMacro[effects.Count];
+            for (int i = 0; i < effects.Count; i++)
             {
-                var effect = effectsSorted[i];
+                var effect = effects[i];
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
             }
 
-            for (int i = 0; i < effectsSorted.Count; i++)
+            for (int i = 0; i < effects.Count; i++)
             {
-                effectsSorted[i].Initialize(device, width, height, macros);
+                effects[i].Initialize(device, width, height, macros).Wait();
             }
 
             isInitialized = true;
+        }
+
+        public async Task InitializeAsync(int width, int height)
+        {
+            for (int i = 0; i < effects.Count; i++)
+            {
+                effects[i].OnEnabledChanged += OnEnabledChanged;
+                effects[i].OnPriorityChanged += OnPriorityChanged;
+            }
+
+            this.width = width;
+            this.height = height;
+            macros = new ShaderMacro[effects.Count];
+            for (int i = 0; i < effects.Count; i++)
+            {
+                var effect = effects[i];
+                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
+            }
+
+            for (int i = 0; i < effects.Count; i++)
+            {
+                await effects[i].Initialize(device, width, height, macros);
+            }
+
+            isInitialized = true;
+        }
+
+        private void OnPriorityChanged(int obj)
+        {
+            Reload();
+        }
+
+        private void OnEnabledChanged(bool obj)
+        {
+            Reload();
         }
 
         public IPostFx? GetByName(string name)
@@ -163,22 +206,24 @@
 
         public void Reload()
         {
-            for (int i = 0; i < effectsSorted.Count; i++)
+            Sort();
+
+            for (int i = 0; i < effects.Count; i++)
             {
-                effectsSorted[i].Dispose();
+                effects[i].Dispose();
             }
 
-            macros = new ShaderMacro[effectsSorted.Count];
+            macros = new ShaderMacro[effects.Count];
 
-            for (int i = 0; i < effectsSorted.Count; i++)
+            for (int i = 0; i < effects.Count; i++)
             {
-                var effect = effectsSorted[i];
+                var effect = effects[i];
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
             }
 
-            for (int i = 0; i < effectsSorted.Count; i++)
+            for (int i = 0; i < effects.Count; i++)
             {
-                effectsSorted[i].Initialize(device, width, height, macros);
+                effects[i].Initialize(device, width, height, macros).Wait();
             }
 
             isDirty = true;
@@ -207,7 +252,7 @@
             for (int i = 0; i < buffers.Count; i++)
             {
                 buffers[i].Dispose();
-                buffers[i] = new(device, TextureDescription.CreateTexture2D(width, height, 1, Format.R32G32B32A32Float));
+                buffers[i] = new(device, TextureDescription.CreateTexture2D(width, height, 1, Format.R16G16B16A16Float));
             }
 
             isDirty = true;
@@ -278,7 +323,7 @@
                     list?.Dispose();
                     deferredContext.ClearState();
                     swapIndex = 0;
-                    IShaderResourceView previous = Input;
+                    IShaderResourceView previous = Input.Value.ShaderResourceView;
                     for (int i = 0; i < effectsSorted.Count; i++)
                     {
                         var effect = effectsSorted[i];
@@ -297,7 +342,7 @@
                             if (i != effectsSorted.Count - 1)
                                 effect.SetOutput(buffer.RenderTargetView, buffers[swapIndex].Viewport);
                             else
-                                effect.SetOutput(Output, Viewport);
+                                effect.SetOutput(Output.Value, Viewport);
 
                             previous = buffer.ShaderResourceView;
                         }
@@ -309,7 +354,7 @@
                         if (swapIndex == buffers.Count)
                             swapIndex = 0;
                     }
-                    list = deferredContext.FinishCommandList(0);
+                    list = deferredContext.FinishCommandList(false);
                     isDirty = false;
                 }
 #else
@@ -329,7 +374,7 @@
                         if ((effect.Flags & PostFxFlags.NoInput) == 0)
                         {
 #pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
-                            effect.SetInput(previous);
+                            effect.SetInput(previous, (ITexture2D)Input.Value.Resource);
 #pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
                         }
 
@@ -339,23 +384,27 @@
 
                             if (i != effectsSorted.Count - 1)
                             {
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
-                                effect.SetOutput(buffer.RenderTargetView, buffers[swapIndex].Viewport);
+                                effect.SetOutput(buffer.RenderTargetView, (ITexture2D)buffer.Resource, buffers[swapIndex].Viewport);
                             }
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetOutput(IRenderTargetView view, Viewport viewport)'.
                             else
                             {
-                                effect.SetOutput(Output.Value, Viewport);
+                                effect.SetOutput(Output.Value, OutputTex.Value, Viewport);
                             }
 
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-                            previous = buffer.ShaderResourceView;
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-                            swapIndex++;
-                            if (swapIndex == buffers.Count)
+                            bool skipSwap = false;
+                            if (i < effectsSorted.Count - 1)
                             {
-                                swapIndex = 0;
+                                skipSwap = effectsSorted[i + 1].Flags == PostFxFlags.Inline;
+                            }
+
+                            if (!skipSwap)
+                            {
+                                previous = buffer.ShaderResourceView;
+                                swapIndex++;
+                                if (swapIndex == buffers.Count)
+                                {
+                                    swapIndex = 0;
+                                }
                             }
                         }
 
@@ -382,7 +431,7 @@
 #if PostFX_Deferred
             if (list != null)
             {
-                context.ExecuteCommandList(list, 1);
+                context.ExecuteCommandList(list, true);
             }
 #endif
         }
@@ -394,7 +443,7 @@
                 effectsSorted.Clear();
                 lock (effects)
                 {
-                    effectsSorted.AddRange(effects.OrderByDescending(x => x.Priority));
+                    effectsSorted.AddRange(effects.Where(x => x.Enabled).OrderByDescending(x => x.Priority));
                 }
             }
         }

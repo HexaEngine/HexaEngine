@@ -5,8 +5,6 @@ struct VSOut
 	float2 Tex : TEXCOORD;
 };
 
-static const float g_FarPlaneDist = 100;
-
 static const int g_maxBinarySearchStep = 40;
 static const int g_maxRayStep = 70;
 static const float g_depthbias = 0.00001f;
@@ -30,7 +28,7 @@ float3 GetTexCoordXYLinearDepthZ(float3 viewPos)
 	float4 projPos = mul(float4(viewPos, 1.f), proj);
 	projPos.xy /= projPos.w;
 	projPos.xy = projPos.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-	projPos.z = viewPos.z / 100;
+    projPos.z = viewPos.z / cam_far;
 	return projPos.xyz;
 }
 

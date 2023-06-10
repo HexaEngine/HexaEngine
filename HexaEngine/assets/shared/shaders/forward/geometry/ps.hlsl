@@ -385,8 +385,7 @@ Pixel main(PixelInput input)
 #if VtxBitangent
     float3 bitangent = normalize(input.bitangent);
 #endif
-    float3 emissive = Emissive.
-    xyz;
+    float3 emissive = Emissive;
     float opacity = 1;
 
     float ao = Ao;
@@ -565,7 +564,7 @@ Pixel main(PixelInput input)
 	
     Pixel output;
     output.Color = float4(ambient + Lo * ao, baseColor.a);
-    output.Position = float4(position, input.depth);
+    output.Position = float4(position, 1);
     output.Normal = float4(N, baseColor.a);
     return output;
 }

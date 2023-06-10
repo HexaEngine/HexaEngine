@@ -39,6 +39,25 @@ namespace HexaEngine.Effects
         private float minLogLuminance = -8;
         private float maxLogLuminance = 3;
         private float tau = 1.1f;
+        private int priority = 200;
+
+        public event Action<bool> OnEnabledChanged;
+
+        public event Action<int> OnPriorityChanged;
+
+        public string Name => "Auto Exposure";
+
+        public PostFxFlags Flags => PostFxFlags.None;
+
+        public int Priority
+        {
+            get => priority;
+            set
+            {
+                priority = value;
+                OnPriorityChanged?.Invoke(value);
+            }
+        }
 
         public unsafe bool Enabled
         {
@@ -47,6 +66,7 @@ namespace HexaEngine.Effects
             {
                 enabled = value;
                 dirty = true;
+                OnEnabledChanged?.Invoke(value);
             }
         }
 
@@ -86,10 +106,6 @@ namespace HexaEngine.Effects
                 dirty = true;
             }
         }
-
-        public string Name => "Auto Exposure";
-        public PostFxFlags Flags => PostFxFlags.None;
-        public int Priority { get; set; } = 200;
 
         #region Structs
 
@@ -181,30 +197,22 @@ namespace HexaEngine.Effects
             lumaAvgUAVs[1] = (void*)lumaUAV.NativePointer;
         }
 
-        private unsafe void ResizeUnsafe(int width, int height)
-        {
-            lumaParams.Local->InputWidth = (uint)width;
-            lumaParams.Local->InputHeight = (uint)height;
-            lumaAvgParams.Local->PixelCount = (uint)(width * height);
-        }
-
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-
-        public async void Resize(int width, int height)
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
+        public unsafe void Resize(int width, int height)
         {
             this.width = width;
             this.height = height;
-            ResizeUnsafe(width, height);
+            lumaParams.Local->InputWidth = (uint)width;
+            lumaParams.Local->InputHeight = (uint)height;
+            lumaAvgParams.Local->PixelCount = (uint)(width * height);
             dirty = true;
         }
 
-        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
         }
 
-        public void SetInput(IShaderResourceView view)
+        public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
@@ -228,7 +236,7 @@ namespace HexaEngine.Effects
             context.CSSetShaderResource(Input, 0);
             context.CSSetConstantBuffer(lumaParams, 0);
             context.CSSetUnorderedAccessViews(lumaUAVs, 1);
-            lumaCompute.Dispatch(context, width / 16, height / 16, 1);
+            lumaCompute.Dispatch(context, (uint)width / 16, (uint)height / 16, 1);
 
             lumaAvgParams.Local->TimeDelta = Time.Delta;
             lumaAvgParams.Update(context);

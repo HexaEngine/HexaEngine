@@ -30,6 +30,47 @@ namespace HexaEngine.Effects
 
         private IShaderResourceView Source;
         private bool disposedValue;
+        private int priority = 100;
+
+        public event Action<bool> OnEnabledChanged;
+
+        public event Action<int> OnPriorityChanged;
+
+        public string Name => "Bloom";
+
+        public PostFxFlags Flags => PostFxFlags.NoOutput;
+
+        public bool Enabled
+        {
+            get => enabled;
+            set
+            {
+                enabled = value;
+                dirty = true;
+                OnEnabledChanged?.Invoke(value);
+            }
+        }
+
+        public int Priority
+        {
+            get => priority;
+            set
+            {
+                priority = value;
+                OnPriorityChanged?.Invoke(value);
+            }
+        }
+
+        public float Radius
+        {
+            get => radius;
+            set
+            {
+                radius = value; dirty = true;
+            }
+        }
+
+        #region Structs
 
         private struct ParamsDownsample
         {
@@ -55,26 +96,10 @@ namespace HexaEngine.Effects
             }
         }
 
-        public bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                enabled = value;
-                dirty = true;
-            }
-        }
-
-        public float Radius
-        { get => radius; set { radius = value; dirty = true; } }
-
-        public string Name => "Bloom";
-
-        public PostFxFlags Flags => PostFxFlags.NoOutput;
-
-        public int Priority { get; set; } = 100;
+        #endregion Structs
 
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
+
         {
             disposedValue = false;
             quad = new(device);
@@ -96,14 +121,14 @@ namespace HexaEngine.Effects
 
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            int levels = Math.Min(MathUtil.ComputeMipLevels(currentWidth, currentHeight), 8);
+            int levels = Math.Min(TextureHelper.ComputeMipLevels(currentWidth, currentHeight), 8);
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)).Value.RenderTargetView;
+                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1, Format.R16G16B16A16Float)).Value.RenderTargetView;
                 mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.ShaderResourceView;
                 currentWidth /= 2;
                 currentHeight /= 2;
@@ -121,14 +146,14 @@ namespace HexaEngine.Effects
         {
             int currentWidth = width / 2;
             int currentHeight = height / 2;
-            int levels = Math.Min(MathUtil.ComputeMipLevels(currentWidth, currentHeight), 8);
+            int levels = Math.Min(TextureHelper.ComputeMipLevels(currentWidth, currentHeight), 8);
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1)).Value.RenderTargetView;
+                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1, Format.R16G16B16A16Float)).Value.RenderTargetView;
                 mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.ShaderResourceView;
                 currentWidth /= 2;
                 currentHeight /= 2;
@@ -141,11 +166,11 @@ namespace HexaEngine.Effects
             dirty = true;
         }
 
-        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
         }
 
-        public void SetInput(IShaderResourceView view)
+        public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Source = view;
         }

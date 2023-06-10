@@ -264,6 +264,11 @@
             return AddResource(name, srv);
         }
 
+        public ResourceRef<IShaderResourceView> GetShaderResourceView(string name)
+        {
+            return GetResource<IShaderResourceView>(name);
+        }
+
         public ResourceRef<IDepthStencilView> AddDepthStencilView(string name, IDepthStencilView srv)
         {
             return AddResource(name, srv);
@@ -274,23 +279,23 @@
             return GetResource<IDepthStencilView>(name);
         }
 
-        public ResourceRef<TextureArray> AddTextureArray(string name, TextureArray srv)
+        public ResourceRef<GBuffer> AddGBuffer(string name, GBuffer srv)
         {
             return AddResource(name, srv);
         }
 
-        public ResourceRef<TextureArray> AddTextureArray(string name, int width, int height, uint count, Format format)
+        public ResourceRef<GBuffer> AddGBuffer(string name, int width, int height, uint count, Format format)
         {
             lock (sharedResources)
             {
-                TextureArray textureArray = new(device, width, height, count, format);
+                GBuffer textureArray = new(device, width, height, count, format);
                 return AddResource(name, textureArray);
             }
         }
 
-        public ResourceRef<TextureArray> GetTextureArray(string name)
+        public ResourceRef<GBuffer> GetGBuffer(string name)
         {
-            return GetResource<TextureArray>(name);
+            return GetResource<GBuffer>(name);
         }
 
         public ResourceRef<Texture> AddTexture(string name, TextureDescription description)
@@ -320,37 +325,28 @@
             }
         }
 
-        public ResourceRef<Texture> AddTexture(string name, TextureDescription description, DepthStencilDesc depthStencilDesc)
+        public ResourceRef<Texture2D> AddTextureFile(string name, TextureFileDescription description)
         {
             lock (sharedResources)
             {
-                Texture texture = new(device, description, depthStencilDesc);
+                Texture2D texture = new(device, description);
                 return AddResource(name, texture);
             }
         }
 
-        public ResourceRef<Texture> AddTextureFile(string name, TextureFileDescription description)
+        public ResourceRef<Texture2D> AddOrUpdateTextureFile(string name, TextureFileDescription description)
         {
             lock (sharedResources)
             {
-                Texture texture = new(device, description);
-                return AddResource(name, texture);
-            }
-        }
-
-        public ResourceRef<Texture> AddOrUpdateTextureFile(string name, TextureFileDescription description)
-        {
-            lock (sharedResources)
-            {
-                if (TryGetResource<Texture>(name, out var resourceRef))
+                if (TryGetResource<Texture2D>(name, out var resourceRef))
                 {
                     var old = resourceRef.Value;
-                    resourceRef.Value = new Texture(device, description);
+                    resourceRef.Value = new Texture2D(device, description);
                     old?.Dispose();
                     return new(resourceRef.Resource);
                 }
 
-                return AddResource(name, new Texture(device, description));
+                return AddResource(name, new Texture2D(device, description));
             }
         }
 

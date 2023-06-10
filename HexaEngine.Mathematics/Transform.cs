@@ -13,19 +13,17 @@
         public Quaternion Orientation;
         public Vector3 GlobalPosition;
         public Quaternion GlobalOrientation;
-        public Vector3 GobalScale;
+        public Vector3 GlobalScale;
         public Vector3 Forward;
         public Vector3 Backward;
         public Vector3 Left;
         public Vector3 Right;
         public Vector3 Up;
         public Vector3 Down;
-        public Matrix4x4 GlobalPrevious;
         public Matrix4x4 Global;
         public Matrix4x4 GlobalInverse;
         public Matrix4x4 Local;
         public Matrix4x4 LocalInverse;
-        public Matrix4x4 ViewPrevious;
         public Matrix4x4 View;
         public Matrix4x4 ViewInv;
         public Vector3 Velocity;
@@ -52,12 +50,10 @@
         protected Vector3 right;
         protected Vector3 up;
         protected Vector3 down;
-        protected Matrix4x4 globalPrevious;
         protected Matrix4x4 global;
         protected Matrix4x4 globalInverse;
         protected Matrix4x4 local;
         protected Matrix4x4 localInverse;
-        protected Matrix4x4 viewPrevious;
         protected Matrix4x4 view;
         protected Matrix4x4 viewInv;
         protected Vector3 velocity;
@@ -335,12 +331,6 @@
         public Vector3 Down => down;
 
         /// <summary>
-        /// The global transformation matrix of the previous frame.
-        /// </summary>
-        [JsonIgnore]
-        public Matrix4x4 GlobalPrevious => globalPrevious;
-
-        /// <summary>
         /// The global transformation matrix
         /// </summary>
         [JsonIgnore]
@@ -363,12 +353,6 @@
         /// </summary>
         [JsonIgnore]
         public Matrix4x4 LocalInverse => localInverse;
-
-        /// <summary>
-        /// The view matrix in world space of the last frame
-        /// </summary>
-        [JsonIgnore]
-        public Matrix4x4 ViewPrevious => viewPrevious;
 
         /// <summary>
         /// The view matrix in world space
@@ -414,8 +398,6 @@
         /// </summary>
         public virtual bool Recalculate()
         {
-            globalPrevious = global;
-            viewPrevious = view;
             if (!dirty)
             {
                 return false;
@@ -479,7 +461,6 @@
             down = initial.Down;
             forward = initial.Forward;
             left = initial.Left;
-            globalPrevious = initial.GlobalPrevious;
             global = initial.Global;
             globalInverse = initial.GlobalInverse;
             oldpos = initial.OldPos;
@@ -491,7 +472,6 @@
             scale = initial.Scale;
             up = initial.Up;
             velocity = initial.Velocity;
-            viewPrevious = initial.ViewPrevious;
             view = initial.View;
             viewInv = initial.ViewInv;
         }
@@ -504,7 +484,6 @@
                 Down = down,
                 Forward = forward,
                 Left = left,
-                GlobalPrevious = globalPrevious,
                 Global = global,
                 GlobalInverse = globalInverse,
                 OldPos = oldpos,
@@ -516,7 +495,6 @@
                 Scale = scale,
                 Up = up,
                 Velocity = velocity,
-                ViewPrevious = viewPrevious,
                 View = view,
                 ViewInv = viewInv
             };
@@ -534,7 +512,6 @@
                 down = down,
                 forward = forward,
                 left = left,
-                globalPrevious = globalPrevious,
                 global = global,
                 globalInverse = globalInverse,
                 oldpos = oldpos,
@@ -546,7 +523,6 @@
                 scale = scale,
                 up = up,
                 velocity = velocity,
-                viewPrevious = viewPrevious,
                 view = view,
                 viewInv = viewInv
             };

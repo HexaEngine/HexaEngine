@@ -16,7 +16,7 @@
                 return;
             }
 
-            var lightManager = scene.Lights;
+            var lightManager = scene.LightManager;
 
             ImGui.BeginListBox("Lights");
             for (int i = 0; i < lightManager.Count; i++)

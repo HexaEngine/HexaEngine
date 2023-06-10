@@ -39,88 +39,11 @@ namespace HexaEngine.Effects
         public IShaderResourceView Input;
         public ResourceRef<IShaderResourceView> Position;
         public ResourceRef<IBuffer> Camera;
+        private int priority = 300;
 
-        #region Structs
+        public event Action<bool> OnEnabledChanged;
 
-        private struct BlurParams
-        {
-            public int Size;
-            public float Reserved0;
-            public float Reserved1;
-            public float Reserved2;
-
-            public BlurParams()
-            {
-                Size = 3;
-                Reserved0 = 0;
-                Reserved1 = 0;
-                Reserved2 = 0;
-            }
-
-            public BlurParams(int size)
-            {
-                Size = size;
-                Reserved0 = 0;
-                Reserved1 = 0;
-                Reserved2 = 0;
-            }
-        }
-
-        private struct BokehParams
-        {
-            public int Size;
-            public float Separation;
-            public float MinThreshold;
-            public float MaxThreshold;
-
-            public BokehParams()
-            {
-                Size = 8;
-                Separation = 1;
-                MinThreshold = 0.1f;
-                MaxThreshold = 0.3f;
-            }
-
-            public BokehParams(int size, float separation, float min, float max)
-            {
-                Size = size;
-                Separation = separation;
-                MinThreshold = min;
-                MaxThreshold = max;
-            }
-        }
-
-        private struct DofParams
-        {
-            public float FocusRange;
-            public float Padding;
-            public Vector2 FocusPoint;
-            public int Enabled;
-            public int AutoFocusEnabled;
-            public int AutoFocusSamples;
-            public float AutoFocusRadius;
-
-            public DofParams()
-            {
-                FocusRange = 20.0f;
-                Padding = 0;
-                FocusPoint = new(0.5f, 0.5f);
-                Enabled = 0;
-                AutoFocusEnabled = 1;
-                AutoFocusSamples = 1;
-                AutoFocusRadius = 30;
-            }
-
-            public DofParams(float focusRange, Vector2 focusPoint)
-            {
-                FocusRange = focusRange;
-                FocusPoint = focusPoint;
-            }
-        }
-
-        #endregion Structs
-
-        #region Properties
+        public event Action<int> OnPriorityChanged;
 
         public bool Enabled
         {
@@ -130,6 +53,21 @@ namespace HexaEngine.Effects
                 dofParams.Enabled = value ? 1 : 0;
                 enabled = value;
                 dirty = true;
+                OnEnabledChanged?.Invoke(value);
+            }
+        }
+
+        public string Name => "Dof";
+
+        public PostFxFlags Flags => PostFxFlags.None;
+
+        public int Priority
+        {
+            get => priority;
+            set
+            {
+                priority = value;
+                OnPriorityChanged?.Invoke(value);
             }
         }
 
@@ -243,13 +181,85 @@ namespace HexaEngine.Effects
             }
         }
 
-        public string Name => "Dof";
+        #region Structs
 
-        public PostFxFlags Flags => PostFxFlags.None;
+        private struct BlurParams
+        {
+            public int Size;
+            public float Reserved0;
+            public float Reserved1;
+            public float Reserved2;
 
-        public int Priority { get; set; } = 300;
+            public BlurParams()
+            {
+                Size = 3;
+                Reserved0 = 0;
+                Reserved1 = 0;
+                Reserved2 = 0;
+            }
 
-        #endregion Properties
+            public BlurParams(int size)
+            {
+                Size = size;
+                Reserved0 = 0;
+                Reserved1 = 0;
+                Reserved2 = 0;
+            }
+        }
+
+        private struct BokehParams
+        {
+            public int Size;
+            public float Separation;
+            public float MinThreshold;
+            public float MaxThreshold;
+
+            public BokehParams()
+            {
+                Size = 8;
+                Separation = 1;
+                MinThreshold = 0.1f;
+                MaxThreshold = 0.3f;
+            }
+
+            public BokehParams(int size, float separation, float min, float max)
+            {
+                Size = size;
+                Separation = separation;
+                MinThreshold = min;
+                MaxThreshold = max;
+            }
+        }
+
+        private struct DofParams
+        {
+            public float FocusRange;
+            public float Padding;
+            public Vector2 FocusPoint;
+            public int Enabled;
+            public int AutoFocusEnabled;
+            public int AutoFocusSamples;
+            public float AutoFocusRadius;
+
+            public DofParams()
+            {
+                FocusRange = 20.0f;
+                Padding = 0;
+                FocusPoint = new(0.5f, 0.5f);
+                Enabled = 0;
+                AutoFocusEnabled = 1;
+                AutoFocusSamples = 1;
+                AutoFocusRadius = 30;
+            }
+
+            public DofParams(float focusRange, Vector2 focusPoint)
+            {
+                FocusRange = focusRange;
+                FocusPoint = focusPoint;
+            }
+        }
+
+        #endregion Structs
 
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
@@ -274,11 +284,11 @@ namespace HexaEngine.Effects
                 PixelShader = "effects/dof/ps.hlsl"
             }, macros);
 
-            outOfFocusTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            outOfFocusTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
             outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
 
-            bokehTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            bokehTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             bokehSRV = device.CreateShaderResourceView(bokehTex);
             bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
 
@@ -297,23 +307,23 @@ namespace HexaEngine.Effects
             outOfFocusTex.Dispose();
             outOfFocusSRV.Dispose();
             outOfFocusRTV.Dispose();
-            outOfFocusTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            outOfFocusTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
             outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
             bokehTex.Dispose();
             bokehSRV.Dispose();
             bokehRTV.Dispose();
-            bokehTex = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+            bokehTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
             bokehSRV = device.CreateShaderResourceView(bokehTex);
             bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
         }
 
-        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
         }
 
-        public void SetInput(IShaderResourceView view)
+        public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
@@ -331,6 +341,11 @@ namespace HexaEngine.Effects
 
         public void Draw(IGraphicsContext context)
         {
+            if (Output == null)
+            {
+                return;
+            }
+
             if (enabled && bokehEnabled)
             {
                 context.ClearRenderTargetView(bokehRTV, default);

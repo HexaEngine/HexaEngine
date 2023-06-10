@@ -2,8 +2,8 @@
 {
     public enum LightType
     {
-        Directional,
-        Point,
-        Spot,
+        Point = 0,
+        Spot = 1,
+        Directional = 2,
     }
 }

@@ -2,107 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Meshes.Processing;
     using HexaEngine.Core.Lights;
     using HexaEngine.Mathematics;
+    using Silk.NET.Maths;
     using System;
     using System.Numerics;
     using System.Reflection;
-
-    public class HeightMap
-    {
-        public int Width;
-        public int Height;
-        public Vector3[] Data;
-
-        public HeightMap(int width, int height, Vector3[] data)
-        {
-            Width = width;
-            Height = height;
-            Data = data;
-        }
-
-        public HeightMap(int width, int height)
-        {
-            Width = width;
-            Height = height;
-            Data = new Vector3[width * height];
-        }
-
-        public Vector3 this[int index]
-        {
-            get => Data[index];
-            set => Data[index] = value;
-        }
-
-        public void GenerateEmpty()
-        {
-            // We divide the height by this number to "water down" the terrains height, otherwise the terrain will
-            // appear to be "spikey" and not so smooth.
-            float heightFactor = 10.0f;
-
-            // Read the image data into our heightMap array
-            for (int j = 0; j < Height; j++)
-            {
-                for (int i = 0; i < Width; i++)
-                {
-                    float height = 0;
-
-                    int index = (Height * j) + i;
-
-                    Data[index].X = i;
-                    Data[index].Y = (float)height / heightFactor;
-                    Data[index].Z = j;
-                }
-            }
-        }
-
-        public void GenerateRandom()
-        {
-            // We divide the height by this number to "water down" the terrains height, otherwise the terrain will
-            // appear to be "spikey" and not so smooth.
-            float heightFactor = 10.0f;
-
-            // Read the image data into our heightMap array
-            for (int j = 0; j < Height; j++)
-            {
-                for (int i = 0; i < Width; i++)
-                {
-                    float height = Random.Shared.NextSingle();
-
-                    int index = (Height * j) + i;
-
-                    Data[index].X = i;
-                    Data[index].Y = (float)height * heightFactor;
-                    Data[index].Z = j;
-                }
-            }
-        }
-
-        public void GeneratePerlin(float x, float z, float scale = 0.02f)
-        {
-            // We divide the height by this number to "water down" the terrains height, otherwise the terrain will
-            // appear to be "spikey" and not so smooth.
-            float heightFactor = 10.0f;
-
-            PerlinNoise noise = new();
-
-            // Read the image data into our heightMap array
-            for (int j = 0; j < Height; j++)
-            {
-                for (int i = 0; i < Width; i++)
-                {
-                    float height = (float)noise.Function2D(scale * (i + x), scale * (j + z)) * 0.5f + 0.5f;
-
-                    int index = (Height * j) + i;
-
-                    Data[index].X = i;
-                    Data[index].Y = (float)height * heightFactor;
-                    Data[index].Z = j;
-                }
-            }
-        }
-    }
 
     public unsafe class Terrain
     {
@@ -209,8 +115,8 @@
 
         public void WriteIndexBuffer(IGraphicsContext context, IBuffer ib)
         {
-            var size = sizeof(uint) * (int)IndicesCount;
-            var buffer = (uint*)Alloc(size);
+            int size = sizeof(uint) * (int)IndicesCount;
+            uint* buffer = (uint*)Alloc(size);
             for (int i = 0; i < IndicesCount; i++)
             {
                 buffer[i] = Indices[i];
@@ -223,9 +129,9 @@
 
         public IBuffer CreateVertexBuffer(IGraphicsDevice device, Usage usage = Usage.Immutable, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            var stride = (int)GetStride();
-            var size = stride * (int)VerticesCount;
-            var buffer = (byte*)Alloc(size);
+            int stride = (int)GetStride();
+            int size = stride * (int)VerticesCount;
+            byte* buffer = (byte*)Alloc(size);
             Zero(buffer, size);
             int m = 0;
 
@@ -267,16 +173,16 @@
                 }
             }
 
-            var result = device.CreateBuffer((void*)buffer, (uint)size, new(size, BindFlags.VertexBuffer, usage, accessFlags));
+            IBuffer result = device.CreateBuffer((void*)buffer, (uint)size, new(size, BindFlags.VertexBuffer, usage, accessFlags));
             Free(buffer);
             return result;
         }
 
         public void WriteVertexBuffer(IGraphicsContext context, IBuffer vb)
         {
-            var stride = (int)GetStride();
-            var size = stride * (int)VerticesCount;
-            var buffer = (byte*)Alloc(size);
+            int stride = (int)GetStride();
+            int size = stride * (int)VerticesCount;
+            byte* buffer = (byte*)Alloc(size);
             Zero(buffer, size);
             int m = 0;
 
@@ -357,9 +263,9 @@
 
         public InputElementDescription[] GetInputElements()
         {
-            var count = ((uint)Flags).Bitcount();
+            uint count = ((uint)Flags).Bitcount();
 
-            var elements = new InputElementDescription[count];
+            InputElementDescription[] elements = new InputElementDescription[count];
             int i = 0;
 
             if ((Flags & TerrainFlags.Positions) != 0)
@@ -390,10 +296,17 @@
             return elements;
         }
 
+        public void Recalculate()
+        {
+            Box = BoundingBoxHelper.Compute(Positions);
+            GenVertexNormalsProcess.GenMeshVertexNormals2(this);
+            CalcTangentsProcess.ProcessMesh2(this);
+        }
+
         public ShaderMacro[] GetShaderMacros()
         {
-            var count = ((uint)Flags).Bitcount() + 1;
-            var macros = new ShaderMacro[count];
+            uint count = ((uint)Flags).Bitcount() + 1;
+            ShaderMacro[] macros = new ShaderMacro[count];
             int i = 0;
 
             macros[i++] = new ShaderMacro("TILESIZE", $"float2({Width},{Height})");
@@ -426,54 +339,121 @@
             return macros;
         }
 
-        public long IntersectRay(Ray ray)
+        public bool IntersectRay(Ray ray, out Vector3 pointInTerrain)
         {
+            pointInTerrain = default;
             if (!Box.Intersects(ray).HasValue)
             {
-                return -1;
+                return false;
             }
 
-            long id = -1;
-            Vector3 minPos = new(float.MaxValue);
             for (uint i = 0; i < IndicesCount / 3; i++)
             {
-                var pos0 = Positions[Indices[i * 3]];
-                var pos1 = Positions[Indices[i * 3 + 1]];
-                var pos2 = Positions[Indices[i * 3 + 2]];
+                Vector3 pos0 = Positions[Indices[i * 3]];
+                Vector3 pos1 = Positions[Indices[i * 3 + 1]];
+                Vector3 pos2 = Positions[Indices[i * 3 + 2]];
 
-                if (!ray.Intersects(pos0, pos1, pos2, out var pointInTriangle))
+                if (ray.Intersects2(pos0, pos1, pos2, out pointInTerrain))
                 {
-                    continue;
-                }
-
-                if (minPos.X < pointInTriangle.X && minPos.Y < pointInTriangle.Y && minPos.Z < pointInTriangle.Z)
-                {
-                    continue;
-                }
-
-                minPos = pointInTriangle;
-
-                var d0 = Vector3.Distance(pos0, pointInTriangle);
-                var d1 = Vector3.Distance(pos1, pointInTriangle);
-                var d2 = Vector3.Distance(pos2, pointInTriangle);
-                var min = Math.Min(d0, Math.Min(d1, d2));
-                if (min == d0)
-                {
-                    return Indices[i * 3];
-                }
-
-                if (min == d1)
-                {
-                    return Indices[i * 3 + 1];
-                }
-
-                if (min == d2)
-                {
-                    return Indices[i * 3 + 2];
+                    return true;
                 }
             }
 
-            return id;
+            return false;
         }
+
+        public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
+        {
+            pointInTerrain = default;
+
+            if (!BoundingBox.Transform(Box, transform).Intersects(ray).HasValue)
+            {
+                return false;
+            }
+
+            for (uint i = 0; i < IndicesCount / 3; i++)
+            {
+                Vector3 pos0 = Positions[Indices[i * 3]];
+                Vector3 pos1 = Positions[Indices[i * 3 + 1]];
+                Vector3 pos2 = Positions[Indices[i * 3 + 2]];
+
+                if (ray.Intersects2(Vector3.Transform(pos0, transform), Vector3.Transform(pos1, transform), Vector3.Transform(pos2, transform), out pointInTerrain))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public uint GetIndexFor(uint x, uint y)
+        {
+            return y * Width + x;
+        }
+
+        public int GetIndexFor(int x, int y)
+        {
+            return (int)(x * Width + y);
+        }
+
+        public void AverageEdge(Edge edge, Terrain other)
+        {
+            if (edge == Edge.ZPos)
+            {
+                for (uint i = 0; i < Width; i++)
+                {
+                    var indexA = GetIndexFor(i, Height - 1);
+                    var indexB = GetIndexFor(i, 0);
+
+                    Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
+                    Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
+                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
+                }
+            }
+            if (edge == Edge.ZNeg)
+            {
+                for (uint i = 0; i < Width; i++)
+                {
+                    var indexA = GetIndexFor(i, 0);
+                    var indexB = GetIndexFor(i, Height - 1);
+
+                    Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
+                    Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
+                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
+                }
+            }
+            if (edge == Edge.XPos)
+            {
+                for (uint i = 0; i < Height; i++)
+                {
+                    var indexA = GetIndexFor(Width - 1, i);
+                    var indexB = GetIndexFor(0, i);
+
+                    Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
+                    Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
+                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
+                }
+            }
+            if (edge == Edge.XNeg)
+            {
+                for (uint i = 0; i < Height; i++)
+                {
+                    var indexA = GetIndexFor(0, i);
+                    var indexB = GetIndexFor(Width - 1, i);
+
+                    Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
+                    Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
+                    Bitangents[indexA] = other.Bitangents[indexB] = Vector3.Normalize(Bitangents[indexA] + other.Bitangents[indexB]);
+                }
+            }
+        }
+    }
+
+    public enum Edge
+    {
+        XPos,
+        XNeg,
+        ZPos,
+        ZNeg,
     }
 }

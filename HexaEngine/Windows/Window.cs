@@ -58,11 +58,14 @@ namespace HexaEngine.Windows
         public ISwapChain SwapChain => swapChain;
 
         public string? StartupScene;
+        private Viewport windowViewport;
         private Viewport renderViewport;
 
-        public Viewport RenderViewport => renderViewport;
+        public Viewport WindowViewport => windowViewport;
 
         public ISceneRenderer Renderer => sceneRenderer;
+
+        public Viewport RenderViewport => renderViewport;
 
         public Window()
         {
@@ -128,6 +131,8 @@ namespace HexaEngine.Windows
                     ImGuiConsole.Log(x.Exception);
                 }
 
+                renderViewport = new(sceneRenderer.Width, sceneRenderer.Height);
+
                 rendererInitialized = true;
             });
 
@@ -175,13 +180,9 @@ namespace HexaEngine.Windows
                 frameviewer.Update();
                 frameviewer.Draw();
                 drawing &= frameviewer.IsVisible;
-                renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
+                windowViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
 
                 DebugDraw.SetCamera(CameraManager.Current);
-
-                Designer.Draw();
-                WidgetManager.Draw(context);
-                ImGuiConsole.Draw();
             }
 
             drawing &= SceneManager.Current is not null;
@@ -198,9 +199,14 @@ namespace HexaEngine.Windows
                     }
                     sceneRenderer.Profiler.Clear();
                     sceneRenderer.Profiler.Start(sceneRenderer);
-                    sceneRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
+                    sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
+                    sceneRenderer.Profiler.End(sceneRenderer);
                 }
             }
+
+            Designer.Draw();
+            WidgetManager.Draw(context);
+            ImGuiConsole.Draw();
 
             OnRender(context);
 
@@ -212,10 +218,6 @@ namespace HexaEngine.Windows
             imGuiRenderer?.EndDraw();
 
             swapChain.Present();
-            if (drawing)
-            {
-                sceneRenderer.Profiler.End(sceneRenderer);
-            }
 
             swapChain.Wait();
         }

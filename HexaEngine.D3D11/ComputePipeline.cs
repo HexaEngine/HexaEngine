@@ -6,24 +6,45 @@
 
     public unsafe class ComputePipeline : IComputePipeline
     {
+        private readonly D3D11GraphicsDevice device;
+        private readonly string dbgName;
         private bool valid;
         private bool initialized;
         private ComPtr<ID3D11ComputeShader> cs;
-        private readonly D3D11GraphicsDevice device;
         private ComputePipelineDesc desc;
+        private ShaderMacro[]? macros;
         private bool disposedValue;
 
-        public ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc)
+        public ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc, string dbgName)
         {
-            Name = new FileInfo(desc.Path ?? throw new ArgumentNullException(nameof(desc))).Directory?.Name ?? throw new ArgumentNullException(nameof(desc));
             PipelineManager.Register(this);
             this.device = device;
+            this.dbgName = dbgName;
             this.desc = desc;
             Compile();
             initialized = true;
         }
 
-        public string Name { get; }
+        public ComputePipeline(D3D11GraphicsDevice device, ComputePipelineDesc desc, ShaderMacro[] macros, string dbgName)
+        {
+            PipelineManager.Register(this);
+            this.device = device;
+            this.dbgName = dbgName;
+            this.desc = desc;
+            this.macros = macros;
+            Compile();
+            initialized = true;
+        }
+
+        public string DebugName => dbgName;
+
+        public ComputePipelineDesc Desc => desc;
+
+        public bool IsInitialized => initialized;
+
+        public bool IsValid => valid;
+
+        public ShaderMacro[]? Macros { get => macros; set => macros = value; }
 
         public virtual void BeginDispatch(IGraphicsContext context)
         {
@@ -38,7 +59,7 @@
             } ((D3D11GraphicsContext)context).DeviceContext.CSSetShader(cs, null, 0);
         }
 
-        public virtual void BeginDispatch(ID3D11DeviceContext1* context)
+        internal void SetComputePipeline(ComPtr<ID3D11DeviceContext1> context)
         {
             if (!valid)
             {
@@ -50,10 +71,10 @@
                 return;
             }
 
-            context->CSSetShader(cs, null, 0);
+            context.CSSetShader(cs, null, 0);
         }
 
-        public void Dispatch(IGraphicsContext context, int x, int y, int z)
+        public void Dispatch(IGraphicsContext context, uint x, uint y, uint z)
         {
             if (!valid)
             {
@@ -67,23 +88,6 @@
 
             BeginDispatch(context);
             context.Dispatch(x, y, z);
-            EndDispatch(context);
-        }
-
-        public void Dispatch(ID3D11DeviceContext1* context, uint x, uint y, uint z)
-        {
-            if (!valid)
-            {
-                return;
-            }
-
-            if (!initialized)
-            {
-                return;
-            }
-
-            BeginDispatch(context);
-            context->Dispatch(x, y, z);
             EndDispatch(context);
         }
 
@@ -149,7 +153,7 @@
                 ComPtr<ID3D11ComputeShader> computeShader;
                 device.Device.CreateComputeShader(shader->Bytecode, shader->Length, (ID3D11ClassLinkage*)null, &computeShader.Handle);
                 cs = computeShader;
-                //TODO: cs.DebugName = GetType().DebugName + nameof(cs);
+                Utils.SetDebugName(cs, dbgName);
                 Free(shader);
                 valid = true;
             }
@@ -157,7 +161,11 @@
 
         protected virtual ShaderMacro[] GetShaderMacros()
         {
-            return Array.Empty<ShaderMacro>();
+            if (macros == null)
+            {
+                return Array.Empty<ShaderMacro>();
+            }
+            return macros;
         }
 
         protected virtual void Dispose(bool disposing)

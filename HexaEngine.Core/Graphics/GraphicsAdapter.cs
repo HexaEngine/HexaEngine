@@ -7,28 +7,33 @@
     {
         public static List<IGraphicsAdapter> Adapters { get; } = new();
 
+        public static IGraphicsAdapter Current { get; private set; }
+
         public static IGraphicsDevice CreateGraphicsDevice(GraphicsBackend backend, bool debug)
         {
             if (backend == GraphicsBackend.Auto)
             {
                 if (Adapters.Count == 1)
                 {
+                    Current = Adapters[0];
                     return Adapters[0].CreateGraphicsDevice(debug);
                 }
                 else
                 {
-                    IGraphicsAdapter audioAdapter = Adapters[0];
+                    IGraphicsAdapter graphicsAdapter = Adapters[0];
                     for (int i = 0; i < Adapters.Count; i++)
                     {
-                        if (Adapters[i].PlatformScore > audioAdapter.PlatformScore)
+                        if (Adapters[i].PlatformScore > graphicsAdapter.PlatformScore)
                         {
-                            audioAdapter = Adapters[i];
+                            graphicsAdapter = Adapters[i];
                         }
                     }
-                    return audioAdapter.CreateGraphicsDevice(debug);
+                    Current = graphicsAdapter;
+                    return graphicsAdapter.CreateGraphicsDevice(debug);
                 }
             }
             var adapter = Adapters.FirstOrDefault(x => x.Backend == backend) ?? throw new PlatformNotSupportedException();
+            Current = adapter;
             return adapter.CreateGraphicsDevice(debug);
         }
     }

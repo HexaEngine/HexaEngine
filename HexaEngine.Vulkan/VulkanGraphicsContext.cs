@@ -471,5 +471,20 @@
         {
             throw new NotImplementedException();
         }
+
+        public void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetUnorderedAccessView(void* view, uint offset, int uavInitialCounts = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetComputePipeline(IComputePipeline pipeline)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

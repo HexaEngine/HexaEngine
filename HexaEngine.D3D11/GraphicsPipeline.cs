@@ -13,7 +13,7 @@
         protected readonly D3D11GraphicsDevice device;
         protected InputElementDescription[]? inputElements;
         protected readonly GraphicsPipelineDesc desc;
-        protected readonly ShaderMacro[] macros = Array.Empty<ShaderMacro>();
+        protected ShaderMacro[]? macros;
         protected ComPtr<ID3D11VertexShader> vs;
         protected ComPtr<ID3D11HullShader> hs;
         protected ComPtr<ID3D11DomainShader> ds;
@@ -127,6 +127,8 @@
 
         public bool IsValid => valid;
 
+        public ShaderMacro[]? Macros { get => macros; set => macros = value; }
+
         public GraphicsPipelineState State
         {
             get => state;
@@ -212,8 +214,18 @@
             initialized = true;
         }
 
+        protected virtual ShaderMacro[] GetShaderMacros()
+        {
+            if (macros == null)
+            {
+                return Array.Empty<ShaderMacro>();
+            }
+            return macros;
+        }
+
         private unsafe void Compile(bool bypassCache = false)
         {
+            var macros = GetShaderMacros();
             if (desc.VertexShader != null)
             {
                 Shader* shader;

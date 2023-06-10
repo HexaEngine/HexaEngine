@@ -4,7 +4,6 @@
     using System;
     using System.Collections.Generic;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
     public class Texture : IDisposable
@@ -14,11 +13,7 @@
         private readonly IResource resource;
         public readonly IShaderResourceView? ShaderResourceView;
         public readonly IRenderTargetView? RenderTargetView;
-        private readonly IResource? depthStencil;
-        public IDepthStencilView? DepthStencilView;
-        private readonly List<ShaderBinding> bindings = new();
         private bool disposedValue;
-        private readonly bool overrwittenDSV;
 
         public readonly TextureDescription Description;
 
@@ -28,162 +23,9 @@
 
         public IResource Resource => resource;
 
-        public IResource? DepthStencil => depthStencil;
-
         #endregion Properties
 
         #region Constructors
-
-        public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, IResource resource)
-        {
-            Description = new(resource);
-
-            this.resource = resource;
-
-            if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
-            {
-                ShaderResourceView = device.CreateShaderResourceView(resource);
-            }
-
-            if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
-            {
-                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
-            }
-
-            DepthStencilView = depthStencil;
-            overrwittenDSV = true;
-        }
-
-        public Texture(IGraphicsDevice device, IResource resource, DepthStencilDesc desc)
-        {
-            Description = new(resource);
-            DepthStencilViewDescription depthStencilViewDesc = new()
-            {
-                Flags = desc.ViewFlags,
-                Format = desc.Format,
-                ViewDimension = Description.GetDepthStencilViewDimension()
-            };
-
-            this.resource = resource;
-
-            switch (Description.Dimension)
-            {
-                case TextureDimension.Texture1D:
-                    {
-                        Texture1DDescription depthStencilDesc = new(
-                            desc.Format,
-                            Description.Width,
-                            Description.ArraySize,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            ResourceMiscFlag.None);
-                        depthStencil = device.CreateTexture1D(depthStencilDesc);
-                    }
-                    break;
-
-                case TextureDimension.Texture2D:
-                    {
-                        Texture2DDescription depthStencilDesc = new(
-                            desc.Format,
-                            Description.Width,
-                            Description.Height,
-                            Description.ArraySize,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            desc.SampleDescription.Count,
-                            desc.SampleDescription.Quality,
-                            ResourceMiscFlag.None);
-                        depthStencil = device.CreateTexture2D(depthStencilDesc);
-                    }
-                    break;
-
-                case TextureDimension.Texture3D:
-                    {
-                        Texture2DDescription depthStencilDesc = new(
-                            desc.Format,
-                            Description.Width,
-                            Description.Height,
-                            Description.Depth,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            desc.SampleDescription.Count,
-                            desc.SampleDescription.Quality,
-                            ResourceMiscFlag.None);
-                        depthStencil = device.CreateTexture2D(depthStencilDesc);
-                    }
-                    break;
-
-                case TextureDimension.TextureCube:
-                    {
-                        Texture2DDescription depthStencilDesc = new(
-                            desc.Format,
-                            Description.Width,
-                            Description.Height,
-                            Description.ArraySize,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            desc.SampleDescription.Count,
-                            desc.SampleDescription.Quality,
-                            ResourceMiscFlag.TextureCube);
-                        depthStencil = device.CreateTexture2D(depthStencilDesc);
-                    }
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(desc));
-            }
-
-            switch (depthStencilViewDesc.ViewDimension)
-            {
-                case DepthStencilViewDimension.Texture1D:
-                    depthStencilViewDesc.Texture1D = new();
-                    break;
-
-                case DepthStencilViewDimension.Texture1DArray:
-                    depthStencilViewDesc.Texture1DArray = new() { ArraySize = Description.ArraySize };
-                    break;
-
-                case DepthStencilViewDimension.Texture2D:
-                    depthStencilViewDesc.Texture2D = new();
-                    break;
-
-                case DepthStencilViewDimension.Texture2DArray:
-                    depthStencilViewDesc.Texture2DArray = new() { ArraySize = Description.ArraySize };
-                    break;
-
-                case DepthStencilViewDimension.Texture2DMultisampled:
-                    depthStencilViewDesc.Texture2DMS = new();
-                    break;
-
-                case DepthStencilViewDimension.Texture2DMultisampledArray:
-                    depthStencilViewDesc.Texture2DMSArray = new() { ArraySize = Description.ArraySize };
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(desc));
-            }
-
-            if ((Description.BindFlags & BindFlags.ShaderResource) != 0)
-            {
-                ShaderResourceView = device.CreateShaderResourceView(resource);
-            }
-
-            if ((Description.BindFlags & BindFlags.RenderTarget) != 0)
-            {
-                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
-            }
-
-            DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
-            Viewport = Description.GetViewport();
-        }
 
         public Texture(IGraphicsDevice device, IResource resource)
         {
@@ -219,163 +61,6 @@
             }
         }
 
-        public Texture(IGraphicsDevice device, IDepthStencilView depthStencil, TextureDescription description)
-        {
-            Description = description;
-
-            resource = description.Dimension switch
-            {
-                TextureDimension.Texture1D => device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
-                TextureDimension.Texture2D => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags),
-                TextureDimension.Texture3D => device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, description.MiscFlags),
-                TextureDimension.TextureCube => device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube),
-                _ => throw new ArgumentOutOfRangeException(nameof(description)),
-            };
-            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
-            {
-                ShaderResourceView = device.CreateShaderResourceView(resource);
-            }
-
-            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-            {
-                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
-            }
-
-            Viewport = Description.GetViewport();
-            overrwittenDSV = true;
-            DepthStencilView = depthStencil;
-        }
-
-        public Texture(IGraphicsDevice device, TextureDescription description, DepthStencilDesc desc)
-        {
-            Description = description;
-            DepthStencilViewDescription depthStencilViewDesc = new()
-            {
-                Flags = desc.ViewFlags,
-                Format = desc.Format,
-                ViewDimension = description.GetDepthStencilViewDimension()
-            };
-
-            switch (description.Dimension)
-            {
-                case TextureDimension.Texture1D:
-                    resource = device.CreateTexture1D(description.Format, description.Width, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags);
-                    {
-                        Texture1DDescription depthStencilDesc = new(
-                            desc.Format,
-                            description.Width,
-                            description.ArraySize,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            ResourceMiscFlag.None);
-                        depthStencil = device.CreateTexture1D(depthStencilDesc);
-                    }
-                    break;
-
-                case TextureDimension.Texture2D:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, description.MiscFlags);
-                    {
-                        Texture2DDescription depthStencilDesc = new(
-                            desc.Format,
-                            description.Width,
-                            description.Height,
-                            description.ArraySize,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            desc.SampleDescription.Count,
-                            desc.SampleDescription.Quality,
-                            ResourceMiscFlag.None);
-                        depthStencil = device.CreateTexture2D(depthStencilDesc);
-                    }
-                    break;
-
-                case TextureDimension.Texture3D:
-                    resource = device.CreateTexture3D(description.Format, description.Width, description.Height, description.Depth, description.MipLevels, null, description.BindFlags, description.MiscFlags);
-                    {
-                        Texture2DDescription depthStencilDesc = new(
-                            desc.Format,
-                            description.Width,
-                            description.Height,
-                            description.Depth,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            desc.SampleDescription.Count,
-                            desc.SampleDescription.Quality,
-                            ResourceMiscFlag.None);
-                        depthStencil = device.CreateTexture2D(depthStencilDesc);
-                    }
-                    break;
-
-                case TextureDimension.TextureCube:
-                    resource = device.CreateTexture2D(description.Format, description.Width, description.Height, description.ArraySize, description.MipLevels, null, description.BindFlags, ResourceMiscFlag.TextureCube);
-                    {
-                        Texture2DDescription depthStencilDesc = new(
-                            desc.Format,
-                            description.Width,
-                            description.Height,
-                            description.ArraySize,
-                            1,
-                            desc.BindFlags,
-                            desc.Usage,
-                            desc.CPUAccessFlags,
-                            desc.SampleDescription.Count,
-                            desc.SampleDescription.Quality,
-                            ResourceMiscFlag.TextureCube);
-                        depthStencil = device.CreateTexture2D(depthStencilDesc);
-                    }
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(description));
-            }
-
-            switch (depthStencilViewDesc.ViewDimension)
-            {
-                case DepthStencilViewDimension.Texture1D:
-                    depthStencilViewDesc.Texture1D = new();
-                    break;
-
-                case DepthStencilViewDimension.Texture1DArray:
-                    depthStencilViewDesc.Texture1DArray = new() { ArraySize = description.ArraySize };
-                    break;
-
-                case DepthStencilViewDimension.Texture2D:
-                    depthStencilViewDesc.Texture2D = new();
-                    break;
-
-                case DepthStencilViewDimension.Texture2DArray:
-                    depthStencilViewDesc.Texture2DArray = new() { ArraySize = description.ArraySize };
-                    break;
-
-                case DepthStencilViewDimension.Texture2DMultisampled:
-                    depthStencilViewDesc.Texture2DMS = new();
-                    break;
-
-                case DepthStencilViewDimension.Texture2DMultisampledArray:
-                    depthStencilViewDesc.Texture2DMSArray = new() { ArraySize = description.ArraySize };
-                    break;
-            }
-
-            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
-            {
-                ShaderResourceView = device.CreateShaderResourceView(resource);
-            }
-
-            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
-            {
-                RenderTargetView = device.CreateRenderTargetView(resource, Description.GetViewport());
-            }
-
-            DepthStencilView = device.CreateDepthStencilView(depthStencil, depthStencilViewDesc);
-            Viewport = Description.GetViewport();
-        }
-
         public Texture(IGraphicsDevice device, TextureDescription description)
         {
             Description = description;
@@ -401,6 +86,7 @@
             Viewport = Description.GetViewport();
         }
 
+        [Obsolete("Use Texture2D")]
         public unsafe Texture(IGraphicsDevice device, TextureFileDescription description)
         {
             switch (description.Dimension)
@@ -438,7 +124,7 @@
                             Depth = texture.Description.ArraySize,
                             BindFlags = texture.Description.BindFlags,
                             CPUAccessFlags = texture.Description.CPUAccessFlags,
-                            Dimension = TextureDimension.Texture1D,
+                            Dimension = TextureDimension.Texture2D,
                             Format = texture.Description.Format,
                             MipLevels = texture.Description.MipLevels,
                             MiscFlags = texture.Description.MiscFlags,
@@ -459,7 +145,7 @@
                             Depth = texture.Description.Depth,
                             BindFlags = texture.Description.BindFlags,
                             CPUAccessFlags = texture.Description.CPUAccessFlags,
-                            Dimension = TextureDimension.Texture1D,
+                            Dimension = TextureDimension.Texture3D,
                             Format = texture.Description.Format,
                             MipLevels = texture.Description.MipLevels,
                             MiscFlags = texture.Description.MiscFlags,
@@ -636,39 +322,7 @@
 
         #endregion Constructors
 
-        #region IRenderTargetView
-
         public readonly Viewport Viewport;
-
-        [Obsolete]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearAndSetTarget(IGraphicsContext context, Vector4 color, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
-        {
-            if (RenderTargetView == null)
-            {
-                return;
-            }
-
-            context.ClearRenderTargetView(RenderTargetView, color);
-            ClearDepthStencil(context, flags, depth, stencil);
-            context.SetRenderTarget(RenderTargetView, DepthStencilView);
-        }
-
-        #endregion IRenderTargetView
-
-        #region IDepthStencil
-
-        [Obsolete]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearDepthStencil(IGraphicsContext context, DepthStencilClearFlags flags = DepthStencilClearFlags.None, float depth = 1, byte stencil = 0)
-        {
-            if (DepthStencilView != null && flags != DepthStencilClearFlags.None)
-            {
-                context.ClearDepthStencilView(DepthStencilView, flags, depth, stencil);
-            }
-        }
-
-        #endregion IDepthStencil
 
         #region IDisposable
 
@@ -679,11 +333,6 @@
                 resource?.Dispose();
                 ShaderResourceView?.Dispose();
                 RenderTargetView?.Dispose();
-                depthStencil?.Dispose();
-                if (!overrwittenDSV)
-                {
-                    DepthStencilView?.Dispose();
-                }
 
                 disposedValue = true;
             }

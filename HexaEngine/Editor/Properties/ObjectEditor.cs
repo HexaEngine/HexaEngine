@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Editor.Properties;
+    using HexaEngine.Core.Graphics;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
@@ -94,7 +95,7 @@
         public object? Instance { get => instance; set => instance = value; }
         public bool IsEmpty => editors.Count == 0 && buttons.Count == 0;
 
-        public void Draw()
+        public void Draw(IGraphicsContext context)
         {
             if (instance == null)
             {
@@ -133,6 +134,10 @@
         {
             var ctx = (HistoryContext<(object, PropertyInfo), object>)context;
             ctx.Target.Item2.SetValue(ctx.Target.Item1, ctx.OldValue);
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

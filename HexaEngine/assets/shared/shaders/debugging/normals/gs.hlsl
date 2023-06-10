@@ -24,10 +24,10 @@ void main(triangle GeometryInput input[3], inout LineStream<PixelInput> triStrea
         if (Normal)
         {
             output.color = float4(0, 0, 1, 1);
-            output.position = mul(mul(pos0, view), proj);
+            output.position = mul(pos0, viewProj);
             triStream.Append(output);
         
-            output.position = mul(mul(pos1, view), proj);
+            output.position = mul(pos1, viewProj);
             triStream.Append(output);
         
             triStream.RestartStrip();
@@ -42,10 +42,10 @@ void main(triangle GeometryInput input[3], inout LineStream<PixelInput> triStrea
         if (Tangent)
         {
             output.color = float4(1, 0, 0, 1);
-            output.position = mul(mul(pos0, view), proj);
+            output.position = mul(pos0, viewProj);
             triStream.Append(output);
         
-            output.position = mul(mul(pos2, view), proj);
+            output.position = mul(pos2, viewProj);
             triStream.Append(output);
         
             triStream.RestartStrip();
@@ -60,10 +60,10 @@ void main(triangle GeometryInput input[3], inout LineStream<PixelInput> triStrea
         if (Bitangent)
         {
             output.color = float4(0, 1, 0, 1);
-            output.position = mul(mul(pos0, view), proj);
+            output.position = mul(pos0, viewProj);
             triStream.Append(output);
         
-            output.position = mul(mul(pos3, view), proj);
+            output.position = mul(pos3, viewProj);
             triStream.Append(output);
         
             triStream.RestartStrip();
@@ -77,10 +77,10 @@ void main(triangle GeometryInput input[3], inout LineStream<PixelInput> triStrea
         if (Bitangent)
         {
             output.color = float4(0, 1, 0, 1);
-            output.position = mul(mul(pos0, view), proj);
+            output.position = mul(pos0, viewProj);
             triStream.Append(output);
         
-            output.position = mul(mul(pos3, view), proj);
+            output.position = mul(pos3, viewProj);
             triStream.Append(output);
         
             triStream.RestartStrip();

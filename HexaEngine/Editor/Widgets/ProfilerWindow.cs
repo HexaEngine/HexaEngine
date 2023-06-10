@@ -5,6 +5,7 @@
     using HexaEngine.Core.Physics;
     using HexaEngine.Core.Scenes;
     using ImPlotNET;
+    using System.Diagnostics;
     using System.Numerics;
 
     public unsafe struct RingBuffer<T> where T : unmanaged
@@ -69,7 +70,9 @@
         private readonly Dictionary<object, RingBuffer<double>> systems = new();
 
         public RingBuffer<double> Update = new(512);
-        public RingBuffer<double> Culling = new(512);
+        public RingBuffer<double> Prepass = new(512);
+        public RingBuffer<double> ObjectCulling = new(512);
+        public RingBuffer<double> LightCulling = new(512);
         public RingBuffer<double> Geometry = new(512);
         public RingBuffer<double> SSAO = new(512);
         public RingBuffer<double> Lights = new(512);
@@ -84,6 +87,9 @@
         public RingBuffer<double> Solver = new(512);
         public RingBuffer<double> BatchCompressor = new(512);
 
+        public RingBuffer<double> MemoryUsage = new(512);
+        public RingBuffer<double> VideoMemoryUsage = new(512);
+
         public override void DrawContent(IGraphicsContext context)
         {
             const int shade_mode = 2;
@@ -91,6 +97,36 @@
             double fill = shade_mode == 0 ? -double.PositiveInfinity : shade_mode == 1 ? double.PositiveInfinity : fill_ref;
 
             Scene? scene = SceneManager.Current;
+
+            Frame.Add(Time.Delta * 1000);
+
+            MemoryUsage.Add(Process.GetCurrentProcess().PrivateMemorySize64 / 1000d / 1000d);
+            VideoMemoryUsage.Add(GraphicsAdapter.Current.GetMemoryCurrentUsage() / 1000d / 1000d);
+
+            ImPlot.SetNextAxesToFit();
+            if (ImPlot.BeginPlot("Latency", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+            {
+                ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                ImPlot.PlotShaded("Latency", ref Frame.Values[0], Frame.Length, fill, 1, 0, ImPlotShadedFlags.None, Frame.Head);
+                ImPlot.PopStyleVar();
+
+                ImPlot.PlotLine("Latency", ref Frame.Values[0], Frame.Length, 1, 0, ImPlotLineFlags.None, Frame.Head);
+                ImPlot.EndPlot();
+            }
+
+            ImPlot.SetNextAxesToFit();
+            if (ImPlot.BeginPlot("Memory", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+            {
+                ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
+                ImPlot.PlotShaded("Memory", ref MemoryUsage.Values[0], MemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, MemoryUsage.Head);
+                ImPlot.PlotShaded("Video Memory", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, fill, 1, 0, ImPlotShadedFlags.None, VideoMemoryUsage.Head);
+                ImPlot.PopStyleVar();
+
+                ImPlot.PlotLine("Memory", ref MemoryUsage.Values[0], MemoryUsage.Length, 1, 0, ImPlotLineFlags.None, MemoryUsage.Head);
+                ImPlot.PlotLine("Video Memory", ref VideoMemoryUsage.Values[0], VideoMemoryUsage.Length, 1, 0, ImPlotLineFlags.None, VideoMemoryUsage.Head);
+                ImPlot.EndPlot();
+            }
+
             if (scene == null)
             {
                 return;
@@ -99,12 +135,13 @@
             var renderer = Application.MainWindow.Renderer;
             var simulation = scene.GetRequiredSystem<PhysicsSystem>().Simulation;
 
-            Frame.Add(Time.Delta * 1000);
             Graphics.Add(renderer.Profiler[renderer] * 1000);
             Systems.Add(scene.Profiler[scene.Systems] * 1000);
 
             Update.Add(renderer.Profiler[renderer.Update] * 1000);
-            Culling.Add(renderer.Profiler[renderer.Culling] * 1000);
+            ObjectCulling.Add(renderer.Profiler[renderer.ObjectCulling] * 1000);
+            LightCulling.Add(renderer.Profiler[renderer.LightCulling] * 1000);
+            Prepass.Add(renderer.Profiler[renderer.Prepass] * 1000);
             Geometry.Add(renderer.Profiler[renderer.Geometry] * 1000);
             SSAO.Add(renderer.Profiler[renderer.SSAO] * 1000);
             Lights.Add(renderer.Profiler[renderer.Lights] * 1000);
@@ -169,12 +206,14 @@
             }
 
             ImPlot.SetNextAxesToFit();
-            if (ImPlot.BeginPlot("Graphics", new Vector2(-1, 0), ImPlotFlags.NoInputs))
+            if (ImPlot.BeginPlot("Graphics (CPU Latency)", new Vector2(-1, 0), ImPlotFlags.NoInputs))
             {
                 ImPlot.PushStyleVar(ImPlotStyleVar.FillAlpha, 0.25f);
                 ImPlot.PlotShaded("Total", ref Graphics.Values[0], Graphics.Length, fill, 1, 0, ImPlotShadedFlags.None, Graphics.Head);
                 ImPlot.PlotShaded("Update", ref Update.Values[0], Update.Length, fill, 1, 0, ImPlotShadedFlags.None, Update.Head);
-                ImPlot.PlotShaded("Culling", ref Culling.Values[0], Culling.Length, fill, 1, 0, ImPlotShadedFlags.None, Culling.Head);
+                ImPlot.PlotShaded("Prepass", ref Prepass.Values[0], Prepass.Length, fill, 1, 0, ImPlotShadedFlags.None, Prepass.Head);
+                ImPlot.PlotShaded("Object Culling", ref ObjectCulling.Values[0], ObjectCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, ObjectCulling.Head);
+                ImPlot.PlotShaded("Light Culling", ref LightCulling.Values[0], LightCulling.Length, fill, 1, 0, ImPlotShadedFlags.None, LightCulling.Head);
                 ImPlot.PlotShaded("Geometry", ref Geometry.Values[0], Geometry.Length, fill, 1, 0, ImPlotShadedFlags.None, Geometry.Head);
                 ImPlot.PlotShaded("SSAO", ref SSAO.Values[0], SSAO.Length, fill, 1, 0, ImPlotShadedFlags.None, SSAO.Head);
                 ImPlot.PlotShaded("Lights", ref Lights.Values[0], Lights.Length, fill, 1, 0, ImPlotShadedFlags.None, Lights.Head);
@@ -183,7 +222,9 @@
 
                 ImPlot.PlotLine("Total", ref Graphics.Values[0], Graphics.Length, 1, 0, ImPlotLineFlags.None, Graphics.Head);
                 ImPlot.PlotLine("Update", ref Update.Values[0], Update.Length, 1, 0, ImPlotLineFlags.None, Update.Head);
-                ImPlot.PlotLine("Culling", ref Culling.Values[0], Culling.Length, 1, 0, ImPlotLineFlags.None, Culling.Head);
+                ImPlot.PlotLine("Prepass", ref Prepass.Values[0], Prepass.Length, 1, 0, ImPlotLineFlags.None, Prepass.Head);
+                ImPlot.PlotLine("Object Culling", ref ObjectCulling.Values[0], ObjectCulling.Length, 1, 0, ImPlotLineFlags.None, ObjectCulling.Head);
+                ImPlot.PlotLine("Light Culling", ref LightCulling.Values[0], LightCulling.Length, 1, 0, ImPlotLineFlags.None, LightCulling.Head);
                 ImPlot.PlotLine("Geometry", ref Geometry.Values[0], Geometry.Length, 1, 0, ImPlotLineFlags.None, Geometry.Head);
                 ImPlot.PlotLine("SSAO", ref SSAO.Values[0], SSAO.Length, 1, 0, ImPlotLineFlags.None, SSAO.Head);
                 ImPlot.PlotLine("Lights", ref Lights.Values[0], Lights.Length, 1, 0, ImPlotLineFlags.None, Lights.Head);

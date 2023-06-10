@@ -15,13 +15,8 @@ cbuffer SSAOParams
     float2 TARGET_SIZE;
 };
 
-Texture2D positionTexture : register(t1);
-Texture2D normalTexture : register(t2);
-Texture2D cleancoatNormalTexture : register(t3);
-Texture2D emissionTexture : register(t4);
-Texture2D misc0Texture : register(t5);
-Texture2D misc1Texture : register(t6);
-Texture2D misc2Texture : register(t7);
+Texture2D<float> depthTexture : register(t0);
+Texture2D normalTexture : register(t1);
 
 SamplerState samplerState;
 
@@ -59,7 +54,7 @@ float4 main(VSOut vs) : SV_Target
 {
 	float3 random = hash3(vs.Tex * float2(1920 / 4, 1080 / 4));
 	// reconstruct the view space position from the depth map
-	float start_Z = positionTexture.Sample(samplerState, vs.Tex).w;
+    float start_Z = depthTexture.Sample(samplerState, vs.Tex);
 	float start_Y = 1.0 - vs.Tex.y; // texture coordinates for D3D have origin in top left, but in camera space origin is in bottom left
 	float2 start_Pos = float2(vs.Tex.x, start_Y);
 	float2 ndc_Pos = (2.0 * start_Pos) - 1.0;
@@ -76,7 +71,7 @@ float4 main(VSOut vs) : SV_Target
 		float3 offset = TAP_SIZE * taps[i] * random;
 		float2 offTex = vs.Tex + float2(offset.x, -offset.y);
 
-		float off_start_Z = positionTexture.Sample(samplerState, offTex).w;
+        float off_start_Z = depthTexture.Sample(samplerState, offTex);
 		float2 off_start_Pos = float2(offTex.x, start_Y + offset.y);
 		float2 off_ndc_Pos = (2.0 * off_start_Pos) - 1.0;
 		float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_start_Z, 1.0), projInv);

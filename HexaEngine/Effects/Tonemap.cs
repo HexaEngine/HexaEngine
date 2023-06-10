@@ -12,7 +12,7 @@
     {
         private Quad quad;
         private IGraphicsPipeline pipeline;
-        private ConstantBuffer<Params> paramBuffer;
+        private ConstantBuffer<TonemapParams> paramBuffer;
         private ISamplerState sampler;
         private unsafe void** srvs;
         private unsafe void** cbvs;
@@ -29,20 +29,32 @@
         private ResourceRef<Texture> Bloom;
         private ResourceRef<IShaderResourceView> Position;
         public Viewport Viewport;
+        private int priority = 0;
+        private bool enabled = true;
 
-        private struct Params
+        public event Action<bool>? OnEnabledChanged;
+
+        public event Action<int>? OnPriorityChanged;
+
+        public string Name => "Tonemap";
+
+        public PostFxFlags Flags => PostFxFlags.None;
+
+        public bool Enabled
         {
-            public float BloomStrength;
-            public float FogEnabled;
-            public float FogStart;
-            public float FogEnd;
-            public Vector3 FogColor;
-            public float Padding;
-
-            public Params(float bloomStrength)
+            get => enabled; set
             {
-                BloomStrength = bloomStrength;
-                Padding = default;
+                enabled = value;
+                OnEnabledChanged?.Invoke(value);
+            }
+        }
+
+        public int Priority
+        {
+            get => priority; set
+            {
+                priority = value;
+                OnPriorityChanged?.Invoke(value);
             }
         }
 
@@ -101,13 +113,25 @@
             }
         }
 
-        public string Name => "Tonemap";
+        #region Structs
 
-        public PostFxFlags Flags => PostFxFlags.None;
+        private struct TonemapParams
+        {
+            public float BloomStrength;
+            public float FogEnabled;
+            public float FogStart;
+            public float FogEnd;
+            public Vector3 FogColor;
+            public float Padding;
 
-        public bool Enabled { get; set; } = true;
+            public TonemapParams(float bloomStrength)
+            {
+                BloomStrength = bloomStrength;
+                Padding = default;
+            }
+        }
 
-        public int Priority { get; set; } = 0;
+        #endregion Structs
 
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
@@ -117,7 +141,7 @@
                 VertexShader = "effects/tonemap/vs.hlsl",
                 PixelShader = "effects/tonemap/ps.hlsl",
             }, macros);
-            paramBuffer = new(device, new Params(bloomStrength), CpuAccessFlags.Write);
+            paramBuffer = new(device, new TonemapParams(bloomStrength), CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
             Bloom = ResourceManager2.Shared.GetResource<Texture>("Bloom");
@@ -152,13 +176,13 @@
         {
         }
 
-        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public unsafe void SetInput(IShaderResourceView view)
+        public unsafe void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
             srvs[0] = (void*)view.NativePointer;

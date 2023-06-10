@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Meshes
 {
     using HexaEngine.Core.Scenes;
+    using System;
     using System.Numerics;
 
     public struct CBWorld
@@ -19,6 +20,22 @@
             Matrix4x4.Invert(transform, out var inverse);
             World = Matrix4x4.Transpose(transform);
             WorldInv = Matrix4x4.Transpose(inverse);
+        }
+    }
+
+    public struct CBSkylight
+    {
+        public float SunZenith;
+        public float SunAzimuth;
+        public float ViewZenith;
+        public float ViewAzimuth;
+
+        public CBSkylight(float sunZenith, float sunAzimuth, float viewZenith, float viewAzimuth)
+        {
+            SunZenith = sunZenith;
+            SunAzimuth = sunAzimuth;
+            ViewZenith = viewZenith;
+            ViewAzimuth = viewAzimuth;
         }
     }
 
@@ -45,4 +62,64 @@
             MaxDistance = maxDistance;
         }
     }
+
+    public struct CBWeather
+    {
+        public Vector4 LightDir;
+        public Vector4 LightColor;
+        public Vector4 SkyColor;
+        public Vector4 AmbientColor;
+        public Vector4 WindDir;
+
+        public float WindSpeed;
+        public float Time;
+        public float Crispiness;
+        public float Curliness;
+
+        public float Coverage;
+        public float Absorption;
+        public float CloudsBottomHeight;
+        public float CloudsTopHeight;
+
+        public float DensityFactor;
+        public float CloudType;
+        public Vector2 _padd;
+
+        //sky parameters
+        public Vector3 A;
+
+        public float _paddA;
+        public Vector3 B;
+        public float _paddB;
+        public Vector3 C;
+        public float _paddC;
+        public Vector3 D;
+        public float _paddD;
+        public Vector3 E;
+        public float _paddE;
+        public Vector3 F;
+        public float _paddF;
+        public Vector3 G;
+        public float _paddG;
+        public Vector3 H;
+        public float _paddH;
+        public Vector3 I;
+        public float _paddI;
+        public Vector3 Z;
+        public float _paddZ;
+    };
+
+    public struct CBVoxel
+    {
+        public Vector3 GridCenter;
+        public float DataSize;        // voxel half-extent in world space units
+        public float DataSizeRCP;    // 1.0 / voxel-half extent
+        public uint DataRes;         // voxel grid resolution
+        public float DataResRCP;     // 1.0 / voxel grid resolution
+        public uint NumCones;
+        public float NumConesRCP;
+        public float MaxDistance;
+        public float RayStepSize;
+        public uint Mips;
+    };
 }

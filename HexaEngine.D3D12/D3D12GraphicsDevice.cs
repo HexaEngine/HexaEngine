@@ -369,5 +369,20 @@
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

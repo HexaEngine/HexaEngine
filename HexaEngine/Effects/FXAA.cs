@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
@@ -17,14 +16,34 @@ namespace HexaEngine.Effects
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
+        private bool enabled = true;
+        private int priority = -1;
+
+        public event Action<bool> OnEnabledChanged;
+
+        public event Action<int> OnPriorityChanged;
 
         public string Name => "FXAA";
 
         public PostFxFlags Flags => PostFxFlags.None;
 
-        public bool Enabled { get; set; } = true;
+        public bool Enabled
+        {
+            get => enabled; set
+            {
+                enabled = value;
+                OnEnabledChanged?.Invoke(value);
+            }
+        }
 
-        public int Priority { get; set; } = -1;
+        public int Priority
+        {
+            get => priority; set
+            {
+                priority = value;
+                OnPriorityChanged?.Invoke(value);
+            }
+        }
 
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
@@ -41,13 +60,13 @@ namespace HexaEngine.Effects
         {
         }
 
-        public void SetOutput(IRenderTargetView view, Viewport viewport)
+        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view)
+        public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }

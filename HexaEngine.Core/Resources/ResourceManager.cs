@@ -10,6 +10,7 @@
     {
         private static readonly ConcurrentDictionary<string, Mesh> meshes = new();
         private static readonly ConcurrentDictionary<string, Material> materials = new();
+        private static readonly ConcurrentDictionary<string, TerrainMaterial> terrainMaterials = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialTexture>> textures = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<MaterialShader>> shaders = new();
         private static readonly ConcurrentDictionary<string, ResourceInstance<IGraphicsPipeline>> pipelines = new();
@@ -143,6 +144,32 @@
             return modelMaterial;
         }
 
+        public static TerrainMaterial LoadTerrainMaterial(MaterialData desc)
+        {
+            TerrainMaterial? modelMaterial;
+            lock (terrainMaterials)
+            {
+                if (terrainMaterials.TryGetValue(desc.Name, out var model))
+                {
+                    model.AddRef();
+                    return model;
+                }
+
+                modelMaterial = new(desc);
+                modelMaterial.AddRef();
+                terrainMaterials.TryAdd(desc.Name, modelMaterial);
+            }
+
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(LoadTexture(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+
+            return modelMaterial;
+        }
+
         public static async Task<Material> LoadMaterialAsync(MeshData mesh, MaterialData desc, bool debone = false)
         {
             Material? modelMaterial;
@@ -160,6 +187,32 @@
             }
 
             modelMaterial.Shader = await LoadMaterialShaderAsync(mesh, desc, debone);
+
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(await LoadTextureAsync(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+
+            return modelMaterial;
+        }
+
+        public static async Task<TerrainMaterial> LoadTerrainMaterialAsync(MaterialData desc)
+        {
+            TerrainMaterial? modelMaterial;
+            lock (terrainMaterials)
+            {
+                if (terrainMaterials.TryGetValue(desc.Name, out modelMaterial))
+                {
+                    modelMaterial.AddRef();
+                    return modelMaterial;
+                }
+
+                modelMaterial = new(desc);
+                modelMaterial.AddRef();
+                terrainMaterials.TryAdd(desc.Name, modelMaterial);
+            }
 
             for (int i = 0; i < desc.Textures.Length; i++)
             {
@@ -199,6 +252,33 @@
             modelMaterial.EndUpdate();
         }
 
+        public static void UpdateTerrainMaterial(MaterialData desc)
+        {
+            TerrainMaterial? modelMaterial;
+            lock (terrainMaterials)
+            {
+                if (!terrainMaterials.TryGetValue(desc.Name, out modelMaterial))
+                {
+                    return;
+                }
+            }
+
+            modelMaterial.Update(desc);
+            modelMaterial.BeginUpdate();
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                UnloadTexture(modelMaterial.TextureList[i]);
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(LoadTexture(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+        }
+
         internal static void RenameMaterial(string oldName, string newName)
         {
             lock (materials)
@@ -206,6 +286,17 @@
                 if (materials.Remove(oldName, out var material))
                 {
                     materials.TryAdd(newName, material);
+                }
+            }
+        }
+
+        internal static void RenameTerrainMaterial(string oldName, string newName)
+        {
+            lock (terrainMaterials)
+            {
+                if (terrainMaterials.Remove(oldName, out var material))
+                {
+                    terrainMaterials.TryAdd(newName, material);
                 }
             }
         }
@@ -225,6 +316,33 @@
             modelMaterial.BeginUpdate();
 
             modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader);
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                UnloadTexture(modelMaterial.TextureList[i]);
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(await LoadTextureAsync(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+        }
+
+        public static async Task UpdateTerrainMaterialAsync(MaterialData desc)
+        {
+            TerrainMaterial? modelMaterial;
+            lock (terrainMaterials)
+            {
+                if (!terrainMaterials.TryGetValue(desc.Name, out modelMaterial))
+                {
+                    return;
+                }
+            }
+
+            modelMaterial.Update(desc);
+            modelMaterial.BeginUpdate();
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
@@ -259,6 +377,31 @@
             }
 
             UnloadMaterialShader(desc.Shader);
+            for (int i = 0; i < desc.TextureList.Count; i++)
+            {
+                UnloadTexture(desc.TextureList[i]);
+            }
+        }
+
+        public static void UnloadTerrainMaterial(TerrainMaterial desc)
+        {
+            desc.RemoveRef();
+            if (desc.IsUsed)
+            {
+                return;
+            }
+
+            if (suppressCleanup)
+            {
+                return;
+            }
+
+            lock (terrainMaterials)
+            {
+                terrainMaterials.Remove(desc.Name, out _);
+                desc.Dispose();
+            }
+
             for (int i = 0; i < desc.TextureList.Count; i++)
             {
                 UnloadTexture(desc.TextureList[i]);
@@ -522,6 +665,12 @@
                 material.Dispose();
             }
             materials.Clear();
+
+            foreach (var material in terrainMaterials.Values)
+            {
+                material.Dispose();
+            }
+            terrainMaterials.Clear();
 
             foreach (var texture in textures.Values)
             {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.IO.Meshes.Processing;
     using System.Numerics;
 
     public class VertexSelection

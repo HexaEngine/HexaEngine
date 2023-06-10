@@ -62,8 +62,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="assets\shared\icons\model.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\brdf2.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\compute\copy\drawArgs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\compute\lights\common.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\compute\lights\frustum.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\compute\lights\culling.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\compute\lumaAvg\shader.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -76,6 +91,9 @@
 		</None>
 		<None Update="assets\shared\shaders\compute\occlusion\occlusion.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\compute\raycast\shader.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\compute\selection2\shader.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -113,34 +131,82 @@
 		<None Update="assets\shared\shaders\deferred\brdf\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\csm\defs.hlsl">
+		<None Update="assets\shared\shaders\effects\godrays\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\csm\gs.hlsl">
+		<None Update="assets\shared\shaders\effects\godrays\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\csm\vs.hlsl">
+		<None Update="assets\shared\shaders\effects\lensflare\gs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\osm\defs.hlsl">
+		<None Update="assets\shared\shaders\effects\lensflare\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\osm\gs.hlsl">
+		<None Update="assets\shared\shaders\effects\lensflare\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\osm\ps.hlsl">
+		<None Update="assets\shared\shaders\effects\lut\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\osm\vs.hlsl">
+		<None Update="assets\shared\shaders\effects\lut\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\psm\defs.hlsl">
+		<None Update="assets\shared\shaders\effects\motionblur\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\psm\ps.hlsl">
+		<None Update="assets\shared\shaders\effects\motionblur\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\deferred\terrain\psm\vs.hlsl">
+		<None Update="assets\shared\shaders\effects\taa\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\taa\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\velocity\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\velocity\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\skylight\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\skylight\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ssr\blend.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\csm\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\csm\gs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\csm\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\osm\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\osm\gs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\osm\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\osm\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\psm\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\psm\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\psm\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\geometry.hlsl">
@@ -188,19 +254,10 @@
 		<None Update="assets\shared\shaders\effects\exposure\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\skybox\ps.hlsl">
+		<None Update="assets\shared\shaders\effects\ssr\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\skybox\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\ssgi\normals.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\ssgi\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\ssgi\vs.hlsl">
+		<None Update="assets\shared\shaders\effects\ssr\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\bezier\ps.hlsl">
@@ -320,22 +377,19 @@
 		<None Update="assets\shared\shaders\effects\tonemap\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\psm\defs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\psm\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\psm\ps.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\psm\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\psm\vs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\psm\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\selection\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\selection\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\shadow.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\deferred\geometry\defs.hlsl">
@@ -359,29 +413,50 @@
 		<None Update="assets\shared\shaders\effects\bloom\upsample\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\csm\defs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\csm\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\csm\gs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\csm\gs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\csm\vs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\csm\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\osm\defs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\osm\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\osm\gs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\osm\gs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\osm\ps.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\osm\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\osm\vs.hlsl">
+		<None Update="assets\shared\shaders\forward\geometry\osm\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\light.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\brush\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\brush\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\brush\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\mask\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\mask\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\mask\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\weather.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\world.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -422,37 +497,28 @@
 		<None Update="assets\shared\shaders\effects\fxaa\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\ssr\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\ssr\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\shared\shaders\gbuffer.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\ssao\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\ssao\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\lut\brdf.hlsl">
+		<None Update="assets\shared\shaders\effects\brdf\brdf.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\lut\vs.hlsl">
+		<None Update="assets\shared\shaders\effects\brdf\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\irradiance\ps.hlsl">
+		<None Update="assets\shared\shaders\filter\irradiance\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\irradiance\vs.hlsl">
+		<None Update="assets\shared\shaders\filter\irradiance\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\prefilter\ps.hlsl">
+		<None Update="assets\shared\shaders\filter\prefilter\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\prefilter\vs.hlsl">
+		<None Update="assets\shared\shaders\filter\prefilter\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\irradiance.hlsl">
@@ -473,16 +539,16 @@
 		<None Update="assets\shared\shaders\common.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\font\FontPixel.hlsl">
+		<None Update="assets\shared\shaders\forward\font\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\font\FontVertex.hlsl">
+		<None Update="assets\shared\shaders\forward\font\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\equitocube\ps.hlsl">
+		<None Update="assets\shared\shaders\filter\equitocube\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\equitocube\vs.hlsl">
+		<None Update="assets\shared\shaders\filter\equitocube\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\skybox\ps.hlsl">
@@ -495,6 +561,21 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\textures\brushes\spray.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\debugging\heatmap.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\lens\Flare_Hex.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\lut.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\LUT_default.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\sun\sunsprite.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
@@ -521,6 +602,7 @@
 
 
 	<ItemGroup>
+	  <Folder Include="assets\shared\shaders\forward\terrain\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
 	</ItemGroup>
 </Project>

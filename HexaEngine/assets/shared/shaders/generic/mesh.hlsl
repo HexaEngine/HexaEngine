@@ -28,8 +28,7 @@ PixelInputType main(VertexInputType input)
 
     output.position = mul(float4(input.position, 1), world);
     output.pos = output.position;
-	output.position = mul(output.position, view);
-	output.position = mul(output.position, proj);
+    output.position = mul(output.position, viewProj);
 	
     output.normal = normalize(mul(input.normal, (float3x3)world));
     output.tangent = normalize(mul(input.tangent, (float3x3)world));

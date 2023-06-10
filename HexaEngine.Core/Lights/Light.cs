@@ -24,6 +24,12 @@
 
         public abstract bool HasShadowMap { get; }
 
+        [EditorProperty("Range")]
+        public float Range { get; set; } = 50;
+
+        [EditorProperty("Intensity")]
+        public float Intensity { get; set; } = 1;
+
         /// <summary>
         /// Tests if an object that moved affects the shadow volume
         /// </summary>

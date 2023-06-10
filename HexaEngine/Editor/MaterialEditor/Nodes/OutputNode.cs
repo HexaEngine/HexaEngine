@@ -38,7 +38,8 @@
 
         public void InitTexture(IGraphicsDevice device)
         {
-            Texture = new(device, TextureDescription.CreateTexture2DWithRTV(256, 256, 1), DepthStencilDesc.Default);
+            Texture = new(device, TextureDescription.CreateTexture2DWithRTV(256, 256, 1, Format.R16G16B16A16Float));
+            DepthStencil = new(device, 256, 256, Format.D32FloatS8X24UInt);
         }
 
         [JsonIgnore]
@@ -46,6 +47,9 @@
 
         [JsonIgnore]
         public Texture? Texture;
+
+        [JsonIgnore]
+        public DepthStencil DepthStencil;
 
         [JsonIgnore]
         public Camera Camera;
@@ -95,6 +99,7 @@
         public override void Destroy()
         {
             Texture?.Dispose();
+            DepthStencil?.Dispose();
             base.Destroy();
         }
     }

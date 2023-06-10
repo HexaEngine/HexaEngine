@@ -2,7 +2,8 @@
 // Filename: light.ps
 ////////////////////////////////////////////////////////////////////////////////
 #include "../../gbuffer.hlsl"
-#include "../../brdf.hlsl"
+//#include "../../brdf.hlsl"
+#include "../../brdf2.hlsl"
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
 
@@ -73,7 +74,9 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
         DirectionalLight light = directionalLights[x];
         float3 L = normalize(-light.dir);
         float3 radiance = light.color.rgb;
-        Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        
+        Lo += BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
+        //Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
     }
 
     for (uint z = 0; z < pointLightCount; z++)
@@ -86,7 +89,8 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
 
-        Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        Lo += BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
+        //Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
     }
 
     for (uint w = 0; w < spotlightCount; w++)
@@ -105,7 +109,8 @@ float4 ComputeLightingPBR(VSOut input, GeometryAttributes attrs)
             if (epsilon != 0)
                 falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
             float3 radiance = light.color.rgb * attenuation * falloff;
-            Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+            Lo += BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metalness);
+            //Lo += BRDF(L, V, N, X, Y, baseColor, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
         }
     }
     float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;

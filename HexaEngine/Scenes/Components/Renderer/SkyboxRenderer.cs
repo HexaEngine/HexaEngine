@@ -23,7 +23,7 @@
     {
         private GameObject gameObject;
         private IGraphicsDevice? device;
-        private Sphere sphere;
+        private Cube sphere;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
         private ConstantBuffer<CBWorld> cb;
@@ -31,6 +31,9 @@
         private Texture? env;
         private string environment = string.Empty;
         private bool drawable;
+
+        private IGraphicsPipeline light;
+        private ConstantBuffer<CBSkylight> cbSkylight;
 
         [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
@@ -83,6 +86,21 @@
                 StencilRef = 0,
                 Topology = PrimitiveTopology.TriangleList
             });
+            light = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "forward/skylight/vs.hlsl",
+                PixelShader = "forward/skylight/ps.hlsl",
+            }, new GraphicsPipelineState()
+            {
+                Blend = BlendDescription.Opaque,
+                BlendFactor = default,
+                DepthStencil = DepthStencilDescription.Default,
+                Rasterizer = RasterizerDescription.CullNone,
+                SampleMask = 0,
+                StencilRef = 0,
+                Topology = PrimitiveTopology.TriangleList
+            });
+            cbSkylight = new(device, CpuAccessFlags.Write);
 
             sampler = ResourceManager2.Shared.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp).Value;
 
@@ -118,11 +136,14 @@
                 return;
             }
 
-            cb[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far - 0.1f) * Matrix4x4.CreateTranslation(camera.Transform.Position));
+            cb[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far / 2) * Matrix4x4.CreateTranslation(camera.Transform.Position));
             cb.Update(context);
+
+            cbSkylight[0] = new((float)Math.PI, (float)Math.PI, 0, 0);
+            cbSkylight.Update(context);
         }
 
-        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        public void DrawDepth(IGraphicsContext context)
         {
         }
 
@@ -154,6 +175,9 @@
                 context.PSSetShaderResource(env.ShaderResourceView, 0);
                 context.PSSetSampler(sampler, 0);
                 sphere.DrawAuto(context, pipeline);
+                /*
+                context.PSSetConstantBuffer(cbSkylight, 0);
+                sphere.DrawAuto(context, light);*/
             }
         }
 

@@ -18,6 +18,7 @@
             return c;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo<T>(this T t, int* offset, byte* dst) where T : unmanaged
         {
             var size = sizeof(T);

@@ -134,7 +134,9 @@
 
         IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
-        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc);
+        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
+
+        IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0);
 
         Task<IGraphicsPipeline> CreateGraphicsPipelineAsync(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
@@ -176,9 +178,14 @@
             return Task.Factory.StartNew(() => CreateGraphicsPipeline(desc, state, inputElements, macros, filename, line));
         }
 
-        Task<IComputePipeline> CreateComputePipelineAsync(ComputePipelineDesc desc)
+        Task<IComputePipeline> CreateComputePipelineAsync(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return Task.Factory.StartNew(() => CreateComputePipeline(desc));
+            return Task.Factory.StartNew(() => CreateComputePipeline(desc, filename, line));
+        }
+
+        Task<IComputePipeline> CreateComputePipelineAsync(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            return Task.Factory.StartNew(() => CreateComputePipeline(desc, macros, filename, line));
         }
     }
 }

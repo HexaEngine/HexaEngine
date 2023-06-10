@@ -151,8 +151,8 @@ namespace HexaEngine.Core.Resources
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/csm/vs.hlsl",
-                    GeometryShader = "forward/csm/gs.hlsl",
+                    VertexShader = "forward/geometry/csm/vs.hlsl",
+                    GeometryShader = "forward/geometry/csm/gs.hlsl",
                 };
                 var csmPipelineState = new GraphicsPipelineState()
                 {
@@ -164,9 +164,9 @@ namespace HexaEngine.Core.Resources
 
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/osm/vs.hlsl",
-                    GeometryShader = "forward/osm/gs.hlsl",
-                    PixelShader = "forward/osm/ps.hlsl",
+                    VertexShader = "forward/geometry/osm/vs.hlsl",
+                    GeometryShader = "forward/geometry/osm/gs.hlsl",
+                    PixelShader = "forward/geometry/osm/ps.hlsl",
                 };
                 var osmPipelineState = new GraphicsPipelineState()
                 {
@@ -178,8 +178,8 @@ namespace HexaEngine.Core.Resources
 
                 var psmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/psm/vs.hlsl",
-                    PixelShader = "forward/psm/ps.hlsl",
+                    VertexShader = "forward/geometry/psm/vs.hlsl",
+                    PixelShader = "forward/geometry/psm/ps.hlsl",
                 };
                 var psmPipelineState = new GraphicsPipelineState()
                 {
@@ -191,14 +191,14 @@ namespace HexaEngine.Core.Resources
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
-                    csmPipelineDesc.HullShader = "forward/csm/hs.hlsl";
-                    csmPipelineDesc.DomainShader = "forward/csm/ds.hlsl";
+                    csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
+                    csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
                     csmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    osmPipelineDesc.HullShader = "forward/osm/hs.hlsl";
-                    osmPipelineDesc.DomainShader = "forward/osm/ds.hlsl";
+                    osmPipelineDesc.HullShader = "forward/geometry/osm/hs.hlsl";
+                    osmPipelineDesc.DomainShader = "forward/geometry/osm/ds.hlsl";
                     osmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    psmPipelineDesc.HullShader = "forward/psm/hs.hlsl";
-                    psmPipelineDesc.DomainShader = "forward/psm/ds.hlsl";
+                    psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
+                    psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";
                     psmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
@@ -319,8 +319,8 @@ namespace HexaEngine.Core.Resources
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/csm/vs.hlsl",
-                    GeometryShader = "forward/csm/gs.hlsl",
+                    VertexShader = "forward/geometry/csm/vs.hlsl",
+                    GeometryShader = "forward/geometry/csm/gs.hlsl",
                 };
                 var csmPipelineState = new GraphicsPipelineState()
                 {
@@ -332,9 +332,9 @@ namespace HexaEngine.Core.Resources
 
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/osm/vs.hlsl",
-                    GeometryShader = "forward/osm/gs.hlsl",
-                    PixelShader = "forward/osm/ps.hlsl",
+                    VertexShader = "forward/geometry/osm/vs.hlsl",
+                    GeometryShader = "forward/geometry/osm/gs.hlsl",
+                    PixelShader = "forward/geometry/osm/ps.hlsl",
                 };
                 var osmPipelineState = new GraphicsPipelineState()
                 {
@@ -346,8 +346,8 @@ namespace HexaEngine.Core.Resources
 
                 var psmPipelineDesc = new GraphicsPipelineDesc()
                 {
-                    VertexShader = "forward/psm/vs.hlsl",
-                    PixelShader = "forward/psm/ps.hlsl",
+                    VertexShader = "forward/geometry/psm/vs.hlsl",
+                    PixelShader = "forward/geometry/psm/ps.hlsl",
                 };
                 var psmPipelineState = new GraphicsPipelineState()
                 {
@@ -359,14 +359,14 @@ namespace HexaEngine.Core.Resources
 
                 if ((matflags & MaterialFlags.Tessellation) != 0)
                 {
-                    csmPipelineDesc.HullShader = "forward/csm/hs.hlsl";
-                    csmPipelineDesc.DomainShader = "forward/csm/ds.hlsl";
+                    csmPipelineDesc.HullShader = "forward/geometry/csm/hs.hlsl";
+                    csmPipelineDesc.DomainShader = "forward/geometry/csm/ds.hlsl";
                     csmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    osmPipelineDesc.HullShader = "forward/osm/hs.hlsl";
-                    osmPipelineDesc.DomainShader = "forward/osm/ds.hlsl";
+                    osmPipelineDesc.HullShader = "forward/geometry/osm/hs.hlsl";
+                    osmPipelineDesc.DomainShader = "forward/geometry/osm/ds.hlsl";
                     osmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
-                    psmPipelineDesc.HullShader = "forward/psm/hs.hlsl";
-                    psmPipelineDesc.DomainShader = "forward/psm/ds.hlsl";
+                    psmPipelineDesc.HullShader = "forward/geometry/psm/hs.hlsl";
+                    psmPipelineDesc.DomainShader = "forward/geometry/psm/ds.hlsl";
                     psmPipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 

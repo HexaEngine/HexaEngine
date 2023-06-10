@@ -290,7 +290,7 @@
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -312,7 +312,7 @@
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -334,7 +334,7 @@
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -356,7 +356,7 @@
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -378,7 +378,7 @@
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -406,7 +406,7 @@
                 image.Dispose();
                 image = tmp;
             }
-            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width != 1 && image.Metadata.Height != 1)
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1)
             {
                 var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
                 image.Dispose();
@@ -414,6 +414,72 @@
             }
 
             var tex = image.CreateTexture3D(device, Core.Graphics.Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, Core.Graphics.ResourceMiscFlag.None);
+
+            image.Dispose();
+            return tex;
+        }
+
+        public ITexture1D LoadTexture1D(TextureFileDescription desc)
+        {
+            var image = LoadFormAssets(desc.Path, TextureDimension.Texture1D);
+            if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
+            {
+                var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
+                image.Dispose();
+                image = tmp;
+            }
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1 && desc.MipLevels == 0)
+            {
+                var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
+                image.Dispose();
+                image = tmp;
+            }
+
+            var tex = image.CreateTexture1D(device, desc.Usage, desc.BindFlags, desc.CPUAccessFlags, desc.Dimension == TextureDimension.TextureCube ? Core.Graphics.ResourceMiscFlag.TextureCube : Core.Graphics.ResourceMiscFlag.None);
+
+            image.Dispose();
+            return tex;
+        }
+
+        public ITexture2D LoadTexture2D(TextureFileDescription desc)
+        {
+            var image = LoadFormAssets(desc.Path, TextureDimension.Texture2D);
+            if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
+            {
+                var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
+                image.Dispose();
+                image = tmp;
+            }
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1 && desc.MipLevels == 0)
+            {
+                var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
+                image.Dispose();
+                image = tmp;
+            }
+
+            var tex = image.CreateTexture2D(device, desc.Usage, desc.BindFlags, desc.CPUAccessFlags, desc.Dimension == TextureDimension.TextureCube ? Core.Graphics.ResourceMiscFlag.TextureCube : Core.Graphics.ResourceMiscFlag.None);
+
+            image.Dispose();
+            return tex;
+        }
+
+        public ITexture3D LoadTexture3D(TextureFileDescription desc)
+        {
+            var image = LoadFormAssets(desc.Path, TextureDimension.Texture3D);
+            if ((flags & TextureLoaderFlags.Scale) != 0 && scalingFactor != 1)
+            {
+                var tmp = image.Resize(scalingFactor, Core.Graphics.Textures.TexFilterFlags.Default);
+                image.Dispose();
+                image = tmp;
+            }
+            if ((flags & TextureLoaderFlags.GenerateMipMaps) != 0 && image.Metadata.MipLevels == 1 && image.Metadata.Width > 1 && image.Metadata.Height > 1 && desc.MipLevels == 0)
+            {
+                var tmp = image.GenerateMipMaps(Core.Graphics.Textures.TexFilterFlags.Default);
+                image.Dispose();
+                image = tmp;
+            }
+
+            var tex = image.CreateTexture3D(device, desc.Usage, desc.BindFlags, desc.CPUAccessFlags, desc.Dimension == TextureDimension.TextureCube ? Core.Graphics.ResourceMiscFlag.TextureCube : Core.Graphics.ResourceMiscFlag.None);
 
             image.Dispose();
             return tex;

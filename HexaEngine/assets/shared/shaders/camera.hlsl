@@ -1,12 +1,15 @@
 cbuffer CameraBuffer : register(b1)
 {
-    matrix view;
-    matrix proj;
-    matrix viewInv;
-    matrix projInv;
+    float4x4 view;
+    float4x4 proj;
+    float4x4 viewInv;
+    float4x4 projInv;
+    float4x4 viewProj;
+    float4x4 viewProjInv;
+    float4x4 prevViewProj;
     float cam_far;
     float cam_near;
-    float2 cam_padd;
+    float2 screen_dim;
 };
 
 float3 GetCameraPos()
@@ -26,4 +29,15 @@ float SampleLinearDepth(Texture2D tex, SamplerState smp, float2 texCoord)
 {
     float depth = tex.Sample(smp, texCoord).r;
     return GetLinearDepth(depth);
+}
+
+float3 GetPositionVS(float2 texcoord, float depth)
+{
+    float4 clipSpaceLocation;
+    clipSpaceLocation.xy = texcoord * 2.0f - 1.0f;
+    clipSpaceLocation.y *= -1;
+    clipSpaceLocation.z = depth;
+    clipSpaceLocation.w = 1.0f;
+    float4 homogenousLocation = mul(clipSpaceLocation, projInv);
+    return homogenousLocation.xyz / homogenousLocation.w;
 }

@@ -57,7 +57,7 @@ namespace HexaEngine.D3D11
         {
             ScratchImage inScImage = scImage;
             ScratchImage outScImage = DirectXTex.CreateScratchImage();
-            DirectXTex.GenerateMipMaps2(inScImage.GetImages(), inScImage.GetImageCount(), inScImage.GetMetadata(), Helper.Convert(flags), (nuint)MathUtil.ComputeMipLevels(Metadata.Width, Metadata.Height), outScImage);
+            DirectXTex.GenerateMipMaps2(inScImage.GetImages(), inScImage.GetImageCount(), inScImage.GetMetadata(), Helper.Convert(flags), (nuint)TextureHelper.ComputeMipLevels(Metadata.Width, Metadata.Height), outScImage);
             return new D3DScratchImage(outScImage);
         }
 

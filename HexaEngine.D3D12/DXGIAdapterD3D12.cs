@@ -14,6 +14,7 @@
 
         internal IDXGIFactory4* IDXGIFactory;
         internal ComPtr<IDXGIAdapter1> IDXGIAdapter;
+        internal ComPtr<IDXGIAdapter3> IDXGIAdapter3;
 
         public DXGIAdapterD3D12()
         {
@@ -24,6 +25,7 @@
             IDXGIFactory = factory;
 
             IDXGIAdapter = GetHardwareAdapter();
+            IDXGIAdapter.QueryInterface(out IDXGIAdapter3);
         }
 
         public static void Init()
@@ -32,6 +34,34 @@
             {
                 GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D12());
             }
+        }
+
+        public ulong GetMemoryBudget()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.Budget;
+        }
+
+        public ulong GetMemoryCurrentUsage()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.CurrentUsage;
+        }
+
+        public ulong GetMemoryAvailableForReservation()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.AvailableForReservation;
+        }
+
+        public ulong GetMemoryCurrentReservation()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.AvailableForReservation;
         }
 
         public virtual GraphicsBackend Backend => GraphicsBackend.D3D11;

@@ -60,7 +60,7 @@
             srv.DebugName = dbgName + ".SRV";
         }
 
-        public StructuredUavBuffer(IGraphicsDevice device, int intialCapacity, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredUavBuffer(IGraphicsDevice device, uint intialCapacity, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
             this.canWrite = canWrite;
@@ -68,15 +68,15 @@
             this.uavFlags = uavFlags;
             this.srvFlags = srvFlags;
             dbgName = $"StructuredUavBuffer: {filename}, Line:{lineNumber}";
-            capacity = (uint)intialCapacity;
+            capacity = intialCapacity;
             items = Alloc<T>(intialCapacity);
-            Zero(items, intialCapacity * sizeof(T));
-            bufferDescription = new(sizeof(T) * intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
-            buffer = device.CreateBuffer(items, (uint)intialCapacity, bufferDescription);
+            Zero(items, (int)intialCapacity * sizeof(T));
+            bufferDescription = new(sizeof(T) * (int)intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
+            buffer = device.CreateBuffer(items, intialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
             if (canWrite || canRead)
             {
-                copyDescription = new(sizeof(T) * intialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
+                copyDescription = new(sizeof(T) * (int)intialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
                 if (canRead)
                 {
                     copyDescription.BindFlags = BindFlags.None;
@@ -87,9 +87,9 @@
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
             }
 
-            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, intialCapacity, uavFlags));
+            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)intialCapacity, uavFlags));
             uav.DebugName = dbgName + ".UAV";
-            srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, intialCapacity, srvFlags));
+            srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, (int)intialCapacity, srvFlags));
             srv.DebugName = dbgName + ".SRV";
         }
 

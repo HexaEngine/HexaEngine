@@ -9,6 +9,7 @@
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
     public static unsafe class Application
     {
@@ -86,6 +87,7 @@
 
         public static void Run(IRenderWindow mainWindow)
         {
+            Process.GetCurrentProcess().PriorityBoostEnabled = true;
             Init();
             Application.mainWindow = mainWindow;
             mainWindow.Closing += MainWindow_Closing;

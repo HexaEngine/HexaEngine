@@ -1,72 +1,138 @@
 #include "defs.hlsl"
 #include "../../gbuffer.hlsl"
 
-#ifndef BaseColor
-#define BaseColor float4(0.8,0.8,0.8,1)
+#ifndef BaseColor0
+#define BaseColor0 float4(0.8,0.8,0.8,1)
+#define BaseColor1 float4(0.8,0.8,0.8,1)
+#define BaseColor2 float4(0.8,0.8,0.8,1)
+#define BaseColor3 float4(0.8,0.8,0.8,1)
 #endif
-#ifndef Roughness
-#define Roughness 0.8
+#ifndef Roughness0
+#define Roughness0 0.8
+#define Roughness1 0.8
+#define Roughness2 0.8
+#define Roughness3 0.8
 #endif
-#ifndef Metalness
-#define Metalness 0
+#ifndef Metalness0
+#define Metalness0 0
+#define Metalness1 0
+#define Metalness2 0
+#define Metalness3 0
 #endif
-#ifndef Specular
-#define Specular 0.5
+#ifndef Specular0
+#define Specular0 0.5
+#define Specular1 0.5
+#define Specular2 0.5
+#define Specular3 0.5
 #endif
-#ifndef SpecularTint
-#define SpecularTint 0
+#ifndef SpecularTint0
+#define SpecularTint0 0
+#define SpecularTint1 0
+#define SpecularTint2 0
+#define SpecularTint3 0
 #endif
-#ifndef Sheen
-#define Sheen 0
+#ifndef Sheen0
+#define Sheen0 0
+#define Sheen1 0
+#define Sheen2 0
+#define Sheen3 0
 #endif
-#ifndef SheenTint
-#define SheenTint 1
+#ifndef SheenTint0
+#define SheenTint0 1
+#define SheenTint1 0
+#define SheenTint2 0
+#define SheenTint3 0
 #endif
-#ifndef Clearcoat
-#define Clearcoat 0
+#ifndef Clearcoat0
+#define Clearcoat0 0
+#define Clearcoat1 0
+#define Clearcoat2 0
+#define Clearcoat3 0
 #endif
-#ifndef ClearcoatGloss
-#define ClearcoatGloss 1
+#ifndef ClearcoatGloss0
+#define ClearcoatGloss0 1
+#define ClearcoatGloss1 1
+#define ClearcoatGloss2 1
+#define ClearcoatGloss3 1
 #endif
-#ifndef Anisotropic
-#define Anisotropic 0
+#ifndef Anisotropic0
+#define Anisotropic0 0
+#define Anisotropic1 0
+#define Anisotropic2 0
+#define Anisotropic3 0
 #endif
-#ifndef Subsurface
-#define Subsurface 0
+#ifndef Subsurface0
+#define Subsurface0 0
+#define Subsurface1 0
+#define Subsurface2 0
+#define Subsurface3 0
 #endif
-#ifndef Ao
-#define Ao 1
+#ifndef Ao0
+#define Ao0 1
+#define Ao1 1
+#define Ao2 1
+#define Ao3 1
 #endif
-#ifndef Emissive
-#define Emissive float3(0,0,0);
+#ifndef Emissive0
+#define Emissive0 float3(0,0,0);
+#define Emissive1 float3(0,0,0);
+#define Emissive2 float3(0,0,0);
+#define Emissive3 float3(0,0,0);
 #endif
 
-#ifndef HasBaseColorTex
-#define HasBaseColorTex 0
+#ifndef HasBaseColorTex0
+#define HasBaseColorTex0 0
+#define HasBaseColorTex1 0
+#define HasBaseColorTex2 0
+#define HasBaseColorTex3 0
 #endif
-#ifndef HasNormalTex
-#define HasNormalTex 0
+#ifndef HasNormalTex0
+#define HasNormalTex0 0
+#define HasNormalTex1 0
+#define HasNormalTex2 0
+#define HasNormalTex3 0
 #endif
-#ifndef HasDisplacementTex
-#define HasDisplacementTex 0
+#ifndef HasDisplacementTex0
+#define HasDisplacementTex0 0
+#define HasDisplacementTex1 0
+#define HasDisplacementTex2 0
+#define HasDisplacementTex3 0
 #endif
-#ifndef HasMetalnessTex
-#define HasMetalnessTex 0
+#ifndef HasMetalnessTex0
+#define HasMetalnessTex0 0
+#define HasMetalnessTex1 0
+#define HasMetalnessTex2 0
+#define HasMetalnessTex3 0
 #endif
-#ifndef HasRoughnessTex
-#define HasRoughnessTex 0
+#ifndef HasRoughnessTex0
+#define HasRoughnessTex0 0
+#define HasRoughnessTex1 0
+#define HasRoughnessTex2 0
+#define HasRoughnessTex3 0
 #endif
-#ifndef HasEmissiveTex
-#define HasEmissiveTex 0
+#ifndef HasEmissiveTex0
+#define HasEmissiveTex0 0
+#define HasEmissiveTex1 0
+#define HasEmissiveTex2 0
+#define HasEmissiveTex3 0
 #endif
-#ifndef HasAmbientOcclusionTex
-#define HasAmbientOcclusionTex 0
+#ifndef HasAmbientOcclusionTex0
+#define HasAmbientOcclusionTex0 0
+#define HasAmbientOcclusionTex1 0
+#define HasAmbientOcclusionTex2 0
+#define HasAmbientOcclusionTex3 0
 #endif
-#ifndef HasRoughnessMetalnessTex
-#define HasRoughnessMetalnessTex 0
+#ifndef HasRoughnessMetalnessTex0
+#define HasRoughnessMetalnessTex0 0
+#define HasRoughnessMetalnessTex1 0
+#define HasRoughnessMetalnessTex2 0
+#define HasRoughnessMetalnessTex3 0
 #endif
-#ifndef HasAmbientOcclusionRoughnessMetalnessTex
-#define HasAmbientOcclusionRoughnessMetalnessTex 0
+#ifndef HasAmbientOcclusionRoughnessMetalnessTex0
+#define HasAmbientOcclusionRoughnessMetalnessTex0 0
+#define HasAmbientOcclusionRoughnessMetalnessTex1 0
+#define HasAmbientOcclusionRoughnessMetalnessTex2 0
+#define HasAmbientOcclusionRoughnessMetalnessTex3 0
 #endif
 
 #if HasBaseColorTex
@@ -144,11 +210,11 @@ Texture2D maskTex;
 
 GeometryData main(PixelInput input)
 {
-#if VtxColor
-    float4 baseColor = input.color;
-#else
-    float4 baseColor = BaseColor;
-#endif
+    float4 baseColor0 = BaseColor0;
+    float4 baseColor1 = BaseColor1;
+    float4 baseColor2 = BaseColor2;
+    float4 baseColor3 = BaseColor3;
+
 #if VtxPosition
     float3 pos = (float3) input.pos;
 #endif
@@ -161,20 +227,55 @@ GeometryData main(PixelInput input)
 #if VtxBitangent
     float3 bitangent = normalize(input.bitangent);
 #endif
-    float3 emissive = Emissive;
-    float opacity = 1;
+    float3 emissive0 = Emissive0;
+    float3 emissive1 = Emissive1;
+    float3 emissive2 = Emissive2;
+    float3 emissive3 = Emissive3;
 
-    float ao = Ao;
-    float specular = Specular;
-    float specularTint = SpecularTint;
-    float sheen = Sheen;
-    float sheenTint = SheenTint;
-    float clearcoat = Clearcoat;
-    float clearcoatGloss = ClearcoatGloss;
-    float anisotropic = Anisotropic;
-    float subsurface = Subsurface;
-    float roughness = Roughness;
-    float metalness = Metalness;
+    float ao0 = Ao0;
+    float ao1 = Ao1;
+    float ao2 = Ao2;
+    float ao3 = Ao3;
+    float specular0 = Specular0;
+    float specular1 = Specular1;
+    float specular2 = Specular2;
+    float specular3 = Specular3;
+    float specularTint0 = SpecularTint0;
+    float specularTint1 = SpecularTint1;
+    float specularTint2 = SpecularTint2;
+    float specularTint3 = SpecularTint3;
+    float sheen0 = Sheen0;
+    float sheen1 = Sheen1;
+    float sheen2 = Sheen2;
+    float sheen3 = Sheen3;
+    float sheenTint0 = SheenTint0;
+    float sheenTint1 = SheenTint1;
+    float sheenTint2 = SheenTint2;
+    float sheenTint3 = SheenTint3;
+    float clearcoat0 = Clearcoat0;
+    float clearcoat1 = Clearcoat1;
+    float clearcoat2 = Clearcoat2;
+    float clearcoat3 = Clearcoat3;
+    float clearcoatGloss0 = ClearcoatGloss0;
+    float clearcoatGloss1 = ClearcoatGloss1;
+    float clearcoatGloss2 = ClearcoatGloss2;
+    float clearcoatGloss3 = ClearcoatGloss3;
+    float anisotropic0 = Anisotropic0;
+    float anisotropic1 = Anisotropic1;
+    float anisotropic2 = Anisotropic2;
+    float anisotropic3 = Anisotropic3;
+    float subsurface0 = Subsurface0;
+    float subsurface1 = Subsurface1;
+    float subsurface2 = Subsurface2;
+    float subsurface3 = Subsurface3;
+    float roughness0 = Roughness0;
+    float roughness1 = Roughness1;
+    float roughness2 = Roughness2;
+    float roughness3 = Roughness3;
+    float metalness0 = Metalness0;
+    float metalness1 = Metalness1;
+    float metalness2 = Metalness2;
+    float metalness3 = Metalness3;
 #if VtxUV
 #if HasBaseColorTex
 	float4 color = baseColorTexture.Sample(baseColorTextureSampler, (float2) input.tex);
@@ -219,24 +320,27 @@ GeometryData main(PixelInput input)
     metalness = orm.b;
 #endif
 #endif
-    if (baseColor.a == 0)
-        discard;
+
 #if !VtxTangent
     float3 tangent = float3(0, 1, 0);
 #endif
 
-/*
+
     float3 c0 = colorTex.Sample(state, input.tex).xyz;
     float3 c1 = colorTex.Sample(state, input.tex).xyz;
     float3 c2 = colorTex.Sample(state, input.tex).xyz;
 
-	float3 mask = maskTex.Sample(state, input.ctex).xyz;
+	float4 mask = maskTex.Sample(state, input.ctex).xyzw;
 
 	float3 color = float3(0.0f, 0.0f, 0.0f);
 	color = lerp(color, c0, mask.r);
 	color = lerp(color, c1, mask.g);
 	color = lerp(color, c2, mask.b);
-*/
 
-    return PackGeometryData(baseColor.rgb, baseColor.a, pos, input.depth, normal, roughness, metalness, tangent, emissive, 0, specular, specularTint, ao, 1, anisotropic, 0, clearcoat, clearcoatGloss, 0, 0, sheen, sheenTint);
+    float opacity = mask.x + mask.y + mask.z + mask.w;
+    
+    if (opacity == 0)
+        discard;
+
+    return PackGeometryData(baseColor0.rgb, opacity, pos, input.depth, normal, roughness0, metalness0, tangent, emissive0, 0, specular0, specularTint0, ao0, 1, anisotropic0, 0, clearcoat0, clearcoatGloss0, 0, 0, sheen0, sheenTint0);
 }

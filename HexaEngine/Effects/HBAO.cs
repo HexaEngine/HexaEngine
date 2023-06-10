@@ -30,7 +30,7 @@ namespace HexaEngine.Effects
 
         public ResourceRef<Texture> Output;
         public ResourceRef<IBuffer> Camera;
-        public ResourceRef<IShaderResourceView> Position;
+        public ResourceRef<IShaderResourceView> Depth;
         public ResourceRef<IShaderResourceView> Normal;
 
         private bool isDirty = true;
@@ -111,18 +111,18 @@ namespace HexaEngine.Effects
             hbaoRTV = device.CreateRenderTargetView(hbaoBuffer, new(width / 2, height / 2));
             hbaoSRV = device.CreateShaderResourceView(hbaoBuffer);
 
-            Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("SwapChain.SRV");
+            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("SwapChain.SRV");
             Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
 
-            Position.Resource.ValueChanged += ValueChanged;
+            Depth.Resource.ValueChanged += ValueChanged;
             Normal.Resource.ValueChanged += ValueChanged;
             Camera.Resource.ValueChanged += ValueChanged;
 
             unsafe
             {
                 hbaoSRVs = AllocArray(2);
-                hbaoSRVs[0] = (void*)Position.Value.NativePointer;
+                hbaoSRVs[0] = (void*)Depth.Value.NativePointer;
                 hbaoSRVs[1] = (void*)Normal.Value.NativePointer;
                 hbaoCBs = AllocArray(2);
                 hbaoCBs[0] = (void*)cbHBAO.NativePointer;
@@ -151,7 +151,7 @@ namespace HexaEngine.Effects
         {
             unsafe
             {
-                hbaoSRVs[0] = (void*)Position.Value.NativePointer;
+                hbaoSRVs[0] = (void*)Depth.Value.NativePointer;
                 hbaoSRVs[1] = (void*)Normal.Value.NativePointer;
                 hbaoCBs[1] = (void*)Camera.Value.NativePointer;
             }

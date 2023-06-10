@@ -5,6 +5,7 @@
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Scenes;
+    using System;
     using System.Collections.Generic;
 
     public class RenderManager : ISystem
@@ -13,6 +14,8 @@
         private readonly List<IRendererComponent> renderers = new();
         private readonly List<IRendererComponent> backgroundQueue = new();
         private readonly List<IRendererComponent> geometryQueue = new();
+        private readonly List<IRendererComponent> alphaTestQueue = new();
+        private readonly List<IRendererComponent> transparencyQueue = new();
         private readonly List<IRenderComponent> components = new();
         private readonly SortRendererAscending comparer = new();
         private readonly IGraphicsDevice device;
@@ -38,6 +41,26 @@
             }
         }
 
+        public void DrawDepth(IGraphicsContext context, RenderQueueIndex index)
+        {
+            if ((index & RenderQueueIndex.Background) != 0)
+            {
+                DrawDepthList(context, backgroundQueue);
+            }
+            if ((index & RenderQueueIndex.Geometry) != 0)
+            {
+                DrawDepthList(context, geometryQueue);
+            }
+            if ((index & RenderQueueIndex.AlphaTest) != 0)
+            {
+                DrawDepthList(context, alphaTestQueue);
+            }
+            if ((index & RenderQueueIndex.Transparency) != 0)
+            {
+                DrawDepthList(context, transparencyQueue);
+            }
+        }
+
         public void Draw(IGraphicsContext context, RenderQueueIndex index)
         {
             switch (index)
@@ -49,6 +72,14 @@
                 case RenderQueueIndex.Geometry:
                     DrawList(context, geometryQueue);
                     break;
+            }
+        }
+
+        private static void DrawDepthList(IGraphicsContext context, List<IRendererComponent> renderers)
+        {
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                renderers[i].DrawDepth(context);
             }
         }
 

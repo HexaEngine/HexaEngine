@@ -53,6 +53,11 @@
             ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext);
         }
 
+        public void SetComputePipeline(IComputePipeline pipeline)
+        {
+            ((ComputePipeline)pipeline).SetComputePipeline(DeviceContext);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil)
         {
@@ -415,9 +420,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Dispatch(int threadGroupCountX, int threadGroupCountY, int threadGroupCountZ)
+        public void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ)
         {
-            DeviceContext.Dispatch((uint)threadGroupCountX, (uint)threadGroupCountY, (uint)threadGroupCountZ);
+            DeviceContext.Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -432,6 +437,13 @@
         {
             uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
             DeviceContext.CSSetUnorderedAccessViews(0, count, (ID3D11UnorderedAccessView**)views, &pUAVInitialCounts);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void CSSetUnorderedAccessView(void* view, uint offset, int uavInitialCounts = -1)
+        {
+            uint pUAVInitialCounts = unchecked((uint)uavInitialCounts);
+            DeviceContext.CSSetUnorderedAccessViews(offset, 1, (ID3D11UnorderedAccessView**)&view, &pUAVInitialCounts);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

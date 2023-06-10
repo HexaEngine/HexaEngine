@@ -776,5 +776,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

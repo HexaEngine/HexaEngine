@@ -24,6 +24,8 @@
 
         Viewport RenderViewport { get; }
 
+        Viewport WindowViewport { get; }
+
         void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice);
 
         void Render(IGraphicsContext context);
