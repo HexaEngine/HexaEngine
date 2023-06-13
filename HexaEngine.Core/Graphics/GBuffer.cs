@@ -8,64 +8,49 @@
     public unsafe class GBuffer : IDisposable
     {
         private readonly IGraphicsDevice device;
+        private readonly Format[] formats;
+        private int width;
+        private int height;
+        private readonly uint count;
+        private readonly IShaderResourceView[] srvs;
+        private readonly IRenderTargetView[] rtvs;
+        private readonly unsafe void** pSRVs;
+        private readonly unsafe void** pRTVs;
         private bool disposedValue;
 
-        public Format Format { get; private set; }
+        public Format[] Formats => formats;
 
-        public int Width { get; private set; }
+        public int Width => width;
 
-        public int Height { get; private set; }
+        public int Height => height;
 
-        public uint Count { get; private set; }
+        public uint Count => count;
 
-        public IShaderResourceView[] SRVs { get; private set; }
+        public IShaderResourceView[] SRVs => srvs;
 
-        public IRenderTargetView[] RTVs { get; private set; }
+        public IRenderTargetView[] RTVs => rtvs;
 
-        public void** PSRVs { get; private set; }
+        public void** PSRVs => pSRVs;
 
-        public void** PRTVs { get; private set; }
+        public void** PRTVs => pRTVs;
 
         public Viewport Viewport => new(Width, Height);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public GBuffer(IGraphicsDevice device, int width, int height, uint count = 1, Format format = Format.R32G32B32A32Float)
-        {
-            this.device = device;
-            Count = count;
-            Format = format;
-            Width = width;
-            Height = height;
-            RTVs = new IRenderTargetView[count];
-            SRVs = new IShaderResourceView[count];
-            PSRVs = AllocArray(count);
-            PRTVs = AllocArray(count);
-            for (int i = 0; i < count; i++)
-            {
-                ITexture2D tex = device.CreateTexture2D(format, Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-                SRVs[i] = device.CreateShaderResourceView(tex);
-                RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
-                PSRVs[i] = (void*)SRVs[i].NativePointer;
-                PRTVs[i] = (void*)RTVs[i].NativePointer;
-                tex.Dispose();
-            }
-        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public GBuffer(IGraphicsDevice device, int width, int height, params Format[] formats)
         {
             this.device = device;
-            Count = (uint)formats.Length;
-            Width = width;
-            Height = height;
-            RTVs = new IRenderTargetView[formats.Length];
-            SRVs = new IShaderResourceView[formats.Length];
-            PSRVs = AllocArray(Count);
-            PRTVs = AllocArray(Count);
+            this.formats = formats;
+            count = (uint)formats.Length;
+            this.width = width;
+            this.height = height;
+            rtvs = new IRenderTargetView[formats.Length];
+            srvs = new IShaderResourceView[formats.Length];
+            pSRVs = AllocArray(Count);
+            pRTVs = AllocArray(Count);
             for (int i = 0; i < Count; i++)
             {
-                var format = formats[i];
-                ITexture2D tex = device.CreateTexture2D(format, Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
                 SRVs[i] = device.CreateShaderResourceView(tex);
                 RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
                 PSRVs[i] = (void*)SRVs[i].NativePointer;
@@ -74,7 +59,7 @@
             }
         }
 
-        public void Resize(int width, int height, uint count = 1, Format format = Format.R32G32B32A32Float)
+        public void Resize(int width, int height)
         {
             for (int i = 0; i < Count; i++)
             {
@@ -82,23 +67,11 @@
                 SRVs[i].Dispose();
             }
 
-            if (Count != count)
+            this.width = width;
+            this.height = height;
+            for (int i = 0; i < Count; i++)
             {
-                Free(PSRVs);
-                Free(PRTVs);
-                RTVs = new IRenderTargetView[count];
-                SRVs = new IShaderResourceView[count];
-                PSRVs = AllocArray(count);
-                PRTVs = AllocArray(count);
-            }
-
-            Count = count;
-            Format = format;
-            Width = width;
-            Height = height;
-            for (int i = 0; i < count; i++)
-            {
-                ITexture2D tex = device.CreateTexture2D(format, Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
                 SRVs[i] = device.CreateShaderResourceView(tex);
                 RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
                 PSRVs[i] = (void*)SRVs[i].NativePointer;

@@ -25,6 +25,8 @@
         public static readonly SamplerDescription AnisotropicWrap = new(Filter.Anisotropic, TextureAddressMode.Wrap, 0.0f, MaxMaxAnisotropy);
         public static readonly SamplerDescription AnisotropicClamp = new(Filter.Anisotropic, TextureAddressMode.Clamp, 0.0f, MaxMaxAnisotropy);
 
+        public static readonly SamplerDescription ComparisonLinearBorder = new(Filter.ComparisonMinMagMipLinear, TextureAddressMode.Border, 0, 0, ComparisonFunction.LessEqual, 0, float.MaxValue);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SamplerDescription"/> struct.
         /// </summary>

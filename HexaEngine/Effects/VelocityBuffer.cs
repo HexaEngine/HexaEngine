@@ -113,8 +113,6 @@
             context.PSSetShaderResource(Depth.Value, 0);
             quad.DrawAuto(context, pipeline);
             context.ClearState();
-
-            ImGui.Image(Velocity.Value.ShaderResourceView.NativePointer, new(1280, 720));
         }
 
         public void Resize(int width, int height)

@@ -7,15 +7,15 @@
 
     public unsafe class DXGIAdapterD3D11On12 : DXGIAdapterD3D11
     {
-        public DXGIAdapterD3D11On12()
+        public DXGIAdapterD3D11On12(bool debug) : base(debug)
         {
         }
 
-        public new static void Init()
+        public new static void Init(bool debug)
         {
             if (OperatingSystem.IsWindows())
             {
-                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11On12());
+                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11On12(debug));
             }
         }
 

@@ -65,7 +65,7 @@
                 return;
             }
 
-            osmDepthBuffer = new(device, 2048, 2048, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
+            osmDepthBuffer = new(device, 512, 512, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
 
             if (Interlocked.Increment(ref instances) == 1)
             {

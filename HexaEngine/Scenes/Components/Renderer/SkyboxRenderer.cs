@@ -40,7 +40,7 @@
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.Update | RendererFlags.Depth | RendererFlags.Geometry;
+        public RendererFlags Flags { get; } = RendererFlags.Update | RendererFlags.Depth | RendererFlags.Draw;
 
         [JsonIgnore]
         public BoundingBox BoundingBox { get; }
@@ -79,13 +79,7 @@
             },
             new GraphicsPipelineState()
             {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = default,
-                DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = RasterizerDescription.CullNone,
-                SampleMask = 0,
-                StencilRef = 0,
-                Topology = PrimitiveTopology.TriangleList
             });
             light = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -93,13 +87,7 @@
                 PixelShader = "forward/skylight/ps.hlsl",
             }, new GraphicsPipelineState()
             {
-                Blend = BlendDescription.Opaque,
-                BlendFactor = default,
-                DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = RasterizerDescription.CullNone,
-                SampleMask = 0,
-                StencilRef = 0,
-                Topology = PrimitiveTopology.TriangleList
             });
             cbSkylight = new(device, CpuAccessFlags.Write);
 
@@ -146,10 +134,12 @@
 
         public void DrawDepth(IGraphicsContext context)
         {
+            throw new NotSupportedException();
         }
 
         public void VisibilityTest(IGraphicsContext context)
         {
+            throw new NotSupportedException();
         }
 
         public void Draw(IGraphicsContext context)
@@ -176,10 +166,17 @@
                 context.PSSetShaderResource(env.ShaderResourceView, 0);
                 context.PSSetSampler(sampler, 0);
                 sphere.DrawAuto(context, pipeline);
-                /*
-                context.PSSetConstantBuffer(cbSkylight, 0);
-                sphere.DrawAuto(context, light);*/
             }
+        }
+
+        public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type)
+        {
+            throw new NotSupportedException();
         }
 
         private Task UpdateEnvAsync(IGraphicsDevice device)
@@ -218,11 +215,6 @@
 
                 Volatile.Write(ref component.drawable, true);
             }, state);
-        }
-
-        public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type)
-        {
-            throw new NotImplementedException();
         }
     }
 }

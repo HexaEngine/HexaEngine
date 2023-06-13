@@ -11,8 +11,8 @@
         public readonly MeshData Data;
         public IBuffer? VertexBuffer;
         public IBuffer? IndexBuffer;
-        public int VertexCount;
-        public int IndexCount;
+        public uint VertexCount;
+        public uint IndexCount;
         public BoundingBox BoundingBox;
         public BoundingSphere BoundingSphere;
         public uint Stride;
@@ -25,8 +25,8 @@
             BoundingSphere = data.Sphere;
             IndexBuffer = data.CreateIndexBuffer(device);
             VertexBuffer = data.CreateVertexBuffer(device, debone: debone);
-            IndexCount = (int)data.IndicesCount;
-            VertexCount = (int)data.VerticesCount;
+            IndexCount = data.IndicesCount;
+            VertexCount = data.VerticesCount;
             Stride = data.GetStride(debone);
         }
 

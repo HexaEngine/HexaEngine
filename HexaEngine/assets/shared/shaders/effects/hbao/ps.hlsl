@@ -1,4 +1,5 @@
 #include "../../camera.hlsl"
+#include "../../gbuffer.hlsl"
 struct VSOut
 {
     float4 Pos : SV_Position;
@@ -65,7 +66,7 @@ float4 main(VSOut input) : SV_Target
     float2 ndc_Pos = (2.0 * start_Pos) - 1.0;
     float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, start_Z, 1.0), projInv);
     float3 viewPos = unproject.xyz / unproject.w;
-    float3 viewNorm = mul(normalTexture.Sample(samplerState, input.Tex).xyz, (float3x3) view);
+    float3 viewNorm = mul(UnpackNormal(normalTexture.Sample(samplerState, input.Tex).xyz), (float3x3) view);
 
     float total = 0.0;
     float sample_direction_increment = 2 * M_PI / NUM_SAMPLING_DIRECTIONS;

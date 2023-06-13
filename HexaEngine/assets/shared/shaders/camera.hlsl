@@ -31,6 +31,12 @@ float SampleLinearDepth(Texture2D tex, SamplerState smp, float2 texCoord)
     return GetLinearDepth(depth);
 }
 
+float SampleLinearDepth(Texture2D<float> tex, SamplerState smp, float2 texCoord)
+{
+    float depth = tex.Sample(smp, texCoord);
+    return GetLinearDepth(depth);
+}
+
 float3 GetPositionVS(float2 uv, float depth)
 {
     float4 ndc = float4(uv * 2.0f - 1.0f, depth, 1.0f);
@@ -45,4 +51,11 @@ float3 GetPositionWS(float2 uv, float depth)
     ndc.y *= -1;
     float4 wp = mul(ndc, viewProjInv);
     return wp.xyz / wp.w;
+}
+
+float2 ProjectUV(float3 uv)
+{
+    float4 uv_projected = mul(float4(uv, 1.0), proj);
+    uv_projected.xy /= uv_projected.w;
+    return uv_projected.xy * float2(0.5f, -0.5f) + 0.5f;
 }

@@ -23,7 +23,6 @@
             Register<MaterialsWidget>();
             Register<MeshesWidget>();
             Register<MixerWidget>();
-            Register<OpenProjectWindow>();
             Register<PublishProjectWindow>();
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();

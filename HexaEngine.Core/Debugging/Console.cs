@@ -81,6 +81,7 @@
                     return;
                 }
 
+                semaphore.Wait();
                 if (messages.Count > 0)
                 {
                     if (messages[^1].Message.EndsWith(Environment.NewLine))
@@ -99,6 +100,7 @@
                 {
                     messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
                 }
+                semaphore.Release();
             }
 
             public override void WriteLine(string? message)
@@ -108,7 +110,9 @@
                     return;
                 }
 
+                semaphore.Wait();
                 messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
+                semaphore.Release();
                 m_ScrollToBottom = true;
             }
         }
@@ -141,36 +145,6 @@
             cmdAutocomplete.Add(command, callback);
         }
 
-        public static void Log(LogSeverity type, string msg)
-        {
-            if (Redirect)
-            {
-                Debug.WriteLine(msg);
-            }
-
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
-            if (messages.Count > max_messages)
-            {
-                messages.Remove(messages[0]);
-            }
-            m_ScrollToBottom = true;
-        }
-
-        public static void Log(Exception? e)
-        {
-            if (Redirect)
-            {
-                Debug.WriteLine(e);
-            }
-
-            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e?.ToString() ?? string.Empty, Timestamp = DateTime.Now.ToShortTimeString() });
-            if (messages.Count > max_messages)
-            {
-                messages.Remove(messages[0]);
-            }
-            m_ScrollToBottom = true;
-        }
-
         public static Task HandleError(Task task)
         {
             if (!task.IsCompletedSuccessfully && task.Exception != null)
@@ -182,51 +156,243 @@
             return Task.CompletedTask;
         }
 
-        public static async Task LogAsync(LogSeverity type, string msg)
+        public static void Log(LogSeverity type, string message)
         {
-            await semaphore.WaitAsync();
             if (Redirect)
             {
-                Debug.WriteLine(msg);
+                Debug.WriteLine(message);
             }
 
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
+            var msg = new LogMessage(type, message);
+            semaphore.Wait();
+            messages.Add(msg);
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
             }
+            Logger.DebugListener.WriteLine(message);
             semaphore.Release();
             m_ScrollToBottom = true;
         }
 
-        public static void Log(string msg)
+        public static void Log(Exception? e)
         {
+            var message = e?.ToString() ?? "null";
             if (Redirect)
             {
-                Debug.WriteLine(msg);
+                Debug.WriteLine(message);
             }
 
-            LogSeverity type = LogSeverity.Log;
-            if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Error;
-            }
-
-            if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
+            var msg = new LogMessage(LogSeverity.Error, message);
+            semaphore.Wait();
+            messages.Add(msg);
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
             }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static void Log(object? value)
+        {
+            var message = value?.ToString() ?? "null";
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = LogSeverity.Log;
+            if (message.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Error;
+            }
+
+            if (message.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("info", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Info;
+            }
+
+            var msg = new LogMessage(type, message);
+            semaphore.Wait();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static void Log(string message)
+        {
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = LogSeverity.Log;
+            if (message.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Error;
+            }
+
+            if (message.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("info", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Info;
+            }
+
+            var msg = new LogMessage(type, message);
+            semaphore.Wait();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(LogSeverity type, string message)
+        {
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            var msg = new LogMessage(type, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(Exception? e)
+        {
+            var message = e?.ToString() ?? "null";
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            var msg = new LogMessage(LogSeverity.Error, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(object? value)
+        {
+            var message = value?.ToString() ?? "null";
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = LogSeverity.Log;
+            if (message.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Error;
+            }
+
+            if (message.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("info", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Info;
+            }
+
+            var msg = new LogMessage(type, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(string message)
+        {
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = LogSeverity.Log;
+            if (message.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Error;
+            }
+
+            if (message.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+
+            if (message.Contains("info", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Info;
+            }
+
+            var msg = new LogMessage(type, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
             m_ScrollToBottom = true;
         }
 
@@ -237,11 +403,13 @@
                 Debug.WriteLine(msg);
             }
 
+            semaphore.Wait();
             messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
             }
+            semaphore.Release();
             m_ScrollToBottom = true;
         }
 
@@ -252,39 +420,8 @@
                 Debug.WriteLine(msg);
             }
 
+            semaphore.Wait();
             messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
-            if (messages.Count > max_messages)
-            {
-                messages.Remove(messages[0]);
-            }
-            m_ScrollToBottom = true;
-        }
-
-        public static async Task LogAsync(string msg)
-        {
-            if (Redirect)
-            {
-                Debug.WriteLine(msg);
-            }
-
-            await semaphore.WaitAsync();
-            LogSeverity type = LogSeverity.Log;
-            if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Error;
-            }
-
-            if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);

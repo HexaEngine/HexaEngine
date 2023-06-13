@@ -7,11 +7,9 @@
     {
         public IGraphicsDevice Device { get; }
 
-        public void SetGraphicsPipeline(IGraphicsPipeline pipeline, Viewport viewport);
+        public void SetGraphicsPipeline(IGraphicsPipeline? pipeline);
 
-        public void SetGraphicsPipeline(IGraphicsPipeline pipeline);
-
-        public void SetComputePipeline(IComputePipeline pipeline);
+        public void SetComputePipeline(IComputePipeline? pipeline);
 
         void CopyResource(IResource dst, IResource src);
 

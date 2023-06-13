@@ -16,64 +16,20 @@
 
     public class TerrainLayer
     {
-        public string Name;
-        private readonly MaterialData material;
-        public TerrainMaterial Material;
+        public int Index;
+        public int[] Materials;
+        public Texture2D Mask;
 
-        public TerrainLayer(string name, MaterialData material)
+        public TerrainLayer(IGraphicsDevice device, int index)
         {
-            Name = name;
-            this.material = material;
-        }
-
-        public void Load()
-        {
-            Material = ResourceManager.LoadTerrainMaterial(material);
-        }
-
-        public async Task LoadAsync()
-        {
-            Material = await ResourceManager.LoadTerrainMaterialAsync(material);
-        }
-
-        public ShaderMacro[] GetShaderMacros(string baseName)
-        {
-            var macros = material.GetShaderMacros();
-            for (int i = 0; i < macros.Length; i++)
-            {
-                macros[i].Name += baseName;
-            }
-            return macros;
-        }
-    }
-
-    public class TerrainLayerCollection
-    {
-        private readonly Terrain terrain;
-        public RWTexture2D LayerMask;
-        public TerrainLayer[] Layers;
-        public TerrainShader Shader;
-
-        public TerrainLayerCollection(IGraphicsDevice device, Terrain terrain, int maskSize, bool allowEditMask)
-        {
-            LayerMask = new RWTexture2D(device, Format.R8G8B8A8UInt, maskSize, maskSize, 1, 1, allowEditMask ? CpuAccessFlags.Write : CpuAccessFlags.None);
-            Layers = new TerrainLayer[4];
-            this.terrain = terrain;
-        }
-
-        public void Reload(IGraphicsDevice device)
-        {
-            List<ShaderMacro> macros = new();
-            for (var i = 0; i < Layers.Length; i++)
-            {
-                macros.AddRange(Layers[i].GetShaderMacros(i.ToString()));
-            }
-            Shader = new(device, terrain, macros.ToArray(), true);
+            Materials = new int[index];
+            Mask = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None);
         }
     }
 
     public class TerrainCell : IDisposable
     {
+        private readonly List<TerrainLayer> layers = new();
         private readonly bool writeable;
         private readonly IGraphicsDevice device;
         public HeightMap HeightMap;
@@ -137,15 +93,12 @@
     public class TerrainGrid
     {
         private readonly List<TerrainCell> cells = new();
-        private readonly List<TerrainLayer> layers = new();
 
         public TerrainCell this[int index]
         {
             get => cells[index];
             set => cells[index] = value;
         }
-
-        public List<TerrainLayer> Layers => layers;
 
         public int Count => cells.Count;
 
@@ -418,6 +371,11 @@
                 context.SetGraphicsPipeline(geometry);
                 context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
             }
+        }
+
+        public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset)
+        {
+            throw new NotImplementedException();
         }
 
         public void VisibilityTest(IGraphicsContext context)

@@ -72,10 +72,6 @@
 
         public void BeginFrame()
         {
-            for (int i = 0; i < blockNames.Count; i++)
-            {
-                results[blockNames[i]] = 0;
-            }
         }
 
         public unsafe void EndFrame(IGraphicsContext context)
@@ -140,6 +136,8 @@
         {
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
+            if (!queries[i].ContainsKey(name))
+                return;
             var queryData = queries[i][name];
             ctx.Begin(queryData.DisjointQuery);
             ctx.End(queryData.TimestampQueryStart);
@@ -150,6 +148,8 @@
         {
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
+            if (!queries[i].ContainsKey(name))
+                return;
             var queryData = queries[i][name];
             ctx.End(queryData.TimestampQueryEnd);
             ctx.End(queryData.DisjointQuery);

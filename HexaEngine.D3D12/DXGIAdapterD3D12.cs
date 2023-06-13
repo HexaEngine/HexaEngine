@@ -164,5 +164,10 @@
 
             return adapter;
         }
+
+        public void PumpDebugMessages()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

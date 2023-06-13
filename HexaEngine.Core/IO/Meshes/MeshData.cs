@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes.Processing;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
     using System.IO;

@@ -1,4 +1,5 @@
 #include "../../camera.hlsl"
+#include "../../gbuffer.hlsl"
 
 struct VSOut
 {
@@ -60,7 +61,7 @@ float4 main(VSOut vs) : SV_Target
 	float2 ndc_Pos = (2.0 * start_Pos) - 1.0;
 	float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, start_Z, 1.0), projInv);
 	float3 viewPos = unproject.xyz / unproject.w;
-	float3 viewNorm = normalTexture.Sample(samplerState, vs.Tex).xyz;
+    float3 viewNorm = mul(UnpackNormal(normalTexture.Sample(samplerState, vs.Tex).xyz), (float3x3)view);
 
 	// WORKNOTE: start_Z was a huge negative value at one point because we had a D16_UNORM depth target
 	// but we set the shader resource view format to R16_FLOAT instead of R16_UNORM

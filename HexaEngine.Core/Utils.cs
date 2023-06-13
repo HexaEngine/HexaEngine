@@ -399,20 +399,19 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="count">The count.</param>
         /// <returns></returns>
-        public static T* Malloc<T>(nint count) where T : unmanaged
-        {
-            return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
-        }
-
-        /// <summary>
-        /// Allocates the specified count of T.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="count">The count.</param>
-        /// <returns></returns>
         public static void* Malloc(nint count)
         {
             return (void*)Marshal.AllocHGlobal(count);
+        }  /// <summary>
+
+           /// Allocates the specified count of T.
+           /// </summary>
+           /// <typeparam name="T"></typeparam>
+           /// <param name="count">The count.</param>
+           /// <returns></returns>
+        public static void* Malloc(nuint count)
+        {
+            return (void*)Marshal.AllocHGlobal((nint)count);
         }
 
         /// <summary>

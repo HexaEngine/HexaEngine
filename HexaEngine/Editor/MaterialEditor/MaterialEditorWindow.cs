@@ -84,13 +84,26 @@
                     }
                     ImGui.EndMenu();
                 }
-                if (ImGui.BeginMenu("Constants"))
+                if (ImGui.BeginMenu("Methods"))
+                {
+                    if (ImGui.MenuItem("Normal Map"))
+                    {
+                        NormalMapNode node = new(editor.GetUniqueId(), true, false);
+                        editor.AddNode(node);
+                    }
+                    ImGui.EndMenu();
+                }
+                if (ImGui.BeginMenu("Shaders"))
                 {
                     if (ImGui.MenuItem("BRDF"))
                     {
                         BRDFNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                     }
+                    ImGui.EndMenu();
+                }
+                if (ImGui.BeginMenu("Constants"))
+                {
                     if (ImGui.MenuItem("Splitter"))
                     {
                         SplitNode node = new(editor.GetUniqueId(), true, false);

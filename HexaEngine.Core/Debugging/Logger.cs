@@ -4,12 +4,14 @@
     using System.Diagnostics;
     using System.IO;
 
-    public static class CrashLogger
+    public static class Logger
     {
+        public static readonly DebugListener DebugListener = new($"logs/app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log");
+
         public static void Initialize()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            Trace.Listeners.Add(new DebugListener($"logs/app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log"));
+            Trace.Listeners.Add(DebugListener);
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

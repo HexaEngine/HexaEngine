@@ -16,7 +16,9 @@
         private readonly List<IRendererComponent> backgroundQueue = new();
         private readonly List<IRendererComponent> geometryQueue = new();
         private readonly List<IRendererComponent> alphaTestQueue = new();
+        private readonly List<IRendererComponent> geometryLastQueue = new();
         private readonly List<IRendererComponent> transparencyQueue = new();
+        private readonly List<IRendererComponent> overlayQueue = new();
         private readonly SortRendererAscending comparer = new();
         private readonly IGraphicsDevice device;
         private readonly LightManager lights;
@@ -30,6 +32,18 @@
             this.device = device;
             this.lights = lights;
         }
+
+        public IReadOnlyList<IRendererComponent> BackgroundQueue => backgroundQueue;
+
+        public IReadOnlyList<IRendererComponent> GeometryQueue => geometryQueue;
+
+        public IReadOnlyList<IRendererComponent> AlphaTestQueue => alphaTestQueue;
+
+        public IReadOnlyList<IRendererComponent> GeometryLastQueue => geometryLastQueue;
+
+        public IReadOnlyList<IRendererComponent> TransparencyQueue => transparencyQueue;
+
+        public IReadOnlyList<IRendererComponent> OverlayQueue => overlayQueue;
 
         public void VisibilityTest(IGraphicsContext context, RenderQueueIndex index)
         {
@@ -196,9 +210,14 @@
             {
                 renderers[i].Destory();
             }
+
             renderers.Clear();
             backgroundQueue.Clear();
             geometryQueue.Clear();
+            alphaTestQueue.Clear();
+            geometryLastQueue.Clear();
+            transparencyQueue.Clear();
+            overlayQueue.Clear();
         }
 
         public void AddRenderer(IRendererComponent renderer)
@@ -216,6 +235,28 @@
                 geometryQueue.Sort(comparer);
                 return;
             }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
+            {
+                alphaTestQueue.Add(renderer);
+                alphaTestQueue.Sort(comparer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
+            {
+                geometryLastQueue.Add(renderer);
+                geometryLastQueue.Sort(comparer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
+            {
+                transparencyQueue.Add(renderer);
+                transparencyQueue.Sort(comparer);
+                return;
+            }
+
+            overlayQueue.Add(renderer);
+            overlayQueue.Sort(comparer);
+            return;
         }
 
         public void RemoveRenderer(IRendererComponent renderer)
@@ -231,6 +272,61 @@
                 geometryQueue.Remove(renderer);
                 return;
             }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
+            {
+                alphaTestQueue.Remove(renderer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
+            {
+                geometryLastQueue.Remove(renderer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
+            {
+                transparencyQueue.Remove(renderer);
+                return;
+            }
+
+            overlayQueue.Remove(renderer);
+        }
+
+        public void RemoveRenderer(IRendererComponent renderer, uint index)
+        {
+            renderers.Remove(renderer);
+            if (index < (uint)RenderQueueIndex.Geometry)
+            {
+                backgroundQueue.Remove(renderer);
+                return;
+            }
+            if (index < (uint)RenderQueueIndex.AlphaTest)
+            {
+                geometryQueue.Remove(renderer);
+                return;
+            }
+            if (index < (uint)RenderQueueIndex.GeometryLast)
+            {
+                alphaTestQueue.Remove(renderer);
+                return;
+            }
+            if (index < (uint)RenderQueueIndex.Transparency)
+            {
+                geometryLastQueue.Remove(renderer);
+                return;
+            }
+            if (index < (uint)RenderQueueIndex.Overlay)
+            {
+                transparencyQueue.Remove(renderer);
+                return;
+            }
+
+            overlayQueue.Remove(renderer);
+        }
+
+        public void UpdateQueueIndex(IRendererComponent renderer, uint oldQueueIndex)
+        {
+            RemoveRenderer(renderer, oldQueueIndex);
+            AddRenderer(renderer);
         }
 
         public void Awake()

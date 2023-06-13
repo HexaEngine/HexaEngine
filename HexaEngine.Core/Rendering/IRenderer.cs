@@ -12,10 +12,11 @@
         None = 0,
         Update = 1,
         Depth = 2,
-        Geometry = 4,
-        Culling = 8,
-        CastShadows = 16,
-        All = Update | Depth | Geometry | Culling | CastShadows,
+        Draw = 4,
+        DrawIndirect = 8,
+        Culling = 16,
+        CastShadows = 32,
+        All = Update | Depth | Draw | Culling | CastShadows,
     }
 
     public interface IRendererComponent : IComponent, IHasFlags<RendererFlags>
@@ -33,5 +34,7 @@
         public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type);
 
         public void Draw(IGraphicsContext context);
+
+        public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset);
     }
 }

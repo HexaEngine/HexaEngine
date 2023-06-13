@@ -7,10 +7,12 @@
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
+    using System.Text;
     using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
     using Format = Core.Graphics.Format;
     using Query = Core.Graphics.Query;
@@ -31,7 +33,7 @@
         public ComPtr<ID3D11Device1> Device;
         public ComPtr<ID3D11DeviceContext1> DeviceContext;
 
-        internal ComPtr<ID3D11Debug> DebugDevice;
+        internal ComPtr<ID3D11Debug> Debug;
 
         static D3D11GraphicsDevice()
         {
@@ -84,7 +86,7 @@
 #if DEBUG
             if (debug)
             {
-                Device.QueryInterface(out DebugDevice);
+                Device.QueryInterface(out Debug);
             }
 #endif
 
@@ -607,10 +609,10 @@
 
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
 
-                if (DebugDevice.Handle != null)
+                if (Debug.Handle != null)
                 {
-                    DebugDevice.ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
-                    DebugDevice.Release();
+                    Debug.ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
+                    Debug.Release();
                 }
 
                 LeakTracer.ReportLiveInstances();

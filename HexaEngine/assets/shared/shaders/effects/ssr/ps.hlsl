@@ -1,4 +1,6 @@
 #include "../../camera.hlsl"
+#include "../../gbuffer.hlsl"
+
 struct VSOut
 {
 	float4 Pos : SV_Position;
@@ -80,7 +82,7 @@ float4 main(VSOut input) : SV_TARGET
 	float4 pos = float4(gpos.xyz, 1);
 	float3 viewPos = mul(pos, view).xyz;
 
-	float3 normal = mul(gnormal.xyz, (float3x3) view);
+    float3 normal = mul(UnpackNormal(gnormal.xyz), (float3x3) view);
 
 	float3 incidentVec = normalize(viewPos);
 	float3 viewNormal = normalize(normal);

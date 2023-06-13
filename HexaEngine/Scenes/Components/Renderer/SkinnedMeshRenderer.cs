@@ -259,7 +259,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, camera.Value, (uint)mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDepth(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
 
                 matrixOffset += (uint)drawable.Length;
                 boneMatrixOffset += mesh.Data.BoneCount;
@@ -294,7 +294,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawShadow(context, light, type, (uint)mesh.IndexCount, (uint)drawable.Length);
+                material.DrawShadow(context, light, type, mesh.IndexCount, (uint)drawable.Length);
 
                 matrixOffset += (uint)drawable.Length;
                 boneMatrixOffset += mesh.Data.BoneCount;
@@ -333,11 +333,16 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.Draw(context, camera.Value, (uint)mesh.IndexCount, (uint)drawable.Length);
+                material.Draw(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
 
                 matrixOffset += (uint)drawable.Length;
                 boneMatrixOffset += mesh.Data.BoneCount;
             }
+        }
+
+        public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset)
+        {
+            throw new NotImplementedException();
         }
 
         private void UpdateModel()

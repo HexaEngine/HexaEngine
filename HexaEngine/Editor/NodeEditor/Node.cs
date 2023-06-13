@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
+    using HexaEngine.Mathematics;
     using ImGuiNET;
     using ImNodesNET;
     using System.Collections.Generic;
@@ -18,13 +19,13 @@
         public string Name;
 
         [JsonIgnore]
-        public uint TitleColor = 0x6930c3ff;
+        public uint TitleColor = MathUtil.Pack(0xff, 0xc3, 0x30, 0x69);// 0x6930c3ff;
 
         [JsonIgnore]
-        public uint TitleHoveredColor = 0x5e60ceff;
+        public uint TitleHoveredColor = MathUtil.Pack(0xff, 0xce, 0x60, 0x5e); //0x5e60ceff;
 
         [JsonIgnore]
-        public uint TitleSelectedColor = 0x7400b8ff;
+        public uint TitleSelectedColor = MathUtil.Pack(0xff, 0xb8, 0x00, 0x74); //0x7400b8ff;
 
         public Node(int id, string name, bool removable, bool isStatic)
         {

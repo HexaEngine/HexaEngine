@@ -279,18 +279,9 @@
             return GetResource<IDepthStencilView>(name);
         }
 
-        public ResourceRef<GBuffer> AddGBuffer(string name, GBuffer srv)
+        public ResourceRef<GBuffer> AddGBuffer(string name, GBuffer gbuffer)
         {
-            return AddResource(name, srv);
-        }
-
-        public ResourceRef<GBuffer> AddGBuffer(string name, int width, int height, uint count, Format format)
-        {
-            lock (sharedResources)
-            {
-                GBuffer textureArray = new(device, width, height, count, format);
-                return AddResource(name, textureArray);
-            }
+            return AddResource(name, gbuffer);
         }
 
         public ResourceRef<GBuffer> GetGBuffer(string name)

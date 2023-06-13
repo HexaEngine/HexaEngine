@@ -386,5 +386,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void PumpDebugMessages()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

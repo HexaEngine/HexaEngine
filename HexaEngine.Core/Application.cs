@@ -484,6 +484,7 @@
                 {
                     windows[i].ClearState();
                 }
+                GraphicsAdapter.Current.PumpDebugMessages();
                 Time.FrameUpdate();
             }
             ResourceManager2.Shared.Dispose();

@@ -43,18 +43,23 @@
 
         public event EventHandler? OnDisposed;
 
-        public void SetGraphicsPipeline(IGraphicsPipeline pipeline, Viewport viewport)
+        public void SetGraphicsPipeline(IGraphicsPipeline? pipeline)
         {
-            ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext, viewport);
-        }
-
-        public void SetGraphicsPipeline(IGraphicsPipeline pipeline)
-        {
+            if (pipeline == null)
+            {
+                GraphicsPipeline.EndDraw(DeviceContext);
+                return;
+            }
             ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext);
         }
 
-        public void SetComputePipeline(IComputePipeline pipeline)
+        public void SetComputePipeline(IComputePipeline? pipeline)
         {
+            if (pipeline == null)
+            {
+                GraphicsPipeline.EndDraw(DeviceContext);
+                return;
+            }
             ((ComputePipeline)pipeline).SetComputePipeline(DeviceContext);
         }
 

@@ -44,7 +44,7 @@
             startTimeStamps.Remove(o);
         }
 
-        public void Clear()
+        public void BeginFrame()
         {
             stages.Clear();
         }

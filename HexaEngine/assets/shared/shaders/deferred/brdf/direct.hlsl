@@ -18,8 +18,10 @@ StructuredBuffer<DirectionalLight> directionalLights : register(t9);
 StructuredBuffer<PointLight> pointLights : register(t10);
 StructuredBuffer<Spotlight> spotlights : register(t11);
 
-SamplerState SampleTypePoint : register(s0);
-SamplerState SampleTypeAnsio : register(s1);
+SamplerState linearClampSampler : register(s0);
+SamplerState linearWrapSampler : register(s1);
+SamplerState pointClampSampler : register(s2);
+SamplerComparisonState shadowSampler : register(s3);
 
 cbuffer constants : register(b0)
 {
@@ -92,16 +94,16 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
             Lo += BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
         }
     }
-    float ao = ssao.Sample(SampleTypePoint, input.Tex).r * attrs.ao;
+    float ao = ssao.Sample(linearWrapSampler, input.Tex).r * attrs.ao;
     return float4(Lo * ao, 1);
 }
 
 float4 main(VSOut pixel) : SV_TARGET
 {
-    float depth = Depth.Sample(SampleTypePoint, pixel.Tex);
+    float depth = Depth.Sample(linearWrapSampler, pixel.Tex);
     float3 position = GetPositionWS(pixel.Tex, depth);
     GeometryAttributes attrs;
-    ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, SampleTypePoint, attrs);
+    ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, linearWrapSampler, attrs);
 
     return ComputeLightingPBR(pixel, position, attrs);
 }

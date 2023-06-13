@@ -15,6 +15,7 @@ namespace HexaEngine.Windows
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
+    using Silk.NET.Direct3D.Compilers;
     using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
@@ -76,7 +77,11 @@ namespace HexaEngine.Windows
         {
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
+#if PROFILE
             graphicsDevice.Profiler.CreateBlock("Total");
+            graphicsDevice.Profiler.CreateBlock("DebugDraw");
+            graphicsDevice.Profiler.CreateBlock("ImGui");
+#endif
             graphicsContext = graphicsDevice.Context;
             swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             swapChain.Active = true;
@@ -152,6 +157,12 @@ namespace HexaEngine.Windows
 
         public void Render(IGraphicsContext context)
         {
+#if PROFILE
+            Device.Profiler.BeginFrame();
+            Device.Profiler.Begin(Context, "Total");
+            sceneRenderer.Profiler.BeginFrame();
+            sceneRenderer.Profiler.Begin("Total");
+#endif
             if (resize)
             {
                 swapChain.Resize(Width, Height);
@@ -199,14 +210,8 @@ namespace HexaEngine.Windows
                         Time.Initialize();
                         firstFrame = false;
                     }
-                    Device.Profiler.BeginFrame();
-                    Device.Profiler.Begin(Context, "Total");
-                    sceneRenderer.Profiler.Clear();
-                    sceneRenderer.Profiler.Begin("Total");
+
                     sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
-                    sceneRenderer.Profiler.End("Total");
-                    Device.Profiler.End(Context, "Total");
-                    Device.Profiler.EndFrame(context);
                 }
             }
 
@@ -218,19 +223,45 @@ namespace HexaEngine.Windows
 
             if (Application.InEditorMode)
             {
+#if PROFILE
+                Device.Profiler.Begin(Context, "DebugDraw");
+                sceneRenderer.Profiler.Begin("DebugDraw");
+#endif
                 debugDrawRenderer?.EndDraw();
+#if PROFILE
+                sceneRenderer.Profiler.End("DebugDraw");
+                Device.Profiler.End(Context, "DebugDraw");
+#endif
             }
 
+#if PROFILE
+            Device.Profiler.Begin(Context, "ImGui");
+            sceneRenderer.Profiler.Begin("ImGui");
+#endif
             imGuiRenderer?.EndDraw();
+#if PROFILE
+            sceneRenderer.Profiler.End("ImGui");
+            Device.Profiler.End(Context, "ImGui");
+#endif
+
+            OnRenderEnd(context);
 
             swapChain.Present();
 
             swapChain.Wait();
+
+#if PROFILE
+            sceneRenderer.Profiler.End("Total");
+            Device.Profiler.End(Context, "Total");
+            Device.Profiler.EndFrame(context);
+#endif
         }
 
         public virtual void Uninitialize()
         {
             OnRendererDispose();
+
+            Device.Profiler.Dispose();
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
             {
@@ -273,6 +304,10 @@ namespace HexaEngine.Windows
         }
 
         protected virtual void OnRender(IGraphicsContext context)
+        {
+        }
+
+        protected virtual void OnRenderEnd(IGraphicsContext context)
         {
         }
 

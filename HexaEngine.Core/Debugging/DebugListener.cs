@@ -7,6 +7,7 @@
 
     public class DebugListener : TraceListener
     {
+        private SemaphoreSlim semaphore = new(1);
 #if DEBUG
         private readonly BufferedStream stream;
 #endif
@@ -45,7 +46,9 @@
                 return;
             }
 #if DEBUG
+            semaphore.Wait();
             stream.Write(Encoding.UTF8.GetBytes(message));
+            semaphore.Release();
 #endif
         }
 
@@ -56,7 +59,35 @@
                 return;
             }
 #if DEBUG
+            semaphore.Wait();
             stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
+            semaphore.Release();
+#endif
+        }
+
+        public async Task WriteAsync(string? message)
+        {
+            if (message == null)
+            {
+                return;
+            }
+#if DEBUG
+            await semaphore.WaitAsync();
+            stream.Write(Encoding.UTF8.GetBytes(message));
+            semaphore.Release();
+#endif
+        }
+
+        public async Task WriteLineAsync(string? message)
+        {
+            if (message == null)
+            {
+                return;
+            }
+#if DEBUG
+            await semaphore.WaitAsync();
+            stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
+            semaphore.Release();
 #endif
         }
 

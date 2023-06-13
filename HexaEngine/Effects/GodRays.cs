@@ -240,8 +240,6 @@
             context.PSSetSampler(sunSampler, 0);
             quad1.DrawAuto(context, sun);
 
-            ImGui.Image(sunBuffer.SRV.NativePointer, new(1280, 720));
-
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
             context.PSSetConstantBuffer(paramsBuffer, 0);

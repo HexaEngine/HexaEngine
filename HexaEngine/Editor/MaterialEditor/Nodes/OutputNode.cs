@@ -21,9 +21,9 @@
         public OutputNode(int id, bool removable, bool isStatic) : base(id, "Output", removable, isStatic)
 #pragma warning restore CS8618 // Non-nullable field 'Out' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
-            TitleColor = 0xc80023ff;
-            TitleHoveredColor = 0xe40028ff;
-            TitleSelectedColor = 0xff002dff;
+            TitleColor = MathUtil.Pack(0xff, 0x23, 0x00, 0xc8);
+            TitleHoveredColor = MathUtil.Pack(0xff, 0x28, 0x00, 0xe4);
+            TitleSelectedColor = MathUtil.Pack(0xff, 0x2d, 0x00, 0xff);
             Camera = new();
             Camera.Fov = 90;
             Camera.Transform.Width = 1;

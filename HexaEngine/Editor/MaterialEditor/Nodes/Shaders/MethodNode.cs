@@ -4,6 +4,7 @@
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
+    using HexaEngine.Mathematics;
     using System.Collections.Generic;
 
     public abstract class MethodNode : Node, ITypedNode
@@ -12,9 +13,9 @@
 
         public MethodNode(int id, string name, bool removable, bool isStatic) : base(id, name, removable, isStatic)
         {
-            TitleColor = 0x009e0fff;
-            TitleHoveredColor = 0x00c413ff;
-            TitleSelectedColor = 0x00e416ff;
+            TitleColor = MathUtil.Pack(0xff, 0x0f, 0x9e, 0x00);
+            TitleHoveredColor = MathUtil.Pack(0xff, 0x13, 0xc4, 0x00);
+            TitleSelectedColor = MathUtil.Pack(0xff, 0x16, 0xe4, 0x00);
         }
 
         public abstract string MethodName { get; }

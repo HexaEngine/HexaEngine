@@ -6,7 +6,7 @@
     using ImGuiNET;
     using System;
 
-    public class OpenProjectWindow : EditorWindow
+    public class OpenProjectWindow : Modal
     {
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
@@ -15,13 +15,13 @@
 
         public OpenProjectWindow()
         {
-            IsShown = true;
-            Flags = ImGuiWindowFlags.Modal | ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking;
         }
 
-        protected override string Name => "Open Project";
+        public override string Name => "Open Project";
 
-        public override void DrawWindow(IGraphicsContext context)
+        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.MenuBar;
+
+        public override void Draw()
         {
             if (filePicker.Draw())
             {
@@ -33,10 +33,10 @@
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
-            base.DrawWindow(context);
+            base.Draw();
         }
 
-        public override unsafe void DrawContent(IGraphicsContext context)
+        protected override unsafe void DrawContent()
         {
             ImGui.SetWindowPos(new(0, 0));
             ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
@@ -51,7 +51,7 @@
                         if (e == OpenFileResult.Ok)
                         {
                             ProjectManager.Load(r);
-                            IsShown = false;
+                            Close();
                         }
 
                         filePicker.AllowedExtensions.Clear();
@@ -68,7 +68,7 @@
                         {
                             Directory.CreateDirectory(r.FullPath);
                             ProjectManager.Create(r.FullPath);
-                            IsShown = false;
+                            Close();
                         }
                     };
                     fileSaver.Show();
@@ -86,9 +86,13 @@
                 if (ImGui.MenuItem(entry.Fullname))
                 {
                     ProjectManager.Load(entry.Path);
-                    IsShown = false;
+                    Close();
                 }
             }
+        }
+
+        public override void Reset()
+        {
         }
     }
 }

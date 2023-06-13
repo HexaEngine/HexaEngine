@@ -2,12 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Passes;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Lights.Probes;
     using HexaEngine.Core.Lights.Structs;
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Renderers;
+    using HexaEngine.Core.Rendering;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.ImGuiNET;
@@ -42,11 +42,14 @@
         private ConstantBuffer<ForwardLightBufferParams> forwardLightParamsBuffer;
 
         private Quad quad;
-        private ISamplerState pointSampler;
-        private ISamplerState linearSampler;
-        private ISamplerState anisoSampler;
+        private ISamplerState linearClampSampler;
+        private ISamplerState linearWrapSampler;
+        private ISamplerState pointClampSampler;
+        private ISamplerState shadowSampler;
         private unsafe void** cbs;
+        private const uint nConstantBuffers = 2;
         private unsafe void** smps;
+        private const uint nSamplers = 4;
 
         private unsafe void** forwardRtvs;
         private const uint nForwardRtvs = 3;
@@ -163,17 +166,20 @@
                 Topology = PrimitiveTopology.TriangleList
             });
 
-            pointSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp).Value;
-            linearSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearClamp", SamplerDescription.LinearClamp).Value;
-            anisoSampler = ResourceManager2.Shared.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp).Value;
+            linearClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerDescription.LinearClamp).Value;
+            linearWrapSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearWrap", SamplerDescription.LinearWrap).Value;
+            pointClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp).Value;
+            shadowSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearComparisonBorder", SamplerDescription.ComparisonLinearBorder).Value;
 
             unsafe
             {
-                smps = AllocArray(2);
-                smps[0] = (void*)pointSampler.NativePointer;
-                smps[1] = (void*)linearSampler.NativePointer;
+                smps = AllocArray(nSamplers);
+                smps[0] = (void*)linearClampSampler.NativePointer;
+                smps[1] = (void*)linearWrapSampler.NativePointer;
+                smps[2] = (void*)pointClampSampler.NativePointer;
+                smps[3] = (void*)shadowSampler.NativePointer;
 
-                cbs = AllocArray(3);
+                cbs = AllocArray(nConstantBuffers);
 
                 forwardSrvs = AllocArray(nForwardSrvs);
                 directSrvs = AllocArray(nDirectSrvs);
@@ -420,6 +426,10 @@
                     UpdateShadowLightQueue.Enqueue(light);
                 }
             }
+
+            *lightCountParams.Local = new(lightsBuffer.Count, 0, 0, 0);
+            lightCountParams.Update(context);
+            lightsBuffer.Update(context);
         }
 
         public void BeginResize()
@@ -690,13 +700,10 @@
 
         public unsafe void CullLights(IGraphicsContext context)
         {
-            *lightCountParams.Local = new(lightsBuffer.Count, 0, 0, 0);
-            lightCountParams.Update(context);
-            lightsBuffer.Update(context);
             context.CSSetConstantBuffer(lightCullParams, 0);
             context.CSSetConstantBuffer(Camera.Value, 1);
             context.CSSetConstantBuffer(lightCountParams, 2);
-            context.CSSetSampler(linearSampler, 0);
+            context.CSSetSampler(linearWrapSampler, 0);
             context.CSSetShaderResource(lightsBuffer.SRV, 0);
             context.CSSetShaderResource(DepthSRV.Value, 1);
             context.CSSetShaderResource(frustumBuffer.SRV, 2);
@@ -712,13 +719,13 @@
             context.CSSetUnorderedAccessViews((void**)array, 7);
             context.ClearUnorderedAccessViewUint(lightListIndexCounterOpaque.UAV, 0, 0, 0, 0);
             context.ClearUnorderedAccessViewUint(lightListIndexCounterTransparent.UAV, 0, 0, 0, 0);
-            lightCullingDispatchPass.PreRender(context);
-            lightCullingDispatchPass.Render(context);
-            lightCullingDispatchPass.PostRender(context);
+            lightCullingDispatchPass.BeginDraw(context);
+            lightCullingDispatchPass.Draw(context);
+            lightCullingDispatchPass.EndDraw(context);
             context.ClearState();
         }
 
-        public unsafe void DeferredPass(IGraphicsContext context, ViewportShading shading, Camera camera)
+        public void UpdateBuffers(IGraphicsContext context)
         {
             GlobalProbes.Update(context);
 
@@ -729,11 +736,10 @@
             ShadowDirectionalLights.Update(context);
             ShadowPointLights.Update(context);
             ShadowSpotlights.Update(context);
+        }
 
-            context.SetRenderTarget(Output, default);
-            context.SetViewport(Output.Viewport);
-            context.PSSetSamplers(smps, 2, 0);
-
+        public unsafe void DeferredPassIndirect(IGraphicsContext context)
+        {
             if (GlobalProbes.Count > 0)
             {
                 // Indirect light pass
@@ -742,11 +748,26 @@
                 probeParamsBuffer.Update(context);
                 cbs[0] = (void*)probeParamsBuffer.Buffer?.NativePointer;
 
-                context.PSSetConstantBuffers(cbs, 2, 0);
+                context.PSSetSamplers(smps, nSamplers, 0);
+                context.PSSetConstantBuffers(cbs, nConstantBuffers, 0);
                 context.PSSetShaderResources(indirectSrvs, nIndirectSrvs, 0);
 
                 quad.DrawAuto(context, deferredIndirect);
+                deferredIndirect.EndDraw(context);
+
+                nint* null_samplers = stackalloc nint[(int)nSamplers];
+                context.PSSetSamplers((void**)null_samplers, nSamplers, 0);
+
+                nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+                context.PSSetConstantBuffers((void**)null_cbs, nConstantBuffers, 0);
+
+                nint* null_srvs = stackalloc nint[(int)nIndirectSrvs];
+                context.PSSetShaderResources((void**)null_srvs, nIndirectSrvs, 0);
             }
+        }
+
+        public unsafe void DeferredPassDirect(IGraphicsContext context)
+        {
             if (DirectionalLights.Count > 0 || PointLights.Count > 0 || Spotlights.Count > 0)
             {
                 // Direct light pass
@@ -757,11 +778,25 @@
                 lightParamsBuffer.Update(context);
                 cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
 
-                context.PSSetConstantBuffers(cbs, 2, 0);
+                context.PSSetSamplers(smps, nSamplers, 0);
+                context.PSSetConstantBuffers(cbs, nConstantBuffers, 0);
                 context.PSSetShaderResources(directSrvs, nDirectSrvs, 0);
 
                 quad.DrawAuto(context, deferredDirect);
+
+                nint* null_samplers = stackalloc nint[(int)nSamplers];
+                context.PSSetSamplers((void**)null_samplers, nSamplers, 0);
+
+                nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+                context.PSSetConstantBuffers((void**)null_cbs, nConstantBuffers, 0);
+
+                nint* null_srvs = stackalloc nint[(int)nIndirectSrvs];
+                context.PSSetShaderResources((void**)null_srvs, nIndirectSrvs, 0);
             }
+        }
+
+        public unsafe void DeferredPassDirectShadows(IGraphicsContext context)
+        {
             if (ShadowDirectionalLights.Count > 0 || ShadowPointLights.Count > 0 || ShadowSpotlights.Count > 0)
             {
                 // Shadow light pass
@@ -772,20 +807,47 @@
                 lightParamsBuffer.Update(context);
                 cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
 
-                context.PSSetConstantBuffers(cbs, 2, 0);
+                context.PSSetSamplers(smps, nSamplers, 0);
+                context.PSSetConstantBuffers(cbs, nConstantBuffers, 0);
                 context.PSSetShaderResources(shadowSrvs, nShadowSrvs, 0);
 
                 quad.DrawAuto(context, deferredShadow);
+
+                nint* null_samplers = stackalloc nint[(int)nSamplers];
+                context.PSSetSamplers((void**)null_samplers, nSamplers, 0);
+
+                nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+                context.PSSetConstantBuffers((void**)null_cbs, nConstantBuffers, 0);
+
+                nint* null_srvs = stackalloc nint[(int)nIndirectSrvs];
+                context.PSSetShaderResources((void**)null_srvs, nIndirectSrvs, 0);
             }
+        }
+
+        public unsafe void ForwardPass(IGraphicsContext context, IRendererComponent renderer, Camera camera)
+        {
+            var lightParams = forwardLightParamsBuffer.Local;
+            lightParams->DirectionalLights = DirectionalLights.Count;
+            lightParams->PointLights = PointLights.Count;
+            lightParams->Spotlights = Spotlights.Count;
+            lightParams->DirectionalLightSDs = ShadowDirectionalLights.Count;
+            lightParams->PointLightSDs = ShadowPointLights.Count;
+            lightParams->SpotlightSDs = ShadowSpotlights.Count;
+            lightParams->GlobalProbes = GlobalProbes.Count;
+            forwardLightParamsBuffer.Update(context);
+            cbs[0] = (void*)forwardLightParamsBuffer.Buffer?.NativePointer;
+
+            context.SetRenderTargets(forwardRtvs, nForwardRtvs, DSV.Value);
+            context.SetViewport(Output.Viewport);
+            context.VSSetConstantBuffers(&cbs[1], 1, 1);
+            context.DSSetConstantBuffers(&cbs[1], 1, 1);
+            context.PSSetConstantBuffers(cbs, nConstantBuffers, 0);
+            context.PSSetShaderResources(forwardSrvs, nForwardSrvs, 0);
+            context.PSSetSamplers(smps, nSamplers, 8);
+
+            renderer.Draw(context);
+
             context.ClearState();
-        }
-
-        public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera)
-        {
-        }
-
-        public unsafe void ForwardPass(IGraphicsContext context, ViewportShading shading, Camera camera, IRenderTargetView rtv, IDepthStencilView dsv, Viewport viewport)
-        {
         }
 
         public unsafe void Dispose()

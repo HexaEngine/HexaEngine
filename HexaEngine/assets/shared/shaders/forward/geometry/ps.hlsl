@@ -1,7 +1,7 @@
 #include "defs.hlsl"
 #include "../../light.hlsl"
 #include "../../camera.hlsl"
-#include "../../brdf.hlsl"
+#include "../../brdf2.hlsl"
 
 #ifndef BaseColor
 #define BaseColor float4(0.8,0.8,0.8,1)
@@ -11,30 +11,6 @@
 #endif
 #ifndef Metalness
 #define Metalness 0
-#endif
-#ifndef Specular
-#define Specular 0.5
-#endif
-#ifndef SpecularTint
-#define SpecularTint 0
-#endif
-#ifndef Sheen
-#define Sheen 0
-#endif
-#ifndef SheenTint
-#define SheenTint 1
-#endif
-#ifndef Clearcoat
-#define Clearcoat 0
-#endif
-#ifndef ClearcoatGloss
-#define ClearcoatGloss 1
-#endif
-#ifndef Anisotropic
-#define Anisotropic 0
-#endif
-#ifndef Subsurface
-#define Subsurface 0
 #endif
 #ifndef Ao
 #define Ao 1
@@ -124,8 +100,10 @@ Texture2DArray depthCSM : register(t25);
 TextureCube depthOSM[32] : register(t26);
 Texture2D depthPSM[32] : register(t58);
 
-SamplerState SampleTypePoint : register(s8);
-SamplerState SampleTypeAnsio : register(s9);
+SamplerState linearClampSampler : register(s8);
+SamplerState linearWrapSampler : register(s9);
+SamplerState pointClampSampler : register(s10);
+SamplerState shadowSampler : register(s11);
 
 cbuffer constants : register(b0)
 {
@@ -389,14 +367,6 @@ Pixel main(PixelInput input)
     float opacity = 1;
 
     float ao = Ao;
-    float specular = Specular;
-    float specularTint = SpecularTint;
-    float sheen = Sheen;
-    float sheenTint = SheenTint;
-    float clearcoat = Clearcoat;
-    float clearcoatGloss = ClearcoatGloss;
-    float anisotropic = Anisotropic;
-    float subsurface = Subsurface;
     float roughness = Roughness;
     float metalness = Metalness;
 	
@@ -458,6 +428,8 @@ Pixel main(PixelInput input)
     float3 V = normalize(GetCameraPos() - position);
 
     float3 Lo = 0;
+    
+    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor.xyz, metalness);
 
     [loop]
     for (uint x = 0; x < directionalLightCount; x++)
@@ -465,7 +437,8 @@ Pixel main(PixelInput input)
         DirectionalLight light = directionalLights[x];
         float3 L = normalize(-light.dir);
         float3 radiance = light.color.rgb;
-        Lo += BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+
+        Lo += BRDFDirect(radiance, L, F0, V, N, baseColor.xyz, roughness, metalness);
     }
 
     [unroll(32)]
@@ -473,10 +446,10 @@ Pixel main(PixelInput input)
     {
         DirectionalLightSD light = directionalLightSDs[y];
         float bias = max(0.05f * (1.0 - dot(N, V)), 0.005f);
-        float shadow = ShadowCalculation(light, position, N, depthCSM, SampleTypeAnsio);
+        float shadow = ShadowCalculation(light, position, N, depthCSM, linearClampSampler);
         float3 L = normalize(-light.dir);
         float3 radiance = light.color.rgb;
-        Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor.xyz, roughness, metalness);
     }
 
     [loop]
@@ -490,7 +463,7 @@ Pixel main(PixelInput input)
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
 
-        Lo += BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        Lo += BRDFDirect(radiance, L, F0, V, N, baseColor.xyz, roughness, metalness);
     }
 
     [unroll(32)]
@@ -503,8 +476,8 @@ Pixel main(PixelInput input)
 
         float attenuation = 1.0 / (distance * distance);
         float3 radiance = light.color.rgb * attenuation;
-        float shadow = ShadowCalculation(light, position, V, depthOSM[zd], SampleTypeAnsio);
-        Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+        float shadow = ShadowCalculation(light, position, V, depthOSM[zd], linearClampSampler);
+        Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor.xyz, roughness, metalness);
     }
 
     [loop]
@@ -524,7 +497,7 @@ Pixel main(PixelInput input)
             if (epsilon != 0)
                 falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
             float3 radiance = light.color.rgb * attenuation * falloff;
-            Lo += BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+            Lo += BRDFDirect(radiance, L, F0, V, N, baseColor.xyz, roughness, metalness);
         }
     }
 
@@ -547,9 +520,9 @@ Pixel main(PixelInput input)
             float3 radiance = light.color.rgb * attenuation * falloff;
             float cosTheta = dot(N, -L);
             float bias = clamp(0.005 * tan(acos(cosTheta)), 0, 0.01);
-            float shadow = ShadowCalculation(light, position, bias, depthPSM[wd], SampleTypeAnsio);
+            float shadow = ShadowCalculation(light, position, bias, depthPSM[wd], linearClampSampler);
 
-            Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+            Lo += (1.0f - shadow) * BRDFDirect(radiance, L, F0, V, N, baseColor.xyz, roughness, metalness);
         }
     }
 
@@ -558,8 +531,8 @@ Pixel main(PixelInput input)
 	
 	[unroll(4)]
     for (uint i = 0; i < globalProbeCount; i++)
-    {
-        ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor.xyz, metalness, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
+    { 
+        ambient += BRDFIndirect(linearWrapSampler, globalDiffuse[i], globalSpecular[i], brdfLUT, F0, N, V, baseColor.xyz, roughness, ao);
     }
 	
     Pixel output;

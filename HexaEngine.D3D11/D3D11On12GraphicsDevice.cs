@@ -68,7 +68,7 @@
 #if DEBUG
             if (debug)
             {
-                Device.QueryInterface(out DebugDevice);
+                Device.QueryInterface(out Debug);
             }
 #endif
 
@@ -91,10 +91,10 @@
 
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
 
-                if (DebugDevice.Handle != null)
+                if (Debug.Handle != null)
                 {
-                    DebugDevice.ReportLiveDeviceObjects(Silk.NET.Direct3D11.RldoFlags.Detail | Silk.NET.Direct3D11.RldoFlags.IgnoreInternal);
-                    DebugDevice.Release();
+                    Debug.ReportLiveDeviceObjects(Silk.NET.Direct3D11.RldoFlags.Detail | Silk.NET.Direct3D11.RldoFlags.IgnoreInternal);
+                    Debug.Release();
                 }
 
                 LeakTracer.ReportLiveInstances();

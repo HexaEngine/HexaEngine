@@ -25,12 +25,14 @@
                 context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
                 context.SetGraphicsPipeline(pipeline);
                 context.DrawIndexedInstanced(indexBuffer.Count, 1, 0, 0, 0);
+                context.SetIndexBuffer(null, 0, 0);
             }
             else
             {
                 context.SetGraphicsPipeline(pipeline);
                 context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
             }
+            context.SetVertexBuffer(null, 0);
         }
 
         public void Bind(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount)

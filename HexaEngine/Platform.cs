@@ -15,9 +15,12 @@
 
         public static void Init(bool editor = false)
         {
+#if DEBUG
+            Application.GraphicsDebugging = true;
+#endif
             Platform.editor = editor;
-            CrashLogger.Initialize();
-            DXGIAdapterD3D11.Init();
+            Logger.Initialize();
+            DXGIAdapterD3D11.Init(Application.GraphicsDebugging);
             //DXGIAdapterD3D11On12.Init();
             OpenALAdapter.Init();
 
@@ -32,10 +35,6 @@
                 AppConfig = AppConfig.Load();
                 AssemblyManager.Load(AppConfig.ScriptAssembly);
             }
-
-#if DEBUG
-            Application.GraphicsDebugging = true;
-#endif
 
             FileSystem.Initialize();
         }

@@ -14,5 +14,12 @@
             Message = $"[{source}]: {message}";
             Timestamp = DateTime.Now.ToShortTimeString();
         }
+
+        public LogMessage(LogSeverity severity, string message) : this()
+        {
+            Severity = severity;
+            Message = message;
+            Timestamp = DateTime.Now.ToShortTimeString();
+        }
     }
 }

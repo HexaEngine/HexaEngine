@@ -20,6 +20,16 @@ struct GeometryAttributes
     float materialData;
 };
 
+float3 PackNormal(float3 normal)
+{
+    return 0.5 * normal + 0.5;
+}
+
+float3 UnpackNormal(float3 normal)
+{
+    return 2 * normal - 1;
+}
+
 GeometryData PackGeometryData(
 	in float materialID,
 	in float3 baseColor,
@@ -36,7 +46,7 @@ GeometryData PackGeometryData(
 	GeometryData data;
     data.GBufferA.rgb = baseColor;
     data.GBufferA.a = materialID;
-    data.GBufferB.xyz = normal;
+    data.GBufferB.xyz = PackNormal(normal);
     data.GBufferB.w = roughness;
     data.GBufferC.x = metallic;
     data.GBufferC.y = reflectance;
@@ -63,7 +73,7 @@ void ExtractGeometryData(
 
 	attrs.baseColor = a.rgb;
 	attrs.materialID = a.a;
-	attrs.normal = b.xyz;
+    attrs.normal = UnpackNormal(b.xyz);
     attrs.roughness = b.w;
     attrs.metallic = c.x;
     attrs.reflectance = c.y;
@@ -72,3 +82,4 @@ void ExtractGeometryData(
     attrs.emission = d.xyz;
     attrs.emissionStrength = d.a;
 }
+
