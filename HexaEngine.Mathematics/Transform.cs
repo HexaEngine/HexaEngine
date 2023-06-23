@@ -161,7 +161,7 @@
                 }
 
                 orientation = value;
-                rotation = value.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
+                rotation = value.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
                 OnChanged();
             }
         }
@@ -267,7 +267,7 @@
                 oldpos = position;
                 (position, orientation) = value;
                 velocity = position - oldpos;
-                rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
+                rotation = orientation.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
                 OnChanged();
             }
         }
@@ -289,7 +289,7 @@
                 oldpos = position;
                 (position, orientation, scale) = value;
                 velocity = position - oldpos;
-                rotation = orientation.GetRotation().ToDeg().NormalizeEulerAngleDegrees();
+                rotation = orientation.GetYawPitchRoll().ToDeg().NormalizeEulerAngleDegrees();
                 OnChanged();
             }
         }
@@ -440,7 +440,7 @@
             local = matrix;
             Matrix4x4.Invert(local, out localInverse);
             Matrix4x4.Decompose(local, out scale, out orientation, out position);
-            rotation = orientation.GetRotation().ToDeg();
+            rotation = orientation.GetYawPitchRoll().ToDeg();
             OnChanged();
         }
 
@@ -526,6 +526,27 @@
                 view = view,
                 viewInv = viewInv
             };
+        }
+
+        public virtual void CopyTo(Transform other)
+        {
+            other.backward = backward;
+            other.down = down;
+            other.forward = forward;
+            other.left = left;
+            other.global = global;
+            other.globalInverse = globalInverse;
+            other.oldpos = oldpos;
+            other.orientation = orientation;
+            other.parent = parent;
+            other.position = position;
+            other.right = right;
+            other.rotation = rotation;
+            other.scale = scale;
+            other.up = up;
+            other.velocity = velocity;
+            other.view = view;
+            other.viewInv = viewInv;
         }
 
         public static implicit operator Matrix4x4(Transform transform) => transform.global;

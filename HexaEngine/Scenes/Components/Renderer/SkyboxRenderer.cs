@@ -13,7 +13,6 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.Effects;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -24,17 +23,14 @@
     {
         private GameObject gameObject;
         private IGraphicsDevice? device;
-        private Cube sphere;
+        private Cube cube;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
         private ConstantBuffer<CBWorld> cb;
         private unsafe void** cbs;
-        private Texture? env;
-        private string environment = string.Empty;
+        private Texture? environment;
+        private string environmentPath = string.Empty;
         private bool drawable;
-
-        private IGraphicsPipeline light;
-        private ConstantBuffer<CBSkylight> cbSkylight;
 
         [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
@@ -48,10 +44,10 @@
         [EditorProperty("Env", null)]
         public string Environment
         {
-            get => environment;
+            get => environmentPath;
             set
             {
-                environment = value;
+                environmentPath = value;
                 if (device == null)
                 {
                     return;
@@ -71,7 +67,7 @@
                 return;
             }
 
-            sphere = new(device);
+            cube = new(device);
             pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "forward/skybox/vs.hlsl",
@@ -81,15 +77,6 @@
             {
                 Rasterizer = RasterizerDescription.CullNone,
             });
-            light = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "forward/skylight/vs.hlsl",
-                PixelShader = "forward/skylight/ps.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone,
-            });
-            cbSkylight = new(device, CpuAccessFlags.Write);
 
             sampler = ResourceManager2.Shared.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp).Value;
 
@@ -108,8 +95,8 @@
         {
             Volatile.Write(ref drawable, false);
 
-            env?.Dispose();
-            sphere.Dispose();
+            environment?.Dispose();
+            cube.Dispose();
             pipeline.Dispose();
             cb.Dispose();
             Free(cbs);
@@ -127,9 +114,6 @@
 
             cb[0] = new CBWorld(Matrix4x4.CreateScale(camera.Transform.Far / 2) * Matrix4x4.CreateTranslation(camera.Transform.Position));
             cb.Update(context);
-
-            cbSkylight[0] = new((float)Math.PI, (float)Math.PI, 0, 0);
-            cbSkylight.Update(context);
         }
 
         public void DrawDepth(IGraphicsContext context)
@@ -137,7 +121,7 @@
             throw new NotSupportedException();
         }
 
-        public void VisibilityTest(IGraphicsContext context)
+        public void VisibilityTest(IGraphicsContext context, Camera camera)
         {
             throw new NotSupportedException();
         }
@@ -155,7 +139,7 @@
                 return;
             }
 
-            if (env == null)
+            if (environment == null)
             {
                 return;
             }
@@ -163,9 +147,9 @@
             unsafe
             {
                 context.VSSetConstantBuffers(cbs, 2, 0);
-                context.PSSetShaderResource(env.ShaderResourceView, 0);
+                context.PSSetShaderResource(environment.ShaderResourceView, 0);
                 context.PSSetSampler(sampler, 0);
-                sphere.DrawAuto(context, pipeline);
+                cube.DrawAuto(context, pipeline);
             }
         }
 
@@ -174,7 +158,7 @@
             throw new NotImplementedException();
         }
 
-        public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type)
+        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             throw new NotSupportedException();
         }
@@ -187,7 +171,7 @@
                 var p = (Tuple<IGraphicsDevice, SkyboxRenderer>)state;
                 var device = p.Item1;
                 var component = p.Item2;
-                var path = Paths.CurrentAssetsPath + component.environment;
+                var path = Paths.CurrentAssetsPath + component.environmentPath;
 
                 unsafe
                 {
@@ -195,22 +179,22 @@
                     Volatile.Write(ref component.drawable, false);
                 }
 
-                component.env?.Dispose();
+                component.environment?.Dispose();
                 if (FileSystem.Exists(path))
                 {
                     try
                     {
-                        component.env = await Texture.CreateTextureAsync(device, new TextureFileDescription(path, TextureDimension.TextureCube));
+                        component.environment = await Texture.CreateTextureAsync(device, new TextureFileDescription(path, TextureDimension.TextureCube));
                     }
                     catch (Exception ex)
                     {
                         ImGuiConsole.Log(ex);
-                        component.env = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
+                        component.environment = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                     }
                 }
                 else
                 {
-                    component.env = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
+                    component.environment = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                 }
 
                 Volatile.Write(ref component.drawable, true);

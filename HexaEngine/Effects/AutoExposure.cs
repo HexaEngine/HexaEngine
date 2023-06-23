@@ -217,13 +217,16 @@ namespace HexaEngine.Effects
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public unsafe void Update(IGraphicsContext context)
         {
             if (dirty)
             {
                 dirty = false;
                 lumaParams.Update(context);
             }
+
+            lumaAvgParams.Local->TimeDelta = Time.Delta;
+            lumaAvgParams.Update(context);
         }
 
         public unsafe void Draw(IGraphicsContext context)
@@ -237,20 +240,31 @@ namespace HexaEngine.Effects
             context.CSSetConstantBuffer(lumaParams, 0);
             context.CSSetUnorderedAccessViews(lumaUAVs, 1);
             lumaCompute.Dispatch(context, (uint)width / 16, (uint)height / 16, 1);
+            nint* emptyUAVs = stackalloc nint[1];
+            context.CSSetUnorderedAccessViews((void**)emptyUAVs, 1);
+            context.CSSetConstantBuffer(null, 0);
+            context.CSSetShaderResource((void*)null, 0);
 
-            lumaAvgParams.Local->TimeDelta = Time.Delta;
-            lumaAvgParams.Update(context);
             context.CSSetConstantBuffer(lumaAvgParams, 0);
             context.CSSetUnorderedAccessViews(lumaAvgUAVs, 2);
             lumaAvgCompute.Dispatch(context, 1, 1, 1);
+            nint* emptyUAV2s = stackalloc nint[2];
+            context.CSSetUnorderedAccessViews((void**)emptyUAV2s, 2);
+            context.CSSetConstantBuffer(null, 0);
 
             context.PSSetShaderResource(Input, 0);
             context.PSSetShaderResource(lumaSRV, 1);
             context.PSSetSampler(samplerPoint, 0);
             context.SetRenderTarget(Output, null);
             context.SetViewport(Output.Viewport);
-            quad.DrawAuto(context, exposurePipeline);
-            context.ClearState();
+            context.SetGraphicsPipeline(exposurePipeline);
+            quad.DrawAuto(context);
+            context.SetGraphicsPipeline(null);
+            context.SetViewport(default);
+            context.SetRenderTarget(null, null);
+            context.PSSetSampler(null, 0);
+            context.PSSetShaderResource((void*)null, 1);
+            context.PSSetShaderResource((void*)null, 0);
         }
 
         public unsafe void Dispose()

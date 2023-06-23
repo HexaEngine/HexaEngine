@@ -246,6 +246,15 @@
             return buffer;
         }
 
+        public static unsafe FileBlob ReadBlob(string path)
+        {
+            var fs = Open(path);
+            var blob = new FileBlob((nint)fs.Length);
+            fs.Read(blob.AsSpan());
+            fs.Close();
+            return blob;
+        }
+
         public static bool ReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
         {
             if (TryOpen(path, out var fs))

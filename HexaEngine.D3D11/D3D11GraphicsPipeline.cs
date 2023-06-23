@@ -6,7 +6,7 @@
     using System;
     using Viewport = Mathematics.Viewport;
 
-    public unsafe class GraphicsPipeline : IGraphicsPipeline
+    public unsafe class D3D11GraphicsPipeline : IGraphicsPipeline
     {
         private readonly string dbgName;
         private bool disposedValue;
@@ -27,7 +27,7 @@
         protected bool valid;
         protected volatile bool initialized;
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -37,7 +37,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, ShaderMacro[] macros, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -48,7 +48,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -59,7 +59,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -71,7 +71,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -82,7 +82,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -94,7 +94,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -106,7 +106,7 @@
             initialized = true;
         }
 
-        public GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
+        public D3D11GraphicsPipeline(D3D11GraphicsDevice device, GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, string dbgName = "")
         {
             this.device = device;
             this.desc = desc;
@@ -350,7 +350,7 @@
                 return;
             }
 
-            ComPtr<ID3D11DeviceContext1> ctx = contextd3d11.DeviceContext;
+            ComPtr<ID3D11DeviceContext3> ctx = contextd3d11.DeviceContext;
             ctx.VSSetShader(vs, null, 0);
             ctx.HSSetShader(hs, null, 0);
             ctx.DSSetShader(ds, null, 0);
@@ -362,13 +362,13 @@
             var factor = State.BlendFactor;
             float* fac = (float*)&factor;
 
-            ctx.OMSetBlendState(blendState, fac, uint.MaxValue);
+            ctx.OMSetBlendState(blendState, fac, state.SampleMask);
             ctx.OMSetDepthStencilState(depthStencilState, state.StencilRef);
             ctx.IASetInputLayout(layout);
             ctx.IASetPrimitiveTopology(Helper.Convert(state.Topology));
         }
 
-        public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext1> context, Viewport viewport)
+        public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext3> context, Viewport viewport)
         {
             if (!initialized)
             {
@@ -399,7 +399,7 @@
             context.IASetPrimitiveTopology(Helper.Convert(state.Topology));
         }
 
-        public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext1> context)
+        public void SetGraphicsPipeline(ComPtr<ID3D11DeviceContext3> context)
         {
             if (!initialized)
             {
@@ -438,7 +438,7 @@
             EndDraw(contextd3d11.DeviceContext);
         }
 
-        public static void EndDraw(ComPtr<ID3D11DeviceContext1> context)
+        public static void EndDraw(ComPtr<ID3D11DeviceContext3> context)
         {
             context.VSSetShader((ID3D11VertexShader*)null, null, 0);
             context.HSSetShader((ID3D11HullShader*)null, null, 0);
@@ -452,74 +452,6 @@
             context.OMSetDepthStencilState((ID3D11DepthStencilState*)null, 0);
             context.IASetInputLayout((ID3D11InputLayout*)null);
             context.IASetPrimitiveTopology(0);
-        }
-
-        public void DrawInstanced(IGraphicsContext context, uint vertexCount, uint instanceCount, uint vertexOffset, uint instanceOffset)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            BeginDraw(context);
-            context.DrawInstanced(vertexCount, instanceCount, vertexOffset, instanceOffset);
-            EndDraw(context);
-        }
-
-        public void DrawIndexedInstanced(IGraphicsContext context, uint indexCount, uint instanceCount, uint indexOffset, int vertexOffset, uint instanceOffset)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            BeginDraw(context);
-            context.DrawIndexedInstanced(indexCount, instanceCount, indexOffset, vertexOffset, instanceOffset);
-            EndDraw(context);
-        }
-
-        public void DrawInstanced(IGraphicsContext context, IBuffer args, uint stride)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            BeginDraw(context);
-            context.DrawInstancedIndirect(args, stride);
-            EndDraw(context);
-        }
-
-        public void DrawIndexedInstancedIndirect(IGraphicsContext context, IBuffer args, uint stride)
-        {
-            if (!initialized)
-            {
-                return;
-            }
-
-            if (!valid)
-            {
-                return;
-            }
-
-            BeginDraw(context);
-            context.DrawIndexedInstancedIndirect(args, stride);
-            EndDraw(context);
         }
 
         protected void Dispose(bool disposing)
@@ -577,7 +509,7 @@
             }
         }
 
-        ~GraphicsPipeline()
+        ~D3D11GraphicsPipeline()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

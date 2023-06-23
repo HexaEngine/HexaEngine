@@ -49,7 +49,7 @@
         private Animation[] animations;
         private Node root;
         private MaterialLibrary materialLibrary;
-        private Model modelFile;
+        private ModelFile modelFile;
         private unsafe AssimpScene* scene;
 
         public MeshData[] Meshes => meshes;
@@ -123,7 +123,7 @@
 
             string oldName = material.Name;
 
-            Model source = modelFile;
+            ModelFile source = modelFile;
             for (ulong j = 0; j < source.Header.MeshCount; j++)
             {
                 MeshData data = source.GetMesh(j);

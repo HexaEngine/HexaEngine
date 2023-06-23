@@ -5,6 +5,7 @@
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using System;
     using System.Collections.Generic;
     using System.Numerics;
@@ -107,9 +108,10 @@
 
         private static void VisibilityTestList(IGraphicsContext context, List<IRendererComponent> renderers)
         {
+            var cam = CameraManager.Current;
             for (int i = 0; i < renderers.Count; i++)
             {
-                renderers[i].VisibilityTest(context);
+                renderers[i].VisibilityTest(context, cam);
             }
         }
 
@@ -160,7 +162,7 @@
                                 {
                                     if (directionalLight.ShadowFrustra[j].Intersects(renderer.BoundingBox))
                                     {
-                                        renderer.DrawShadows(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
+                                        renderer.DrawShadowMap(context, DirectionalLight.CSMBuffer, ShadowType.Cascaded);
                                         break;
                                     }
                                 }
@@ -178,7 +180,7 @@
                             {
                                 if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
                                 {
-                                    renderer.DrawShadows(context, PointLight.OSMBuffer, ShadowType.Omni);
+                                    renderer.DrawShadowMap(context, PointLight.OSMBuffer, ShadowType.Omni);
                                 }
                             }
                         }
@@ -194,7 +196,7 @@
                             {
                                 if (spotlight.ShadowFrustum.Intersects(renderer.BoundingBox))
                                 {
-                                    renderer.DrawShadows(context, Spotlight.PSMBuffer, ShadowType.Perspective);
+                                    renderer.DrawShadowMap(context, Spotlight.PSMBuffer, ShadowType.Perspective);
                                 }
                             }
                         }

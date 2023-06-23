@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Scenes.Components.Renderer
+﻿namespace HexaEngine.Editor.Properties.Editors
 {
     using System.Numerics;
 

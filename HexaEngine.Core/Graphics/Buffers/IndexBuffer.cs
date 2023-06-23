@@ -240,6 +240,21 @@
             Free(items);
         }
 
+        public void Bind(IGraphicsContext context)
+        {
+            context.SetIndexBuffer(buffer, Format.R32UInt, 0);
+        }
+
+        public void Bind(IGraphicsContext context, int offset)
+        {
+            context.SetIndexBuffer(buffer, Format.R32UInt, offset);
+        }
+
+        public void Unbind(IGraphicsContext context)
+        {
+            context.SetIndexBuffer(null, Format.Unknown, 0);
+        }
+
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);

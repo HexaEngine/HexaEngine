@@ -1,7 +1,7 @@
 #include "common.hlsl"
 #include "lights.hlsl"
-#include "../../camera.hlsl"
-#include "../../shadow.hlsl"
+#include "../camera.hlsl"
+#include "../shadow.hlsl"
 
 SamplerComparisonState shadow_sampler : register(s2);
 

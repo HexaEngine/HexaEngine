@@ -68,12 +68,12 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
         {
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             throw new NotImplementedException();
         }

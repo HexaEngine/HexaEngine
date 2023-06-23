@@ -6,7 +6,7 @@
     public unsafe struct SkinnedMeshVertex : IEquatable<SkinnedMeshVertex>
     {
         public Vector3 Position;
-        public Vector3 Texture;
+        public Vector3 UV;
         public Vector3 Normal;
         public Vector3 Tangent;
         public Vector3 Bitangent;
@@ -17,7 +17,7 @@
         public SkinnedMeshVertex(Vector3 position, Vector3 texture, Vector3 normal, Vector3 tangent)
         {
             Position = position;
-            Texture = texture;
+            UV = texture;
             Normal = normal;
             Tangent = tangent;
         }
@@ -25,14 +25,14 @@
         public SkinnedMeshVertex(MeshVertex vertex)
         {
             Position = vertex.Position;
-            Texture = vertex.UV;
+            UV = vertex.UV;
             Normal = vertex.Normal;
             Tangent = vertex.Tangent;
         }
 
         public readonly SkinnedMeshVertex InvertTex()
         {
-            return new SkinnedMeshVertex(Position, new(Math.Abs(Texture.X - 1), Math.Abs(Texture.Y - 1), 0), Normal, Tangent);
+            return new SkinnedMeshVertex(Position, new(Math.Abs(UV.X - 1), Math.Abs(UV.Y - 1), 0), Normal, Tangent);
         }
 
         public override bool Equals(object? obj)
@@ -43,7 +43,7 @@
         public bool Equals(SkinnedMeshVertex other)
         {
             return Position.Equals(other.Position) &&
-                   Texture.Equals(other.Texture) &&
+                   UV.Equals(other.UV) &&
                    Normal.Equals(other.Normal) &&
                    Tangent.Equals(other.Tangent) &&
                    Bitangent.Equals(other.Bitangent);

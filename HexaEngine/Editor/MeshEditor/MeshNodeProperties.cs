@@ -118,7 +118,7 @@
 
             if (child_visible)
             {
-                ImGui.Text($"<Pos: {translation}, Rot: {rotation.GetRotation().ToDeg()}, Scale: {scale}>");
+                ImGui.Text($"<Pos: {translation}, Rot: {rotation.GetYawPitchRoll().ToDeg()}, Scale: {scale}>");
                 ImGui.OpenPopupOnItemClick("TransformEdit", ImGuiPopupFlags.MouseButtonLeft);
 
                 if (ImGui.BeginPopup("TransformEdit"))
@@ -132,7 +132,7 @@
                         }
                     }
                     {
-                        var val = rotation.GetRotation().ToDeg();
+                        var val = rotation.GetYawPitchRoll().ToDeg();
                         if (ImGui.InputFloat3("Rotation", ref val))
                         {
                             changed = true;

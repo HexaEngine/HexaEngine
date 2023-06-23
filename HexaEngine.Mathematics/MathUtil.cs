@@ -120,13 +120,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void GetYaw(this Quaternion r, out float yaw)
-        {
-            yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 GetRotation(this Quaternion r)
+        public static Vector3 GetYawPitchRoll(this Quaternion r)
         {
             float yaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y));
             float pitch = MathF.Asin(2.0f * (r.X * r.W - r.Y * r.Z));
@@ -285,24 +279,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Matrix4x4 LookAtLHRotation(Vector3 target, Vector3 up)
-        {
-            Vector3 zaxis = Vector3.Normalize(target);
-            Vector3 xaxis = Vector3.Normalize(Vector3.Cross(up, zaxis));
-            Vector3 yaxis = Vector3.Cross(zaxis, xaxis);
-
-            Matrix4x4 result = Matrix4x4.Identity;
-            result.M11 = xaxis.X; result.M21 = xaxis.Y; result.M31 = xaxis.Z;
-            result.M12 = yaxis.X; result.M22 = yaxis.Y; result.M32 = yaxis.Z;
-            result.M13 = zaxis.X; result.M23 = zaxis.Y; result.M33 = zaxis.Z;
-
-            result.M41 = -result.M41;
-            result.M42 = -result.M42;
-            result.M43 = -result.M43;
-            return result;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Matrix4x4 PerspectiveFovLH(float fov, float aspect, float znear, float zfar)
         {
             float yScale = (float)(1.0f / Math.Tan(fov * 0.5f));
@@ -382,7 +358,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 NormalizeEulerAngleDegrees(this Vector2 angle)
+        public static Vector2 NormalizeEulerDeg(this Vector2 angle)
         {
             float normalizedX = angle.X % 360;
             float normalizedY = angle.Y % 360;

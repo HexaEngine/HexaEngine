@@ -10,7 +10,7 @@
 
     public class D3D11GPUProfiler : IGPUProfiler
     {
-        private readonly ComPtr<ID3D11Device1> device;
+        private readonly ComPtr<ID3D11Device5> device;
         private readonly List<string> blockNames = new();
         private readonly Dictionary<string, QueryData>[] queries = new Dictionary<string, QueryData>[FrameCount];
         private readonly Dictionary<string, double> results = new();
@@ -18,7 +18,7 @@
         private bool disposedValue;
         private const int FrameCount = 3;
 
-        public D3D11GPUProfiler(ComPtr<ID3D11Device1> device)
+        public D3D11GPUProfiler(ComPtr<ID3D11Device5> device)
         {
             this.device = device;
             for (int i = 0; i < FrameCount; i++)
@@ -42,31 +42,37 @@
 
         public unsafe void CreateBlock(string name)
         {
-            blockNames.Add(name);
-            results.Add(name, 0);
-            for (int i = 0; i < FrameCount; i++)
+            lock (blockNames)
             {
-                QueryData queryData = new();
-                QueryDesc desc = new(Query.TimestampDisjoint);
-                device.CreateQuery(desc, queryData.DisjointQuery.GetAddressOf());
-                desc = new(Query.Timestamp);
-                device.CreateQuery(desc, queryData.TimestampQueryStart.GetAddressOf());
-                device.CreateQuery(desc, queryData.TimestampQueryEnd.GetAddressOf());
-                queries[i].Add(name, queryData);
+                blockNames.Add(name);
+                results.Add(name, 0);
+                for (int i = 0; i < FrameCount; i++)
+                {
+                    QueryData queryData = new();
+                    QueryDesc desc = new(Query.TimestampDisjoint);
+                    device.CreateQuery(desc, queryData.DisjointQuery.GetAddressOf());
+                    desc = new(Query.Timestamp);
+                    device.CreateQuery(desc, queryData.TimestampQueryStart.GetAddressOf());
+                    device.CreateQuery(desc, queryData.TimestampQueryEnd.GetAddressOf());
+                    queries[i].Add(name, queryData);
+                }
             }
         }
 
         public unsafe void DestroyBlock(string name)
         {
-            blockNames.Remove(name);
-            results.Remove(name);
-            for (int i = 0; i < FrameCount; i++)
+            lock (blockNames)
             {
-                QueryData queryData = queries[i][name];
-                queryData.DisjointQuery.Release();
-                queryData.TimestampQueryStart.Release();
-                queryData.TimestampQueryEnd.Release();
-                queries[i].Remove(name);
+                blockNames.Remove(name);
+                results.Remove(name);
+                for (int i = 0; i < FrameCount; i++)
+                {
+                    QueryData queryData = queries[i][name];
+                    queryData.DisjointQuery.Release();
+                    queryData.TimestampQueryStart.Release();
+                    queryData.TimestampQueryEnd.Release();
+                    queries[i].Remove(name);
+                }
             }
         }
 
@@ -88,46 +94,49 @@
             var oldQueries = queries[oldIndex];
 
             QueryDataTimestampDisjoint disjoint = default;
-            for (int i = 0; i < blockNames.Count; i++)
+            lock (blockNames)
             {
-                var name = blockNames[i];
-                var query = oldQueries[name];
-
-                if (query.BeginCalled && query.EndCalled)
+                for (int i = 0; i < blockNames.Count; i++)
                 {
-                    while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
-                    {
-                        ImGuiConsole.Log(LogSeverity.Info, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
-                        Thread.Sleep(1);
-                    }
+                    var name = blockNames[i];
+                    var query = oldQueries[name];
 
-                    ctx.GetData(query.DisjointQuery, &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
-                    if (disjoint.Disjoint)
+                    if (query.BeginCalled && query.EndCalled)
                     {
-                        ImGuiConsole.Log(LogSeverity.Warning, $"Disjoint Timestamp Flag in {name}");
-                    }
-                    else
-                    {
-                        ulong begin = 0;
-                        ulong end = 0;
-
-                        ctx.GetData(query.TimestampQueryStart, &begin, sizeof(ulong), 0);
-
-                        while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
+                        while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
                         {
-                            ImGuiConsole.Log(LogSeverity.Info, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                            ImGuiConsole.Log(LogSeverity.Info, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
                             Thread.Sleep(1);
                         }
-                        ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);
 
-                        double delta = (double)(end - begin) / disjoint.Frequency;
+                        ctx.GetData(query.DisjointQuery, &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
+                        if (disjoint.Disjoint)
+                        {
+                            ImGuiConsole.Log(LogSeverity.Warning, $"Disjoint Timestamp Flag in {name}");
+                        }
+                        else
+                        {
+                            ulong begin = 0;
+                            ulong end = 0;
 
-                        results[name] = delta;
+                            ctx.GetData(query.TimestampQueryStart, &begin, sizeof(ulong), 0);
+
+                            while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
+                            {
+                                ImGuiConsole.Log(LogSeverity.Info, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                Thread.Sleep(1);
+                            }
+                            ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);
+
+                            double delta = (double)(end - begin) / disjoint.Frequency;
+
+                            results[name] = delta;
+                        }
                     }
-                }
 
-                query.BeginCalled = false;
-                query.EndCalled = false;
+                    query.BeginCalled = false;
+                    query.EndCalled = false;
+                }
             }
             ++currentFrame;
         }

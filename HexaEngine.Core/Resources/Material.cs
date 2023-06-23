@@ -27,9 +27,14 @@
 
         public bool IsUsed => Volatile.Read(ref instances) != 0;
 
-        public bool Bind(IGraphicsContext context)
+        public bool BeginDraw(IGraphicsContext context)
         {
             if (!loaded)
+            {
+                return false;
+            }
+
+            if (!Shader.Value.BeginDraw(context))
             {
                 return false;
             }
@@ -40,90 +45,142 @@
             return true;
         }
 
-        public void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type, uint indexCount, uint instanceCount)
+        public bool BeginDraw(IGraphicsContext context, IBuffer camera)
         {
             if (!loaded)
             {
-                return;
+                return false;
             }
 
-            if (!Shader.Value.BeginDrawShadow(context, light, type))
+            if (!Shader.Value.BeginDraw(context, camera))
             {
-                return;
+                return false;
             }
 
             context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
             context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
 
-            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+            return true;
         }
 
-        public void DrawDepth(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
+        public unsafe void EndDraw(IGraphicsContext context)
         {
-            if (!loaded)
-            {
-                return;
-            }
-
-            if (!Shader.Value.BeginDrawDepth(context, camera))
-            {
-                return;
-            }
-
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
-
-            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+            nint* temp = stackalloc nint[TextureList.SlotCount];
+            context.PSSetSamplers((void**)temp, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources((void**)temp, (uint)TextureList.SlotCount, 0);
+            Shader.Value.EndDraw(context);
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, uint indexCount, uint instanceCount)
         {
-            if (!loaded)
+            if (!BeginDraw(context))
             {
                 return;
             }
 
-            if (!Shader.Value.BeginDraw(context))
-            {
-                return;
-            }
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+            EndDraw(context);
         }
 
         public void Draw(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
-            if (!loaded)
+            if (!BeginDraw(context, camera))
             {
                 return;
             }
 
-            if (!Shader.Value.BeginDraw(context, camera))
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+
+            EndDraw(context);
+        }
+
+        public bool BeginDrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
+        {
+            if (!loaded)
             {
-                return;
+                return false;
+            }
+
+            if (!Shader.Value.BeginDrawShadow(context, light, type))
+            {
+                return false;
             }
 
             context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
             context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+
+            return true;
+        }
+
+        public void EndDrawShadow(IGraphicsContext context)
+        {
+            nint* temp = stackalloc nint[TextureList.SlotCount];
+            context.PSSetSamplers((void**)temp, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources((void**)temp, (uint)TextureList.SlotCount, 0);
+            Shader.Value.EndDrawShadow(context);
+        }
+
+        public void DrawShadow(IGraphicsContext context, IBuffer light, ShadowType type, uint indexCount, uint instanceCount)
+        {
+            if (!BeginDrawShadow(context, light, type))
+            {
+                return;
+            }
+
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+
+            EndDrawShadow(context);
+        }
+
+        public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
+        {
+            if (!loaded)
+            {
+                return false;
+            }
+
+            if (!Shader.Value.BeginDrawDepth(context, camera))
+            {
+                return false;
+            }
+
+            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+
+            return true;
+        }
+
+        public void EndDrawDepth(IGraphicsContext context)
+        {
+            nint* temp = stackalloc nint[TextureList.SlotCount];
+            context.PSSetSamplers((void**)temp, (uint)TextureList.SlotCount, 0);
+            context.PSSetShaderResources((void**)temp, (uint)TextureList.SlotCount, 0);
+            Shader.Value.EndDrawDepth(context);
+        }
+
+        public void DrawDepth(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
+        {
+            if (!BeginDrawDepth(context, camera))
+            {
+                return;
+            }
+
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+
+            EndDrawDepth(context);
         }
 
         public void DrawIndirect(IGraphicsContext context, IBuffer camera, IBuffer argBuffer, uint offset)
         {
-            if (!loaded)
+            if (!BeginDraw(context, camera))
             {
                 return;
             }
 
-            if (!Shader.Value.BeginDraw(context, camera))
-            {
-                return;
-            }
-            //TextureList.Bind(context);
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
             context.DrawIndexedInstancedIndirect(argBuffer, offset);
+
+            EndDraw(context);
         }
 
         public void Update(MaterialData desc)

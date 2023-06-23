@@ -301,7 +301,7 @@
             }
         }
 
-        public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type)
+        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!drawable)
                 return;
@@ -378,7 +378,7 @@
             throw new NotImplementedException();
         }
 
-        public void VisibilityTest(IGraphicsContext context)
+        public void VisibilityTest(IGraphicsContext context, Camera camera)
         {
         }
     }

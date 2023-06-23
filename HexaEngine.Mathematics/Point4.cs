@@ -7,10 +7,66 @@
 
     public struct Point4 : IEquatable<Point4>
     {
+        /// <summary>The X component of the point.</summary>
         public int X;
+
+        /// <summary>The Y component of the point.</summary>
         public int Y;
+
+        /// <summary>The Z component of the point.</summary>
         public int Z;
+
+        /// <summary>The W component of the point.</summary>
         public int W;
+
+        /// <summary>Gets a point whose 4 elements are equal to zero.</summary>
+        /// <value>A point whose four elements are equal to zero (that is, it returns the point <c>(0,0,0,0)</c>.</value>
+        public static Point4 Zero => new(0);
+
+        /// <summary>Gets a point whose 4 elements are equal to one.</summary>
+        /// <value>Returns <see cref="Point4" />.</value>
+        /// <remarks>A point whose four elements are equal to one (that is, it returns the point <c>(1,1,1,1)</c>.</remarks>
+        public static Point4 One => new(1);
+
+        /// <summary>Gets the point (1,0,0,0).</summary>
+        /// <value>The point <c>(1,0,0,0)</c>.</value>
+        public static Point4 UnitX => new(1, 0, 0, 0);
+
+        /// <summary>Gets the point (0,1,0,0).</summary>
+        /// <value>The point <c>(0,1,0,0)</c>.</value>
+        public static Point4 UnitY => new(0, 1, 0, 0);
+
+        /// <summary>Gets the point (0,0,1,0).</summary>
+        /// <value>The point <c>(0,0,1,0)</c>.</value>
+        public static Point4 UnitZ => new(0, 0, 1, 0);
+
+        /// <summary>Gets the point (0,0,0,1).</summary>
+        /// <value>The point <c>(0,0,0,1)</c>.</value>
+        public static Point4 UnitW => new(0, 0, 0, 1);
+
+        public Point4(int value)
+        {
+            X = value;
+            Y = value;
+            Z = value;
+            W = value;
+        }
+
+        public Point4(Point2 point, int z, int w)
+        {
+            X = point.X;
+            Y = point.Y;
+            Z = z;
+            W = w;
+        }
+
+        public Point4(Point3 point, int w)
+        {
+            X = point.X;
+            Y = point.Y;
+            Z = point.Z;
+            W = w;
+        }
 
         public Point4(int x, int y, int z, int w)
         {

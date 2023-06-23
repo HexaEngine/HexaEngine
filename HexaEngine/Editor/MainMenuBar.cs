@@ -135,16 +135,31 @@
                         ImGui.EndMenu();
                     }
 
+                    ImGui.EndMenu();
+                }
+
+                if (ImGui.BeginMenu("Build"))
+                {
+                    if (ImGui.MenuItem("Build Scripts"))
+                    {
+                        Task.Run(ProjectManager.BuildScripts);
+                    }
+
+                    if (ImGui.MenuItem("Rebuild Scripts"))
+                    {
+                        Task.Run(ProjectManager.RebuildScripts);
+                    }
+
+                    if (ImGui.MenuItem("Clean Scripts"))
+                    {
+                        Task.Run(ProjectManager.CleanScripts);
+                    }
+
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Open Visual Studio"))
                     {
                         ProjectManager.OpenVisualStudio();
-                    }
-
-                    if (ImGui.MenuItem("Rebuild project"))
-                    {
-                        Task.Run(ProjectManager.UpdateScripts);
                     }
 
                     ImGui.EndMenu();
@@ -207,6 +222,10 @@
                             ShaderCache.Clear();
                             PipelineManager.Recompile();
                         }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                    }
+                    if (ImGui.MenuItem("Clear Shader Cache"))
+                    {
+                        ShaderCache.Clear();
                     }
 
                     ImGui.Separator();

@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.PostFx
 {
+    using HexaEngine.Core.Effects;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
@@ -295,6 +296,36 @@
             Sort();
         }
 
+        public void PrePassDraw(IGraphicsContext context)
+        {
+            if (!enabled)
+            {
+                return;
+            }
+
+            lock (effectsSorted)
+            {
+                for (int i = 0; i < effectsSorted.Count; i++)
+                {
+                    var effect = effectsSorted[i];
+                    if ((effect.Flags & PostFxFlags.PrePass) != 0)
+                        effect.Update(context);
+                }
+
+                context.ClearState();
+                for (int i = 0; i < effectsSorted.Count; i++)
+                {
+                    var effect = effectsSorted[i];
+                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) == 0)
+                    {
+                        continue;
+                    }
+
+                    effect.PrePassDraw(context);
+                }
+            }
+        }
+
         public void Draw(IGraphicsContext context)
         {
             if (!enabled)
@@ -316,7 +347,9 @@
             {
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
-                    effectsSorted[i].Update(context);
+                    var effect = effectsSorted[i];
+                    if ((effect.Flags & PostFxFlags.PrePass) == 0)
+                        effect.Update(context);
                 }
 #if PostFX_Deferred
 

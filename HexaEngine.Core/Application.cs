@@ -35,7 +35,10 @@
         public static IRenderWindow MainWindow => mainWindow;
 #nullable enable
 
-        public static GraphicsBackend GraphicsBackend => graphicsDevice.Backend;
+        public static GraphicsBackend GraphicsBackend
+        {
+            get; set;
+        }
 
         public enum SpecialFolder
         {
@@ -87,12 +90,12 @@
 
         public static void Run(IRenderWindow mainWindow)
         {
-            Process.GetCurrentProcess().PriorityBoostEnabled = true;
-            Init();
             Application.mainWindow = mainWindow;
+            Process.GetCurrentProcess().PriorityBoostEnabled = true;
+            mainWindow.Show();
+            Init();
             mainWindow.Closing += MainWindow_Closing;
 
-            mainWindow.Show();
             PlatformRun();
         }
 
@@ -118,7 +121,7 @@
             Gamepads.Init();
             TouchDevices.Init();
 
-            graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend.Auto, GraphicsDebugging);
+            graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
             audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
 

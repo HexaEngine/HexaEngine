@@ -180,7 +180,7 @@
             context.Write(buffer, items, buffer.Description.ByteWidth);
         }
 
-        public void Set(IGraphicsContext context, T value)
+        public void Update(IGraphicsContext context, T value)
         {
             *items = value;
             if (description.Usage != Usage.Dynamic)

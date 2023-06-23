@@ -7,8 +7,25 @@
 
     public struct UPoint2 : IEquatable<UPoint2>
     {
+        /// <summary>The X component of the point.</summary>
         public uint X;
+
+        /// <summary>The Y component of the point.</summary>
         public uint Y;
+
+        public static readonly UPoint2 Zero = new(0);
+
+        public static readonly UPoint2 One = new(1);
+
+        public static readonly UPoint2 UnitX = new(1, 0);
+
+        public static readonly UPoint2 UnitY = new(0, 1);
+
+        public UPoint2(uint value)
+        {
+            X = value;
+            Y = value;
+        }
 
         public UPoint2(uint x, uint y)
         {

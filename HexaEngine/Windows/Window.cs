@@ -15,8 +15,6 @@ namespace HexaEngine.Windows
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
-    using Silk.NET.Direct3D.Compilers;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
     using CullingManager = CullingManager;

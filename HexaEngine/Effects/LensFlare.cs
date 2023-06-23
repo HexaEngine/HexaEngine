@@ -132,9 +132,16 @@
                 var light = lights.Active[i];
                 if (light is DirectionalLight directional)
                 {
-                    var light_posH = Vector4.Transform(new Vector4(directional.Transform.GlobalPosition, 1), camera.Transform.ViewProjection);
+                    var camera_position = camera.Transform.GlobalPosition;
+
+                    var translation = Matrix4x4.CreateTranslation(camera_position);
+
+                    var far = camera.Transform.Far;
+                    var light_position = Vector3.Transform(light.Transform.Backward * (far / 2f), translation);
+
+                    var light_posH = Vector4.Transform(light_position, camera.Transform.ViewProjection);
                     var ss_sun_pos = new Vector4(0.5f * light_posH.X / light_posH.W + 0.5f, -0.5f * light_posH.Y / light_posH.W + 0.5f, light_posH.Z / light_posH.W, 1.0f);
-                    lightBuffer.Set(context, ss_sun_pos);
+                    lightBuffer.Update(context, ss_sun_pos);
 
                     nint* srvs = stackalloc nint[8];
                     srvs[0] = lens0.SRV.NativePointer;

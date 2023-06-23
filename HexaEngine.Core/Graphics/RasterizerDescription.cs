@@ -59,6 +59,8 @@
         /// </summary>
         public static readonly RasterizerDescription Wireframe = new(CullMode.None, FillMode.Wireframe);
 
+        public static readonly RasterizerDescription CullFrontDepthBias = new(CullMode.Front, FillMode.Solid, false, 8500, 0, 1, true, false, false, false);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RasterizerDescription"/> class.
         /// </summary>
@@ -76,6 +78,20 @@
             ScissorEnable = false;
             MultisampleEnable = true;
             AntialiasedLineEnable = false;
+        }
+
+        public RasterizerDescription(CullMode cullMode, FillMode fillMode, bool frontCounterClockwise, int depthBias, float depthBiasClamp, float slopeScaledDepthBias, bool depthClipEnable, bool scissorEnable, bool multisampleEnable, bool antialiasedLineEnable)
+        {
+            FillMode = fillMode;
+            CullMode = cullMode;
+            FrontCounterClockwise = frontCounterClockwise;
+            DepthBias = depthBias;
+            DepthBiasClamp = depthBiasClamp;
+            SlopeScaledDepthBias = slopeScaledDepthBias;
+            DepthClipEnable = depthClipEnable;
+            ScissorEnable = scissorEnable;
+            MultisampleEnable = multisampleEnable;
+            AntialiasedLineEnable = antialiasedLineEnable;
         }
 
         public override bool Equals(object? obj)

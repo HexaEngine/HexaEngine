@@ -10,13 +10,9 @@
     using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes.Managers;
-    using HexaEngine.ImGuiNET;
     using HexaEngine.Mathematics;
-    using Silk.NET.Direct3D.Compilers;
-    using Silk.NET.OpenAL;
     using System;
     using System.Numerics;
-    using System.Runtime.InteropServices;
     using System.Threading.Tasks;
 
     public class GodRays : IPostFx
@@ -35,6 +31,7 @@
 
         private Texture2D sunsprite;
         private Texture2D sunBuffer;
+        private Texture2D noiseTex;
 
         private ResourceRef<IBuffer> Camera;
         private ResourceRef<IDepthStencilView> DSV;
@@ -55,7 +52,7 @@
 
         public string Name => "GodRays";
 
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline;
+        public PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
 
         public bool Enabled
         {
@@ -75,13 +72,13 @@
             }
         }
 
-        public float GodraysDensity { get => godraysDensity; set => godraysDensity = value; }
+        public float Density { get => godraysDensity; set => godraysDensity = value; }
 
-        public float GodraysWeight { get => godraysWeight; set => godraysWeight = value; }
+        public float Weight { get => godraysWeight; set => godraysWeight = value; }
 
-        public float GodraysDecay { get => godraysDecay; set => godraysDecay = value; }
+        public float Decay { get => godraysDecay; set => godraysDecay = value; }
 
-        public float GodraysExposure { get => godraysExposure; set => godraysExposure = value; }
+        public float Exposure { get => godraysExposure; set => godraysExposure = value; }
 
         public struct GodRaysParams
         {
@@ -102,7 +99,7 @@
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             this.device = device;
-            quad1 = new(device, 250);
+            quad1 = new(device, 10);
             quad = new Quad(device);
 
             sun = await device.CreateGraphicsPipelineAsync(new()
@@ -113,7 +110,7 @@
             {
                 Blend = BlendDescription.AlphaBlend,
                 BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.Default,
+                DepthStencil = DepthStencilDescription.DepthRead,
                 Rasterizer = RasterizerDescription.CullBack,
                 SampleMask = int.MaxValue,
                 StencilRef = 0,
@@ -144,6 +141,14 @@
 
             sunsprite = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/sun/sunsprite.png"));
             sunBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None);
+
+            noiseTex = new(device, Format.R32Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
+            {
+                Noise noise = new(device, NoiseType.Blue2D);
+                noise.Draw2D(device.Context, noiseTex.RTV, new(1024), Vector2.One);
+                noise.Dispose();
+            });
 
             Viewport = new(width, height);
 
@@ -193,43 +198,39 @@
 
                     var camera_position = camera.Transform.GlobalPosition;
 
-                    var light_position = Vector4.Transform(new Vector4(light.Transform.GlobalPosition, 1), Matrix4x4.CreateTranslation(camera_position.X, 0.0f, camera_position.Z));
+                    var translation = Matrix4x4.CreateTranslation(camera_position);
+
+                    var far = camera.Transform.Far;
+                    var light_position = Vector3.Transform(light.Transform.Backward * (far / 2f), translation);
+
+                    var transform = Matrix4x4.CreateTranslation(light.Transform.Backward * (far / 15));
 
                     var light_posH = Vector4.Transform(light_position, camera.Transform.ViewProjection);
                     var ss_sun_pos = new Vector4(0.5f * light_posH.X / light_posH.W + 0.5f, -0.5f * light_posH.Y / light_posH.W + 0.5f, light_posH.Z / light_posH.W, 1.0f);
 
                     raysParams.ScreenSpacePosition = ss_sun_pos;
 
-                    float fMaxDist = MathF.Max(MathF.Abs(raysParams.ScreenSpacePosition.X), MathF.Abs(raysParams.ScreenSpacePosition.Y));
-                    if (fMaxDist >= 1.0f)
-                        raysParams.Color = Vector4.Transform(raysParams.Color, Matrix4x4.CreateScale(MaxLightDist - fMaxDist, MaxLightDist - fMaxDist, MaxLightDist - fMaxDist));
-
-                    paramsBuffer.Set(context, raysParams);
+                    paramsBuffer.Update(context, raysParams);
 
                     CBWorld world = default;
 
-                    world.World = Matrix4x4.Transpose(light.Transform.Global);
+                    world.World = Matrix4x4.Transpose(transform);
                     world.WorldInv = Matrix4x4.Transpose(light.Transform.GlobalInverse);
 
-                    paramsWorldBuffer.Set(context, world);
+                    paramsWorldBuffer.Update(context, world);
 
                     SunParams sunParams = default;
 
                     sunParams.Diffuse = Vector3.One;
                     sunParams.AlbedoFactor = 1f;
 
-                    paramsSunBuffer.Set(context, sunParams);
+                    paramsSunBuffer.Update(context, sunParams);
                 }
             }
         }
 
-        public unsafe void Draw(IGraphicsContext context)
+        public unsafe void PrePassDraw(IGraphicsContext context)
         {
-            if (Output == null)
-            {
-                return;
-            }
-
             context.ClearRenderTargetView(sunBuffer.RTV, default);
             context.SetRenderTarget(sunBuffer.RTV, DSV.Value);
             context.SetViewport(Viewport);
@@ -239,6 +240,14 @@
             context.PSSetShaderResource(sunsprite.SRV, 0);
             context.PSSetSampler(sunSampler, 0);
             quad1.DrawAuto(context, sun);
+        }
+
+        public unsafe void Draw(IGraphicsContext context)
+        {
+            if (Output == null)
+            {
+                return;
+            }
 
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
@@ -255,6 +264,7 @@
             godrays.Dispose();
             sampler.Dispose();
             paramsBuffer.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

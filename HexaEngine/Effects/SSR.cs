@@ -93,6 +93,7 @@
 
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
+            this.device = device;
             quad = new(device);
 
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);

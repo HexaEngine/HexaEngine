@@ -161,6 +161,8 @@
 
         void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ);
 
+        void DispatchIndirect(IBuffer dispatchArgs, uint offset);
+
         void GenerateMips(IShaderResourceView resourceView);
 
         void ExecuteCommandList(ICommandList commandList, bool restoreState);

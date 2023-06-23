@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
 
     public class Mesh : ResourceInstance
@@ -24,16 +25,30 @@
             BoundingBox = data.Box;
             BoundingSphere = data.Sphere;
             IndexBuffer = data.CreateIndexBuffer(device);
-            VertexBuffer = data.CreateVertexBuffer(device, debone: debone);
+            if (!debone && (data.Flags & VertexFlags.Skinned) != 0)
+            {
+                VertexBuffer = data.CreateSkinnedVertexBuffer(device);
+                Stride = (uint)sizeof(SkinnedMeshVertex);
+            }
+            else
+            {
+                VertexBuffer = data.CreateVertexBuffer(device);
+                Stride = (uint)sizeof(MeshVertex);
+            }
             IndexCount = data.IndicesCount;
             VertexCount = data.VerticesCount;
-            Stride = data.GetStride(debone);
         }
 
         public void BeginDraw(IGraphicsContext context)
         {
             context.SetIndexBuffer(IndexBuffer, Format.R32UInt, 0);
             context.SetVertexBuffer(VertexBuffer, Stride);
+        }
+
+        public void EndDraw(IGraphicsContext context)
+        {
+            context.SetIndexBuffer(null, Format.Unknown, 0);
+            context.SetVertexBuffer(null, 0);
         }
 
         protected override void Dispose(bool disposing)

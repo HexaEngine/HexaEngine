@@ -41,7 +41,7 @@
 
         private string CurrentFile;
 
-        private Model? model;
+        private ModelFile? model;
         private MeshSource? selectedMesh;
         private MeshSource[]? sources;
         private Node[]? nodes;
@@ -87,7 +87,7 @@
             nodePropertiesWindow = new(this, nodesWindow);
         }
 
-        public Model? Current => model;
+        public ModelFile? Current => model;
 
         public Node[]? Nodes => nodes;
 
@@ -119,7 +119,7 @@
 
         public void Load(string path)
         {
-            model = Model.LoadExternal(path);
+            model = ModelFile.LoadExternal(path);
             sources = new MeshSource[model.Meshes.Length];
             for (int i = 0; i < model.Meshes.Length; i++)
             {

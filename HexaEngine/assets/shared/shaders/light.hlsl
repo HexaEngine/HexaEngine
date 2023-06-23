@@ -50,3 +50,12 @@ struct Spotlight
     float3 dir;
     float outerCutOff;
 };
+
+float3 GetShadowUVD(float3 pos, float4x4 view)
+{
+    float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
+    fragPosLightSpace.y = -fragPosLightSpace.y;
+    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords.xy = projCoords.xy * 0.5 + 0.5;
+    return projCoords;
+}

@@ -1,14 +1,16 @@
 ﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.Meshes;
     using System.Numerics;
 
     public unsafe class MeshSource : IDisposable
     {
         public MeshData Data;
-        public readonly IBuffer VertexBuffer;
-        public readonly IBuffer IndexBuffer;
+        public readonly VertexBuffer<MeshVertex> VertexBuffer;
+        public readonly IndexBuffer IndexBuffer;
         public readonly uint Stride;
         public readonly uint VertexCount;
         public readonly uint IndexCount;
@@ -22,15 +24,14 @@
         public MeshSource(IGraphicsDevice device, MeshData data)
         {
             Data = data;
-            VertexBuffer = data.CreateVertexBuffer(device, Usage.Dynamic, CpuAccessFlags.Write);
-            IndexBuffer = data.CreateIndexBuffer(device, Usage.Dynamic, CpuAccessFlags.Write);
-            Stride = data.GetStride();
+            VertexBuffer = data.CreateVertexBuffer(device, CpuAccessFlags.Write);
+            IndexBuffer = data.CreateIndexBuffer(device, CpuAccessFlags.Write);
+            Stride = (uint)sizeof(MeshVertex);
 
             VertexCount = data.VerticesCount;
             IndexCount = data.IndicesCount;
 
-            ShaderMacro[] macros = data.GetShaderMacros();
-            InputElementDescription[] inputElements = data.GetInputElements();
+            InputElementDescription[] inputElements = MeshData.InputElements;
 
             Solid = device.CreateGraphicsPipeline(new()
             {
@@ -46,7 +47,7 @@
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
 
             Overlay = device.CreateGraphicsPipeline(new()
             {
@@ -62,7 +63,7 @@
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
 
             Normals = device.CreateGraphicsPipeline(new()
             {
@@ -79,7 +80,7 @@
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
 
             Points = device.CreateGraphicsPipeline(new()
             {
@@ -96,7 +97,7 @@
                 Topology = PrimitiveTopology.PointList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
         }
 
         public void Update(IGraphicsContext context, bool ib, bool vb)

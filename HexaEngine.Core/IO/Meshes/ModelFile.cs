@@ -9,7 +9,7 @@
     using System.Numerics;
     using System.Text;
 
-    public unsafe class Model
+    public unsafe class ModelFile
     {
         public ModelHeader Header;
         public string Name;
@@ -17,7 +17,7 @@
         public readonly MeshData[] Meshes;
         public readonly Node Root;
 
-        private Model(string path, Stream fs)
+        private ModelFile(string path, Stream fs)
         {
             Name = path;
 
@@ -47,11 +47,11 @@
             fs.Close();
         }
 
-        private Model(string path) : this(path, FileSystem.Open(path))
+        private ModelFile(string path) : this(path, FileSystem.Open(path))
         {
         }
 
-        public Model(string path, string materialLibrary, MeshData[] meshes, Node root)
+        public ModelFile(string path, string materialLibrary, MeshData[] meshes, Node root)
         {
             Name = path;
             MaterialLibrary = materialLibrary;
@@ -92,14 +92,14 @@
             fs.Close();
         }
 
-        public static Model Load(string path)
+        public static ModelFile Load(string path)
         {
-            return new Model(path);
+            return new ModelFile(path);
         }
 
-        public static Model LoadExternal(string path)
+        public static ModelFile LoadExternal(string path)
         {
-            return new Model(path, File.OpenRead(path));
+            return new ModelFile(path, File.OpenRead(path));
         }
 
         public MeshData GetMesh(int index)

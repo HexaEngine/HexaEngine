@@ -60,6 +60,7 @@
             description = new(sizeof(T) * (int)capacity, BindFlags.VertexBuffer, Usage.Default, flags);
             if ((flags & CpuAccessFlags.None) != 0)
             {
+                capacity = 0;
                 description.Usage = Usage.Immutable;
                 fixed (T* ptr = vertices)
                 {
@@ -77,6 +78,36 @@
             }
 
             items = AllocCopy(vertices);
+            buffer = device.CreateBuffer(items, capacity, description);
+            buffer.DebugName = dbgName;
+        }
+
+        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T* vertices, uint count, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            this.device = device;
+            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+
+            capacity = count;
+            this.count = capacity;
+
+            description = new(sizeof(T) * (int)capacity, BindFlags.VertexBuffer, Usage.Default, flags);
+            if ((flags & CpuAccessFlags.None) != 0)
+            {
+                capacity = 0;
+                description.Usage = Usage.Immutable;
+                buffer = device.CreateBuffer(vertices, capacity, description);
+                return;
+            }
+            if ((flags & CpuAccessFlags.Write) != 0)
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if ((flags & CpuAccessFlags.Read) != 0)
+            {
+                description.Usage = Usage.Staging;
+            }
+
+            items = AllocCopy(vertices, count);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
         }
@@ -244,6 +275,16 @@
         public void CopyTo(IGraphicsContext context, IBuffer buffer)
         {
             context.CopyResource(buffer, this.buffer);
+        }
+
+        public void Bind(IGraphicsContext context)
+        {
+            context.SetVertexBuffer(buffer, (uint)sizeof(T));
+        }
+
+        public void Unbind(IGraphicsContext context)
+        {
+            context.SetVertexBuffer(null, 0);
         }
 
         public void Dispose()

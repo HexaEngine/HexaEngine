@@ -7,8 +7,24 @@
 
     public struct Point2 : IEquatable<Point2>
     {
+        /// <summary>The X component of the point.</summary>
         public int X;
+
+        /// <summary>The Y component of the point.</summary>
         public int Y;
+
+        public static readonly Point2 Zero = new(0);
+
+        public static readonly Point2 One = new(1);
+
+        public static readonly Point2 UnitX = new(1, 0);
+
+        public static readonly Point2 UnitY = new(0, 1);
+
+        public Point2(int value)
+        {
+            X = value;
+        }
 
         public Point2(int x, int y)
         {

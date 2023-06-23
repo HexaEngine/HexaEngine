@@ -6,6 +6,7 @@ namespace HexaEngine.Core.Resources
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Scenes;
     using System.Threading.Tasks;
 
     public class MaterialShader : IDisposable
@@ -46,8 +47,16 @@ namespace HexaEngine.Core.Resources
         private void Compile()
         {
             flags = 0;
-            var elements = mesh.GetInputElements(debone);
-            var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros(debone)).ToArray();
+            InputElementDescription[] elements = MeshData.InputElements;
+            if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
+            {
+                elements = MeshData.SkinnedInputElements;
+            }
+            var macros = material.GetShaderMacros();
+            if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
+            {
+                macros = macros.Append(new ShaderMacro("VtxSkinned", "1")).ToArray();
+            }
             var matflags = material.Flags;
             var custom = material.VertexShader != null && material.PixelShader != null;
 
@@ -157,7 +166,7 @@ namespace HexaEngine.Core.Resources
                 var csmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullNone,
+                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -166,12 +175,11 @@ namespace HexaEngine.Core.Resources
                 {
                     VertexShader = "forward/geometry/osm/vs.hlsl",
                     GeometryShader = "forward/geometry/osm/gs.hlsl",
-                    PixelShader = "forward/geometry/osm/ps.hlsl",
                 };
                 var osmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullBack,
+                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -184,7 +192,7 @@ namespace HexaEngine.Core.Resources
                 var psmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullFront,
+                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -214,8 +222,16 @@ namespace HexaEngine.Core.Resources
         private async Task CompileAsync()
         {
             flags = 0;
-            var elements = mesh.GetInputElements(debone);
-            var macros = material.GetShaderMacros().Concat(mesh.GetShaderMacros(debone)).ToArray();
+            InputElementDescription[] elements = MeshData.InputElements;
+            if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
+            {
+                elements = MeshData.SkinnedInputElements;
+            }
+            var macros = material.GetShaderMacros();
+            if (debone! && (mesh.Flags & VertexFlags.Skinned) != 0)
+            {
+                macros = macros.Append(new ShaderMacro("VtxSkinned", "1")).ToArray();
+            }
             var matflags = material.Flags;
             var custom = material.VertexShader != null && material.PixelShader != null;
 
@@ -325,7 +341,7 @@ namespace HexaEngine.Core.Resources
                 var csmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullNone,
+                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -339,7 +355,7 @@ namespace HexaEngine.Core.Resources
                 var osmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullBack,
+                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -352,7 +368,7 @@ namespace HexaEngine.Core.Resources
                 var psmPipelineState = new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.Default,
-                    Rasterizer = RasterizerDescription.CullFront,
+                    Rasterizer = RasterizerDescription.CullFrontDepthBias,
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 };
@@ -435,6 +451,13 @@ namespace HexaEngine.Core.Resources
             return true;
         }
 
+        public void EndDraw(IGraphicsContext context)
+        {
+            context.SetGraphicsPipeline(null);
+            context.DSSetConstantBuffer(null, 1);
+            context.VSSetConstantBuffer(null, 1);
+        }
+
         public bool BeginDrawForward(IGraphicsContext context)
         {
             if (!initialized)
@@ -449,6 +472,11 @@ namespace HexaEngine.Core.Resources
 
             context.SetGraphicsPipeline(pipeline);
             return true;
+        }
+
+        public void EndDrawForward(IGraphicsContext context)
+        {
+            context.SetGraphicsPipeline(null);
         }
 
         public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
@@ -467,6 +495,13 @@ namespace HexaEngine.Core.Resources
             context.VSSetConstantBuffer(camera, 1);
             context.SetGraphicsPipeline(depthOnly);
             return true;
+        }
+
+        public void EndDrawDepth(IGraphicsContext context)
+        {
+            context.DSSetConstantBuffer(null, 1);
+            context.VSSetConstantBuffer(null, 1);
+            context.SetGraphicsPipeline(null);
         }
 
         public bool BeginDrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
@@ -510,6 +545,14 @@ namespace HexaEngine.Core.Resources
             }
 
             return false;
+        }
+
+        public void EndDrawShadow(IGraphicsContext context)
+        {
+            context.DSSetConstantBuffer(null, 1);
+            context.VSSetConstantBuffer(null, 1);
+            context.GSSetConstantBuffer(null, 1);
+            context.SetGraphicsPipeline(null);
         }
 
         protected virtual void Dispose(bool disposing)

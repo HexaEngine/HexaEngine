@@ -5,10 +5,15 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
     public static unsafe class Utils
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string? ToStringFromUTF8(byte* ptr)
+        {
+            return Marshal.PtrToStringUTF8((nint)ptr);
+        }
+
         public static uint Bitcount(this uint value)
         {
             uint v = value;

@@ -28,7 +28,7 @@
             IDXGIAdapter.QueryInterface(out IDXGIAdapter3);
         }
 
-        public static void Init()
+        public static void Init(IWindow window, bool graphicsDebugging)
         {
             if (OperatingSystem.IsWindows())
             {
@@ -83,6 +83,8 @@
         [SupportedOSPlatform("windows")]
         internal ISwapChain CreateSwapChainForWindow(D3D12GraphicsDevice device, SdlWindow window)
         {
+            var (Hwnd, HDC, HInstance) = window.Win32 ?? throw new NotSupportedException();
+
             SwapChainDesc desc = new()
             {
                 BufferCount = 2,
@@ -99,13 +101,12 @@
                     Scaling = ModeScaling.Stretched,
                     ScanlineOrdering = ModeScanlineOrder.Unspecified
                 },
-                OutputWindow = window.GetWin32HWND()
+                OutputWindow = Hwnd
             };
 
             IDXGISwapChain3* swapChain;
-            IntPtr hwnd = window.GetWin32HWND();
             IDXGIFactory->CreateSwapChain((IUnknown*)device.CommandQueue.Handle, &desc, (IDXGISwapChain**)&swapChain);
-            IDXGIFactory->MakeWindowAssociation(hwnd, 1 << 0);
+            IDXGIFactory->MakeWindowAssociation(Hwnd, 1 << 0);
 
             return new DXGISwapChain(device, swapChain, (int)desc.BufferDesc.Width, (int)desc.BufferDesc.Height, 2, (SwapChainFlag)desc.Flags);
         }

@@ -117,43 +117,25 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 [earlydepthstencil]
 GeometryData main(PixelInput input)
 {
-#if VtxColor
-    float4 baseColor = input.color;
-#else
     float4 baseColor = BaseColor;
-#endif
-#if VtxPosition
-    float3 pos = (float3) input.pos;
-#endif
-#if VtxNormal
     float3 normal = normalize(input.normal);
-#endif
-#if VtxTangent
     float3 tangent = normalize(input.tangent);    
-#endif
-#if VtxBitangent
     float3 bitangent = normalize(input.bitangent);
-#endif
+
     float3 emissive = Emissive;
     float opacity = 1;
 
     float ao = Ao;
     float roughness = Roughness;
     float metalness = Metalness;
-#if VtxUV
+
 #if HasBaseColorTex
 	float4 color = baseColorTexture.Sample(baseColorTextureSampler, (float2) input.tex);
     baseColor = float4(color.rgb * color.a, color.a);
 #endif
 
-#if VtxTangent
 #if HasNormalTex
-#if VtxBitangent
     normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent, bitangent);
-#else
-	normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent);
-#endif
-#endif
 #endif
 	
 #if HasRoughnessTex
@@ -177,13 +159,14 @@ GeometryData main(PixelInput input)
     roughness = rm.x;
     metalness = rm.y;
 #endif
+    
 #if HasAmbientOcclusionRoughnessMetalnessTex
     float3 orm = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, (float2) input.tex).rgb;
     ao = orm.r;
     roughness = orm.g;
     metalness = orm.b;
 #endif
-#endif
+
     if (baseColor.a == 0)
         discard;
 

@@ -1,21 +1,14 @@
 ﻿/*
 namespace HexaEngine.Rendering
 {
-    using BepuUtilities;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Rendering;
+    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
-    using HexaEngine.Pipelines.Forward;
-    using HexaEngine.Windows;
-    using ImGuiNET;
-    using Silk.NET.Direct3D11;
-    using Silk.NET.DXGI;
-    using Silk.NET.OpenAL;
-    using Silk.NET.SDL;
+    using HexaEngine.Scenes.Components.Renderer;
     using System;
     using System.Numerics;
-    using System.Xml.Linq;
 
     public class MeshBaker
     {
@@ -39,7 +32,7 @@ namespace HexaEngine.Rendering
         private const uint NumBounces = 1;
         private const uint NumIterations = NumBounces + 1;
 
-        private Texture initialRadiance;
+        private Texture2D initialRadiance;
         private UavBuffer reductionBuffer;
         private DepthStencil dsBuffer;
 
@@ -194,9 +187,9 @@ namespace HexaEngine.Rendering
 
         private unsafe void Initialize(IGraphicsDevice device)
         {
-            initialRadiance = new(device, TextureDescription.CreateTexture2DWithRTV((int)RTSize, (int)RTSize, 1, Format.RGBA16Float));
-            reductionBuffer = new(device, 16, RTSize * NumSHTargets * NumFaces, Format.RGBA32Float, false, false);
-            dsBuffer = new(device, (int)RTSize, (int)RTSize, Format.Depth24UNormStencil8);
+            initialRadiance = new(device, Format.R16G16B16A16Float, (int)RTSize, (int)RTSize, 1, 1, CpuAccessFlags.None);
+            reductionBuffer = new(device, 16, RTSize * NumSHTargets * NumFaces, Format.R32G32B32A32Float, false, false);
+            dsBuffer = new(device, (int)RTSize, (int)RTSize, Format.D24UNormS8UInt);
 
             integrateConstants = new(device, CpuAccessFlags.Write);
 
@@ -315,13 +308,13 @@ namespace HexaEngine.Rendering
             }
 
             if (posOffset == 0xFFFFFFFF)
-                throw Exception(L"Can't bake a mesh with no positions!");
+                throw new Exception("Can't bake a mesh with no positions!");
 
             if (nmlOffset == 0xFFFFFFFF)
-                throw Exception(L"Can't bake a mesh with no normals!");
+                throw new Exception("Can't bake a mesh with no normals!");
 
             if (tangentOffset == 0xFFFFFFFF || binormalOffset == 0xFFFFFFFF)
-                throw Exception(L"Can't bake a mesh with no tangent frame!");
+                throw new Exception("Can't bake a mesh with no tangent frame!");
 
             // Pull out the vertex data from the mesh
             uint numVerts = mesh.NumVertices();
@@ -384,7 +377,7 @@ namespace HexaEngine.Rendering
             }
             context->Unmap(stagingBuffer, 0);
 
-            RWBuffer & meshData = currentMeshBuffers[meshIdx];
+            UavBuffer meshData = currentMeshBuffers[meshIdx];
 
             // Bake each vertex
             for (uint vertIdx = 0; vertIdx < numVerts; ++vertIdx)

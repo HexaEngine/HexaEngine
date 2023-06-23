@@ -7,10 +7,43 @@
 
     public struct UPoint4 : IEquatable<UPoint4>
     {
+        /// <summary>The X component of the point.</summary>
         public uint X;
+
+        /// <summary>The Y component of the point.</summary>
         public uint Y;
+
+        /// <summary>The Z component of the point.</summary>
         public uint Z;
+
+        /// <summary>The W component of the point.</summary>
         public uint W;
+
+        internal const int Count = 4;
+
+        public UPoint4(uint value)
+        {
+            X = value;
+            Y = value;
+            Z = value;
+            W = value;
+        }
+
+        public UPoint4(UPoint2 point, uint z, uint w)
+        {
+            X = point.X;
+            Y = point.Y;
+            Z = z;
+            W = w;
+        }
+
+        public UPoint4(UPoint3 point, uint w)
+        {
+            X = point.X;
+            Y = point.Y;
+            Z = point.Z;
+            W = w;
+        }
 
         public UPoint4(uint x, uint y, uint z, uint w)
         {
@@ -19,6 +52,31 @@
             Z = z;
             W = w;
         }
+
+        /// <summary>Gets a point whose 4 elements are equal to zero.</summary>
+        /// <value>A point whose four elements are equal to zero (that is, it returns the point <c>(0,0,0,0)</c>.</value>
+        public static UPoint4 Zero => new(0);
+
+        /// <summary>Gets a point whose 4 elements are equal to one.</summary>
+        /// <value>Returns <see cref="Point4" />.</value>
+        /// <remarks>A point whose four elements are equal to one (that is, it returns the point <c>(1,1,1,1)</c>.</remarks>
+        public static UPoint4 One => new(1);
+
+        /// <summary>Gets the point (1,0,0,0).</summary>
+        /// <value>The point <c>(1,0,0,0)</c>.</value>
+        public static UPoint4 UnitX => new(1, 0, 0, 0);
+
+        /// <summary>Gets the point (0,1,0,0).</summary>
+        /// <value>The point <c>(0,1,0,0)</c>.</value>
+        public static UPoint4 UnitY => new(0, 1, 0, 0);
+
+        /// <summary>Gets the point (0,0,1,0).</summary>
+        /// <value>The point <c>(0,0,1,0)</c>.</value>
+        public static UPoint4 UnitZ => new(0, 0, 1, 0);
+
+        /// <summary>Gets the point (0,0,0,1).</summary>
+        /// <value>The point <c>(0,0,0,1)</c>.</value>
+        public static UPoint4 UnitW => new(0, 0, 0, 1);
 
         public override bool Equals(object? obj)
         {

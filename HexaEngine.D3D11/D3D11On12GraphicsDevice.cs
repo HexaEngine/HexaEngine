@@ -22,7 +22,6 @@
         static D3D11On12GraphicsDevice()
         {
             Compiler = new();
-            ShaderCompilers.Register(GraphicsBackend.D3D11On12, Compiler);
         }
 
         [SupportedOSPlatform("windows")]

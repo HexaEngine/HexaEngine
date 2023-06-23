@@ -20,7 +20,7 @@
 
         public Sequencer()
         {
-            Animation = Animation.LoadExternal(@"C:\Users\junam\Desktop\Data\TestProject\assets\animations\CesiumMan.anim");
+            Animation = new("Test", 10, 10);
         }
 
         public float TimeToFrame(float time)
@@ -283,7 +283,7 @@
                 var time = (int)TimeToFrame((float)keyframe.Time);
                 if (time == Frame)
                 {
-                    var rot = keyframe.Value.GetRotation().ToDeg();
+                    var rot = keyframe.Value.GetYawPitchRoll().ToDeg();
                     if (ImGui.InputFloat3("Rotation", ref rot))
                     {
                         keyframe.Value = rot.ToRad().GetQuaternion();

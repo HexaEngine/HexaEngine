@@ -27,14 +27,12 @@
 
         public void Update(IGraphicsContext context);
 
-        public void VisibilityTest(IGraphicsContext context);
+        public void VisibilityTest(IGraphicsContext context, Camera camera);
 
         public void DrawDepth(IGraphicsContext context);
 
-        public void DrawShadows(IGraphicsContext context, IBuffer light, ShadowType type);
+        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type);
 
         public void Draw(IGraphicsContext context);
-
-        public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset);
     }
 }

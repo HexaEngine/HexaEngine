@@ -18,6 +18,11 @@
         /// <summary>
         /// The Effect uses the old RenderTarget of the last pipeline.
         /// </summary>
-        Inline = 4
+        Inline = 4,
+
+        /// <summary>
+        /// The Effect has a prepass.
+        /// </summary>
+        PrePass = 8,
     }
 }

@@ -136,12 +136,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetCounter(uint count)
-        {
-            this.count = count;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EnsureCapacity(uint capacity)
         {
             if (this.capacity < capacity)

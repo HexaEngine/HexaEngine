@@ -100,7 +100,7 @@
 
         public void Update(IGraphicsContext context)
         {
-            paramsBuffer.Set(context, new(scale));
+            paramsBuffer.Update(context, new(scale));
         }
 
         public void Draw(IGraphicsContext context)

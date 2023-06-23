@@ -332,7 +332,7 @@
             throw new NotImplementedException();
         }
 
-        public void SetGraphicsPipeline(IGraphicsPipeline pipeline)
+        public void SetGraphicsPipeline(IGraphicsPipeline? pipeline)
         {
             throw new NotImplementedException();
         }
@@ -482,7 +482,12 @@
             throw new NotImplementedException();
         }
 
-        public void SetComputePipeline(IComputePipeline pipeline)
+        public void SetComputePipeline(IComputePipeline? pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DispatchIndirect(IBuffer dispatchArgs, uint offset)
         {
             throw new NotImplementedException();
         }

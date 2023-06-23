@@ -35,6 +35,22 @@
             context.SetVertexBuffer(null, 0);
         }
 
+        public void DrawAuto(IGraphicsContext context)
+        {
+            context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
+            if (indexBuffer != null)
+            {
+                context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
+                context.DrawIndexedInstanced(indexBuffer.Count, 1, 0, 0, 0);
+                context.SetIndexBuffer(null, 0, 0);
+            }
+            else
+            {
+                context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
+            }
+            context.SetVertexBuffer(null, 0);
+        }
+
         public void Bind(IGraphicsContext context, out uint vertexCount, out uint indexCount, out int instanceCount)
         {
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);

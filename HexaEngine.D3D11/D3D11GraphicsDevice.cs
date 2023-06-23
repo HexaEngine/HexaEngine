@@ -30,21 +30,20 @@
 
         public static readonly ShaderCompiler Compiler;
         private long graphicsMemoryUsage;
-        public ComPtr<ID3D11Device1> Device;
-        public ComPtr<ID3D11DeviceContext1> DeviceContext;
+        public ComPtr<ID3D11Device5> Device;
+        public ComPtr<ID3D11DeviceContext3> DeviceContext;
 
         internal ComPtr<ID3D11Debug> Debug;
 
         static D3D11GraphicsDevice()
         {
             Compiler = new();
-            ShaderCompilers.Register(GraphicsBackend.D3D11, Compiler);
         }
 
         protected D3D11GraphicsDevice(DXGIAdapterD3D11 adapter)
         {
             this.adapter = adapter;
-            D3D11 = D3D11.GetApi();
+            D3D11 = D3D11.GetApi(adapter.source);
             TextureLoader = new D3D11TextureLoader(this);
         }
 
@@ -52,7 +51,7 @@
         {
             this.adapter = adapter;
 
-            D3D11 = D3D11.GetApi();
+            D3D11 = D3D11.GetApi(adapter.source);
             D3DFeatureLevel[] levelsArr = new D3DFeatureLevel[]
             {
                 D3DFeatureLevel.Level111,
@@ -122,52 +121,52 @@
 
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new ComputePipeline(this, desc, $"({nameof(ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new ComputePipeline(this, desc, macros, $"({nameof(ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11ComputePipeline(this, desc, macros, $"({nameof(D3D11ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, macros, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, elementDescriptions, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, inputElements, macros, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, state, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, state, macros, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] elementDescriptions, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, state, elementDescriptions, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         public IGraphicsPipeline CreateGraphicsPipeline(GraphicsPipelineDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
-            return new GraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
+            return new D3D11GraphicsPipeline(this, desc, state, inputElements, macros, $"({nameof(D3D11GraphicsPipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -190,29 +189,25 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
         {
             if (description.ByteWidth == 0)
             {
-                description.ByteWidth = Marshal.SizeOf<T>();
+                description.ByteWidth = sizeof(T);
             }
 
             ComPtr<ID3D11Buffer> buffer;
             BufferDesc desc = Helper.Convert(description);
 
-            var data = Alloc(description.ByteWidth);
-            Marshal.StructureToPtr(value, (nint)data, true);
-            D3D11SubresourceData* bufferData = Alloc(new D3D11SubresourceData(data, (uint)description.ByteWidth));
+            D3D11SubresourceData bufferData = new(&value, (uint)description.ByteWidth);
 
             Device.CreateBuffer(&desc, bufferData, &buffer.Handle).ThrowHResult();
-            Free(bufferData);
-            Free(data);
 
             return new D3D11Buffer(buffer, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             BufferDescription description = new(0, bindFlags, usage, cpuAccessFlags, miscFlags);
             return CreateBuffer(value, description);
@@ -654,8 +649,8 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IGraphicsContext CreateDeferredContext()
         {
-            ComPtr<ID3D11DeviceContext1> context;
-            Device.CreateDeferredContext1(0, &context.Handle);
+            ComPtr<ID3D11DeviceContext3> context;
+            Device.CreateDeferredContext3(0, &context.Handle);
             return new D3D11GraphicsContext(this, context);
         }
 

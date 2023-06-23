@@ -376,7 +376,7 @@
                         activeLights.Add(light);
                     }
 
-                    if (light.CastShadows)
+                    if (light.CastsShadows)
                     {
                         light.CreateShadowMap(context.Device);
                     }
@@ -404,7 +404,7 @@
                 for (int i = 0; i < activeLights.Count; i++)
                 {
                     var light = activeLights[i];
-                    if (!light.CastShadows)
+                    if (!light.CastsShadows)
                     {
                         continue;
                     }
@@ -420,7 +420,7 @@
             for (int i = 0; i < activeLights.Count; i++)
             {
                 var light = activeLights[i];
-                if (light.CastShadows && light is DirectionalLight && !light.InUpdateQueue)
+                if (light.CastsShadows && light is DirectionalLight && !light.InUpdateQueue)
                 {
                     light.InUpdateQueue = true;
                     UpdateShadowLightQueue.Enqueue(light);
@@ -535,7 +535,7 @@
             {
                 var light = activeLights[i];
                 lightsBuffer.Add(new(light, camera));
-                if (light.CastShadows)
+                if (light.CastsShadows)
                 {
                     switch (light.LightType)
                     {
@@ -655,7 +655,7 @@
             CBDispatchParams dispatchParams = default;
             dispatchParams.NumThreadGroups = numThreadGroups;
             dispatchParams.NumThreads = numThreadGroups * new UPoint3(lightCullingBlockSize, lightCullingBlockSize, 1);
-            lightCullParams.Set(device.Context, dispatchParams);
+            lightCullParams.Update(device.Context, dispatchParams);
 
             lightIndexListOpaque.Capacity = numThreadGroups.X * numThreadGroups.Y * numThreadGroups.Z * AVERAGE_OVERLAPPING_LIGHTS_PER_TILE;
             lightIndexListTransparent.Capacity = numThreadGroups.X * numThreadGroups.Y * numThreadGroups.Z * AVERAGE_OVERLAPPING_LIGHTS_PER_TILE;
@@ -679,7 +679,7 @@
             CBDispatchParams dispatchParams = default;
             dispatchParams.NumThreadGroups = numThreadGroups;
             dispatchParams.NumThreads = numThreads;
-            frustumParams.Set(context, dispatchParams);
+            frustumParams.Update(context, dispatchParams);
 
             // Destroy the previous structured buffer for storing gird frustums.
             // Create a new RWStructuredBuffer for storing the grid frustums.
@@ -694,6 +694,7 @@
             context.CSSetUnorderedAccessView((void*)frustumBuffer.UAV.NativePointer, 0);
 
             computeFrustums.Dispatch(context, numThreadGroups.X, numThreadGroups.Y, numThreadGroups.Z);
+            context.ClearState();
         }
 
         private const uint AVERAGE_OVERLAPPING_LIGHTS_PER_TILE = 200;

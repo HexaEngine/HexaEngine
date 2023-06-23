@@ -33,7 +33,7 @@
         void Uninitialize();
     }
 
-    public interface IWindow
+    public interface IWindow : INativeWindow, INativeWindowSource
     {
         bool Bordered { get; set; }
         bool Focused { get; }
@@ -94,8 +94,6 @@
         void Capture();
 
         void Close();
-
-        nint GetWin32HWND();
 
         unsafe bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle);
 

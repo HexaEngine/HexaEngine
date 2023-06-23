@@ -23,6 +23,10 @@
 
         void Draw(IGraphicsContext context);
 
+        void PrePassDraw(IGraphicsContext context)
+        {
+        }
+
         public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport);
 
         public void SetInput(IShaderResourceView view, ITexture2D resource);

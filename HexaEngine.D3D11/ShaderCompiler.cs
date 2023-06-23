@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Unsafes;
     using Silk.NET.Core.Native;
@@ -15,41 +16,32 @@
     using System.Text;
     using static HexaEngine.D3D11.D3D11GraphicsDevice;
 
-    public class ShaderCompiler : IShaderCompiler
+    public class ShaderCompiler
     {
-        private static readonly SemaphoreSlim semaphore = new(1);
         private static readonly D3DCompiler D3DCompiler = D3DCompiler.GetApi();
         private static readonly ConcurrentDictionary<Pointer<ID3DInclude>, string> paths = new();
 
-        public bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
-        {
-            semaphore.Wait();
-            var result = CompileInternal(source, macros, entryPoint, sourceName, profile, out shaderBlob, out errorBlob);
-            semaphore.Release();
-            return result;
-        }
-
-        private unsafe bool CompileInternal(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out Blob? errorBlob)
+        public unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
         {
             Debug.WriteLine($"Compiling: {sourceName}");
             shaderBlob = null;
-            errorBlob = null;
+            error = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
 #if DEBUG && !RELEASE && !SHADER_FORCE_OPTIMIZE
             flags |= ShaderFlags.Debug | ShaderFlags.SkipOptimization | ShaderFlags.DebugNameForSource;
 #else
             flags |= ShaderFlags.OptimizationLevel3;
 #endif
-            byte* pSource = (byte*)Marshal.StringToCoTaskMemUTF8(source);
+            byte* pSource = source.ToUTF8();
 
             var pMacros = macros.Length > 0 ? Alloc<D3DShaderMacro>(macros.Length + 1) : null;
 
             for (int i = 0; i < macros.Length; i++)
             {
                 var macro = macros[i];
-                var pName = Marshal.StringToCoTaskMemUTF8(macro.Name);
-                var pDef = Marshal.StringToCoTaskMemUTF8(macro.Definition);
-                pMacros[i] = new((byte*)pName, (byte*)pDef);
+                var pName = macro.Name.ToUTF8();
+                var pDef = macro.Definition.ToUTF8();
+                pMacros[i] = new(pName, pDef);
             }
             if (pMacros != null)
             {
@@ -57,9 +49,9 @@
                 pMacros[macros.Length].Definition = null;
             }
 
-            byte* pEntryPoint = (byte*)Marshal.StringToCoTaskMemUTF8(entryPoint);
-            byte* pSourceName = (byte*)Marshal.StringToCoTaskMemUTF8(sourceName);
-            byte* pProfile = (byte*)Marshal.StringToCoTaskMemUTF8(profile);
+            byte* pEntryPoint = entryPoint.ToUTF8();
+            byte* pSourceName = sourceName.ToUTF8();
+            byte* pProfile = profile.ToUTF8();
 
             ID3D10Blob* vBlob;
             ID3D10Blob* vError;
@@ -73,16 +65,13 @@
             callbacks[0] = pOpen;
             callbacks[1] = pClose;
 
-            ID3DInclude* include = Alloc<ID3DInclude>();
+            ID3DInclude* include = (ID3DInclude*)Malloc(sizeof(ID3DInclude) + sizeof(nint));
 
             include->LpVtbl = callbacks;
 
-            lock (D3DCompiler)
-            {
-                paths.TryAdd(include, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
-                D3DCompiler.Compile(pSource, (nuint)source.Length, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
-                paths.Remove(include, out _);
-            }
+            paths.TryAdd(include, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
+            D3DCompiler.Compile(pSource, (nuint)source.Length, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
+            paths.Remove(include, out _);
 
             Free(callbacks);
             Free(include);
@@ -103,7 +92,7 @@
 
             if (vError != null)
             {
-                errorBlob = new(vError->Buffer.ToArray());
+                error = ToStringFromUTF8((byte*)vError->GetBufferPointer());
                 vError->Release();
             }
 
@@ -172,9 +161,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void Compile(string code, ShaderMacro[] macros, string entry, string sourceName, string profile, Shader** shader, out string? error)
         {
-            Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out errorBlob);
+            Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out error);
             if (shaderBlob != null)
             {
                 Shader* pShader = Alloc<Shader>();
@@ -183,16 +172,16 @@
                 *shader = pShader;
             }
 
-            if (errorBlob != null)
+            if (error != null)
             {
-                ImGuiConsole.Log(errorBlob.AsString());
+                ImGuiConsole.Log(error);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void Compile(string code, string entry, string sourceName, string profile, Shader** shader, out string? error)
         {
-            Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, shader, out errorBlob);
+            Compile(code, Array.Empty<ShaderMacro>(), entry, sourceName, profile, shader, out error);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -208,9 +197,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void CompileFromFile(string path, ShaderMacro[] macros, string entry, string profile, Shader** shader, out string? error)
         {
-            Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out errorBlob);
+            Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out error);
             if (shaderBlob != null)
             {
                 Shader* pShader = Alloc<Shader>();
@@ -218,16 +207,16 @@
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
             }
-            if (errorBlob != null)
+            if (error != null)
             {
-                ImGuiConsole.Log(errorBlob.AsString());
+                ImGuiConsole.Log(error);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out Blob? errorBlob)
+        public unsafe void CompileFromFile(string path, string entry, string profile, Shader** shader, out string? error)
         {
-            CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, shader, out errorBlob);
+            CompileFromFile(path, Array.Empty<ShaderMacro>(), entry, profile, shader, out error);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -245,7 +234,7 @@
         public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out _))
+            if (bypassCache || !ShaderCache.GetShader(path, SourceLanguage.HLSL, macros, &pShader, out _))
             {
                 CompileFromFile(path, macros, entry, profile, &pShader);
                 if (pShader == null)
@@ -253,7 +242,7 @@
                     return;
                 }
 
-                ShaderCache.CacheShader(path, macros, Array.Empty<InputElementDescription>(), pShader);
+                ShaderCache.CacheShader(path, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
@@ -261,7 +250,7 @@
         public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
         {
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, macros, &pShader, out inputElements))
+            if (bypassCache || !ShaderCache.GetShader(path, SourceLanguage.HLSL, macros, &pShader, out inputElements))
             {
                 CompileFromFile(path, macros, entry, profile, &pShader);
                 signature = null;
@@ -273,7 +262,7 @@
 
                 signature = GetInputSignature(pShader);
                 inputElements = GetInputElementsFromSignature(pShader, signature);
-                ShaderCache.CacheShader(path, macros, inputElements, pShader);
+                ShaderCache.CacheShader(path, SourceLanguage.HLSL, macros, inputElements, pShader);
             }
             *shader = pShader;
             signature = GetInputSignature(pShader);

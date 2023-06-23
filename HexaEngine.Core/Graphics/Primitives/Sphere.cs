@@ -66,8 +66,6 @@
                         v.Tangent = Vector3.Normalize(Vector3.Cross(Vector3.UnitY, v.Normal));
                     }
 
-                    v.Bitangent = Vector3.Cross(v.Normal, v.Tangent);
-
                     // vertex tex coord (s, t) range between [0, 1]
                     s = (float)j / LongLines;
                     t = (float)i / LatLines;

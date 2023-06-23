@@ -2,20 +2,21 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Core.Contexts;
     using Silk.NET.DXGI;
     using System.Runtime.Versioning;
 
     public unsafe class DXGIAdapterD3D11On12 : DXGIAdapterD3D11
     {
-        public DXGIAdapterD3D11On12(bool debug) : base(debug)
+        public DXGIAdapterD3D11On12(INativeWindowSource windowSource, bool debug) : base(windowSource, debug)
         {
         }
 
-        public new static void Init(bool debug)
+        public new static void Init(INativeWindowSource windowSource, bool debug)
         {
             if (OperatingSystem.IsWindows())
             {
-                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11On12(debug));
+                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11On12(windowSource, debug));
             }
         }
 

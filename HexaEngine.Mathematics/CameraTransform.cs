@@ -161,5 +161,26 @@
             Matrix4x4.Invert(viewProjection, out viewProjectionInv);
             base.OnUpdated();
         }
+
+        public override void CopyTo(Transform other)
+        {
+            base.CopyTo(other);
+            if (other is CameraTransform camera)
+            {
+                camera.width = width;
+                camera.height = height;
+                camera.prevViewProjection = prevViewProjection;
+                camera.viewProjection = viewProjection;
+                camera.viewProjectionInv = viewProjectionInv;
+                camera.frustum = frustum;
+                camera.projection = projection;
+                camera.projectionInv = projectionInv;
+                camera.projectionType = projectionType;
+                camera.aspectRatio = aspectRatio;
+                camera.near = near;
+                camera.far = far;
+                camera.fov = fov;
+            }
+        }
     }
 }

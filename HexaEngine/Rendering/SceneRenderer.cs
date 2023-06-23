@@ -114,9 +114,9 @@ namespace HexaEngine.Rendering
 
             gbuffer = new GBuffer(device, width, height,
                 Format.R16G16B16A16Float,   // BaseColor(RGB)   Material ID(A)
-                Format.R8G8B8A8UNorm,   // Normal(XYZ)      Roughness(W)
+                Format.R8G8B8A8UNorm,       // Normal(XYZ)      Roughness(W)
                 Format.R8G8B8A8UNorm,       // Metallic         Reflectance             AO      Material Data
-                Format.R16G16B16A16Float    // Emission(XYZ)    Emission Strength(W)
+                Format.R8G8B8A8UNorm        // Emission(XYZ)    Emission Strength(W)
                 );
 
             depthStencil = new(device, width, height, Format.D32Float);
@@ -408,6 +408,9 @@ namespace HexaEngine.Rendering
                 context.SetViewport(gbuffer.Viewport);
                 renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
                 context.ClearState();
+
+                postProcessing.PrePassDraw(context);
+
 #if PROFILE
                 device.Profiler.End(context, "PrePass");
                 profiler.End("PrePass");
@@ -508,6 +511,7 @@ namespace HexaEngine.Rendering
             context.SetRenderTarget(lightBuffer.Value.RenderTargetView, dsv);
             context.SetViewport(lightBuffer.Value.RenderTargetView.Viewport);
             renderers.Draw(context, RenderQueueIndex.Background);
+            context.ClearState();
 
 #if PROFILE
             profiler.Begin("PostProcessing");

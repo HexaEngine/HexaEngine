@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
+    using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
@@ -15,11 +16,11 @@
     public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter
     {
         internal readonly DXGI DXGI;
+        internal readonly INativeWindowSource source;
         private readonly bool debug;
 
-        internal ComPtr<IDXGIFactory2> IDXGIFactory;
-        internal ComPtr<IDXGIAdapter1> IDXGIAdapter;
-        internal ComPtr<IDXGIAdapter3> IDXGIAdapter3;
+        internal ComPtr<IDXGIFactory7> IDXGIFactory;
+        internal ComPtr<IDXGIAdapter4> IDXGIAdapter;
         internal ComPtr<IDXGIDebug> IDXGIDebug;
         internal ComPtr<IDXGIInfoQueue> IDXGIInfoQueue;
 
@@ -29,9 +30,9 @@
         private readonly Guid DXGI_DEBUG_APP = new(0x6cd6e01, 0x4219, 0x4ebd, 0x87, 0x9, 0x27, 0xed, 0x23, 0x36, 0xc, 0x62);
         private readonly Guid DXGI_DEBUG_D3D11 = new(0x4b99317b, 0xac39, 0x4aa6, 0xbb, 0xb, 0xba, 0xa0, 0x47, 0x84, 0x79, 0x8f);
 
-        public DXGIAdapterD3D11(bool debug)
+        public DXGIAdapterD3D11(INativeWindowSource source, bool debug)
         {
-            DXGI = DXGI.GetApi();
+            DXGI = DXGI.GetApi(source);
             if (debug)
             {
                 DXGI.GetDebugInterface1(0, out IDXGIDebug);
@@ -46,16 +47,13 @@
             DXGI.CreateDXGIFactory2(debug ? 0x01u : 0x00u, out IDXGIFactory);
 
             IDXGIAdapter = GetHardwareAdapter();
-            IDXGIAdapter.QueryInterface(out IDXGIAdapter3);
+            this.source = source;
             this.debug = debug;
         }
 
-        public static void Init(bool debug)
+        public static void Init(INativeWindowSource source, bool debug)
         {
-            if (OperatingSystem.IsWindows())
-            {
-                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11(debug));
-            }
+            GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11(source, debug));
         }
 
         public static string Convert(InfoQueueMessageSeverity severity)
@@ -92,6 +90,8 @@
 
         public void PumpDebugMessages()
         {
+            if (!debug)
+                return;
             ulong messageCount = IDXGIInfoQueue.GetNumStoredMessages(DXGI_DEBUG_ALL);
             for (ulong i = 0; i < messageCount; i++)
             {
@@ -127,28 +127,28 @@
         public ulong GetMemoryBudget()
         {
             QueryVideoMemoryInfo memoryInfo;
-            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            IDXGIAdapter.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
             return memoryInfo.Budget;
         }
 
         public ulong GetMemoryCurrentUsage()
         {
             QueryVideoMemoryInfo memoryInfo;
-            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            IDXGIAdapter.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
             return memoryInfo.CurrentUsage;
         }
 
         public ulong GetMemoryAvailableForReservation()
         {
             QueryVideoMemoryInfo memoryInfo;
-            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            IDXGIAdapter.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
             return memoryInfo.AvailableForReservation;
         }
 
         public ulong GetMemoryCurrentReservation()
         {
             QueryVideoMemoryInfo memoryInfo;
-            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            IDXGIAdapter.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
             return memoryInfo.AvailableForReservation;
         }
 
@@ -169,6 +169,8 @@
 
         internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SdlWindow window)
         {
+            var (Hwnd, HDC, HInstance) = window.Win32 ?? throw new NotSupportedException();
+
             SwapChainDesc1 desc = new()
             {
                 Width = (uint)window.Width,
@@ -191,66 +193,34 @@
             };
 
             ComPtr<IDXGISwapChain1> swapChain;
-            IntPtr hwnd = window.GetWin32HWND();
-            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
-            IDXGIFactory.MakeWindowAssociation(hwnd, 1 << 0);
+            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
+            IDXGIFactory.MakeWindowAssociation(Hwnd, 1 << 0);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
-        private IDXGIAdapter1* GetHardwareAdapter()
+        private ComPtr<IDXGIAdapter4> GetHardwareAdapter()
         {
-            IDXGIAdapter1* adapter = null;
-            Guid* adapterGuid = Utils.Guid(IDXGIAdapter1.Guid);
-            IDXGIFactory6* factory6;
-            IDXGIFactory.QueryInterface(Utils.Guid(IDXGIFactory6.Guid), (void**)&factory6);
+            ComPtr<IDXGIAdapter4> adapter = null;
 
-            if (factory6 != null)
+            for (uint adapterIndex = 0;
+                (ResultCode)IDXGIFactory.EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, out adapter) !=
+                ResultCode.DXGI_ERROR_NOT_FOUND;
+                adapterIndex++)
             {
-                for (uint adapterIndex = 0;
-                    (ResultCode)factory6->EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, adapterGuid, (void**)&adapter) !=
-                    ResultCode.DXGI_ERROR_NOT_FOUND;
-                    adapterIndex++)
+                AdapterDesc1 desc;
+                adapter.GetDesc1(&desc);
+                if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                 {
-                    AdapterDesc1 desc;
-                    adapter->GetDesc1(&desc);
-                    if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
-                    {
-                        // Don't select the Basic Render Driver adapter.
-                        adapter->Release();
-                        continue;
-                    }
-
-                    return adapter;
+                    // Don't select the Basic Render Driver adapter.
+                    adapter.Release();
+                    continue;
                 }
 
-                factory6->Release();
+                return adapter;
             }
 
-            if (adapter == null)
-            {
-                for (uint adapterIndex = 0;
-                    (ResultCode)IDXGIFactory.EnumAdapters1(adapterIndex, &adapter) != ResultCode.DXGI_ERROR_NOT_FOUND;
-                    adapterIndex++)
-                {
-                    AdapterDesc1 desc;
-                    adapter->GetDesc1(&desc);
-                    string name = new(desc.Description);
-
-                    Trace.WriteLine($"Found Adapter {name}");
-
-                    if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
-                    {
-                        // Don't select the Basic Render Driver adapter.
-                        adapter->Release();
-                        continue;
-                    }
-
-                    return adapter;
-                }
-            }
-
-            return adapter;
+            throw new NotSupportedException();
         }
     }
 }

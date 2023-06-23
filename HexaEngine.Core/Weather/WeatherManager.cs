@@ -29,6 +29,34 @@
         private float turbidity;
         private float groundAlbedo;
 
+        public Vector3 SkyColor { get => skyColor; set => skyColor = value; }
+
+        public Vector3 AmbientColor { get => ambientColor; set => ambientColor = value; }
+
+        public Vector2 WindDirection { get => windDirection; set => windDirection = value; }
+
+        public float WindSpeed { get => windSpeed; set => windSpeed = value; }
+
+        public float Crispiness { get => crispiness; set => crispiness = value; }
+
+        public float Curliness { get => curliness; set => curliness = value; }
+
+        public float Coverage { get => coverage; set => coverage = value; }
+
+        public float LightAbsorption { get => lightAbsorption; set => lightAbsorption = value; }
+
+        public float CloudsBottomHeight { get => cloudsBottomHeight; set => cloudsBottomHeight = value; }
+
+        public float CloudsTopHeight { get => cloudsTopHeight; set => cloudsTopHeight = value; }
+
+        public float DensityFactor { get => densityFactor; set => densityFactor = value; }
+
+        public float CloudType { get => cloudType; set => cloudType = value; }
+
+        public float Turbidity { get => turbidity; set => turbidity = value; }
+
+        public float GroundAlbedo { get => groundAlbedo; set => groundAlbedo = value; }
+
         public Task InitializeAsync(IGraphicsDevice device)
         {
             weatherBuffer = new(device, CpuAccessFlags.Write);
@@ -85,7 +113,7 @@
             weather.I = skyParams[(int)EnumSkyParams.I];
             weather.Z = skyParams[(int)EnumSkyParams.Z];
 
-            weatherBuffer.Set(context, weather);
+            weatherBuffer.Update(context, weather);
         }
     }
 }

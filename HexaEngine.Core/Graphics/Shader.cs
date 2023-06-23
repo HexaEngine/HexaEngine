@@ -41,7 +41,12 @@
             Marshal.FreeHGlobal((nint)Bytecode);
         }
 
-        public byte[] GetBytes()
+        public Span<byte> AsSpan()
+        {
+            return new Span<byte>(Bytecode, (int)Length);
+        }
+
+        public byte[] ToArray()
         {
             byte[] bytes = new byte[Length];
             fixed (byte* ptr = bytes)

@@ -17,7 +17,7 @@
     {
         private bool disposedValue;
 
-        internal ComPtr<ID3D11DeviceContext1> DeviceContext;
+        internal ComPtr<ID3D11DeviceContext3> DeviceContext;
 
         internal D3D11GraphicsContext(D3D11GraphicsDevice device)
         {
@@ -26,7 +26,7 @@
             Device = device;
         }
 
-        internal D3D11GraphicsContext(D3D11GraphicsDevice device, ComPtr<ID3D11DeviceContext1> context)
+        internal D3D11GraphicsContext(D3D11GraphicsDevice device, ComPtr<ID3D11DeviceContext3> context)
         {
             DeviceContext = context;
             NativePointer = new(context);
@@ -47,20 +47,20 @@
         {
             if (pipeline == null)
             {
-                GraphicsPipeline.EndDraw(DeviceContext);
+                D3D11GraphicsPipeline.EndDraw(DeviceContext);
                 return;
             }
-            ((GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext);
+            ((D3D11GraphicsPipeline)pipeline).SetGraphicsPipeline(DeviceContext);
         }
 
         public void SetComputePipeline(IComputePipeline? pipeline)
         {
             if (pipeline == null)
             {
-                GraphicsPipeline.EndDraw(DeviceContext);
+                D3D11GraphicsPipeline.EndDraw(DeviceContext);
                 return;
             }
-            ((ComputePipeline)pipeline).SetComputePipeline(DeviceContext);
+            ((D3D11ComputePipeline)pipeline).SetComputePipeline(DeviceContext);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -428,6 +428,11 @@
         public void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ)
         {
             DeviceContext.Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+        }
+
+        public void DispatchIndirect(IBuffer dispatchArgs, uint offset)
+        {
+            DeviceContext.DispatchIndirect((ID3D11Buffer*)dispatchArgs.NativePointer, offset);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -10,6 +10,7 @@
     using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Text;
     using Key = Input.Key;
@@ -21,7 +22,7 @@
         WindowedFullscreen,
     }
 
-    public unsafe class SdlWindow : IWindow
+    public unsafe class SdlWindow : IWindow, INativeWindow
     {
         protected readonly Sdl Sdl = Sdl.GetApi();
         private readonly ShownEventArgs shownEventArgs = new();
@@ -59,6 +60,18 @@
         private bool lockCursor;
         private bool resizable = true;
         private bool bordered = true;
+
+        public SdlWindow()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Kind = NativeWindowFlags.Win32;
+            }
+            else
+            {
+                Kind = NativeWindowFlags.Sdl;
+            }
+        }
 
         private void PlatformConstruct()
         {
@@ -135,14 +148,6 @@
             Sdl.SetWindowFullscreen(window, (uint)mode);
         }
 
-        public IntPtr GetWin32HWND()
-        {
-            SysWMInfo wmInfo;
-            Sdl.GetVersion(&wmInfo.Version);
-            Sdl.GetWindowWMInfo(window, &wmInfo);
-            return wmInfo.Info.Win.Hwnd;
-        }
-
         public bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle)
         {
             return Sdl.VulkanCreateSurface(window, vkHandle, vkNonDispatchableHandle) == SdlBool.True;
@@ -150,7 +155,7 @@
 
         public IGLContext OpenGLCreateContext()
         {
-            return new SdlContext(Sdl, window);
+            return new SdlContext(Sdl, window, null, (GLattr.ContextMajorVersion, 4), (GLattr.ContextMinorVersion, 5));
         }
 
         public Window* GetWindow() => window;
@@ -277,6 +282,43 @@
         }
 
         public Viewport Viewport { get; private set; }
+
+        public NativeWindowFlags Kind { get; }
+
+        public (nint Display, nuint Window)? X11 => throw new NotSupportedException();
+
+        public nint? Cocoa => throw new NotSupportedException();
+
+        public (nint Display, nint Surface)? Wayland => throw new NotSupportedException();
+
+        public nint? WinRT => throw new NotSupportedException();
+
+        public (nint Window, uint Framebuffer, uint Colorbuffer, uint ResolveFramebuffer)? UIKit => throw new NotSupportedException();
+
+        public (nint Hwnd, nint HDC, nint HInstance)? Win32
+        {
+            get
+            {
+                SysWMInfo wmInfo;
+                Sdl.GetVersion(&wmInfo.Version);
+                Sdl.GetWindowWMInfo(window, &wmInfo);
+                return (wmInfo.Info.Win.Hwnd, wmInfo.Info.Win.HDC, wmInfo.Info.Win.HInstance);
+            }
+        }
+
+        public (nint Display, nint Window)? Vivante => throw new NotSupportedException();
+
+        public (nint Window, nint Surface)? Android => throw new NotSupportedException();
+
+        public nint? Glfw => throw new NotSupportedException();
+
+        nint? INativeWindow.Sdl => (nint)window;
+
+        public nint? DXHandle => throw new NotSupportedException();
+
+        public (nint? Display, nint? Surface)? EGL => throw new NotSupportedException();
+
+        public INativeWindow? Native => this;
 
         #region Events
 

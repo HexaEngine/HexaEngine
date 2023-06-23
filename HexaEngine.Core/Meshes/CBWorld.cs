@@ -23,22 +23,6 @@
         }
     }
 
-    public struct CBSkylight
-    {
-        public float SunZenith;
-        public float SunAzimuth;
-        public float ViewZenith;
-        public float ViewAzimuth;
-
-        public CBSkylight(float sunZenith, float sunAzimuth, float viewZenith, float viewAzimuth)
-        {
-            SunZenith = sunZenith;
-            SunAzimuth = sunAzimuth;
-            ViewZenith = viewZenith;
-            ViewAzimuth = viewAzimuth;
-        }
-    }
-
     public struct CBTessellation
     {
         public float MinFactor;
