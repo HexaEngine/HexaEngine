@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Effects
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Effects.Noise;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
@@ -99,7 +100,7 @@
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             this.device = device;
-            quad1 = new(device, 10);
+            quad1 = new(device, 5);
             quad = new Quad(device);
 
             sun = await device.CreateGraphicsPipelineAsync(new()
@@ -153,7 +154,7 @@
             Viewport = new(width, height);
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-            DSV = ResourceManager2.Shared.GetDepthStencilView("PrePass.DSV");
+            DSV = ResourceManager2.Shared.GetDepthStencilView("GBuffer.DepthStencil");
         }
 
         public void Resize(int width, int height)
@@ -234,11 +235,11 @@
             context.ClearRenderTargetView(sunBuffer.RTV, default);
             context.SetRenderTarget(sunBuffer.RTV, DSV.Value);
             context.SetViewport(Viewport);
-            context.VSSetConstantBuffer(paramsWorldBuffer, 0);
-            context.VSSetConstantBuffer(Camera.Value, 1);
-            context.PSSetConstantBuffer(paramsSunBuffer, 0);
-            context.PSSetShaderResource(sunsprite.SRV, 0);
-            context.PSSetSampler(sunSampler, 0);
+            context.VSSetConstantBuffer(0, paramsWorldBuffer);
+            context.VSSetConstantBuffer(1, Camera.Value);
+            context.PSSetConstantBuffer(0, paramsSunBuffer);
+            context.PSSetShaderResource(0, sunsprite.SRV);
+            context.PSSetSampler(0, sunSampler);
             quad1.DrawAuto(context, sun);
         }
 
@@ -251,9 +252,9 @@
 
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
-            context.PSSetConstantBuffer(paramsBuffer, 0);
-            context.PSSetShaderResource(sunBuffer.SRV, 0);
-            context.PSSetSampler(sampler, 0);
+            context.PSSetConstantBuffer(0, paramsBuffer);
+            context.PSSetShaderResource(0, sunBuffer.SRV);
+            context.PSSetSampler(0, sampler);
             quad.DrawAuto(context, godrays);
             context.ClearState();
         }

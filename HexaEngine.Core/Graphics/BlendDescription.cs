@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Xml.Serialization;
 
     public struct BlendDescription : IEquatable<BlendDescription>
     {
@@ -16,9 +17,11 @@
 
         public const int SimultaneousRenderTargetCount = unchecked(8);
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool AlphaToCoverageEnable = false;
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool IndependentBlendEnable = false;
 

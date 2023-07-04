@@ -299,7 +299,7 @@ namespace HexaEngine.Effects
             pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-            Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("SwapChain.SRV");
+            Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
         }
 
         public void Resize(int width, int height)
@@ -351,18 +351,18 @@ namespace HexaEngine.Effects
                 context.ClearRenderTargetView(bokehRTV, default);
                 context.SetRenderTarget(bokehRTV, null);
                 context.SetViewport(bokehRTV.Viewport);
-                context.PSSetShaderResource(Input, 0);
-                context.PSSetConstantBuffer(cbBlur, 0);
-                context.PSSetSampler(pointSampler, 0);
+                context.PSSetShaderResource(0, Input);
+                context.PSSetConstantBuffer(0, cbBlur);
+                context.PSSetSampler(0, pointSampler);
                 quad.DrawAuto(context, pipelineBlur);
                 context.ClearState();
 
                 context.ClearRenderTargetView(outOfFocusRTV, default);
                 context.SetRenderTarget(outOfFocusRTV, null);
                 context.SetViewport(outOfFocusRTV.Viewport);
-                context.PSSetShaderResource(bokehSRV, 0);
-                context.PSSetConstantBuffer(cbBokeh, 0);
-                context.PSSetSampler(pointSampler, 0);
+                context.PSSetShaderResource(0, bokehSRV);
+                context.PSSetConstantBuffer(0, cbBokeh);
+                context.PSSetSampler(0, pointSampler);
                 quad.DrawAuto(context, pipelineBokeh);
                 context.ClearState();
             }
@@ -371,21 +371,21 @@ namespace HexaEngine.Effects
                 context.ClearRenderTargetView(outOfFocusRTV, default);
                 context.SetRenderTarget(outOfFocusRTV, null);
                 context.SetViewport(outOfFocusRTV.Viewport);
-                context.PSSetShaderResource(Input, 0);
-                context.PSSetConstantBuffer(cbBlur, 0);
-                context.PSSetSampler(pointSampler, 0);
+                context.PSSetShaderResource(0, Input);
+                context.PSSetConstantBuffer(0, cbBlur);
+                context.PSSetSampler(0, pointSampler);
                 quad.DrawAuto(context, pipelineBlur);
                 context.ClearState();
             }
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Output.Viewport);
-            context.PSSetShaderResource(Position.Value, 0);
-            context.PSSetShaderResource(Input, 2);
-            context.PSSetShaderResource(outOfFocusSRV, 3);
-            context.PSSetSampler(pointSampler, 0);
-            context.PSSetConstantBuffer(cbDof, 0);
-            context.PSSetConstantBuffer(Camera.Value, 1);
+            context.PSSetShaderResource(0, Position.Value);
+            context.PSSetShaderResource(2, Input);
+            context.PSSetShaderResource(3, outOfFocusSRV);
+            context.PSSetSampler(0, pointSampler);
+            context.PSSetConstantBuffer(0, cbDof);
+            context.PSSetConstantBuffer(1, Camera.Value);
             quad.DrawAuto(context, pipelineDof);
             context.ClearState();
         }

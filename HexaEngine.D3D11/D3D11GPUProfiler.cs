@@ -18,6 +18,8 @@
         private bool disposedValue;
         private const int FrameCount = 3;
 
+        public bool DisableLogging = true;
+
         public D3D11GPUProfiler(ComPtr<ID3D11Device5> device)
         {
             this.device = device;
@@ -105,14 +107,16 @@
                     {
                         while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
                         {
-                            ImGuiConsole.Log(LogSeverity.Info, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
+                            if (!DisableLogging)
+                                ImGuiConsole.Log(LogSeverity.Info, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
                             Thread.Sleep(1);
                         }
 
                         ctx.GetData(query.DisjointQuery, &disjoint, (uint)sizeof(QueryDataTimestampDisjoint), 0);
                         if (disjoint.Disjoint)
                         {
-                            ImGuiConsole.Log(LogSeverity.Warning, $"Disjoint Timestamp Flag in {name}");
+                            if (!DisableLogging)
+                                ImGuiConsole.Log(LogSeverity.Warning, $"Disjoint Timestamp Flag in {name}");
                         }
                         else
                         {
@@ -123,7 +127,8 @@
 
                             while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
                             {
-                                ImGuiConsole.Log(LogSeverity.Info, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                if (!DisableLogging)
+                                    ImGuiConsole.Log(LogSeverity.Info, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
                                 Thread.Sleep(1);
                             }
                             ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);

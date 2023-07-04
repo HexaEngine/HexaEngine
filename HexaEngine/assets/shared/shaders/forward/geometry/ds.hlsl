@@ -42,9 +42,7 @@ PixelInput main(PatchTess patchTess, float3 bary : SV_DomainLocation, const Outp
 #if (DEPTH != 1)
 	output.pos = output.position;
 #endif
-	output.position = mul(output.position, view);
-	output.depth = output.position.z / cam_far;
-	output.position = mul(output.position, proj);
+	output.position = mul(output.position, viewProj);
 
 #if (DEPTH != 1)
 	// Store the texture coordinates for the pixel shader.

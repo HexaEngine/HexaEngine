@@ -242,12 +242,12 @@
                 context.ClearDepthStencilView(outputNode.DepthStencil.DSV, DepthStencilClearFlags.All, 1, 0);
                 context.SetRenderTarget(outputNode.Texture.RenderTargetView, outputNode.DepthStencil.DSV);
 
-                for (int i = 0; i < textureFiles.Count; i++)
+                for (uint i = 0; i < textureFiles.Count; i++)
                 {
-                    context.PSSetShaderResource(textureFiles[i].Image, i);
+                    context.PSSetShaderResource(i, textureFiles[(int)i].Image);
                 }
-                context.VSSetConstantBuffer(world.Buffer, 0);
-                context.VSSetConstantBuffer(view.Buffer, 1);
+                context.VSSetConstantBuffer(0, world.Buffer);
+                context.VSSetConstantBuffer(1, view.Buffer);
                 context.SetViewport(new(256, 256));
 
                 sphere.DrawAuto(context, pipeline);

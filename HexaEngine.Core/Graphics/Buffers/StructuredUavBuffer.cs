@@ -37,7 +37,7 @@
             dbgName = $"StructuredUavBuffer: {filename}, Line:{lineNumber}";
             capacity = DefaultCapacity;
             items = Alloc<T>(DefaultCapacity);
-            Zero(items, DefaultCapacity * sizeof(T));
+            ZeroMemory(items, DefaultCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
             buffer.DebugName = dbgName;
@@ -54,9 +54,9 @@
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
             }
 
-            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, DefaultCapacity, uavFlags));
+            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)capacity, uavFlags));
             uav.DebugName = dbgName + ".UAV";
-            srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, DefaultCapacity, srvFlags));
+            srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, (int)capacity, srvFlags));
             srv.DebugName = dbgName + ".SRV";
         }
 
@@ -70,7 +70,7 @@
             dbgName = $"StructuredUavBuffer: {filename}, Line:{lineNumber}";
             capacity = intialCapacity;
             items = Alloc<T>(intialCapacity);
-            Zero(items, (int)intialCapacity * sizeof(T));
+            ZeroMemory(items, (int)intialCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * (int)intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
             buffer = device.CreateBuffer(items, intialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
@@ -186,7 +186,7 @@
                 }
 
                 var tmp = Alloc<T>((int)value);
-                Zero(tmp, DefaultCapacity * sizeof(T));
+                ZeroMemory(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);

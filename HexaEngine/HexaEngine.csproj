@@ -38,12 +38,15 @@
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
 		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
+		<Compile Remove="assets\shared\shaders\effects\chromaticaberration\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\blinn\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
+		<EmbeddedResource Remove="assets\shared\shaders\effects\chromaticaberration\**" />
 		<None Remove="assets\shared\shaders\compute\light\**" />
 		<None Remove="assets\shared\shaders\deferred\blinn\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
+		<None Remove="assets\shared\shaders\effects\chromaticaberration\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -65,19 +68,16 @@
 		<None Update="assets\shared\icons\model.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\brdf2.hlsl">
+		<None Update="assets\shared\shaders\cluster.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\compute\copy\drawArgs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\compute\lights\common.hlsl">
+		<None Update="assets\shared\shaders\compute\clustered\culling.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\compute\lights\frustum.hlsl">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\compute\lights\culling.hlsl">
+		<None Update="assets\shared\shaders\compute\clustered\building.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\compute\lumaAvg\shader.hlsl">
@@ -129,6 +129,46 @@
 		  <ShaderProfile>hs_5_0</ShaderProfile>
 		</None>
 		<None Update="assets\shared\shaders\deferred\brdf\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\clustered\indirect.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <EntryPointName>main</EntryPointName>
+		  <ShaderProfile>hs_5_0</ShaderProfile>
+		</None>
+		<None Update="assets\shared\shaders\deferred\clustered\light.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		  <EntryPointName>main</EntryPointName>
+		  <ShaderProfile>hs_5_0</ShaderProfile>
+		</None>
+		<None Update="assets\shared\shaders\deferred\clustered\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\foliage\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\foliage\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\sprite\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\sprite\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\blur\gaussian.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\blur\horizontal.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\blur\vertical.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\clouds\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\clouds\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\godrays\ps.hlsl">
@@ -209,6 +249,9 @@
 		<None Update="assets\shared\shaders\effects\noise\blue2d.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\effects\ssao\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\effects\taa\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -221,13 +264,64 @@
 		<None Update="assets\shared\shaders\effects\velocity\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\skylight\ps.hlsl">
+		<None Update="assets\shared\shaders\forward\billboard\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\skylight\vs.hlsl">
+		<None Update="assets\shared\shaders\forward\billboard\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\ssr\blend.hlsl">
+		<None Update="assets\shared\shaders\deferred\decal\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\deferred\decal\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\geometry\osm\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\BitonicSortStepCS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\InitDeadListCS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\InitSortDispatchArgsCS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\ParticleEmitCS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\ParticleGlobals.hlsli">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\ParticlePS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\ParticleResetCS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\ParticleSimulateCS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\ParticleVS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\Sort512CS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\particles\SortInner512CS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\sky\uniformColorSky.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\sky\hoseWilkieSky.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\sprite\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\sprite\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\sun\ps.hlsl">
@@ -273,9 +367,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\assao\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\blur\hbao.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\bokeh\ps.hlsl">
@@ -485,12 +576,6 @@
 		<None Update="assets\shared\shaders\forward\geometry\osm\defs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\geometry\osm\gs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\forward\geometry\osm\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\shared\shaders\forward\geometry\osm\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -528,9 +613,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\blend\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\blur\gaussian.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\hbao\ps.hlsl">
@@ -596,28 +678,31 @@
 		<None Update="assets\shared\shaders\common.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\font\ps.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\forward\font\vs.hlsl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
 		<None Update="assets\shared\shaders\filter\equitocube\ps.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\filter\equitocube\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\skybox\ps.hlsl">
+		<None Update="assets\shared\shaders\forward\sky\skybox.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\skybox\vs.hlsl">
+		<None Update="assets\shared\shaders\forward\sky\vs.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\textures\brushes\single.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\textures\brushes\spray.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\clouds\cloud.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\clouds\weather.dds">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\textures\clouds\worley.dds">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\textures\debugging\heatmap.png">
@@ -685,8 +770,8 @@
 
 
 	<ItemGroup>
-	  <Folder Include="assets\shared\shaders\effects\chromaticaberration\" />
 	  <Folder Include="assets\shared\shaders\forward\terrain\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
+	  <Folder Include="Editor\Properties\" />
 	</ItemGroup>
 </Project>

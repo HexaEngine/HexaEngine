@@ -178,10 +178,11 @@
             occlusionSrvs[1] = (void*)instanceDataBuffer.SRV.NativePointer;
             occlusionSrvs[0] = (void*)mipChain.SRV.NativePointer;
 
-            context.CSSetShaderResources(occlusionSrvs, 2, 0);
-            context.CSSetUnorderedAccessViews(occlusionUavs, 3, 0);
-            context.CSSetSampler(sampler, 0);
-            context.CSSetConstantBuffers(occlusionCbs, 2, 0);
+            uint* initialCount = stackalloc uint[] { unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1) };
+            context.CSSetShaderResources(0, 2, occlusionSrvs);
+            context.CSSetUnorderedAccessViews(0, occlusionUavs, initialCount);
+            context.CSSetSampler(0, sampler);
+            context.CSSetConstantBuffers(0, 2, occlusionCbs);
             occlusion.Dispatch(context, (uint)instanceCount / 1024 + 1, 1, 1);
             context.ClearState();
 

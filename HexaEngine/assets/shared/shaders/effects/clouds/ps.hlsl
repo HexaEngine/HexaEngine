@@ -7,15 +7,18 @@ SamplerState point_wrap_sampler;
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
-    float2 Tex : TEX;
+    float2 Tex : TEXCOORD;
 };
 
 
-Texture2D weatherTex    : register(t0);
-Texture3D cloudTex      : register(t1);
-Texture3D worleyTex     : register(t2);
-Texture2D depthTex      : register(t3);
+Texture2D weatherTex : register(t0);
+Texture3D cloudTex : register(t1);
+Texture3D worleyTex : register(t2);
+Texture2D depthTex : register(t3);
 
+
+#define RAYMARCH_STEPS 8
+#define RAYMARCH_MIN_TRANSMITTANCE 0.1f
 
 
 // Cloud types height density gradients
@@ -213,14 +216,12 @@ float RaymarchToLight(float3 origin, float stepSize, float3 lightDir, float orig
 
 float4 RaymarchToCloud(float2 texCoord, float3 startPos, float3 endPos, float3 skyColor, out float4 cloudPos)
 {
-    const float minTransmittance = 0.1f;
-    const int steps = 32;
     float4 finalColor = float4(0.0, 0.0, 0.0, 0.0);
     
     float3 path = endPos - startPos;
     float len = length(path);
 	
-    float deltaStep = len / (float) steps;
+    float deltaStep = len / (float) RAYMARCH_STEPS;
     float3 dir = path / len;
     dir *= deltaStep;
     
@@ -241,8 +242,8 @@ float4 RaymarchToCloud(float2 texCoord, float3 startPos, float3 endPos, float3 s
     float sigmaDeltaStep = -deltaStep * density_factor;
     bool entered = false;
 
-    [unroll(steps)]
-    for (int i = 0; i < steps; ++i)
+    [unroll(RAYMARCH_STEPS)]
+    for (int i = 0; i < RAYMARCH_STEPS; ++i)
     {
         float densitySample = SampleCloudDensity(pos, true, i / 16.0f);
         if (densitySample > 0.0f)
@@ -265,7 +266,7 @@ float4 RaymarchToCloud(float2 texCoord, float3 startPos, float3 endPos, float3 s
                 break;
         }
 
-        if (finalTransmittance <= minTransmittance)
+        if (finalTransmittance <= RAYMARCH_MIN_TRANSMITTANCE)
             break;
         
         pos += dir;
@@ -345,16 +346,16 @@ bool IntersectSphere(float3 o, float3 d, out float3 minT, out float3 maxT)
 struct Output
 {
     float4 color : SV_TARGET;
-    float  depth : SV_Depth;
+    float depth : SV_Depth;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-Output main(VertexOut pin) 
+Output main(VertexOut pin)
 {
     float depth = depthTex.SampleLevel(point_wrap_sampler, pin.Tex, 0.0f).r;
     
-    Output output = (Output)0;
+    Output output = (Output) 0;
     output.color = 0.0f;
     output.depth = depth;
 
@@ -378,7 +379,7 @@ Output main(VertexOut pin)
         float4 cloudsColor = 0.0f;
 
         float4 cloudDistance;
-        cloudsColor = RaymarchToCloud(pin.Tex, startPos, endPos, float3(0,0,0), cloudDistance);
+        cloudsColor = RaymarchToCloud(pin.Tex, startPos, endPos, float3(0, 0, 0), cloudDistance);
 
         output.color = cloudsColor;
         output.depth = 0.9999f;

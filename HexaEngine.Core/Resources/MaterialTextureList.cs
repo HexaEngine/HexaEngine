@@ -9,16 +9,16 @@
         private const uint DefaultCapacity = 4;
         private readonly List<ResourceInstance<MaterialTexture>?> textures = new();
         private uint capacity;
-        private int count;
-        private int startSlot;
+        private uint count;
+        private uint startSlot;
 
         public MaterialTextureList()
         {
             capacity = DefaultCapacity;
             shaderResourceViews = AllocArray(capacity);
             samplers = AllocArray(capacity);
-            Zero(samplers, (uint)(sizeof(nint) * capacity));
-            Zero(shaderResourceViews, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
         }
 
         public void** shaderResourceViews;
@@ -27,9 +27,9 @@
 
         public int Count => textures.Count;
 
-        public int StartSlot => startSlot;
+        public uint StartSlot => startSlot;
 
-        public int SlotCount => count;
+        public uint SlotCount => count;
 
         public void** ShaderResourceViews => shaderResourceViews;
 
@@ -53,8 +53,8 @@
                 var tmpSamplers = samplers;
                 shaderResourceViews = AllocArray(capacity);
                 samplers = AllocArray(capacity);
-                Zero(samplers, (uint)(sizeof(nint) * capacity));
-                Zero(shaderResourceViews, (uint)(sizeof(nint) * capacity));
+                ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
+                ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
                 MemoryCopy(tmpShaderResourceViews, shaderResourceViews, capacity * sizeof(nint), oldCapacity * sizeof(nint));
                 MemoryCopy(tmpSamplers, samplers, capacity * sizeof(nint), oldCapacity * sizeof(nint));
                 Free(tmpShaderResourceViews);
@@ -76,8 +76,8 @@
         {
             startSlot = int.MaxValue;
             count = 0;
-            Zero(samplers, (uint)(sizeof(nint) * capacity));
-            Zero(shaderResourceViews, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
             for (int i = 0; i < textures.Count; i++)
             {
                 var texture = textures[i];
@@ -89,12 +89,12 @@
 
                 var slot = GetIndexFor(texture.Value.Desc.Type);
 
-                if (slot == -1)
+                if (slot == uint.MaxValue)
                 {
                     continue;
                 }
 
-                EnsureCapacity((uint)(slot + 1));
+                EnsureCapacity(slot + 1);
                 shaderResourceViews[slot] = (void*)texture.Value.ShaderResourceView.NativePointer;
                 samplers[slot] = (void*)texture.Value.Sampler.NativePointer;
                 count = Math.Max(slot + 1, count);
@@ -115,13 +115,13 @@
 
                 var slot = GetIndexFor(texture.Value.Desc.Type);
 
-                if (slot == -1)
+                if (slot == uint.MaxValue)
                 {
                     continue;
                 }
 
-                context.PSSetShaderResource(texture.Value.ShaderResourceView, slot);
-                context.PSSetSampler(texture.Value.Sampler, slot);
+                context.PSSetShaderResource(slot, texture.Value.ShaderResourceView);
+                context.PSSetSampler(slot, texture.Value.Sampler);
             }
         }
 
@@ -130,34 +130,34 @@
             return textures.Contains(texture);
         }
 
-        public static int GetIndexFor(TextureType type)
+        public static uint GetIndexFor(TextureType type)
         {
             return type switch
             {
-                TextureType.None => -1,
+                TextureType.None => uint.MaxValue,
                 TextureType.Diffuse => 0,
-                TextureType.Specular => -1,
-                TextureType.Ambient => -1,
+                TextureType.Specular => uint.MaxValue,
+                TextureType.Ambient => uint.MaxValue,
                 TextureType.Emissive => 4,
-                TextureType.Height => -1,
+                TextureType.Height => uint.MaxValue,
                 TextureType.Normal => 1,
-                TextureType.Shininess => -1,
-                TextureType.Opacity => -1,
-                TextureType.Displacement => -1,
+                TextureType.Shininess => uint.MaxValue,
+                TextureType.Opacity => uint.MaxValue,
+                TextureType.Displacement => uint.MaxValue,
                 TextureType.AmbientOcclusionRoughnessMetalness => 7,
-                TextureType.Reflection => -1,
+                TextureType.Reflection => uint.MaxValue,
                 TextureType.BaseColor => 0,
-                TextureType.NormalCamera => -1,
-                TextureType.EmissionColor => -1,
+                TextureType.NormalCamera => uint.MaxValue,
+                TextureType.EmissionColor => uint.MaxValue,
                 TextureType.Metalness => 3,
                 TextureType.Roughness => 2,
                 TextureType.AmbientOcclusion => 5,
-                TextureType.Sheen => -1,
-                TextureType.Clearcoat => -1,
-                TextureType.Transmission => -1,
+                TextureType.Sheen => uint.MaxValue,
+                TextureType.Clearcoat => uint.MaxValue,
+                TextureType.Transmission => uint.MaxValue,
                 TextureType.RoughnessMetalness => 6,
-                TextureType.Unknown => -1,
-                _ => -1,
+                TextureType.Unknown => uint.MaxValue,
+                _ => uint.MaxValue,
             };
         }
 

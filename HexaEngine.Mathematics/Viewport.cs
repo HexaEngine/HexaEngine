@@ -155,6 +155,8 @@
 
         public Vector2 Size => new(Width, Height);
 
+        public Rect Rect => new((long)X, (long)Y, (long)(X + Width), (long)(Y + Height));
+
         /// <summary>
         /// Projects a 3D vector from object space into screen space.
         /// </summary>

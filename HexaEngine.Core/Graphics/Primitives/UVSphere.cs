@@ -95,7 +95,7 @@
                 }
             }
 
-            indexBuffer = new(device, CpuAccessFlags.None, uints);
+            indexBuffer = new(device, uints, CpuAccessFlags.None);
         }
 
         public static void CreateSphere(out Vertex[] vertices, out int[] indexBuffer, int LatLines = 10, int LongLines = 10)

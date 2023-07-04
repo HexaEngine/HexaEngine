@@ -312,7 +312,7 @@
                 context.ClearRenderTargetView(overlay.RTV, default);
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.RTV.Viewport);
-                context.PSSetShaderResource(source.SRV, 0);
+                context.PSSetShaderResource(0, source.SRV);
                 quad.DrawAuto(context, copyPipeline);
                 context.ClearState();
 
@@ -335,7 +335,7 @@
                     }
                     isDown = changed;
 
-                    context.PSSetConstantBuffer(colorCB, 0);
+                    context.PSSetConstantBuffer(0, colorCB);
 
                     brushes.Current.Apply(context);
 

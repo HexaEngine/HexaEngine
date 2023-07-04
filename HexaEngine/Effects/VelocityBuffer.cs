@@ -92,7 +92,7 @@
             sampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("PrePass.SRV");
+            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
             Velocity = ResourceManager2.Shared.AddTexture("VelocityBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32Float));
 
             Viewport = new(width, height);
@@ -107,10 +107,10 @@
         {
             context.SetRenderTarget(Velocity.Value?.RenderTargetView, null);
             context.SetViewport(Viewport);
-            context.PSSetConstantBuffer(paramsBuffer, 0);
-            context.PSSetConstantBuffer(Camera.Value, 1);
-            context.PSSetSampler(sampler, 0);
-            context.PSSetShaderResource(Depth.Value, 0);
+            context.PSSetConstantBuffer(0, paramsBuffer);
+            context.PSSetConstantBuffer(1, Camera.Value);
+            context.PSSetSampler(0, sampler);
+            context.PSSetShaderResource(0, Depth.Value);
             quad.DrawAuto(context, pipeline);
             context.ClearState();
         }

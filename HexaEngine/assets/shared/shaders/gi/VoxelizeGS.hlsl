@@ -7,20 +7,18 @@ cbuffer VoxelCbuf : register(b0)
 
 struct GS_INPUT
 {
-    float4 PositionWS   : POSITION;
-    float2 Uvs          : TEX;
-    float3 NormalWS     : NORMAL0;
+    float4 PositionWS : POSITION;
+    float2 Uvs : TEX;
+    float3 NormalWS : NORMAL0;
 };
-
 
 struct GS_OUTPUT
 {
-    float4 Position     : SV_POSITION;
-    float4 PositionWS   : POSITION;
-    float2 Uvs          : TEX;
-    float3 NormalWS     : NORMAL0;
+    float4 Position : SV_POSITION;
+    float4 PositionWS : POSITION;
+    float2 Uvs : TEX;
+    float3 NormalWS : NORMAL0;
 };
-
 
 [maxvertexcount(3)]
 void main(
@@ -54,12 +52,11 @@ void main(
         output.Position.xy *= voxel_radiance.DataResRCP;
         output.Position.zw = float2(0, 1);
 
-		
         output.Uvs = input[i].Uvs;
         output.NormalWS = input[i].NormalWS;
         output.PositionWS = input[i].PositionWS;
 
         outputStream.Append(output);
-        
+
     }
 }

@@ -11,6 +11,7 @@
     using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Scenes.Systems;
+    using HexaEngine.Core.Weather;
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
@@ -30,11 +31,13 @@
         private RenderManager renderManager;
         private AnimationManager animationManager = new();
         private MaterialManager materialManager = new();
+        private WeatherManager weatherManager = new();
 
         private readonly SemaphoreSlim semaphore = new(1);
         private string? path;
 
         private readonly GameObject root;
+
         public int ActiveCamera;
 
 #pragma warning disable CS8618 // Non-nullable field 'Simulation' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
@@ -79,6 +82,9 @@
         public MaterialManager MaterialManager => materialManager;
 
         [JsonIgnore]
+        public WeatherManager WeatherManager => weatherManager;
+
+        [JsonIgnore]
         public FlaggedList<SystemFlags, ISystem> Systems => systems;
 
         [JsonIgnore]
@@ -101,6 +107,7 @@
             lightManager = new();
             meshManager ??= new();
             lightManager.Initialize(device).Wait();
+            weatherManager.Initialize(device).Wait();
             systems.Add(new AudioSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
@@ -108,6 +115,7 @@
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(renderManager = new(device, lightManager));
+            systems.Add(weatherManager);
 
             semaphore.Wait();
 
@@ -130,6 +138,7 @@
             lightManager = new();
             meshManager ??= new();
             await lightManager.Initialize(device);
+            await weatherManager.Initialize(device);
             systems.Add(new AudioSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
@@ -137,6 +146,7 @@
             systems.Add(new PhysicsSystem());
             systems.Add(new TransformSystem());
             systems.Add(renderManager = new(device, lightManager));
+            systems.Add(weatherManager);
 
             await semaphore.WaitAsync();
 

@@ -331,7 +331,7 @@
             if (!enabled)
             {
                 context.SetRenderTarget(Output.Value, null);
-                context.PSSetShaderResource(Input.Value?.ShaderResourceView, 0);
+                context.PSSetShaderResource(0, Input.Value?.ShaderResourceView);
                 context.SetViewport(Viewport);
                 quad.DrawAuto(context, copy);
                 context.ClearState();

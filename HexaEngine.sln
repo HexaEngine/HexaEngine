@@ -41,6 +41,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{E0AE2973
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Dotnet", "HexaEngine.Dotnet\HexaEngine.Dotnet.csproj", "{A4A67A2A-21E6-4398-B7DB-6C4727E92FD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VkTesting", "VkTesting\VkTesting.csproj", "{DD0B0555-0A0C-4119-A527-53FF90CB6896}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -355,6 +357,26 @@ Global
 		{A4A67A2A-21E6-4398-B7DB-6C4727E92FD6}.TraceLeak|Any CPU.Build.0 = Debug|Any CPU
 		{A4A67A2A-21E6-4398-B7DB-6C4727E92FD6}.TraceLeak|x64.ActiveCfg = Debug|Any CPU
 		{A4A67A2A-21E6-4398-B7DB-6C4727E92FD6}.TraceLeak|x64.Build.0 = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Debug|x64.Build.0 = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.MinSizeRel|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.MinSizeRel|Any CPU.Build.0 = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.MinSizeRel|x64.ActiveCfg = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.MinSizeRel|x64.Build.0 = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Release|x64.ActiveCfg = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.Release|x64.Build.0 = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.RelWithDebInfo|Any CPU.ActiveCfg = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.RelWithDebInfo|Any CPU.Build.0 = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.RelWithDebInfo|x64.ActiveCfg = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.RelWithDebInfo|x64.Build.0 = Release|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.TraceLeak|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.TraceLeak|Any CPU.Build.0 = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.TraceLeak|x64.ActiveCfg = Debug|Any CPU
+		{DD0B0555-0A0C-4119-A527-53FF90CB6896}.TraceLeak|x64.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

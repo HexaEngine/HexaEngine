@@ -2,30 +2,39 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Xml.Serialization;
 
     public struct RenderTargetBlendDescription : IEquatable<RenderTargetBlendDescription>
     {
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool IsBlendEnabled;
 
+        [XmlAttribute]
         [DefaultValue(Blend.One)]
         public Blend SourceBlend;
 
+        [XmlAttribute]
         [DefaultValue(Blend.Zero)]
         public Blend DestinationBlend;
 
+        [XmlAttribute]
         [DefaultValue(BlendOperation.Add)]
         public BlendOperation BlendOperation;
 
+        [XmlAttribute]
         [DefaultValue(Blend.One)]
         public Blend SourceBlendAlpha;
 
+        [XmlAttribute]
         [DefaultValue(Blend.Zero)]
         public Blend DestinationBlendAlpha;
 
+        [XmlAttribute]
         [DefaultValue(BlendOperation.Add)]
         public BlendOperation BlendOperationAlpha;
 
+        [XmlAttribute]
         [DefaultValue(ColorWriteEnable.All)]
         public ColorWriteEnable RenderTargetWriteMask;
 

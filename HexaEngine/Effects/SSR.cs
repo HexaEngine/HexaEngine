@@ -6,10 +6,6 @@
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Numerics;
-    using System.Text;
     using System.Threading.Tasks;
 
     public class SSR : IPostFx
@@ -18,22 +14,17 @@
         private bool enabled = true;
         private Quad quad;
         private IGraphicsPipeline pipelineSSR;
-        private ITexture2D ssrBuffer;
-        private unsafe void** ssrSRVs;
-        private IShaderResourceView ssrSRV;
-        private IRenderTargetView ssrRTV;
 
-        private BlurParams blurParams;
-        private IBuffer cbBlur;
-        private IGraphicsPipeline pipelineBlend;
-
-        private ISamplerState sampler;
+        private ISamplerState pointClampSampler;
+        private ISamplerState linearClampSampler;
+        private ISamplerState linearBorderSampler;
 
         public IRenderTargetView Output;
         public Viewport Viewport;
         public IShaderResourceView Input;
-        public ResourceRef<IShaderResourceView> Position;
         public ResourceRef<IShaderResourceView> Normal;
+        public ResourceRef<IShaderResourceView> Misc;
+        public ResourceRef<IShaderResourceView> Depth;
         public ResourceRef<IBuffer> Camera;
         private int priority = 200;
 
@@ -96,7 +87,9 @@
             this.device = device;
             quad = new(device);
 
-            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            pointClampSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+            linearClampSampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            linearBorderSampler = device.CreateSamplerState(SamplerDescription.LinearBorder);
 
             pipelineSSR = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -104,32 +97,14 @@
                 PixelShader = "effects/ssr/ps.hlsl",
             }, macros);
 
-            pipelineBlend = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "effects/ssr/vs.hlsl",
-                PixelShader = "effects/ssr/blend.hlsl"
-            }, macros);
-
-            blurParams = new();
-            cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-
-            ssrBuffer = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            ssrSRV = device.CreateShaderResourceView(ssrBuffer);
-            ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
-
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-            Position = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Position");
+            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
             Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
+            Misc = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Misc");
         }
 
         public void Resize(int width, int height)
         {
-            ssrBuffer.Dispose();
-            ssrRTV.Dispose();
-            ssrSRV.Dispose();
-            ssrBuffer = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            ssrSRV = device.CreateShaderResourceView(ssrBuffer);
-            ssrRTV = device.CreateRenderTargetView(ssrBuffer, new(width, height));
         }
 
         public void Draw(IGraphicsContext context)
@@ -137,23 +112,18 @@
             if (Output == null)
                 return;
 
-            context.ClearRenderTargetView(ssrRTV, default);
-            context.SetRenderTarget(ssrRTV, null);
-            context.SetViewport(ssrRTV.Viewport);
-            context.PSSetShaderResource(Input, 0);
-            context.PSSetShaderResource(Position.Value, 1);
-            context.PSSetShaderResource(Normal.Value, 2);
-            context.PSSetConstantBuffer(Camera.Value, 1);
-            context.PSSetSampler(sampler, 0);
+            context.SetRenderTarget(Output, null);
+            context.SetViewport(Viewport);
+            context.PSSetShaderResource(0, Normal.Value);
+            context.PSSetShaderResource(1, Input);
+            context.PSSetShaderResource(2, Depth.Value);
+            context.PSSetShaderResource(3, Misc.Value);
+            context.PSSetConstantBuffer(1, Camera.Value);
+            context.PSSetSampler(0, pointClampSampler);
+            context.PSSetSampler(1, linearClampSampler);
+            context.PSSetSampler(2, linearBorderSampler);
             quad.DrawAuto(context, pipelineSSR);
 
-            context.SetRenderTarget(Output, null);
-            context.SetViewport(Output.Viewport);
-            context.PSSetShaderResource(ssrSRV, 0);
-            context.PSSetShaderResource(Input, 1);
-            context.PSSetConstantBuffer(cbBlur, 0);
-            context.PSSetSampler(sampler, 0);
-            quad.DrawAuto(context, pipelineBlend);
             context.ClearState();
         }
 
@@ -174,9 +144,6 @@
 
         public void Dispose()
         {
-            ssrBuffer.Dispose();
-            ssrRTV.Dispose();
-            ssrSRV.Dispose();
         }
     }
 }

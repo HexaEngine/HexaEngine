@@ -19,18 +19,12 @@
 
         private void Recompile(IGraphicsPipeline pipeline)
         {
-            if (task == null || task.IsCompleted)
-            {
-                task = Task.Factory.StartNew(pipeline.Recompile);
-            }
+            pipeline.Recompile();
         }
 
         private void Recompile(IComputePipeline pipeline)
         {
-            if (task == null || task.IsCompleted)
-            {
-                task = Task.Factory.StartNew(pipeline.Recompile);
-            }
+            pipeline.Recompile();
         }
 
         public override void DrawContent(IGraphicsContext context)

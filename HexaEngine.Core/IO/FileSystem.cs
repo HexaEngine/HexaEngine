@@ -296,5 +296,57 @@
             var reader = new StreamReader(fs);
             return reader;
         }
+
+        public static Stream OpenWrite(string path)
+        {
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
+            if (fileIndices.TryGetValue(realPath, out string? value))
+            {
+                var fs = File.OpenWrite(value);
+
+                return fs;
+            }
+            else if (File.Exists(path))
+            {
+                var fs = File.OpenWrite(path);
+
+                return fs;
+            }
+            else if (!string.IsNullOrWhiteSpace(realPath))
+            {
+                var rel = Path.GetRelativePath("assets/", realPath);
+                var asset = assetBundles.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                throw new NotSupportedException();
+            }
+
+            throw new FileNotFoundException(realPath);
+        }
+
+        public static Stream Create(string path)
+        {
+            var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
+            realPath = realPath.Replace(@"\\", @"\");
+            if (fileIndices.TryGetValue(realPath, out string? value))
+            {
+                var fs = File.Create(value);
+
+                return fs;
+            }
+            else if (File.Exists(path))
+            {
+                var fs = File.Create(path);
+
+                return fs;
+            }
+            else if (!string.IsNullOrWhiteSpace(realPath))
+            {
+                var rel = Path.GetRelativePath("assets/", realPath);
+                var asset = assetBundles.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                throw new NotSupportedException();
+            }
+
+            throw new FileNotFoundException(realPath);
+        }
     }
 }

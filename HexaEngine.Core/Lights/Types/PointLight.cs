@@ -9,40 +9,26 @@
     using Newtonsoft.Json;
     using System.Numerics;
 
-    [EditorNode<PointLight>("Point Light")]
+    [EditorGameObject<PointLight>("Point Light")]
     public class PointLight : Light
     {
         private static ulong instances;
         private static ConstantBuffer<OmniShadowData>? osmBuffer;
 
+        public const int ShadowMapSize = 512;
+
         private struct OmniShadowData
         {
-            public Matrix4x4 M1;
-            public Matrix4x4 M2;
-            public Matrix4x4 M3;
-            public Matrix4x4 M4;
-            public Matrix4x4 M5;
-            public Matrix4x4 M6;
+            public Matrix4x4 View;
             public Vector3 Position;
             public float Far;
         }
 
         private DepthStencil? osmDepthBuffer;
-        private float shadowRange = 100;
-        private float strength = 1;
-        private float falloff = 100;
+        private ShadowAtlasAllocation[] allocations = new ShadowAtlasAllocation[6];
 
         [JsonIgnore]
         public BoundingBox ShadowBox = new();
-
-        [EditorProperty("Shadow Range")]
-        public float ShadowRange { get => shadowRange; set => SetAndNotifyWithEqualsTest(ref shadowRange, value); }
-
-        [EditorProperty("Strength")]
-        public float Strength { get => strength; set => SetAndNotifyWithEqualsTest(ref strength, value); }
-
-        [EditorProperty("Falloff")]
-        public float Falloff { get => falloff; set => SetAndNotifyWithEqualsTest(ref falloff, value); }
 
         [JsonIgnore]
         public override LightType LightType => LightType.Point;
@@ -58,6 +44,11 @@
             return osmDepthBuffer?.SRV;
         }
 
+        public ShadowAtlasAllocation[] GetShadows()
+        {
+            return allocations;
+        }
+
         public override void CreateShadowMap(IGraphicsDevice device)
         {
             if (osmDepthBuffer != null)
@@ -65,7 +56,9 @@
                 return;
             }
 
-            osmDepthBuffer = new(device, 512, 512, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
+            osmDepthBuffer = new(device, ShadowMapSize, ShadowMapSize, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
+
+            LightManager.Current.ShadowPool.AllocRange(ShadowMapSize, allocations);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -80,6 +73,8 @@
                 return;
             }
 
+            LightManager.Current.ShadowPool.FreeRange(allocations);
+
             osmDepthBuffer?.Dispose();
             osmDepthBuffer = null;
             if (Interlocked.Decrement(ref instances) == 0)
@@ -90,7 +85,22 @@
             }
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowPointLightData> buffer)
+        public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
+        {
+            var data = buffer.Local + QueueIndex;
+            data->Size = ShadowMapSize;
+            data->Softness = 1;
+            var views = ShadowData.GetViews(data);
+            var coords = ShadowData.GetAtlasCoords(data);
+            for (int i = 0; i < 6; i++)
+            {
+                coords[i] = allocations[i].Offset * allocations[i].Size;
+            }
+
+            OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
+        }
+
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, int pass)
         {
             if (osmDepthBuffer == null)
             {
@@ -98,14 +108,26 @@
             }
 #nullable disable
 
-            OSMHelper.GetLightSpaceMatrices(Transform, ShadowRange, (Matrix4x4*)osmBuffer.Local, ref ShadowBox);
-            osmBuffer.Local->Position = Transform.GlobalPosition;
-            osmBuffer.Local->Far = ShadowRange;
-            osmBuffer.Update(context);
-            context.ClearDepthStencilView(osmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
-            context.SetRenderTarget(null, osmDepthBuffer.DSV);
-            context.SetViewport(osmDepthBuffer.Viewport);
+            var data = buffer.Local + QueueIndex;
+            data->Size = ShadowMapSize;
+            data->Softness = 1;
+            var views = ShadowData.GetViews(data);
+            var coords = ShadowData.GetAtlasCoords(data);
+            for (int i = 0; i < 6; i++)
+            {
+                coords[i] = allocations[i].Offset * allocations[i].Size;
+            }
 
+            OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
+
+            var viewport = allocations[pass].GetViewport();
+            osmBuffer.Local->View = views[pass];
+            osmBuffer.Local->Position = Transform.GlobalPosition;
+            osmBuffer.Local->Far = Range;
+            osmBuffer.Update(context);
+            context.ClearView(LightManager.Current.ShadowPool.DSV, Vector4.One, viewport.Rect);
+            context.SetRenderTarget(null, LightManager.Current.ShadowPool.DSV);
+            context.SetViewport(viewport);
 #nullable enable
         }
 

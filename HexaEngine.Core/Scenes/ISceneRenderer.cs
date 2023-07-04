@@ -6,6 +6,7 @@
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
     using System;
+    using System.Numerics;
 
     public interface ISceneRenderer : IDisposable
     {
@@ -14,6 +15,7 @@
         PostProcessingManager PostProcessing { get; }
 
         ViewportShading Shading { get; set; }
+        Vector2 Size { get; }
 
         Task Initialize(IGraphicsDevice device, ISwapChain swapChain, IRenderWindow window);
 

@@ -10,7 +10,7 @@
     using System;
     using System.Numerics;
 
-    [EditorNode<Spotlight>("Spotlight")]
+    [EditorGameObject<Spotlight>("Spotlight")]
     public class Spotlight : Light
     {
         public new CameraTransform Transform;
@@ -18,12 +18,12 @@
         private static ulong instances;
         private static IBuffer? psmBuffer;
 
-        private DepthStencil? psmDepthBuffer;
-        private float strength = 1;
         private float coneAngle;
         private float blend;
-        private float falloff = 100;
         private Matrix4x4 view;
+        private ShadowAtlasAllocation allocation;
+
+        public const int ShadowMapSize = 2048;
 
         [JsonIgnore]
         public readonly BoundingFrustum ShadowFrustum = new();
@@ -40,26 +40,6 @@
             OverwriteTransform(Transform);
         }
 
-        [EditorProperty("Strength")]
-        public float Strength { get => strength; set => SetAndNotifyWithEqualsTest(ref strength, value); }
-
-        [EditorProperty("Shadow Range")]
-        public float ShadowRange
-        {
-            get => Transform.Far;
-            set
-            {
-                var target = Transform.Far;
-                if (SetAndNotifyWithEqualsTest(ref target, value))
-                {
-                    Transform.Far = target;
-                }
-            }
-        }
-
-        [EditorProperty("Falloff")]
-        public float Falloff { get => falloff; set => SetAndNotifyWithEqualsTest(ref falloff, value); }
-
         [EditorProperty("Cone Angle", 1f, 180f, EditorPropertyMode.Slider)]
         public float ConeAngle { get => coneAngle; set => SetAndNotifyWithEqualsTest(ref coneAngle, value); }
 
@@ -67,7 +47,7 @@
         public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
 
         [JsonIgnore]
-        public override bool HasShadowMap => psmDepthBuffer != null;
+        public override bool HasShadowMap => allocation.IsValid;
 
         [JsonIgnore]
         internal static IBuffer PSMBuffer => psmBuffer;
@@ -79,17 +59,17 @@
 
         public override IShaderResourceView? GetShadowMap()
         {
-            return psmDepthBuffer?.SRV;
+            return null;
         }
 
         public override void CreateShadowMap(IGraphicsDevice device)
         {
-            if (psmDepthBuffer != null)
+            if (allocation.IsValid)
             {
                 return;
             }
 
-            psmDepthBuffer = new(device, 2048, 2048, Format.D32Float); //new(device, TextureDescription.CreateTexture2DWithRTV(2048, 2048, 1, Format.R32Float), DepthStencilDesc.Default);
+            allocation = LightManager.Current.ShadowPool.Alloc(ShadowMapSize);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -99,13 +79,13 @@
 
         public override void DestroyShadowMap()
         {
-            if (psmDepthBuffer == null)
+            if (!allocation.IsValid)
             {
                 return;
             }
 
-            psmDepthBuffer?.Dispose();
-            psmDepthBuffer = null;
+            LightManager.Current.ShadowPool.Free(ref allocation);
+
             if (Interlocked.Decrement(ref instances) == 0)
             {
                 psmBuffer?.Dispose();
@@ -113,19 +93,31 @@
             }
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowSpotlightData> buffer)
+        public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer)
         {
-            if (psmDepthBuffer == null)
+            var data = buffer.Local + QueueIndex;
+            data->Size = ShadowMapSize;
+            data->Softness = 1;
+            var views = ShadowData.GetViews(data);
+            var coords = ShadowData.GetAtlasCoords(data);
+
+            coords[0] = allocation.Offset * allocation.Size;
+        }
+
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer)
+        {
+            if (!allocation.IsValid)
             {
                 return;
             }
 #nullable disable
 
-            view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), ShadowRange, ShadowFrustum);
+            var viewport = allocation.GetViewport();
+            view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
             context.Write(psmBuffer, view);
-            context.ClearDepthStencilView(psmDepthBuffer.DSV, DepthStencilClearFlags.All, 1, 0);
-            context.SetRenderTarget(null, psmDepthBuffer.DSV);
-            context.SetViewport(psmDepthBuffer.Viewport);
+            context.ClearView(LightManager.Current.ShadowPool.DSV, Vector4.One, viewport.Rect);
+            context.SetRenderTarget(null, LightManager.Current.ShadowPool.DSV);
+            context.SetViewport(viewport);
 
 #nullable enable
         }

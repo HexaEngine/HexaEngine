@@ -1056,6 +1056,29 @@ new Vector3(+1, +1, +1),
                     i += 2;
                 }
             }
+
+            {
+                int half = size / 2;
+
+                int i = 0;
+                for (int x = -half; x <= half; x++)
+                {
+                    var pos0 = Vector3.Transform(new Vector3(x, 0, -half), matrix);
+                    var pos1 = Vector3.Transform(new Vector3(x, 0, half), matrix);
+                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
+                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
+                    i += 2;
+                }
+
+                for (int z = -half; z <= half; z++)
+                {
+                    var pos0 = Vector3.Transform(new Vector3(-half, 0, z), matrix);
+                    var pos1 = Vector3.Transform(new Vector3(half, 0, z), matrix);
+                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
+                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
+                    i += 2;
+                }
+            }
         }
     }
 }

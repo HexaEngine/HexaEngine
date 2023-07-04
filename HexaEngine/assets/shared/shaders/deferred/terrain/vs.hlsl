@@ -40,9 +40,7 @@ PixelInput main(VertexInput input)
 #endif
 
 #if VtxPosition
-    output.position = mul(output.position, view);
-    output.depth = output.position.z / cam_far;
-    output.position = mul(output.position, proj);
+    output.position = mul(output.position, viewProj);
 #endif
 
 	return output;

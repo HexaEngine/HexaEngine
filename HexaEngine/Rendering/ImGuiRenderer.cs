@@ -104,7 +104,7 @@ namespace HexaEngine.Rendering
             colors[(int)ImGuiCol.Button] = new Vector4(0.05f, 0.05f, 0.05f, 0.54f);
             colors[(int)ImGuiCol.ButtonHovered] = new Vector4(0.19f, 0.19f, 0.19f, 0.54f);
             colors[(int)ImGuiCol.ButtonActive] = new Vector4(0.20f, 0.22f, 0.23f, 1.00f);
-            colors[(int)ImGuiCol.Header] = new Vector4(0.00f, 0.00f, 0.00f, 0.52f);
+            colors[(int)ImGuiCol.Header] = new Vector4(0.08f, 0.08f, 0.08f, 1.0f);
             colors[(int)ImGuiCol.HeaderHovered] = new Vector4(0.00f, 0.00f, 0.00f, 0.36f);
             colors[(int)ImGuiCol.HeaderActive] = new Vector4(0.20f, 0.22f, 0.23f, 0.33f);
             colors[(int)ImGuiCol.Separator] = new Vector4(0.28f, 0.28f, 0.28f, 0.29f);
@@ -138,17 +138,17 @@ namespace HexaEngine.Rendering
 
             style.WindowPadding = new Vector2(8.00f, 8.00f);
             style.FramePadding = new Vector2(5.00f, 2.00f);
-            style.CellPadding = new Vector2(6.00f, 6.00f);
+            style.CellPadding = new Vector2(6.00f, 2.00f);
             style.ItemSpacing = new Vector2(6.00f, 6.00f);
             style.ItemInnerSpacing = new Vector2(6.00f, 6.00f);
             style.TouchExtraPadding = new Vector2(0.00f, 0.00f);
-            style.IndentSpacing = 25;
+            style.IndentSpacing = 10;
             style.ScrollbarSize = 15;
             style.GrabMinSize = 10;
-            style.WindowBorderSize = 1;
+            style.WindowBorderSize = 0;
             style.ChildBorderSize = 1;
             style.PopupBorderSize = 1;
-            style.FrameBorderSize = 1;
+            style.FrameBorderSize = 0;
             style.TabBorderSize = 1;
             style.WindowRounding = 7;
             style.ChildRounding = 4;
@@ -300,14 +300,15 @@ namespace HexaEngine.Rendering
                     {
                         ctx.SetScissorRect((int)cmd.ClipRect.X, (int)cmd.ClipRect.Y, (int)cmd.ClipRect.Z, (int)cmd.ClipRect.W);
 
-                        ctx.PSSetShaderResource((void*)cmd.TextureId.Handle, 0);
+                        var srv = (void*)cmd.TextureId.Handle;
+                        ctx.PSSetShaderResources(0, 1, &srv);
                         if (Samplers.TryGetValue(cmd.TextureId.Handle, out var sampler))
                         {
-                            ctx.PSSetSampler(sampler, 0);
+                            ctx.PSSetSampler(0, sampler);
                         }
                         else
                         {
-                            ctx.PSSetSampler(fontSampler, 0);
+                            ctx.PSSetSampler(0, fontSampler);
                         }
 
                         ctx.DrawIndexedInstanced(cmd.ElemCount, 1, idx_offset, vtx_offset, 0);
@@ -342,8 +343,8 @@ namespace HexaEngine.Rendering
             ctx.SetVertexBuffer(vertexBuffer, stride, offset);
             ctx.SetIndexBuffer(indexBuffer, sizeof(ushort) == 2 ? Format.R16UInt : Format.R32UInt, 0);
             ctx.SetPrimitiveTopology(PrimitiveTopology.TriangleList);
-            ctx.VSSetConstantBuffer(constantBuffer, 0);
-            ctx.PSSetSampler(fontSampler, 0);
+            ctx.VSSetConstantBuffer(0, constantBuffer);
+            ctx.PSSetSampler(0, fontSampler);
         }
 
         private void CreateFontsTexture()

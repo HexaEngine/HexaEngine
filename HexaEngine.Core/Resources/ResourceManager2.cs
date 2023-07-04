@@ -23,6 +23,8 @@
             this.device = device;
         }
 
+        public IReadOnlyList<ResourceRef> Resources => resources;
+
         public ResourceRef GetResource(string name)
         {
             lock (sharedResources)

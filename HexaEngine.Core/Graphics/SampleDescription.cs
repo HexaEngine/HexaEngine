@@ -1,10 +1,18 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using System;
+    using System.ComponentModel;
+    using System.Xml;
+    using System.Xml.Serialization;
 
     public struct SampleDescription : IEquatable<SampleDescription>
     {
+        [XmlAttribute]
+        [DefaultValue(1)]
         public int Count;
+
+        [XmlAttribute]
+        [DefaultValue(0)]
         public int Quality;
 
         /// <summary>

@@ -106,7 +106,7 @@
                 }
             }
 
-            indexBuffer = new(device, CpuAccessFlags.None, indices);
+            indexBuffer = new(device, indices, CpuAccessFlags.None);
         }
     }
 }

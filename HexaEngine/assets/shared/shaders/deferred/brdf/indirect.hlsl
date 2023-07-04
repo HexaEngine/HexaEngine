@@ -1,9 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: light.ps
-////////////////////////////////////////////////////////////////////////////////
 #include "../../gbuffer.hlsl"
-//#include "../../brdf.hlsl"
-#include "../../brdf2.hlsl"
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
 
@@ -12,7 +7,7 @@ Texture2D GBufferB : register(t1);
 Texture2D GBufferC : register(t2);
 Texture2D GBufferD : register(t3);
 Texture2D<float> Depth : register(t4);
-Texture2D ssao : register(t8);
+Texture2D ssao : register(t5);
 Texture2D brdfLUT : register(t9);
 StructuredBuffer<GlobalProbe> globalProbes : register(t10);
 TextureCube globalDiffuse[4] : register(t11);
@@ -36,9 +31,6 @@ cbuffer paramsBuffer : register(b0)
     Params params;
 };
 
-//////////////
-// TYPEDEFS //
-//////////////
 struct VSOut
 {
     float4 Pos : SV_Position;
@@ -62,7 +54,7 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
     [unroll(4)]
     for (uint i = 0; i < params.globalProbeCount; i++)
     {
-        ambient += BRDFIndirect(linearWrapSampler, globalDiffuse[i], globalSpecular[i], brdfLUT, F0, N, V, baseColor, roughness, ao);
+        ambient += BRDF_IBL(linearWrapSampler, globalDiffuse[i], globalSpecular[i], brdfLUT, F0, N, V, baseColor, roughness, ao);
     }
 
     

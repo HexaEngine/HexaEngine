@@ -174,7 +174,7 @@ namespace HexaEngine.Core.Resources
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/osm/vs.hlsl",
-                    GeometryShader = "forward/geometry/osm/gs.hlsl",
+                    PixelShader = "forward/geometry/osm/ps.hlsl",
                 };
                 var osmPipelineState = new GraphicsPipelineState()
                 {
@@ -349,7 +349,6 @@ namespace HexaEngine.Core.Resources
                 var osmPipelineDesc = new GraphicsPipelineDesc()
                 {
                     VertexShader = "forward/geometry/osm/vs.hlsl",
-                    GeometryShader = "forward/geometry/osm/gs.hlsl",
                     PixelShader = "forward/geometry/osm/ps.hlsl",
                 };
                 var osmPipelineState = new GraphicsPipelineState()
@@ -446,16 +445,18 @@ namespace HexaEngine.Core.Resources
             }
 
             context.SetGraphicsPipeline(pipeline);
-            context.DSSetConstantBuffer(camera, 1);
-            context.VSSetConstantBuffer(camera, 1);
+            context.DSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera);
+            context.PSSetConstantBuffer(1, camera);
             return true;
         }
 
         public void EndDraw(IGraphicsContext context)
         {
             context.SetGraphicsPipeline(null);
-            context.DSSetConstantBuffer(null, 1);
-            context.VSSetConstantBuffer(null, 1);
+            context.PSSetConstantBuffer(1, null);
+            context.DSSetConstantBuffer(1, null);
+            context.VSSetConstantBuffer(1, null);
         }
 
         public bool BeginDrawForward(IGraphicsContext context)
@@ -491,16 +492,18 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            context.DSSetConstantBuffer(camera, 1);
-            context.VSSetConstantBuffer(camera, 1);
+            context.PSSetConstantBuffer(1, camera);
+            context.DSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera);
             context.SetGraphicsPipeline(depthOnly);
             return true;
         }
 
         public void EndDrawDepth(IGraphicsContext context)
         {
-            context.DSSetConstantBuffer(null, 1);
-            context.VSSetConstantBuffer(null, 1);
+            context.PSSetConstantBuffer(1, null);
+            context.DSSetConstantBuffer(1, null);
+            context.VSSetConstantBuffer(1, null);
             context.SetGraphicsPipeline(null);
         }
 
@@ -511,9 +514,9 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            context.DSSetConstantBuffer(light, 1);
-            context.VSSetConstantBuffer(light, 1);
-            context.GSSetConstantBuffer(light, 1);
+            context.DSSetConstantBuffer(1, light);
+            context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(1, light);
             switch (type)
             {
                 case ShadowType.Perspective:
@@ -549,9 +552,9 @@ namespace HexaEngine.Core.Resources
 
         public void EndDrawShadow(IGraphicsContext context)
         {
-            context.DSSetConstantBuffer(null, 1);
-            context.VSSetConstantBuffer(null, 1);
-            context.GSSetConstantBuffer(null, 1);
+            context.DSSetConstantBuffer(1, null);
+            context.VSSetConstantBuffer(1, null);
+            context.GSSetConstantBuffer(1, null);
             context.SetGraphicsPipeline(null);
         }
 

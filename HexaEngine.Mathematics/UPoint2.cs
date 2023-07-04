@@ -78,6 +78,26 @@
             return new UPoint2(left.X / right.X, left.Y / right.Y);
         }
 
+        public static UPoint2 operator +(UPoint2 left, uint right)
+        {
+            return new UPoint2(left.X + right, left.Y + right);
+        }
+
+        public static UPoint2 operator -(UPoint2 left, uint right)
+        {
+            return new UPoint2(left.X - right, left.Y - right);
+        }
+
+        public static UPoint2 operator *(UPoint2 left, uint right)
+        {
+            return new UPoint2(left.X * right, left.Y * right);
+        }
+
+        public static UPoint2 operator /(UPoint2 left, uint right)
+        {
+            return new UPoint2(left.X / right, left.Y / right);
+        }
+
         public static UPoint2 operator ++(UPoint2 point)
         {
             return new UPoint2(point.X++, point.Y++);

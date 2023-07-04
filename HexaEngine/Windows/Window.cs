@@ -15,6 +15,7 @@ namespace HexaEngine.Windows
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
+    using Microsoft.Win32.SafeHandles;
     using System;
     using System.Numerics;
     using CullingManager = CullingManager;
@@ -42,6 +43,7 @@ namespace HexaEngine.Windows
         private Task initTask;
         private bool rendererInitialized;
         private bool resize = false;
+
         private ImGuiRenderer? imGuiRenderer;
         private DebugDrawRenderer? debugDrawRenderer;
 

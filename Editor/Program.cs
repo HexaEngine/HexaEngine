@@ -1,7 +1,9 @@
 ﻿using HexaEngine;
 using HexaEngine.Core;
+using HexaEngine.Core.Effects;
 using HexaEngine.Core.Graphics;
 using HexaEngine.Windows;
+using System.Runtime.InteropServices;
 
 public class Program
 {

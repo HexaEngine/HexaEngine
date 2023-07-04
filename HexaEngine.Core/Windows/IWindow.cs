@@ -91,21 +91,21 @@
 
         event EventHandler<TakeFocusEventArgs>? TakeFocus;
 
-        void Capture();
+        void Show();
+
+        void Hide();
 
         void Close();
+
+        void Capture();
+
+        void ReleaseCapture();
 
         unsafe bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle);
 
         IGLContext OpenGLCreateContext();
 
         unsafe Window* GetWindow();
-
-        void ReleaseCapture();
-
-        void Show();
-
-        void ShowHidden();
 
         internal void ClearState();
     }

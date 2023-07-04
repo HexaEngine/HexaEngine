@@ -93,9 +93,9 @@ namespace HexaEngine.Filters
             for (int i = 0; i < 6; i++)
             {
                 context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
-                context.VSSetConstantBuffer(mvpBuffer, 0);
-                context.PSSetSampler(sampler, 0);
-                context.PSSetShaderResource(Source, 0);
+                context.VSSetConstantBuffer(0, mvpBuffer);
+                context.PSSetSampler(0, sampler);
+                context.PSSetShaderResource(0, Source);
                 Targets.ClearAndSetTarget(context, i);
                 context.SetViewport(Targets.Viewport);
                 cube.DrawAuto(context, pipeline);
@@ -113,9 +113,9 @@ namespace HexaEngine.Filters
             context.SetScissorRect(x, y, xsize + x, ysize + y);
             Targets.SetTarget(context, i);
             context.SetViewport(Targets.Viewport);
-            context.VSSetConstantBuffer(mvpBuffer, 0);
-            context.PSSetShaderResource(Source, 0);
-            context.PSSetSampler(sampler, 0);
+            context.VSSetConstantBuffer(0, mvpBuffer);
+            context.PSSetShaderResource(0, Source);
+            context.PSSetSampler(0, sampler);
             cube.DrawAuto(context, pipeline);
         }
 

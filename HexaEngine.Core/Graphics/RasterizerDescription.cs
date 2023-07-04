@@ -2,6 +2,7 @@
 {
     using System;
     using System.ComponentModel;
+    using System.Xml.Serialization;
 
     public struct RasterizerDescription : IEquatable<RasterizerDescription>
     {
@@ -9,33 +10,43 @@
         public const float DefaultDepthBiasClamp = unchecked((float)0.0F);
         public const float DefaultSlopeScaledDepthBias = unchecked((float)0.0F);
 
+        [XmlAttribute]
         [DefaultValue(FillMode.Solid)]
         public FillMode FillMode = FillMode.Solid;
 
+        [XmlAttribute]
         [DefaultValue(CullMode.Back)]
         public CullMode CullMode = CullMode.Back;
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool FrontCounterClockwise;
 
+        [XmlAttribute]
         [DefaultValue(DefaultDepthBias)]
         public int DepthBias;
 
+        [XmlAttribute]
         [DefaultValue(DefaultDepthBiasClamp)]
         public float DepthBiasClamp;
 
+        [XmlAttribute]
         [DefaultValue(DefaultSlopeScaledDepthBias)]
         public float SlopeScaledDepthBias;
 
+        [XmlAttribute]
         [DefaultValue(true)]
         public bool DepthClipEnable;
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool ScissorEnable;
 
+        [XmlAttribute]
         [DefaultValue(true)]
         public bool MultisampleEnable;
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool AntialiasedLineEnable;
 

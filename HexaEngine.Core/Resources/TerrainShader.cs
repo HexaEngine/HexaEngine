@@ -27,7 +27,7 @@ namespace HexaEngine.Core.Resources
             this.device = device;
             this.mesh = mesh;
             this.alphaBlend = alphaBlend;
-            this.macros = macros.Concat(mesh.GetShaderMacros()).ToArray();
+            this.macros = macros;
         }
 
         public MaterialShaderFlags Flags => flags;
@@ -45,7 +45,7 @@ namespace HexaEngine.Core.Resources
         private void Compile()
         {
             flags = 0;
-            var elements = mesh.GetInputElements();
+            var elements = Terrain.InputElements;
 
             bool twoSided = false;
 
@@ -136,7 +136,7 @@ namespace HexaEngine.Core.Resources
         private async Task CompileAsync()
         {
             flags = 0;
-            var elements = mesh.GetInputElements();
+            var elements = Terrain.InputElements;
 
             bool twoSided = false;
 
@@ -275,8 +275,8 @@ namespace HexaEngine.Core.Resources
             }
 
             context.SetGraphicsPipeline(pipeline);
-            context.DSSetConstantBuffer(camera, 1);
-            context.VSSetConstantBuffer(camera, 1);
+            context.DSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera);
             return true;
         }
 
@@ -308,8 +308,8 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            context.DSSetConstantBuffer(camera, 1);
-            context.VSSetConstantBuffer(camera, 1);
+            context.DSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera);
             context.SetGraphicsPipeline(depthOnly);
             return true;
         }
@@ -321,9 +321,9 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            context.DSSetConstantBuffer(light, 1);
-            context.VSSetConstantBuffer(light, 1);
-            context.GSSetConstantBuffer(light, 1);
+            context.DSSetConstantBuffer(1, light);
+            context.VSSetConstantBuffer(1, light);
+            context.GSSetConstantBuffer(1, light);
             switch (type)
             {
                 case ShadowType.Perspective:

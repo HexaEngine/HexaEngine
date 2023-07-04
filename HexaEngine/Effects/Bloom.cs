@@ -192,15 +192,15 @@ namespace HexaEngine.Effects
             {
                 if (i > 0)
                 {
-                    context.PSSetShaderResource(mipChainSRVs[i - 1], 0);
+                    context.PSSetShaderResource(0, mipChainSRVs[i - 1]);
                 }
                 else
                 {
-                    context.PSSetShaderResource(Source, 0);
+                    context.PSSetShaderResource(0, Source);
                 }
 
-                context.PSSetConstantBuffer(downsampleCB, 0);
-                context.PSSetSampler(sampler, 0);
+                context.PSSetConstantBuffer(0, downsampleCB);
+                context.PSSetSampler(0, sampler);
                 context.SetRenderTarget(mipChainRTVs[i], null);
                 context.SetViewport(mipChainRTVs[i].Viewport);
                 quad.DrawAuto(context, downsample);
@@ -210,9 +210,9 @@ namespace HexaEngine.Effects
             for (int i = mipChainRTVs.Length - 1; i > 0; i--)
             {
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
-                context.PSSetShaderResource(mipChainSRVs[i], 0);
-                context.PSSetConstantBuffer(upsampleCB, 0);
-                context.PSSetSampler(sampler, 0);
+                context.PSSetShaderResource(0, mipChainSRVs[i]);
+                context.PSSetConstantBuffer(0, upsampleCB);
+                context.PSSetSampler(0, sampler);
                 context.SetViewport(mipChainRTVs[i - 1].Viewport);
                 quad.DrawAuto(context, upsample);
             }

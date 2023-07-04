@@ -13,8 +13,6 @@
         private static Task? task;
         private static OpenProjectWindow projectWindow = new();
 
-        public static History History { get; } = new();
-
         internal static void Init(IGraphicsDevice device)
         {
             MainMenuBar.Init(device);

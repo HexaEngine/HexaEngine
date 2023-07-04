@@ -34,7 +34,7 @@
             }
             capacity = DefaultCapacity;
             items = Alloc<T>(DefaultCapacity);
-            Zero(items, DefaultCapacity * sizeof(T));
+            ZeroMemory(items, DefaultCapacity * sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, description);
             buffer.DebugName = dbgName;
             srv = device.CreateShaderResourceView(buffer);
@@ -56,7 +56,7 @@
             }
             capacity = (uint)initialCapacity;
             items = Alloc<T>(initialCapacity);
-            Zero(items, initialCapacity * sizeof(T));
+            ZeroMemory(items, initialCapacity * sizeof(T));
             buffer = device.CreateBuffer(items, (uint)initialCapacity, description);
             buffer.DebugName = dbgName;
             srv = device.CreateShaderResourceView(buffer);

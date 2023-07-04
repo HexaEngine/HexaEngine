@@ -539,7 +539,7 @@ namespace App
                 Components.Add(type);
             }
 
-            foreach (var type in AssemblyManager.GetAssignableTypes<IScript>(assembly))
+            foreach (var type in AssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
             {
                 Scripts.Add(type);
             }
@@ -561,7 +561,7 @@ namespace App
             }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            foreach (var type in AssemblyManager.GetAssignableTypes<IScript>(assembly))
+            foreach (var type in AssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
             {
                 Scripts.Add(type);
             }

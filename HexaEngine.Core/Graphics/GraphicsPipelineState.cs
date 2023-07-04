@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Numerics;
+    using System.Xml.Serialization;
 
     public struct GraphicsPipelineState : IEquatable<GraphicsPipelineState>
     {
@@ -11,14 +12,17 @@
         public DepthStencilDescription DepthStencil;
         public BlendDescription Blend;
 
+        [XmlAttribute]
         [DefaultValue(PrimitiveTopology.TriangleList)]
         public PrimitiveTopology Topology;
 
         public Vector4 BlendFactor;
 
+        [XmlAttribute]
         [DefaultValue(int.MaxValue)]
         public uint SampleMask;
 
+        [XmlAttribute]
         [DefaultValue(0)]
         public uint StencilRef;
 

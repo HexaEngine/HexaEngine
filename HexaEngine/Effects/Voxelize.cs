@@ -7,6 +7,7 @@
     using HexaEngine.Core.Meshes;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Mathematics;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -102,17 +103,21 @@
             for (int i = 0; i < lightView.ActiveCount; i++)
             {
                 var light = lightView.Active[i];
-                LightSBuffer lightData;
+                LightSBuffer lightData = default;
                 lightData.Active = light.IsEnabled ? 1 : 0;
                 lightData.Color = light.Color * light.Intensity;
                 lightData.Position = new(light.Position, 1);
                 lightData.Direction = new(light.Direction, 1);
                 lightData.Range = light.Range;
                 lightData.Type = (int)light.LightType;
-                lightData.InnerCosine = light.InnerCosine;
-                lightData.OuterCosine = light.OuterCosine;
-                lightData.CastsShadows = light.CastsShadows ? 1 : 0;
-                lightData.UseCascades = light is DirectionalLight directional && directional.CastsShadows ? 1 : 0;
+                if (light is Spotlight spotlight)
+                {
+                    lightData.OuterCosine = MathF.Cos((spotlight.ConeAngle / 2).ToRad());
+                    lightData.InnerCosine = MathF.Cos((MathUtil.Lerp(0, spotlight.ConeAngle, 1 - spotlight.Blend) / 2).ToRad());
+                }
+
+                lightData.CastsShadows = light.ShadowMapEnable ? 1 : 0;
+                lightData.UseCascades = light is DirectionalLight directional && directional.ShadowMapEnable ? 1 : 0;
                 lightData.Padd = 0;
                 lights.Add(lightData);
             }

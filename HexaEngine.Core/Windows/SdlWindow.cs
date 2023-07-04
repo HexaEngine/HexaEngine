@@ -24,7 +24,7 @@
 
     public unsafe class SdlWindow : IWindow, INativeWindow
     {
-        protected readonly Sdl Sdl = Sdl.GetApi();
+        protected readonly Sdl sdl = Silk.NET.SDL.Sdl.GetApi();
         private readonly ShownEventArgs shownEventArgs = new();
         private readonly HiddenEventArgs hiddenEventArgs = new();
         private readonly ExposedEventArgs exposedEventArgs = new();
@@ -71,6 +71,8 @@
             {
                 Kind = NativeWindowFlags.Sdl;
             }
+
+            PlatformConstruct();
         }
 
         private void PlatformConstruct()
@@ -95,12 +97,12 @@
                     break;
             }
 
-            window = Sdl.CreateWindow(ptr, x, y, width, height, (uint)flags);
-            WindowID = Sdl.GetWindowID(window);
+            window = sdl.CreateWindow(ptr, x, y, width, height, (uint)flags);
+            WindowID = sdl.GetWindowID(window);
 
             int w;
             int h;
-            Sdl.GetWindowSize(window, &w, &h);
+            sdl.GetWindowSize(window, &w, &h);
 
             Width = w;
             Height = h;
@@ -110,52 +112,45 @@
 
         public void Show()
         {
-            if (!created)
-            {
-                PlatformConstruct();
-            }
-
             Application.RegisterWindow((IRenderWindow)this);
-            Sdl.ShowWindow(window);
+            sdl.ShowWindow(window);
         }
 
-        public void ShowHidden()
+        public void Hide()
         {
-            if (!created)
-            {
-                PlatformConstruct();
-            }
+            sdl.HideWindow(window);
+            OnHidden(hiddenEventArgs);
         }
 
         public void Close()
         {
-            CloseEventArgs args = new();
-            OnClose(args);
+            closeEventArgs.Handled = false;
+            OnClose(closeEventArgs);
         }
 
         public void ReleaseCapture()
         {
-            Sdl.CaptureMouse(SdlBool.False);
+            sdl.CaptureMouse(SdlBool.False);
         }
 
         public void Capture()
         {
-            Sdl.CaptureMouse(SdlBool.True);
+            sdl.CaptureMouse(SdlBool.True);
         }
 
         public void Fullscreen(FullscreenMode mode)
         {
-            Sdl.SetWindowFullscreen(window, (uint)mode);
+            sdl.SetWindowFullscreen(window, (uint)mode);
         }
 
         public bool VulkanCreateSurface(VkHandle vkHandle, VkNonDispatchableHandle* vkNonDispatchableHandle)
         {
-            return Sdl.VulkanCreateSurface(window, vkHandle, vkNonDispatchableHandle) == SdlBool.True;
+            return sdl.VulkanCreateSurface(window, vkHandle, vkNonDispatchableHandle) == SdlBool.True;
         }
 
         public IGLContext OpenGLCreateContext()
         {
-            return new SdlContext(Sdl, window, null, (GLattr.ContextMajorVersion, 4), (GLattr.ContextMinorVersion, 5));
+            return new SdlContext(sdl, window, null, (GLattr.ContextMajorVersion, 4), (GLattr.ContextMinorVersion, 5));
         }
 
         public Window* GetWindow() => window;
@@ -168,7 +163,7 @@
             set
             {
                 title = value;
-                Sdl.SetWindowTitle(window, value);
+                sdl.SetWindowTitle(window, value);
             }
         }
 
@@ -178,7 +173,7 @@
             set
             {
                 x = value;
-                Sdl.SetWindowPosition(window, value, y);
+                sdl.SetWindowPosition(window, value, y);
             }
         }
 
@@ -188,7 +183,7 @@
             set
             {
                 y = value;
-                Sdl.SetWindowPosition(window, x, value);
+                sdl.SetWindowPosition(window, x, value);
             }
         }
 
@@ -200,7 +195,7 @@
                 resizedEventArgs.OldWidth = width;
                 resizedEventArgs.NewWidth = value;
                 width = value;
-                Sdl.SetWindowSize(window, value, height);
+                sdl.SetWindowSize(window, value, height);
                 Viewport = new(width, height);
                 OnResized(resizedEventArgs);
             }
@@ -214,7 +209,7 @@
                 resizedEventArgs.OldHeight = height;
                 resizedEventArgs.NewHeight = value;
                 height = value;
-                Sdl.SetWindowSize(window, width, value);
+                sdl.SetWindowSize(window, width, value);
                 Viewport = new(width, height);
                 OnResized(resizedEventArgs);
             }
@@ -233,19 +228,19 @@
                 switch (value)
                 {
                     case WindowState.Hidden:
-                        Sdl.HideWindow(window);
+                        sdl.HideWindow(window);
                         break;
 
                     case WindowState.Normal:
-                        Sdl.ShowWindow(window);
+                        sdl.ShowWindow(window);
                         break;
 
                     case WindowState.Minimized:
-                        Sdl.MinimizeWindow(window);
+                        sdl.MinimizeWindow(window);
                         break;
 
                     case WindowState.Maximized:
-                        Sdl.MaximizeWindow(window);
+                        sdl.MaximizeWindow(window);
                         break;
                 }
             }
@@ -257,7 +252,7 @@
             set
             {
                 lockCursor = value;
-                Sdl.SetRelativeMouseMode(value ? SdlBool.True : SdlBool.False);
+                sdl.SetRelativeMouseMode(value ? SdlBool.True : SdlBool.False);
             }
         }
 
@@ -267,7 +262,7 @@
             set
             {
                 resizable = value;
-                Sdl.SetWindowResizable(window, value ? SdlBool.True : SdlBool.False);
+                sdl.SetWindowResizable(window, value ? SdlBool.True : SdlBool.False);
             }
         }
 
@@ -277,7 +272,7 @@
             set
             {
                 bordered = value;
-                Sdl.SetWindowBordered(window, value ? SdlBool.True : SdlBool.False);
+                sdl.SetWindowBordered(window, value ? SdlBool.True : SdlBool.False);
             }
         }
 
@@ -300,8 +295,8 @@
             get
             {
                 SysWMInfo wmInfo;
-                Sdl.GetVersion(&wmInfo.Version);
-                Sdl.GetWindowWMInfo(window, &wmInfo);
+                sdl.GetVersion(&wmInfo.Version);
+                sdl.GetWindowWMInfo(window, &wmInfo);
                 return (wmInfo.Info.Win.Hwnd, wmInfo.Info.Win.HDC, wmInfo.Info.Win.HInstance);
             }
         }
@@ -312,7 +307,7 @@
 
         public nint? Glfw => throw new NotSupportedException();
 
-        nint? INativeWindow.Sdl => (nint)window;
+        public nint? Sdl => (nint)window;
 
         public nint? DXHandle => throw new NotSupportedException();
 
@@ -436,6 +431,10 @@
         protected virtual void OnClose(CloseEventArgs args)
         {
             Closing?.Invoke(this, args);
+            if (!args.Handled)
+            {
+                sdl.DestroyWindow(window);
+            }
         }
 
         protected virtual void OnTakeFocus(TakeFocusEventArgs args)
@@ -489,7 +488,7 @@
                         OnShown(shownEventArgs);
                         if (shownEventArgs.Handled)
                         {
-                            Sdl.HideWindow(window);
+                            sdl.HideWindow(window);
                         }
                     }
                     break;
@@ -504,7 +503,7 @@
                         OnHidden(hiddenEventArgs);
                         if (hiddenEventArgs.Handled)
                         {
-                            Sdl.ShowWindow(window);
+                            sdl.ShowWindow(window);
                         }
                     }
                     break;
@@ -529,7 +528,7 @@
                         OnMoved(movedEventArgs);
                         if (movedEventArgs.Handled)
                         {
-                            Sdl.SetWindowPosition(window, xold, yold);
+                            sdl.SetWindowPosition(window, xold, yold);
                         }
                     }
                     break;
@@ -549,13 +548,23 @@
                         OnResized(resizedEventArgs);
                         if (resizedEventArgs.Handled)
                         {
-                            Sdl.SetWindowSize(window, widthOld, heightOld);
+                            sdl.SetWindowSize(window, widthOld, heightOld);
                         }
                     }
                     break;
 
                 case WindowEventID.SizeChanged:
                     {
+                        int widthOld = width;
+                        int heightOld = height;
+                        width = evnt.Data1;
+                        height = evnt.Data2;
+                        Viewport = new(width, height);
+                        sizeChangedEventArgs.OldWidth = widthOld;
+                        sizeChangedEventArgs.OldHeight = heightOld;
+                        sizeChangedEventArgs.Width = evnt.Data1;
+                        sizeChangedEventArgs.Height = evnt.Data2;
+                        sizeChangedEventArgs.Handled = false;
                         OnSizeChanged(sizeChangedEventArgs);
                     }
                     break;
@@ -650,7 +659,7 @@
                         OnTakeFocus(takeFocusEventArgs);
                         if (!takeFocusEventArgs.Handled)
                         {
-                            Sdl.SetWindowInputFocus(window);
+                            sdl.SetWindowInputFocus(window);
                         }
                     }
                     break;
@@ -666,7 +675,7 @@
         internal void ProcessInputKeyboard(KeyboardEvent evnt)
         {
             KeyState state = (KeyState)evnt.State;
-            Key keyCode = (Key)Sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
+            Key keyCode = (Key)sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
             keyboardEventArgs.KeyState = state;
             keyboardEventArgs.KeyCode = keyCode;
             keyboardEventArgs.Scancode = evnt.Keysym.Scancode;
@@ -693,7 +702,7 @@
         {
             if (lockCursor)
             {
-                Sdl.WarpMouseInWindow(window, 0, 0);
+                sdl.WarpMouseInWindow(window, 0, 0);
             }
 
             mouseMotionEventArgs.X = evnt.X;

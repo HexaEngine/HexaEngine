@@ -67,7 +67,14 @@
 
             if (drawGrid)
             {
-                DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, 100, new Vector4(1, 1, 1, 0.2f));
+                if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
+                {
+                    DebugDraw.DrawGrid("Grid", Matrix4x4.Identity, 100, new Vector4(1, 1, 1, 0.2f));
+                }
+                else if (CameraManager.Dimension == CameraEditorDimension.Dim2D)
+                {
+                    DebugDraw.DrawGrid("Grid", MathUtil.RotationYawPitchRoll(0, float.Pi / 2, 0), 100, new Vector4(1, 1, 1, 0.2f));
+                }
             }
 
             if (drawLights)
@@ -93,11 +100,11 @@
                     }
                     if (light is Spotlight spotlight)
                     {
-                        DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.ShadowRange, false, Vector4.One);
+                        DebugDraw.DrawRay(light.Name, light.Transform.GlobalPosition, light.Transform.Forward * spotlight.Range, false, Vector4.One);
 
                         DebugDraw.DrawRing(light.Name + "0", light.Transform.GlobalPosition + light.Transform.Forward, spotlight.GetConeEllipse(1), Vector4.One);
-                        DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.ShadowRange, spotlight.GetConeEllipse(spotlight.ShadowRange), Vector4.One);
-                        DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.ShadowRange, spotlight.GetInnerConeEllipse(spotlight.ShadowRange), Vector4.One);
+                        DebugDraw.DrawRing(light.Name + "1", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.Range, spotlight.GetConeEllipse(spotlight.Range), Vector4.One);
+                        DebugDraw.DrawRing(light.Name + "2", light.Transform.GlobalPosition + light.Transform.Forward * spotlight.Range, spotlight.GetInnerConeEllipse(spotlight.Range), Vector4.One);
 
                         if (drawLightBounds)
                         {
@@ -205,7 +212,7 @@
                 GameObject? element = GameObject.Selected.First();
                 Camera? camera = CameraManager.Current;
                 ImGuizmo.Enable(true);
-                ImGuizmo.SetOrthographic(false);
+                ImGuizmo.SetOrthographic(CameraManager.Dimension == CameraEditorDimension.Dim2D);
                 if (camera == null)
                 {
                     return;
@@ -237,7 +244,7 @@
                     if (gimbalGrabbed)
                     {
                         var oldValue = gimbalBefore;
-                        Designer.History.Push(element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
+                        History.Default.Push(element.Transform, oldValue, transform, SetMatrix, RestoreMatrix);
                     }
                     gimbalGrabbed = false;
                     gimbalBefore = element.Transform.Local;

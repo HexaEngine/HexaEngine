@@ -1,10 +1,9 @@
 #include "common.hlsl"
-#include "../../camera.hlsl"
+#include "../camera.hlsl"
 
 Texture2D normalTx : register(t1);
 Texture2D<float> depthTx : register(t2);
 Texture2D inputTx : register(t3);
-
 
 struct VertexOut
 {
@@ -67,16 +66,16 @@ float4 main(VertexOut pin) : SV_TARGET
     float depth = depthTx.SampleLevel(linear_wrap_sampler, pin.Tex, 0.0f);
     float4 fragment_position = GetPositionVS(pin.Tex, depth);
     fragment_position.xyz /= fragment_position.w;
-    
+
     float3 view_direction = normalize(0.0f - fragment_position);
     uint3 dimensions;
     inputTx.GetDimensions(0, dimensions.x, dimensions.y, dimensions.z);
-    
+
     float2 inverse_size = 1.0f / float2(dimensions.xy);
-    
+
     const int SAMPLES = 4;
     float3 accum = 0.0f;
-    
+
     float r = Rand(pin.Tex);
     for (int i = 0; i < SAMPLES; i++)
     {

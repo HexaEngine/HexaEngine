@@ -6,7 +6,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Core.Resources;
 
-    public class TAA : IPostFx
+    public class TAA : IPostFx, IAntialiasing
     {
         private Quad quad;
         private IGraphicsPipeline pipeline;
@@ -98,11 +98,13 @@
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
-            context.PSSetShaderResources((void**)srvs, 3, 0);
-            context.PSSetSampler(sampler, 0);
+            context.PSSetShaderResources(0, 3, (void**)srvs);
+            context.PSSetSampler(0, sampler);
             quad.DrawAuto(context, pipeline);
-            context.ClearState();
-
+            context.PSSetSampler(0, null);
+            ZeroMemory(srvs, sizeof(nint) * 3);
+            context.PSSetShaderResources(0, 3, (void**)srvs);
+            context.SetRenderTarget(null, default);
             context.CopyResource(Previous.Value.Resource, InputTex);
         }
 

@@ -1,98 +1,51 @@
-﻿namespace HexaEngine.Scenes.Components.Renderer
+﻿namespace HexaEngine.Core.Meshes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Meshes;
-    using HexaEngine.Core.Resources;
-    using HexaEngine.Core.Scenes.Managers;
-    using System.Numerics;
 
     public class Skybox : IDisposable
     {
         private readonly IGraphicsDevice device;
-        private readonly Cube cube;
-        private IGraphicsPipeline pipeline;
-        private readonly ISamplerState anisotropicClampSampler;
+        private readonly ISamplerState samplerState;
+        private Texture2D? environment;
 
-        private readonly ConstantBuffer<CBWorld> worldBuffer;
-
-        private Texture2D environment;
-
-        private readonly bool loaded;
+        private bool loaded;
         private bool disposedValue;
 
         public Skybox(IGraphicsDevice device)
         {
             this.device = device;
-            cube = new(device);
-
-            anisotropicClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("AnisotropicClamp", SamplerDescription.AnisotropicClamp).Value;
-            worldBuffer = new(device, CpuAccessFlags.Write);
+            samplerState = device.CreateSamplerState(SamplerDescription.LinearWrap);
         }
+
+        public ISamplerState SamplerState => samplerState;
+
+        public Texture2D? Environment => environment;
+
+        public bool Loaded => loaded;
 
         public void Load(string environmentPath)
         {
-            pipeline = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "forward/skybox/vs.hlsl",
-                PixelShader = "forward/skybox/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone,
-            });
-
-            environment = new(device, new(environmentPath, TextureDimension.TextureCube, 0, Usage.Immutable));
+            environment = new(device, new TextureFileDescription(environmentPath, TextureDimension.TextureCube, 0, Usage.Immutable));
+            loaded = true;
         }
 
         public async Task LoadAsync(string environmentPath)
         {
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "forward/skybox/vs.hlsl",
-                PixelShader = "forward/skybox/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Rasterizer = RasterizerDescription.CullNone,
-            });
-
-            environment = new(device, new(environmentPath, TextureDimension.TextureCube, 0, Usage.Immutable));
+            environment = await Texture2D.CreateTextureAsync(device, new(environmentPath, TextureDimension.TextureCube));
+            loaded = true;
         }
 
         public void Unload()
         {
             environment.Dispose();
-        }
-
-        public void Update(IGraphicsContext context)
-        {
-            var camera = CameraManager.Current;
-            if (camera == null)
-            {
-                return;
-            }
-
-            worldBuffer.Update(context, new(Matrix4x4.CreateScale(camera.Transform.Far / 2) * Matrix4x4.CreateTranslation(camera.Transform.Position)));
-        }
-
-        public void Draw(IGraphicsContext context, IBuffer camera)
-        {
-            if (!loaded)
-                return;
-
-            context.VSSetConstantBuffer(worldBuffer, 0);
-            context.VSSetConstantBuffer(camera, 1);
-            context.PSSetShaderResource(environment.SRV, 0);
-            context.PSSetSampler(anisotropicClampSampler, 0);
-            cube.DrawAuto(context, pipeline);
+            loaded = false;
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
+                Unload();
                 disposedValue = true;
             }
         }

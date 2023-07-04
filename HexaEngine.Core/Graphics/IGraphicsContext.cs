@@ -13,6 +13,8 @@
 
         void CopyResource(IResource dst, IResource src);
 
+        void CopyStructureCount(IBuffer dst, uint alignedByteOffset, IUnorderedAccessView uav);
+
         unsafe void Write(IBuffer buffer, void* value, int size);
 
         unsafe void Write(IBuffer buffer, void* value, int size, Map flags);
@@ -41,89 +43,77 @@
 
         public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
 
-        public void VSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+        public void VSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void HSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+        public void HSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void DSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+        public void DSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void GSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+        public void GSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void PSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+        public void PSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void CSSetConstantBuffer(IBuffer? constantBuffer, int slot);
+        public void CSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        unsafe void VSSetConstantBuffers(void** constantBuffers, uint count, int slot);
+        unsafe void VSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        unsafe void HSSetConstantBuffers(void** constantBuffers, uint count, int slot);
+        unsafe void HSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        unsafe void DSSetConstantBuffers(void** constantBuffers, uint count, int slot);
+        unsafe void DSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        unsafe void GSSetConstantBuffers(void** constantBuffers, uint count, int slot);
+        unsafe void GSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        unsafe void PSSetConstantBuffers(void** constantBuffers, uint count, int slot);
+        unsafe void PSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        unsafe void CSSetConstantBuffers(void** constantBuffers, uint count, int slot);
+        unsafe void CSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        public void VSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+        public void VSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        unsafe void VSSetShaderResource(void* shaderResourceView, int slot);
+        public void HSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void HSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+        public void DSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        unsafe void HSSetShaderResource(void* shaderResourceView, int slot);
+        public void GSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void DSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+        public void PSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        unsafe void DSSetShaderResource(void* shaderResourceView, int slot);
+        public void CSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void GSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+        unsafe void VSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
-        unsafe void GSSetShaderResource(void* shaderResourceView, int slot);
+        unsafe void HSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
-        public void PSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+        unsafe void DSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
-        public unsafe void PSSetShaderResource(void* shaderResourceView, int slot);
+        unsafe void GSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
-        unsafe void CSSetShaderResource(void* shaderResourceView, int slot);
+        unsafe void PSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
-        public void CSSetShaderResource(IShaderResourceView? shaderResourceView, int slot);
+        unsafe void CSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
-        unsafe void VSSetShaderResources(void** shaderResourceViews, uint count, int slot);
+        void VSSetSampler(uint slot, ISamplerState? sampler);
 
-        unsafe void HSSetShaderResources(void** shaderResourceViews, uint count, int slot);
+        void HSSetSampler(uint slot, ISamplerState? sampler);
 
-        unsafe void DSSetShaderResources(void** shaderResourceViews, uint count, int slot);
+        void DSSetSampler(uint slot, ISamplerState? sampler);
 
-        unsafe void GSSetShaderResources(void** shaderResourceViews, uint count, int slot);
+        void GSSetSampler(uint slot, ISamplerState? sampler);
 
-        unsafe void PSSetShaderResources(void** shaderResourceViews, uint count, int slot);
+        void PSSetSampler(uint slot, ISamplerState? sampler);
 
-        unsafe void CSSetShaderResources(void** shaderResourceViews, uint count, int slot);
+        void CSSetSampler(uint slot, ISamplerState? sampler);
 
-        void VSSetSampler(ISamplerState? sampler, int slot);
+        unsafe void VSSetSamplers(uint slot, uint count, void** samplers);
 
-        void HSSetSampler(ISamplerState? sampler, int slot);
+        unsafe void HSSetSamplers(uint slot, uint count, void** samplers);
 
-        void DSSetSampler(ISamplerState? sampler, int slot);
+        unsafe void DSSetSamplers(uint slot, uint count, void** samplers);
 
-        void GSSetSampler(ISamplerState? sampler, int slot);
+        unsafe void GSSetSamplers(uint slot, uint count, void** samplers);
 
-        void PSSetSampler(ISamplerState? sampler, int slot);
+        unsafe void PSSetSamplers(uint slot, uint count, void** samplers);
 
-        void CSSetSampler(ISamplerState? sampler, int slot);
-
-        unsafe void VSSetSamplers(void** samplers, uint count, int slot);
-
-        unsafe void HSSetSamplers(void** samplers, uint count, int slot);
-
-        unsafe void DSSetSamplers(void** samplers, uint count, int slot);
-
-        unsafe void GSSetSamplers(void** samplers, uint count, int slot);
-
-        unsafe void PSSetSamplers(void** samplers, uint count, int slot);
-
-        unsafe void CSSetSamplers(void** samplers, uint count, int slot);
+        unsafe void CSSetSamplers(uint slot, uint count, void** samplers);
 
         public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
 
@@ -136,6 +126,8 @@
         void ClearState();
 
         void SetViewport(Viewport viewport);
+
+        unsafe void SetViewports(uint count, Viewport* viewports);
 
         void SetPrimitiveTopology(PrimitiveTopology topology);
 
@@ -171,17 +163,25 @@
 
         void UpdateSubresource(IResource resource, int destSubresource, MappedSubresource subresource);
 
-        unsafe void CSSetUnorderedAccessViews(uint offset, void** views, uint count, int uavInitialCounts = -1);
+        unsafe void CSSetUnorderedAccessViews(uint offset, uint count, void** views, uint* uavInitialCounts);
 
-        unsafe void CSSetUnorderedAccessViews(void** views, uint count, int uavInitialCounts = -1);
+        unsafe void CSSetUnorderedAccessViews(uint count, void** views, uint* uavInitialCounts);
 
-        unsafe void CSSetUnorderedAccessView(void* view, uint offset, int uavInitialCounts = -1);
+        unsafe void CSSetUnorderedAccessView(uint offset, void* view, uint uavInitialCounts = unchecked((uint)-1));
 
-        unsafe void SetRenderTargets(void** views, uint count, IDepthStencilView? depthStencilView);
+        unsafe void CSSetUnorderedAccessView(void* view, uint uavInitialCounts = unchecked((uint)-1)) => CSSetUnorderedAccessView(0, view, uavInitialCounts);
 
-        unsafe void ClearRenderTargetViews(void** rtvs, uint count, Vector4 value);
+        unsafe void SetRenderTargets(uint count, void** views, IDepthStencilView? depthStencilView);
+
+        unsafe void ClearRenderTargetViews(uint count, void** rtvs, Vector4 value);
 
         void ClearUnorderedAccessViewUint(IUnorderedAccessView uav, uint r, uint g, uint b, uint a);
+
+        void ClearView(IRenderTargetView rtv, Vector4 color, Rect rect);
+
+        void ClearView(IDepthStencilView dsv, Vector4 color, Rect rect);
+
+        void ClearView(IUnorderedAccessView uav, Vector4 color, Rect rect);
     }
 
     public interface IQuery : IDeviceChild

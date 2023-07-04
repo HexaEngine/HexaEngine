@@ -35,7 +35,7 @@
             if (TransformEdit("Transform", ref translation, ref rotation, ref scale))
             {
                 var newMatrix = Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(rotation) * Matrix4x4.CreateTranslation(translation); ;
-                Designer.History.Do(selected, selected.Transform, newMatrix, SetMatrix, RestoreMatrix);
+                History.Default.Do(selected, selected.Transform, newMatrix, SetMatrix, RestoreMatrix);
             }
             var flagString = selected.Flags.ToString();
             ImGui.InputText("Flags", ref flagString, 256, ImGuiInputTextFlags.ReadOnly);

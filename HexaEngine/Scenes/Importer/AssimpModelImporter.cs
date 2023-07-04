@@ -23,7 +23,7 @@
     using AssimpScene = Silk.NET.Assimp.Scene;
     using BlendMode = Silk.NET.Assimp.BlendMode;
     using MaterialProperty = Core.IO.Materials.MaterialProperty;
-    using Node = HexaEngine.Core.IO.Meshes.Node;
+    using Node = Core.IO.Meshes.Node;
     using TextureFlags = Silk.NET.Assimp.TextureFlags;
     using TextureMapMode = Silk.NET.Assimp.TextureMapMode;
     using TextureOp = Silk.NET.Assimp.TextureOp;

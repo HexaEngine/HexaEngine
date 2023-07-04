@@ -54,7 +54,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 local = (byte*)Alloc(rowPitch * height);
-                Zero(local, rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
             }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
@@ -112,7 +112,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 local = (byte*)Alloc(rowPitch * height);
-                Zero(local, rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
             }
 
             texture = device.CreateTexture2D(description);
@@ -129,6 +129,126 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+        }
+
+        public Texture2D(IGraphicsDevice device, Texture2DDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            format = description.Format;
+            width = description.Width;
+            height = description.Height;
+            mipLevels = description.MipLevels;
+            arraySize = description.ArraySize;
+            cpuAccessFlags = description.CPUAccessFlags;
+            gpuAccessFlags = GpuAccessFlags.None;
+            miscFlag = description.MiscFlags;
+            this.description = description;
+
+            FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                local = (byte*)Alloc(rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
+            }
+
+            texture = device.CreateTexture2D(description);
+            texture.DebugName = dbgName;
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                srv = device.CreateShaderResourceView(texture);
+                srv.DebugName = dbgName + ".SRV";
+            }
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv.DebugName = dbgName + ".RTV";
+            }
+        }
+
+        public Texture2D(IGraphicsDevice device, Texture2DDescription description, SubresourceData[] initialData, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            format = description.Format;
+            width = description.Width;
+            height = description.Height;
+            mipLevels = description.MipLevels;
+            arraySize = description.ArraySize;
+            cpuAccessFlags = description.CPUAccessFlags;
+            gpuAccessFlags = GpuAccessFlags.None;
+            miscFlag = description.MiscFlags;
+            this.description = description;
+
+            FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                local = (byte*)Alloc(rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
+            }
+
+            texture = device.CreateTexture2D(description, initialData);
+            texture.DebugName = dbgName;
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                srv = device.CreateShaderResourceView(texture);
+                srv.DebugName = dbgName + ".SRV";
+            }
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv.DebugName = dbgName + ".RTV";
+            }
+        }
+
+        public Texture2D(IGraphicsDevice device, Texture2DDescription description, SubresourceData initialData, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            format = description.Format;
+            width = description.Width;
+            height = description.Height;
+            mipLevels = description.MipLevels;
+            arraySize = description.ArraySize;
+            cpuAccessFlags = description.CPUAccessFlags;
+            gpuAccessFlags = GpuAccessFlags.None;
+            miscFlag = description.MiscFlags;
+            this.description = description;
+
+            FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                local = (byte*)Alloc(rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
+            }
+
+            texture = device.CreateTexture2D(description, new SubresourceData[] { initialData });
+            texture.DebugName = dbgName;
+
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                srv = device.CreateShaderResourceView(texture);
+                srv.DebugName = dbgName + ".SRV";
+            }
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv.DebugName = dbgName + ".RTV";
+            }
+        }
+
+        public static Task<Texture2D> CreateTextureAsync(IGraphicsDevice device, TextureFileDescription description)
+        {
+            return Task.Factory.StartNew((object? state) =>
+            {
+                var data = ((IGraphicsDevice, TextureFileDescription))state;
+                return new Texture2D(data.Item1, data.Item2);
+            }, (device, description));
         }
 
         public ResourceDimension Dimension => ResourceDimension.Texture2D;
@@ -327,7 +447,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 local = (byte*)Alloc(rowPitch * height);
-                Zero(local, rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
             }
 
             texture = device.CreateTexture2D(description);

@@ -47,7 +47,7 @@
             buffer = device.CreateBuffer(description);
         }
 
-        public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint[] indices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(IGraphicsDevice device, uint[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
             dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
@@ -79,7 +79,7 @@
             buffer = device.CreateBuffer(items, capacity, description);
         }
 
-        public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint capacity, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public IndexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
             dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";

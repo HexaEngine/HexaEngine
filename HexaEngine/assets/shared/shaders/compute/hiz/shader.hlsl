@@ -14,7 +14,7 @@ void main(uint3 threadId : SV_DispatchThreadID)
     if (all(threadId.xy < texelSize.xy))
     {
         float4 depths = input.Gather(samplerPoint, (threadId.xy + 0.5) / texelSize);
-        float gatheredTexelMins = max(max(depths.x, depths.y), max(depths.z, depths.w));
+        float gatheredTexelMins = min(min(depths.x, depths.y), min(depths.z, depths.w));
         output[threadId.xy] = float4(gatheredTexelMins, gatheredTexelMins, gatheredTexelMins, gatheredTexelMins);
     }
 }

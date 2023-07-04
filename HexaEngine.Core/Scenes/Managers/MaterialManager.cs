@@ -22,6 +22,14 @@ namespace HexaEngine.Core.Scenes.Managers
 
         public event Action<MaterialData, string, string>? Renamed;
 
+        public MaterialLibrary GetMaterialLibraryForm(MaterialData materialData)
+        {
+            lock (lockObject)
+            {
+                return matToLib[materialData];
+            }
+        }
+
         public string GetFreeName(string name)
         {
             if (!Exists(name))

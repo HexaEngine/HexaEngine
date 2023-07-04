@@ -10,7 +10,7 @@
     using Newtonsoft.Json;
     using System.Numerics;
 
-    [EditorNode<DirectionalLight>("Directional Light")]
+    [EditorGameObject<DirectionalLight>("Directional Light")]
     public class DirectionalLight : Light
     {
         private static ulong instances;
@@ -18,6 +18,8 @@
 
         private DepthStencil? csmDepthBuffer;
         public new CameraTransform Transform = new();
+
+        public const int ShadowMapSize = 4096;
 
         [JsonIgnore]
         public BoundingFrustum[] ShadowFrustra = new BoundingFrustum[16];
@@ -53,7 +55,7 @@
                 return;
             }
 
-            csmDepthBuffer = new(device, 4096, 4096, 3, Format.D32Float);
+            csmDepthBuffer = new(device, ShadowMapSize, ShadowMapSize, 3, Format.D32Float);
             if (Interlocked.Increment(ref instances) == 1)
             {
                 csmBuffer = new(device, 16, CpuAccessFlags.Write);
@@ -77,7 +79,7 @@
             }
         }
 
-        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowDirectionalLightData> buffer, Camera camera)
+        public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, Camera camera)
         {
             if (csmDepthBuffer == null)
             {
@@ -86,10 +88,8 @@
 #nullable disable
             var data = buffer.Local + QueueIndex;
 
-            data->Data.Color = color;
-            data->Data.Direction = Transform.Forward;
-            Matrix4x4* views = data->GetViews();
-            float* cascades = data->GetCascades();
+            Matrix4x4* views = ShadowData.GetViews(data);
+            float* cascades = ShadowData.GetCascades(data);
 
             var mtxs = CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, ShadowFrustra);
             context.Write(csmBuffer.Buffer, mtxs, sizeof(Matrix4x4) * 16);

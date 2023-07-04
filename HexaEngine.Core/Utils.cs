@@ -2,6 +2,8 @@
 {
     using HexaEngine.Core.Unsafes;
     using System;
+    using System.Collections.Concurrent;
+    using System.Drawing;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -312,9 +314,9 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
-        public static void Zero<T>(T* pointer) where T : unmanaged
+        public static void ZeroMemory<T>(T* pointer) where T : unmanaged
         {
-            Zero(pointer, (uint)sizeof(T));
+            ZeroMemory(pointer, (uint)sizeof(T));
         }
 
         /// <summary>
@@ -325,7 +327,7 @@
         /// <param name="length">The length.</param>
         public static void ZeroRange<T>(T* pointer, uint length) where T : unmanaged
         {
-            Zero(pointer, (uint)sizeof(T) * length);
+            ZeroMemory(pointer, (uint)sizeof(T) * length);
         }
 
         /// <summary>
@@ -333,7 +335,7 @@
         /// </summary>
         /// <param name="pointer">The pointer.</param>
         /// <param name="size">The size.</param>
-        public static void Zero(void* pointer, uint size)
+        public static void ZeroMemory(void* pointer, uint size)
         {
             new Span<byte>(pointer, (int)size).Clear();
         }
@@ -343,7 +345,7 @@
         /// </summary>
         /// <param name="pointer">The pointer.</param>
         /// <param name="size">The size.</param>
-        public static void Zero(void* pointer, int size)
+        public static void ZeroMemory(void* pointer, int size)
         {
             new Span<byte>(pointer, size).Clear();
         }
@@ -353,7 +355,7 @@
         /// </summary>
         /// <param name="pointer">The pointer.</param>
         /// <param name="size">The size.</param>
-        public static void Zero(void* pointer, nint size)
+        public static void ZeroMemory(void* pointer, nint size)
         {
             byte* pointerCopy = (byte*)pointer;
             for (nint i = 0; i < size; i++)
@@ -626,6 +628,17 @@
         }
 
         /// <summary>
+        /// Allocates an pointer array and zeros it.
+        /// </summary>
+        /// <param name="length">The length.</param>
+        public static void** AllocArrayAndZero(uint length)
+        {
+            var result = AllocArray(length);
+            ZeroMemory(result, (int)(sizeof(nint) * length));
+            return result;
+        }
+
+        /// <summary>
         /// Frees the specified pointer. And automatically calls <see cref="IFreeable.Release"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -806,6 +819,81 @@
         public static void Memset(void* ptr, byte value, int length)
         {
             new Span<byte>(ptr, length).Fill(value);
+        }
+    }
+
+    public static unsafe class ArrayUtils
+    {
+        public static void Add<T>(ref T[] array, T value)
+        {
+            Array.Resize(ref array, array.Length + 1);
+            array[^1] = value;
+        }
+
+        public static void Remove<T>(ref T[] array, T value)
+        {
+            int index = Array.IndexOf(array, value);
+            var count = array.Length - index;
+            Buffer.BlockCopy(array, index + 1, array, index, count);
+            Array.Resize(ref array, array.Length - 1);
+        }
+
+        public static bool AddUnique<T>(this IList<T> list, T t)
+        {
+            if (list.Contains(t))
+            {
+                return false;
+            }
+
+            list.Add(t);
+
+            return true;
+        }
+
+        public static int IndexOf<T>(T* ptr, T* item, int count) where T : unmanaged
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (&ptr[i] == item)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }
+
+    public class ListPool<T>
+    {
+        private readonly ConcurrentStack<List<T>> pool = new();
+
+        public static ListPool<T> Shared { get; } = new();
+
+        public List<T> Rent()
+        {
+            if (pool.IsEmpty)
+            {
+                return new();
+            }
+            else
+            {
+                if (pool.TryPop(out var list))
+                {
+                    return list;
+                }
+                return new();
+            }
+        }
+
+        public void Return(List<T> list)
+        {
+            list.Clear();
+            pool.Push(list);
+        }
+
+        public void Clear()
+        {
+            pool.Clear();
         }
     }
 }

@@ -2,10 +2,8 @@
 
 namespace HexaEngine.Editor.MeshEditor.Dialogs
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes.Importer;
     using ImGuiNET;
     using Silk.NET.Assimp;

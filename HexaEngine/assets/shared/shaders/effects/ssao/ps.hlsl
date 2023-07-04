@@ -11,13 +11,15 @@ cbuffer SSAOParams
 {
     float TAP_SIZE = 0.0002;
     uint NUM_TAPS = 16;
-    float THRESHOLD0 = 0.1;
-    float SCALE = 1.0;
-    float2 TARGET_SIZE;
+    float POWER;
+    float2 NoiseScale;
 };
 
-Texture2D<float> depthTexture : register(t0);
-Texture2D normalTexture : register(t1);
+#define BIAS 0.01f
+
+Texture2D<float> depthTex : register(t0);
+Texture2D normalTex : register(t1);
+Texture2D noiseTex : register(t2);
 
 SamplerState samplerState;
 
@@ -41,52 +43,40 @@ static const float3 taps[16] =
 	float3(0.852626, -0.061007, -0.144475)
 };
 
-#define TAP_SIZE 0.0002
-#define NUM_TAPS 16
-#define THRESHOLD 0.1
-#define SCALE 1.0
-
-float3 hash3(float2 p) {
-	float3 q = float3(dot(p, float2(127.1, 311.7)), dot(p, float2(269.5, 183.3)), dot(p, float2(419.2, 371.9)));
-	return frac(sin(q) * 43758.5453);
-}
-
 float4 main(VSOut vs) : SV_Target
 {
-	float3 random = hash3(vs.Tex * float2(1920 / 4, 1080 / 4));
-	// reconstruct the view space position from the depth map
-    float start_Z = depthTexture.Sample(samplerState, vs.Tex);
-	float start_Y = 1.0 - vs.Tex.y; // texture coordinates for D3D have origin in top left, but in camera space origin is in bottom left
-	float2 start_Pos = float2(vs.Tex.x, start_Y);
-	float2 ndc_Pos = (2.0 * start_Pos) - 1.0;
-	float4 unproject = mul(float4(ndc_Pos.x, ndc_Pos.y, start_Z, 1.0), projInv);
-	float3 viewPos = unproject.xyz / unproject.w;
-    float3 viewNorm = mul(UnpackNormal(normalTexture.Sample(samplerState, vs.Tex).xyz), (float3x3)view);
+    float3 random = noiseTex.Sample(samplerState, vs.Tex * NoiseScale);
 
-	// WORKNOTE: start_Z was a huge negative value at one point because we had a D16_UNORM depth target
-	// but we set the shader resource view format to R16_FLOAT instead of R16_UNORM
+    float depth = depthTex.Sample(samplerState, vs.Tex);
+	
+    float3 position = GetPositionVS(vs.Tex, depth);
+	
+    float3 normal = mul(UnpackNormal(normalTex.Sample(samplerState, vs.Tex).xyz), (float3x3)view);
+	
+    float3 tangent = normalize(random - normal * dot(random, normal));
+    float3 bitangent = cross(normal, tangent);
+    float3x3 TBN = float3x3(tangent, bitangent, normal);
 
 	float total = 0.0;
 	for (uint i = 0; i < NUM_TAPS; i++)
 	{
-		float3 offset = TAP_SIZE * taps[i] * random;
-		float2 offTex = vs.Tex + float2(offset.x, -offset.y);
+        float3 sampleDir = mul(taps[i].xyz, TBN);
+        float3 samplePos = position + sampleDir * TAP_SIZE;
+		
+        float4 offset = float4(samplePos, 1.0);
+        offset = mul(offset, proj);
+		
+        offset.xy = ((offset.xy / offset.w) * float2(1.0f, -1.0f)) * 0.5f + 0.5f;
+		
+        float sampleDepth = depthTex.Sample(samplerState, offset.xy);
+		
+        sampleDepth = GetPositionVS(offset.xy, sampleDepth).z;
 
-        float off_start_Z = depthTexture.Sample(samplerState, offTex);
-		float2 off_start_Pos = float2(offTex.x, start_Y + offset.y);
-		float2 off_ndc_Pos = (2.0 * off_start_Pos) - 1.0;
-		float4 off_unproject = mul(float4(off_ndc_Pos.x, off_ndc_Pos.y, off_start_Z, 1.0), projInv);
-		float3 off_viewPos = off_unproject.xyz / off_unproject.w;
-
-		float3 diff = off_viewPos.xyz - viewPos.xyz;
-		float distance = length(diff);
-		float3 diffnorm = normalize(diff);
-		float dotx = diffnorm.x * viewNorm.x;
-
-		float occlusion = max(0.0, dot(viewNorm, diffnorm)); // * SCALE / (1.0 + distance);
-		total += (1.0 - occlusion);
-	}
+        float rangeCheck = smoothstep(0.0, 1.0, TAP_SIZE / abs(position.z - sampleDepth));
+        total += (sampleDepth >= samplePos.z + BIAS ? 1.0 : 0.0) * rangeCheck;
+    }
 
 	total /= NUM_TAPS;
-	return float4(total, total, total, 1.0);
+	
+    return float4(pow(total, POWER).xxx, 1.0);
 }

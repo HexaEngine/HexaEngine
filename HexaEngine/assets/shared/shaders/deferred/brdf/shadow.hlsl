@@ -1,5 +1,4 @@
 #include "../../gbuffer.hlsl"
-#include "../../brdf2.hlsl"
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
 #include "../../common.hlsl"
@@ -10,12 +9,9 @@ Texture2D GBufferB : register(t1);
 Texture2D GBufferC : register(t2);
 Texture2D GBufferD : register(t3);
 Texture2D<float> Depth : register(t4);
-Texture2D Dither : register(t5);
-Texture2D ssao : register(t8);
-
-StructuredBuffer<DirectionalLightSD> directionalLights : register(t9);
-StructuredBuffer<PointLightSD> pointLights : register(t10);
-StructuredBuffer<SpotlightSD> spotlights : register(t11);
+Texture2D ssao : register(t5);
+StructuredBuffer<Light> lights : register(t6);
+StructuredBuffer<ShadowData> shadowData : register(t7);
 
 Texture2DArray depthCSM : register(t12);
 TextureCube depthOSM[32] : register(t13);
@@ -31,7 +27,7 @@ cbuffer constants : register(b0)
     uint directionalLightCount;
     uint pointLightCount;
     uint spotlightCount;
-    uint PaddLight;
+    uint lightCount;
 };
 
 struct VSOut
@@ -63,10 +59,10 @@ float SSCS(float3 position, float2 uv, float3 direction)
 
     // Compute ray step
     float3 ray_step = ray_dir * SSS_STEP_LENGTH;
-    
+
     //float offset = InterleavedGradientNoise(screen_dim * uv) * 2.0f - 1.0f;
     //ray_pos += ray_step * offset;
-	
+
     // Ray march towards the light
     float occlusion = 0.0;
     float2 ray_uv = 0.0f;
@@ -101,19 +97,14 @@ float SSCS(float3 position, float2 uv, float3 direction)
     return 1.0f - occlusion;
 }
 
-float ShadowCalculation(SpotlightSD light, float3 fragPos, Texture2D depthTex, SamplerComparisonState state)
+float ShadowFactorSpotlight(ShadowData data, float3 position, Texture2D depthTex, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowUVD(fragPos, light.view);
-    
+    float3 uvd = GetShadowUVD(position, data.views[0]);
+
 #if HARD_SHADOWS_SPOTLIGHTS
-    
     return CalcShadowFactor_Basic(state, depthTex, uvd);
 #else
-    
-    float w, h;
-    depthTex.GetDimensions(w, h);
-    
-    return CalcShadowFactor_PCF3x3(state, depthTex, uvd, w, 1);
+    return CalcShadowFactor_PCF3x3(state, depthTex, uvd, data.size, data.softness);
 #endif
 }
 
@@ -127,19 +118,19 @@ static const float3 gridSamplingDisk[20] =
 	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
-float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCube depthTex, SamplerComparisonState state)
+float ShadowFactorPointLight(Light light, float3 position, float3 V, TextureCube depthTex, SamplerComparisonState state)
 {
-    float3 light_to_pixelWS = fragPos - light.position.xyz;
-    float depthValue = length(light_to_pixelWS) / light.far;
-    
+    float3 light_to_pixelWS = position - light.position.xyz;
+    float depthValue = length(light_to_pixelWS) / light.range;
+
 #if HARD_SHADOWS_POINTLIGHTS
     return depthTex.SampleCmpLevelZero(state, normalize(light_to_pixelWS.xyz), depthValue);
 #else
 
     float percentLit = 0.0f;
-    
+
     float viewDistance = length(V);
-    float diskRadius = (1.0 + (viewDistance / light.far)) / 25.0;
+    float diskRadius = (1.0 + (viewDistance / light.range)) / 25.0;
 
     for (int i = 0; i < 20; ++i)
     {
@@ -150,22 +141,28 @@ float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCub
 #endif
 }
 
-float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, Texture2DArray depthTex, SamplerComparisonState state)
+float ShadowFactorDirectionalLight(ShadowData data, float3 position, Texture2D depthTex, SamplerComparisonState state)
 {
-    float cascadePlaneDistances[16] = (float[16]) light.cascades;
-    float farPlane = cam_far;
+    float3 uvd = GetShadowUVD(position, data.views[0]);
 
-    float w;
-    float h;
-    uint cascadeCount;
-    depthTex.GetDimensions(w, h, cascadeCount);
+#if HARD_SHADOWS_DIRECTIONAL
+    return CalcShadowFactor_Basic(state, depthTex, uvd);
+#else
+    return CalcShadowFactor_PCF3x3(state, depthTex, uvd, data.size, 1);
+#endif
+}
+
+float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4x4 camView, float3 position, Texture2DArray depthTex, SamplerComparisonState state)
+{
+    float cascadePlaneDistances[8] = (float[8]) data.cascades;
+    float farPlane = camFar;
 
 	// select cascade layer
-    float4 fragPosViewSpace = mul(float4(fragPosWorldSpace, 1.0), view);
+    float4 fragPosViewSpace = mul(float4(position, 1.0), camView);
     float depthValue = abs(fragPosViewSpace.z);
     float cascadePlaneDistance;
-    uint layer = cascadeCount;
-    for (uint i = 0; i < cascadeCount; ++i)
+    uint layer = data.cascadeCount;
+    for (uint i = 0; i < data.cascadeCount; ++i)
     {
         if (depthValue < cascadePlaneDistances[i])
         {
@@ -174,13 +171,13 @@ float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, Text
             break;
         }
     }
-     
-    float3 uvd = GetShadowUVD(fragPosWorldSpace, light.views[layer]);
 
-#if HARD_SHADOWS_CASCADED
-    return CSMCalcShadowFactor_Basic(state, depthTex, layer, uvd, w, 1);
+    float3 uvd = GetShadowUVD(position, data.views[layer]);
+
+#if HARD_SHADOWS_DIRECTIONAL_CASCADED
+    return CSMCalcShadowFactor_Basic(state, depthTex, layer, uvd, data.size, data.softness);
 #else
-    return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, w, 1);
+    return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
 #endif
 }
 
@@ -197,55 +194,28 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
 
     float3 Lo = float3(0, 0, 0);
 
-	[unroll(1)]
-    for (uint y = 0; y < directionalLightCount; y++)
+    float shadowFactor;
+    uint3 shadowMapIndex = 0;
+
+    [fastopt]
+    for (uint i = 0; i < lightCount; i++)
     {
-        DirectionalLightSD light = directionalLights[y];
-        float shadow = ShadowCalculation(light, position, depthCSM, shadowSampler);
-        float3 L = normalize(-light.dir);
-        float3 radiance = light.color.rgb;
-        if (shadow == 0)
-            continue;
-        Lo += shadow * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
-    }
-
-	[unroll(32)]
-    for (uint zd = 0; zd < pointLightCount; zd++)
-    {
-        PointLightSD light = pointLights[zd];
-        float3 LN = light.position - position;
-        float distance = length(LN);
-        float3 L = normalize(LN);
-
-        float attenuation = 1.0 / (distance * distance);
-        float3 radiance = light.color.rgb * attenuation;
-        float shadow = ShadowCalculation(light, position, V, depthOSM[zd], shadowSampler);
-        if (shadow == 0)
-            continue;
-        Lo += shadow * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
-    }
-
-	[unroll(32)]
-    for (uint wd = 0; wd < spotlightCount; wd++)
-    {
-        SpotlightSD light = spotlights[wd];
-        float3 LN = light.pos - position;
-        float3 L = normalize(LN);
-
-        float theta = dot(L, normalize(-light.dir));
-        if (theta > light.cutOff)
+        Light light = lights[i];
+        ShadowData data = shadowData[i];
+        switch (light.type)
         {
-            float distance = length(LN);
-            float attenuation = 1.0 / (distance * distance);
-            float epsilon = light.cutOff - light.outerCutOff;
-            float falloff = 1;
-            if (epsilon != 0)
-                falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
-            float3 radiance = light.color.rgb * attenuation * falloff;
-            float shadow = ShadowCalculation(light, position, depthPSM[wd], shadowSampler);
-            if (shadow == 0)
-                continue;
-            Lo += shadow * BRDFDirect(radiance, L, F0, V, N, baseColor, roughness, metallic);
+            case POINT_LIGHT:
+                shadowFactor = ShadowFactorPointLight(light, position, V, depthOSM[shadowMapIndex.x++], shadowSampler);
+                Lo += PointLightBRDF(light, position, F0, V, N, baseColor, roughness, metallic) * shadowFactor;
+                break;
+            case SPOT_LIGHT:
+                shadowFactor = ShadowFactorSpotlight(data, position, depthPSM[shadowMapIndex.y++], shadowSampler);
+                Lo += SpotlightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
+                break;
+            case DIRECTIONAL_LIGHT:
+                shadowFactor = ShadowFactorDirectionalLightCascaded(data, camFar, view, position, depthCSM, shadowSampler);
+                Lo += DirectionalLightBRDF(light, F0, V, N, baseColor, roughness, metallic);
+                break;
         }
     }
 

@@ -6,7 +6,7 @@
     using HexaEngine.Mathematics;
     using System.Numerics;
 
-    [EditorNode<Camera>("Camera")]
+    [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject, IView
     {
         public new CameraTransform Transform;
@@ -45,6 +45,15 @@
             {
                 CameraManager.Culling = value ? this : null;
             }
+        }
+
+        [EditorButton("Copy from View")]
+        public void CopySettings()
+        {
+            var current = CameraManager.Current;
+            if (current == null)
+                return;
+            Transform.PositionRotation = current.Transform.PositionRotation;
         }
 
         CameraTransform IView.Transform => Transform;

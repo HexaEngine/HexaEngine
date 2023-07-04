@@ -415,11 +415,11 @@
             context.ClearRenderTargetView(Application.MainWindow.SwapChain.BackbufferRTV, new Vector4(0.2f, 0.2f, 0.2f, 1));
             context.SetViewport(Viewport);
 
-            context.VSSetConstantBuffer(overlayBuffer, 0);
-            context.PSSetConstantBuffer(overlayBuffer, 0);
-            context.VSSetConstantBuffer(cameraBuffer, 1);
-            context.GSSetConstantBuffer(cameraBuffer, 1);
-            context.PSSetConstantBuffer(cameraBuffer, 1);
+            context.VSSetConstantBuffer(0, overlayBuffer);
+            context.PSSetConstantBuffer(0, overlayBuffer);
+            context.VSSetConstantBuffer(1, cameraBuffer);
+            context.GSSetConstantBuffer(1, cameraBuffer);
+            context.PSSetConstantBuffer(1, cameraBuffer);
 
             for (int i = 0; i < nodes.Length; i++)
             {
@@ -441,7 +441,7 @@
 
                 *worldBuffer.Local = Matrix4x4.Transpose(transform);
                 worldBuffer.Update(context);
-                context.VSSetConstantBuffer(worldBuffer, 2);
+                context.VSSetConstantBuffer(2, worldBuffer);
                 for (int j = 0; j < node.Meshes.Count; j++)
                 {
                     var meshSource = sources[node.Meshes[j]];
@@ -471,7 +471,7 @@
                         }
 
                         boneBuffer.Update(context);
-                        context.VSSetShaderResource(boneBuffer.SRV, 0);
+                        context.VSSetShaderResource(0, boneBuffer.SRV);
                         context.SetGraphicsPipeline(meshSource.Solid);
                         meshSource.Draw(context);
                     }
@@ -484,7 +484,7 @@
 
                     if ((drawNormals || drawTangents || drawBitangents) && meshSource.Normals.IsValid && meshSource.Normals.IsInitialized)
                     {
-                        context.GSSetConstantBuffer(ntbView, 0);
+                        context.GSSetConstantBuffer(0, ntbView);
                         context.SetGraphicsPipeline(meshSource.Normals);
                         meshSource.Draw(context);
                     }

@@ -20,14 +20,12 @@ namespace HexaEngine.Effects
         private ConstantBuffer<LumaParams> lumaParams;
         private IBuffer histogram;
         private IUnorderedAccessView histogramUAV;
-        private unsafe void** lumaUAVs;
 
         private IComputePipeline lumaAvgCompute;
         private ConstantBuffer<LumaAvgParams> lumaAvgParams;
         private ITexture2D luma;
         private IShaderResourceView lumaSRV;
         private IUnorderedAccessView lumaUAV;
-        private unsafe void** lumaAvgUAVs;
 
         private IGraphicsPipeline exposurePipeline;
         private Quad quad;
@@ -184,17 +182,10 @@ namespace HexaEngine.Effects
             lumaParams.Local->InputWidth = (uint)width;
             lumaParams.Local->InputHeight = (uint)height;
 
-            lumaUAVs = AllocArray(2);
-            lumaUAVs[0] = (void*)histogramUAV.NativePointer;
-
             lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));
 
             lumaAvgParams = new(device, new LumaAvgParams(), CpuAccessFlags.Write);
             lumaAvgParams.Local->PixelCount = (uint)(width * height);
-
-            lumaAvgUAVs = AllocArray(2);
-            lumaAvgUAVs[0] = (void*)histogramUAV.NativePointer;
-            lumaAvgUAVs[1] = (void*)lumaUAV.NativePointer;
         }
 
         public unsafe void Resize(int width, int height)
@@ -236,25 +227,27 @@ namespace HexaEngine.Effects
                 return;
             }
 
-            context.CSSetShaderResource(Input, 0);
-            context.CSSetConstantBuffer(lumaParams, 0);
-            context.CSSetUnorderedAccessViews(lumaUAVs, 1);
+            context.CSSetShaderResource(0, Input);
+            context.CSSetConstantBuffer(0, lumaParams);
+            context.CSSetUnorderedAccessView((void*)histogramUAV.NativePointer);
             lumaCompute.Dispatch(context, (uint)width / 16, (uint)height / 16, 1);
             nint* emptyUAVs = stackalloc nint[1];
-            context.CSSetUnorderedAccessViews((void**)emptyUAVs, 1);
-            context.CSSetConstantBuffer(null, 0);
-            context.CSSetShaderResource((void*)null, 0);
+            context.CSSetUnorderedAccessView(null);
+            context.CSSetConstantBuffer(0, null);
+            context.CSSetShaderResource(0, null);
 
-            context.CSSetConstantBuffer(lumaAvgParams, 0);
-            context.CSSetUnorderedAccessViews(lumaAvgUAVs, 2);
+            nint* lumaAvgUAVs = stackalloc nint[] { histogramUAV.NativePointer, lumaUAV.NativePointer };
+            uint* initialCount = stackalloc uint[] { uint.MaxValue, uint.MaxValue };
+            context.CSSetConstantBuffer(0, lumaAvgParams);
+            context.CSSetUnorderedAccessViews(2, (void**)lumaAvgUAVs, initialCount);
             lumaAvgCompute.Dispatch(context, 1, 1, 1);
             nint* emptyUAV2s = stackalloc nint[2];
-            context.CSSetUnorderedAccessViews((void**)emptyUAV2s, 2);
-            context.CSSetConstantBuffer(null, 0);
+            context.CSSetUnorderedAccessViews(2, (void**)emptyUAV2s, null);
+            context.CSSetConstantBuffer(0, null);
 
-            context.PSSetShaderResource(Input, 0);
-            context.PSSetShaderResource(lumaSRV, 1);
-            context.PSSetSampler(samplerPoint, 0);
+            context.PSSetShaderResource(0, Input);
+            context.PSSetShaderResource(1, lumaSRV);
+            context.PSSetSampler(0, samplerPoint);
             context.SetRenderTarget(Output, null);
             context.SetViewport(Output.Viewport);
             context.SetGraphicsPipeline(exposurePipeline);
@@ -262,9 +255,9 @@ namespace HexaEngine.Effects
             context.SetGraphicsPipeline(null);
             context.SetViewport(default);
             context.SetRenderTarget(null, null);
-            context.PSSetSampler(null, 0);
-            context.PSSetShaderResource((void*)null, 1);
-            context.PSSetShaderResource((void*)null, 0);
+            context.PSSetSampler(0, null);
+            context.PSSetShaderResource(1, null);
+            context.PSSetShaderResource(0, null);
         }
 
         public unsafe void Dispose()
@@ -283,8 +276,7 @@ namespace HexaEngine.Effects
             exposurePipeline.Dispose();
             samplerPoint.Dispose();
             quad.Dispose();
-            Free(lumaUAVs);
-            Free(lumaAvgUAVs);
+
             GC.SuppressFinalize(this);
         }
     }

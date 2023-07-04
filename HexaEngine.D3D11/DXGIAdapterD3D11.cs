@@ -194,7 +194,7 @@
 
             ComPtr<IDXGISwapChain1> swapChain;
             IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
-            IDXGIFactory.MakeWindowAssociation(Hwnd, 1 << 0);
+            // IDXGIFactory.MakeWindowAssociation(Hwnd, 1 << 0);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }

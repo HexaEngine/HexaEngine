@@ -16,6 +16,7 @@
         DrawIndirect = 8,
         Culling = 16,
         CastShadows = 32,
+        NoDepthTest = 64,
         All = Update | Depth | Draw | Culling | CastShadows,
     }
 

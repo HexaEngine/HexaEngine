@@ -310,7 +310,7 @@
             dbgName = $"UavBuffer: {filename}, Line:{lineNumber}";
             capacity = DefaultCapacity;
             items = Alloc<T>(DefaultCapacity);
-            Zero(items, DefaultCapacity * sizeof(T));
+            ZeroMemory(items, DefaultCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None, 0);
             buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
             buffer.DebugName = dbgName;
@@ -342,7 +342,7 @@
             dbgName = $"UavBuffer: {filename}, Line:{lineNumber}";
             capacity = (uint)intialCapacity;
             items = Alloc<T>(intialCapacity);
-            Zero(items, intialCapacity * sizeof(T));
+            ZeroMemory(items, intialCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None, 0);
             buffer = device.CreateBuffer(items, (uint)intialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
@@ -458,7 +458,7 @@
                 }
 
                 var tmp = Alloc<T>((int)value);
-                Zero(tmp, DefaultCapacity * sizeof(T));
+                ZeroMemory(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);

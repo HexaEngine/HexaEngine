@@ -161,6 +161,11 @@
             return srvformat;
         }
 
+        public void CopyTo(IGraphicsContext context, DepthStencil depthStencil)
+        {
+            context.CopyResource(depthStencil.Resource, Resource);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

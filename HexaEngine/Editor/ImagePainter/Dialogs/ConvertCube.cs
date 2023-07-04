@@ -7,7 +7,6 @@
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Filters;
     using ImGuiNET;
-    using Silk.NET.DirectStorage;
 
     public class ConvertCubeDialog : Modal
     {

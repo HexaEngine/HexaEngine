@@ -5,12 +5,12 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes.Components.Renderer;
 
-    [EditorNode<Skybox>("Skybox")]
+    [EditorGameObject<Skybox>("Skybox")]
     public class Skybox : GameObject
     {
         public Skybox()
         {
-            AddComponent(new SkyboxRenderer());
+            AddComponent(new SkyboxRendererComponent());
             AddComponent(new IBLLightProbeComponent());
         }
 

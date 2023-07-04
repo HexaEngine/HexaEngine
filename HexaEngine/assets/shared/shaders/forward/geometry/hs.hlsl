@@ -21,7 +21,6 @@ DomainInput main(InputPatch<HullInput, 3> patch, uint pointId : SV_OutputControl
 {
 	DomainInput output;
 
-    output.color = patch[pointId].color;
 	output.pos = patch[pointId].pos;
 	output.tex = patch[pointId].tex;
 	output.normal = patch[pointId].normal;

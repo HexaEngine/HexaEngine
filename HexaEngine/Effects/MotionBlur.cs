@@ -94,8 +94,8 @@
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
-            context.PSSetShaderResources((void**)srvs, 2, 0);
-            context.PSSetSampler(sampler, 0);
+            context.PSSetShaderResources(0, 2, (void**)srvs);
+            context.PSSetSampler(0, sampler);
             quad.DrawAuto(context, pipeline);
             context.ClearState();
         }

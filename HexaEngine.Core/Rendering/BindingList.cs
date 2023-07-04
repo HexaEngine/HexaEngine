@@ -10,7 +10,7 @@
         private readonly Dictionary<uint, int> dict = new();
         private uint capacity;
         private uint count;
-        private int startSlot;
+        private uint startSlot;
         private void** data;
         private bool disposedValue;
 
@@ -18,12 +18,12 @@
         {
             capacity = DefaultCapacity;
             data = AllocArray(capacity);
-            Zero(data, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(data, (uint)(sizeof(nint) * capacity));
         }
 
         public int Count => bindings.Count;
 
-        public int StartSlot => startSlot;
+        public uint StartSlot => startSlot;
 
         public uint SlotCount => count;
 
@@ -67,7 +67,7 @@
                 capacity = (uint)(newCapacity * 1.5f);
                 var tmpData = data;
                 data = AllocArray(capacity);
-                Zero(data, (uint)(sizeof(nint) * capacity));
+                ZeroMemory(data, (uint)(sizeof(nint) * capacity));
                 MemoryCopy(tmpData, data, capacity * sizeof(nint), oldCapacity * sizeof(nint));
                 Free(tmpData);
             }
@@ -91,7 +91,7 @@
         {
             startSlot = int.MaxValue;
             count = 0;
-            Zero(data, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(data, (uint)(sizeof(nint) * capacity));
             for (int i = 0; i < bindings.Count; i++)
             {
                 var binding = bindings[i];
@@ -101,19 +101,19 @@
                 EnsureCapacity(slot + 1);
                 data[slot] = (void*)binding.Data;
                 count = Math.Max(slot + 1, count);
-                startSlot = (int)Math.Min(slot, startSlot);
+                startSlot = Math.Min(slot, startSlot);
             }
         }
 
         public void Bind(IGraphicsContext context)
         {
-            context.PSSetShaderResources(data, count, startSlot);
+            context.PSSetShaderResources(startSlot, count, data);
         }
 
         public void Unbind(IGraphicsContext context)
         {
             nint* temp = stackalloc nint[(int)count];
-            context.PSSetShaderResources((void**)temp, count, startSlot);
+            context.PSSetShaderResources(startSlot, count, (void**)temp);
         }
 
         public bool Contains(Binding binding)
@@ -150,7 +150,7 @@
         private readonly Dictionary<uint, int> dict = new();
         private uint capacity;
         private uint count;
-        private int startSlot;
+        private uint startSlot;
         private void** data;
         private bool disposedValue;
 
@@ -158,12 +158,12 @@
         {
             capacity = DefaultCapacity;
             data = AllocArray(capacity);
-            Zero(data, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(data, (uint)(sizeof(nint) * capacity));
         }
 
         public int Count => bindings.Count;
 
-        public int StartSlot => startSlot;
+        public uint StartSlot => startSlot;
 
         public uint SlotCount => count;
 
@@ -207,7 +207,7 @@
                 capacity = (uint)(newCapacity * 1.5f);
                 var tmpData = data;
                 data = AllocArray(capacity);
-                Zero(data, (uint)(sizeof(nint) * capacity));
+                ZeroMemory(data, (uint)(sizeof(nint) * capacity));
                 MemoryCopy(tmpData, data, capacity * sizeof(nint), oldCapacity * sizeof(nint));
                 Free(tmpData);
             }
@@ -231,7 +231,7 @@
         {
             startSlot = int.MaxValue;
             count = 0;
-            Zero(data, (uint)(sizeof(nint) * capacity));
+            ZeroMemory(data, (uint)(sizeof(nint) * capacity));
             for (int i = 0; i < bindings.Count; i++)
             {
                 var binding = bindings[i];
@@ -241,19 +241,19 @@
                 EnsureCapacity(slot + 1);
                 data[slot] = (void*)binding.Data;
                 count = Math.Max(slot + 1, count);
-                startSlot = (int)Math.Min(slot, startSlot);
+                startSlot = Math.Min(slot, startSlot);
             }
         }
 
         public void Bind(IGraphicsContext context)
         {
-            context.PSSetShaderResources(data, count, startSlot);
+            context.PSSetShaderResources(startSlot, count, data);
         }
 
         public void Unbind(IGraphicsContext context)
         {
             nint* temp = stackalloc nint[(int)count];
-            context.PSSetShaderResources((void**)temp, count, startSlot);
+            context.PSSetShaderResources(startSlot, count, (void**)temp);
         }
 
         public bool Contains(Binding binding)

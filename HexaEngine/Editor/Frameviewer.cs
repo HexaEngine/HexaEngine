@@ -5,6 +5,7 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.UI;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
@@ -75,6 +76,21 @@
 
             if (scene != null && ImGui.BeginMenuBar())
             {
+                if (CameraManager.Dimension == CameraEditorDimension.Dim3D)
+                {
+                    if (ImGui.Button("3D"))
+                    {
+                        CameraManager.Dimension = CameraEditorDimension.Dim2D;
+                    }
+                }
+                else
+                {
+                    if (ImGui.Button("2D"))
+                    {
+                        CameraManager.Dimension = CameraEditorDimension.Dim3D;
+                    }
+                }
+
                 // Play "\xE769"
                 // Pause "\xE768"
                 // Stop "xE71A"

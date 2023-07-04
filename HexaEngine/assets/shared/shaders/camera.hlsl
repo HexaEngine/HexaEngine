@@ -7,9 +7,9 @@ cbuffer CameraBuffer : register(b1)
     float4x4 viewProj;
     float4x4 viewProjInv;
     float4x4 prevViewProj;
-    float cam_far;
-    float cam_near;
-    float2 screen_dim;
+    float camFar;
+    float camNear;
+    float2 screenDim;
 };
 
 float3 GetCameraPos()
@@ -21,7 +21,7 @@ float GetLinearDepth(float depth)
 {
     float z_b = depth;
     float z_n = 2.0 * z_b - 1.0;
-    float z_e = 2.0 * cam_near * cam_far / (cam_far + cam_near - z_n * (cam_far - cam_near));
+    float z_e = 2.0 * camNear * camFar / (camFar + camNear - z_n * (camFar - camNear));
     return z_e;
 }
 
@@ -41,8 +41,17 @@ float3 GetPositionVS(float2 uv, float depth)
 {
     float4 ndc = float4(uv * 2.0f - 1.0f, depth, 1.0f);
     ndc.y *= -1;
-    float4 wp = mul(ndc, viewInv);
+    float4 wp = mul(ndc, projInv);
     return wp.xyz / wp.w;
+}
+
+float4 Screen2View(float3 screen)
+{
+    float2 uv = screen.xy / screenDim.xy;
+    float4 ndc = float4(uv * 2.0f - 1.0f, screen.z, 1.0f);
+    ndc.y *= -1;
+    float4 wp = mul(ndc, projInv);
+    return wp.xyzw / wp.w;
 }
 
 float3 GetPositionWS(float2 uv, float depth)

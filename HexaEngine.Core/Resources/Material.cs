@@ -39,8 +39,8 @@
                 return false;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }
@@ -57,17 +57,17 @@
                 return false;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }
 
         public unsafe void EndDraw(IGraphicsContext context)
         {
-            nint* temp = stackalloc nint[TextureList.SlotCount];
-            context.PSSetSamplers((void**)temp, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources((void**)temp, (uint)TextureList.SlotCount, 0);
+            nint* temp = stackalloc nint[(int)TextureList.SlotCount];
+            context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
+            context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
             Shader.Value.EndDraw(context);
         }
 
@@ -107,17 +107,17 @@
                 return false;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }
 
         public void EndDrawShadow(IGraphicsContext context)
         {
-            nint* temp = stackalloc nint[TextureList.SlotCount];
-            context.PSSetSamplers((void**)temp, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources((void**)temp, (uint)TextureList.SlotCount, 0);
+            nint* temp = stackalloc nint[(int)TextureList.SlotCount];
+            context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
+            context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
             Shader.Value.EndDrawShadow(context);
         }
 
@@ -145,17 +145,17 @@
                 return false;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, 0);
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }
 
         public void EndDrawDepth(IGraphicsContext context)
         {
-            nint* temp = stackalloc nint[TextureList.SlotCount];
-            context.PSSetSamplers((void**)temp, (uint)TextureList.SlotCount, 0);
-            context.PSSetShaderResources((void**)temp, (uint)TextureList.SlotCount, 0);
+            nint* temp = stackalloc nint[(int)TextureList.SlotCount];
+            context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
+            context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
             Shader.Value.EndDrawDepth(context);
         }
 

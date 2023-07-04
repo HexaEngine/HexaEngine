@@ -1,31 +1,62 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
     using System.Numerics;
+    using System.Xml.Serialization;
 
     public partial struct SamplerDescription
     {
         public const int MaxMaxAnisotropy = unchecked(16);
-        public Filter Filter;
-        public TextureAddressMode AddressU;
-        public TextureAddressMode AddressV;
-        public TextureAddressMode AddressW;
-        public float MipLODBias;
-        public int MaxAnisotropy;
-        public ComparisonFunction ComparisonFunction;
-        public Vector4 BorderColor;
-        public float MinLOD;
-        public float MaxLOD;
+
+        [XmlAttribute]
+        public Filter Filter = Filter.MinMagMipPoint;
+
+        [XmlAttribute]
+        public TextureAddressMode AddressU = TextureAddressMode.Wrap;
+
+        [XmlAttribute]
+        public TextureAddressMode AddressV = TextureAddressMode.Wrap;
+
+        [XmlAttribute]
+        public TextureAddressMode AddressW = TextureAddressMode.Wrap;
+
+        [DefaultValue(0.0f)]
+        [XmlAttribute]
+        public float MipLODBias = 0;
+
+        [DefaultValue(0)]
+        [XmlAttribute]
+        public int MaxAnisotropy = 0;
+
+        [DefaultValue(ComparisonFunction.Never)]
+        [XmlAttribute]
+        public ComparisonFunction ComparisonFunction = ComparisonFunction.Never;
+
+        public Vector4 BorderColor = Vector4.Zero;
+
+        [DefaultValue(float.MinValue)]
+        [XmlAttribute]
+        public float MinLOD = float.MinValue;
+
+        [DefaultValue(float.MaxValue)]
+        [XmlAttribute]
+        public float MaxLOD = float.MaxValue;
 
         public static readonly SamplerDescription PointWrap = new(Filter.MinMagMipPoint, TextureAddressMode.Wrap);
         public static readonly SamplerDescription PointClamp = new(Filter.MinMagMipPoint, TextureAddressMode.Clamp);
 
         public static readonly SamplerDescription LinearWrap = new(Filter.MinMagMipLinear, TextureAddressMode.Wrap);
         public static readonly SamplerDescription LinearClamp = new(Filter.MinMagMipLinear, TextureAddressMode.Clamp);
+        public static readonly SamplerDescription LinearBorder = new(Filter.MinMagMipLinear, TextureAddressMode.Border) { BorderColor = default };
 
         public static readonly SamplerDescription AnisotropicWrap = new(Filter.Anisotropic, TextureAddressMode.Wrap, 0.0f, MaxMaxAnisotropy);
         public static readonly SamplerDescription AnisotropicClamp = new(Filter.Anisotropic, TextureAddressMode.Clamp, 0.0f, MaxMaxAnisotropy);
 
         public static readonly SamplerDescription ComparisonLinearBorder = new(Filter.ComparisonMinMagMipLinear, TextureAddressMode.Border, 0, 0, ComparisonFunction.LessEqual, 0, float.MaxValue);
+
+        public SamplerDescription()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SamplerDescription"/> struct.

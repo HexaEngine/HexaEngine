@@ -146,13 +146,15 @@
 
         public void UpdateShadows(IGraphicsContext context, Camera camera)
         {
+            if (lights.UpdateShadowLightQueue.Count == 0)
+                return;
             while (lights.UpdateShadowLightQueue.TryDequeue(out var light))
             {
                 switch (light.LightType)
                 {
                     case LightType.Directional:
                         var directionalLight = (DirectionalLight)light;
-                        directionalLight.UpdateShadowMap(context, lights.ShadowDirectionalLights, camera);
+                        directionalLight.UpdateShadowMap(context, lights.ShadowDataBuffer, camera);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
@@ -172,23 +174,27 @@
 
                     case LightType.Point:
                         var pointLight = (PointLight)light;
-                        pointLight.UpdateShadowMap(context, lights.ShadowPointLights);
-                        for (int i = 0; i < renderers.Count; i++)
+                        for (int i = 0; i < 6; i++)
                         {
-                            var renderer = renderers[i];
-                            if ((renderer.Flags & RendererFlags.CastShadows) != 0)
+                            pointLight.UpdateShadowMap(context, lights.ShadowDataBuffer, i);
+                            for (int j = 0; j < renderers.Count; j++)
                             {
-                                if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
+                                var renderer = renderers[j];
+                                if ((renderer.Flags & RendererFlags.CastShadows) != 0)
                                 {
-                                    renderer.DrawShadowMap(context, PointLight.OSMBuffer, ShadowType.Omni);
+                                    if (renderer.BoundingBox.Intersects(pointLight.ShadowBox))
+                                    {
+                                        renderer.DrawShadowMap(context, PointLight.OSMBuffer, ShadowType.Omni);
+                                    }
                                 }
                             }
                         }
+
                         break;
 
                     case LightType.Spot:
                         var spotlight = (Spotlight)light;
-                        spotlight.UpdateShadowMap(context, lights.ShadowSpotlights);
+                        spotlight.UpdateShadowMap(context, lights.ShadowDataBuffer);
                         for (int i = 0; i < renderers.Count; i++)
                         {
                             var renderer = renderers[i];
@@ -204,6 +210,8 @@
                 }
                 light.InUpdateQueue = false;
             }
+
+            lights.ShadowDataBuffer.Update(context);
         }
 
         public void Destroy()

@@ -2,8 +2,15 @@
 
 cbuffer cb
 {
-	uint offset;
+    uint offset;
 }
+
+cbuffer LightBuffer : register(b1)
+{
+    matrix view;
+    float3 position;
+    float far;
+};
 
 StructuredBuffer<float4x4> worldMatrices;
 StructuredBuffer<uint> worldMatrixOffsets;
@@ -14,8 +21,10 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 	HullInput output;
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-    
-    output.pos = mul(float4(input.pos, 1), mat).xyz;
+
+    output.position = mul(totalPosition, mat);
+    output.depth = length(output.position.xyz - position) / far;
+    output.position = mul(output.position, view);
 
     output.TessFactor = TessellationFactor;
 	return output;
@@ -26,44 +35,48 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 StructuredBuffer<float4x4> boneMatrices;
 StructuredBuffer<uint> boneMatrixOffsets;
 
-GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
-{   
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
+{
     float4 totalPosition = 0;
 
     uint boneMatrixOffset = boneMatrixOffsets[instanceId + offset];
     for (int i = 0; i < MaxBoneInfluence; i++)
     {
-        if (input.boneIds[i] == -1) 
+        if (input.boneIds[i] == -1)
             continue;
         if (input.boneIds[i] >= MaxBones)
         {
             totalPosition = float4(input.pos, 1.0f);
             break;
         }
-           
+
         float4 localPosition = mul(float4(input.pos, 1.0f), boneMatrices[input.boneIds[i] + boneMatrixOffset]);
-        totalPosition += localPosition * input.weights[i]; 
+        totalPosition += localPosition * input.weights[i];
     }
-    
-    GeometryInput output;
-    
+
+    PixelInput output;
+
     float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-    
-    output.pos = mul(totalPosition, mat).xyz;
- 
+
+    output.position = mul(totalPosition, mat);
+    output.depth = length(output.position.xyz - position) / far;
+    output.position = mul(output.position, view);
+
     return output;
 }
 
 #else
 
-GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 {
-    GeometryInput output;
+    PixelInput output;
 
     float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
-    
-    output.pos = mul(float4(input.pos, 1), mat).xyz;
-    
+
+    output.position = mul(float4(input.pos, 1), mat);
+    output.depth = length(output.position.xyz - position) / far;
+    output.position = mul(output.position, view);
+
     return output;
 }
 #endif

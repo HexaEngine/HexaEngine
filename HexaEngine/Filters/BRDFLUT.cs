@@ -33,7 +33,7 @@ namespace HexaEngine.Filters
         {
         }
 
-        public void EndResize(int width, int height)
+        public void Resize(int width, int height)
         {
         }
 

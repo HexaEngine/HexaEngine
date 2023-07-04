@@ -1,14 +1,11 @@
 ﻿namespace HexaEngine.Core.IO.Terrains
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes.Processing;
-    using HexaEngine.Core.Lights;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
-    using Silk.NET.Maths;
-    using System;
     using System.Numerics;
-    using System.Reflection;
 
     public unsafe class Terrain
     {
@@ -105,238 +102,116 @@
             Flags |= TerrainFlags.Tangents | TerrainFlags.Bitangents;
         }
 
-        public IBuffer CreateIndexBuffer(IGraphicsDevice device, Usage usage = Usage.Immutable, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        public IndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            fixed (uint* ptr = Indices)
-            {
-                return device.CreateBuffer(ptr, (uint)Indices.Length, BindFlags.IndexBuffer, usage, accessFlags);
-            }
+            return new(device, accessFlags);
         }
 
-        public void WriteIndexBuffer(IGraphicsContext context, IBuffer ib)
+        public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer ib)
         {
-            int size = sizeof(uint) * (int)IndicesCount;
-            uint* buffer = (uint*)Alloc(size);
             for (int i = 0; i < IndicesCount; i++)
             {
-                buffer[i] = Indices[i];
+                ib[i] = Indices[i];
             }
 
-            context.Write(ib, buffer, size);
-
-            Free(buffer);
+            return ib.Update(context);
         }
 
-        public IBuffer CreateVertexBuffer(IGraphicsDevice device, Usage usage = Usage.Immutable, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        public VertexBuffer<TerrainVertex> CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            int stride = (int)GetStride();
-            int size = stride * (int)VerticesCount;
-            byte* buffer = (byte*)Alloc(size);
-            Zero(buffer, size);
-            int m = 0;
+            var stride = sizeof(TerrainVertex);
+            var size = stride * (int)VerticesCount;
+            var vertices = (TerrainVertex*)Alloc(size);
+            ZeroMemory(vertices, size);
 
             for (int i = 0; i < VerticesCount; i++)
             {
+                TerrainVertex vertex = default;
+
                 if ((Flags & TerrainFlags.Positions) != 0)
                 {
-                    Positions[i].CopyTo(&m, buffer);
+                    vertex.Position = Positions[i];
                 }
 
                 if ((Flags & TerrainFlags.UVs) != 0)
                 {
-                    UVs[i].CopyTo(&m, buffer);
+                    vertex.UV = UVs[i];
                 }
 
                 if ((Flags & TerrainFlags.Normals) != 0)
                 {
-                    Normals[i].CopyTo(&m, buffer);
+                    vertex.Normal = Normals[i];
                 }
 
                 if ((Flags & TerrainFlags.Tangents) != 0)
                 {
-                    Tangents[i].CopyTo(&m, buffer);
+                    vertex.Tangent = Tangents[i];
                 }
 
                 if ((Flags & TerrainFlags.Bitangents) != 0)
                 {
-                    Bitangents[i].CopyTo(&m, buffer);
+                    vertex.Bitangent = Bitangents[i];
                 }
 
-                if (m % stride != 0)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                if (m > size)
-                {
-                    throw new InternalBufferOverflowException();
-                }
+                vertices[i] = vertex;
             }
 
-            IBuffer result = device.CreateBuffer((void*)buffer, (uint)size, new(size, BindFlags.VertexBuffer, usage, accessFlags));
-            Free(buffer);
-            return result;
+            VertexBuffer<TerrainVertex> vertexBuffer = new(device, accessFlags, vertices, VerticesCount);
+            Free(vertices);
+            return vertexBuffer;
         }
 
-        public void WriteVertexBuffer(IGraphicsContext context, IBuffer vb)
+        public bool WriteVertexBuffer(IGraphicsContext context, VertexBuffer<TerrainVertex> vb)
         {
-            int stride = (int)GetStride();
-            int size = stride * (int)VerticesCount;
-            byte* buffer = (byte*)Alloc(size);
-            Zero(buffer, size);
-            int m = 0;
-
             for (int i = 0; i < VerticesCount; i++)
             {
+                TerrainVertex vertex = default;
+
                 if ((Flags & TerrainFlags.Positions) != 0)
                 {
-                    Positions[i].CopyTo(&m, buffer);
+                    vertex.Position = Positions[i];
                 }
 
                 if ((Flags & TerrainFlags.UVs) != 0)
                 {
-                    UVs[i].CopyTo(&m, buffer);
+                    vertex.UV = UVs[i];
                 }
 
                 if ((Flags & TerrainFlags.Normals) != 0)
                 {
-                    Normals[i].CopyTo(&m, buffer);
+                    vertex.Normal = Normals[i];
                 }
 
                 if ((Flags & TerrainFlags.Tangents) != 0)
                 {
-                    Tangents[i].CopyTo(&m, buffer);
+                    vertex.Tangent = Tangents[i];
                 }
 
                 if ((Flags & TerrainFlags.Bitangents) != 0)
                 {
-                    Bitangents[i].CopyTo(&m, buffer);
+                    vertex.Bitangent = Bitangents[i];
                 }
 
-                if (m % stride != 0)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                if (m > size)
-                {
-                    throw new InternalBufferOverflowException();
-                }
+                vb[i] = vertex;
             }
 
-            context.Write(vb, buffer, size);
-
-            Free(buffer);
+            return vb.Update(context);
         }
 
-        public unsafe uint GetStride()
-        {
-            int result = 0;
-
-            if ((Flags & TerrainFlags.Positions) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & TerrainFlags.UVs) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & TerrainFlags.Normals) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & TerrainFlags.Tangents) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & TerrainFlags.Bitangents) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            return (uint)result;
-        }
-
-        public InputElementDescription[] GetInputElements()
-        {
-            uint count = ((uint)Flags).Bitcount();
-
-            InputElementDescription[] elements = new InputElementDescription[count];
-            int i = 0;
-
-            if ((Flags & TerrainFlags.Positions) != 0)
-            {
-                elements[i++] = new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & TerrainFlags.UVs) != 0)
-            {
-                elements[i++] = new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & TerrainFlags.Normals) != 0)
-            {
-                elements[i++] = new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & TerrainFlags.Tangents) != 0)
-            {
-                elements[i++] = new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & TerrainFlags.Bitangents) != 0)
-            {
-                elements[i++] = new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0);
-            }
-
-            return elements;
-        }
+        public static readonly InputElementDescription[] InputElements =
+{
+            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0),
+            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0),
+            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0),
+            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0),
+            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0),
+        };
 
         public void Recalculate()
         {
             Box = BoundingBoxHelper.Compute(Positions);
             GenVertexNormalsProcess.GenMeshVertexNormals2(this);
             CalcTangentsProcess.ProcessMesh2(this);
-        }
-
-        public ShaderMacro[] GetShaderMacros()
-        {
-            uint count = ((uint)Flags).Bitcount() + 1;
-            ShaderMacro[] macros = new ShaderMacro[count];
-            int i = 0;
-
-            macros[i++] = new ShaderMacro("TILESIZE", $"float2({Width},{Height})");
-
-            if ((Flags & TerrainFlags.Positions) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxPosition", "1");
-            }
-
-            if ((Flags & TerrainFlags.UVs) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxUV", "1");
-            }
-
-            if ((Flags & TerrainFlags.Normals) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxNormal", "1");
-            }
-
-            if ((Flags & TerrainFlags.Tangents) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxTangent", "1");
-            }
-
-            if ((Flags & TerrainFlags.Bitangents) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxBitangent", "1");
-            }
-
-            return macros;
         }
 
         public bool IntersectRay(Ray ray, out Vector3 pointInTerrain)

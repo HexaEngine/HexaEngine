@@ -6,6 +6,7 @@
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Numerics;
     using System.Text;
@@ -236,7 +237,7 @@
 
         public IndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            return new(device, accessFlags, Indices);
+            return new(device, Indices, accessFlags);
         }
 
         public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer ib)
@@ -254,7 +255,7 @@
             var stride = sizeof(MeshVertex);
             var size = stride * (int)VerticesCount;
             var vertices = (MeshVertex*)Alloc(size);
-            Zero(vertices, size);
+            ZeroMemory(vertices, size);
 
             for (int i = 0; i < VerticesCount; i++)
             {
@@ -298,7 +299,7 @@
             var stride = sizeof(SkinnedMeshVertex);
             var size = stride * (int)VerticesCount;
             var vertices = (SkinnedMeshVertex*)Alloc(size);
-            Zero(vertices, size);
+            ZeroMemory(vertices, size);
             int m = 0;
 
             for (int i = 0; i < VerticesCount; i++)
@@ -650,6 +651,16 @@
             BoneCount = 0;
             Bones = null;
             Flags ^= VertexFlags.Skinned;
+        }
+
+        public Face[] GetFaces()
+        {
+            Face[] faces = new Face[IndicesCount / 3];
+            for (int i = 0; i < faces.Length; i++)
+            {
+                faces[i] = new(Indices[i * 3], Indices[i * 3 + 1], Indices[i * 3 + 2]);
+            }
+            return faces;
         }
     }
 }

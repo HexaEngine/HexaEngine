@@ -5,29 +5,37 @@
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Lights.Types;
     using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics.HosekWilkie;
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public class WeatherManager
+    public class WeatherManager : ISystem
     {
+        private IGraphicsDevice device;
+        private IGraphicsContext context;
         private ConstantBuffer<CBWeather> weatherBuffer;
+        private bool hasSun = false;
 
-        public static WeatherManager Current;
-        private Vector3 skyColor;
-        private Vector3 ambientColor;
-        private Vector2 windDirection;
-        private float windSpeed;
-        private float crispiness;
-        private float curliness;
-        private float coverage;
-        private float lightAbsorption;
-        private float cloudsBottomHeight;
-        private float cloudsTopHeight;
-        private float densityFactor;
-        private float cloudType;
-        private float turbidity;
-        private float groundAlbedo;
+        public static WeatherManager? Current => SceneManager.Current?.WeatherManager;
+
+        private Vector3 skyColor = new(0.53f, 0.81f, 0.92f);
+        private Vector3 ambientColor = new(15.0f / 255.0f, 15.0f / 255.0f, 15.0f / 255.0f);
+        private Vector2 windDirection = new(10.0f, 10.0f);
+        private float windSpeed = 15f;
+        private float crispiness = 43f;
+        private float curliness = 3.6f;
+        private float coverage = 0.505f;
+        private float lightAbsorption = 0.003f;
+        private float cloudsBottomHeight = 3000.0f;
+        private float cloudsTopHeight = 10000.0f;
+        private float densityFactor = 0.015f;
+        private float cloudType = 1;
+        private float turbidity = 3;
+        private float groundAlbedo = 0.1f;
+
+        public bool HasSun => hasSun;
 
         public Vector3 SkyColor { get => skyColor; set => skyColor = value; }
 
@@ -57,9 +65,17 @@
 
         public float GroundAlbedo { get => groundAlbedo; set => groundAlbedo = value; }
 
-        public Task InitializeAsync(IGraphicsDevice device)
+        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer;
+
+        public string Name { get; } = "Weather System";
+
+        public SystemFlags Flags { get; } = SystemFlags.Update;
+
+        public Task Initialize(IGraphicsDevice device)
         {
-            weatherBuffer = new(device, CpuAccessFlags.Write);
+            this.device = device;
+            context = device.Context;
+            weatherBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write).Value;
             return Task.CompletedTask;
         }
 
@@ -73,14 +89,15 @@
             }
 
             CBWeather weather = default;
-
+            hasSun = false;
             for (int i = 0; i < manager.ActiveCount; i++)
             {
                 var light = manager.Active[i];
                 if (light is DirectionalLight directional)
                 {
-                    weather.LightDir = new Vector4(directional.Transform.Forward, 1);
+                    weather.LightDir = new Vector4(-directional.Transform.Forward, 1);
                     weather.LightColor = directional.Color * directional.Intensity;
+                    hasSun = true;
                     break;
                 }
             }
@@ -114,6 +131,31 @@
             weather.Z = skyParams[(int)EnumSkyParams.Z];
 
             weatherBuffer.Update(context, weather);
+        }
+
+        public void Register(GameObject gameObject)
+        {
+        }
+
+        public void Unregister(GameObject gameObject)
+        {
+        }
+
+        public void Awake()
+        {
+        }
+
+        public void Update(float delta)
+        {
+            UpdateWeather(context);
+        }
+
+        public void FixedUpdate()
+        {
+        }
+
+        public void Destroy()
+        {
         }
     }
 }

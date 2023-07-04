@@ -19,7 +19,7 @@
         protected override (VertexBuffer<VertexPositionColor>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
         {
             (VertexPositionColor[] vertices, uint[] indices) = GenerateGrid();
-            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer(device, CpuAccessFlags.None, indices));
+            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer(device, indices, CpuAccessFlags.None));
         }
 
         public static (VertexPositionColor[], uint[]) GenerateGrid()

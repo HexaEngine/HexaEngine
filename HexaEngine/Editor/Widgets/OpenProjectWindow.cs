@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;

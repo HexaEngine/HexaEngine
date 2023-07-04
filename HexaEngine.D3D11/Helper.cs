@@ -302,6 +302,14 @@
             };
         }
 
+        public static void Convert(Viewport* srcViewports, Silk.NET.Direct3D11.Viewport* dstViewports, uint count)
+        {
+            for (uint i = 0; i < count; i++)
+            {
+                dstViewports[i] = Convert(srcViewports[i]);
+            }
+        }
+
         private static float ClampAndRound(float value, float min, float max)
         {
             if (float.IsNaN(value))
@@ -2276,6 +2284,11 @@
                 DirectXTex.TexAlphaMode.Custom => TexAlphaMode.Custom,
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        public static Silk.NET.Maths.Box2D<int> Convert(Rect rect)
+        {
+            return new((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom);
         }
     }
 }

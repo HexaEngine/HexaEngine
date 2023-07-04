@@ -35,8 +35,8 @@
 
         public void Apply(IGraphicsContext context)
         {
-            context.PSSetShaderResource(_shaderResourceView, 0);
-            context.PSSetSampler(_samplerState, 0);
+            context.PSSetShaderResource(0, _shaderResourceView);
+            context.PSSetSampler(0, _samplerState);
         }
 
         public void DrawPreview(Vector2 size)

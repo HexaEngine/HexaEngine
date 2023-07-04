@@ -27,7 +27,7 @@
                     new OrthoVertex(new(1, 1, 0), new(1, 0)),
                     new OrthoVertex(new(1, -1, 0), new(1, 1))
                 });
-                IndexBuffer = new(device, CpuAccessFlags.None, new uint[] { 0, 3, 1, 0, 2, 3 });
+                IndexBuffer = new(device, new uint[] { 0, 3, 1, 0, 2, 3 }, CpuAccessFlags.None);
             }
 
             instances++;
@@ -68,7 +68,7 @@
                     new OrthoVertex(new(1 * size, 1 * size, 0), new(1, 0)),
                     new OrthoVertex(new(1 * size, -1 * size, 0), new(1, 1))
             });
-            indexBuffer = new(device, CpuAccessFlags.None, new uint[] { 0, 3, 1, 0, 2, 3 });
+            indexBuffer = new(device, new uint[] { 0, 3, 1, 0, 2, 3 }, CpuAccessFlags.None);
         }
 
         public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline)

@@ -123,7 +123,7 @@
         public void Draw(IGraphicsContext context)
         {
             context.SetRenderTarget(RTV, null);
-            context.PSSetShaderResource(Input, 0);
+            context.PSSetShaderResource(0, Input);
             context.SetViewport(viewports[0]);
             quad.DrawAuto(context, copy);
             context.ClearState();
@@ -132,11 +132,11 @@
             {
                 Vector2 texel = new(1 / viewports[i].Width * viewports[i - 1].Width, 1 / viewports[i].Height * viewports[i - 1].Height);
                 context.Write(cbDownsample, new Vector4(texel, 0, 0));
-                context.CSSetConstantBuffer(cbDownsample, 0);
-                context.CSSetUnorderedAccessViews(&pUavs[i], (uint)Mips);
-                context.CSSetShaderResource(srvs[i - 1], 0);
-                context.CSSetSampler(samplerState, 0);
-                downsample.Dispatch(context, (uint)viewports[i].Width, (uint)viewports[i].Height, 1);
+                context.CSSetConstantBuffer(0, cbDownsample);
+                context.CSSetUnorderedAccessView(pUavs[i]);
+                context.CSSetShaderResource(0, srvs[i - 1]);
+                context.CSSetSampler(0, samplerState);
+                downsample.Dispatch(context, (uint)viewports[i].Width / 16, (uint)viewports[i].Height / 16, 1);
             }
 
             context.ClearState();
@@ -145,7 +145,7 @@
         public void Generate(IGraphicsContext context, IShaderResourceView input)
         {
             context.SetRenderTarget(RTV, null);
-            context.PSSetShaderResource(input, 0);
+            context.PSSetShaderResource(0, input);
             context.SetViewport(viewports[0]);
             quad.DrawAuto(context, copy);
             context.ClearState();
@@ -154,10 +154,10 @@
             {
                 Vector2 texel = new(viewports[i].Width, viewports[i].Height);
                 context.Write(cbDownsample, new Vector4(texel, 0, 0));
-                context.CSSetConstantBuffer(cbDownsample, 0);
-                context.CSSetUnorderedAccessViews(&pUavs[i], 1);
-                context.CSSetShaderResource(srvs[i - 1], 0);
-                context.CSSetSampler(samplerState, 0);
+                context.CSSetConstantBuffer(0, cbDownsample);
+                context.CSSetUnorderedAccessView(pUavs[i]);
+                context.CSSetShaderResource(0, srvs[i - 1]);
+                context.CSSetSampler(0, samplerState);
                 downsample.Dispatch(context, (uint)viewports[i].Width / 32 + 1, (uint)viewports[i].Height / 32 + 1, 1);
             }
 
@@ -203,7 +203,7 @@
             throw new NotImplementedException();
         }
 
-        public void EndResize(int width, int height)
+        public void Resize(int width, int height)
         {
             throw new NotImplementedException();
         }

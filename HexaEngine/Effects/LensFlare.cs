@@ -81,7 +81,7 @@
             sampler = device.CreateSamplerState(SamplerDescription.PointClamp);
 
             lightBuffer = new(device, CpuAccessFlags.Write);
-            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("PrePass.SRV");
+            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
 
             lens0 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex1.png"));
             lens1 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex2.png"));
@@ -155,11 +155,11 @@
 
                     context.SetRenderTarget(Output, default);
                     context.SetViewport(Viewport);
-                    context.GSSetConstantBuffer(lightBuffer, 0);
-                    context.GSSetShaderResources((void**)srvs, 8, 0);
-                    context.PSSetShaderResources((void**)srvs, 8, 0);
-                    context.GSSetSampler(sampler, 0);
-                    context.PSSetSampler(sampler, 0);
+                    context.GSSetConstantBuffer(0, lightBuffer);
+                    context.GSSetShaderResources(0, 8, (void**)srvs);
+                    context.PSSetShaderResources(0, 8, (void**)srvs);
+                    context.GSSetSampler(0, sampler);
+                    context.PSSetSampler(0, sampler);
                     context.SetGraphicsPipeline(pipeline);
                     context.DrawInstanced(7, 1, 0, 0);
                     context.ClearState();

@@ -12,6 +12,7 @@
         object? Instance { get; set; }
 
         bool IsEmpty { get; }
+        bool NoTable { get; set; }
 
         void Draw(IGraphicsContext context);
     }

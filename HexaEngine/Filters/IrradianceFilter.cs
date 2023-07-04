@@ -101,9 +101,9 @@
                     {
                         context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
                         context.SetScissorRect(x, y, x + xTileSize, y + yTileSize);
-                        context.VSSetConstantBuffer(mvpBuffer, 0);
-                        context.PSSetSampler(sampler, 0);
-                        context.PSSetShaderResource(Source, 0);
+                        context.VSSetConstantBuffer(0, mvpBuffer);
+                        context.PSSetSampler(0, sampler);
+                        context.PSSetShaderResource(0, Source);
                         Targets.SetTarget(context, i);
                         context.SetViewport(Targets.Viewport);
                         cube.DrawAuto(context, pipeline);
@@ -122,9 +122,9 @@
 
             context.Write(mvpBuffer, new ModelViewProj(Matrix4x4.Identity, Cameras[i].View, Cameras[i].Projection));
             context.SetScissorRect(x, y, x + xSize, y + ySize);
-            context.VSSetConstantBuffer(mvpBuffer, 0);
-            context.PSSetSampler(sampler, 0);
-            context.PSSetShaderResource(Source, 0);
+            context.VSSetConstantBuffer(0, mvpBuffer);
+            context.PSSetSampler(0, sampler);
+            context.PSSetShaderResource(0, Source);
             Targets.SetTarget(context, i);
             context.SetViewport(Targets.Viewport);
             cube.DrawAuto(context, pipeline);

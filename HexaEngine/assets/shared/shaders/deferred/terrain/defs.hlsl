@@ -52,8 +52,4 @@ struct PixelInput
 #if VtxBitangent
     float3 bitangent : BINORMAL;
 #endif
-
-#if VtxPosition
-    float depth : DEPTH;
-#endif
 };

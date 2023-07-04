@@ -61,7 +61,7 @@ namespace HexaEngine.Rendering
             indexBuffer = device.CreateBuffer(new BufferDescription(indexBufferSize * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(Matrix4x4), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
 
-            dsv = ResourceManager2.Shared.GetDepthStencilView("SwapChain.DSV");
+            dsv = ResourceManager2.Shared.GetDepthStencilView("GBuffer.DepthStencil");
             rtv = ResourceManager2.Shared.GetTexture("LightBuffer");
         }
 
@@ -128,7 +128,7 @@ namespace HexaEngine.Rendering
             {
                 context.Write(constantBuffer, Matrix4x4.Transpose(camera.Transform.View * camera.Transform.Projection));
 
-                context.VSSetConstantBuffer(constantBuffer, 0);
+                context.VSSetConstantBuffer(0, constantBuffer);
                 context.SetVertexBuffer(vertexBuffer, (uint)sizeof(DebugDrawVert));
                 context.SetIndexBuffer(indexBuffer, Format.R16UInt, 0);
                 pipeline.BeginDraw(context);

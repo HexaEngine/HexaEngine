@@ -67,7 +67,7 @@
             FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
 
             local = (byte*)Alloc(rowPitch * height);
-            Zero(local, rowPitch * height);
+            ZeroMemory(local, rowPitch * height);
             texture = device.CreateTexture2D(description, null);
             texture.DebugName = dbgName;
 
@@ -316,7 +316,7 @@
             FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
 
             local = (T*)Alloc(rowPitch * height);
-            Zero(local, rowPitch * height);
+            ZeroMemory(local, rowPitch * height);
             texture = device.CreateTexture2D(description, null);
             texture.DebugName = dbgName;
 

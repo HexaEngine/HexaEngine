@@ -23,9 +23,13 @@
             dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
-            count = length;
-            items = Alloc<T>(length);
-            ZeroRange(items, length);
+
+            if (accessFlags != CpuAccessFlags.None)
+            {
+                count = length;
+                items = Alloc<T>(length);
+                ZeroRange(items, length);
+            }
 
             description.Usage = accessFlags switch
             {
@@ -59,12 +63,15 @@
         {
             fixed (T* src = values)
             {
-                int size = (int)(count * sizeof(T));
-                System.Buffer.MemoryCopy(src, items, size, size);
-            }
+                if (description.CPUAccessFlags != CpuAccessFlags.None)
+                {
+                    int size = (int)(count * sizeof(T));
+                    System.Buffer.MemoryCopy(src, items, size, size);
+                }
 
-            buffer = device.CreateBuffer(items, count, description);
-            buffer.DebugName = dbgName;
+                buffer = device.CreateBuffer(src, count, description);
+                buffer.DebugName = dbgName;
+            }
         }
 
         /// <summary>
@@ -75,11 +82,15 @@
         /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
         {
+            count = 1;
             T* src = &value;
-            int size = (int)(count * sizeof(T));
-            System.Buffer.MemoryCopy(src, items, size, size);
+            if (description.CPUAccessFlags != CpuAccessFlags.None)
+            {
+                int size = (int)(count * sizeof(T));
+                System.Buffer.MemoryCopy(src, items, size, size);
+            }
 
-            buffer = device.CreateBuffer(items, count, description);
+            buffer = device.CreateBuffer(src, count, description);
             buffer.DebugName = dbgName;
         }
 
@@ -92,6 +103,23 @@
         public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
         {
             buffer = device.CreateBuffer(items, 1, description);
+            buffer.DebugName = dbgName;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// </summary>
+        /// <param name="device">The device.</param>
+        /// <param name="cpuAccessFlags">The access flags.</param>
+        /// <exception cref="ArgumentException"></exception>
+        public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, bool allowSubresourceUpdate, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, cpuAccessFlags, 1, filename, lineNumber)
+        {
+            if (allowSubresourceUpdate)
+            {
+                description.Usage = Usage.Default;
+            }
+
+            buffer = device.CreateBuffer<T>(default, description);
             buffer.DebugName = dbgName;
         }
 

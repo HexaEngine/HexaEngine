@@ -1,16 +1,20 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
     using ImGuiNET;
+    using System.Text;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
 
     public unsafe class MaterialsWidget : EditorWindow
     {
         private int current = -1;
         private bool hasChanged;
+        private bool hasFileSaved = true;
         private bool isActive;
 
         protected override string Name => "Materials";
@@ -161,7 +165,7 @@
                     var tex = material.Textures[i];
 
                     var iType = Array.IndexOf(MaterialTexture.TextureTypes, tex.Type);
-                    if (ImGui.Combo("Type", ref iType, MaterialTexture.TextureTypeNames, MaterialTexture.TextureTypeNames.Length))
+                    if (ImGui.Combo($"Type##{i}", ref iType, MaterialTexture.TextureTypeNames, MaterialTexture.TextureTypeNames.Length))
                     {
                         material.Textures[i].Type = MaterialTexture.TextureTypes[iType];
                         hasChanged = true;
@@ -169,7 +173,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var file = tex.File;
-                    if (ImGui.InputText("File", ref file, 1024))
+                    if (ImGui.InputText($"File##{i}", ref file, 1024))
                     {
                         material.Textures[i].File = file;
                         hasChanged = true;
@@ -177,7 +181,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
-                    if (ImGui.Combo("Blend", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
+                    if (ImGui.Combo($"Blend##{i}", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
                     {
                         material.Textures[i].Blend = MaterialTexture.BlendModes[iBlend];
                         hasChanged = true;
@@ -185,7 +189,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var iOp = Array.IndexOf(MaterialTexture.TextureOps, tex.Op);
-                    if (ImGui.Combo("TextureOp", ref iOp, MaterialTexture.TextureOpNames, MaterialTexture.TextureOpNames.Length))
+                    if (ImGui.Combo($"TextureOp##{i}", ref iOp, MaterialTexture.TextureOpNames, MaterialTexture.TextureOpNames.Length))
                     {
                         material.Textures[i].Op = MaterialTexture.TextureOps[iOp];
                         hasChanged = true;
@@ -193,7 +197,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var mapping = tex.Mapping;
-                    if (ImGui.InputInt("Mapping", ref mapping))
+                    if (ImGui.InputInt($"Mapping##{i}", ref mapping))
                     {
                         material.Textures[i].Mapping = mapping;
                         hasChanged = true;
@@ -201,7 +205,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var uvwSrc = tex.UVWSrc;
-                    if (ImGui.InputInt("UVWSrc", ref uvwSrc))
+                    if (ImGui.InputInt($"UVWSrc##{i}", ref uvwSrc))
                     {
                         material.Textures[i].UVWSrc = uvwSrc;
                         hasChanged = true;
@@ -209,7 +213,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var iU = Array.IndexOf(MaterialTexture.TextureMapModes, tex.U);
-                    if (ImGui.Combo("U", ref iU, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
+                    if (ImGui.Combo($"U##{i}", ref iU, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
                     {
                         material.Textures[i].U = MaterialTexture.TextureMapModes[iU];
                         hasChanged = true;
@@ -217,7 +221,7 @@
                     isActive |= ImGui.IsItemActive();
 
                     var iV = Array.IndexOf(MaterialTexture.TextureMapModes, tex.V);
-                    if (ImGui.Combo("V", ref iV, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
+                    if (ImGui.Combo($"V##{i}", ref iV, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
                     {
                         material.Textures[i].V = MaterialTexture.TextureMapModes[iV];
                         hasChanged = true;
@@ -225,19 +229,19 @@
                     isActive |= ImGui.IsItemActive();
 
                     var texFlags = (int)tex.Flags;
-                    if (ImGui.CheckboxFlags("Invert", ref texFlags, (int)TextureFlags.Invert))
+                    if (ImGui.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
                     {
                         material.Textures[i].Flags ^= TextureFlags.Invert;
                         hasChanged = true;
                     }
                     isActive |= ImGui.IsItemActive();
-                    if (ImGui.CheckboxFlags("UseAlpha", ref texFlags, (int)TextureFlags.UseAlpha))
+                    if (ImGui.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
                     {
                         material.Textures[i].Flags ^= TextureFlags.UseAlpha;
                         hasChanged = true;
                     }
                     isActive |= ImGui.IsItemActive();
-                    if (ImGui.CheckboxFlags("IgnoreAlpha", ref texFlags, (int)TextureFlags.IgnoreAlpha))
+                    if (ImGui.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
                     {
                         material.Textures[i].Flags ^= TextureFlags.IgnoreAlpha;
                         hasChanged = true;
@@ -254,7 +258,17 @@
                 {
                     manager.Update(material);
                     hasChanged = false;
+                    hasFileSaved = false;
                 }
+                ImGui.BeginDisabled(hasFileSaved);
+                if (ImGui.Button("Save"))
+                {
+                    var lib = manager.GetMaterialLibraryForm(material);
+                    var path = Paths.CurrentProjectFolder + lib.Name.Replace("assets/", "/").Replace("/", "\\");
+                    lib.Save(path, Encoding.UTF8);
+                }
+                ImGui.EndDisabled();
+
                 ImGui.Text($"HasChanged: {hasChanged}, IsActive: {isActive}");
             }
             ImGui.EndChild();

@@ -1,5 +1,5 @@
 #include "common.hlsl"
-#include "../../camera.hlsl"
+#include "../camera.hlsl"
 
 cbuffer VoxelCbuf : register(b0)
 {
@@ -32,7 +32,7 @@ inline float4 ConeTrace(in Texture3D<float4> voxels, in float3 P, in float3 N, i
 {
     float3 color = 0;
     float alpha = 0;
-	
+
 	// We need to offset the cone start position to avoid sampling its own voxel (self-occlusion):
 	//	Unfortunately, it will result in disconnection between nearby surfaces :(
     float dist = voxel_radiance.DataSize; // offset by cone dir so that first sample of all cones are not the same
@@ -117,12 +117,12 @@ float4 main(VertexOut pin) : SV_TARGET
     float metallic = NormalMetallic.a;
     float depth = depthTx.Sample(linear_wrap_sampler, pin.Tex);
     float3 view_pos = GetPositionVS(pin.Tex, depth);
-    
+
     float4 world_pos = mul(float4(view_pos, 1.0f), viewInv);
     world_pos /= world_pos.w;
 
     float3 world_normal = mul(Normal, (float3x3) transpose(view));
-    
+
     return ConeTraceRadiance(voxelTexture, world_pos.xyz, world_normal);
 
 }

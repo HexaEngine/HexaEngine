@@ -5,7 +5,6 @@
     using HexaEngine.Editor.Dialogs;
     using ImGuiNET;
     using System;
-    using System.Text;
 
     public class GenerateMipMapsDialog : Modal
     {

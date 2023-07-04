@@ -13,6 +13,7 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
@@ -21,6 +22,7 @@ namespace HexaEngine.Rendering
     using HexaEngine.Filters;
     using ImGuiNET;
     using System;
+    using System.Collections.Generic;
     using System.Numerics;
 
     public class SceneRenderer : ISceneRenderer
@@ -42,13 +44,14 @@ namespace HexaEngine.Rendering
         private ConstantBuffer<CBTessellation> tesselationBuffer;
 
         private DepthStencil depthStencil;
+        private DepthStencil depthStencil2;
         private ResourceRef<Texture> lightBuffer;
         private IDepthStencilView dsv;
         private GBuffer gbuffer;
 
         private DepthMipChain hizBuffer;
 
-        private HBAO ssao;
+        private IAmbientOcclusion ssao;
 
         private BRDFLUT brdfLUT;
 
@@ -73,6 +76,8 @@ namespace HexaEngine.Rendering
         public int Width => width;
 
         public int Height => height;
+
+        public Vector2 Size => new(width, height);
 
         public SceneRenderer()
         {
@@ -120,21 +125,25 @@ namespace HexaEngine.Rendering
                 );
 
             depthStencil = new(device, width, height, Format.D32Float);
+            depthStencil2 = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
             hizBuffer = new(device, width, height);
 
             ResourceManager2.Shared.AddGBuffer("GBuffer", gbuffer);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[1]);
-            ResourceManager2.Shared.AddDepthStencilView("SwapChain.DSV", depthStencil.DSV);
-            ResourceManager2.Shared.AddDepthStencilView("PrePass.DSV", depthStencil.DSV);
-            ResourceManager2.Shared.AddShaderResourceView("PrePass.SRV", depthStencil.SRV);
-            ResourceManager2.Shared.AddShaderResourceView("SwapChain.SRV", depthStencil.SRV);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Misc", gbuffer.SRVs[2]);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Emission", gbuffer.SRVs[3]);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Depth", depthStencil.SRV);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.DepthCopy", depthStencil2.SRV);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.DepthChain", hizBuffer.SRV);
+            ResourceManager2.Shared.AddDepthStencilView("GBuffer.DepthStencil", depthStencil.DSV);
             lightBuffer = ResourceManager2.Shared.AddTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float));
 
             postProcessing = new(device, width, height);
 
             postProcessing.Add(new VelocityBuffer());
+            postProcessing.Add(new VolumetricClouds());
             postProcessing.Add(new SSR());
             postProcessing.Add(new MotionBlur());
             postProcessing.Add(new DepthOfField());
@@ -147,7 +156,7 @@ namespace HexaEngine.Rendering
             postProcessing.Add(new TAA());
             postProcessing.Add(new FXAA());
 
-            ssao = new();
+            ssao = new HBAO();
 
             brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.R16G16Float)).Value;
 
@@ -320,15 +329,17 @@ namespace HexaEngine.Rendering
 
             gbuffer.Resize(width, height);
             depthStencil = new(device, width, height, Format.D32Float);
+            depthStencil2 = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
 
             lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float));
-            ResourceManager2.Shared.SetOrAddResource("GBuffer.Color", gbuffer.SRVs[0]);
-            ResourceManager2.Shared.SetOrAddResource("GBuffer.Position", gbuffer.SRVs[1]);
-            ResourceManager2.Shared.SetOrAddResource("GBuffer.Normal", gbuffer.SRVs[2]);
-            ResourceManager2.Shared.SetOrAddResource("SwapChain.DSV", depthStencil.DSV);
-            ResourceManager2.Shared.SetOrAddResource("PrePass.DSV", depthStencil.DSV);
-            ResourceManager2.Shared.SetOrAddResource("PrePass.SRV", depthStencil.SRV);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[1]);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Misc", gbuffer.SRVs[2]);
+            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Emission", gbuffer.SRVs[3]);
+            ResourceManager2.Shared.SetOrAddResource("GBuffer.Depth", depthStencil.SRV);
+            ResourceManager2.Shared.SetOrAddResource("GBuffer.DepthCopy", depthStencil2.SRV);
+            ResourceManager2.Shared.SetOrAddResource("GBuffer.DepthStencil", depthStencil.DSV);
 
             hizBuffer.Resize(device, width, height);
 
@@ -391,6 +402,7 @@ namespace HexaEngine.Rendering
 
             renderers.Update(context);
             lights.Update(context, camera);
+            lights.UpdateBuffers(context);
             CullingManager.UpdateCamera(context);
 
 #if PROFILE
@@ -404,7 +416,7 @@ namespace HexaEngine.Rendering
                 device.Profiler.Begin(context, "PrePass");
 #endif
                 context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-                context.SetRenderTargets(null, 0, dsv);
+                context.SetRenderTargets(0, null, dsv);
                 context.SetViewport(gbuffer.Viewport);
                 renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
                 context.ClearState();
@@ -461,8 +473,8 @@ namespace HexaEngine.Rendering
 #endif
 
             // Fill Geometry Buffer
-            context.ClearRenderTargetViews(gbuffer.PRTVs, gbuffer.Count, Vector4.Zero);
-            context.SetRenderTargets(gbuffer.PRTVs, gbuffer.Count, depthStencil.DSV);
+            context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
+            context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
             context.SetViewport(gbuffer.Viewport);
             renderers.Draw(context, RenderQueueIndex.Geometry);
             context.ClearState();
@@ -477,19 +489,26 @@ namespace HexaEngine.Rendering
             device.Profiler.Begin(context, "Lights");
 #endif
 
-            // Light Pass
-            lights.UpdateBuffers(context);
+            depthStencil.CopyTo(context, depthStencil2);
+
+            context.SetRenderTarget(lightBuffer.Value.RenderTargetView, dsv);
+            context.SetViewport(lightBuffer.Value.RenderTargetView.Viewport);
+            renderers.Draw(context, RenderQueueIndex.Background);
+            context.ClearState();
 
             context.SetRenderTarget(lightBuffer.Value.RenderTargetView, default);
             context.SetViewport(gbuffer.Viewport);
 
-            lights.DeferredPassIndirect(context);
-            lights.DeferredPassDirect(context);
-            lights.DeferredPassDirectShadows(context);
+            lights.DeferredPass(context);
             var alphaTest = renderers.AlphaTestQueue;
             for (int i = 0; i < alphaTest.Count; i++)
             {
                 lights.ForwardPass(context, alphaTest[i], camera);
+            }
+            var transparency = renderers.TransparencyQueue;
+            for (int i = 0; i < transparency.Count; i++)
+            {
+                lights.ForwardPass(context, transparency[i], camera);
             }
 
 #if PROFILE
@@ -508,11 +527,6 @@ namespace HexaEngine.Rendering
             profiler.End("SSAO");
 #endif
 
-            context.SetRenderTarget(lightBuffer.Value.RenderTargetView, dsv);
-            context.SetViewport(lightBuffer.Value.RenderTargetView.Viewport);
-            renderers.Draw(context, RenderQueueIndex.Background);
-            context.ClearState();
-
 #if PROFILE
             profiler.Begin("PostProcessing");
             device.Profiler.Begin(context, "PostProcessing");
@@ -524,37 +538,58 @@ namespace HexaEngine.Rendering
 #endif
         }
 
-        private float zoom = 1;
         private bool prepassEnabled = true;
 
         public void DrawSettings()
         {
+            hizBuffer.Debug();
             if (!initialized)
             {
                 return;
             }
 
-            var size = ImGui.GetWindowContentRegionMax();
-            size.Y = size.X / 16 * 9;
-            ImGui.DragFloat("Zoom", ref zoom, 0.01f, 0, 1);
-            if (ImGui.CollapsingHeader("Color"))
-            {
-                ImGui.Image(gbuffer.SRVs[0].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
-            }
+            var resources = ResourceManager2.Shared.Resources;
 
-            if (ImGui.CollapsingHeader("Position"))
+            for (int i = 0; i < resources.Count; i++)
             {
-                ImGui.Image(gbuffer.SRVs[1].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
-            }
+                var size = ImGui.GetWindowContentRegionMax();
 
-            if (ImGui.CollapsingHeader("Normals"))
-            {
-                ImGui.Image(gbuffer.SRVs[2].NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
-            }
+                var resource = resources[i];
 
-            if (ImGui.CollapsingHeader("SSAO"))
-            {
-                ImGui.Image(ssao.Output.Value.ShaderResourceView.NativePointer, size, Vector2.One / 2 - Vector2.One / 2 * zoom, Vector2.One / 2 + Vector2.One / 2 * zoom);
+                if (resource.Value is IShaderResourceView srv)
+                {
+                    size.Y = size.X / 16 * 9;
+
+                    if (ImGui.CollapsingHeader(resource.Name))
+                    {
+                        ImGui.Image(srv.NativePointer, size);
+                    }
+                }
+                if (resource.Value is Texture2D texture2d && texture2d.SRV != null)
+                {
+                    size.X = MathF.Min(texture2d.Width, size.X);
+                    size.Y = MathF.Min(texture2d.Height, size.Y);
+                    if (ImGui.CollapsingHeader(resource.Name))
+                    {
+                        ImGui.Image(texture2d.SRV.NativePointer, size);
+                    }
+                }
+                if (resource.Value is Texture texture && texture.ShaderResourceView != null)
+                {
+                    float aspect = texture.Viewport.Height / texture.Viewport.Width;
+                    size.X = MathF.Min(texture.Viewport.Width, size.X);
+                    size.Y = texture.Viewport.Height;
+                    var dx = texture.Viewport.Width - size.X;
+                    if (dx > 0)
+                    {
+                        size.Y = size.X * aspect;
+                    }
+
+                    if (ImGui.CollapsingHeader(resource.Name))
+                    {
+                        ImGui.Image(texture.ShaderResourceView.NativePointer, size);
+                    }
+                }
             }
         }
 

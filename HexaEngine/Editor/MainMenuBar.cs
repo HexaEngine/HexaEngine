@@ -5,7 +5,6 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Editor.MeshEditor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
 
@@ -28,8 +27,8 @@
 
         static MainMenuBar()
         {
-            HotkeyManager.Register("Undo-Action", () => Designer.History.TryUndo(), Key.LCtrl, Key.Z);
-            HotkeyManager.Register("Redo-Action", () => Designer.History.TryRedo(), Key.LCtrl, Key.Y);
+            HotkeyManager.Register("Undo-Action", () => History.Default.TryUndo(), Key.LCtrl, Key.Z);
+            HotkeyManager.Register("Redo-Action", () => History.Default.TryRedo(), Key.LCtrl, Key.Y);
         }
 
         internal static void Init(IGraphicsDevice device)
@@ -72,13 +71,13 @@
 
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, Designer.History.CanUndo))
+                    if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, History.Default.CanUndo))
                     {
-                        Designer.History.Undo();
+                        History.Default.Undo();
                     }
-                    if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, Designer.History.CanRedo))
+                    if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, History.Default.CanRedo))
                     {
-                        Designer.History.Redo();
+                        History.Default.Redo();
                     }
 
                     ImGui.EndMenu();

@@ -4,12 +4,12 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Scenes.Components.Renderer;
 
-    [EditorNode<Terrain>("Terrain")]
+    [EditorGameObject<Terrain>("Terrain")]
     public class Terrain : GameObject
     {
         public Terrain()
         {
-            AddComponent(new TerrainRenderer());
+            AddComponent(new TerrainRendererComponent());
         }
 
         [JsonConstructor]

@@ -26,15 +26,15 @@
 
         public bool IsUsed => Volatile.Read(ref instances) != 0;
 
-        public bool Bind(IGraphicsContext context, int offset)
+        public bool Bind(IGraphicsContext context, uint offset)
         {
             if (!loaded)
             {
                 return false;
             }
 
-            context.PSSetSamplers(TextureList.Samplers, (uint)TextureList.SlotCount, offset);
-            context.PSSetShaderResources(TextureList.ShaderResourceViews, (uint)TextureList.SlotCount, offset);
+            context.PSSetSamplers(offset, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(offset, TextureList.SlotCount, TextureList.ShaderResourceViews);
 
             return true;
         }

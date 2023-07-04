@@ -24,7 +24,7 @@
                 new Vector3(1.0f, 1.0f, 1.0f)
             });
 
-            IndexBuffer indexBuffer = new(device, CpuAccessFlags.None, new uint[]
+            IndexBuffer indexBuffer = new(device, new uint[]
             {
                 0,1,2,2,3,0,
                 4,1,0,0,5,4,
@@ -32,7 +32,7 @@
                 4,5,7,7,6,4,
                 0,3,7,7,5,0,
                 1,4,2,2,4,6,
-            });
+            }, CpuAccessFlags.None);
 
             return (vertexBuffer, indexBuffer);
         }

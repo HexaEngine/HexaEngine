@@ -328,12 +328,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 Floor(this Vector3 vector)
-        {
-            return new(MathF.Floor(vector.X), MathF.Floor(vector.Y), MathF.Floor(vector.Z));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 NormalizeEulerAngleDegrees(this Vector3 angle)
         {
             float normalizedX = angle.X % 360;
@@ -404,6 +398,24 @@
         public static float Exp2(float x)
         {
             return MathF.Pow(2, x);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Floor(this Vector2 vector)
+        {
+            return new(MathF.Floor(vector.X), MathF.Floor(vector.Y));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Floor(this Vector3 vector)
+        {
+            return new(MathF.Floor(vector.X), MathF.Floor(vector.Y), MathF.Floor(vector.Z));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Floor(this Vector4 vector)
+        {
+            return new(MathF.Floor(vector.X), MathF.Floor(vector.Y), MathF.Floor(vector.Z), MathF.Floor(vector.W));
         }
 
         public static Vector2 Ceiling(this Vector2 value)
@@ -479,6 +491,11 @@
         public static Vector4 Exp2(Vector4 a)
         {
             return new(Exp2(a.X), Exp2(a.Y), Exp2(a.Z), Exp2(a.W));
+        }
+
+        public static float Map01ToN1P1(this float value)
+        {
+            return 2 * value - 1;
         }
     }
 }

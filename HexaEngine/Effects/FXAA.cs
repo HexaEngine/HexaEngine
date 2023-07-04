@@ -7,7 +7,7 @@ namespace HexaEngine.Effects
     using HexaEngine.Core.PostFx;
     using HexaEngine.Mathematics;
 
-    public class FXAA : IPostFx
+    public class FXAA : IPostFx, IAntialiasing
     {
         private Quad quad;
         private IGraphicsPipeline pipeline;
@@ -85,8 +85,8 @@ namespace HexaEngine.Effects
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(Input, 0);
-            context.PSSetSampler(sampler, 0);
+            context.PSSetShaderResource(0, Input);
+            context.PSSetSampler(0, sampler);
             quad.DrawAuto(context, pipeline);
             context.ClearState();
         }

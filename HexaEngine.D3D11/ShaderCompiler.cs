@@ -1,4 +1,6 @@
-﻿namespace HexaEngine.D3D11
+﻿#define SHADER_FORCE_OPTIMIZE
+
+namespace HexaEngine.D3D11
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;

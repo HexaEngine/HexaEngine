@@ -1,11 +1,16 @@
 ﻿namespace HexaEngine.Core.Editor.Attributes
 {
-    using HexaEngine.Core.Scenes;
     using System;
 
     [AttributeUsage(AttributeTargets.Property)]
     public class EditorPropertyAttribute : Attribute
     {
+        public EditorPropertyAttribute(EditorPropertyMode mode = EditorPropertyMode.Default)
+        {
+            Name = string.Empty;
+            Mode = mode;
+        }
+
         public EditorPropertyAttribute(string name, EditorPropertyMode mode = EditorPropertyMode.Default)
         {
             Name = name;
@@ -46,7 +51,7 @@
             Mode = mode;
         }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
         public EditorPropertyMode Mode { get; }
 
@@ -89,67 +94,5 @@
                 EditorPropertyMode.Enum)
         {
         }
-    }
-
-    public class EditorPropertyTypeSelectorAttribute<T> : EditorPropertyAttribute
-    {
-        public EditorPropertyTypeSelectorAttribute(string name, params Type[] types)
-            : base(name,
-                  typeof(T),
-                  types,
-                  types.Select(x => x.Name).ToArray(),
-                  EditorPropertyMode.TypeSelector)
-        {
-        }
-    }
-
-    public enum EditorPropertyMode
-    {
-        Default,
-        Enum,
-        Colorpicker,
-        Slider,
-        SliderAngle,
-        TypeSelector,
-        Filepicker,
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class EditorNodeAttribute : Attribute
-    {
-        public EditorNodeAttribute(string name, Type type, Func<GameObject> constructor, Func<GameObject, bool> isType)
-        {
-            Name = name;
-            Type = type;
-            Constructor = constructor;
-            IsType = isType;
-        }
-
-        public string Name { get; }
-
-        public Type Type { get; }
-
-        public Func<GameObject> Constructor { get; }
-
-        public Func<GameObject, bool> IsType { get; }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class EditorNodeAttribute<T> : EditorNodeAttribute where T : GameObject, new()
-    {
-        public EditorNodeAttribute(string name) : base(name, typeof(T), () => new T(), (other) => other is T)
-        {
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class EditorButtonAttribute : Attribute
-    {
-        public EditorButtonAttribute(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; }
     }
 }

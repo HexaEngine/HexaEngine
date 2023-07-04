@@ -3835,7 +3835,7 @@
                 1 * Math.Pow(value, 5) * spline[5 * stride];
         }
 
-        public static double Evaluate(double[] dataset, int offset, nint stride, float turbidity, float albedo, float sun_theta)
+        public static double Evaluate(double* dataset, nint stride, float turbidity, float albedo, float sun_theta)
         {
             // splines are functions of elevation^1/3
             double elevationK = Math.Pow(MathF.Max(0.0f, 1.0f - sun_theta / (float.Pi / 2.0f)), 1.0f / 3.0f);
@@ -3845,23 +3845,20 @@
             int turbidity1 = Math.Min(turbidity0 + 1, 10);
             float turbidityK = Math.Clamp(turbidity - turbidity0, 0.0f, 1.0f);
 
-            fixed (double* pData = dataset)
-            {
-                double* datasetA0 = (pData + offset);
-                double* datasetA1 = (pData + offset) + stride * 6 * 10;
+            double* datasetA0 = dataset;
+            double* datasetA1 = dataset + stride * 6 * 10;
 
-                double a0t0 = EvaluateSpline(datasetA0 + stride * 6 * (turbidity0 - 1), stride, elevationK);
-                double a1t0 = EvaluateSpline(datasetA1 + stride * 6 * (turbidity0 - 1), stride, elevationK);
-                double a0t1 = EvaluateSpline(datasetA0 + stride * 6 * (turbidity1 - 1), stride, elevationK);
-                double a1t1 = EvaluateSpline(datasetA1 + stride * 6 * (turbidity1 - 1), stride, elevationK);
+            double a0t0 = EvaluateSpline(datasetA0 + stride * 6 * (turbidity0 - 1), stride, elevationK);
+            double a1t0 = EvaluateSpline(datasetA1 + stride * 6 * (turbidity0 - 1), stride, elevationK);
+            double a0t1 = EvaluateSpline(datasetA0 + stride * 6 * (turbidity1 - 1), stride, elevationK);
+            double a1t1 = EvaluateSpline(datasetA1 + stride * 6 * (turbidity1 - 1), stride, elevationK);
 
-                return a0t0 * (1.0f - albedo) * (1.0f - turbidityK) + a1t0 * albedo * (1.0f - turbidityK) + a0t1 * (1.0f - albedo) * turbidityK + a1t1 * albedo * turbidityK;
-            }
+            return a0t0 * (1.0f - albedo) * (1.0f - turbidityK) + a1t0 * albedo * (1.0f - turbidityK) + a0t1 * (1.0f - albedo) * turbidityK + a1t1 * albedo * turbidityK;
         }
 
         public static Vector3 HosekWilkie(float cos_theta, float gamma, float cos_gamma, Vector3 A, Vector3 B, Vector3 C, Vector3 D, Vector3 E, Vector3 F, Vector3 G, Vector3 H, Vector3 I)
         {
-            Vector3 chi = new Vector3(1.0f + cos_gamma * cos_gamma) / MathUtil.Pow(H * H + new Vector3(1.0f) - H * (2.0f * cos_gamma), new Vector3(1.5f));
+            Vector3 chi = new Vector3(1.0f + cos_gamma * cos_gamma) / MathUtil.Pow(H * H + new Vector3(1.0f) - (H * (2.0f * cos_gamma)), new Vector3(1.5f));
             Vector3 temp1 = A * MathUtil.Exp2(B * (1.0f / (cos_theta + 0.01f)));
             Vector3 temp2 = C + D * MathUtil.Exp2(E * gamma) + F * (gamma * gamma) + chi * G + I * (float)Math.Sqrt(Math.Max(0.0f, cos_theta));
             Vector3 temp = temp1 * temp2;
@@ -3878,31 +3875,51 @@
             for (int i = 0; i < SkyParameters.Count - 1; ++i)
             {
                 var param = parameters[i];
-                param.X = (float)Evaluate(datasetsRGB[0], i, 9, turbidity, albedo, sun_theta);
-                param.Y = (float)Evaluate(datasetsRGB[1], i, 9, turbidity, albedo, sun_theta);
-                param.Z = (float)Evaluate(datasetsRGB[2], i, 9, turbidity, albedo, sun_theta);
+                fixed (double* dataset = datasetsRGB[0])
+                {
+                    param.X = (float)Evaluate(dataset + i, 9, turbidity, albedo, sun_theta);
+                }
+                fixed (double* dataset = datasetsRGB[1])
+                {
+                    param.Y = (float)Evaluate(dataset + i, 9, turbidity, albedo, sun_theta);
+                }
+                fixed (double* dataset = datasetsRGB[2])
+                {
+                    param.Z = (float)Evaluate(dataset + i, 9, turbidity, albedo, sun_theta);
+                }
+                parameters[i] = param;
             }
 
             var paramZ = parameters[(int)EnumSkyParams.Z];
-            paramZ.X = (float)Evaluate(datasetsRGBRad[0], 0, 1, turbidity, albedo, sun_theta);
-            paramZ.Y = (float)Evaluate(datasetsRGBRad[1], 0, 1, turbidity, albedo, sun_theta);
-            paramZ.Z = (float)Evaluate(datasetsRGBRad[2], 0, 1, turbidity, albedo, sun_theta);
+            fixed (double* dataset = datasetsRGBRad[0])
+            {
+                paramZ.X = (float)Evaluate(dataset, 1, turbidity, albedo, sun_theta);
+            }
+            fixed (double* dataset = datasetsRGBRad[1])
+            {
+                paramZ.Y = (float)Evaluate(dataset, 1, turbidity, albedo, sun_theta);
+            }
+            fixed (double* dataset = datasetsRGBRad[2])
+            {
+                paramZ.Z = (float)Evaluate(dataset, 1, turbidity, albedo, sun_theta);
+            }
+            parameters[(int)EnumSkyParams.Z] = paramZ;
 
             Vector3 S = HosekWilkie(MathF.Cos(sun_theta), 0.0f, 1.0f,
                 parameters[(int)EnumSkyParams.A],
                 parameters[(int)EnumSkyParams.B],
-            parameters[(int)EnumSkyParams.C],
-            parameters[(int)EnumSkyParams.D],
-            parameters[(int)EnumSkyParams.E],
-            parameters[(int)EnumSkyParams.F],
-            parameters[(int)EnumSkyParams.G],
-            parameters[(int)EnumSkyParams.H],
-            parameters[(int)EnumSkyParams.I]);
+                parameters[(int)EnumSkyParams.C],
+                parameters[(int)EnumSkyParams.D],
+                parameters[(int)EnumSkyParams.E],
+                parameters[(int)EnumSkyParams.F],
+                parameters[(int)EnumSkyParams.G],
+                parameters[(int)EnumSkyParams.H],
+                parameters[(int)EnumSkyParams.I]);
 
             Vector3 Z = parameters[(int)EnumSkyParams.Z];
             S *= Z;
 
-            Z /= Vector3.Dot(S, new Vector3(0.2126f, 0.7152f, 0.0722f));
+            Z = Vector3.Divide(Z, Vector3.Dot(S, new Vector3(0.2126f, 0.7152f, 0.0722f)));
             parameters[(int)EnumSkyParams.Z] = Z;
 
             return parameters;
