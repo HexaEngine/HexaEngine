@@ -2,6 +2,8 @@
 {
 #if TRACELEAK
 
+    using HexaEngine.Core.Graphics;
+    using System.Collections.Concurrent;
     using System.Diagnostics;
 
 #endif

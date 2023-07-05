@@ -50,7 +50,7 @@
             return csmDepthBuffer?.SRV;
         }
 
-        public override void CreateShadowMap(IGraphicsDevice device)
+        public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
             if (csmDepthBuffer != null)
             {
@@ -64,7 +64,7 @@
             }
         }
 
-        public override void DestroyShadowMap()
+        public override void DestroyShadowMap(ShadowAtlas atlas)
         {
             if (csmDepthBuffer == null)
             {

@@ -6,7 +6,7 @@
     using System;
     using Viewport = Mathematics.Viewport;
 
-    public unsafe class D3D11GraphicsPipeline : IGraphicsPipeline
+    public unsafe class D3D11GraphicsPipeline : DisposableBase, IGraphicsPipeline
     {
         private readonly string dbgName;
         private bool disposedValue;
@@ -454,72 +454,54 @@
             context.IASetPrimitiveTopology(0);
         }
 
-        protected void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
+            PipelineManager.Unregister(this);
+
+            if (vs.Handle != null)
             {
-                PipelineManager.Unregister(this);
-
-                if (vs.Handle != null)
-                {
-                    vs.Release();
-                }
-
-                if (hs.Handle != null)
-                {
-                    hs.Release();
-                }
-
-                if (ds.Handle != null)
-                {
-                    ds.Release();
-                }
-
-                if (gs.Handle != null)
-                {
-                    gs.Release();
-                }
-
-                if (ps.Handle != null)
-                {
-                    ps.Release();
-                }
-
-                if (layout.Handle != null)
-                {
-                    layout.Release();
-                }
-
-                if (rasterizerState.Handle != null)
-                {
-                    rasterizerState.Release();
-                }
-
-                if (rasterizerState.Handle != null)
-                {
-                    depthStencilState.Release();
-                }
-
-                if (rasterizerState.Handle != null)
-                {
-                    blendState.Release();
-                }
-
-                disposedValue = true;
+                vs.Release();
             }
-        }
 
-        ~D3D11GraphicsPipeline()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
+            if (hs.Handle != null)
+            {
+                hs.Release();
+            }
 
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            if (ds.Handle != null)
+            {
+                ds.Release();
+            }
+
+            if (gs.Handle != null)
+            {
+                gs.Release();
+            }
+
+            if (ps.Handle != null)
+            {
+                ps.Release();
+            }
+
+            if (layout.Handle != null)
+            {
+                layout.Release();
+            }
+
+            if (rasterizerState.Handle != null)
+            {
+                rasterizerState.Release();
+            }
+
+            if (rasterizerState.Handle != null)
+            {
+                depthStencilState.Release();
+            }
+
+            if (rasterizerState.Handle != null)
+            {
+                blendState.Release();
+            }
         }
     }
 }

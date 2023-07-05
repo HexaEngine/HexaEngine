@@ -599,6 +599,8 @@
             {
                 OnDisposed?.Invoke(this, EventArgs.Empty);
 
+                Profiler.Dispose();
+
                 Context.Dispose();
                 Device.Release();
 

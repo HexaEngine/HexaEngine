@@ -62,14 +62,14 @@
             return null;
         }
 
-        public override void CreateShadowMap(IGraphicsDevice device)
+        public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
             if (allocation.IsValid)
             {
                 return;
             }
 
-            allocation = LightManager.Current.ShadowPool.Alloc(ShadowMapSize);
+            allocation = atlas.Alloc(ShadowMapSize);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -77,14 +77,14 @@
             }
         }
 
-        public override void DestroyShadowMap()
+        public override void DestroyShadowMap(ShadowAtlas atlas)
         {
             if (!allocation.IsValid)
             {
                 return;
             }
 
-            LightManager.Current.ShadowPool.Free(ref allocation);
+            atlas.Free(ref allocation);
 
             if (Interlocked.Decrement(ref instances) == 0)
             {

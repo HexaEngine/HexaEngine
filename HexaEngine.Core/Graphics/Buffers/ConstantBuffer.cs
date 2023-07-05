@@ -169,6 +169,8 @@
         /// </value>
         public T* Local => items;
 
+        public ref T Data => ref items[0];
+
         public BufferDescription Description => buffer.Description;
 
         public int Length => buffer.Length;

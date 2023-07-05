@@ -6,6 +6,7 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
+    using HexaEngine.Editor.MaterialEditor.Generator.Structs;
     using ImGuiNET;
     using System.Numerics;
 
@@ -426,6 +427,8 @@
 
             quad?.Dispose();
             copyPipeline?.Dispose();
+
+            samplerState.Dispose();
 
             colorCB.Dispose();
 

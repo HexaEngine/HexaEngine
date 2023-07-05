@@ -133,6 +133,7 @@
         {
             quad.Dispose();
             pipeline.Dispose();
+            paramsBuffer.Dispose();
             sampler.Dispose();
             GC.SuppressFinalize(this);
         }

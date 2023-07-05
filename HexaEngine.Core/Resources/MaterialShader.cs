@@ -596,6 +596,7 @@ namespace HexaEngine.Core.Resources
         {
             if (!disposedValue)
             {
+                forward?.Dispose();
                 deferred?.Dispose();
                 depthOnly?.Dispose();
                 csm?.Dispose();

@@ -78,7 +78,7 @@
         private unsafe void** deferredClusterdSrvs;
         private const uint nDeferredClusterdSrvs = 11 + MaxDirectionalLightSDs;
 
-        public const int MaxGlobalLightProbes = 4;
+        public const int MaxGlobalLightProbes = 1;
         public const int MaxDirectionalLightSDs = 1;
         public const int MaxPointLightSDs = 32;
         public const int MaxSpotlightSDs = 32;
@@ -277,7 +277,7 @@
         {
             if (gameObject is Light light)
             {
-                light.DestroyShadowMap();
+                light.DestroyShadowMap(shadowPool);
                 RemoveLight(light);
             }
             if (gameObject.TryGetComponent<ILightProbeComponent>(out var component))
@@ -340,11 +340,11 @@
 
                     if (light.ShadowMapEnable)
                     {
-                        light.CreateShadowMap(context.Device);
+                        light.CreateShadowMap(context.Device, shadowPool);
                     }
                     else
                     {
-                        light.DestroyShadowMap();
+                        light.DestroyShadowMap(shadowPool);
                     }
 
                     if (!light.InUpdateQueue)
@@ -465,6 +465,10 @@
                 switch (probe.Type)
                 {
                     case ProbeType.Global:
+                        if (globalProbesCount == MaxGlobalLightProbes)
+                        {
+                            continue;
+                        }
                         GlobalProbes.Add((GlobalLightProbeComponent)probe);
                         forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.ShaderResourceView?.NativePointer ?? 0);
                         forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.ShaderResourceView?.NativePointer ?? 0);
@@ -887,11 +891,6 @@
             shadowPool.Dispose();
 
             quad.Dispose();
-
-            linearClampSampler.Dispose();
-            linearWrapSampler.Dispose();
-            pointClampSampler.Dispose();
-            shadowSampler.Dispose();
 
             deferredIndirect.Dispose();
             deferred.Dispose();

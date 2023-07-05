@@ -116,9 +116,9 @@
 
         public abstract IShaderResourceView? GetShadowMap();
 
-        public abstract void CreateShadowMap(IGraphicsDevice device);
+        public abstract void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas);
 
-        public abstract void DestroyShadowMap();
+        public abstract void DestroyShadowMap(ShadowAtlas atlas);
 
         public uint GetQueueIndex() => QueueIndex;
     }

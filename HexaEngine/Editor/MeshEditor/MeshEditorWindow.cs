@@ -681,6 +681,8 @@
             worldBuffer.Dispose();
             cameraBuffer.Dispose();
             ntbView.Dispose();
+            overlayBuffer.Dispose();
+            boneBuffer.Dispose();
         }
     }
 }

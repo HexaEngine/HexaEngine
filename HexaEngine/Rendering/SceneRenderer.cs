@@ -13,7 +13,6 @@ namespace HexaEngine.Rendering
     using HexaEngine.Core.Renderers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
@@ -22,7 +21,6 @@ namespace HexaEngine.Rendering
     using HexaEngine.Filters;
     using ImGuiNET;
     using System;
-    using System.Collections.Generic;
     using System.Numerics;
 
     public class SceneRenderer : ISceneRenderer
@@ -629,6 +627,7 @@ namespace HexaEngine.Rendering
 
                 dsv.Dispose();
                 depthStencil.Dispose();
+                depthStencil2.Dispose();
 
                 hizBuffer.Dispose();
                 deferredContext.Dispose();

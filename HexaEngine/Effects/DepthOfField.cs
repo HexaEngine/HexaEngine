@@ -3,6 +3,7 @@
 namespace HexaEngine.Effects
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.PostFx;
     using HexaEngine.Core.Resources;
@@ -15,24 +16,20 @@ namespace HexaEngine.Effects
         private bool enabled = true;
         private bool bokehEnabled = true;
         private Quad quad;
-        private IBuffer cbBlur;
-        private IBuffer cbBokeh;
-        private IBuffer cbDof;
+        private ConstantBuffer<BlurParams> cbBlur;
+        private ConstantBuffer<BokehParams> cbBokeh;
+        private ConstantBuffer<DofParams> cbDof;
         private ISamplerState pointSampler;
         private IGraphicsPipeline pipelineBlur;
         private IGraphicsPipeline pipelineBokeh;
         private IGraphicsPipeline pipelineDof;
-        private ITexture2D outOfFocusTex;
-        private IShaderResourceView outOfFocusSRV;
-        private IRenderTargetView outOfFocusRTV;
-        private ITexture2D bokehTex;
-        private IShaderResourceView bokehSRV;
-        private IRenderTargetView bokehRTV;
-
-        private BlurParams blurParams = new();
-        private BokehParams bokehParams = new();
-        private DofParams dofParams = new();
-
+        private Texture2D outOfFocusTex;
+        private Texture2D bokehTex;
+        private int autoFocusSamples;
+        private int bokehRadius;
+        private float bokehSeparation;
+        private float bokehMaxThreshold;
+        private float focusRange;
         private bool dirty;
 
         public IRenderTargetView Output;
@@ -40,6 +37,11 @@ namespace HexaEngine.Effects
         public ResourceRef<IShaderResourceView> Position;
         public ResourceRef<IBuffer> Camera;
         private int priority = 300;
+        private bool autoFocusEnabled;
+        private float autoFocusRadius;
+        private int blurRadius;
+        private float bokehMinThreshold;
+        private Vector2 focusPoint;
 
         public event Action<bool> OnEnabledChanged;
 
@@ -47,10 +49,9 @@ namespace HexaEngine.Effects
 
         public bool Enabled
         {
-            get => dofParams.Enabled == 1;
+            get => enabled;
             set
             {
-                dofParams.Enabled = value ? 1 : 0;
                 enabled = value;
                 dirty = true;
                 OnEnabledChanged?.Invoke(value);
@@ -73,30 +74,30 @@ namespace HexaEngine.Effects
 
         public bool AutoFocusEnabled
         {
-            get => dofParams.AutoFocusEnabled == 1;
+            get => autoFocusEnabled;
             set
             {
-                dofParams.AutoFocusEnabled = value ? 1 : 0;
+                autoFocusEnabled = value;
                 dirty = true;
             }
         }
 
         public int AutoFocusSamples
         {
-            get => dofParams.AutoFocusSamples;
+            get => autoFocusSamples;
             set
             {
-                dofParams.AutoFocusSamples = value;
+                autoFocusSamples = value;
                 dirty = true;
             }
         }
 
         public float AutoFocusRadius
         {
-            get => dofParams.AutoFocusRadius;
+            get => autoFocusRadius;
             set
             {
-                dofParams.AutoFocusRadius = value;
+                autoFocusRadius = value;
                 dirty = true;
             }
         }
@@ -113,70 +114,70 @@ namespace HexaEngine.Effects
 
         public int BlurRadius
         {
-            get => blurParams.Size;
+            get => blurRadius;
             set
             {
-                blurParams.Size = value;
+                blurRadius = value;
                 dirty = true;
             }
         }
 
         public int BokehRadius
         {
-            get => bokehParams.Size;
+            get => bokehRadius;
             set
             {
-                bokehParams.Size = value;
+                bokehRadius = value;
                 dirty = true;
             }
         }
 
         public float BokehSeparation
         {
-            get => bokehParams.Separation;
+            get => bokehSeparation;
             set
             {
-                bokehParams.Separation = value;
+                bokehSeparation = value;
                 dirty = true;
             }
         }
 
         public float BokehMinThreshold
         {
-            get => bokehParams.MinThreshold;
+            get => bokehMinThreshold;
             set
             {
-                bokehParams.MinThreshold = value;
+                bokehMinThreshold = value;
                 dirty = true;
             }
         }
 
         public float BokehMaxThreshold
         {
-            get => bokehParams.MaxThreshold;
+            get => bokehMaxThreshold;
             set
             {
-                bokehParams.MaxThreshold = value;
+                bokehMaxThreshold = value;
                 dirty = true;
             }
         }
 
         public float FocusRange
         {
-            get => dofParams.FocusRange;
+            get => focusRange;
             set
             {
-                dofParams.FocusRange = value;
+                focusRange = value;
                 dirty = true;
             }
         }
 
         public Vector2 FocusPoint
         {
-            get => dofParams.FocusPoint;
+            get => focusPoint;
             set
             {
-                dofParams.FocusPoint = value;
+                focusPoint = value;
                 dirty = true;
             }
         }
@@ -265,9 +266,7 @@ namespace HexaEngine.Effects
         {
             this.device = device;
             quad = new(device);
-            blurParams = new BlurParams();
-            bokehParams = new BokehParams();
-            dofParams = new DofParams();
+
             pipelineBlur = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "effects/blur/vs.hlsl",
@@ -284,17 +283,13 @@ namespace HexaEngine.Effects
                 PixelShader = "effects/dof/ps.hlsl"
             }, macros);
 
-            outOfFocusTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
-            outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
+            outOfFocusTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
-            bokehTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            bokehSRV = device.CreateShaderResourceView(bokehTex);
-            bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
+            bokehTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
-            cbBlur = device.CreateBuffer(blurParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            cbBokeh = device.CreateBuffer(bokehParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            cbDof = device.CreateBuffer(dofParams, BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            cbBlur = new(device, CpuAccessFlags.Write);
+            cbBokeh = new(device, CpuAccessFlags.Write);
+            cbDof = new(device, CpuAccessFlags.Write);
 
             pointSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
 
@@ -304,18 +299,8 @@ namespace HexaEngine.Effects
 
         public void Resize(int width, int height)
         {
-            outOfFocusTex.Dispose();
-            outOfFocusSRV.Dispose();
-            outOfFocusRTV.Dispose();
-            outOfFocusTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            outOfFocusSRV = device.CreateShaderResourceView(outOfFocusTex);
-            outOfFocusRTV = device.CreateRenderTargetView(outOfFocusTex, new(width, height));
-            bokehTex.Dispose();
-            bokehSRV.Dispose();
-            bokehRTV.Dispose();
-            bokehTex = device.CreateTexture2D(Format.R16G16B16A16Float, width, height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
-            bokehSRV = device.CreateShaderResourceView(bokehTex);
-            bokehRTV = device.CreateRenderTargetView(bokehTex, new(width, height));
+            outOfFocusTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            bokehTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 
         public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
@@ -333,9 +318,26 @@ namespace HexaEngine.Effects
             if (dirty)
             {
                 dirty = false;
-                context.Write(cbBlur, blurParams);
-                context.Write(cbBokeh, bokehParams);
-                context.Write(cbDof, dofParams);
+
+                BlurParams blurParams = default;
+                blurParams.Size = blurRadius;
+                cbBlur.Update(context, blurParams);
+
+                BokehParams bokehParams = default;
+                bokehParams.Separation = bokehSeparation;
+                bokehParams.MinThreshold = bokehMinThreshold;
+                bokehParams.MaxThreshold = bokehMaxThreshold;
+                bokehParams.Size = bokehRadius;
+                cbBokeh.Update(context, bokehParams);
+
+                DofParams dofParams = default;
+                dofParams.Enabled = enabled ? 1 : 0;
+                dofParams.AutoFocusEnabled = autoFocusEnabled ? 1 : 0;
+                dofParams.AutoFocusRadius = autoFocusRadius;
+                dofParams.AutoFocusSamples = autoFocusSamples;
+                dofParams.FocusPoint = focusPoint;
+                dofParams.FocusRange = focusRange;
+                cbDof.Update(context, dofParams);
             }
         }
 
@@ -348,19 +350,19 @@ namespace HexaEngine.Effects
 
             if (enabled && bokehEnabled)
             {
-                context.ClearRenderTargetView(bokehRTV, default);
-                context.SetRenderTarget(bokehRTV, null);
-                context.SetViewport(bokehRTV.Viewport);
+                context.ClearRenderTargetView(bokehTex.RTV, default);
+                context.SetRenderTarget(bokehTex.RTV, null);
+                context.SetViewport(bokehTex.RTV.Viewport);
                 context.PSSetShaderResource(0, Input);
                 context.PSSetConstantBuffer(0, cbBlur);
                 context.PSSetSampler(0, pointSampler);
                 quad.DrawAuto(context, pipelineBlur);
                 context.ClearState();
 
-                context.ClearRenderTargetView(outOfFocusRTV, default);
-                context.SetRenderTarget(outOfFocusRTV, null);
-                context.SetViewport(outOfFocusRTV.Viewport);
-                context.PSSetShaderResource(0, bokehSRV);
+                context.ClearRenderTargetView(outOfFocusTex.RTV, default);
+                context.SetRenderTarget(outOfFocusTex.RTV, null);
+                context.SetViewport(outOfFocusTex.RTV.Viewport);
+                context.PSSetShaderResource(0, bokehTex.SRV);
                 context.PSSetConstantBuffer(0, cbBokeh);
                 context.PSSetSampler(0, pointSampler);
                 quad.DrawAuto(context, pipelineBokeh);
@@ -368,9 +370,9 @@ namespace HexaEngine.Effects
             }
             else if (enabled)
             {
-                context.ClearRenderTargetView(outOfFocusRTV, default);
-                context.SetRenderTarget(outOfFocusRTV, null);
-                context.SetViewport(outOfFocusRTV.Viewport);
+                context.ClearRenderTargetView(outOfFocusTex.RTV, default);
+                context.SetRenderTarget(outOfFocusTex.RTV, null);
+                context.SetViewport(outOfFocusTex.RTV.Viewport);
                 context.PSSetShaderResource(0, Input);
                 context.PSSetConstantBuffer(0, cbBlur);
                 context.PSSetSampler(0, pointSampler);
@@ -382,7 +384,7 @@ namespace HexaEngine.Effects
             context.SetViewport(Output.Viewport);
             context.PSSetShaderResource(0, Position.Value);
             context.PSSetShaderResource(2, Input);
-            context.PSSetShaderResource(3, outOfFocusSRV);
+            context.PSSetShaderResource(3, outOfFocusTex.SRV);
             context.PSSetSampler(0, pointSampler);
             context.PSSetConstantBuffer(0, cbDof);
             context.PSSetConstantBuffer(1, Camera.Value);
@@ -393,21 +395,20 @@ namespace HexaEngine.Effects
         public void Dispose()
         {
             quad.Dispose();
-            pipelineBlur.Dispose();
-            pipelineBokeh.Dispose();
-            pipelineDof.Dispose();
-            pointSampler.Dispose();
-            pipelineBokeh.Dispose();
-            pipelineDof.Dispose();
-            outOfFocusTex.Dispose();
-            outOfFocusSRV.Dispose();
-            outOfFocusRTV.Dispose();
-            bokehTex.Dispose();
-            bokehSRV.Dispose();
-            bokehRTV.Dispose();
+
             cbBlur.Dispose();
             cbBokeh.Dispose();
             cbDof.Dispose();
+
+            pointSampler.Dispose();
+
+            pipelineBlur.Dispose();
+            pipelineBokeh.Dispose();
+            pipelineDof.Dispose();
+
+            outOfFocusTex.Dispose();
+            bokehTex.Dispose();
+
             GC.SuppressFinalize(this);
         }
     }

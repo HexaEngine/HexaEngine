@@ -49,7 +49,7 @@
             return allocations;
         }
 
-        public override void CreateShadowMap(IGraphicsDevice device)
+        public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
             if (osmDepthBuffer != null)
             {
@@ -58,7 +58,7 @@
 
             osmDepthBuffer = new(device, ShadowMapSize, ShadowMapSize, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
 
-            LightManager.Current.ShadowPool.AllocRange(ShadowMapSize, allocations);
+            atlas.AllocRange(ShadowMapSize, allocations);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -66,14 +66,14 @@
             }
         }
 
-        public override void DestroyShadowMap()
+        public override void DestroyShadowMap(ShadowAtlas atlas)
         {
             if (osmDepthBuffer == null)
             {
                 return;
             }
 
-            LightManager.Current.ShadowPool.FreeRange(allocations);
+            atlas.FreeRange(allocations);
 
             osmDepthBuffer?.Dispose();
             osmDepthBuffer = null;

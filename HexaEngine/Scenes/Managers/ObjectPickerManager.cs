@@ -135,6 +135,7 @@ namespace HexaEngine.Scenes.Managers
         {
             pipeline.Dispose();
             texture.Dispose();
+            depthStencil.Dispose();
             computePipeline.Dispose();
             mouseBuffer.Dispose();
             outputBuffer.Dispose();

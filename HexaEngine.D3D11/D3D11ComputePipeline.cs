@@ -4,7 +4,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
 
-    public unsafe class D3D11ComputePipeline : IComputePipeline
+    public unsafe class D3D11ComputePipeline : DisposableBase, IComputePipeline
     {
         private readonly D3D11GraphicsDevice device;
         private readonly string dbgName;
@@ -172,31 +172,13 @@
             return macros;
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
+            PipelineManager.Unregister(this);
+            if (cs.Handle != null)
             {
-                PipelineManager.Unregister(this);
-                if (cs.Handle != null)
-                {
-                    cs.Release();
-                }
-
-                disposedValue = true;
+                cs.Release();
             }
-        }
-
-        ~D3D11ComputePipeline()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

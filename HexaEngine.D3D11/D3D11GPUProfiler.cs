@@ -185,9 +185,10 @@
         {
             if (!disposedValue)
             {
-                for (int i = 0; i < blockNames.Count; i++)
+                var names = blockNames.ToArray();
+                for (int i = 0; i < names.Length; i++)
                 {
-                    DestroyBlock(blockNames[i]);
+                    DestroyBlock(names[i]);
                 }
 
                 disposedValue = true;

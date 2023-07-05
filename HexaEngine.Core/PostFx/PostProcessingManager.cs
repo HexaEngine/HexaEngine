@@ -487,9 +487,9 @@
         {
             if (!disposedValue)
             {
-                for (int i = 0; i < effectsSorted.Count; i++)
+                for (int i = 0; i < effects.Count; i++)
                 {
-                    effectsSorted[i].Dispose();
+                    effects[i].Dispose();
                 }
                 effects.Clear();
                 effectsSorted.Clear();
