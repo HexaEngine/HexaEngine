@@ -1,6 +1,7 @@
 #include "../../gbuffer.hlsl"
 #include "../../camera.hlsl"
 #include "../../light.hlsl"
+#include "../../weather.hlsl"
 
 Texture2D GBufferA : register(t0);
 Texture2D GBufferB : register(t1);
@@ -10,8 +11,8 @@ Texture2D<float> Depth : register(t4);
 Texture2D ssao : register(t5);
 Texture2D brdfLUT : register(t9);
 StructuredBuffer<GlobalProbe> globalProbes : register(t10);
-TextureCube globalDiffuse[4] : register(t11);
-TextureCube globalSpecular[4] : register(t15);
+TextureCube globalDiffuse : register(t11);
+TextureCube globalSpecular : register(t12);
 
 SamplerState linearClampSampler : register(s0);
 SamplerState linearWrapSampler : register(s1);
@@ -47,18 +48,15 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
     float3 N = normalize(attrs.normal);
     float3 V = normalize(GetCameraPos() - position);
     float ao = ssao.Sample(linearWrapSampler, input.Tex).r * attrs.ao;
-    float3 ambient = attrs.emission * attrs.emissionStrength;
-    
-    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
-    
-    [unroll(4)]
-    for (uint i = 0; i < params.globalProbeCount; i++)
-    {
-        ambient += BRDF_IBL(linearWrapSampler, globalDiffuse[i], globalSpecular[i], brdfLUT, F0, N, V, baseColor, roughness, ao);
-    }
+    float3 ambient = baseColor * ambient_color.xyz;
 
-    
-    return float4(ambient, 1);
+    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor, metallic);
+
+    ambient += BRDF_IBL(linearWrapSampler, globalDiffuse, globalSpecular, brdfLUT, F0, N, V, baseColor, roughness);
+
+    float3 color = ambient * ao + attrs.emission * attrs.emissionStrength;
+
+    return float4(color, 1);
 }
 
 float4 main(VSOut pixel) : SV_TARGET

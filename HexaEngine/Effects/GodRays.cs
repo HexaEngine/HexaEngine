@@ -47,6 +47,8 @@
         private float godraysDecay = 0.825f;
         private float godraysExposure = 2.0f;
 
+        private bool sunPresent;
+
         public event Action<bool>? OnEnabledChanged;
 
         public event Action<int>? OnPriorityChanged;
@@ -184,11 +186,13 @@
                 return;
             }
 
+            sunPresent = false;
             for (int i = 0; i < lights.ActiveCount; i++)
             {
                 var light = lights.Active[i];
                 if (light is DirectionalLight)
                 {
+                    sunPresent = true;
                     GodRaysParams raysParams = default;
 
                     raysParams.GodraysDecay = godraysDecay;
@@ -226,12 +230,16 @@
                     sunParams.AlbedoFactor = 1f;
 
                     paramsSunBuffer.Update(context, sunParams);
+
+                    break;
                 }
             }
         }
 
         public unsafe void PrePassDraw(IGraphicsContext context)
         {
+            if (!sunPresent)
+                return;
             context.ClearRenderTargetView(sunBuffer.RTV, default);
             context.SetRenderTarget(sunBuffer.RTV, DSV.Value);
             context.SetViewport(Viewport);
@@ -245,7 +253,7 @@
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output == null)
+            if (Output == null || !sunPresent)
             {
                 return;
             }
@@ -261,10 +269,20 @@
 
         public void Dispose()
         {
+            quad1.Dispose();
+            sun.Dispose();
+            sunSampler.Dispose();
+            paramsSunBuffer.Dispose();
+            paramsWorldBuffer.Dispose();
+
             quad.Dispose();
             godrays.Dispose();
             sampler.Dispose();
             paramsBuffer.Dispose();
+
+            sunsprite.Dispose();
+            sunBuffer.Dispose();
+            noiseTex.Dispose();
             GC.SuppressFinalize(this);
         }
     }

@@ -145,6 +145,9 @@
             quad.Dispose();
             pipeline.Dispose();
             sampler.Dispose();
+            samplerLut.Dispose();
+            paramBuffer.Dispose();
+            lut.Dispose();
         }
     }
 }

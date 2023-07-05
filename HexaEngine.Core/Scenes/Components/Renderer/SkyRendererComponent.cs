@@ -14,8 +14,8 @@
     using System.ComponentModel;
     using System.Threading.Tasks;
 
-    [EditorComponent<SkyboxRendererComponent>("Skybox", false, true)]
-    public class SkyboxRendererComponent : IRendererComponent
+    [EditorComponent<SkyRendererComponent>("Sky", false, true)]
+    public class SkyRendererComponent : IRendererComponent
     {
         private GameObject gameObject;
         private SkyRenderer renderer;
@@ -81,11 +81,16 @@
             throw new NotSupportedException();
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, RenderPath path)
         {
             if (!gameObject.IsEnabled)
                 return;
             renderer.Draw(context, SkyType.HosekWilkie);
+        }
+
+        public void Bake(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
         }
 
         public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset)
@@ -105,10 +110,10 @@
             skybox = null;
             tmpSkybox?.Dispose();
 
-            var state = new Tuple<IGraphicsDevice, SkyboxRendererComponent>(device, this);
+            var state = new Tuple<IGraphicsDevice, SkyRendererComponent>(device, this);
             return Task.Factory.StartNew(async (state) =>
             {
-                var p = (Tuple<IGraphicsDevice, SkyboxRendererComponent>)state;
+                var p = (Tuple<IGraphicsDevice, SkyRendererComponent>)state;
                 var device = p.Item1;
                 var component = p.Item2;
                 var path = Paths.CurrentAssetsPath + component.environmentPath;

@@ -6,6 +6,9 @@
     {
         public double this[string index] => 0;
 
+        public bool Enabled { get; set; }
+        public bool DisableLogging { get; set; }
+
         public void Begin(IGraphicsContext context, string name)
         {
         }

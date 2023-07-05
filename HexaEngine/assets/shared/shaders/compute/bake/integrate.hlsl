@@ -1,3 +1,15 @@
+#ifndef RTSize_
+#define RTSize_ 64
+#endif
+
+#ifndef NumFaces_
+#define NumFaces_ 5
+#endif
+
+#ifndef NumBounceSumThreads_
+#define NumBounceSumThreads_ 512
+#endif
+
 //======================================================================
 //
 //	DX11 Radiosity Sample
@@ -14,9 +26,9 @@
 cbuffer Constants : register(cb0)
 {
     float4x4 ToTangentSpace[5] : packoffset(c0);
-	float FinalWeight : packoffset(c20);
-	uint VertexIndex : packoffset(c21);
-	uint NumElements : packoffset(c22);
+    float FinalWeight : packoffset(c20);
+    uint VertexIndex : packoffset(c21);
+    uint NumElements : packoffset(c22);
 }
 
 //======================================================================================
@@ -37,7 +49,7 @@ RWBuffer<float4> OutputBuffer : register(u0);
 void ProjectOntoSH(in float3 n, in float3 color, out float3 sh[9])
 {
 	// Cosine kernel
-	const float A0 = 3.141593f;
+    const float A0 = 3.141593f;
     const float A1 = 2.095395f;
     const float A2 = 0.785398f;
 
@@ -63,27 +75,27 @@ void ProjectOntoSH(in float3 n, in float3 color, out float3 sh[9])
 //-------------------------------------------------------------------------------------------------
 void ConvertToHBasis(in float3 sh[9], out float3 hBasis[4])
 {
-	const float rt2 = sqrt(2.0f);
-	const float rt32 = sqrt(3.0f / 2.0f);
-	const float rt52 = sqrt(5.0f / 2.0f);
-	const float rt152 = sqrt(15.0f / 2.0f);
-	const float convMatrix[4][9] =
-	{
-		{ 1.0f / rt2, 0, 0.5f * rt32, 0, 0, 0, 0, 0, 0 },
-		{ 0, 1.0f / rt2, 0, 0, 0, (3.0f / 8.0f) * rt52, 0, 0, 0 },
-		{ 0, 0, 1.0f / (2.0f * rt2), 0, 0, 0, 0.25f * rt152, 0, 0 },
-		{ 0, 0, 0, 1.0f / rt2, 0, 0, 0, (3.0f / 8.0f) * rt52, 0 }
-	};
+    const float rt2 = sqrt(2.0f);
+    const float rt32 = sqrt(3.0f / 2.0f);
+    const float rt52 = sqrt(5.0f / 2.0f);
+    const float rt152 = sqrt(15.0f / 2.0f);
+    const float convMatrix[4][9] =
+    {
+        { 1.0f / rt2, 0, 0.5f * rt32, 0, 0, 0, 0, 0, 0 },
+        { 0, 1.0f / rt2, 0, 0, 0, (3.0f / 8.0f) * rt52, 0, 0, 0 },
+        { 0, 0, 1.0f / (2.0f * rt2), 0, 0, 0, 0.25f * rt152, 0, 0 },
+        { 0, 0, 0, 1.0f / rt2, 0, 0, 0, (3.0f / 8.0f) * rt52, 0 }
+    };
 
 	[unroll(4)]
-	for(uint row = 0; row < 4; ++row)
-	{
-		hBasis[row] = 0.0f;
+    for (uint row = 0; row < 4; ++row)
+    {
+        hBasis[row] = 0.0f;
 
 		[unroll(9)]
-		for(uint col = 0; col < 9; ++col)
-			hBasis[row] += convMatrix[row][col] * sh[col];
-	}
+        for (uint col = 0; col < 9; ++col)
+            hBasis[row] += convMatrix[row][col] * sh[col];
+    }
 }
 
 // Shared memory for summing H-Basis coefficients for a row
@@ -99,62 +111,62 @@ void IntegrateCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_Dispatc
 					uint3 GroupThreadID : SV_GroupThreadID, uint GroupIndex : SV_GroupIndex)
 {
 	// Gather RGB from the texels
-	const int3 location = int3(GroupThreadID.x, GroupID.y, GroupID.z);
-	float3 radiance = RadianceMap.Load(int4(location.xy, location.z, 0)).xyz;
+    const int3 location = int3(GroupThreadID.x, GroupID.y, GroupID.z);
+    float3 radiance = RadianceMap.Load(int4(location.xy, location.z, 0)).xyz;
 
 	// Calculate the location in [-1, 1] texture space
-	float u = (location.x / float(RTSize_)) * 2.0f - 1.0f;
-	float v = -((location.y / float(RTSize_)) * 2.0f - 1.0f);
+    float u = (location.x / float(RTSize_)) * 2.0f - 1.0f;
+    float v = -((location.y / float(RTSize_)) * 2.0f - 1.0f);
 
 	// Calculate weight
-	float temp = 1.0f + u * u + v * v;
-	float weight = 4.0f / (sqrt(temp) * temp);
-	radiance *= weight;
+    float temp = 1.0f + u * u + v * v;
+    float weight = 4.0f / (sqrt(temp) * temp);
+    radiance *= weight;
 
 	// Extract direction from texel u,v
-	float3 dirVS = normalize(float3(u, v, 1.0f));
-	float3 dirTS = mul(dirVS, (float3x3)ToTangentSpace[location.z]);
+    float3 dirVS = normalize(float3(u, v, 1.0f));
+    float3 dirTS = mul(dirVS, (float3x3) ToTangentSpace[location.z]);
 
 	// Project onto SH
-	float3 sh[9];
-	ProjectOntoSH(dirTS, radiance, sh);
+    float3 sh[9];
+    ProjectOntoSH(dirTS, radiance, sh);
 
 	// Convert to H-Basis
-	float3 hBasis[4];
-	ConvertToHBasis(sh, hBasis);
+    float3 hBasis[4];
+    ConvertToHBasis(sh, hBasis);
 
 	// Store in shared memory
-	RowHBasis[GroupThreadID.x][0] = hBasis[0];
-	RowHBasis[GroupThreadID.x][1] = hBasis[1];
-	RowHBasis[GroupThreadID.x][2] = hBasis[2];
-	RowHBasis[GroupThreadID.x][3] = hBasis[3];
-	GroupMemoryBarrierWithGroupSync();
+    RowHBasis[GroupThreadID.x][0] = hBasis[0];
+    RowHBasis[GroupThreadID.x][1] = hBasis[1];
+    RowHBasis[GroupThreadID.x][2] = hBasis[2];
+    RowHBasis[GroupThreadID.x][3] = hBasis[3];
+    GroupMemoryBarrierWithGroupSync();
 
 	// Sum the coefficients for the row
 	[unroll(RTSize_)]
-	for(uint s = RTSize_ / 2; s > 0; s >>= 1)
-	{
-		if(GroupThreadID.x < s)
-		{
-			RowHBasis[GroupThreadID.x][0] += RowHBasis[GroupThreadID.x + s][0];
-			RowHBasis[GroupThreadID.x][1] += RowHBasis[GroupThreadID.x + s][1];
-			RowHBasis[GroupThreadID.x][2] += RowHBasis[GroupThreadID.x + s][2];
-			RowHBasis[GroupThreadID.x][3] += RowHBasis[GroupThreadID.x + s][3];
-		}
+    for (uint s = RTSize_ / 2; s > 0; s >>= 1)
+    {
+        if (GroupThreadID.x < s)
+        {
+            RowHBasis[GroupThreadID.x][0] += RowHBasis[GroupThreadID.x + s][0];
+            RowHBasis[GroupThreadID.x][1] += RowHBasis[GroupThreadID.x + s][1];
+            RowHBasis[GroupThreadID.x][2] += RowHBasis[GroupThreadID.x + s][2];
+            RowHBasis[GroupThreadID.x][3] += RowHBasis[GroupThreadID.x + s][3];
+        }
 
-		GroupMemoryBarrierWithGroupSync();
-	}
+        GroupMemoryBarrierWithGroupSync();
+    }
 
 	// Have the first thread write out to the output texture
-	if(GroupThreadID.x == 0)
-	{
+    if (GroupThreadID.x == 0)
+    {
 		[unroll]
-		for(uint i = 0; i < 3; ++i)
-		{
-			float4 packed = float4(RowHBasis[0][0][i], RowHBasis[0][1][i], RowHBasis[0][2][i], RowHBasis[0][3][i]);
-			OutputBuffer[GroupID.y + RTSize_ * i + RTSize_ * 3 * location.z] = packed;
-		}
-	}
+        for (uint i = 0; i < 3; ++i)
+        {
+            float4 packed = float4(RowHBasis[0][0][i], RowHBasis[0][1][i], RowHBasis[0][2][i], RowHBasis[0][3][i]);
+            OutputBuffer[GroupID.y + RTSize_ * i + RTSize_ * 3 * location.z] = packed;
+        }
+    }
 }
 
 // Shared memory for reducing H-Basis coefficients
@@ -167,32 +179,32 @@ groupshared float4 ColumnHBasis[RTSize_][3][NumFaces_];
 void ReductionCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_DispatchThreadID,
 					uint3 GroupThreadID : SV_GroupThreadID, uint GroupIndex : SV_GroupIndex)
 {
-	const int3 location = int3(GroupThreadID.x, GroupID.y, GroupThreadID.z);
+    const int3 location = int3(GroupThreadID.x, GroupID.y, GroupThreadID.z);
 
 	// Store in shared memory
-	ColumnHBasis[location.x][location.y][location.z] = InputBuffer[location.x + RTSize_ * location.y + RTSize_ * 3 * location.z];
-	GroupMemoryBarrierWithGroupSync();
+    ColumnHBasis[location.x][location.y][location.z] = InputBuffer[location.x + RTSize_ * location.y + RTSize_ * 3 * location.z];
+    GroupMemoryBarrierWithGroupSync();
 
 	// Sum the coefficients for the column
 	[unroll(RTSize_)]
-	for(uint s = RTSize_ / 2; s > 0; s >>= 1)
-	{
-		if(GroupThreadID.x < s)
-			ColumnHBasis[location.x][location.y][location.z] += ColumnHBasis[location.x + s][location.y][location.z];
+    for (uint s = RTSize_ / 2; s > 0; s >>= 1)
+    {
+        if (GroupThreadID.x < s)
+            ColumnHBasis[location.x][location.y][location.z] += ColumnHBasis[location.x + s][location.y][location.z];
 
-		GroupMemoryBarrierWithGroupSync();
-	}
+        GroupMemoryBarrierWithGroupSync();
+    }
 
 	// Have the first thread write out to the output buffer
-	if (GroupThreadID.x == 0 && GroupThreadID.z == 0)
-	{
-		float4 output = 0.0f;
+    if (GroupThreadID.x == 0 && GroupThreadID.z == 0)
+    {
+        float4 output = 0.0f;
 		[unroll(NumFaces_)]
-		for(uint i = 0; i < NumFaces_; ++i)
-			output += ColumnHBasis[location.x][location.y][i];
-		output *= FinalWeight;
-		OutputBuffer[VertexIndex * 3 + location.y] = output;
-	}
+        for (uint i = 0; i < NumFaces_; ++i)
+            output += ColumnHBasis[location.x][location.y][i];
+        output *= FinalWeight;
+        OutputBuffer[VertexIndex * 3 + location.y] = output;
+    }
 }
 
 //======================================================================================
@@ -202,7 +214,7 @@ void ReductionCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_Dispatc
 void SumBouncesCS(uint3 GroupID : SV_GroupID, uint3 DispatchThreadID : SV_DispatchThreadID,
 					uint3 GroupThreadID : SV_GroupThreadID, uint GroupIndex : SV_GroupIndex)
 {
-	const uint index = GroupThreadID.x + GroupID.x * NumBounceSumThreads_;
-	if(index < NumElements)
-		OutputBuffer[index] = InputBuffer0[index] + InputBuffer1[index];
+    const uint index = GroupThreadID.x + GroupID.x * NumBounceSumThreads_;
+    if (index < NumElements)
+        OutputBuffer[index] = InputBuffer0[index] + InputBuffer1[index];
 }

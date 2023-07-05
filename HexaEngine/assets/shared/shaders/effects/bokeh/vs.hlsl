@@ -1,19 +1,37 @@
-struct VSIn
+
+struct BokehVSOutput
 {
-	float3 Pos : POSITION;
-	float2 Tex : TEXCOORD;
+    float2 Position : POSITION;
+    float2 Size     : SIZE;
+    float3 Color    : COLOR;
+    float  Depth    : DEPTH;
 };
 
-struct VSOut
+struct Bokeh
 {
-	float4 Pos : SV_Position;
-	float2 Tex : TEXCOORD;
+    float3 Position;
+    float2 Size;
+    float3 Color;
 };
 
-VSOut main(VSIn input)
+StructuredBuffer<Bokeh> BokehStack : register(t0);
+
+BokehVSOutput main(in uint VertexID : SV_VertexID)
 {
-	VSOut output;
-	output.Pos = float4(input.Pos, 1);
-	output.Tex = input.Tex;
-	return output;
+    Bokeh bPoint = BokehStack[VertexID];
+    BokehVSOutput output;
+
+	// Position the vertex in normalized device coordinate space [-1, 1]
+    output.Position.xy = bPoint.Position.xy;
+    output.Position.xy = output.Position.xy * 2.0f - 1.0f;
+    output.Position.y *= -1.0f;
+
+	// Scale the size based on the CoC size, and max bokeh sprite size
+    output.Size = bPoint.Size; 
+    
+    output.Depth = bPoint.Position.z; //depth in view space
+
+    output.Color = bPoint.Color;
+
+    return output;
 }

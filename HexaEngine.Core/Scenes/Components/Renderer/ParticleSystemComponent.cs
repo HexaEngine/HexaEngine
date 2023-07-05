@@ -26,10 +26,13 @@
 
         private ResourceRef<IShaderResourceView> dsv;
 
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Transparency;
 
+        [JsonIgnore]
         public BoundingBox BoundingBox { get; }
 
+        [JsonIgnore]
         public RendererFlags Flags { get; } = RendererFlags.Draw | RendererFlags.Update;
 
         [EditorProperty("Texture", EditorPropertyMode.Filepicker)]
@@ -110,13 +113,18 @@
             particleTexture?.Dispose();
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, RenderPath path)
         {
             if (!gameObject.IsEnabled)
                 return;
             if (particleTexture == null)
                 return;
             renderer.Draw(context, emitter, dsv.Value, emitter.ParticleTexture.SRV);
+        }
+
+        public void Bake(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
         }
 
         public void DrawDepth(IGraphicsContext context)

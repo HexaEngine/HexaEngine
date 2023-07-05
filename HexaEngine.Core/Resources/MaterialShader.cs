@@ -15,7 +15,8 @@ namespace HexaEngine.Core.Resources
         private readonly MeshData mesh;
         private readonly MaterialData material;
         private readonly bool debone;
-        private IGraphicsPipeline pipeline;
+        private IGraphicsPipeline forward;
+        private IGraphicsPipeline deferred;
         private IGraphicsPipeline depthOnly;
         private IGraphicsPipeline csm;
         private IGraphicsPipeline osm;
@@ -72,15 +73,10 @@ namespace HexaEngine.Core.Resources
                 blendFunc = blendFuncProp.AsBool();
             }
 
-            var forward = (material.Flags & MaterialFlags.Transparent) != 0;
-            if (forward)
+            if ((material.Flags & MaterialFlags.Transparent) != 0)
             {
-                flags |= MaterialShaderFlags.Forward;
+                flags |= MaterialShaderFlags.Transparent;
                 blendFunc = true;
-            }
-            else
-            {
-                flags |= MaterialShaderFlags.Deferred;
             }
 
             RasterizerDescription rasterizer = RasterizerDescription.CullBack;
@@ -121,7 +117,7 @@ namespace HexaEngine.Core.Resources
                     pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                pipeline = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+                deferred = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
 
                 pipelineDesc.PixelShader = null;
                 depthOnly = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
@@ -129,11 +125,16 @@ namespace HexaEngine.Core.Resources
             }
             else
             {
-                string basePath = forward ? "forward" : "deferred";
-                GraphicsPipelineDesc pipelineDesc = new()
+                GraphicsPipelineDesc pipelineDescForward = new()
                 {
-                    VertexShader = $"{basePath}/geometry/vs.hlsl",
-                    PixelShader = $"{basePath}/geometry/ps.hlsl"
+                    VertexShader = $"forward/geometry/vs.hlsl",
+                    PixelShader = $"forward/geometry/ps.hlsl"
+                };
+
+                GraphicsPipelineDesc pipelineDescDeferred = new()
+                {
+                    VertexShader = $"deferred/geometry/vs.hlsl",
+                    PixelShader = $"deferred/geometry/ps.hlsl"
                 };
 
                 GraphicsPipelineState pipelineState = new()
@@ -148,15 +149,19 @@ namespace HexaEngine.Core.Resources
                 {
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
-                    pipelineDesc.HullShader = $"{basePath}/geometry/hs.hlsl";
-                    pipelineDesc.DomainShader = $"{basePath}/geometry/ds.hlsl";
+                    pipelineDescForward.HullShader = $"forward/geometry/hs.hlsl";
+                    pipelineDescForward.DomainShader = $"forward/geometry/ds.hlsl";
+                    pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
+                    pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
                     pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                pipeline = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+                forward = device.CreateGraphicsPipeline(pipelineDescForward, pipelineState, elements, macros.Append(new("CLUSTERED_FORWARD", 1)).ToArray());
 
-                pipelineDesc.PixelShader = null;
-                depthOnly = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, elements, macros);
+                deferred = device.CreateGraphicsPipeline(pipelineDescDeferred, pipelineState, elements, macros);
+
+                pipelineDescDeferred.PixelShader = null;
+                depthOnly = device.CreateGraphicsPipeline(pipelineDescDeferred, pipelineState, elements, macros);
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
@@ -247,15 +252,10 @@ namespace HexaEngine.Core.Resources
                 blendFunc = blendFuncProp.AsBool();
             }
 
-            var forward = (material.Flags & MaterialFlags.Transparent) != 0;
-            if (forward)
+            if ((material.Flags & MaterialFlags.Transparent) != 0)
             {
-                flags |= MaterialShaderFlags.Forward;
+                flags |= MaterialShaderFlags.Transparent;
                 blendFunc = true;
-            }
-            else
-            {
-                flags |= MaterialShaderFlags.Deferred;
             }
 
             RasterizerDescription rasterizer = RasterizerDescription.CullBack;
@@ -296,7 +296,7 @@ namespace HexaEngine.Core.Resources
                     pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                pipeline = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+                deferred = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
 
                 pipelineDesc.PixelShader = null;
                 depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
@@ -304,11 +304,16 @@ namespace HexaEngine.Core.Resources
             }
             else
             {
-                string basePath = forward ? "forward" : "deferred";
-                GraphicsPipelineDesc pipelineDesc = new()
+                GraphicsPipelineDesc pipelineDescForward = new()
                 {
-                    VertexShader = $"{basePath}/geometry/vs.hlsl",
-                    PixelShader = $"{basePath}/geometry/ps.hlsl"
+                    VertexShader = $"forward/geometry/vs.hlsl",
+                    PixelShader = $"forward/geometry/ps.hlsl"
+                };
+
+                GraphicsPipelineDesc pipelineDescDeferred = new()
+                {
+                    VertexShader = $"deferred/geometry/vs.hlsl",
+                    PixelShader = $"deferred/geometry/ps.hlsl"
                 };
 
                 GraphicsPipelineState pipelineState = new()
@@ -323,15 +328,20 @@ namespace HexaEngine.Core.Resources
                 {
                     Array.Resize(ref macros, macros.Length + 1);
                     macros[^1] = new("Tessellation", "1");
-                    pipelineDesc.HullShader = $"{basePath}/geometry/hs.hlsl";
-                    pipelineDesc.DomainShader = $"{basePath}/geometry/ds.hlsl";
+                    pipelineDescForward.HullShader = $"forward/geometry/hs.hlsl";
+                    pipelineDescForward.DomainShader = $"forward/geometry/ds.hlsl";
+                    pipelineDescDeferred.HullShader = $"deferred/geometry/hs.hlsl";
+                    pipelineDescDeferred.DomainShader = $"deferred/geometry/ds.hlsl";
+
                     pipelineState.Topology = PrimitiveTopology.PatchListWith3ControlPoints;
                 }
 
-                pipeline = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+                forward = await device.CreateGraphicsPipelineAsync(pipelineDescForward, pipelineState, elements, macros.Append(new("CLUSTERED_FORWARD", 1)).ToArray());
 
-                pipelineDesc.PixelShader = null;
-                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDesc, pipelineState, elements, macros);
+                deferred = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred, pipelineState, elements, macros);
+
+                pipelineDescDeferred.PixelShader = null;
+                depthOnly = await device.CreateGraphicsPipelineAsync(pipelineDescDeferred, pipelineState, elements, macros);
 
                 var csmPipelineDesc = new GraphicsPipelineDesc()
                 {
@@ -397,7 +407,8 @@ namespace HexaEngine.Core.Resources
         public void Recompile()
         {
             initialized = false;
-            pipeline.Dispose();
+            forward.Dispose();
+            deferred.Dispose();
             depthOnly.Dispose();
             csm.Dispose();
             osm.Dispose();
@@ -408,55 +419,13 @@ namespace HexaEngine.Core.Resources
         public async Task RecompileAsync()
         {
             initialized = false;
-            pipeline.Dispose();
+            forward.Dispose();
+            deferred.Dispose();
             depthOnly.Dispose();
             csm.Dispose();
             osm.Dispose();
             psm.Dispose();
             await CompileAsync();
-        }
-
-        public bool BeginDraw(IGraphicsContext context)
-        {
-            if (!initialized)
-            {
-                return false;
-            }
-
-            if (!pipeline.IsValid)
-            {
-                return false;
-            }
-
-            context.SetGraphicsPipeline(pipeline);
-            return true;
-        }
-
-        public bool BeginDraw(IGraphicsContext context, IBuffer camera)
-        {
-            if (!initialized)
-            {
-                return false;
-            }
-
-            if (!pipeline.IsValid)
-            {
-                return false;
-            }
-
-            context.SetGraphicsPipeline(pipeline);
-            context.DSSetConstantBuffer(1, camera);
-            context.VSSetConstantBuffer(1, camera);
-            context.PSSetConstantBuffer(1, camera);
-            return true;
-        }
-
-        public void EndDraw(IGraphicsContext context)
-        {
-            context.SetGraphicsPipeline(null);
-            context.PSSetConstantBuffer(1, null);
-            context.DSSetConstantBuffer(1, null);
-            context.VSSetConstantBuffer(1, null);
         }
 
         public bool BeginDrawForward(IGraphicsContext context)
@@ -466,18 +435,83 @@ namespace HexaEngine.Core.Resources
                 return false;
             }
 
-            if (!pipeline.IsValid)
+            if (!forward.IsValid)
             {
                 return false;
             }
 
-            context.SetGraphicsPipeline(pipeline);
+            context.SetGraphicsPipeline(forward);
+            return true;
+        }
+
+        public bool BeginDrawDeferred(IGraphicsContext context)
+        {
+            if (!initialized)
+            {
+                return false;
+            }
+
+            if (!deferred.IsValid)
+            {
+                return false;
+            }
+
+            context.SetGraphicsPipeline(deferred);
+            return true;
+        }
+
+        public bool BeginDrawForward(IGraphicsContext context, IBuffer camera)
+        {
+            if (!initialized)
+            {
+                return false;
+            }
+
+            if (!forward.IsValid)
+            {
+                return false;
+            }
+
+            context.SetGraphicsPipeline(forward);
+            context.DSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera);
+            context.PSSetConstantBuffer(1, camera);
             return true;
         }
 
         public void EndDrawForward(IGraphicsContext context)
         {
             context.SetGraphicsPipeline(null);
+            context.PSSetConstantBuffer(1, null);
+            context.DSSetConstantBuffer(1, null);
+            context.VSSetConstantBuffer(1, null);
+        }
+
+        public bool BeginDrawDeferred(IGraphicsContext context, IBuffer camera)
+        {
+            if (!initialized)
+            {
+                return false;
+            }
+
+            if (!deferred.IsValid)
+            {
+                return false;
+            }
+
+            context.SetGraphicsPipeline(deferred);
+            context.DSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera);
+            context.PSSetConstantBuffer(1, camera);
+            return true;
+        }
+
+        public void EndDrawDeferred(IGraphicsContext context)
+        {
+            context.SetGraphicsPipeline(null);
+            context.PSSetConstantBuffer(1, null);
+            context.DSSetConstantBuffer(1, null);
+            context.VSSetConstantBuffer(1, null);
         }
 
         public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
@@ -562,7 +596,7 @@ namespace HexaEngine.Core.Resources
         {
             if (!disposedValue)
             {
-                pipeline?.Dispose();
+                deferred?.Dispose();
                 depthOnly?.Dispose();
                 csm?.Dispose();
                 osm?.Dispose();

@@ -71,14 +71,19 @@
             renderer.DrawDepth(context);
         }
 
+        public void Draw(IGraphicsContext context, RenderPath path)
+        {
+            renderer.Draw(context);
+        }
+
+        public void Bake(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             renderer.DrawShadowMap(context, light, type);
-        }
-
-        public void Draw(IGraphicsContext context)
-        {
-            renderer.Draw(context);
         }
 
         public void VisibilityTest(IGraphicsContext context, Camera camera)

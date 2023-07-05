@@ -16,9 +16,9 @@
         private readonly Dictionary<string, double> results = new();
         private int currentFrame = 0;
         private bool disposedValue;
+        private bool enabled;
+        private bool disableLogging = true;
         private const int FrameCount = 3;
-
-        public bool DisableLogging = true;
 
         public D3D11GPUProfiler(ComPtr<ID3D11Device5> device)
         {
@@ -28,6 +28,10 @@
                 queries[i] = new();
             }
         }
+
+        public bool Enabled { get => enabled; set => enabled = value; }
+
+        public bool DisableLogging { get => disableLogging; set => disableLogging = value; }
 
         private class QueryData
         {
@@ -84,6 +88,9 @@
 
         public unsafe void EndFrame(IGraphicsContext context)
         {
+            if (!enabled)
+                return;
+
             if (currentFrame < FrameCount - 1)
             {
                 ++currentFrame;
@@ -148,6 +155,8 @@
 
         public void Begin(IGraphicsContext context, string name)
         {
+            if (!enabled)
+                return;
             int i = currentFrame % FrameCount;
             var ctx = ((D3D11GraphicsContext)context).DeviceContext;
             if (!queries[i].ContainsKey(name))
@@ -165,6 +174,8 @@
             if (!queries[i].ContainsKey(name))
                 return;
             var queryData = queries[i][name];
+            if (!queryData.BeginCalled)
+                return;
             ctx.End(queryData.TimestampQueryEnd);
             ctx.End(queryData.DisjointQuery);
             queryData.EndCalled = true;

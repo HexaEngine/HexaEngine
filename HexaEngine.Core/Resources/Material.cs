@@ -27,14 +27,14 @@
 
         public bool IsUsed => Volatile.Read(ref instances) != 0;
 
-        public bool BeginDraw(IGraphicsContext context)
+        public bool BeginDrawForward(IGraphicsContext context)
         {
             if (!loaded)
             {
                 return false;
             }
 
-            if (!Shader.Value.BeginDraw(context))
+            if (!Shader.Value.BeginDrawForward(context))
             {
                 return false;
             }
@@ -45,14 +45,14 @@
             return true;
         }
 
-        public bool BeginDraw(IGraphicsContext context, IBuffer camera)
+        public bool BeginDrawDeferred(IGraphicsContext context)
         {
             if (!loaded)
             {
                 return false;
             }
 
-            if (!Shader.Value.BeginDraw(context, camera))
+            if (!Shader.Value.BeginDrawDeferred(context))
             {
                 return false;
             }
@@ -63,36 +63,104 @@
             return true;
         }
 
-        public unsafe void EndDraw(IGraphicsContext context)
+        public bool BeginDrawForward(IGraphicsContext context, IBuffer camera)
+        {
+            if (!loaded)
+            {
+                return false;
+            }
+
+            if (!Shader.Value.BeginDrawForward(context, camera))
+            {
+                return false;
+            }
+
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
+
+            return true;
+        }
+
+        public unsafe void EndDrawForward(IGraphicsContext context)
         {
             nint* temp = stackalloc nint[(int)TextureList.SlotCount];
             context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
             context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
-            Shader.Value.EndDraw(context);
+            Shader.Value.EndDrawForward(context);
         }
 
-        public void Draw(IGraphicsContext context, uint indexCount, uint instanceCount)
+        public bool BeginDrawDeferred(IGraphicsContext context, IBuffer camera)
         {
-            if (!BeginDraw(context))
+            if (!loaded)
+            {
+                return false;
+            }
+
+            if (!Shader.Value.BeginDrawDeferred(context, camera))
+            {
+                return false;
+            }
+
+            context.PSSetSamplers(0, TextureList.SlotCount, TextureList.Samplers);
+            context.PSSetShaderResources(0, TextureList.SlotCount, TextureList.ShaderResourceViews);
+
+            return true;
+        }
+
+        public unsafe void EndDrawDeferred(IGraphicsContext context)
+        {
+            nint* temp = stackalloc nint[(int)TextureList.SlotCount];
+            context.PSSetSamplers(0, TextureList.SlotCount, (void**)temp);
+            context.PSSetShaderResources(0, TextureList.SlotCount, (void**)temp);
+            Shader.Value.EndDrawDeferred(context);
+        }
+
+        public void DrawForward(IGraphicsContext context, uint indexCount, uint instanceCount)
+        {
+            if (!BeginDrawForward(context))
             {
                 return;
             }
 
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
 
-            EndDraw(context);
+            EndDrawForward(context);
         }
 
-        public void Draw(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
+        public void DrawForward(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
         {
-            if (!BeginDraw(context, camera))
+            if (!BeginDrawForward(context, camera))
             {
                 return;
             }
 
             context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
 
-            EndDraw(context);
+            EndDrawForward(context);
+        }
+
+        public void DrawDeferred(IGraphicsContext context, uint indexCount, uint instanceCount)
+        {
+            if (!BeginDrawDeferred(context))
+            {
+                return;
+            }
+
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+
+            EndDrawDeferred(context);
+        }
+
+        public void DrawDeferred(IGraphicsContext context, IBuffer camera, uint indexCount, uint instanceCount)
+        {
+            if (!BeginDrawDeferred(context, camera))
+            {
+                return;
+            }
+
+            context.DrawIndexedInstanced(indexCount, instanceCount, 0, 0, 0);
+
+            EndDrawDeferred(context);
         }
 
         public bool BeginDrawShadow(IGraphicsContext context, IBuffer light, ShadowType type)
@@ -173,14 +241,14 @@
 
         public void DrawIndirect(IGraphicsContext context, IBuffer camera, IBuffer argBuffer, uint offset)
         {
-            if (!BeginDraw(context, camera))
+            if (!BeginDrawDeferred(context, camera))
             {
                 return;
             }
 
             context.DrawIndexedInstancedIndirect(argBuffer, offset);
 
-            EndDraw(context);
+            EndDrawDeferred(context);
         }
 
         public void Update(MaterialData desc)

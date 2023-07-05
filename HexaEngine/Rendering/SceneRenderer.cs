@@ -187,10 +187,11 @@ namespace HexaEngine.Rendering
             device.Profiler.CreateBlock("PrePass");
             device.Profiler.CreateBlock("ObjectCulling");
             device.Profiler.CreateBlock("LightCulling");
-            device.Profiler.CreateBlock("Shadows");
+            device.Profiler.CreateBlock("ShadowMaps");
             device.Profiler.CreateBlock("Geometry");
-            device.Profiler.CreateBlock("Lights");
-            device.Profiler.CreateBlock("SSAO");
+            device.Profiler.CreateBlock("LightsDeferred");
+            device.Profiler.CreateBlock("LightsForward");
+            device.Profiler.CreateBlock("AO");
             device.Profiler.CreateBlock("PostProcessing");
 #endif
         }
@@ -361,6 +362,8 @@ namespace HexaEngine.Rendering
             scene.LightManager.EndResize(width, height).Wait();
         }
 
+        private const bool forceForward = true;
+
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera? camera)
         {
             if (sceneChanged)
@@ -458,26 +461,28 @@ namespace HexaEngine.Rendering
 
             context.ClearRenderTargetView(lightBuffer.Value.RenderTargetView, default);
 #if PROFILE
-            profiler.Begin("Shadows");
-            device.Profiler.Begin(context, "Shadows");
+            profiler.Begin("ShadowMaps");
+            device.Profiler.Begin(context, "ShadowMaps");
 #endif
-            renderers.UpdateShadows(context, camera);
+            renderers.UpdateShadowMaps(context, camera);
 #if PROFILE
-            device.Profiler.End(context, "Shadows");
-            profiler.End("Shadows");
+            device.Profiler.End(context, "ShadowMaps");
+            profiler.End("ShadowMaps");
 #endif
 
 #if PROFILE
             profiler.Begin("Geometry");
             device.Profiler.Begin(context, "Geometry");
 #endif
-
-            // Fill Geometry Buffer
             context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
-            context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
-            context.SetViewport(gbuffer.Viewport);
-            renderers.Draw(context, RenderQueueIndex.Geometry);
-            context.ClearState();
+            if (!forceForward)
+            {
+                // Fill Geometry Buffer
+                context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
+                context.SetViewport(gbuffer.Viewport);
+                renderers.Draw(context, RenderQueueIndex.Geometry, RenderPath.Deferred);
+                context.ClearState();
+            }
 
 #if PROFILE
             device.Profiler.End(context, "Geometry");
@@ -485,21 +490,41 @@ namespace HexaEngine.Rendering
 #endif
 
 #if PROFILE
-            profiler.Begin("Lights");
-            device.Profiler.Begin(context, "Lights");
+            profiler.Begin("LightsDeferred");
+            device.Profiler.Begin(context, "LightsDeferred");
 #endif
 
             depthStencil.CopyTo(context, depthStencil2);
 
             context.SetRenderTarget(lightBuffer.Value.RenderTargetView, dsv);
             context.SetViewport(lightBuffer.Value.RenderTargetView.Viewport);
-            renderers.Draw(context, RenderQueueIndex.Background);
+            renderers.Draw(context, RenderQueueIndex.Background, RenderPath.Forward);
             context.ClearState();
 
-            context.SetRenderTarget(lightBuffer.Value.RenderTargetView, default);
-            context.SetViewport(gbuffer.Viewport);
+            if (!forceForward)
+            {
+                context.SetRenderTarget(lightBuffer.Value.RenderTargetView, default);
+                context.SetViewport(gbuffer.Viewport);
 
-            lights.DeferredPass(context);
+                lights.DeferredPass(context);
+            }
+
+#if PROFILE
+            device.Profiler.End(context, "LightsDeferred");
+            profiler.End("LightsDeferred");
+#endif
+#if PROFILE
+            profiler.Begin("LightsForward");
+            device.Profiler.Begin(context, "LightsForward");
+#endif
+            if (forceForward)
+            {
+                var geometryQueue = renderers.GeometryQueue;
+                for (int i = 0; i < geometryQueue.Count; i++)
+                {
+                    lights.ForwardPass(context, geometryQueue[i], camera);
+                }
+            }
             var alphaTest = renderers.AlphaTestQueue;
             for (int i = 0; i < alphaTest.Count; i++)
             {
@@ -512,19 +537,19 @@ namespace HexaEngine.Rendering
             }
 
 #if PROFILE
-            device.Profiler.End(context, "Lights");
-            profiler.End("Lights");
+            device.Profiler.End(context, "LightsForward");
+            profiler.End("LightsForward");
 #endif
 
 #if PROFILE
-            profiler.Begin("SSAO");
-            device.Profiler.Begin(context, "SSAO");
+            profiler.Begin("AO");
+            device.Profiler.Begin(context, "AO");
 #endif
             // SSAO Pass
             ssao.Draw(context);
 #if PROFILE
-            device.Profiler.End(context, "SSAO");
-            profiler.End("SSAO");
+            device.Profiler.End(context, "AO");
+            profiler.End("AO");
 #endif
 
 #if PROFILE

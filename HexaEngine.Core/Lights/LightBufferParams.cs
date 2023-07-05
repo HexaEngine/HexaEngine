@@ -21,10 +21,8 @@
     public struct ForwardLightBufferParams
     {
         public uint LightCount;
-        public Vector3 Padding1;
         public uint GlobalProbes;
         public uint LocalProbes;
-        public uint Padding2;
-        public uint Padding3;
+        public uint Padding;
     }
 }

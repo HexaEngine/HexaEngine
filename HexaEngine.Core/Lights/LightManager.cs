@@ -50,33 +50,33 @@
         private ISamplerState pointClampSampler;
         private ISamplerState shadowSampler;
         private unsafe void** cbs;
-        private const uint nConstantBuffers = 2;
+        private const uint nConstantBuffers = 3;
         private unsafe void** smps;
         private const uint nSamplers = 4;
 
         private unsafe void** forwardRtvs;
         private const uint nForwardRtvs = 3;
-        private unsafe void** forwardSrvs;
-        private const uint nForwardSrvs = 8 + 2 + 1 + 3 + 3 + MaxGlobalLightProbes * 2 + MaxDirectionalLightSDs + MaxPointLightSDs + MaxSpotlightSDs;
-        private const uint nForwardIndirectSrvsBase = 8 + 2 + 1 + 3 + 3;
-        private const uint nForwardShadowSrvsBase = 8 + 2 + 1 + 3 + 3 + MaxGlobalLightProbes * 2;
 
-        private IGraphicsPipeline deferredDirect;
-        private unsafe void** directSrvs;
-        private const uint nDirectSrvs = 8 + 4;
+        private unsafe void** forwardSrvs;
+        private const uint nForwardSrvs = 8 + 9;
+        private const uint nForwardIndirectSrvsBase = 8 + 7;
+
+        private unsafe void** forwardClusterdSrvs;
+        private const uint nForwardClusterdSrvs = 8 + 11;
+        private const uint nForwardClusterdIndirectSrvsBase = 8 + 9;
 
         private IGraphicsPipeline deferredIndirect;
         private unsafe void** indirectSrvs;
         private const uint nIndirectSrvsBase = 8 + 3;
         private const uint nIndirectSrvs = 8 + 3 + MaxGlobalLightProbes * 2;
 
-        private IGraphicsPipeline deferredShadow;
-        private unsafe void** shadowSrvs;
-        private const uint nShadowSrvs = 8 + 4 + MaxDirectionalLightSDs + MaxPointLightSDs + MaxSpotlightSDs;
+        private IGraphicsPipeline deferred;
+        private unsafe void** deferredSrvs;
+        private const uint nDeferredSrvs = 9 + MaxDirectionalLightSDs;
 
         private IGraphicsPipeline deferredClusterd;
-        private unsafe void** clusterdSrvs;
-        private const uint nClusterdSrvs = 11 + MaxDirectionalLightSDs;
+        private unsafe void** deferredClusterdSrvs;
+        private const uint nDeferredClusterdSrvs = 11 + MaxDirectionalLightSDs;
 
         public const int MaxGlobalLightProbes = 4;
         public const int MaxDirectionalLightSDs = 1;
@@ -85,17 +85,12 @@
 
         public IRenderTargetView Output;
         public ResourceRef<IDepthStencilView> DSV;
-        public ResourceRef<IShaderResourceView> DepthSRV;
-
         public ResourceRef<GBuffer> GBuffers;
-
+        public ResourceRef<IShaderResourceView> Depth;
         public ResourceRef<Texture> LUT;
-        public ResourceRef<Texture> SSAO;
-
-        public IShaderResourceView[] CSMs;
-        public IShaderResourceView[] OSMs;
-        public IShaderResourceView[] PSMs;
+        public ResourceRef<Texture> AO;
         public ResourceRef<IBuffer> Camera;
+        public ResourceRef<IBuffer> Weather;
 
         private bool recreateClusters = true;
         public const uint CLUSTERS_X = 16;
@@ -142,9 +137,10 @@
             forwardLightParamsBuffer = new(device, CpuAccessFlags.Write);
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+            Weather = ResourceManager2.Shared.GetBuffer("CBWeather");
             GBuffers = ResourceManager2.Shared.GetGBuffer("GBuffer");
             LUT = ResourceManager2.Shared.GetTexture("BRDFLUT");
-            SSAO = ResourceManager2.Shared.GetTexture("AOBuffer");
+            AO = ResourceManager2.Shared.GetTexture("AOBuffer");
 
             GlobalProbes = new(device, true, false);
 
@@ -171,28 +167,13 @@
                 cbs = AllocArrayAndZero(nConstantBuffers);
 
                 forwardSrvs = AllocArrayAndZero(nForwardSrvs);
-                directSrvs = AllocArrayAndZero(nDirectSrvs);
+                forwardClusterdSrvs = AllocArrayAndZero(nForwardClusterdSrvs);
                 indirectSrvs = AllocArrayAndZero(nIndirectSrvs);
-                shadowSrvs = AllocArrayAndZero(nShadowSrvs);
-
-                clusterdSrvs = AllocArrayAndZero(nClusterdSrvs);
+                deferredSrvs = AllocArrayAndZero(nDeferredSrvs);
+                deferredClusterdSrvs = AllocArrayAndZero(nDeferredClusterdSrvs);
 
                 forwardRtvs = AllocArrayAndZero(nForwardRtvs);
             }
-
-            deferredDirect = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "deferred/brdf/vs.hlsl",
-                PixelShader = "deferred/brdf/direct.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Additive,
-                BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleList
-            });
 
             deferredIndirect = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -208,10 +189,10 @@
                 Topology = PrimitiveTopology.TriangleList
             });
 
-            deferredShadow = await device.CreateGraphicsPipelineAsync(new()
+            deferred = await device.CreateGraphicsPipelineAsync(new()
             {
                 VertexShader = "deferred/brdf/vs.hlsl",
-                PixelShader = "deferred/brdf/shadow.hlsl",
+                PixelShader = "deferred/brdf/light.hlsl",
             },
             new GraphicsPipelineState()
             {
@@ -224,8 +205,8 @@
 
             deferredClusterd = await device.CreateGraphicsPipelineAsync(new()
             {
-                VertexShader = "deferred/clustered/vs.hlsl",
-                PixelShader = "deferred/clustered/light.hlsl",
+                VertexShader = "deferred/brdf/vs.hlsl",
+                PixelShader = "deferred/brdf/light.hlsl",
             },
             new GraphicsPipelineState()
             {
@@ -234,7 +215,7 @@
                 DepthStencil = DepthStencilDescription.Default,
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleList
-            });
+            }, new ShaderMacro[] { new("CLUSTERED_DEFERRED", 1) });
 
             var window = Application.MainWindow;
             float screenWidth = window.RenderViewport.Width;
@@ -418,7 +399,7 @@
 #nullable disable
             Output = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float)).Value.RenderTargetView;
             DSV = ResourceManager2.Shared.GetDepthStencilView("GBuffer.DepthStencil");
-            DepthSRV = ResourceManager2.Shared.GetShaderResourceView("GBuffer.Depth");
+            Depth = ResourceManager2.Shared.GetShaderResourceView("GBuffer.Depth");
 
 #nullable enable
             UpdateResources();
@@ -432,6 +413,7 @@
         private unsafe void UpdateResources()
         {
             cbs[1] = (void*)Camera.Value?.NativePointer;
+            cbs[2] = (void*)Weather.Value?.NativePointer;
 #nullable disable
 
             if (GBuffers != null)
@@ -440,21 +422,21 @@
                 {
                     if (i < GBuffers.Value.Count)
                     {
-                        shadowSrvs[i] = indirectSrvs[i] = directSrvs[i] = clusterdSrvs[i] = (void*)GBuffers.Value.SRVs[i]?.NativePointer;
+                        deferredSrvs[i] = indirectSrvs[i] = deferredClusterdSrvs[i] = (void*)GBuffers.Value.SRVs[i]?.NativePointer;
                     }
                 }
-                shadowSrvs[4] = indirectSrvs[4] = directSrvs[4] = clusterdSrvs[4] = (void*)DepthSRV.Value.NativePointer;
+                deferredSrvs[4] = indirectSrvs[4] = deferredClusterdSrvs[4] = (void*)Depth.Value.NativePointer;
             }
 
-            indirectSrvs[5] = directSrvs[5] = shadowSrvs[5] = clusterdSrvs[5] = forwardSrvs[8] = (void*)SSAO.Value?.ShaderResourceView.NativePointer;
-            forwardSrvs[9] = indirectSrvs[9] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
+            forwardSrvs[8] = forwardClusterdSrvs[8] = indirectSrvs[5] = deferredSrvs[5] = deferredClusterdSrvs[5] = (void*)AO.Value?.ShaderResourceView.NativePointer;
+            forwardSrvs[9] = forwardClusterdSrvs[9] = indirectSrvs[9] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
             forwardSrvs[10] = indirectSrvs[10] = (void*)GlobalProbes.SRV.NativePointer;
 
-            forwardSrvs[11] = directSrvs[6] = clusterdSrvs[6] = (void*)LightBuffer.SRV.NativePointer;
-            forwardSrvs[12] = directSrvs[7] = clusterdSrvs[7] = (void*)ShadowDataBuffer.SRV.NativePointer;
-            clusterdSrvs[8] = (void*)LightIndexList.SRV.NativePointer;
-            clusterdSrvs[9] = (void*)LightGridBuffer.SRV.NativePointer;
-            clusterdSrvs[10] = (void*)shadowPool.SRV.NativePointer;
+            forwardSrvs[11] = forwardClusterdSrvs[11] = deferredSrvs[6] = deferredClusterdSrvs[6] = (void*)LightBuffer.SRV.NativePointer;
+            forwardSrvs[12] = forwardClusterdSrvs[12] = deferredSrvs[7] = deferredClusterdSrvs[7] = (void*)ShadowDataBuffer.SRV.NativePointer;
+            forwardClusterdSrvs[13] = deferredClusterdSrvs[8] = (void*)LightIndexList.SRV.NativePointer;
+            forwardClusterdSrvs[14] = deferredClusterdSrvs[9] = (void*)LightGridBuffer.SRV.NativePointer;
+            forwardSrvs[13] = forwardClusterdSrvs[15] = deferredClusterdSrvs[10] = deferredSrvs[8] = (void*)shadowPool.SRV.NativePointer;
 
             forwardRtvs[0] = (void*)Output.NativePointer;
             forwardRtvs[1] = GBuffers.Value.PRTVs[1];
@@ -484,8 +466,8 @@
                 {
                     case ProbeType.Global:
                         GlobalProbes.Add((GlobalLightProbeComponent)probe);
-                        forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.ShaderResourceView?.NativePointer ?? 0);
-                        forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.ShaderResourceView?.NativePointer ?? 0);
+                        forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.ShaderResourceView?.NativePointer ?? 0);
+                        forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.ShaderResourceView?.NativePointer ?? 0);
                         globalProbesCount++;
                         break;
 
@@ -496,8 +478,8 @@
 
             for (uint i = globalProbesCount; i < MaxGlobalLightProbes; i++)
             {
-                forwardSrvs[nForwardIndirectSrvsBase + i] = indirectSrvs[nIndirectSrvsBase + i] = null;
-                forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + i] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + i] = null;
+                forwardSrvs[nForwardIndirectSrvsBase + i] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + i] = indirectSrvs[nIndirectSrvsBase + i] = null;
+                forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + i] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + i] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + i] = null;
             }
 
             for (int i = 0; i < activeLights.Count; i++)
@@ -514,10 +496,11 @@
                                 continue;
                             }
 
-                            light.QueueIndex = LightBuffer.Count;
+                            light.QueueIndex = ShadowDataBuffer.Count;
                             LightBuffer.Add(new((DirectionalLight)light, camera));
                             ShadowDataBuffer.Add(new((DirectionalLight)light, DirectionalLight.ShadowMapSize));
-                            forwardSrvs[nForwardShadowSrvsBase + csmCount] = shadowSrvs[nDirectSrvs + csmCount] = clusterdSrvs[11] = (void*)light.GetShadowMap()?.NativePointer;
+                            forwardSrvs[14] = forwardClusterdSrvs[16] = deferredSrvs[9] = deferredClusterdSrvs[11] = (void*)light.GetShadowMap()?.NativePointer;
+                            ((DirectionalLight)light).UpdateShadowBuffer(ShadowDataBuffer, camera);
                             csmCount++;
                             break;
 
@@ -560,13 +543,13 @@
 
             for (uint i = csmCount; i < MaxDirectionalLightSDs; i++)
             {
-                forwardSrvs[nForwardShadowSrvsBase + i] = shadowSrvs[nDirectSrvs + i] = null;
+                forwardSrvs[14] = forwardClusterdSrvs[16] = deferredSrvs[9] = deferredClusterdSrvs[11] = null;
             }
 
-            forwardSrvs[10] = indirectSrvs[10] = (void*)GlobalProbes.SRV.NativePointer;
+            forwardSrvs[10] = forwardClusterdSrvs[10] = indirectSrvs[10] = (void*)GlobalProbes.SRV.NativePointer;
 
-            forwardSrvs[11] = directSrvs[6] = clusterdSrvs[6] = (void*)LightBuffer.SRV.NativePointer;
-            forwardSrvs[12] = directSrvs[7] = clusterdSrvs[7] = (void*)ShadowDataBuffer.SRV.NativePointer;
+            forwardSrvs[11] = forwardClusterdSrvs[11] = deferredSrvs[6] = deferredClusterdSrvs[6] = (void*)LightBuffer.SRV.NativePointer;
+            forwardSrvs[12] = forwardClusterdSrvs[12] = deferredSrvs[7] = deferredClusterdSrvs[7] = (void*)ShadowDataBuffer.SRV.NativePointer;
         }
 
         public void UpdateBuffers(IGraphicsContext context)
@@ -593,8 +576,7 @@
                 context.SetComputePipeline(null);
 
                 context.CSSetUnorderedAccessView(0, null);
-
-                recreateClusters = true;
+                recreateClusters = false;
             }
 
             context.CSSetConstantBuffer(0, lightParamsBuffer);
@@ -618,18 +600,18 @@
 
         public void DeferredPass(IGraphicsContext context)
         {
-            DeferredPassIndirect(context);
+            DeferredIndirect(context);
             if (clustered)
             {
-                DeferredPassClusterd(context);
+                DeferredClustered(context);
             }
             else
             {
-                DeferredPassDirect(context);
+                Deferred(context);
             }
         }
 
-        public unsafe void DeferredPassIndirect(IGraphicsContext context)
+        public unsafe void DeferredIndirect(IGraphicsContext context)
         {
             if (GlobalProbes.Count > 0)
             {
@@ -657,7 +639,7 @@
             }
         }
 
-        public unsafe void DeferredPassDirect(IGraphicsContext context)
+        public unsafe void Deferred(IGraphicsContext context)
         {
             if (ActiveCount > 0)
             {
@@ -669,9 +651,9 @@
 
                 context.PSSetSamplers(0, nSamplers, smps);
                 context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-                context.PSSetShaderResources(0, nDirectSrvs, directSrvs);
+                context.PSSetShaderResources(0, nDeferredSrvs, deferredSrvs);
 
-                quad.DrawAuto(context, deferredDirect);
+                quad.DrawAuto(context, deferred);
 
                 nint* null_samplers = stackalloc nint[(int)nSamplers];
                 context.PSSetSamplers(0, nSamplers, (void**)null_samplers);
@@ -679,19 +661,19 @@
                 nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
                 context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
 
-                nint* null_srvs = stackalloc nint[(int)nIndirectSrvs];
-                context.PSSetShaderResources(0, nIndirectSrvs, (void**)null_srvs);
+                nint* null_srvs = stackalloc nint[(int)nDeferredSrvs];
+                context.PSSetShaderResources(0, nDeferredSrvs, (void**)null_srvs);
             }
         }
 
-        public unsafe void DeferredPassClusterd(IGraphicsContext context)
+        public unsafe void DeferredClustered(IGraphicsContext context)
         {
             if (ActiveCount > 0)
             {
                 // Direct clusterd light pass
                 context.PSSetSamplers(0, nSamplers, smps);
                 context.PSSetConstantBuffers(1, 1, &cbs[1]);
-                context.PSSetShaderResources(0, nClusterdSrvs, clusterdSrvs);
+                context.PSSetShaderResources(0, nDeferredClusterdSrvs, deferredClusterdSrvs);
 
                 quad.DrawAuto(context, deferredClusterd);
 
@@ -701,12 +683,24 @@
                 nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
                 context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
 
-                nint* null_srvs = stackalloc nint[(int)nClusterdSrvs];
-                context.PSSetShaderResources(0, nClusterdSrvs, (void**)null_srvs);
+                nint* null_srvs = stackalloc nint[(int)nDeferredClusterdSrvs];
+                context.PSSetShaderResources(0, nDeferredClusterdSrvs, (void**)null_srvs);
             }
         }
 
         public unsafe void ForwardPass(IGraphicsContext context, IRendererComponent renderer, Camera camera)
+        {
+            if ((renderer.Flags & RendererFlags.Clustered) != 0)
+            {
+                ForwardClustered(context, renderer, camera);
+            }
+            else
+            {
+                Forward(context, renderer, camera);
+            }
+        }
+
+        private unsafe void Forward(IGraphicsContext context, IRendererComponent renderer, Camera camera)
         {
             var lightParams = forwardLightParamsBuffer.Local;
             lightParams->LightCount = LightBuffer.Count;
@@ -728,12 +722,146 @@
             context.DSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
-            context.PSSetShaderResources(0, nForwardSrvs, forwardSrvs);
+            context.PSSetShaderResources(8, nForwardSrvs, forwardSrvs);
             context.PSSetSamplers(8, nSamplers, smps);
 
-            renderer.Draw(context);
+            renderer.Draw(context, RenderPath.Forward);
 
-            context.ClearState();
+            nint* null_samplers = stackalloc nint[(int)nSamplers];
+            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
+
+            nint* null_srvs = stackalloc nint[(int)nForwardSrvs];
+            context.PSSetShaderResources(8, nForwardSrvs, (void**)null_srvs);
+
+            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
+        }
+
+        private unsafe void ForwardClustered(IGraphicsContext context, IRendererComponent renderer, Camera camera)
+        {
+            var lightParams = forwardLightParamsBuffer.Local;
+            lightParams->LightCount = LightBuffer.Count;
+            lightParams->GlobalProbes = GlobalProbes.Count;
+            forwardLightParamsBuffer.Update(context);
+            cbs[0] = (void*)forwardLightParamsBuffer.Buffer?.NativePointer;
+
+            if ((renderer.Flags & RendererFlags.NoDepthTest) != 0)
+            {
+                context.SetRenderTargets(nForwardRtvs, forwardRtvs, null);
+            }
+            else
+            {
+                context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
+            }
+
+            context.SetViewport(Output.Viewport);
+            context.VSSetConstantBuffers(1, 1, &cbs[1]);
+            context.DSSetConstantBuffers(1, 1, &cbs[1]);
+            context.CSSetConstantBuffers(1, 1, &cbs[1]);
+            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
+            context.PSSetShaderResources(0, nForwardClusterdSrvs, forwardClusterdSrvs);
+            context.PSSetSamplers(8, nSamplers, smps);
+
+            renderer.Draw(context, RenderPath.Forward);
+
+            nint* null_samplers = stackalloc nint[(int)nSamplers];
+            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
+
+            nint* null_srvs = stackalloc nint[(int)nForwardClusterdSrvs];
+            context.PSSetShaderResources(8, nForwardClusterdSrvs, (void**)null_srvs);
+
+            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
+        }
+
+        public unsafe void BakePass(IGraphicsContext context, IRendererComponent renderer, Camera camera)
+        {
+            if ((renderer.Flags & RendererFlags.Bake) == 0)
+            {
+                return;
+            }
+            if ((renderer.Flags & RendererFlags.Clustered) != 0)
+            {
+                BakeClustered(context, renderer, camera);
+            }
+            else
+            {
+                Bake(context, renderer, camera);
+            }
+        }
+
+        private unsafe void Bake(IGraphicsContext context, IRendererComponent renderer, Camera camera)
+        {
+            var lightParams = forwardLightParamsBuffer.Local;
+            lightParams->LightCount = LightBuffer.Count;
+            lightParams->GlobalProbes = GlobalProbes.Count;
+            forwardLightParamsBuffer.Update(context);
+            cbs[0] = (void*)forwardLightParamsBuffer.Buffer?.NativePointer;
+
+            if ((renderer.Flags & RendererFlags.NoDepthTest) != 0)
+            {
+                context.SetRenderTargets(nForwardRtvs, forwardRtvs, null);
+            }
+            else
+            {
+                context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
+            }
+
+            context.SetViewport(Output.Viewport);
+            context.VSSetConstantBuffers(1, 1, &cbs[1]);
+            context.DSSetConstantBuffers(1, 1, &cbs[1]);
+            context.CSSetConstantBuffers(1, 1, &cbs[1]);
+            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
+            context.PSSetShaderResources(8, nForwardSrvs, forwardSrvs);
+            context.PSSetSamplers(8, nSamplers, smps);
+
+            renderer.Draw(context, RenderPath.Forward);
+
+            nint* null_samplers = stackalloc nint[(int)nSamplers];
+            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
+
+            nint* null_srvs = stackalloc nint[(int)nForwardSrvs];
+            context.PSSetShaderResources(8, nForwardSrvs, (void**)null_srvs);
+
+            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
+        }
+
+        private unsafe void BakeClustered(IGraphicsContext context, IRendererComponent renderer, Camera camera)
+        {
+            var lightParams = forwardLightParamsBuffer.Local;
+            lightParams->LightCount = LightBuffer.Count;
+            lightParams->GlobalProbes = GlobalProbes.Count;
+            forwardLightParamsBuffer.Update(context);
+            cbs[0] = (void*)forwardLightParamsBuffer.Buffer?.NativePointer;
+
+            if ((renderer.Flags & RendererFlags.NoDepthTest) != 0)
+            {
+                context.SetRenderTargets(nForwardRtvs, forwardRtvs, null);
+            }
+            else
+            {
+                context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
+            }
+
+            context.SetViewport(Output.Viewport);
+            context.VSSetConstantBuffers(1, 1, &cbs[1]);
+            context.DSSetConstantBuffers(1, 1, &cbs[1]);
+            context.CSSetConstantBuffers(1, 1, &cbs[1]);
+            context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
+            context.PSSetShaderResources(0, nForwardClusterdSrvs, forwardClusterdSrvs);
+            context.PSSetSamplers(8, nSamplers, smps);
+
+            renderer.Bake(context);
+
+            nint* null_samplers = stackalloc nint[(int)nSamplers];
+            context.PSSetSamplers(8, nSamplers, (void**)null_samplers);
+
+            nint* null_srvs = stackalloc nint[(int)nForwardClusterdSrvs];
+            context.PSSetShaderResources(8, nForwardClusterdSrvs, (void**)null_srvs);
+
+            nint* null_cbs = stackalloc nint[(int)nConstantBuffers];
+            context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
         }
 
         public unsafe void Dispose()
@@ -742,19 +870,38 @@
 
             LightBuffer.Dispose();
             ShadowDataBuffer.Dispose();
-            shadowPool.Dispose();
-            forwardLightParamsBuffer.Dispose();
+
+            ClusterBuffer.Dispose();
+            LightIndexCounter.Dispose();
+            LightIndexList.Dispose();
+            LightGridBuffer.Dispose();
+
+            clusterBuilding.Dispose();
+            clusterCulling.Dispose();
+
             probeParamsBuffer.Dispose();
             lightParamsBuffer.Dispose();
+            forwardLightParamsBuffer.Dispose();
+            clusterSizesBuffer.Dispose();
+
+            shadowPool.Dispose();
+
             quad.Dispose();
-            deferredDirect.Dispose();
+
+            linearClampSampler.Dispose();
+            linearWrapSampler.Dispose();
+            pointClampSampler.Dispose();
+            shadowSampler.Dispose();
+
             deferredIndirect.Dispose();
-            deferredShadow.Dispose();
+            deferred.Dispose();
             deferredClusterd.Dispose();
-            Free(directSrvs);
+
             Free(indirectSrvs);
-            Free(shadowSrvs);
+            Free(deferredSrvs);
+            Free(deferredClusterdSrvs);
             Free(forwardSrvs);
+            Free(forwardClusterdSrvs);
             Free(smps);
             Free(cbs);
             Free(forwardRtvs);

@@ -76,16 +76,16 @@
             }
         }
 
-        public void Draw(IGraphicsContext context, RenderQueueIndex index)
+        public void Draw(IGraphicsContext context, RenderQueueIndex index, RenderPath path)
         {
             switch (index)
             {
                 case RenderQueueIndex.Background:
-                    DrawList(context, backgroundQueue);
+                    DrawList(context, backgroundQueue, path);
                     break;
 
                 case RenderQueueIndex.Geometry:
-                    DrawList(context, geometryQueue);
+                    DrawList(context, geometryQueue, path);
                     break;
             }
         }
@@ -98,11 +98,11 @@
             }
         }
 
-        private static void DrawList(IGraphicsContext context, List<IRendererComponent> renderers)
+        private static void DrawList(IGraphicsContext context, List<IRendererComponent> renderers, RenderPath path)
         {
             for (int i = 0; i < renderers.Count; i++)
             {
-                renderers[i].Draw(context);
+                renderers[i].Draw(context, path);
             }
         }
 
@@ -144,7 +144,7 @@
             }
         }
 
-        public void UpdateShadows(IGraphicsContext context, Camera camera)
+        public void UpdateShadowMaps(IGraphicsContext context, Camera camera)
         {
             if (lights.UpdateShadowLightQueue.Count == 0)
                 return;

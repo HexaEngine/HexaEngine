@@ -144,6 +144,11 @@
 
         public void Dispose()
         {
+            quad.Dispose();
+            pipelineSSR.Dispose();
+            pointClampSampler.Dispose();
+            linearClampSampler.Dispose();
+            linearBorderSampler.Dispose();
         }
     }
 }

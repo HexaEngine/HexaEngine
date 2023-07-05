@@ -148,6 +148,9 @@
             cloudTex.Dispose();
             worleyTex.Dispose();
 
+            intermediateTex.Dispose();
+            gaussianBlur.Dispose();
+
             GC.SuppressFinalize(this);
         }
     }

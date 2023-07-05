@@ -572,22 +572,22 @@
 
         public static readonly InputElementDescription[] InputElements =
         {
-            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0),
+            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0, 0),
+            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
+            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
+            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
+            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
         };
 
         public static readonly InputElementDescription[] SkinnedInputElements =
         {
-            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0),
-            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32SInt, 0),
-            new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 0),
+            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0, 0),
+            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
+            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
+            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
+            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
+            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32SInt, 60, 0),
+            new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 76, 0),
         };
 
         public long IntersectRay(Ray ray)

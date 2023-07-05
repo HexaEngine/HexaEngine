@@ -7,21 +7,6 @@
     using Newtonsoft.Json;
     using System.Numerics;
 
-    public enum ShadowResolution
-    {
-        Low,
-        Medium,
-        High,
-        Ultra
-    }
-
-    public enum ShadowUpdateMode
-    {
-        EveryFrame,
-        OnEnable,
-        OnDemand,
-    }
-
     public abstract class Light : GameObject
     {
         internal bool InUpdateQueue;

@@ -4,6 +4,9 @@
     {
         double this[string index] { get; }
 
+        bool Enabled { get; set; }
+        bool DisableLogging { get; set; }
+
         void CreateBlock(string name);
 
         void DestroyBlock(string name);

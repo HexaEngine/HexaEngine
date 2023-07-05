@@ -161,7 +161,7 @@ SamplerState samplerState,
 TextureCube irradianceTex,
 TextureCube prefilterMap,
 Texture2D brdfLUT,
-float3 F0, float3 N, float3 V, float3 albedo, float roughness, float ao)
+float3 F0, float3 N, float3 V, float3 albedo, float roughness)
 {
     float3 irradiance = irradianceTex.Sample(samplerState, N).rgb;
     float3 kS = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
@@ -175,7 +175,7 @@ float3 F0, float3 N, float3 V, float3 albedo, float roughness, float ao)
     float2 brdf = brdfLUT.Sample(samplerState, float2(max(dot(N, V), 0.0), roughness)).rg;
     float3 specular = prefilteredColor * (kS * brdf.x + brdf.y);
 
-    return (kD * diffuse + specular) * ao;
+    return kD * diffuse + specular;
 }
 
 float3 DirectionalLightBRDF(Light light, float3 F0, float3 V, float3 N, float3 baseColor, float roughness, float metallic)

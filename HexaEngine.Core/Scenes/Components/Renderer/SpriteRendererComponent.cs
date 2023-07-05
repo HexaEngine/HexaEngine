@@ -23,10 +23,13 @@
         private Sprite sprite = new();
         private string atlasPath = string.Empty;
 
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
+        [JsonIgnore]
         public BoundingBox BoundingBox { get; }
 
+        [JsonIgnore]
         public RendererFlags Flags { get; } = RendererFlags.Draw;
 
         [EditorProperty("Atlas", null)]
@@ -83,13 +86,18 @@
             spriteBatch.Dispose();
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, RenderPath path)
         {
             if (!gameObject.IsEnabled || spriteAtlas == null)
             {
                 return;
             }
             renderer.Draw(context, spriteBatch, spriteAtlas, gameObject.Transform);
+        }
+
+        public void Bake(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
         }
 
         public void DrawDepth(IGraphicsContext context)

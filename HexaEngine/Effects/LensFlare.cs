@@ -172,6 +172,13 @@
             pipeline.Dispose();
             sampler.Dispose();
             lightBuffer.Dispose();
+            lens0.Dispose();
+            lens1.Dispose();
+            lens2.Dispose();
+            lens3.Dispose();
+            lens4.Dispose();
+            lens5.Dispose();
+            lens6.Dispose();
         }
     }
 }

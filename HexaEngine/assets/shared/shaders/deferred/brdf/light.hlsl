@@ -4,6 +4,14 @@
 #include "../../common.hlsl"
 #include "../../shadow.hlsl"
 
+#ifndef CLUSTERED_DEFERRED
+#define CLUSTERED_DEFERRED 0
+#endif
+
+#if CLUSTERED_DEFERRED
+#include "../../cluster.hlsl"
+#endif
+
 Texture2D GBufferA : register(t0);
 Texture2D GBufferB : register(t1);
 Texture2D GBufferC : register(t2);
@@ -13,22 +21,29 @@ Texture2D ssao : register(t5);
 StructuredBuffer<Light> lights : register(t6);
 StructuredBuffer<ShadowData> shadowData : register(t7);
 
-Texture2DArray depthCSM : register(t12);
-TextureCube depthOSM[32] : register(t13);
-Texture2D depthPSM[32] : register(t45);
+#if !CLUSTERED_DEFERRED
+Texture2D depthAtlas : register(t8);
+Texture2DArray depthCSM : register(t9);
+#endif
+
+#if CLUSTERED_DEFERRED
+StructuredBuffer<uint> lightIndexList : register(t8); //MAX_CLUSTER_LIGHTS * 16^3
+StructuredBuffer<LightGrid> lightGrid : register(t9); //16^3
+Texture2D depthAtlas : register(t10);
+Texture2DArray depthCSM : register(t11);
+#endif
+
+#if !CLUSTERED_DEFERRED
+cbuffer constants : register(b0)
+{
+    uint cLightCount;
+};
+#endif
 
 SamplerState linearClampSampler : register(s0);
 SamplerState linearWrapSampler : register(s1);
 SamplerState pointClampSampler : register(s2);
 SamplerComparisonState shadowSampler : register(s3);
-
-cbuffer constants : register(b0)
-{
-    uint directionalLightCount;
-    uint pointLightCount;
-    uint spotlightCount;
-    uint lightCount;
-};
 
 struct VSOut
 {
@@ -97,14 +112,14 @@ float SSCS(float3 position, float2 uv, float3 direction)
     return 1.0f - occlusion;
 }
 
-float ShadowFactorSpotlight(ShadowData data, float3 position, Texture2D depthTex, SamplerComparisonState state)
+float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowUVD(position, data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
 
 #if HARD_SHADOWS_SPOTLIGHTS
-    return CalcShadowFactor_Basic(state, depthTex, uvd);
+    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
 #else
-    return CalcShadowFactor_PCF3x3(state, depthTex, uvd, data.size, data.softness);
+    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
 #endif
 }
 
@@ -118,26 +133,41 @@ static const float3 gridSamplingDisk[20] =
 	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
-float ShadowFactorPointLight(Light light, float3 position, float3 V, TextureCube depthTex, SamplerComparisonState state)
+int CubeFaceFromDirection(float3 direction)
+{
+    float3 absDirection = abs(direction);
+    int faceIndex = 0;
+
+    if (absDirection.x >= absDirection.y && absDirection.x >= absDirection.z)
+    {
+        faceIndex = (direction.x > 0.0) ? 0 : 1; // Positive X face (0), Negative X face (1)
+    }
+    else if (absDirection.y >= absDirection.x && absDirection.y >= absDirection.z)
+    {
+        faceIndex = (direction.y > 0.0) ? 2 : 3; // Positive Y face (2), Negative Y face (3)
+    }
+    else
+    {
+        faceIndex = (direction.z > 0.0) ? 4 : 5; // Positive Z face (4), Negative Z face (5)
+    }
+
+    return faceIndex;
+}
+
+#define HARD_SHADOWS_POINTLIGHTS 1
+float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
 {
     float3 light_to_pixelWS = position - light.position.xyz;
     float depthValue = length(light_to_pixelWS) / light.range;
 
+    int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[face], data.views[face]);
+    uvd.z = depthValue;
+
 #if HARD_SHADOWS_POINTLIGHTS
-    return depthTex.SampleCmpLevelZero(state, normalize(light_to_pixelWS.xyz), depthValue);
+    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
 #else
-
-    float percentLit = 0.0f;
-
-    float viewDistance = length(V);
-    float diskRadius = (1.0 + (viewDistance / light.range)) / 25.0;
-
-    for (int i = 0; i < 20; ++i)
-    {
-        percentLit += depthTex.SampleCmpLevelZero(state, normalize(light_to_pixelWS.xyz) + gridSamplingDisk[i] * diskRadius, depthValue);
-    }
-
-    return percentLit / 20;
+    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
 #endif
 }
 
@@ -180,9 +210,19 @@ float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4
     return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
 #endif
 }
-
+#if CLUSTERED_DEFERRED
+float4 ComputeLightingPBR(VSOut input, float3 position, const uint tileIndex, GeometryAttributes attrs)
+#else
 float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs)
+#endif
 {
+#if CLUSTERED_DEFERRED
+    uint lightCount = lightGrid[tileIndex].lightCount;
+    uint lightOffset = lightGrid[tileIndex].lightOffset;
+#else
+    uint lightCount = cLightCount;
+#endif
+
     float3 baseColor = attrs.baseColor;
     float roughness = attrs.roughness;
     float metallic = attrs.metallic;
@@ -194,29 +234,54 @@ float4 ComputeLightingPBR(VSOut input, float3 position, GeometryAttributes attrs
 
     float3 Lo = float3(0, 0, 0);
 
-    float shadowFactor;
-    uint3 shadowMapIndex = 0;
-
-    [fastopt]
+    [loop]
     for (uint i = 0; i < lightCount; i++)
     {
+        float3 L = 0;
+#if CLUSTERED_DEFERRED
+        uint lightIndex = lightIndexList[lightOffset + i];
+        Light light = lights[lightIndex];
+#else
         Light light = lights[i];
-        ShadowData data = shadowData[i];
+#endif
+
         switch (light.type)
         {
             case POINT_LIGHT:
-                shadowFactor = ShadowFactorPointLight(light, position, V, depthOSM[shadowMapIndex.x++], shadowSampler);
-                Lo += PointLightBRDF(light, position, F0, V, N, baseColor, roughness, metallic) * shadowFactor;
+                L += PointLightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
                 break;
             case SPOT_LIGHT:
-                shadowFactor = ShadowFactorSpotlight(data, position, depthPSM[shadowMapIndex.y++], shadowSampler);
-                Lo += SpotlightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
+                L += SpotlightBRDF(light, position, F0, V, N, baseColor, roughness, metallic);
                 break;
             case DIRECTIONAL_LIGHT:
-                shadowFactor = ShadowFactorDirectionalLightCascaded(data, camFar, view, position, depthCSM, shadowSampler);
-                Lo += DirectionalLightBRDF(light, F0, V, N, baseColor, roughness, metallic);
+                L += DirectionalLightBRDF(light, F0, V, N, baseColor, roughness, metallic);
                 break;
         }
+
+        float shadowFactor = 1;
+
+        if (light.castsShadows)
+        {
+#if CLUSTERED_DEFERRED
+            ShadowData data = shadowData[lightIndex];
+#else
+            ShadowData data = shadowData[i];
+#endif
+            switch (light.type)
+            {
+                case POINT_LIGHT:
+                    shadowFactor = ShadowFactorPointLight(data, light, position, shadowSampler);
+                    break;
+                case SPOT_LIGHT:
+                    shadowFactor = ShadowFactorSpotlight(data, position, shadowSampler);
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    shadowFactor = ShadowFactorDirectionalLightCascaded(data, camFar, view, position, depthCSM, shadowSampler);
+                    break;
+            }
+        }
+
+        Lo += L * shadowFactor;
     }
 
     float ao = ssao.Sample(linearWrapSampler, input.Tex).r * attrs.ao;
@@ -230,5 +295,10 @@ float4 main(VSOut pixel) : SV_TARGET
     GeometryAttributes attrs;
     ExtractGeometryData(pixel.Tex, GBufferA, GBufferB, GBufferC, GBufferD, linearWrapSampler, attrs);
 
+#if CLUSTERED_DEFERRED
+    uint tileIndex = GetClusterIndex(depth, camNear, camFar, screenDim, pixel.Pos);
+    return ComputeLightingPBR(pixel, position, tileIndex, attrs);
+#else
     return ComputeLightingPBR(pixel, position, attrs);
+#endif
 }

@@ -48,10 +48,13 @@
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.All;
+        public RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
 
         [JsonIgnore]
-        public BoundingBox BoundingBox { get => BoundingBox.Transform(model?.BoundingBox ?? BoundingBox.Empty, gameObject.Transform); }
+        public BoundingBox BoundingBox { get => BoundingBox.Transform(model?.BoundingBox ?? BoundingBox.Empty, gameObject?.Transform ?? Matrix4x4.Identity); }
+
+        [JsonIgnore]
+        public Matrix4x4 Transform => gameObject?.Transform ?? Matrix4x4.Identity;
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
@@ -74,21 +77,40 @@
         public void Update(IGraphicsContext context)
         {
             if (!gameObject.IsEnabled)
+            {
                 return;
+            }
+
             renderer.Update(context, gameObject.Transform.Global);
         }
 
         public void DrawDepth(IGraphicsContext context)
         {
             if (!gameObject.IsEnabled)
+            {
                 return;
+            }
+
             renderer.DrawDepth(context);
+        }
+
+        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        {
+            if (!gameObject.IsEnabled)
+            {
+                return;
+            }
+
+            renderer.DrawDepth(context, camera);
         }
 
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             if (!gameObject.IsEnabled)
+            {
                 return;
+            }
+
             renderer.DrawShadowMap(context, light, type);
         }
 
@@ -96,11 +118,26 @@
         {
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, RenderPath path)
         {
             if (!gameObject.IsEnabled)
+            {
                 return;
-            renderer.Draw(context);
+            }
+
+            if (path == RenderPath.Deferred)
+            {
+                renderer.DrawDeferred(context);
+            }
+            else
+            {
+                renderer.DrawForward(context);
+            }
+        }
+
+        public void Bake(IGraphicsContext context)
+        {
+            throw new NotImplementedException();
         }
 
         private void UpdateModel()

@@ -115,7 +115,7 @@
                 return;
         }
 
-        public void Draw(IGraphicsContext context)
+        public void DrawDeferred(IGraphicsContext context)
         {
             if (!initialized)
                 return;
@@ -136,13 +136,103 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.Draw(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDeferred(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
             context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, (IShaderResourceView?)null);
-            context.VSSetShaderResource(1, (IShaderResourceView?)null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public void DrawForward(IGraphicsContext context)
+        {
+            if (!initialized)
+                return;
+
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformBuffer.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+
+            for (uint i = 0; i < drawables.Length; i++)
+            {
+                offsetBuffer.Update(context, new(bufferOffset + i));
+
+                int[] drawable = drawables[i];
+                Mesh mesh = meshes[i];
+                Material material = materials[i];
+
+                if (mesh == null || material == null)
+                    continue;
+
+                mesh.BeginDraw(context);
+                material.DrawForward(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                mesh.EndDraw(context);
+            }
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public void DrawDeferred(IGraphicsContext context, IBuffer camera)
+        {
+            if (!initialized)
+                return;
+
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformBuffer.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+
+            for (uint i = 0; i < drawables.Length; i++)
+            {
+                offsetBuffer.Update(context, new(bufferOffset + i));
+
+                int[] drawable = drawables[i];
+                Mesh mesh = meshes[i];
+                Material material = materials[i];
+
+                if (mesh == null || material == null)
+                    continue;
+
+                mesh.BeginDraw(context);
+                material.DrawDeferred(context, camera, mesh.IndexCount, (uint)drawable.Length);
+                mesh.EndDraw(context);
+            }
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public void DrawForward(IGraphicsContext context, IBuffer camera)
+        {
+            if (!initialized)
+                return;
+
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformBuffer.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+
+            for (uint i = 0; i < drawables.Length; i++)
+            {
+                offsetBuffer.Update(context, new(bufferOffset + i));
+
+                int[] drawable = drawables[i];
+                Mesh mesh = meshes[i];
+                Material material = materials[i];
+
+                if (mesh == null || material == null)
+                    continue;
+
+                mesh.BeginDraw(context);
+                material.DrawForward(context, camera, mesh.IndexCount, (uint)drawable.Length);
+                mesh.EndDraw(context);
+            }
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
         }
 
         public void DrawDepth(IGraphicsContext context)
@@ -171,8 +261,38 @@
             }
 
             context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, (IShaderResourceView?)null);
-            context.VSSetShaderResource(1, (IShaderResourceView?)null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
+        }
+
+        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        {
+            if (!initialized)
+                return;
+
+            context.VSSetConstantBuffer(0, offsetBuffer);
+            context.VSSetShaderResource(0, transformBuffer.SRV);
+            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
+
+            for (uint i = 0; i < drawables.Length; i++)
+            {
+                offsetBuffer.Update(context, new(bufferOffset + i));
+
+                int[] drawable = drawables[i];
+                Mesh mesh = meshes[i];
+                Material material = materials[i];
+
+                if (mesh == null || material == null)
+                    continue;
+
+                mesh.BeginDraw(context);
+                material.DrawDepth(context, camera, mesh.IndexCount, (uint)drawable.Length);
+                mesh.EndDraw(context);
+            }
+
+            context.VSSetConstantBuffer(0, null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
         }
 
         public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
@@ -201,8 +321,8 @@
             }
 
             context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, (IShaderResourceView?)null);
-            context.VSSetShaderResource(1, (IShaderResourceView?)null);
+            context.VSSetShaderResource(0, null);
+            context.VSSetShaderResource(1, null);
         }
 
         protected virtual void Dispose(bool disposing)

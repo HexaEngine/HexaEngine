@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using Silk.NET.Core.Contexts;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -235,10 +236,18 @@
                 srv.DebugName = dbgName + ".SRV";
             }
 
+            ArraySlices = new IRenderTargetView[description.ArraySize];
+
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
+
+                for (int i = 0; i < description.ArraySize; i++)
+                {
+                    ArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2D, firstArraySlice: i, arraySize: 1), new(width, height));
+                    ArraySlices[i].DebugName = dbgName + $".RTV.{i}";
+                }
             }
         }
 
@@ -284,6 +293,8 @@
         public IShaderResourceView? SRV => srv;
 
         public IRenderTargetView? RTV => rtv;
+
+        public IRenderTargetView[] ArraySlices;
 
         public nint NativePointer => texture.NativePointer;
 

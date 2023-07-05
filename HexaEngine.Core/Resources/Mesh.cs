@@ -39,6 +39,8 @@
             VertexCount = data.VerticesCount;
         }
 
+        public InputElementDescription[] InputElements => MeshData.InputElements;
+
         public void BeginDraw(IGraphicsContext context)
         {
             context.SetIndexBuffer(IndexBuffer, Format.R32UInt, 0);

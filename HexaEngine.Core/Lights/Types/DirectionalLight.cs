@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Lights.Types
 {
+    using BepuUtilities.Memory;
     using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
@@ -8,6 +9,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using Newtonsoft.Json;
+    using System;
     using System.Numerics;
 
     [EditorGameObject<DirectionalLight>("Directional Light")]
@@ -77,6 +79,16 @@
                 csmBuffer?.Dispose();
                 csmBuffer = null;
             }
+        }
+
+        public unsafe void UpdateShadowBuffer(StructuredUavBuffer<ShadowData> buffer, Camera camera)
+        {
+            var data = buffer.Local + QueueIndex;
+
+            Matrix4x4* views = ShadowData.GetViews(data);
+            float* cascades = ShadowData.GetCascades(data);
+
+            CSMHelper.GetLightSpaceMatrices(camera.Transform, Transform, views, cascades, ShadowFrustra);
         }
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, Camera camera)
