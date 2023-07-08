@@ -11,7 +11,6 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using System;
-    using System.ComponentModel;
     using System.Threading.Tasks;
 
     [EditorComponent<SkyRendererComponent>("Sky", false, true)]
@@ -23,6 +22,7 @@
 
         private IGraphicsDevice? device;
         private string environmentPath = string.Empty;
+        private SkyType skyType;
 
         [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
@@ -32,6 +32,9 @@
 
         [JsonIgnore]
         public BoundingBox BoundingBox { get; }
+
+        [EditorProperty<SkyType>("Type")]
+        public SkyType SkyType { get => skyType; set => skyType = value; }
 
         [EditorProperty("Env", null)]
         public string Environment
@@ -61,7 +64,7 @@
         public unsafe void Destory()
         {
             renderer.Dispose();
-            skybox.Dispose();
+            skybox?.Dispose();
         }
 
         public void Update(IGraphicsContext context)
@@ -85,7 +88,7 @@
         {
             if (!gameObject.IsEnabled)
                 return;
-            renderer.Draw(context, SkyType.HosekWilkie);
+            renderer.Draw(context, skyType);
         }
 
         public void Bake(IGraphicsContext context)

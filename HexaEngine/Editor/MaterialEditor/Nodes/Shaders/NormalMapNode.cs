@@ -29,14 +29,29 @@
         public override FloatPin Out { get; protected set; }
 
         [JsonIgnore]
-        public override string MethodName => "BRDF";
+        public override string MethodName => "NormalMap";
 
         [JsonIgnore]
         public override SType Type { get; } = new SType(VectorType.Float3);
 
         public override void DefineMethod(VariableTable table)
         {
-            table.AddInclude("brdf.hlsl");
+            string body = @"
+	// Uncompress each component from [0,1] to [-1,1].
+    float3 normalT = 2.0f * normalMapSample.xyz - 1.0f;
+
+	// Build orthonormal basis.
+    float3 N = unitNormalW;
+    float3 T = normalize(tangentW - dot(tangentW, N) * N);
+    float3 B = cross(N, T);
+
+    float3x3 TBN = float3x3(T, B, N);
+
+	// Transform from tangent space to world space.
+    float3 bumpedNormalW = mul(normalT, TBN);
+
+    return bumpedNormalW;";
+            table.AddMethod("NormalMap", "float3 unitNormalW, float3 tangentW, float3 bitangent, float4 normalMapSample", "float3", body);
         }
     }
 }

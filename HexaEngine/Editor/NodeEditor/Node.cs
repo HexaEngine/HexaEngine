@@ -7,7 +7,7 @@
 
     public class Node
     {
-        private NodeEditor? editor;
+        protected NodeEditor? editor;
         private int id;
 
         private bool isEditing;

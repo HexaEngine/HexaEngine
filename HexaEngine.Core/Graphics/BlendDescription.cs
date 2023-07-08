@@ -54,6 +54,25 @@
             }
         }
 
+        public BlendDescription(Blend sourceBlend, Blend destinationBlend, Blend srcBlendAlpha, Blend destBlendAlpha, BlendOperation blendOperation, BlendOperation blendOperationAlpha)
+            : this()
+        {
+            AlphaToCoverageEnable = false;
+            IndependentBlendEnable = false;
+
+            for (int i = 0; i < SimultaneousRenderTargetCount; i++)
+            {
+                RenderTarget[i].SourceBlend = sourceBlend;
+                RenderTarget[i].DestinationBlend = destinationBlend;
+                RenderTarget[i].BlendOperation = blendOperation;
+                RenderTarget[i].SourceBlendAlpha = srcBlendAlpha;
+                RenderTarget[i].DestinationBlendAlpha = destBlendAlpha;
+                RenderTarget[i].BlendOperationAlpha = blendOperationAlpha;
+                RenderTarget[i].RenderTargetWriteMask = ColorWriteEnable.All;
+                RenderTarget[i].IsBlendEnabled = IsBlendEnabled(ref RenderTarget[i]);
+            }
+        }
+
         private static bool IsBlendEnabled(ref RenderTargetBlendDescription renderTarget)
         {
             return renderTarget.BlendOperationAlpha != BlendOperation.Add

@@ -5,6 +5,7 @@
     public class TerrainGrid
     {
         private readonly List<TerrainCell> cells = new();
+        private readonly List<TerrainLayer> layers = new();
 
         public TerrainCell this[int index]
         {
@@ -13,6 +14,8 @@
         }
 
         public int Count => cells.Count;
+
+        public List<TerrainLayer> Layers => layers;
 
         public void Add(TerrainCell cell)
         {

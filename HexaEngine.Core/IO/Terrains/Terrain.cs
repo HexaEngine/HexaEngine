@@ -104,7 +104,7 @@
 
         public IndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            return new(device, accessFlags);
+            return new(device, Indices, accessFlags);
         }
 
         public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer ib)

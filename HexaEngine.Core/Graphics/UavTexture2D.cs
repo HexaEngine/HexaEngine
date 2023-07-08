@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class TextureUav2D : ITexture2D
+    public unsafe class UavTexture2D : ITexture2D
     {
         private readonly string dbgName;
         private Texture2DDescription description;
@@ -19,7 +19,7 @@
         private IUnorderedAccessView? uav;
         private bool disposedValue;
 
-        public TextureUav2D(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, bool isSRV, bool isRTV, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public UavTexture2D(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, bool isSRV, bool isRTV, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"RWTexture2D: {filename}, Line:{lineNumber}";
             this.format = format;
@@ -75,6 +75,8 @@
         public ResourceMiscFlag MiscFlag => miscFlag;
 
         public IShaderResourceView? SRV => srv;
+
+        public IRenderTargetView? RTV => rtv;
 
         public IUnorderedAccessView? UAV => uav;
 
@@ -155,7 +157,7 @@
             }
         }
 
-        ~TextureUav2D()
+        ~UavTexture2D()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);

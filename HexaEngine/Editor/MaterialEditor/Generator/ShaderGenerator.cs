@@ -44,10 +44,11 @@
                 Defs = new()
                 {
                     new("position", new(VectorType.Float4, "SV_POSITION")),
-                    new("pos", new(VectorType.Float4, "POSITION")),
-                    new("tex", new(VectorType.Float2, "TEXCOORD0")),
+                    new("pos", new(VectorType.Float3, "POSITION")),
+                    new("tex", new(VectorType.Float3, "TEXCOORD0")),
                     new("normal", new(VectorType.Float3, "NORMAL")),
                     new("tangent", new(VectorType.Float3, "TANGENT")),
+                    new("bitangent", new(VectorType.Float3, "BINORMAL")),
                 },
             };
 
@@ -379,7 +380,7 @@
 
         private Operation AddVariable(string name, Node node, SType type, string def)
         {
-            name = name.ToLower();
+            name = name.ToLower().Replace(" ", string.Empty);
             string newName = table.GetUniqueName(name);
             return table.AddVariable(new(mapping[node], newName, type, def));
         }

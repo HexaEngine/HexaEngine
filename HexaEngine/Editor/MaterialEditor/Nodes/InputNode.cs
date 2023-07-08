@@ -25,8 +25,8 @@
 
         public override void Initialize(NodeEditor editor)
         {
-            WorldPos = CreateOrGetPin(editor, "pos", PinKind.Output, PinType.Float4, ImNodesPinShape.CircleFilled);
-            TexCoord = CreateOrGetPin(editor, "tex", PinKind.Output, PinType.Float2, ImNodesPinShape.CircleFilled);
+            WorldPos = CreateOrGetPin(editor, "pos", PinKind.Output, PinType.Float3, ImNodesPinShape.CircleFilled);
+            TexCoord = CreateOrGetPin(editor, "tex", PinKind.Output, PinType.Float3, ImNodesPinShape.CircleFilled);
             Normal = CreateOrGetPin(editor, "normal", PinKind.Output, PinType.Float3, ImNodesPinShape.CircleFilled);
             Tangent = CreateOrGetPin(editor, "tangent", PinKind.Output, PinType.Float3, ImNodesPinShape.CircleFilled);
             Bitangent = CreateOrGetPin(editor, "bitangent", PinKind.Output, PinType.Float3, ImNodesPinShape.CircleFilled);

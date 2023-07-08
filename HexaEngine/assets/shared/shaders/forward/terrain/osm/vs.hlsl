@@ -5,13 +5,20 @@ cbuffer WorldBuffer
     float4x4 world;
 };
 
-GeometryInput main(VertexInput input, uint instanceId : SV_InstanceID)
+cbuffer LightBuffer : register(b1)
 {
-    GeometryInput output;
+    matrix view;
+    float3 position;
+    float far;
+};
 
-#if VtxPosition
-    output.pos = mul(float4(input.pos, 1), world).xyz;
-#endif
-    
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
+{
+    PixelInput output;
+
+    output.position = mul(float4(input.pos, 1), world);
+    output.depth = length(output.position.xyz - position) / far;
+    output.position = mul(output.position, view);
+
     return output;
 }

@@ -11,6 +11,7 @@
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
         private static Action<OpenFileResult, string>? filePickerCallback;
         private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
+        private HistoryEntry historyEntry;
 
         public OpenProjectWindow()
         {
@@ -32,13 +33,35 @@
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
+            if (ImGui.BeginPopupModal("DeleteNonExistingProject"))
+            {
+                ImGui.Text("The selected Project doesn't exist, do you want to remove it from the History?");
+
+                if (ImGui.Button("Yes"))
+                {
+                    ProjectHistory.RemoveEntryByPath(historyEntry.Path);
+                    ImGui.CloseCurrentPopup();
+                    Show();
+                }
+                if (ImGui.Button("No"))
+                {
+                    ImGui.CloseCurrentPopup();
+                    Show();
+                }
+
+                ImGui.EndPopup();
+            }
+
             base.Draw();
         }
 
         protected override unsafe void DrawContent()
         {
-            ImGui.SetWindowPos(new(0, 0));
-            ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+            var size = ImGui.GetWindowSize();
+            var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
+
+            ImGui.SetWindowPos(s / 2 - size / 2);
+
             if (ImGui.BeginMenuBar())
             {
                 if (ImGui.MenuItem("Open"))
@@ -49,8 +72,11 @@
                     {
                         if (e == OpenFileResult.Ok)
                         {
-                            ProjectManager.Load(r);
-                            Close();
+                            if (File.Exists(r))
+                            {
+                                ProjectManager.Load(r);
+                                Close();
+                            }
                         }
 
                         filePicker.AllowedExtensions.Clear();
@@ -84,8 +110,24 @@
                 var entry = entries[i];
                 if (ImGui.MenuItem(entry.Fullname))
                 {
-                    ProjectManager.Load(entry.Path);
-                    Close();
+                    if (File.Exists(entry.Path))
+                    {
+                        ProjectManager.Load(entry.Path);
+                        Close();
+                    }
+                    else
+                    {
+                        historyEntry = entry;
+                        ImGui.OpenPopup("DeleteNonExistingProject");
+                    }
+                }
+                if (ImGui.BeginPopupContextItem())
+                {
+                    if (ImGui.MenuItem($"Remove from List##{i}"))
+                    {
+                        ProjectHistory.RemoveEntryByPath(historyEntry.Path);
+                    }
+                    ImGui.EndPopup();
                 }
             }
         }

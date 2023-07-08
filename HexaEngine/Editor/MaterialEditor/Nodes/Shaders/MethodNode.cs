@@ -26,6 +26,29 @@
 
         public IReadOnlyList<FloatPin> Params => pins;
 
+        public override T AddOrGetPin<T>(T pin)
+        {
+            Pin? old = Find(pin.Name);
+
+            if (old != null)
+            {
+                if (old is FloatPin floatPin)
+                {
+                    if (floatPin.Kind == PinKind.Input)
+                    {
+                        pins.Add(floatPin);
+                    }
+                }
+                return (T)old;
+            }
+            else
+            {
+                AddPin(pin);
+            }
+
+            return pin;
+        }
+
         public override T AddPin<T>(T pin)
         {
             if (pin is FloatPin floatPin)

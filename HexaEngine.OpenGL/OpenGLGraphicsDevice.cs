@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Contexts;
     using Silk.NET.OpenGL;
+    using Silk.NET.SDL;
     using System;
     using System.Diagnostics;
     using System.Globalization;
@@ -318,6 +319,11 @@
         }
 
         public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window)
         {
             throw new NotImplementedException();
         }

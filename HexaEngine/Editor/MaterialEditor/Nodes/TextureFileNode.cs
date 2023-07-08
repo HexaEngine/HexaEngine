@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.ImNodesNET;
     using ImGuiNET;
@@ -10,7 +11,8 @@
 
     public class TextureFileNode : Node
     {
-        private readonly IGraphicsDevice device;
+        private readonly OpenFileDialog dialog = new(Paths.CurrentProjectFolder);
+        private string path;
         private IShaderResourceView? image;
 
         [JsonIgnore]
@@ -25,12 +27,12 @@
         private static readonly string[] comparisonFunctionNames = Enum.GetNames<ComparisonFunction>();
         private static readonly ComparisonFunction[] comparisonFunctions = Enum.GetValues<ComparisonFunction>();
 
-        public string Path = string.Empty;
+        private bool showMore;
+
         public SamplerDescription Description = SamplerDescription.PointClamp;
 
-        public TextureFileNode(IGraphicsDevice device, int id, bool removable, bool isStatic) : base(id, "Texture", removable, isStatic)
+        public TextureFileNode(int id, bool removable, bool isStatic) : base(id, "Texture", removable, isStatic)
         {
-            this.device = device;
         }
 
         public override void Initialize(NodeEditor editor)
@@ -38,6 +40,16 @@
             OutColor = CreateOrGetPin(editor, "out", PinKind.Output, PinType.VectorAny, ImNodesPinShape.Quad);
             InUV = CreateOrGetPin(editor, "uv", PinKind.Input, PinType.Float2, ImNodesPinShape.CircleFilled);
             base.Initialize(editor);
+        }
+
+        public string Path
+        {
+            get => path;
+            set
+            {
+                path = value;
+                Reload();
+            }
         }
 
         [JsonIgnore]
@@ -66,8 +78,8 @@
             {
                 try
                 {
-                    var tmp = device.TextureLoader.LoadTexture2D(Paths.CurrentTexturePath + Path);
-                    image = device.CreateShaderResourceView(tmp);
+                    var tmp = Application.GraphicsDevice.TextureLoader.LoadTexture2D(Paths.CurrentTexturePath + Path);
+                    image = Application.GraphicsDevice.CreateShaderResourceView(tmp);
                     tmp.Dispose();
                 }
                 catch
@@ -76,18 +88,48 @@
             }
         }
 
+        public override void Draw()
+        {
+            if (dialog.Draw())
+            {
+                if (dialog.Result == OpenFileResult.Ok)
+                {
+                    Path = FileSystem.GetRelativePath(dialog.FullPath).Replace(Paths.CurrentTexturePath, string.Empty);
+                    Reload();
+                }
+            }
+            base.Draw();
+        }
+
         protected override void DrawContent()
         {
             ImGui.Image(image?.NativePointer ?? 0, Size);
 
             ImGui.PushItemWidth(100);
 
-            if (ImGui.InputText("Path", ref Path, 512, ImGuiInputTextFlags.EnterReturnsTrue))
+            if (ImGui.InputText("Path", ref path, 512, ImGuiInputTextFlags.EnterReturnsTrue))
             {
                 Reload();
             }
 
-            if (ImGui.TreeNodeEx("Test"))
+            ImGui.SameLine();
+
+            if (ImGui.Button("...##OpenFileButton"))
+            {
+                dialog.Show();
+            }
+
+            if (!showMore && ImGui.Button("more..."))
+            {
+                showMore = true;
+            }
+
+            if (showMore && ImGui.Button("less..."))
+            {
+                showMore = false;
+            }
+
+            if (showMore)
             {
                 int filterIndex = Array.IndexOf(filters, Description.Filter);
                 if (ImGui.Combo("Filter", ref filterIndex, filterNames, filterNames.Length))
@@ -125,8 +167,6 @@
                 ImGui.ColorEdit4("BorderColor", ref Description.BorderColor);
                 ImGui.InputFloat("MinLOD", ref Description.MinLOD);
                 ImGui.InputFloat("MaxLOD", ref Description.MaxLOD);
-
-                ImGui.TreePop();
             }
 
             ImGui.PopItemWidth();

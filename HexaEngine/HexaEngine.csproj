@@ -333,16 +333,25 @@
 		<None Update="assets\shared\shaders\forward\terrain\csm\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\terrain\osm\defs.hlsl">
+		<None Update="assets\shared\shaders\forward\terrain\defs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\forward\terrain\osm\gs.hlsl">
+		<None Update="assets\shared\shaders\forward\terrain\depthVS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\osm\defs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\terrain\osm\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\terrain\osm\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\depthPS.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\terrain\psm\defs.hlsl">
@@ -352,6 +361,9 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\forward\terrain\psm\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\geometry.hlsl">
@@ -570,22 +582,40 @@
 		<None Update="assets\shared\shaders\light.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\brush\defs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\edit\brush\defs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\brush\ps.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\edit\brush\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\brush\vs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\edit\brush\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\mask\defs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\edit\mask\normalize.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\mask\ps.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\edit\mask\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\tools\terrain\mask\vs.hlsl">
+		<None Update="assets\shared\shaders\tools\terrain\edit\mask\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\overlay\brush\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\overlay\mask\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\overlay\mask\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\terrain\overlay\mask\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\weather.hlsl">
@@ -758,8 +788,6 @@
 
 
 	<ItemGroup>
-	  <Folder Include="assets\shared\shaders\forward\terrain\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
-	  <Folder Include="Editor\Properties\" />
 	</ItemGroup>
 </Project>

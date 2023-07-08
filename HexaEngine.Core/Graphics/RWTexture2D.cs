@@ -400,6 +400,8 @@
         {
             int x = (int)(uv.X * Width);
             int y = (int)(uv.Y * Height);
+            x %= Width;
+            y %= Height;
             return x + y * (RowPitch / sizeof(T));
         }
 

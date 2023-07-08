@@ -78,7 +78,7 @@
                 {
                     if (ImGui.MenuItem("Texture File"))
                     {
-                        TextureFileNode node = new(context.Device, editor.GetUniqueId(), true, false);
+                        TextureFileNode node = new(editor.GetUniqueId(), true, false);
                         editor.AddNode(node);
                         textureFiles.Add(node);
                     }
@@ -184,7 +184,7 @@
                     pipeline ??= context.Device.CreateGraphicsPipeline(new()
                     {
                         PixelShader = "tmp.hlsl",
-                        VertexShader = "generic/mesh.hlsl",
+                        VertexShader = "forward/geometry/vs.hlsl",
                     },
                         new GraphicsPipelineState()
                         {
@@ -233,7 +233,7 @@
                 ImGui.EndMenuBar();
             }
 
-            if (pipeline != null)
+            if (pipeline != null && pipeline.IsValid && pipeline.IsInitialized)
             {
                 view[0] = new(outputNode.Camera, new(256, 256));
                 view.Update(context);

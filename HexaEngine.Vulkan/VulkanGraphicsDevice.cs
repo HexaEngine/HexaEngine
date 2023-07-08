@@ -792,5 +792,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public ISwapChain CreateSwapChain(Window* window)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

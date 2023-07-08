@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D12;
+    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using SubresourceData = Core.Graphics.SubresourceData;
@@ -391,6 +392,11 @@
         }
 
         public void PumpDebugMessages()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window)
         {
             throw new NotImplementedException();
         }

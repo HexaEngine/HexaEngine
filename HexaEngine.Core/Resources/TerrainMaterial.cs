@@ -8,8 +8,6 @@
         private readonly string name;
         public MaterialData desc;
 
-        public ResourceInstance<TerrainShader>? Shader;
-
         public MaterialTextureList TextureList = new();
 
         private int instances;

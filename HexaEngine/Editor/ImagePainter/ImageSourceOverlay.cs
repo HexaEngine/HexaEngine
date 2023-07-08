@@ -29,7 +29,7 @@
                 textures[i] = device.CreateTexture2D(desc);
                 srvs[i] = device.CreateShaderResourceView(textures[i]);
                 rtvs[i] = device.CreateRenderTargetView(textures[i], new(desc.Width, desc.Height));
-                ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
+                //ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
                 desc.BindFlags = BindFlags.DepthStencil;
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
@@ -79,7 +79,7 @@
                 {
                     for (int i = 0; i < textures.Length; i++)
                     {
-                        ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
+                        //ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
                         textures[i].Dispose();
                         srvs[i].Dispose();
                         rtvs[i].Dispose();

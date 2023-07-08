@@ -61,6 +61,8 @@
         private bool resizable = true;
         private bool bordered = true;
 
+        public const int WindowPosCentered = Silk.NET.SDL.Sdl.WindowposCentered;
+
         public SdlWindow()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

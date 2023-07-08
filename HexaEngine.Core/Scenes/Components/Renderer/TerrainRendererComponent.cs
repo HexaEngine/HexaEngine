@@ -32,7 +32,7 @@
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.All;
+        public RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
 
         [JsonIgnore]
         public BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, gameObject.Transform); }
@@ -73,7 +73,14 @@
 
         public void Draw(IGraphicsContext context, RenderPath path)
         {
-            renderer.Draw(context);
+            if (path == RenderPath.Deferred)
+            {
+                renderer.DrawDeferred(context);
+            }
+            else
+            {
+                renderer.DrawForward(context);
+            }
         }
 
         public void Bake(IGraphicsContext context)

@@ -2,6 +2,9 @@
 {
     using HexaEngine.Shaderc;
     using HexaEngine.SPIRVCross;
+    using System.Numerics;
+    using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using static Utils;
 
     public static unsafe partial class Program
@@ -77,8 +80,58 @@
             compiler.Release();
         }
 
+        private struct VP
+        {
+            public int ID;
+
+            public uint Flags;
+
+            public Vector2 Pos;
+
+            public Vector2 Size;
+
+            public Vector2 WorkPos;
+
+            public Vector2 WorkSize;
+
+            public float DpiScale;
+
+            public int ParentViewportId;
+
+            public unsafe void* DrawData;
+
+            public unsafe void* RendererUserData;
+
+            public unsafe void* PlatformUserData;
+
+            public unsafe void* PlatformHandle;
+
+            public unsafe void* PlatformHandleRaw;
+
+            public byte PlatformWindowCreated;
+
+            public byte PlatformRequestMove;
+
+            public byte PlatformRequestResize;
+
+            public byte PlatformRequestClose;
+        }
+
+        [UnmanagedCallersOnly(CallConvs = new Type[] { typeof(CallConvCdecl) })]
+        private static Vector2 Test(VP* dd)
+        {
+            return dd->Pos;
+        }
+
         public static void Main()
         {
+            delegate* unmanaged[Cdecl]<VP*, Vector2> func = &Test;
+            VP* vp = Alloc<VP>();
+            Zero(vp);
+            vp->ID = 0;
+            vp->Flags = 0;
+            vp->Pos = new Vector2(0, 0);
+            vp->Pos = func(vp);
         }
     }
 }

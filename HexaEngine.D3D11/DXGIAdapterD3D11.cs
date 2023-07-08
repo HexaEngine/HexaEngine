@@ -7,6 +7,7 @@
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
+    using Silk.NET.SDL;
     using System;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
@@ -175,6 +176,48 @@
             {
                 Width = (uint)window.Width,
                 Height = (uint)window.Height,
+                Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
+                BufferCount = 2,
+                BufferUsage = DXGI.UsageRenderTargetOutput,
+                SampleDesc = new(1, 0),
+                Scaling = Scaling.Stretch,
+                SwapEffect = SwapEffect.FlipSequential,
+                Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing)
+            };
+
+            SwapChainFullscreenDesc fullscreenDesc = new()
+            {
+                Windowed = 1,
+                RefreshRate = new Rational(0, 1),
+                Scaling = ModeScaling.Unspecified,
+                ScanlineOrdering = ModeScanlineOrder.Unspecified,
+            };
+
+            ComPtr<IDXGISwapChain1> swapChain;
+            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
+            // IDXGIFactory.MakeWindowAssociation(Hwnd, 1 << 0);
+
+            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+        }
+
+        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, Window* window)
+        {
+            Sdl sdl = Sdl.GetApi();
+            SysWMInfo info;
+            sdl.GetVersion(&info.Version);
+            sdl.GetWindowWMInfo(window, &info);
+
+            int width = 0;
+            int height = 0;
+
+            sdl.GetWindowSize(window, &width, &height);
+
+            var Hwnd = info.Info.Win.Hwnd;
+
+            SwapChainDesc1 desc = new()
+            {
+                Width = (uint)width,
+                Height = (uint)height,
                 Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
                 BufferCount = 2,
                 BufferUsage = DXGI.UsageRenderTargetOutput,

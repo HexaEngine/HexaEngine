@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE;TRACELEAK</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
@@ -39,10 +39,10 @@
 	  <None Remove="Graphics\Passes\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="HexaEngine.ImGui" Version="2.0.11" />
-		<PackageReference Include="HexaEngine.ImGuizmo" Version="2.0.11" />
-		<PackageReference Include="HexaEngine.ImNodes" Version="2.0.11" />
-		<PackageReference Include="HexaEngine.ImPlot" Version="2.0.11" />
+		<PackageReference Include="HexaEngine.ImGui" Version="2.0.15" />
+		<PackageReference Include="HexaEngine.ImGuizmo" Version="2.0.15" />
+		<PackageReference Include="HexaEngine.ImNodes" Version="2.0.15" />
+		<PackageReference Include="HexaEngine.ImPlot" Version="2.0.15" />
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
 		<PackageReference Include="Silk.NET.GLFW" Version="2.17.1" />

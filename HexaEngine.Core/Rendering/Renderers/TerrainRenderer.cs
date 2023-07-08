@@ -4,7 +4,6 @@ namespace HexaEngine.Rendering
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Core.Lights;
     using HexaEngine.Core.Resources;
     using System.Numerics;
@@ -13,11 +12,6 @@ namespace HexaEngine.Rendering
     {
         private readonly ConstantBuffer<Matrix4x4> worldBuffer;
         private readonly ResourceRef<IBuffer> camera;
-        private readonly IGraphicsPipeline geometry;
-        private readonly IGraphicsPipeline depth;
-        private readonly IGraphicsPipeline psm;
-        private readonly IGraphicsPipeline osm;
-        private readonly IGraphicsPipeline csm;
 
         private TerrainGrid? grid;
 
@@ -28,69 +22,6 @@ namespace HexaEngine.Rendering
         {
             worldBuffer = new(device, CpuAccessFlags.Write);
             camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-
-            GraphicsPipelineDesc pipelineDesc = new()
-            {
-                VertexShader = "deferred/terrain/vs.hlsl",
-                PixelShader = "deferred/terrain/ps.hlsl"
-            };
-
-            GraphicsPipelineState pipelineState = new()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
-            };
-
-            geometry = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, Terrain.InputElements);
-
-            pipelineDesc.PixelShader = null;
-            depth = device.CreateGraphicsPipeline(pipelineDesc, pipelineState, Terrain.InputElements);
-
-            var csmPipelineDesc = new GraphicsPipelineDesc()
-            {
-                VertexShader = "forward/terrain/csm/vs.hlsl",
-                GeometryShader = "forward/terrain/csm/gs.hlsl",
-            };
-            var csmPipelineState = new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullNone,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
-            };
-
-            var osmPipelineDesc = new GraphicsPipelineDesc()
-            {
-                VertexShader = "forward/terrain/osm/vs.hlsl",
-                GeometryShader = "forward/terrain/osm/gs.hlsl",
-                PixelShader = "forward/terrain/osm/ps.hlsl",
-            };
-            var osmPipelineState = new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
-            };
-
-            var psmPipelineDesc = new GraphicsPipelineDesc()
-            {
-                VertexShader = "forward/terrain/psm/vs.hlsl",
-                PixelShader = "forward/terrain/psm/ps.hlsl",
-            };
-            var psmPipelineState = new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullFront,
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleList,
-            };
-
-            csm = device.CreateGraphicsPipeline(csmPipelineDesc, csmPipelineState, Terrain.InputElements);
-            osm = device.CreateGraphicsPipeline(osmPipelineDesc, osmPipelineState, Terrain.InputElements);
-            psm = device.CreateGraphicsPipeline(psmPipelineDesc, psmPipelineState, Terrain.InputElements);
         }
 
         public void Initialize(TerrainGrid grid)
@@ -117,7 +48,7 @@ namespace HexaEngine.Rendering
             }
         }
 
-        public void Draw(IGraphicsContext context)
+        public void DrawForward(IGraphicsContext context)
         {
             if (!initialized)
                 return;
@@ -131,12 +62,54 @@ namespace HexaEngine.Rendering
                     worldBuffer.Update(context);
                 }
 
-                context.SetVertexBuffer(cell.VertexBuffer, cell.Stride);
-                context.SetIndexBuffer(cell.IndexBuffer, Format.R32UInt, 0);
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                    continue;
+
                 context.VSSetConstantBuffer(0, worldBuffer);
-                context.VSSetConstantBuffer(1, camera.Value);
-                context.SetGraphicsPipeline(geometry);
-                context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
+                {
+                    var layer = cell.DrawLayers[j];
+                    if (!layer.BeginDrawForward(context, camera.Value))
+                        continue;
+                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
+                    layer.EndDrawForward(context);
+                }
+                cell.Unbind(context);
+            }
+        }
+
+        public void DrawDeferred(IGraphicsContext context)
+        {
+            if (!initialized)
+                return;
+
+            for (int i = 0; i < grid.Count; i++)
+            {
+                var cell = grid[i];
+                unsafe
+                {
+                    *worldBuffer.Local = Matrix4x4.Transpose(cell.Transform);
+                    worldBuffer.Update(context);
+                }
+
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                    continue;
+
+                context.VSSetConstantBuffer(0, worldBuffer);
+
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
+                {
+                    var layer = cell.DrawLayers[j];
+                    if (!layer.BeginDrawDeferred(context, camera.Value))
+                        continue;
+                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
+                    layer.EndDrawDeferred(context);
+                }
+                cell.Unbind(context);
             }
         }
 
@@ -147,12 +120,27 @@ namespace HexaEngine.Rendering
             for (int i = 0; i < grid.Count; i++)
             {
                 var cell = grid[i];
-                context.SetVertexBuffer(cell.VertexBuffer, cell.Stride);
-                context.SetIndexBuffer(cell.IndexBuffer, Format.R32UInt, 0);
+                unsafe
+                {
+                    *worldBuffer.Local = Matrix4x4.Transpose(cell.Transform);
+                    worldBuffer.Update(context);
+                }
+
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                    continue;
+
                 context.VSSetConstantBuffer(0, worldBuffer);
-                context.VSSetConstantBuffer(1, camera.Value);
-                context.SetGraphicsPipeline(depth);
-                context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
+                {
+                    var layer = cell.DrawLayers[j];
+                    if (!layer.BeginDrawDepth(context, camera.Value))
+                        continue;
+                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
+                    layer.EndDrawDepth(context);
+                }
+                cell.Unbind(context);
             }
         }
 
@@ -169,39 +157,22 @@ namespace HexaEngine.Rendering
                     worldBuffer.Update(context);
                 }
 
-                context.SetVertexBuffer(cell.VertexBuffer, cell.Stride);
-                context.SetIndexBuffer(cell.IndexBuffer, Format.R32UInt, 0);
+                // Skip draw when no layers are present
+                if (cell.DrawLayers.Count == 0)
+                    continue;
+
                 context.VSSetConstantBuffer(0, worldBuffer);
-                context.DSSetConstantBuffer(1, light);
-                context.VSSetConstantBuffer(1, light);
-                context.GSSetConstantBuffer(1, light);
-                switch (type)
+
+                cell.Bind(context);
+                for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
-                    case ShadowType.Perspective:
-                        if (!psm.IsValid)
-                        {
-                            return;
-                        }
-                        context.SetGraphicsPipeline(psm);
-                        break;
-
-                    case ShadowType.Cascaded:
-                        if (!csm.IsValid)
-                        {
-                            return;
-                        }
-                        context.SetGraphicsPipeline(csm);
-                        break;
-
-                    case ShadowType.Omni:
-                        if (!osm.IsValid)
-                        {
-                            return;
-                        }
-                        context.SetGraphicsPipeline(osm);
-                        break;
+                    var layer = cell.DrawLayers[j];
+                    if (!layer.BeginDrawShadow(context, light, type))
+                        continue;
+                    context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
+                    layer.EndDrawShadow(context);
                 }
-                context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
+                cell.Unbind(context);
             }
         }
 
@@ -210,11 +181,6 @@ namespace HexaEngine.Rendering
             if (!disposedValue)
             {
                 worldBuffer?.Dispose();
-                geometry?.Dispose();
-                depth?.Dispose();
-                csm?.Dispose();
-                osm?.Dispose();
-                psm?.Dispose();
                 disposedValue = true;
             }
         }

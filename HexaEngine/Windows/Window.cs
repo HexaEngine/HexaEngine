@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Windows
 {
+    using Example.ImGuiDemo;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
@@ -15,7 +16,6 @@ namespace HexaEngine.Windows
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
-    using Microsoft.Win32.SafeHandles;
     using System;
     using System.Numerics;
     using CullingManager = CullingManager;
@@ -44,7 +44,7 @@ namespace HexaEngine.Windows
         private bool rendererInitialized;
         private bool resize = false;
 
-        private ImGuiRenderer? imGuiRenderer;
+        private ImGuiManager? imGuiRenderer;
         private DebugDrawRenderer? debugDrawRenderer;
 
         public RendererFlags Flags;
@@ -107,7 +107,7 @@ namespace HexaEngine.Windows
 
             if ((Flags & RendererFlags.ImGui) != 0)
             {
-                imGuiRenderer = new(this, graphicsDevice, swapChain);
+                imGuiRenderer = new(this, graphicsDevice, graphicsContext);
             }
 
             if ((Flags & RendererFlags.ImGuiWidgets) != 0)
@@ -181,7 +181,7 @@ namespace HexaEngine.Windows
 
             renderDispatcher.ExecuteQueue();
 
-            imGuiRenderer?.BeginDraw();
+            imGuiRenderer?.NewFrame();
             debugDrawRenderer?.BeginDraw();
 
             OnRenderBegin(context);
@@ -238,7 +238,8 @@ namespace HexaEngine.Windows
             Device.Profiler.Begin(Context, "ImGui");
             sceneRenderer.Profiler.Begin("ImGui");
 #endif
-            imGuiRenderer?.EndDraw();
+            context.SetRenderTarget(swapChain.BackbufferRTV, null);
+            imGuiRenderer?.EndFrame();
 #if PROFILE
             sceneRenderer.Profiler.End("ImGui");
             Device.Profiler.End(Context, "ImGui");

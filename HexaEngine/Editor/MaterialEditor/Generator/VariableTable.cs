@@ -8,6 +8,31 @@
     public struct Include
     {
         public string Name;
+
+        public void Build(StringBuilder builder)
+        {
+            builder.AppendLine($@"#include ""{Name}""");
+        }
+    }
+
+    public struct Method
+    {
+        public string Name;
+        public string Signature;
+        public string ReturnType;
+        public string Body;
+
+        public void Build(StringBuilder builder)
+        {
+            builder.AppendLine($"{ReturnType} {Name}({Signature})");
+            builder.AppendLine("{");
+            string[] lines = Body.Split("\n");
+            for (int i = 0; i < lines.Length; i++)
+            {
+                builder.AppendLine("\t" + lines[i]);
+            }
+            builder.AppendLine("}");
+        }
     }
 
     public class VariableTable
@@ -21,6 +46,7 @@
         private readonly List<Operation> operations = new();
         private readonly List<Struct> structs = new();
         private readonly List<Include> includes = new();
+        private readonly List<Method> methods = new();
 
         private int srvCounter;
         private int uavCounter;
@@ -31,6 +57,11 @@
 
         public void Build(StringBuilder builder)
         {
+            builder.AppendLine("/// Includes");
+            for (int i = 0; i < includes.Count; i++)
+            {
+                includes[i].Build(builder);
+            }
             builder.AppendLine("/// Unordered Access Views");
             for (int i = 0; i < unorderedAccessViews.Count; i++)
             {
@@ -55,6 +86,11 @@
             for (int i = 0; i < constantBuffers.Count; i++)
             {
                 constantBuffers[i].Build(builder);
+            }
+            builder.AppendLine("/// Methods");
+            for (int i = 0; i < methods.Count; i++)
+            {
+                methods[i].Build(builder);
             }
         }
 
@@ -111,12 +147,38 @@
             return false;
         }
 
+        public bool IsMethodDefined(string name)
+        {
+            for (int i = 0; i < methods.Count; i++)
+            {
+                var method = methods[i];
+                if (method.Name == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public int IndexOfInclude(string name)
         {
             for (int i = 0; i < includes.Count; i++)
             {
                 var include = includes[i];
                 if (include.Name == name)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        public int IndexOfMethod(string name)
+        {
+            for (int i = 0; i < methods.Count; i++)
+            {
+                var methods = this.methods[i];
+                if (methods.Name == name)
                 {
                     return i;
                 }
@@ -138,6 +200,23 @@
             if (index != -1)
             {
                 includes.RemoveAt(index);
+            }
+        }
+
+        public void AddMethod(string name, string signature, string returnType, string body)
+        {
+            if (!IsMethodDefined(name))
+            {
+                methods.Add(new() { Name = name, Signature = signature, ReturnType = returnType, Body = body });
+            }
+        }
+
+        public void RemoveMethod(string name)
+        {
+            var index = IndexOfMethod(name);
+            if (index != -1)
+            {
+                methods.RemoveAt(index);
             }
         }
 

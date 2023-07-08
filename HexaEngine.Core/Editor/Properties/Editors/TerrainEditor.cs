@@ -1,29 +1,70 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Editor.Properties;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Core.Resources;
+    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Core.UI;
     using HexaEngine.ImGuiNET;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Components.Renderer;
     using System;
+    using System.Buffers.Binary;
+    using System.Diagnostics;
     using System.Numerics;
+    using System.Text;
+    using MaterialTexture = Core.IO.Materials.MaterialTexture;
+
+    public struct CBColorMask
+    {
+        public Vector4 Mask;
+
+        public CBColorMask(ChannelMask mask)
+        {
+            Mask = default;
+            if ((mask & ChannelMask.R) != 0)
+            {
+                Mask.X = 1;
+            }
+            if ((mask & ChannelMask.G) != 0)
+            {
+                Mask.Y = 1;
+            }
+            if ((mask & ChannelMask.B) != 0)
+            {
+                Mask.Z = 1;
+            }
+            if ((mask & ChannelMask.A) != 0)
+            {
+                Mask.W = 1;
+            }
+        }
+    }
 
     internal class TerrainEditor : IObjectEditor
     {
+        private Quad quad;
         private IGraphicsPipeline brushOverlay;
         private ConstantBuffer<CBBrush> brushBuffer;
+        private ConstantBuffer<CBColorMask> maskBuffer;
         private ConstantBuffer<Matrix4x4> WorldBuffer;
         private ResourceRef<IBuffer> camera;
+        private DepthStencil depthStencil;
 
         private IGraphicsPipeline maskOverlay;
-        private RWTexture2D<Vector4> mask;
+        private IGraphicsPipeline maskEdit;
         private ISamplerState maskSampler;
+
+        private bool isDown;
+        private bool isEdited;
 
         private bool init;
 
@@ -47,6 +88,11 @@
 
         private bool hoversOverTerrain;
         private Vector3 position;
+        private Vector3 uv;
+        private bool hasChanged;
+        private bool isActive;
+        private bool hasFileSaved;
+        private int current;
         private readonly Queue<TerrainCell> updateQueue = new();
 
         public void Draw(IGraphicsContext context)
@@ -62,11 +108,14 @@
             {
                 var device = context.Device;
                 var inputElements = Terrain.InputElements;
+                quad = new(device);
+
+                depthStencil = new(device, 1024, 1024, Format.D32Float);
 
                 brushOverlay = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
                 {
-                    VertexShader = "tools/terrain/brush/vs.hlsl",
-                    PixelShader = "tools/terrain/brush/ps.hlsl",
+                    VertexShader = "tools/terrain/overlay/brush/vs.hlsl",
+                    PixelShader = "tools/terrain/overlay/brush/ps.hlsl",
                 }, new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.None,
@@ -77,8 +126,8 @@
 
                 maskOverlay = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
                 {
-                    VertexShader = "tools/terrain/mask/vs.hlsl",
-                    PixelShader = "tools/terrain/mask/ps.hlsl",
+                    VertexShader = "tools/terrain/overlay/mask/vs.hlsl",
+                    PixelShader = "tools/terrain/overlay/mask/ps.hlsl",
                 }, new GraphicsPipelineState()
                 {
                     DepthStencil = DepthStencilDescription.None,
@@ -86,13 +135,35 @@
                     Blend = BlendDescription.Opaque,
                     Topology = PrimitiveTopology.TriangleList,
                 }, inputElements);
+                DepthStencilDescription depthStencilD = new()
+                {
+                    DepthEnable = true,
+                    DepthWriteMask = DepthWriteMask.All,
+                    DepthFunc = ComparisonFunction.Less,
+                    StencilEnable = false,
+                    StencilReadMask = 255,
+                    StencilWriteMask = 255,
+                    FrontFace = DepthStencilOperationDescription.DefaultFront,
+                    BackFace = DepthStencilOperationDescription.DefaultBack
+                };
+
+                maskEdit = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
+                {
+                    VertexShader = "tools/terrain/edit/mask/vs.hlsl",
+                    PixelShader = "tools/terrain/edit/mask/ps.hlsl",
+                }, new GraphicsPipelineState()
+                {
+                    DepthStencil = depthStencilD,
+                    Rasterizer = RasterizerDescription.CullBack,
+                    Blend = BlendDescription.AlphaBlend,
+                    Topology = PrimitiveTopology.TriangleList,
+                }, inputElements);
                 maskSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
 
                 brushBuffer = new(device, CpuAccessFlags.Write);
                 WorldBuffer = new(device, CpuAccessFlags.Write);
                 camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-
-                mask = new(device, Format.R32G32B32A32Float, 32, 32, 1, 1, CpuAccessFlags.Write);
+                maskBuffer = new(device, CpuAccessFlags.Write);
 
                 init = true;
             }
@@ -110,6 +181,7 @@
                 if (cell.Terrain.IntersectRay(ray, cell.Transform, out var pointInTerrain))
                 {
                     position = pointInTerrain;
+                    uv = position / cell.BoundingBox.Size;
                     hoversOverTerrain = true;
                 }
             }
@@ -119,12 +191,133 @@
             ImGui.InputFloat("Strength", ref strength);
             ImGui.Checkbox("Raise", ref raise);
 
-            ImGui.Checkbox("Edit Mask", ref editMask);
-            ImGui.InputInt("Mask Channel", ref maskChannel);
-
             var swapChain = Application.MainWindow.SwapChain;
             context.SetRenderTarget(swapChain.BackbufferRTV, swapChain.BackbufferDSV);
             context.SetViewport(Application.MainWindow.WindowViewport);
+
+            if (ImGui.CollapsingHeader("Layers"))
+            {
+                if (ImGui.Button("Add Layer"))
+                {
+                    grid.Layers.Add(new("New Layer"));
+                }
+                ImGui.Checkbox("Edit Mask", ref editMask);
+                ImGui.BeginListBox("##LayerBox");
+                for (int i = 0; i < grid.Layers.Count; i++)
+                {
+                    var layer = grid.Layers[i];
+                    if (ImGui.MenuItem(layer.Name, i == maskChannel))
+                    {
+                        maskChannel = i;
+                    }
+                }
+                ImGui.EndListBox();
+
+                if (maskChannel > -1 && maskChannel < grid.Layers.Count)
+                {
+                    var layer = grid.Layers[maskChannel];
+                    var name = layer.Name;
+                    if (ImGui.InputText("Name", ref name, 256))
+                    {
+                        layer.Name = name;
+                    }
+
+                    ImGui.SeparatorText("Material");
+
+                    var scene = SceneManager.Current;
+
+                    if (scene is null)
+                    {
+                        current = -1;
+                        return;
+                    }
+
+                    var manager = scene.MaterialManager;
+
+                    if (manager.Count == 0)
+                    {
+                        current = -1;
+                    }
+
+                    if (layer.Data == null)
+                    {
+                        if (ImGui.Button("Create new"))
+                        {
+                            layer.Data = new("New Material");
+                        }
+
+                        lock (manager.Materials)
+                        {
+                            ImGui.PushItemWidth(200);
+                            if (ImGui.BeginCombo("##Materials", string.Empty))
+                            {
+                                for (int i = 0; i < manager.Count; i++)
+                                {
+                                    var material = manager.Materials[i];
+                                    if (ImGui.MenuItem(material.Name))
+                                    {
+                                        current = i;
+                                    }
+                                }
+                                ImGui.EndCombo();
+                            }
+                            ImGui.PopItemWidth();
+                        }
+                    }
+                    else
+                    {
+                        if (EditMaterial(manager, layer.Data))
+                        {
+                            for (int i = 0; i < grid.Count; i++)
+                            {
+                                grid[i].UpdateLayer(layer);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (ImGui.CollapsingHeader("Cells"))
+            {
+                for (int i = 0; i < grid.Count; i++)
+                {
+                    var cell = grid[i];
+
+                    if (ImGui.TreeNode($"{cell.ID}"))
+                    {
+                        if (cell.Right == null && ImGui.Button($"{cell.ID} Add Tile X+"))
+                        {
+                            HeightMap heightMap = new(32, 32);
+                            heightMap.GenerateEmpty();
+                            TerrainCell terrainCell = new(context.Device, heightMap, true);
+                            terrainCell.ID = cell.ID + new Point2(1, 0);
+                            terrainCell.Offset = cell.Offset + new Vector3(cell.HeightMap.Width - 1, 0, 0);
+
+                            grid.Add(terrainCell);
+                            grid.FindNeighbors();
+                        }
+
+                        if (cell.Top == null && cell.Right == null)
+                        {
+                            ImGui.SameLine();
+                        }
+
+                        if (cell.Top == null && ImGui.Button($"{cell.ID} Add Tile Z+"))
+                        {
+                            HeightMap heightMap = new(32, 32);
+                            heightMap.GenerateEmpty();
+                            TerrainCell terrainCell = new(context.Device, heightMap, true);
+                            terrainCell.ID = cell.ID + new Point2(0, 1);
+                            terrainCell.Offset = cell.Offset + new Vector3(0, 0, cell.HeightMap.Height - 1);
+
+                            grid.Add(terrainCell);
+                            grid.FindNeighbors();
+                        }
+
+                        ImGui.TreePop();
+                    }
+                }
+            }
 
             for (int i = 0; i < grid.Count; i++)
             {
@@ -134,34 +327,6 @@
                     *WorldBuffer.Local = Matrix4x4.Transpose(cell.Transform);
                     WorldBuffer.Update(context);
                 }
-
-                if (ImGui.CollapsingHeader(($"{cell.ID}")))
-                {
-                    if (cell.Right == null && ImGui.Button($"{cell.ID} Add Tile X+"))
-                    {
-                        HeightMap heightMap = new(32, 32);
-                        heightMap.GenerateEmpty();
-                        TerrainCell terrainCell = new(context.Device, heightMap, true);
-                        terrainCell.ID = cell.ID + new Point2(1, 0);
-                        terrainCell.Offset = cell.Offset + new Vector3(cell.HeightMap.Width - 1, 0, 0);
-
-                        grid.Add(terrainCell);
-                        grid.FindNeighbors();
-                    }
-
-                    if (cell.Top == null && ImGui.Button($"{cell.ID} Add Tile Z+"))
-                    {
-                        HeightMap heightMap = new(32, 32);
-                        heightMap.GenerateEmpty();
-                        TerrainCell terrainCell = new(context.Device, heightMap, true);
-                        terrainCell.ID = cell.ID + new Point2(0, 1);
-                        terrainCell.Offset = cell.Offset + new Vector3(0, 0, cell.HeightMap.Height - 1);
-
-                        grid.Add(terrainCell);
-                        grid.FindNeighbors();
-                    }
-                }
-
                 if (editTerrain || editMask)
                 {
                     context.SetVertexBuffer(cell.VertexBuffer, cell.Stride);
@@ -172,10 +337,14 @@
                     context.PSSetConstantBuffer(1, camera.Value);
                     if (editMask)
                     {
-                        context.PSSetShaderResource(0, mask.SRV);
-                        context.PSSetSampler(0, maskSampler);
-                        context.SetGraphicsPipeline(maskOverlay);
-                        context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
+                        var tuple = cell.GetLayerMask(grid.Layers[maskChannel]);
+                        if (tuple != null)
+                        {
+                            context.PSSetShaderResource(0, tuple.Value.Item2.SRV);
+                            context.PSSetSampler(0, maskSampler);
+                            context.SetGraphicsPipeline(maskOverlay);
+                            context.DrawIndexedInstanced(cell.Terrain.IndicesCount, 1, 0, 0, 0);
+                        }
                     }
 
                     if (hoversOverTerrain)
@@ -192,13 +361,14 @@
 
                         if (Mouse.IsDown(MouseButton.Left))
                         {
+                            isDown = true;
                             bool hasAffected = false;
                             for (int j = 0; j < cell.Terrain.VerticesCount; j++)
                             {
                                 var vertex = Vector3.Transform(cell.Terrain.Positions[j], cell.Transform);
                                 Vector3 p1 = new(vertex.X, 0, vertex.Z);
                                 Vector3 p2 = new(position.X, 0, position.Z);
-                                Vector2 uv = new(p1.X / cell.Terrain.Width, p1.Z / cell.Terrain.Height);
+                                Vector3 uv = cell.Terrain.UVs[j];
                                 //
                                 float distance = (p2 - p1).Length();
                                 //
@@ -218,29 +388,36 @@
                                             cell.Terrain.Positions[j].Y -= temp * Time.Delta;
                                         }
                                     }
-                                    else if (editMask)
-                                    {
-                                        var vec = mask[uv];
-                                        if (raise)
-                                        {
-                                            vec[maskChannel] += temp * Time.Delta;
-                                        }
-                                        else
-                                        {
-                                            vec[maskChannel] -= temp * Time.Delta;
-                                        }
-                                        vec[maskChannel] = Math.Clamp(vec[maskChannel], 0, 1);
-                                        vec[3] = 0;
-                                        mask[uv] = vec;
-                                    }
 
                                     hasAffected = true;
                                 }
                             }
 
-                            if (editMask && hasAffected)
+                            if (editMask)
                             {
-                                mask.Write(context);
+                                var tuple = cell.GetLayerMask(grid.Layers[maskChannel]);
+                                tuple ??= cell.AddLayer(grid.Layers[maskChannel]);
+                                CBColorMask colorMask = new(tuple.Value.Item1);
+                                colorMask.Mask *= strength * Time.Delta;
+                                maskBuffer.Update(context, colorMask);
+
+                                context.PSSetShaderResource(0, null);
+                                context.PSSetConstantBuffer(0, maskBuffer);
+                                context.SetRenderTarget(tuple.Value.Item2.RTV, depthStencil.DSV);
+                                context.SetGraphicsPipeline(maskEdit);
+                                context.SetViewport(tuple.Value.Item2.RTV.Viewport);
+
+                                Matrix4x4.Invert(cell.Transform, out var inverse);
+                                var tlSize = tuple.Value.Item2.RTV.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
+                                var vpSize = new Vector2(size) * tlSize;
+                                var local = Vector3.Transform(position, inverse);
+                                var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.RTV.Viewport.Size - vpSize / 2f;
+
+                                context.SetViewport(new(pos, vpSize));
+                                quad.DrawAuto(context);
+
+                                hasAffected = true;
+                                isEdited = true;
                             }
 
                             if (editTerrain && hasAffected)
@@ -272,8 +449,16 @@
                                 }
                             }
                         }
+
+                        isDown = false;
                     }
                 }
+            }
+
+            if (!isDown && isEdited)
+            {
+                context.ClearDepthStencilView(depthStencil.DSV, DepthStencilClearFlags.All, 1, 0);
+                isEdited = false;
             }
 
             while (updateQueue.TryDequeue(out var cell))
@@ -282,11 +467,297 @@
             }
         }
 
+        private string newPropName = string.Empty;
+        private MaterialPropertyType newPropType;
+        private MaterialValueType newPropValueType;
+
+        private string newTexPath = string.Empty;
+        private TextureType newTexType;
+
+        public bool EditMaterial(MaterialManager manager, MaterialData material)
+        {
+            var name = material.Name;
+            isActive = false;
+            if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+            {
+                manager.Rename(material.Name, name);
+            }
+
+            if (ImGui.Button("Add Property"))
+            {
+                ImGui.OpenPopup("AddMaterialProperty");
+            }
+
+            if (ImGui.BeginPopup("AddMaterialProperty", ImGuiWindowFlags.None))
+            {
+                ImGui.InputText("Name", ref newPropName, 256);
+                if (ComboEnumHelper<MaterialPropertyType>.Combo("Type", ref newPropType))
+                {
+                    newPropName = newPropType.ToString();
+                }
+                ComboEnumHelper<MaterialValueType>.Combo("Value Type", ref newPropValueType);
+                if (ImGui.Button("Cancel"))
+                {
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.SameLine();
+                if (ImGui.Button("Add"))
+                {
+                    var props = material.Properties;
+                    ArrayUtils.Add(ref props, new(newPropName, newPropType, newPropValueType, default, default, new byte[MaterialProperty.GetByteCount(newPropValueType)]));
+                    material.Properties = props;
+                    ImGui.CloseCurrentPopup();
+                    hasChanged = true;
+                }
+                ImGui.EndPopup();
+            }
+
+            for (int i = 0; i < material.Properties.Length; i++)
+            {
+                var prop = material.Properties[i];
+                EditProperty(material, i, prop);
+            }
+
+            var flags = (int)material.Flags;
+            if (ImGui.CheckboxFlags("Transparent", ref flags, (int)MaterialFlags.Transparent))
+            {
+                material.Flags = (MaterialFlags)flags;
+                hasChanged = true;
+            }
+            isActive |= ImGui.IsItemActive();
+
+            ImGui.Separator();
+
+            if (ImGui.Button("Add Texture"))
+            {
+                ImGui.OpenPopup("AddMaterialTexture");
+            }
+
+            if (ImGui.BeginPopup("AddMaterialTexture", ImGuiWindowFlags.None))
+            {
+                ComboEnumHelper<TextureType>.Combo("Type", ref newTexType);
+                ImGui.InputText("Path", ref newTexPath, 256);
+
+                if (ImGui.Button("Cancel"))
+                {
+                    ImGui.CloseCurrentPopup();
+                }
+                ImGui.SameLine();
+                if (ImGui.Button("Add"))
+                {
+                    var textures = material.Textures;
+                    ArrayUtils.Add(ref textures, new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
+                    material.Textures = textures;
+                    ImGui.CloseCurrentPopup();
+                    hasChanged = true;
+                }
+                ImGui.EndPopup();
+            }
+
+            for (int i = 0; i < material.Textures.Length; i++)
+            {
+                var tex = material.Textures[i];
+
+                var iType = Array.IndexOf(MaterialTexture.TextureTypes, tex.Type);
+                if (ImGui.Combo($"Type##{i}", ref iType, MaterialTexture.TextureTypeNames, MaterialTexture.TextureTypeNames.Length))
+                {
+                    material.Textures[i].Type = MaterialTexture.TextureTypes[iType];
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var file = tex.File;
+                if (ImGui.InputText($"File##{i}", ref file, 1024))
+                {
+                    material.Textures[i].File = file;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var iBlend = Array.IndexOf(MaterialTexture.BlendModes, tex.Blend);
+                if (ImGui.Combo($"Blend##{i}", ref iBlend, MaterialTexture.BlendModeNames, MaterialTexture.BlendModeNames.Length))
+                {
+                    material.Textures[i].Blend = MaterialTexture.BlendModes[iBlend];
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var iOp = Array.IndexOf(MaterialTexture.TextureOps, tex.Op);
+                if (ImGui.Combo($"TextureOp##{i}", ref iOp, MaterialTexture.TextureOpNames, MaterialTexture.TextureOpNames.Length))
+                {
+                    material.Textures[i].Op = MaterialTexture.TextureOps[iOp];
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var mapping = tex.Mapping;
+                if (ImGui.InputInt($"Mapping##{i}", ref mapping))
+                {
+                    material.Textures[i].Mapping = mapping;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var uvwSrc = tex.UVWSrc;
+                if (ImGui.InputInt($"UVWSrc##{i}", ref uvwSrc))
+                {
+                    material.Textures[i].UVWSrc = uvwSrc;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var iU = Array.IndexOf(MaterialTexture.TextureMapModes, tex.U);
+                if (ImGui.Combo($"U##{i}", ref iU, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
+                {
+                    material.Textures[i].U = MaterialTexture.TextureMapModes[iU];
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var iV = Array.IndexOf(MaterialTexture.TextureMapModes, tex.V);
+                if (ImGui.Combo($"V##{i}", ref iV, MaterialTexture.TextureMapModeNames, MaterialTexture.TextureMapModeNames.Length))
+                {
+                    material.Textures[i].V = MaterialTexture.TextureMapModes[iV];
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+
+                var texFlags = (int)tex.Flags;
+                if (ImGui.CheckboxFlags($"Invert##{i}", ref texFlags, (int)TextureFlags.Invert))
+                {
+                    material.Textures[i].Flags ^= TextureFlags.Invert;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+                if (ImGui.CheckboxFlags($"UseAlpha##{i}", ref texFlags, (int)TextureFlags.UseAlpha))
+                {
+                    material.Textures[i].Flags ^= TextureFlags.UseAlpha;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+                if (ImGui.CheckboxFlags($"IgnoreAlpha##{i}", ref texFlags, (int)TextureFlags.IgnoreAlpha))
+                {
+                    material.Textures[i].Flags ^= TextureFlags.IgnoreAlpha;
+                    hasChanged = true;
+                }
+                isActive |= ImGui.IsItemActive();
+                if (i < material.Textures.Length - 1)
+                {
+                    ImGui.Separator();
+                }
+            }
+
+            bool result = false;
+            //TODO: Add new material texture system
+            if (hasChanged && !isActive)
+            {
+                manager.Update(material);
+                hasChanged = false;
+                hasFileSaved = false;
+                result = true;
+            }
+            ImGui.BeginDisabled(hasFileSaved);
+            if (ImGui.Button("Save"))
+            {
+                var lib = manager.GetMaterialLibraryForm(material);
+                var path = Paths.CurrentProjectFolder + lib.Name.Replace("assets/", "/").Replace("/", "\\");
+                lib.Save(path, Encoding.UTF8);
+            }
+            ImGui.EndDisabled();
+
+            ImGui.Text($"HasChanged: {hasChanged}, IsActive: {isActive}");
+
+            return result;
+        }
+
+        private void EditProperty(MaterialData material, int i, MaterialProperty prop)
+        {
+            switch (prop.ValueType)
+            {
+                case MaterialValueType.Float:
+                    {
+                        var value = prop.AsFloat();
+                        if (ImGui.SliderFloat(prop.Name, ref value, 0, 1))
+                        {
+                            material.Properties[i].SetFloat(value);
+                            hasChanged = true;
+                        }
+                        isActive |= ImGui.IsItemActive();
+                    }
+                    break;
+
+                case MaterialValueType.Float2:
+                    break;
+
+                case MaterialValueType.Float3:
+                    {
+                        var value = prop.AsFloat3();
+                        if (ImGui.ColorEdit3(prop.Name, ref value, ImGuiColorEditFlags.Float))
+                        {
+                            material.Properties[i].SetFloat3(value);
+                            hasChanged = true;
+                        }
+                        isActive |= ImGui.IsItemActive();
+                    }
+                    break;
+
+                case MaterialValueType.Float4:
+                    {
+                        var value = prop.AsFloat4();
+                        if (ImGui.ColorEdit4(prop.Name, ref value, ImGuiColorEditFlags.Float))
+                        {
+                            material.Properties[i].SetFloat4(value);
+                            hasChanged = true;
+                        }
+                        isActive |= ImGui.IsItemActive();
+                    }
+                    break;
+
+                case MaterialValueType.Bool:
+                    {
+                        var value = prop.AsBool();
+                        if (ImGui.Checkbox(prop.Name, ref value))
+                        {
+                            material.Properties[i].SetBool(value);
+                            hasChanged = true;
+                        }
+                        isActive |= ImGui.IsItemActive();
+                    }
+                    break;
+
+                case MaterialValueType.UInt8:
+                    break;
+
+                case MaterialValueType.UInt16:
+                    break;
+
+                case MaterialValueType.UInt32:
+                    break;
+
+                case MaterialValueType.UInt64:
+                    break;
+
+                case MaterialValueType.Int8:
+                    break;
+
+                case MaterialValueType.Int16:
+                    break;
+
+                case MaterialValueType.Int32:
+                    break;
+
+                case MaterialValueType.Int64:
+                    break;
+            }
+        }
+
         public void Dispose()
         {
             brushOverlay.Dispose();
             brushBuffer.Dispose();
             WorldBuffer.Dispose();
+            maskOverlay.Dispose();
+            maskSampler.Dispose();
         }
     }
 }

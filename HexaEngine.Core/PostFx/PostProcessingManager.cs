@@ -25,6 +25,7 @@
 #endif
         private bool isDirty = true;
         private bool isInitialized = false;
+        private bool isReloading;
         private int swapIndex;
 
         private readonly Quad quad;
@@ -207,6 +208,42 @@
 
         public void Reload()
         {
+            Volatile.Write(ref isReloading, true);
+            Sort();
+
+            for (int i = 0; i < effects.Count; i++)
+            {
+                effects[i].Dispose();
+            }
+
+            macros = new ShaderMacro[effects.Count];
+
+            for (int i = 0; i < effects.Count; i++)
+            {
+                var effect = effects[i];
+                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
+            }
+
+            Task.Factory.StartNew(async () =>
+            {
+                Task[] tasks = new Task[effects.Count];
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    tasks[i] = effects[i].Initialize(device, width, height, macros);
+                }
+                Task.WaitAll(tasks);
+            }
+            ).ContinueWith(t =>
+            {
+                Volatile.Write(ref isReloading, false);
+            });
+
+            isDirty = true;
+        }
+
+        public async Task ReloadAsync()
+        {
+            Volatile.Write(ref isReloading, true);
             Sort();
 
             for (int i = 0; i < effects.Count; i++)
@@ -224,9 +261,9 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                effects[i].Initialize(device, width, height, macros).Wait();
+                await effects[i].Initialize(device, width, height, macros);
             }
-
+            Volatile.Write(ref isReloading, false);
             isDirty = true;
         }
 
@@ -298,7 +335,7 @@
 
         public void PrePassDraw(IGraphicsContext context)
         {
-            if (!enabled)
+            if (!enabled || isReloading)
             {
                 return;
             }
@@ -328,7 +365,7 @@
 
         public void Draw(IGraphicsContext context)
         {
-            if (!enabled)
+            if (!enabled || isReloading)
             {
                 context.SetRenderTarget(Output.Value, null);
                 context.PSSetShaderResource(0, Input.Value?.ShaderResourceView);

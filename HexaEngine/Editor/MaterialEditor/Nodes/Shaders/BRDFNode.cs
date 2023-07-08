@@ -39,7 +39,6 @@
 
         public override void DefineMethod(VariableTable table)
         {
-            table.AddInclude("brdf.hlsl");
         }
     }
 }

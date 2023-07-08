@@ -19,7 +19,7 @@
         private static bool exiting = false;
         private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
         private static readonly List<IRenderWindow> windows = new();
-        private static readonly List<Action<Event>> hooks = new();
+        private static readonly List<Func<Event, bool>> hooks = new();
         private static IRenderWindow? mainWindow;
         private static bool inDesignMode;
         private static bool inEditorMode;
@@ -34,6 +34,10 @@
 #nullable disable
         public static IRenderWindow MainWindow => mainWindow;
 #nullable enable
+
+        public static IGraphicsDevice GraphicsDevice => graphicsDevice;
+
+        public static IGraphicsContext GraphicsContext => graphicsContext;
 
         public static GraphicsBackend GraphicsBackend
         {
@@ -152,7 +156,7 @@
             }
         }
 
-        public static void RegisterHook(Action<Event> hook)
+        public static void RegisterHook(Func<Event, bool> hook)
         {
             hooks.Add(hook);
         }
@@ -204,11 +208,14 @@
 
                         case EventType.Windowevent:
                             {
-                                SdlWindow window = (SdlWindow)windowIdToWindow[evnt.Window.WindowID];
-                                window.ProcessEvent(evnt.Window);
-                                if ((WindowEventID)evnt.Window.Event == WindowEventID.Close && window == mainWindow)
+                                var even = evnt.Window;
+                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
                                 {
-                                    exiting = true;
+                                    ((SdlWindow)window).ProcessEvent(even);
+                                    if ((WindowEventID)evnt.Window.Event == WindowEventID.Close && window == mainWindow)
+                                    {
+                                        exiting = true;
+                                    }
                                 }
                             }
                             break;

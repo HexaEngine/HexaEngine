@@ -23,9 +23,16 @@
 
         internal static void AddEntry(string name, string path)
         {
-            if (entries.Any(entry => entry.Path == path))
+            for (int i = 0; i < entries.Count; i++)
             {
-                return;
+                var entry = entries[i];
+                if (entry.Path == path)
+                {
+                    entries.RemoveAt(i);
+                    entries.Insert(0, entry);
+                    Save();
+                    return;
+                }
             }
 
             entries.Add(new HistoryEntry { Name = name, Path = path });

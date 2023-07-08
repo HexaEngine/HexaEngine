@@ -681,6 +681,12 @@
                             ImGui.CloseCurrentPopup();
                         }
 
+                        if (ImGui.Button("Clear", new(120, 0)))
+                        {
+                            messages.Clear();
+                            ImGui.CloseCurrentPopup();
+                        }
+
                         ImGui.SetItemDefaultFocus();
                         ImGui.SameLine();
                         if (ImGui.Button("Cancel", new(120, 0)))

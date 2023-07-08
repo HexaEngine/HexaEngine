@@ -108,12 +108,11 @@
 
         public void Draw(IGraphicsContext context, SkyType type)
         {
-            if (!initialized)
-                return;
-
             switch (type)
             {
                 case SkyType.Skybox:
+                    if (!initialized)
+                        return;
                     context.VSSetConstantBuffer(0, worldBuffer);
                     context.VSSetConstantBuffer(1, camera.Value);
                     context.PSSetShaderResource(0, environment.SRV);
