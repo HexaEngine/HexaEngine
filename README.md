@@ -12,7 +12,7 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - Principled BSDF
 - IBL
 - Shadow Mapping (PSM, CSM, OSM)
-- Deferred rendering
+- Clustered Forward and Clustered Deferred (Hybrid renderer)
 - Instancing
 - HBAO
 - HDR Bloom
