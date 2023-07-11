@@ -283,16 +283,18 @@
     {
         private const int DefaultCapacity = 64;
         private readonly IGraphicsDevice device;
+        private readonly Format format;
         private readonly bool canWrite;
         private readonly bool canRead;
-        private readonly BufferUnorderedAccessViewFlags flags;
+        private readonly BufferUnorderedAccessViewFlags uavFlags;
+        private readonly BufferExtendedShaderResourceViewFlags srvFlags;
         private readonly string dbgName;
         private BufferDescription bufferDescription;
         private BufferDescription copyDescription;
         private IBuffer buffer;
         private IBuffer? copyBuffer;
         private IUnorderedAccessView uav;
-        private IShaderResourceView srv;
+        private IShaderResourceView? srv;
 
         private T* items;
         private uint count;
@@ -301,54 +303,53 @@
 
         private bool disposedValue;
 
-        public UavBuffer(IGraphicsDevice device, bool canWrite, bool canRead, Format format, BufferUnorderedAccessViewFlags uavflags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public UavBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, Format format, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, bool hasSRV = false, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+            : this(device, DefaultCapacity, cpuAccessFlags, format, uavFlags, hasSRV, srvFlags, filename, lineNumber)
         {
-            this.device = device;
-            this.canWrite = canWrite;
-            this.canRead = canRead;
-            this.flags = uavflags;
-            dbgName = $"UavBuffer: {filename}, Line:{lineNumber}";
-            capacity = DefaultCapacity;
-            items = Alloc<T>(DefaultCapacity);
-            ZeroMemory(items, DefaultCapacity * sizeof(T));
-            bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None, 0);
-            buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
-            buffer.DebugName = dbgName;
-            if (canWrite)
-            {
-                copyDescription = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.None, 0);
-                if (canRead)
-                {
-                    copyDescription.BindFlags = BindFlags.None;
-                    copyDescription.Usage = Usage.Staging;
-                    copyDescription.CPUAccessFlags = CpuAccessFlags.RW;
-                }
-                copyBuffer = device.CreateBuffer(copyDescription);
-                copyBuffer.DebugName = dbgName + ".CopyBuffer";
-            }
-
-            uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, DefaultCapacity, uavflags));
-            uav.DebugName = dbgName + ".UAV";
-            srv = device.CreateShaderResourceView(buffer, new(buffer, format, 0, DefaultCapacity, srvFlags));
-            srv.DebugName = dbgName + ".SRV";
         }
 
-        public UavBuffer(IGraphicsDevice device, int intialCapacity, bool canWrite, bool canRead, Format format, BufferUnorderedAccessViewFlags uavflags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public UavBuffer(IGraphicsDevice device, int initialCapacity, CpuAccessFlags cpuAccessFlags, Format format, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, bool hasSRV = false, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.canWrite = canWrite;
-            this.canRead = canRead;
-            this.flags = uavflags;
+            this.format = format;
+            canWrite = (cpuAccessFlags & CpuAccessFlags.Write) != 0;
+            canRead = (cpuAccessFlags & CpuAccessFlags.Read) != 0;
+            this.uavFlags = uavFlags;
+            this.srvFlags = srvFlags;
+
+            BindFlags bindFlags = BindFlags.UnorderedAccess;
+            if (hasSRV)
+            {
+                bindFlags |= BindFlags.ShaderResource;
+            }
+
+            ResourceMiscFlag miscFlag = ResourceMiscFlag.None;
+            if ((uavFlags & BufferUnorderedAccessViewFlags.Raw) != 0 || (srvFlags & BufferExtendedShaderResourceViewFlags.Raw) != 0)
+            {
+                miscFlag = ResourceMiscFlag.BufferAllowRawViews;
+            }
+
             dbgName = $"UavBuffer: {filename}, Line:{lineNumber}";
-            capacity = (uint)intialCapacity;
-            items = Alloc<T>(intialCapacity);
-            ZeroMemory(items, intialCapacity * sizeof(T));
-            bufferDescription = new(sizeof(T) * intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None, 0);
-            buffer = device.CreateBuffer(items, (uint)intialCapacity, bufferDescription);
+            capacity = (uint)initialCapacity;
+
+            items = Alloc<T>(initialCapacity);
+            ZeroMemory(items, initialCapacity * sizeof(T));
+
+            bufferDescription = new(sizeof(T) * initialCapacity, bindFlags, Usage.Default, CpuAccessFlags.None, miscFlag, 0);
+            buffer = device.CreateBuffer(items, (uint)initialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
+
+            // Ensures that no additional memory is used when not needed,
+            // because the internal buffer is only required if reads or writes can happen.
+            if (canRead || canWrite)
+            {
+                Free(items);
+                items = null;
+            }
+
             if (canWrite)
             {
-                copyDescription = new(sizeof(T) * intialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.None, 0);
+                copyDescription = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.None, 0);
                 if (canRead)
                 {
                     copyDescription.BindFlags = BindFlags.None;
@@ -358,23 +359,57 @@
                 copyBuffer = device.CreateBuffer(copyDescription);
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
             }
+            else if (canRead)
+            {
+                copyDescription = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read, ResourceMiscFlag.None, 0);
+                copyBuffer = device.CreateBuffer(copyDescription);
+                copyBuffer.DebugName = dbgName + ".CopyBuffer";
+            }
 
-            uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, intialCapacity, uavflags));
+            uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, initialCapacity, uavFlags));
             uav.DebugName = dbgName + ".UAV";
-            srv = device.CreateShaderResourceView(buffer, new(buffer, format, 0, intialCapacity, srvFlags));
-            srv.DebugName = dbgName + ".SRV";
+
+            if (hasSRV)
+            {
+                srv = device.CreateShaderResourceView(buffer, new(buffer, format, 0, initialCapacity, srvFlags));
+                srv.DebugName = dbgName + ".SRV";
+            }
         }
 
         public T this[int index]
         {
-            get { return items[index]; }
-            set { items[index] = value; isDirty = true; }
+            get
+            {
+                if (!canWrite || !canRead)
+                    throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+
+                return items[index];
+            }
+            set
+            {
+                if (!canWrite || !canRead)
+                    throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+
+                items[index] = value; isDirty = true;
+            }
         }
 
         public T this[uint index]
         {
-            get { return items[index]; }
-            set { items[index] = value; isDirty = true; }
+            get
+            {
+                if (!canWrite || !canRead)
+                    throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+
+                return items[index];
+            }
+            set
+            {
+                if (!canWrite || !canRead)
+                    throw new InvalidOperationException("The Uav buffer is not capable of writing or reading, please specify the write or read flag");
+
+                items[index] = value; isDirty = true;
+            }
         }
 
         public T* Local => items;
@@ -406,7 +441,7 @@
         /// <value>
         /// The SRV.
         /// </value>
-        public IShaderResourceView SRV => srv;
+        public IShaderResourceView? SRV => srv;
 
         /// <summary>
         /// Not null when CanWrite is true
@@ -457,33 +492,47 @@
                     return;
                 }
 
-                var tmp = Alloc<T>((int)value);
-                ZeroMemory(tmp, DefaultCapacity * sizeof(T));
-                var oldsize = count * sizeof(T);
-                var newsize = value * sizeof(T);
-                Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);
-                Free(items);
-                items = tmp;
+                // Null check here because if no read or write access is specified we don't need that buffer
+                if (items != null)
+                {
+                    var tmp = Alloc<T>((int)value);
+                    ZeroMemory(tmp, DefaultCapacity * sizeof(T));
+                    var oldSize = count * sizeof(T);
+                    var newSize = value * sizeof(T);
+                    Buffer.MemoryCopy(items, tmp, newSize, oldSize > newSize ? newSize : oldSize);
+                    Free(items);
+                    items = tmp;
+                }
+
                 capacity = value;
                 count = capacity < count ? capacity : count;
-                srv.Dispose();
+
+                srv?.Dispose();
                 uav.Dispose();
                 buffer.Dispose();
-                copyBuffer?.Dispose();
+
                 bufferDescription.ByteWidth = sizeof(T) * (int)capacity;
                 buffer = device.CreateBuffer(items, capacity, bufferDescription);
                 buffer.DebugName = dbgName;
-                if (canWrite)
+
+                // canWrite/canRead check here because if no read or write access is specified we don't need that buffer
+                if (canWrite || canRead)
                 {
+                    copyBuffer?.Dispose();
                     copyDescription.ByteWidth = sizeof(T) * (int)value;
                     copyBuffer = device.CreateBuffer(copyDescription);
                     copyBuffer.DebugName = dbgName + ".CopyBuffer";
                 }
 
-                uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)capacity, flags));
+                uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, (int)capacity, uavFlags));
                 uav.DebugName = dbgName + ".UAV";
-                srv = device.CreateShaderResourceView(buffer);
-                srv.DebugName = dbgName + ".SRV";
+
+                if ((bufferDescription.BindFlags & BindFlags.ShaderResource) != 0)
+                {
+                    srv = device.CreateShaderResourceView(buffer, new(buffer, format, 0, (int)capacity, srvFlags));
+                    srv.DebugName = dbgName + ".SRV";
+                }
+
                 isDirty = true;
             }
         }
@@ -544,6 +593,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResetCounter()
         {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
             count = 0;
         }
 
@@ -572,6 +624,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add(T args)
         {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
             var index = count;
             count++;
             EnsureCapacity(count);
@@ -583,6 +638,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(int index)
         {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
             isDirty = true;
@@ -591,6 +649,9 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(uint index)
         {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
             isDirty = true;
@@ -598,6 +659,9 @@
 
         public void Clear()
         {
+            if (!canWrite)
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
+
             for (int i = 0; i < count; i++)
             {
                 items[i] = default;
@@ -614,12 +678,12 @@
         {
             if (copyBuffer == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
             }
 
             if (!canWrite)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("The Uav buffer is not capable of writing, please specify the write flag");
             }
 
             if (isDirty)
@@ -645,12 +709,12 @@
         {
             if (copyBuffer == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("The Uav buffer is not capable of reading, please specify the read flag");
             }
 
             if (!canRead)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("The Uav buffer is not capable of reading, please specify the read flag");
             }
 
             context.CopyResource(copyBuffer, buffer);
@@ -666,7 +730,11 @@
         {
             if (!disposedValue)
             {
-                srv.Dispose();
+                if (items != null)
+                {
+                    Free(items);
+                }
+                srv?.Dispose();
                 uav.Dispose();
                 buffer.Dispose();
                 copyBuffer?.Dispose();

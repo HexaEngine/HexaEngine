@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;

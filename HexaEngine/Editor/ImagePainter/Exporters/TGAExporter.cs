@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.ImagePainter.Exporter
+﻿namespace HexaEngine.Editor.ImagePainter.Exporters
 {
     public class TGAExporter
     {

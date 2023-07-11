@@ -400,5 +400,15 @@
         {
             throw new NotImplementedException();
         }
+
+        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

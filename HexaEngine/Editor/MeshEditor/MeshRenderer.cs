@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Editor.ModelEditor
+﻿namespace HexaEngine.Editor.MeshEditor
 {
     using System;
     using System.Collections.Generic;

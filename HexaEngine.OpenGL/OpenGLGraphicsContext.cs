@@ -594,5 +594,15 @@
         {
             throw new NotImplementedException();
         }
+
+        public void SetRenderTargetsAndUnorderedAccessViews(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView, uint uavSlot, IUnorderedAccessView? unorderedAccessView, uint uavInitialCount = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetRenderTargetsAndUnorderedAccessViews(uint count, void** views, IDepthStencilView? depthStencilView, uint uavSlot, uint uavCount, void** uavs, uint* pUavInitialCount)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

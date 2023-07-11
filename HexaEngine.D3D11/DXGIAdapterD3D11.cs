@@ -3,15 +3,15 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
+    using Silk.NET.Core.Attributes;
+    using Silk.NET.Core;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.DXGI;
     using Silk.NET.SDL;
     using System;
-    using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using System.Runtime.Versioning;
     using System.Text;
 
     public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter
@@ -180,22 +180,36 @@
                 BufferCount = 2,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
-                Scaling = Scaling.Stretch,
-                SwapEffect = SwapEffect.FlipSequential,
-                Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing)
+                Scaling = Silk.NET.DXGI.Scaling.Stretch,
+                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
+                Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing),
+                Stereo = false,
             };
 
             SwapChainFullscreenDesc fullscreenDesc = new()
             {
                 Windowed = 1,
                 RefreshRate = new Rational(0, 1),
-                Scaling = ModeScaling.Unspecified,
-                ScanlineOrdering = ModeScanlineOrder.Unspecified,
+                Scaling = Silk.NET.DXGI.ModeScaling.Unspecified,
+                ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
             ComPtr<IDXGISwapChain1> swapChain;
             IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
-            // IDXGIFactory.MakeWindowAssociation(Hwnd, 1 << 0);
+
+            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+        }
+
+        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            var (Hwnd, HDC, HInstance) = window.Win32 ?? throw new NotSupportedException();
+
+            SwapChainDesc1 desc = Helper.Convert(swapChainDescription);
+
+            SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
+
+            ComPtr<IDXGISwapChain1> swapChain;
+            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -222,32 +236,47 @@
                 BufferCount = 2,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
-                Scaling = Scaling.Stretch,
-                SwapEffect = SwapEffect.FlipSequential,
+                Scaling = Silk.NET.DXGI.Scaling.Stretch,
+                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing)
             };
 
             SwapChainFullscreenDesc fullscreenDesc = new()
             {
-                Windowed = 1,
+                Windowed = true,
                 RefreshRate = new Rational(0, 1),
-                Scaling = ModeScaling.Unspecified,
-                ScanlineOrdering = ModeScanlineOrder.Unspecified,
+                Scaling = Silk.NET.DXGI.ModeScaling.Unspecified,
+                ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
             ComPtr<IDXGISwapChain1> swapChain;
             IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
-            // IDXGIFactory.MakeWindowAssociation(Hwnd, 1 << 0);
+
+            return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
+        }
+
+        internal ISwapChain CreateSwapChainForWindow(D3D11GraphicsDevice device, Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            Sdl sdl = Sdl.GetApi();
+            SysWMInfo info;
+            sdl.GetVersion(&info.Version);
+            sdl.GetWindowWMInfo(window, &info);
+            var Hwnd = info.Info.Win.Hwnd;
+
+            SwapChainDesc1 desc = Helper.Convert(swapChainDescription);
+
+            SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
+
+            ComPtr<IDXGISwapChain1> swapChain;
+            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
         private ComPtr<IDXGIAdapter4> GetHardwareAdapter()
         {
-            ComPtr<IDXGIAdapter4> adapter = null;
-
             for (uint adapterIndex = 0;
-                (ResultCode)IDXGIFactory.EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, out adapter) !=
+                (ResultCode)IDXGIFactory.EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, out ComPtr<IDXGIAdapter4> adapter) !=
                 ResultCode.DXGI_ERROR_NOT_FOUND;
                 adapterIndex++)
             {

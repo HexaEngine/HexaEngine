@@ -37,6 +37,18 @@ float SampleLinearDepth(Texture2D<float> tex, SamplerState smp, float2 texCoord)
     return GetLinearDepth(depth);
 }
 
+float LoadLinearDepth(Texture2D tex, int3 texCoord)
+{
+    float depth = tex.Load(texCoord).r;
+    return GetLinearDepth(depth);
+}
+
+float LoadLinearDepth(Texture2D<float> tex, int3 texCoord)
+{
+    float depth = tex.Load(texCoord);
+    return GetLinearDepth(depth);
+}
+
 float3 GetPositionVS(float2 uv, float depth)
 {
     float4 ndc = float4(uv * 2.0f - 1.0f, depth, 1.0f);

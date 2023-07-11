@@ -1,15 +1,37 @@
 #include "common.hlsl"
-
+#include "../../camera.hlsl"
+#include "../../shadow.hlsl"
+#include "../../light.hlsl"
 
 Texture2D<float> depthTx : register(t2);
-Texture2D shadowDepthMap : register(t4);
+Texture2D shadowAtlas : register(t4);
 
+SamplerState linear_clamp_sampler;
+SamplerComparisonState shadow_sampler;
+
+cbuffer LightBuffer
+{
+    Light currentLight;
+    ShadowData shadowData;
+    float padd;
+};
 
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
     float2 Tex : TEX;
 };
+
+float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
+{
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
+
+#if HARD_SHADOWS_SPOTLIGHTS
+    return CalcShadowFactor_Basic(state, shadowAtlas, uvd);
+#else
+    return CalcShadowFactor_PCF3x3(state, shadowAtlas, uvd, data.size, data.softness);
+#endif
+}
 
 float4 main(VertexOut input) : SV_TARGET
 {
@@ -25,7 +47,7 @@ float4 main(VertexOut input) : SV_TARGET
 
     float3 rayEnd = float3(0.0f, 0.0f, 0.0f);
 	// todo: rayEnd should be clamped to the closest cone intersection point when camera is outside volume
-	
+
     const uint sampleCount = 16;
     const float stepSize = length(P - rayEnd) / sampleCount;
 
@@ -36,35 +58,26 @@ float4 main(VertexOut input) : SV_TARGET
 	[loop]
     for (uint i = 0; i < sampleCount; ++i)
     {
-        float3 L = current_light.position.xyz - P; //position in view space
+        float3 L = currentLight.position.xyz - P; //position in view space
         const float dist2 = dot(L, L);
         const float dist = sqrt(dist2);
         L /= dist;
 
-        float SpotFactor = dot(L, normalize(-current_light.direction.xyz));
-        float spotCutOff = current_light.outer_cosine;
+        float SpotFactor = dot(L, normalize(-currentLight.direction.xyz));
+        float spotCutOff = currentLight.outerCosine;
 
 		[branch]
         if (SpotFactor > spotCutOff)
         {
-            float attenuation = DoAttenuation(dist, current_light.range);
-            float conAtt = saturate((SpotFactor - current_light.outer_cosine) / (current_light.inner_cosine - current_light.outer_cosine));
+            float attenuation = Attenuation(dist, currentLight.range);
+            float conAtt = saturate((SpotFactor - currentLight.outerCosine) / (currentLight.innerCosine - currentLight.outerCosine));
             conAtt *= conAtt;
             attenuation *= conAtt;
 			[branch]
-            if (current_light.casts_shadows)
+            if (currentLight.castsShadows)
             {
-                float4 posShadowMap = mul(float4(P, 1.0), shadow_matrices[0]);
-                float3 UVD = posShadowMap.xyz / posShadowMap.w;
-
-                UVD.xy = 0.5 * UVD.xy + 0.5;
-                UVD.y = 1.0 - UVD.y;
-                [branch]
-                if (IsSaturated(UVD.xy))
-                {             
-                    float shadow_factor = CalcShadowFactor_PCF3x3(shadow_sampler, shadowDepthMap, UVD, shadow_map_size, softness);
-                    attenuation *= shadow_factor;
-                }
+                float shadow_factor = ShadowFactorSpotlight(shadowData, currentLight.position.xyz, shadow_sampler);
+                attenuation *= shadow_factor;
             }
             //attenuation *= ExponentialFog(cameraDistance - marchedDistance);
             accumulation += attenuation;
@@ -73,5 +86,5 @@ float4 main(VertexOut input) : SV_TARGET
         P = P + V * stepSize;
     }
     accumulation /= sampleCount;
-    return max(0, float4(accumulation * current_light.color.rgb * current_light.volumetric_strength, 1));
+    return max(0, float4(accumulation * currentLight.color.rgb * currentLight.volumetricStrength, 1));
 }

@@ -2,9 +2,10 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Physics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.ImGuiNET;
+    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Systems;
     using ImPlotNET;
     using System.Diagnostics;
     using System.Numerics;
@@ -153,7 +154,10 @@
                 ImPlot.EndPlot();
             }
 
-            var renderer = Application.MainWindow.Renderer;
+            var renderer = SceneRenderer.Current;
+
+            if (renderer == null)
+                return;
 
             Update.Add(renderer.Profiler["Update"] * 1000);
             ObjectCulling.Add(renderer.Profiler["ObjectCulling"] * 1000);

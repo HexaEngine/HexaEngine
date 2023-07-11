@@ -3,12 +3,13 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Lights;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.UI;
+    using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
+    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using ImGuizmoNET;
@@ -183,17 +184,23 @@
                 if (ImGui.BeginMenu("options"))
                 {
                     ImGui.Text("Shading Mode");
-                    if (ImGui.RadioButton("Wireframe", Application.MainWindow.Renderer.Shading == ViewportShading.Wireframe))
+
+                    SceneRenderer? renderer = SceneRenderer.Current;
+
+                    if (renderer != null)
                     {
-                        Application.MainWindow.Renderer.Shading = ViewportShading.Wireframe;
-                    }
-                    if (ImGui.RadioButton("Solid", Application.MainWindow.Renderer.Shading == ViewportShading.Solid))
-                    {
-                        Application.MainWindow.Renderer.Shading = ViewportShading.Solid;
-                    }
-                    if (ImGui.RadioButton("Rendered", Application.MainWindow.Renderer.Shading == ViewportShading.Rendered))
-                    {
-                        Application.MainWindow.Renderer.Shading = ViewportShading.Rendered;
+                        if (ImGui.RadioButton("Wireframe", renderer.Shading == ViewportShading.Wireframe))
+                        {
+                            renderer.Shading = ViewportShading.Wireframe;
+                        }
+                        if (ImGui.RadioButton("Solid", renderer.Shading == ViewportShading.Solid))
+                        {
+                            renderer.Shading = ViewportShading.Solid;
+                        }
+                        if (ImGui.RadioButton("Rendered", renderer.Shading == ViewportShading.Rendered))
+                        {
+                            renderer.Shading = ViewportShading.Rendered;
+                        }
                     }
 
                     ImGui.EndMenu();

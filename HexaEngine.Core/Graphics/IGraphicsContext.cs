@@ -5,11 +5,11 @@
 
     public interface IGraphicsContext : IDeviceChild
     {
-        public IGraphicsDevice Device { get; }
+        IGraphicsDevice Device { get; }
 
-        public void SetGraphicsPipeline(IGraphicsPipeline? pipeline);
+        void SetGraphicsPipeline(IGraphicsPipeline? pipeline);
 
-        public void SetComputePipeline(IComputePipeline? pipeline);
+        void SetComputePipeline(IComputePipeline? pipeline);
 
         void CopyResource(IResource dst, IResource src);
 
@@ -23,37 +23,37 @@
 
         unsafe void Write<T>(IBuffer buffer, T* value, int size, Map flags) where T : unmanaged;
 
-        public void Write<T>(IBuffer buffer, T value) where T : unmanaged;
+        void Write<T>(IBuffer buffer, T value) where T : unmanaged;
 
         unsafe void Read(IBuffer buffer, void* value, int size);
 
         unsafe void Read<T>(IBuffer buffer, T* values, uint count) where T : unmanaged;
 
-        public MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags);
+        MappedSubresource Map(IResource resource, int subresourceIndex, MapMode mode, MapFlags flags);
 
-        public void Unmap(IResource resource, int subresourceIndex);
+        void Unmap(IResource resource, int subresourceIndex);
 
-        public void SetVertexBuffer(IBuffer? vertexBuffer, uint stride);
+        void SetVertexBuffer(IBuffer? vertexBuffer, uint stride);
 
-        public void SetVertexBuffer(IBuffer? vertexBuffer, uint stride, uint offset);
+        void SetVertexBuffer(IBuffer? vertexBuffer, uint stride, uint offset);
 
-        public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride);
+        void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride);
 
-        public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride, uint offset);
+        void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride, uint offset);
 
-        public void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
+        void SetIndexBuffer(IBuffer? indexBuffer, Format format, int offset);
 
-        public void VSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
+        void VSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void HSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
+        void HSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void DSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
+        void DSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void GSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
+        void GSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void PSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
+        void PSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
-        public void CSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
+        void CSSetConstantBuffer(uint slot, IBuffer? constantBuffer);
 
         unsafe void VSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
@@ -67,17 +67,17 @@
 
         unsafe void CSSetConstantBuffers(uint slot, uint count, void** constantBuffers);
 
-        public void VSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
+        void VSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void HSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
+        void HSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void DSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
+        void DSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void GSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
+        void GSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void PSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
+        void PSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
-        public void CSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
+        void CSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView);
 
         unsafe void VSSetShaderResources(uint slot, uint count, void** shaderResourceViews);
 
@@ -115,11 +115,15 @@
 
         unsafe void CSSetSamplers(uint slot, uint count, void** samplers);
 
-        public void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
+        void ClearRenderTargetView(IRenderTargetView renderTargetView, Vector4 value);
 
-        public void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
+        void ClearDepthStencilView(IDepthStencilView depthStencilView, DepthStencilClearFlags flags, float depth, byte stencil);
 
-        public void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView);
+        void SetRenderTarget(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView);
+
+        void SetRenderTargetsAndUnorderedAccessViews(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView, uint uavSlot, IUnorderedAccessView? unorderedAccessView, uint uavInitialCount = uint.MaxValue);
+
+        unsafe void SetRenderTargetsAndUnorderedAccessViews(uint count, void** views, IDepthStencilView? depthStencilView, uint uavSlot, uint uavCount, void** uavs, uint* pUavInitialCount);
 
         void SetScissorRect(int x, int y, int z, int w);
 

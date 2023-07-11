@@ -3,9 +3,9 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
+    using HexaEngine.Scenes;
     using ImGuiNET;
 
     public static class MainMenuBar

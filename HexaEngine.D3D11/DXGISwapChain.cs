@@ -12,7 +12,7 @@
     public unsafe class DXGISwapChain : DeviceChildBase, ISwapChain
     {
         private ComPtr<IDXGISwapChain1> swapChain;
-        private SwapChainFlag flags;
+        private readonly SwapChainFlag flags;
         private ComPtr<ID3D11Texture2D> backbuffer;
         private ITexture2D depthStencil;
         private long fpsStartTime;

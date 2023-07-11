@@ -2,13 +2,14 @@
 
 namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;

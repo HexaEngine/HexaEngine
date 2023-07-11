@@ -174,8 +174,8 @@
 
             Vector3* vertTangents = Alloc<Vector3>(pMesh.VerticesCount);
             Vector3* vertBitangents = Alloc<Vector3>(pMesh.VerticesCount);
-            Memset(vertTangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
-            Memset(vertBitangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            Memset(vertTangents, 0, (int)(pMesh.VerticesCount));
+            Memset(vertBitangents, 0, (int)(pMesh.VerticesCount));
 
             for (uint i = 0; i < nFace; ++i)
             {
@@ -236,8 +236,8 @@
 
             Vector3* vertTangents = Alloc<Vector3>(pMesh.VerticesCount);
             Vector3* vertBitangents = Alloc<Vector3>(pMesh.VerticesCount);
-            Memset(vertTangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
-            Memset(vertBitangents, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            Memset(vertTangents, 0, (int)(pMesh.VerticesCount));
+            Memset(vertBitangents, 0, (int)(pMesh.VerticesCount));
 
             for (uint i = 0; i < nFace; ++i)
             {

@@ -820,6 +820,11 @@
         {
             new Span<byte>(ptr, length).Fill(value);
         }
+
+        public static void Memset<T>(T* ptr, byte value, int count) where T : unmanaged
+        {
+            new Span<byte>(ptr, count * sizeof(T)).Fill(value);
+        }
     }
 
     public static unsafe class ArrayUtils

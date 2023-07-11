@@ -8,20 +8,24 @@
 
     public interface IGraphicsDevice : IDeviceChild
     {
-        public GraphicsBackend Backend { get; }
+        GraphicsBackend Backend { get; }
 
         /// <summary>
         /// The immediate context of this device
         /// </summary>
-        public IGraphicsContext Context { get; }
+        IGraphicsContext Context { get; }
 
         ITextureLoader TextureLoader { get; }
 
         IGPUProfiler Profiler { get; }
 
-        public ISwapChain CreateSwapChain(SdlWindow window);
+        ISwapChain CreateSwapChain(SdlWindow window);
 
         unsafe ISwapChain CreateSwapChain(Window* window);
+
+        ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription);
+
+        unsafe ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription);
 
         /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/>
@@ -31,7 +35,7 @@
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="OutOfMemoryException"></exception>
-        public IBuffer CreateBuffer(BufferDescription description);
+        IBuffer CreateBuffer(BufferDescription description);
 
         /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/>
@@ -54,7 +58,7 @@
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="OutOfMemoryException"></exception>
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged;
+        IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged;
 
         /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/> and with the initial value <paramref name="value"/><br/>
@@ -67,53 +71,53 @@
         /// <param name="cpuAccessFlags"></param>
         /// <param name="miscFlags"></param>
         /// <returns></returns>
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
+        IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
 
         unsafe IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged;
 
         unsafe IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
 
-        public IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description);
+        IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description);
 
-        public IDepthStencilView CreateDepthStencilView(IResource resource);
+        IDepthStencilView CreateDepthStencilView(IResource resource);
 
-        public IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport);
+        IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport);
 
-        public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport);
+        IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport);
 
-        public IShaderResourceView CreateShaderResourceView(IResource resource);
+        IShaderResourceView CreateShaderResourceView(IResource resource);
 
-        public IShaderResourceView CreateShaderResourceView(IResource texture, ShaderResourceViewDescription description);
+        IShaderResourceView CreateShaderResourceView(IResource texture, ShaderResourceViewDescription description);
 
-        public IShaderResourceView CreateShaderResourceView(IBuffer buffer);
+        IShaderResourceView CreateShaderResourceView(IBuffer buffer);
 
-        public IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description);
+        IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description);
 
-        public ISamplerState CreateSamplerState(SamplerDescription sampler);
+        ISamplerState CreateSamplerState(SamplerDescription sampler);
 
-        public ITexture1D CreateTexture1D(Texture1DDescription description);
+        ITexture1D CreateTexture1D(Texture1DDescription description);
 
-        public ITexture2D CreateTexture2D(Texture2DDescription description);
+        ITexture2D CreateTexture2D(Texture2DDescription description);
 
-        public ITexture3D CreateTexture3D(Texture3DDescription description);
+        ITexture3D CreateTexture3D(Texture3DDescription description);
 
-        public ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[]? subresources);
+        ITexture1D CreateTexture1D(Texture1DDescription description, SubresourceData[]? subresources);
 
-        public ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[]? subresources);
+        ITexture2D CreateTexture2D(Texture2DDescription description, SubresourceData[]? subresources);
 
-        public ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[]? subresources);
+        ITexture3D CreateTexture3D(Texture3DDescription description, SubresourceData[]? subresources);
 
-        public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None);
+        ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None);
 
-        public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag misc = ResourceMiscFlag.None);
+        ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag misc = ResourceMiscFlag.None);
 
-        public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None);
+        ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags = BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag misc = ResourceMiscFlag.None);
 
-        public ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
+        ITexture1D CreateTexture1D(Format format, int width, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
 
-        public ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
+        ITexture2D CreateTexture2D(Format format, int width, int height, int arraySize, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
 
-        public ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
+        ITexture3D CreateTexture3D(Format format, int width, int height, int depth, int mipLevels, SubresourceData[]? subresources, BindFlags bindFlags, ResourceMiscFlag none);
 
         IQuery CreateQuery();
 

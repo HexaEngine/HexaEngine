@@ -34,6 +34,7 @@
             Register<InputWindow>();
             Register<ImagePainterWindow>();
             Register<WeatherWidget>();
+            Register<RenderGraphWidget>();
         }
 
         public static bool Register<T>() where T : IImGuiWindow, new()

@@ -2290,5 +2290,123 @@
         {
             return new((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom);
         }
+
+        public static Silk.NET.DXGI.SwapChainDesc1 Convert(SwapChainDescription swapChainDescription)
+        {
+            return new()
+            {
+                BufferCount = swapChainDescription.BufferCount,
+                BufferUsage = swapChainDescription.BufferUsage,
+                Width = swapChainDescription.Width,
+                Height = swapChainDescription.Height,
+                Format = Convert(swapChainDescription.Format),
+                SampleDesc = Convert(swapChainDescription.SampleDesc),
+                Stereo = swapChainDescription.Stereo,
+                AlphaMode = Convert(swapChainDescription.AlphaMode),
+                SwapEffect = Convert(swapChainDescription.SwapEffect),
+                Scaling = Convert(swapChainDescription.Scaling),
+                Flags = (uint)Convert(swapChainDescription.Flags)
+            };
+        }
+
+        private static Silk.NET.DXGI.SwapChainFlag Convert(SwapChainFlags flags)
+        {
+            return flags switch
+            {
+                SwapChainFlags.None => Silk.NET.DXGI.SwapChainFlag.None,
+                SwapChainFlags.Nonprerotated => Silk.NET.DXGI.SwapChainFlag.Nonprerotated,
+                SwapChainFlags.AllowModeSwitch => Silk.NET.DXGI.SwapChainFlag.AllowModeSwitch,
+                SwapChainFlags.GdiCompatible => Silk.NET.DXGI.SwapChainFlag.GdiCompatible,
+                SwapChainFlags.RestrictedContent => Silk.NET.DXGI.SwapChainFlag.RestrictedContent,
+                SwapChainFlags.RestrictSharedResourceDriver => Silk.NET.DXGI.SwapChainFlag.RestrictSharedResourceDriver,
+                SwapChainFlags.DisplayOnly => Silk.NET.DXGI.SwapChainFlag.DisplayOnly,
+                SwapChainFlags.FrameLatencyWaitableObject => Silk.NET.DXGI.SwapChainFlag.FrameLatencyWaitableObject,
+                SwapChainFlags.ForegroundLayer => Silk.NET.DXGI.SwapChainFlag.ForegroundLayer,
+                SwapChainFlags.FullscreenVideo => Silk.NET.DXGI.SwapChainFlag.FullscreenVideo,
+                SwapChainFlags.YuvVideo => Silk.NET.DXGI.SwapChainFlag.YuvVideo,
+                SwapChainFlags.HWProtected => Silk.NET.DXGI.SwapChainFlag.HWProtected,
+                SwapChainFlags.AllowTearing => Silk.NET.DXGI.SwapChainFlag.AllowTearing,
+                SwapChainFlags.RestrictedToAllHolographicDisplays => Silk.NET.DXGI.SwapChainFlag.RestrictedToAllHolographicDisplays,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static Silk.NET.DXGI.AlphaMode Convert(SwapChainAlphaMode alphaMode)
+        {
+            return alphaMode switch
+            {
+                SwapChainAlphaMode.Unspecified => Silk.NET.DXGI.AlphaMode.Unspecified,
+                SwapChainAlphaMode.Premultiplied => Silk.NET.DXGI.AlphaMode.Premultiplied,
+                SwapChainAlphaMode.Straight => Silk.NET.DXGI.AlphaMode.Straight,
+                SwapChainAlphaMode.Ignore => Silk.NET.DXGI.AlphaMode.Ignore,
+                SwapChainAlphaMode.ForceDword => Silk.NET.DXGI.AlphaMode.ForceDword,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static Silk.NET.DXGI.SwapEffect Convert(SwapEffect swapEffect)
+        {
+            return swapEffect switch
+            {
+                SwapEffect.Discard => Silk.NET.DXGI.SwapEffect.Discard,
+                SwapEffect.Sequential => Silk.NET.DXGI.SwapEffect.Sequential,
+                SwapEffect.FlipSequential => Silk.NET.DXGI.SwapEffect.FlipSequential,
+                SwapEffect.FlipDiscard => Silk.NET.DXGI.SwapEffect.FlipDiscard,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static Silk.NET.DXGI.Scaling Convert(Scaling scaling)
+        {
+            return scaling switch
+            {
+                Scaling.Stretch => Silk.NET.DXGI.Scaling.Stretch,
+                Scaling.None => Silk.NET.DXGI.Scaling.None,
+                Scaling.AspectRatioStretch => Silk.NET.DXGI.Scaling.AspectRatioStretch,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static Silk.NET.DXGI.SwapChainFullscreenDesc Convert(SwapChainFullscreenDescription description)
+        {
+            return new()
+            {
+                Windowed = description.Windowed,
+                RefreshRate = Convert(description.RefreshRate),
+                Scaling = Convert(description.Scaling),
+                ScanlineOrdering = Convert(description.ScanlineOrdering)
+            };
+        }
+
+        public static Silk.NET.DXGI.Rational Convert(Rational value)
+        {
+            return new()
+            {
+                Denominator = value.Denominator,
+                Numerator = value.Numerator,
+            };
+        }
+
+        public static Silk.NET.DXGI.ModeScaling Convert(ModeScaling scaling)
+        {
+            return scaling switch
+            {
+                ModeScaling.Unspecified => Silk.NET.DXGI.ModeScaling.Unspecified,
+                ModeScaling.Centered => Silk.NET.DXGI.ModeScaling.Centered,
+                ModeScaling.Stretched => Silk.NET.DXGI.ModeScaling.Stretched,
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        public static Silk.NET.DXGI.ModeScanlineOrder Convert(ModeScanlineOrder order)
+        {
+            return order switch
+            {
+                ModeScanlineOrder.Unspecified => Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
+                ModeScanlineOrder.Progressive => Silk.NET.DXGI.ModeScanlineOrder.Progressive,
+                ModeScanlineOrder.UpperFieldFirst => Silk.NET.DXGI.ModeScanlineOrder.UpperFieldFirst,
+                ModeScanlineOrder.LowerFieldFirst => Silk.NET.DXGI.ModeScanlineOrder.LowerFieldFirst,
+            };
+        }
     }
 }

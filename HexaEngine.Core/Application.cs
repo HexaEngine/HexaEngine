@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Resources;
-    using HexaEngine.Core.Scripts;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
@@ -28,8 +27,6 @@
         private static IGraphicsContext graphicsContext;
 
         private static IAudioDevice audioDevice;
-
-        private static IApp? App;
 
 #nullable disable
         public static IRenderWindow MainWindow => mainWindow;
@@ -105,14 +102,6 @@
 
         private static void Init()
         {
-            var type = AssemblyManager.GetAssignableType<IApp>();
-            if (type != null)
-            {
-                App = (IApp?)Activator.CreateInstance(type);
-            }
-
-            App?.Startup();
-
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
             sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
             sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
@@ -134,7 +123,7 @@
             {
                 windows[i].Initialize(audioDevice, graphicsDevice);
             }
-            App?.Initialize();
+
             initialized = true;
         }
 
@@ -502,8 +491,6 @@
             {
                 windows[i].Uninitialize();
             }
-
-            App?.Uninitialize();
 
             sdl.Quit();
         }

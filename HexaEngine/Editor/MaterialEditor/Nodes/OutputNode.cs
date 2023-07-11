@@ -3,9 +3,9 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using ImGuiNET;
     using ImNodesNET;
     using System.Numerics;
@@ -32,7 +32,9 @@
 
         public override void Initialize(NodeEditor editor)
         {
-            Out = CreateOrGetPin(editor, "in", PinKind.Input, PinType.Float4, ImNodesPinShape.QuadFilled, 1);
+            Surface = CreateOrGetPin(editor, "Surface", PinKind.Input, PinType.Float4, ImNodesPinShape.QuadFilled, 1);
+            Volume = CreateOrGetPin(editor, "Volume", PinKind.Input, PinType.Float4, ImNodesPinShape.QuadFilled, 1);
+            Displacement = CreateOrGetPin(editor, "Displacement", PinKind.Input, PinType.Float3, ImNodesPinShape.QuadFilled, 1);
             base.Initialize(editor);
         }
 
@@ -43,7 +45,13 @@
         }
 
         [JsonIgnore]
-        public Pin Out;
+        public Pin Surface;
+
+        [JsonIgnore]
+        public Pin Volume;
+
+        [JsonIgnore]
+        public Pin Displacement;
 
         [JsonIgnore]
         public Texture? Texture;

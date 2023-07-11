@@ -4,7 +4,6 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Scripts;
     using HexaEngine.Core.Windows;
     using HexaEngine.D3D11;
     using HexaEngine.D3D12;
@@ -12,6 +11,7 @@
     using HexaEngine.OpenAL;
     using HexaEngine.OpenGL;
     using HexaEngine.Projects;
+    using HexaEngine.Scripts;
     using HexaEngine.Windows;
 
     public static class Platform

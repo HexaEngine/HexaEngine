@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Core.Editor.Attributes;
+    using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Scenes.Components.Renderer;
+    using HexaEngine.Editor.Attributes;
 
     [EditorGameObject<Terrain>("Terrain")]
     public class Terrain : GameObject

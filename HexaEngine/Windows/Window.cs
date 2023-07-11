@@ -1,20 +1,18 @@
-﻿using HexaEngine.Core.Culling;
+﻿using HexaEngine.Culling;
 
 namespace HexaEngine.Windows
 {
-    using Example.ImGuiDemo;
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Resources;
-    using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering;
+    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Resources;
+    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
@@ -195,7 +193,7 @@ namespace HexaEngine.Windows
                 drawing &= frameviewer.IsVisible;
                 windowViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
 
-                DebugDraw.SetCamera(CameraManager.Current);
+                DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
             }
 
             drawing &= SceneManager.Current is not null;

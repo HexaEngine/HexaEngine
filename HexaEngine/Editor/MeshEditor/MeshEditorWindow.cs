@@ -6,12 +6,11 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.IO.Meshes.Processing;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MeshEditor.Dialogs;
-    using HexaEngine.Editor.ModelEditor;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using ImGuiNET;
     using ImGuizmoNET;
     using System.Numerics;
@@ -363,7 +362,7 @@
             var x = position.X + (size.X - w) / 2;
             var y = position.Y + (size.Y - h) / 2;
             Viewport = new Viewport(x, y, w, h);
-            DebugDraw.SetCamera(camera);
+            DebugDraw.SetCamera(camera.Transform.ViewProjection);
             DebugDraw.SetViewport(Viewport);
 
             if (drawGrid)

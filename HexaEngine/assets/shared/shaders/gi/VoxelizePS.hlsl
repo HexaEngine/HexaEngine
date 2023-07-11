@@ -2,6 +2,7 @@
 #include "../light.hlsl"
 #include "../camera.hlsl"
 #include "../shadow.hlsl"
+#include "../weather.hlsl"
 
 SamplerComparisonState shadow_sampler : register(s2);
 
@@ -10,7 +11,6 @@ cbuffer VoxelCbuf : register(b0)
     VoxelRadiance voxel_radiance;
 }
 
-#define global_ambient float4(0,0,0,0)
 #define albedo_factor 1
 
 struct PS_INPUT
@@ -24,23 +24,9 @@ struct PS_INPUT
 RWStructuredBuffer<VoxelType> VoxelGrid : register(u0);
 
 Texture2D albedoTx : register(t0);
-
-Texture2D shadowMap : register(t4);
-
-Texture2DArray cascadeShadowMaps : register(t6);
-
-StructuredBuffer<Light> lights : register(t10);
-
-cbuffer ShadowCBuf : register(b3)
-{
-    float4x4 lightviewprojection;
-    float4x4 lightview;
-    float4x4 shadow_matrices[4];
-    float4 splits;
-    float softness;
-    int shadow_map_size;
-    int visualize;
-}
+StructuredBuffer<Light> lights : register(t1);
+StructuredBuffer<ShadowData> shadowData : register(t2);
+Texture2DArray cascadeShadowMaps : register(t3);
 
 void main(PS_INPUT input)
 {
@@ -67,7 +53,7 @@ void main(PS_INPUT input)
     for (int i = 0; i < light_count; ++i)
     {
         Light light = lights[i];
-
+        ShadowData shadow = shadowData[i];
         switch (light.type)
         {
             case DIRECTIONAL_LIGHT:
@@ -80,14 +66,14 @@ void main(PS_INPUT input)
                     float viewDepth = PosVS.z;
                     for (uint i = 0; i < 4; ++i)
                     {
-                        matrix light_space_matrix = shadow_matrices[i];
-                        if (viewDepth < splits[i])
+                        matrix light_space_matrix = shadow.views[i];
+                        if (viewDepth < shadow.cascades[i])
                         {
                             float4 pos_shadow_map = mul(float4(PosVS.xyz, 1.0), light_space_matrix);
                             float3 UVD = pos_shadow_map.xyz / pos_shadow_map.w;
                             UVD.xy = 0.5 * UVD.xy + 0.5;
                             UVD.y = 1.0 - UVD.y;
-                            diffuse *= CSMCalcShadowFactor_PCF3x3(shadow_sampler, cascadeShadowMaps, i, UVD, shadow_map_size, softness);
+                            diffuse *= CSMCalcShadowFactor_PCF3x3(shadow_sampler, cascadeShadowMaps, i, UVD, shadow.size, shadow.softness);
                             break;
                         }
                     }
@@ -127,7 +113,7 @@ void main(PS_INPUT input)
         }
     }
 
-    color *= (lighting + global_ambient);
+    color *= (lighting + ambient_color);
 
     uint colorEncoded = EncodeColor(color);
     uint normalEncoded = EncodeNormal(normal);

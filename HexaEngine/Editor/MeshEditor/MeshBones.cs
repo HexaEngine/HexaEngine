@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Editor.ModelEditor
+﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Editor.MeshEditor;
     using HexaEngine.Editor.PoseEditor;
     using HexaEngine.ImGuiNET;
     using System.Collections.Generic;

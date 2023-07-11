@@ -3,7 +3,6 @@
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input.Events;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Contexts;
@@ -19,8 +18,6 @@
         IGraphicsContext Context { get; }
 
         ISwapChain SwapChain { get; }
-
-        ISceneRenderer Renderer { get; }
 
         Viewport RenderViewport { get; }
 

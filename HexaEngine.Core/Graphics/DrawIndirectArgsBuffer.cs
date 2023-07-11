@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class DrawIndirectArgsBuffer<T> : IDisposable where T : unmanaged
+    public unsafe class DrawIndirectArgsBuffer<T> : IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 64;
         private readonly IGraphicsDevice device;
@@ -32,12 +32,110 @@
                 description.Usage = Usage.Staging;
             }
 
-            capacity = DefaultCapacity;
             this.device = device;
-            items = Alloc<T>(DefaultCapacity);
-            ZeroMemory(items, (uint)(capacity * sizeof(T)));
-            buffer = device.CreateBuffer(items, DefaultCapacity, description);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                capacity = DefaultCapacity;
+                items = Alloc<T>(capacity);
+                ZeroMemory(items, (uint)(capacity * sizeof(T)));
+            }
+
+            buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+        }
+
+        public DrawIndirectArgsBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Read))
+            {
+                description.Usage = Usage.Staging;
+            }
+
+            this.device = device;
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                capacity = initialCapacity;
+                items = Alloc<T>(capacity);
+                ZeroMemory(items, (uint)(capacity * sizeof(T)));
+            }
+
+            buffer = device.CreateBuffer(items, capacity, description);
+            buffer.DebugName = dbgName;
+        }
+
+        public DrawIndirectArgsBuffer(IGraphicsDevice device, T initialData, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Read))
+            {
+                description.Usage = Usage.Staging;
+            }
+
+            this.device = device;
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                capacity = 1;
+                items = Alloc<T>(capacity);
+                items[0] = initialData;
+                buffer = device.CreateBuffer(items, capacity, description);
+            }
+            else
+            {
+                buffer = device.CreateBuffer(&initialData, 1, description);
+            }
+            buffer.DebugName = dbgName;
+        }
+
+        public DrawIndirectArgsBuffer(IGraphicsDevice device, T* initialData, uint count, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Read))
+            {
+                description.Usage = Usage.Staging;
+            }
+
+            this.device = device;
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                capacity = count;
+                items = AllocCopy(initialData, count);
+                buffer = device.CreateBuffer(items, capacity, description);
+            }
+            else
+            {
+                buffer = device.CreateBuffer(initialData, count, description);
+            }
+            buffer.DebugName = dbgName;
+        }
+
+        public event EventHandler? OnDisposed
+        {
+            add
+            {
+                buffer.OnDisposed += value;
+            }
+
+            remove
+            {
+                buffer.OnDisposed -= value;
+            }
         }
 
         public IBuffer Buffer => buffer;
@@ -77,6 +175,18 @@
                 buffer.DebugName = dbgName;
             }
         }
+
+        public BufferDescription Description => buffer.Description;
+
+        public int Length => buffer.Length;
+
+        public ResourceDimension Dimension => buffer.Dimension;
+
+        public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
+
+        public bool IsDisposed => buffer.IsDisposed;
+
+        public nint NativePointer => buffer.NativePointer;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ResetCounter()
@@ -142,6 +252,10 @@
         {
             if (!disposedValue)
             {
+                if (items != null)
+                {
+                    Free(items);
+                }
                 buffer.Dispose();
                 count = 0;
                 capacity = 0;

@@ -125,6 +125,16 @@
             return adapter.CreateSwapChainForWindow(this, window);
         }
 
+        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            return adapter.CreateSwapChainForWindow(this, window, swapChainDescription, fullscreenDescription);
+        }
+
+        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            return adapter.CreateSwapChainForWindow(this, window, swapChainDescription, fullscreenDescription);
+        }
+
         public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             return new D3D11ComputePipeline(this, desc, $"({nameof(D3D11ComputePipeline)} : {filename}, Line:{line.ToString(CultureInfo.InvariantCulture)})");

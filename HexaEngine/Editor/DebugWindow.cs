@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
+    using HexaEngine.Scenes;
     using ImGuiNET;
 
     public class DebugWindow : EditorWindow

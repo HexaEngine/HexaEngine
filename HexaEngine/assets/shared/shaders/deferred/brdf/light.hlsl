@@ -123,16 +123,6 @@ float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonS
 #endif
 }
 
-// array of offset direction for sampling
-static const float3 gridSamplingDisk[20] =
-{
-    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
-	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
-	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
-	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
-};
-
 int CubeFaceFromDirection(float3 direction)
 {
     float3 absDirection = abs(direction);
@@ -210,6 +200,7 @@ float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4
     return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
 #endif
 }
+
 #if CLUSTERED_DEFERRED
 float4 ComputeLightingPBR(VSOut input, float3 position, const uint tileIndex, GeometryAttributes attrs)
 #else

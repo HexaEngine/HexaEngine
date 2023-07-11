@@ -75,8 +75,6 @@ inline float dither(in float2 pixel)
     return ditherMask8(pixel);
 }
 
-
-
 //other
 
 float2 dither(float2 coord, float seed, float2 size)

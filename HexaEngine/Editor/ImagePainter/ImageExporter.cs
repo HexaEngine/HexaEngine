@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Editor.ImagePainter.Exporter;
+    using HexaEngine.Editor.ImagePainter.Exporters;
     using ImGuiNET;
     using System;
     using System.Numerics;

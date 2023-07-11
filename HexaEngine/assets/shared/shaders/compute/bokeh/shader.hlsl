@@ -1,9 +1,19 @@
 #include "../../camera.hlsl"
 
+struct DofParams
+{
+    float focusRange;
+    float2 focusCenter;
+    bool autofocus;
+    float autofocusSamples;
+    float autofocusRadius;
+    float2 padd;
+};
+
 cbuffer BokehParams
 {
+    DofParams dof_params;
     float bokeh_fallout;
-    float4 dof_params;
     float bokeh_radius_scale;
     float bokeh_color_scale;
     float bokeh_blur_threshold;
@@ -24,18 +34,49 @@ struct Bokeh
 
 AppendStructuredBuffer<Bokeh> BokehStack : register(u0);
 
-float BlurFactor(in float depth, in float4 DOF)
+float FocusPoint()
 {
-    float f0 = 1.0f - saturate((depth - DOF.x) / max(DOF.y - DOF.x, 0.01f));
-    float f1 = saturate((depth - DOF.z) / max(DOF.w - DOF.z, 0.01f));
-    float blur = saturate(f0 + f1);
+    float focusPoint;
+    float2 center = dof_params.focusCenter * screenDim;
+    if (dof_params.autofocusRadius && dof_params.autofocusSamples > 0)
+    {
+        float result = 0.0;
+        float count = 0.0;
 
-    return blur;
+		[unroll(8)]
+        for (int x = -dof_params.autofocusSamples; x <= dof_params.autofocusSamples; ++x)
+        {
+			[unroll(8)]
+            for (int y = -dof_params.autofocusSamples; y <= dof_params.autofocusSamples; ++y)
+            {
+                float2 offset = float2(x, y) * dof_params.autofocusRadius;
+                float d = LoadLinearDepth(DepthTex, int3((int2) (center + offset), 0));
+                result += d;
+                count++;
+            }
+        }
+
+        result /= count;
+        focusPoint = result;
+    }
+    else
+    {
+        focusPoint = LoadLinearDepth(DepthTex, int3((int2) center, 0));
+    }
+
+    return focusPoint;
 }
 
-float BlurFactor2(in float depth, in float2 DOF)
+float BlurFactor(in float depth)
 {
-    return saturate((depth - DOF.x) / (DOF.y - DOF.x));
+    float focusPoint = FocusPoint();
+    float blur = (depth - focusPoint) / dof_params.focusRange;
+    blur = clamp(blur, -1, 1);
+    if (blur < 0)
+    {
+        blur = blur * -half4(1, 0, 0, 1);
+    }
+    return blur;
 }
 
 [numthreads(32, 32, 1)]
@@ -55,7 +96,7 @@ void main(uint3 dispatchThreadId : SV_DispatchThreadID)
     if (depth < 1.0f)
     {
 
-        float centerBlur = BlurFactor(centerDepth, dof_params);
+        float centerBlur = BlurFactor(centerDepth);
 
         const uint NumSamples = 9;
         const uint2 SamplePoints[NumSamples] =

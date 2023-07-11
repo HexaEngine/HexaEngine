@@ -3,7 +3,6 @@
 namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -14,7 +13,7 @@ namespace HexaEngine.Editor
         private static readonly DebugDrawCommandQueue queue = new();
 
         private static Viewport viewport;
-        private static Camera camera;
+        private static Matrix4x4 camera;
         private const int COL32_R_SHIFT = 0;
         private const int COL32_G_SHIFT = 8;
         private const int COL32_B_SHIFT = 16;
@@ -74,12 +73,12 @@ namespace HexaEngine.Editor
             return viewport;
         }
 
-        public static void SetCamera(Camera camera)
+        public static void SetCamera(Matrix4x4 camera)
         {
             DebugDraw.camera = camera;
         }
 
-        public static Camera GetCamera()
+        public static Matrix4x4 GetCamera()
         {
             return camera;
         }

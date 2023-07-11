@@ -5,13 +5,13 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
     using HexaEngine.Editor.MaterialEditor.Nodes.Operations;
     using HexaEngine.Editor.MaterialEditor.Nodes.Shaders;
     using HexaEngine.Editor.NodeEditor;
+    using HexaEngine.Scenes;
     using ImGuiNET;
     using System.Numerics;
 

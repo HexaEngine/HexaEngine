@@ -279,6 +279,7 @@ struct Pixel
     float4 Normal : SV_Target1;
 };
 
+[earlydepthstencil]
 Pixel main(PixelInput input)
 {
     float3 position = input.pos;

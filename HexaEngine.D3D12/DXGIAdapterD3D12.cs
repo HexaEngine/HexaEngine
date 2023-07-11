@@ -90,7 +90,7 @@
                 BufferCount = 2,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
-                SwapEffect = SwapEffect.FlipSequential,
+                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing),
                 Windowed = true,
                 BufferDesc = new(1, 0)
@@ -98,8 +98,8 @@
                     Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
                     Height = (uint)window.Height,
                     Width = (uint)window.Width,
-                    Scaling = ModeScaling.Stretched,
-                    ScanlineOrdering = ModeScanlineOrder.Unspecified
+                    Scaling = Silk.NET.DXGI.ModeScaling.Stretched,
+                    ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified
                 },
                 OutputWindow = Hwnd
             };

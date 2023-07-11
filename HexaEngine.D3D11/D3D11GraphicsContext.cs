@@ -221,6 +221,28 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SetRenderTargetsAndUnorderedAccessViews(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView, uint uavSlot, IUnorderedAccessView? unorderedAccessView, uint uavInitialCount = unchecked((uint)-1))
+        {
+#nullable disable
+            ID3D11RenderTargetView* rtv = (ID3D11RenderTargetView*)(renderTargetView?.NativePointer);
+            ID3D11DepthStencilView* dsv = (ID3D11DepthStencilView*)(depthStencilView?.NativePointer);
+            ID3D11UnorderedAccessView* uav = (ID3D11UnorderedAccessView*)(unorderedAccessView?.NativePointer);
+#nullable enable
+            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(1, &rtv, dsv, uavSlot, 1, &uav, uavInitialCount);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public unsafe void SetRenderTargetsAndUnorderedAccessViews(uint count, void** views, IDepthStencilView? depthStencilView, uint uavSlot, uint uavCount, void** uavs, uint* pUavInitialCount)
+        {
+#nullable disable
+            ID3D11RenderTargetView** ptr = (ID3D11RenderTargetView**)views;
+            ID3D11DepthStencilView* dsv = (ID3D11DepthStencilView*)(depthStencilView?.NativePointer);
+            ID3D11UnorderedAccessView** uavss = (ID3D11UnorderedAccessView**)uavs;
+#nullable enable
+            DeviceContext.OMSetRenderTargetsAndUnorderedAccessViews(count, ptr, dsv, uavSlot, uavCount, uavss, pUavInitialCount);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SetScissorRect(int x, int y, int z, int w)
         {
             Box2D<int> rect = new(x, y, z, w);

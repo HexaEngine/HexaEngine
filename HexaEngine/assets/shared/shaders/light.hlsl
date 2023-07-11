@@ -1,3 +1,5 @@
+#include "brdf.hlsl"
+
 struct GlobalProbe
 {
     float exposure;
@@ -25,7 +27,7 @@ struct Light
 
     bool castsShadows;
     bool cascadedShadows;
-    uint shadowMapIndex;
+    float volumetricStrength;
 
     uint1 padd;
 };
@@ -135,6 +137,107 @@ float GeometrySmith(float3 N, float3 V, float3 L, float roughness)
     return ggx1 * ggx2;
 }
 
+struct Pixel
+{
+    float3 diffuseColor;
+    float perceptualRoughness;
+    float perceptualRoughnessUnclamped;
+    float3 f0;
+    float roughness;
+    float3 dfg;
+    float3 energyCompensation;
+
+#if defined(MATERIAL_HAS_CLEAR_COAT)
+    float clearCoat;
+    float clearCoatPerceptualRoughness;
+    float clearCoatRoughness;
+#endif
+};
+
+#if defined(MATERIAL_HAS_SHEEN_COLOR)
+float3 sheenLobe(const PixelParams pixel, float NoV, float NoL, float NoH) {
+    float D = distributionCloth(pixel.sheenRoughness, NoH);
+    float V = visibilityCloth(NoV, NoL);
+
+    return (D * V) * pixel.sheenColor;
+}
+#endif
+
+#if defined(MATERIAL_HAS_CLEAR_COAT)
+float clearCoatLobe(const PixelParams pixel, const float3 h, float NoH, float LoH, out float Fcc) {
+#if defined(MATERIAL_HAS_NORMAL) || defined(MATERIAL_HAS_CLEAR_COAT_NORMAL)
+    // If the material has a normal map, we want to use the geometric normal
+    // instead to avoid applying the normal map details to the clear coat layer
+    float clearCoatNoH = saturate(dot(shading_clearCoatNormal, h));
+#else
+    float clearCoatNoH = NoH;
+#endif
+
+    // clear coat specular lobe
+    float D = distributionClearCoat(pixel.clearCoatRoughness, clearCoatNoH, h);
+    float V = visibilityClearCoat(LoH);
+    float F = F_Schlick(0.04, 1.0, LoH) * pixel.clearCoat; // fix IOR to 1.5
+
+    Fcc = F;
+    return D * V * F;
+}
+#endif
+
+#if defined(MATERIAL_HAS_ANISOTROPY)
+float3 anisotropicLobe(const PixelParams pixel, const Light light, const float3 h,
+        float NoV, float NoL, float NoH, float LoH) {
+
+    float3 l = light.l;
+    float3 t = pixel.anisotropicT;
+    float3 b = pixel.anisotropicB;
+    float3 v = shading_view;
+
+    float ToV = dot(t, v);
+    float BoV = dot(b, v);
+    float ToL = dot(t, l);
+    float BoL = dot(b, l);
+    float ToH = dot(t, h);
+    float BoH = dot(b, h);
+
+    // Anisotropic parameters: at and ab are the roughness along the tangent and bitangent
+    // to simplify materials, we derive them from a single roughness parameter
+    // Kulla 2017, "Revisiting Physically Based Shading at Imageworks"
+    float at = max(pixel.roughness * (1.0 + pixel.anisotropy), MIN_ROUGHNESS);
+    float ab = max(pixel.roughness * (1.0 - pixel.anisotropy), MIN_ROUGHNESS);
+
+    // specular anisotropic BRDF
+    float D = distributionAnisotropic(at, ab, ToH, BoH, NoH);
+    float V = visibilityAnisotropic(pixel.roughness, at, ab, ToV, BoV, ToL, BoL, NoV, NoL);
+    float3  F = fresnel(pixel.f0, LoH);
+
+    return (D * V) * F;
+}
+#endif
+
+float3 isotropicLobe(const Pixel pixel, const Light light, const float3 h, float NoV, float NoL, float NoH, float LoH)
+{
+
+    float D = distribution(pixel.roughness, NoH, h);
+    float V = visibility(pixel.roughness, NoV, NoL);
+    float3 F = fresnel(pixel.f0, LoH);
+
+    return (D * V) * F;
+}
+
+float3 specularLobe(const Pixel pixel, const Light light, const float3 h, float NoV, float NoL, float NoH, float LoH)
+{
+#if defined(MATERIAL_HAS_ANISOTROPY)
+    return anisotropicLobe(pixel, light, h, NoV, NoL, NoH, LoH);
+#else
+    return isotropicLobe(pixel, light, h, NoV, NoL, NoH, LoH);
+#endif
+}
+
+float3 diffuseLobe(const Pixel pixel, float NoV, float NoL, float LoH)
+{
+    return pixel.diffuseColor * diffuse(pixel.roughness, NoV, NoL, LoH);
+}
+
 float3 BRDF(float3 radiance, float3 L, float3 F0, float3 V, float3 N, float3 albedo, float roughness, float metalness)
 {
     float3 H = normalize(V + L);
@@ -151,9 +254,54 @@ float3 BRDF(float3 radiance, float3 L, float3 F0, float3 V, float3 N, float3 alb
     float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.0001;
     float3 specular = numerator / denominator;
 
-    // add to outgoing radiance Lo
-    float NdotL = max(dot(N, L), 0.0);
+    float NdotL = saturate(dot(N, L));
     return (kD * albedo / PI + specular) * radiance * NdotL;
+}
+
+float3 BRDF2(const Pixel pixel, const Light light, float occlusion, float3 N, float3 L, float3 V, float NdotV)
+{
+    float3 H = normalize(V + L);
+
+    float NdotL = saturate(dot(N, L));
+    float NdotH = saturate(dot(N, H));
+    float LdotH = saturate(dot(H, L));
+
+    float3 Fr = specularLobe(pixel, light, H, NdotV, NdotL, NdotH, LdotH);
+    float3 Fd = diffuseLobe(pixel, NdotV, NdotL, LdotH);
+#if defined(MATERIAL_HAS_REFRACTION)
+    Fd *= (1.0 - pixel.transmission);
+#endif
+
+    float3 color = Fd + Fr * pixel.energyCompensation;
+
+#if defined(MATERIAL_HAS_SHEEN_COLOR)
+    color *= pixel.sheenScaling;
+    color += sheenLobe(pixel, NoV, NoL, NoH);
+#endif
+
+#if defined(MATERIAL_HAS_CLEAR_COAT)
+    float Fcc;
+    float clearCoat = clearCoatLobe(pixel, h, NoH, LoH, Fcc);
+    float attenuation = 1.0 - Fcc;
+
+#if defined(MATERIAL_HAS_NORMAL) || defined(MATERIAL_HAS_CLEAR_COAT_NORMAL)
+    color *= attenuation * NoL;
+
+    // If the material has a normal map, we want to use the geometric normal
+    // instead to avoid applying the normal map details to the clear coat layer
+    float clearCoatNoL = saturate(dot(shading_clearCoatNormal, light.l));
+    color += clearCoat * clearCoatNoL;
+
+    // Early exit to avoid the extra multiplication by NoL
+    return (color * light.colorIntensity.rgb) *
+            (light.colorIntensity.w * light.attenuation * occlusion);
+#else
+    color *= attenuation;
+    color += clearCoat;
+#endif
+#endif
+
+    return (color * light.color.rgb) * (light.color.w * NdotL * occlusion);
 }
 
 float3 BRDF_IBL(
@@ -194,6 +342,9 @@ float3 PointLightBRDF(Light light, float3 position, float3 F0, float3 V, float3 
 
     float attenuation = Attenuation(distance, light.range);
     float3 radiance = light.color.rgb * attenuation;
+
+    Pixel pixel;
+    pixel.diffuseColor = baseColor;
 
     return BRDF(radiance, L, F0, V, N, baseColor, roughness, metallic);
 }

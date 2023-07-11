@@ -111,7 +111,7 @@
         public static unsafe bool GenMeshVertexNormals2(MeshData pMesh)
         {
             Vector3* vertNormals = Alloc<Vector3>(pMesh.VerticesCount);
-            Memset(vertNormals, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            Memset(vertNormals, 0, (int)(pMesh.VerticesCount));
             uint nFaces = pMesh.IndicesCount / 3;
 
             for (int face = 0; face < nFaces; ++face)
@@ -170,7 +170,7 @@
         public static unsafe bool GenMeshVertexNormals2(Terrain pMesh)
         {
             Vector3* vertNormals = Alloc<Vector3>(pMesh.VerticesCount);
-            Memset(vertNormals, 0, (int)(pMesh.VerticesCount * sizeof(Vector3)));
+            Memset(vertNormals, 0, (int)(pMesh.VerticesCount));
             uint nFaces = pMesh.IndicesCount / 3;
 
             for (int face = 0; face < nFaces; ++face)

@@ -1,10 +1,20 @@
 #include "common.hlsl"
-//#endif
+#include "../../camera.hlsl"
+#include "../../shadow.hlsl"
+#include "../../light.hlsl"
 
-Texture2D<float> depthTx        : register(t2);
-TextureCube depthCubeMap        : register(t5);
+Texture2D<float> depthTx : register(t2);
+Texture2D shadowAtlas : register(t5);
 
 SamplerState linear_clamp_sampler : register(s3);
+SamplerComparisonState shadow_sampler : register(s4);
+
+cbuffer LightBuffer
+{
+    Light currentLight;
+    ShadowData shadowData;
+    float padd;
+};
 
 struct VertexOut
 {
@@ -12,6 +22,43 @@ struct VertexOut
     float2 Tex : TEX;
 };
 
+int CubeFaceFromDirection(float3 direction)
+{
+    float3 absDirection = abs(direction);
+    int faceIndex = 0;
+
+    if (absDirection.x >= absDirection.y && absDirection.x >= absDirection.z)
+    {
+        faceIndex = (direction.x > 0.0) ? 0 : 1; // Positive X face (0), Negative X face (1)
+    }
+    else if (absDirection.y >= absDirection.x && absDirection.y >= absDirection.z)
+    {
+        faceIndex = (direction.y > 0.0) ? 2 : 3; // Positive Y face (2), Negative Y face (3)
+    }
+    else
+    {
+        faceIndex = (direction.z > 0.0) ? 4 : 5; // Positive Z face (4), Negative Z face (5)
+    }
+
+    return faceIndex;
+}
+
+#define HARD_SHADOWS_POINTLIGHTS 1
+float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
+{
+    float3 light_to_pixelWS = position - light.position.xyz;
+    float depthValue = length(light_to_pixelWS) / light.range;
+
+    int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[face], data.views[face]);
+    uvd.z = depthValue;
+
+#if HARD_SHADOWS_POINTLIGHTS
+    return CalcShadowFactor_Basic(state, shadowAtlas, uvd);
+#else
+    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
+#endif
+}
 
 float4 main(VertexOut input) : SV_TARGET
 {
@@ -31,27 +78,17 @@ float4 main(VertexOut input) : SV_TARGET
 	[loop]
     for (uint i = 0; i < sampleCount; ++i)
     {
-        float3 L = current_light.position.xyz - P; //position in view space
+        float3 L = currentLight.position.xyz - P; //position in view space
         const float dist2 = dot(L, L);
         const float dist = sqrt(dist2);
         L /= dist;
-        float SpotFactor = dot(L, normalize(-current_light.direction.xyz));
-        float spotCutOff = current_light.outer_cosine;
-        float attenuation = DoAttenuation(dist, current_light.range);
+        float SpotFactor = dot(L, normalize(-currentLight.direction.xyz));
+        float spotCutOff = currentLight.outerCosine;
+        float attenuation = Attenuation(dist, currentLight.range);
 		[branch]
-        if (current_light.casts_shadows)
+        if (currentLight.castsShadows)
         {
-            const float zf = current_light.range;
-            const float zn = 0.5f;
-            const float c1 = zf / (zf - zn);
-            const float c0 = -zn * zf / (zf - zn);
-            
-            float3 light_to_pixelWS = mul(float4(P - current_light.position.xyz, 0.0f), inverse_view).xyz;
-
-            const float3 m = abs(light_to_pixelWS).xyz;
-            const float major = max(m.x, max(m.y, m.z));
-            float fragment_depth = (c1 * major + c0) / major;
-            float shadow_factor = depthCubeMap.SampleCmpLevelZero(shadow_sampler, normalize(light_to_pixelWS.xyz), fragment_depth);
+            float shadow_factor = ShadowFactorPointLight(shadowData, currentLight, P, shadow_sampler);
             attenuation *= shadow_factor;
         }
         //attenuation *= ExponentialFog(cameraDistance - marchedDistance);
@@ -60,5 +97,5 @@ float4 main(VertexOut input) : SV_TARGET
         P = P + V * stepSize;
     }
     accumulation /= sampleCount;
-    return max(0, float4(accumulation * current_light.color.rgb * current_light.volumetric_strength, 1));
+    return max(0, float4(accumulation * currentLight.color.rgb * currentLight.volumetricStrength, 1));
 }
