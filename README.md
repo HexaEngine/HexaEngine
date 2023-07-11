@@ -13,18 +13,13 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - IBL
 - Shadow Mapping (PSM, CSM, OSM)
 - Clustered Forward and Clustered Deferred (Hybrid renderer)
-- Instancing
-- HBAO
-- HDR Bloom
-- Auto Exposure
-- Tonemapping
-- DDA SSR
+- Many post processing effects (DoF, SSR, Tonemapping, LUT, Bloom, Motion blur)
 - Level-Editor
 - Physics Engine
 - Plugin System
-- Post-Processing Framework
+- Audio System (Wav-file support)
 - Culling (Frustum and Occlusion)
-- Audio (Wav-file support)
+
 
 # Backends
 | API     | Supported          |
@@ -32,7 +27,7 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 | D3D11   | :white_check_mark: |
 | D3D12   | :ballot_box_with_check: (wip) |
 | Vulkan  | :ballot_box_with_check: (wip) |
-| OpenGL  | :x:                |
+| OpenGL  | :ballot_box_with_check: (wip) |
 
 # Credits
 https://github.com/ocornut/imgui  
