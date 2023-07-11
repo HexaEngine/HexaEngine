@@ -14,6 +14,7 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - Shadow Mapping (PSM, OSM, CSM) (note: OSM and PSM uses an shadow atlas)
 - Clustered Forward and Clustered Deferred (Hybrid renderer)
 - Many post processing effects (DoF, SSR, Tonemapping, LUT, Bloom, Motion blur)
+- Ambient Occlusion (SSAO, HBAO+, GTAO and ASSAO are comming soon)
 - Level-Editor
 - Physics Engine
 - Plugin System
