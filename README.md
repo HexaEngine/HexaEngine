@@ -9,9 +9,9 @@
 Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine.Native
 
 # Features
-- Principled BSDF
+- BRDF (Roughness, Metallic, Reflectance, Ao workflow)
 - IBL
-- Shadow Mapping (PSM, CSM, OSM)
+- Shadow Mapping (PSM, OSM, CSM) (note: OSM and PSM uses an shadow atlas)
 - Clustered Forward and Clustered Deferred (Hybrid renderer)
 - Many post processing effects (DoF, SSR, Tonemapping, LUT, Bloom, Motion blur)
 - Level-Editor
