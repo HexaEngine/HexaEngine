@@ -21,6 +21,8 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - Audio System (Wav-file support)
 - Culling (Frustum and Occlusion)
 
+# (WIP) Material editor + Shader generator
+![image](https://github.com/JunaMeinhold/HexaEngine/assets/46632782/8a3acc3d-3fad-4083-88fd-3613ffd6b30f)
 
 # Backends
 | API     | Supported          |
