@@ -16,7 +16,7 @@
         public new CameraTransform Transform;
 
         private static ulong instances;
-        private static IBuffer? psmBuffer;
+        private static ConstantBuffer<Matrix4x4>? psmBuffer;
 
         private float coneAngle;
         private float blend;
@@ -73,7 +73,7 @@
 
             if (Interlocked.Increment(ref instances) == 1)
             {
-                psmBuffer = device.CreateBuffer(new Matrix4x4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+                psmBuffer = new(device, CpuAccessFlags.Write);
             }
         }
 

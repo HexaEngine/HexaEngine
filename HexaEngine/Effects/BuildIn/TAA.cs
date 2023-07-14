@@ -108,7 +108,7 @@
             }, macros);
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
             Previous = ResourceManager2.Shared.AddTexture("Previous", new(Format.R16G16B16A16Float, width, height, 1, 1));

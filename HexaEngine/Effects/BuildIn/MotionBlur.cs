@@ -55,7 +55,7 @@
                 VertexShader = "effects/motionblur/vs.hlsl",
                 PixelShader = "effects/motionblur/ps.hlsl"
             }, macros);
-            sampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
 

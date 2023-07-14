@@ -4,7 +4,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class VertexBuffer<T> : IBuffer where T : unmanaged
+    public unsafe class VertexBuffer<T> : IBuffer, IVertexBuffer<T> where T : unmanaged
     {
         private const int DefaultCapacity = 8;
 

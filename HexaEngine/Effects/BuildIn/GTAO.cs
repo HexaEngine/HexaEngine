@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
@@ -139,7 +137,7 @@ namespace HexaEngine.Effects.BuildIn
             Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
 
-            samplerLinear = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             viewport = new(width, height);
         }
 

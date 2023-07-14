@@ -159,7 +159,7 @@
                     Blend = BlendDescription.AlphaBlend,
                     Topology = PrimitiveTopology.TriangleList,
                 }, inputElements);
-                maskSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+                maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
 
                 brushBuffer = new(device, CpuAccessFlags.Write);
                 WorldBuffer = new(device, CpuAccessFlags.Write);

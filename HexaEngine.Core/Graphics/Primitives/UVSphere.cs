@@ -5,19 +5,19 @@
     using HexaEngine.Mathematics;
     using System;
 
-    public class UVSphere : Primitive<Vertex>
+    public class UVSphere : Primitive<Vertex, uint>
     {
         public UVSphere(IGraphicsDevice device) : base(device)
         {
         }
 
-        protected override (VertexBuffer<Vertex>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<Vertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
-            CreateSphere(device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer);
+            CreateSphere(device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
-        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 10, uint LongLines = 10)
+        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<Vertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, uint LatLines = 10, uint LongLines = 10)
         {
             float radius = 1;
             float x, y, z, xy;                              // vertex position

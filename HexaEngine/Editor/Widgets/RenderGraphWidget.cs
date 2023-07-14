@@ -14,8 +14,8 @@ namespace HexaEngine.Editor.Widgets
     {
         private ImNodesEditorContextPtr nodeContext;
         private int currId;
-        private readonly Dictionary<RenderPassOld, ImNode> nodes = new();
-        private readonly Dictionary<(RenderPassOld, RenderPassOld), ImLink> links = new();
+        private readonly Dictionary<RenderPass, ImNode> nodes = new();
+        private readonly Dictionary<(RenderPass, RenderPass), ImLink> links = new();
         private readonly Dictionary<string, ImAttribute> attributes = new();
         private readonly Dictionary<ResourceBinding, ImAttribute> resourceBindings = new();
         private ViewMode viewMode = ViewMode.NodeTree;
@@ -73,7 +73,7 @@ namespace HexaEngine.Editor.Widgets
 
         protected override string Name { get; } = "Render Graph";
 
-        private ImNode GetOrAddNode(RenderPassOld graphNode)
+        private ImNode GetOrAddNode(RenderPass graphNode)
         {
             if (nodes.TryGetValue(graphNode, out ImNode node))
             {
@@ -85,7 +85,7 @@ namespace HexaEngine.Editor.Widgets
             return node;
         }
 
-        private ImLink GetOrAddLink(RenderPassOld a, RenderPassOld b)
+        private ImLink GetOrAddLink(RenderPass a, RenderPass b)
         {
             if (links.TryGetValue((a, b), out ImLink link))
             {
@@ -139,20 +139,6 @@ namespace HexaEngine.Editor.Widgets
             }
 
             return default;
-        }
-
-        private void DestroyLink(int v)
-        {
-            foreach (var a in links)
-            {
-                if (a.Value.Id == v)
-                {
-                    a.Key.Item1.Dependencies.Remove(a.Key.Item2);
-                    break;
-                }
-            }
-
-            return;
         }
 
         public override void DrawContent(IGraphicsContext context)
@@ -422,7 +408,7 @@ namespace HexaEngine.Editor.Widgets
             return default;
         }
 
-        private RenderPassOld GetRenderPassById(int id)
+        private RenderPass GetRenderPassById(int id)
         {
             foreach (var node in nodes)
             {

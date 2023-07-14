@@ -25,115 +25,12 @@ namespace HexaEngine.Rendering.Renderers
     using System;
     using System.Numerics;
 
-    public class ClearMainDepthStencilPass : ClearDepthStencilPass
-    {
-        public ClearMainDepthStencilPass() : base("ClearMainDepthStencil")
-        {
-            AddWriteDependency(new("$DepthStencil"));
-        }
-    }
-
-    public class DepthPrePass : DepthStencilPass
-    {
-        public DepthPrePass() : base("PrePass")
-        {
-            AddWriteDependency(new("$DepthStencil"));
-        }
-    }
-
-    public class PostProcessPrePass : DrawPass
-    {
-        public PostProcessPrePass() : base("PostProcessPrePass")
-        {
-            AddReadDependency(new("$DepthStencil"));
-        }
-    }
-
-    public class HizDepthPass : Graph.ComputePass
-    {
-        public HizDepthPass() : base("HizDepth")
-        {
-            AddReadDependency(new("$DepthStencil"));
-        }
-    }
-
-    public class ObjectCullPass : Graph.ComputePass
-    {
-        public ObjectCullPass() : base("ObjectCull")
-        {
-            AddReadDependency(new("$DepthStencil"));
-        }
-    }
-
-    public class LightCullPass : Graph.ComputePass
-    {
-        public LightCullPass() : base("LightCull")
-        {
-            AddReadDependency(new("$DepthStencil"));
-        }
-    }
-
-    public class ShadowMapPass : DrawPass
-    {
-        public ShadowMapPass() : base("ShadowMap")
-        {
-            AddWriteDependency(new("$ShadowAtlas"));
-        }
-    }
-
-    public class ClearGBufferPass : ClearMultiRenderTargetPass
-    {
-        public ClearGBufferPass() : base("ClearGBuffer")
-        {
-            AddWriteDependency(new("$GBuffer"));
-        }
-    }
-
-    public class GBufferPass : MultiTargetDrawPass
-    {
-        public GBufferPass() : base("GBuffer")
-        {
-            AddWriteDependency(new("$DepthStencil"));
-            AddWriteDependency(new("$GBuffer"));
-        }
-    }
-
-    public class ClearLightBufferPass : ClearRenderTargetPass
-    {
-        public ClearLightBufferPass() : base("ClearLightBuffer")
-        {
-            AddWriteDependency(new("$LightBuffer"));
-        }
-    }
-
-    public class LightDeferredPass : DrawPass
-    {
-        public LightDeferredPass() : base("LightDeferred")
-        {
-            AddWriteDependency(new("$LightBuffer"));
-            AddReadDependency(new("$GBuffer"));
-            AddReadDependency(new("$AOBuffer"));
-            AddReadDependency(new("$ShadowAtlas"));
-        }
-    }
-
-    public class LightForwardPass : MultiTargetDrawPass
-    {
-        public LightForwardPass() : base("Lightning")
-        {
-            AddWriteDependency(new("$LightBuffer"));
-            AddWriteDependency(new("$GBuffer"));
-            AddReadDependency(new("$AOBuffer"));
-            AddReadDependency(new("$ShadowAtlas"));
-        }
-    }
-
     public class HBAOPass : DrawPass
     {
         public HBAOPass() : base("HABO")
         {
-            AddReadDependency(new("$GBuffer"));
-            AddWriteDependency(new("$AOBuffer"));
+            AddReadDependency(new("GBuffer"));
+            AddWriteDependency(new("AOBuffer"));
         }
     }
 
@@ -141,25 +38,24 @@ namespace HexaEngine.Rendering.Renderers
     {
         public PostProcessPass() : base("PostProcess")
         {
-            AddReadDependency(new("$GBuffer"));
-            AddReadDependency(new("$LightBuffer"));
-            AddReadDependency(new("$DepthStencil"));
+            AddReadDependency(new("GBuffer"));
+            AddReadDependency(new("LightBuffer"));
+            AddReadDependency(new("DepthStencil"));
         }
     }
 
-    public class HDRPipeline : Graph.RenderGraph
+    public class HDRPipeline : RenderGraph
     {
+        public RenderPass[] Passes;
+
         public HDRPipeline() : base("HDRPipeline")
         {
-            ClearMainDepthStencilPass clearMainDepthStencilPass = new();
             DepthPrePass depthPrePass = new();
             PostProcessPrePass postProcessPrePass = new();
             HizDepthPass hizDepthPass = new();
             ObjectCullPass objectCullPass = new();
             LightCullPass lightCullPass = new();
-            ClearGBufferPass clearGBufferPass = new();
             GBufferPass gBufferPass = new();
-            ClearLightBufferPass clearLightBufferPass = new();
             LightForwardPass lightForwardPass = new();
             HBAOPass aoPass = new();
             VelocityBufferPass velocityBufferPass = new();
@@ -174,67 +70,48 @@ namespace HexaEngine.Rendering.Renderers
             TAAPass taaPass = new();
             ComposePass composePass = new();
 
-            /*
-            AddPass(clearMainDepthStencilPass);
-            AddPass(depthPrePass);
-            AddPass(postProcessPrePass);
-            AddPass(hizDepthPass);
-            AddPass(objectCullPass);
-            AddPass(lightCullPass);
-            AddPass(clearGBufferPass);
-            AddPass(gBufferPass);
-            AddPass(clearLightBufferPass);
-            AddPass(lightDeferredPass);
-            AddPass(lightForwardPass);
-            AddPass(aoPass);
-            AddPass(velocityBufferPass);
-            AddPass(volumetricLightsPass);
-            AddPass(bloomPass);
-            AddPass(autoExposurePass);
-            AddPass(depthOfFieldPass);
-            AddPass(motionBlurPass);
-            AddPass(godRaysPass);
-            AddPass(lensFlarePass);
-            AddPass(volumetricCloudsPass);
-            AddPass(taaPass);
-            AddPass(composePass);
-            */
+            depthPrePass.Build(this);
+            postProcessPrePass.Build(this);
+            hizDepthPass.Build(this);
+            objectCullPass.Build(this);
+            lightCullPass.Build(this);
+            gBufferPass.Build(this);
+            lightForwardPass.Build(this);
+            aoPass.Build(this);
+            velocityBufferPass.Build(this);
+            volumetricLightsPass.Build(this);
+            bloomPass.Build(this);
+            autoExposurePass.Build(this);
+            depthOfFieldPass.Build(this);
+            motionBlurPass.Build(this);
+            godRaysPass.Build(this);
+            lensFlarePass.Build(this);
+            volumetricCloudsPass.Build(this);
+            taaPass.Build(this);
+            composePass.Build(this);
 
-            depthPrePass.Dependencies.Add(clearMainDepthStencilPass);
-            postProcessPrePass.Dependencies.Add(depthPrePass);
-            hizDepthPass.Dependencies.Add(depthPrePass);
-            objectCullPass.Dependencies.Add(hizDepthPass);
-            lightCullPass.Dependencies.Add(depthPrePass);
-            gBufferPass.Dependencies.Add(clearGBufferPass);
-            gBufferPass.Dependencies.Add(objectCullPass);
-            aoPass.Dependencies.Add(gBufferPass);
-            aoPass.Dependencies.Add(depthPrePass);
-            lightForwardPass.Dependencies.Add(postProcessPrePass);
-            lightForwardPass.Dependencies.Add(clearLightBufferPass);
-            lightForwardPass.Dependencies.Add(lightCullPass);
-            lightForwardPass.Dependencies.Add(objectCullPass);
-            lightForwardPass.Dependencies.Add(aoPass);
-            velocityBufferPass.Dependencies.Add(lightForwardPass);
-            volumetricLightsPass.Dependencies.Add(lightForwardPass);
-            depthOfFieldPass.Dependencies.Add(lightForwardPass);
-            depthOfFieldPass.Dependencies.Add(volumetricLightsPass);
-
-            taaPass.Dependencies.Add(velocityBufferPass);
-            taaPass.Dependencies.Add(depthOfFieldPass);
-            motionBlurPass.Dependencies.Add(velocityBufferPass);
-            motionBlurPass.Dependencies.Add(taaPass);
-            bloomPass.Dependencies.Add(motionBlurPass);
-            autoExposurePass.Dependencies.Add(bloomPass);
-
-            godRaysPass.Dependencies.Add(autoExposurePass);
-            godRaysPass.Dependencies.Add(lightForwardPass);
-            lensFlarePass.Dependencies.Add(godRaysPass);
-            lensFlarePass.Dependencies.Add(lightForwardPass);
-
-            volumetricCloudsPass.Dependencies.Add(lensFlarePass);
-            volumetricCloudsPass.Dependencies.Add(lightForwardPass);
-
-            composePass.Dependencies.Add(volumetricCloudsPass);
+            Passes = new RenderPass[]
+            {
+                depthPrePass,
+                postProcessPrePass,
+                hizDepthPass,
+                objectCullPass,
+                lightCullPass,
+                gBufferPass,
+                lightForwardPass,
+                aoPass,
+                velocityBufferPass,
+                volumetricLightsPass,
+                bloomPass,
+                autoExposurePass,
+                depthOfFieldPass,
+                motionBlurPass,
+                godRaysPass,
+                lensFlarePass,
+                volumetricCloudsPass,
+                taaPass,
+                composePass
+            };
         }
     }
 
@@ -279,7 +156,8 @@ namespace HexaEngine.Rendering.Renderers
         private bool windowResized;
         private bool sceneChanged;
         private readonly CPUProfiler profiler = new(10);
-
+        private HDRPipeline renderGraph = new HDRPipeline();
+        private RenderGraphExecuter graphExecuter;
         private ICommandList commandList;
 
         public CPUProfiler Profiler => profiler;
@@ -288,8 +166,7 @@ namespace HexaEngine.Rendering.Renderers
 
         public ViewportShading Shading { get => shading; set => shading = value; }
 
-        public Graph.RenderGraph RenderGraph { get; } = new HDRPipeline();
-
+        public RenderGraph RenderGraph => renderGraph;
         public int Width => width;
 
         public int Height => height;
@@ -323,7 +200,10 @@ namespace HexaEngine.Rendering.Renderers
             configKey = Config.Global.GetOrCreateKey("Renderer");
             renderResolution = configKey.TryGet(nameof(renderResolution), 1f);
 
+            RenderGraph.ResolveGlobalResources();
             RenderGraph.Build();
+
+            graphExecuter = new(device, renderGraph, renderGraph.Passes);
 
             return
             Task.Factory.StartNew(Initialize);
@@ -338,11 +218,16 @@ namespace HexaEngine.Rendering.Renderers
             cameraBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write).Value;
             tesselationBuffer = new(device, CpuAccessFlags.Write);
 
+            //var resourceCreator = graphExecuter.ResourceCreator;
+            //resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
+
             gbuffer = new GBuffer(device, width, height,
+                new Format[] {
                 Format.R16G16B16A16Float,   // BaseColor(RGB)   Material ID(A)
                 Format.R8G8B8A8UNorm,       // Normal(XYZ)      Roughness(W)
                 Format.R8G8B8A8UNorm,       // Metallic         Reflectance             AO      Material Data
                 Format.R8G8B8A8UNorm        // Emission(XYZ)    Emission Strength(W)
+                }
                 );
 
             depthStencil = new(device, width, height, Format.D32Float);
@@ -657,7 +542,7 @@ namespace HexaEngine.Rendering.Renderers
 #endif
 
             hizBuffer.Generate(context, depthStencil.SRV);
-            CullingManager.DoCulling(context, hizBuffer);
+            CullingManager.DoCulling(context, hizBuffer.SRV);
 
 #if PROFILE
             device.Profiler.End(context, "ObjectCulling");

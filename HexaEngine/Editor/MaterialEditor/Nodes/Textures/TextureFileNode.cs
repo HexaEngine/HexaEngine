@@ -33,7 +33,7 @@
 
         private bool showMore;
 
-        private SamplerDescription samplerDescription = SamplerDescription.AnisotropicClamp;
+        private SamplerStateDescription samplerDescription = SamplerStateDescription.AnisotropicClamp;
 
         public TextureFileNode(int id, bool removable, bool isStatic, IGraphicsDevice device) : base(id, "Texture", removable, isStatic)
         {
@@ -60,7 +60,7 @@
             }
         }
 
-        public SamplerDescription SamplerDescription { get => samplerDescription; set => samplerDescription = value; }
+        public SamplerStateDescription SamplerDescription { get => samplerDescription; set => samplerDescription = value; }
 
         [JsonIgnore]
         public Pin OutColor;
@@ -184,7 +184,7 @@
                     changed = true;
                 }
                 active |= ImGui.IsItemActive();
-                if (ImGui.SliderInt("Anisotropy", ref samplerDescription.MaxAnisotropy, 1, SamplerDescription.MaxMaxAnisotropy))
+                if (ImGui.SliderInt("Anisotropy", ref samplerDescription.MaxAnisotropy, 1, SamplerStateDescription.MaxMaxAnisotropy))
                 {
                     changed = true;
                 }

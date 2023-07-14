@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
@@ -55,7 +53,7 @@ namespace HexaEngine.Effects.BuildIn
                 VertexShader = "effects/fxaa/vs.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl"
             }, macros);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicClamp);
         }
 
         public void Resize(int width, int height)

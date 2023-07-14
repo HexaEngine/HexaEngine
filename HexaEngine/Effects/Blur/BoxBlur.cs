@@ -30,7 +30,7 @@
                 PixelShader = "effects/blur/box.hlsl"
             });
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            linearClampSampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public int Size { get => size; set => size = value; }

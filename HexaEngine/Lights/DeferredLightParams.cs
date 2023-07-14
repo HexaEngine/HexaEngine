@@ -12,23 +12,35 @@
         public uint Padding1;
     }
 
-    public struct LightParams
+    public struct DeferredLightParams
     {
         public uint LightCount;
         public Vector3 Padding;
 
-        public LightParams(uint lightCount)
+        public DeferredLightParams(uint lightCount)
         {
             LightCount = lightCount;
             Padding = default;
         }
     }
 
-    public struct ForwardLightBufferParams
+    public struct ForwardLightParams
     {
         public uint LightCount;
         public uint GlobalProbes;
         public uint LocalProbes;
         public uint Padding;
+    }
+
+    public struct CullLightParams
+    {
+        public uint LightCount;
+        public Vector3 Padding;
+
+        public CullLightParams(uint lightCount)
+        {
+            LightCount = lightCount;
+            Padding = default;
+        }
     }
 }

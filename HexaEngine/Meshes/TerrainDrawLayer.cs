@@ -69,7 +69,7 @@
         {
             Material = new(device);
             Mask = new(device, Format.R16G16B16A16UNorm, 1024, 1024, 1, 1, true, true);
-            MaskSampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            MaskSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public ChannelMask GetChannelMask(TerrainLayer layer)

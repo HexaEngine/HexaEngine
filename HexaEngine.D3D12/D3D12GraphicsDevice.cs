@@ -172,7 +172,7 @@
             throw new NotImplementedException();
         }
 
-        public ISamplerState CreateSamplerState(SamplerDescription sampler)
+        public ISamplerState CreateSamplerState(SamplerStateDescription sampler)
         {
             throw new NotImplementedException();
         }

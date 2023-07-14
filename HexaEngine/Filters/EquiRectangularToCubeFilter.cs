@@ -5,6 +5,7 @@ using HexaEngine;
 namespace HexaEngine.Filters
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Graphics.Structs;
     using System;
@@ -14,7 +15,7 @@ namespace HexaEngine.Filters
     {
         private Cube cube;
         private IGraphicsPipeline pipeline;
-        private IBuffer mvpBuffer;
+        private ConstantBuffer<ModelViewProj> mvpBuffer;
         private ISamplerState sampler;
 
         public IShaderResourceView Source;
@@ -46,8 +47,8 @@ namespace HexaEngine.Filters
             });
 
             SetViewPoint(Vector3.Zero);
-            mvpBuffer = device.CreateBuffer(new ModelViewProj(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.AnisotropicWrap);
+            mvpBuffer = new(device, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicWrap);
         }
 
         public void SetViewPoint(Vector3 camera)

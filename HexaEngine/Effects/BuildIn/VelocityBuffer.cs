@@ -23,7 +23,6 @@
         private ResourceRef<Texture2D> Velocity;
 
         private Viewport Viewport;
-        private Matrix4x4 prevViewProj;
         private float scale = 64;
 
         private bool enabled = true;
@@ -84,7 +83,7 @@
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
-            sampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");

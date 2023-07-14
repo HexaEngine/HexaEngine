@@ -87,9 +87,9 @@
             this.device = device;
             quad = new(device);
 
-            pointClampSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
-            linearClampSampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
-            linearBorderSampler = device.CreateSamplerState(SamplerDescription.LinearBorder);
+            pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            linearBorderSampler = device.CreateSamplerState(SamplerStateDescription.LinearBorder);
 
             pipelineSSR = await device.CreateGraphicsPipelineAsync(new()
             {

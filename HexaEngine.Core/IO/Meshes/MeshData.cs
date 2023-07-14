@@ -235,12 +235,12 @@
             }
         }
 
-        public IndexBuffer CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        public IndexBuffer<uint> CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             return new(device, Indices, accessFlags);
         }
 
-        public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer ib)
+        public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer<uint> ib)
         {
             for (int i = 0; i < IndicesCount; i++)
             {

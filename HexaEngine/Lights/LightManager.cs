@@ -26,7 +26,7 @@
         private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
         public readonly ConcurrentQueue<IRendererComponent> RendererUpdateQueue = new();
 
-        private StructuredUavBuffer<GlobalProbeData> GlobalProbes;
+        public StructuredUavBuffer<GlobalProbeData> GlobalProbes;
 
         public StructuredUavBuffer<LightData> LightBuffer;
         public StructuredUavBuffer<ShadowData> ShadowDataBuffer;
@@ -40,8 +40,8 @@
         private IComputePipeline clusterCulling;
 
         private ConstantBuffer<ProbeBufferParams> probeParamsBuffer;
-        private ConstantBuffer<LightParams> lightParamsBuffer;
-        private ConstantBuffer<ForwardLightBufferParams> forwardLightParamsBuffer;
+        private ConstantBuffer<DeferredLightParams> lightParamsBuffer;
+        private ConstantBuffer<ForwardLightParams> forwardLightParamsBuffer;
         private ConstantBuffer<ClusterSizes> clusterSizesBuffer;
 
         private ShadowAtlas shadowPool;
@@ -144,19 +144,19 @@
             LUT = ResourceManager2.Shared.GetTexture("BRDFLUT");
             AO = ResourceManager2.Shared.GetTexture("AOBuffer");
 
-            GlobalProbes = new(device, true, false);
+            GlobalProbes = new(device, CpuAccessFlags.Write);
 
-            LightBuffer = new(device, true, false);
-            ShadowDataBuffer = new(device, true, false);
+            LightBuffer = new(device, CpuAccessFlags.Write);
+            ShadowDataBuffer = new(device, CpuAccessFlags.Write);
 
             quad = new(device);
 
             shadowPool = new(device);
 
-            linearClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerDescription.LinearClamp).Value;
-            linearWrapSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearWrap", SamplerDescription.LinearWrap).Value;
-            pointClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerDescription.PointClamp).Value;
-            shadowSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearComparisonBorder", SamplerDescription.ComparisonLinearBorder).Value;
+            linearClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerStateDescription.LinearClamp).Value;
+            linearWrapSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearWrap", SamplerStateDescription.LinearWrap).Value;
+            pointClampSampler = ResourceManager2.Shared.GetOrAddSamplerState("PointClamp", SamplerStateDescription.PointClamp).Value;
+            shadowSampler = ResourceManager2.Shared.GetOrAddSamplerState("LinearComparisonBorder", SamplerStateDescription.ComparisonLinearBorder).Value;
 
             unsafe
             {
@@ -223,10 +223,10 @@
             float screenWidth = window.RenderViewport.Width;
             float screenHeight = window.RenderViewport.Height;
 
-            ClusterBuffer = new(device, CLUSTER_COUNT, false, false);
-            LightIndexCounter = new(device, 1, false, false);
-            LightIndexList = new(device, CLUSTER_COUNT * CLUSTER_MAX_LIGHTS, false, false);
-            LightGridBuffer = new(device, CLUSTER_COUNT, false, false);
+            ClusterBuffer = new(device, CLUSTER_COUNT, CpuAccessFlags.None);
+            LightIndexCounter = new(device, 1, CpuAccessFlags.None);
+            LightIndexList = new(device, CLUSTER_COUNT * CLUSTER_MAX_LIGHTS, CpuAccessFlags.None);
+            LightGridBuffer = new(device, CLUSTER_COUNT, CpuAccessFlags.None);
             clusterSizesBuffer = new(device, new ClusterSizes(screenWidth / CLUSTERS_X, screenHeight / CLUSTERS_Y), CpuAccessFlags.Write);
 
             clusterBuilding = await device.CreateComputePipelineAsync(new()

@@ -97,12 +97,12 @@
 
             occlusionCameraBuffer = new(device, CpuAccessFlags.Write);
             occlusionParamBuffer = new(device, CpuAccessFlags.Write);
-            instanceOffsets = new(device, false, false);
-            instanceDataOutBuffer = new(device, false, true);
+            instanceOffsets = new(device, CpuAccessFlags.None);
+            instanceDataOutBuffer = new(device, CpuAccessFlags.Read);
             instanceDataBuffer = new(device, CpuAccessFlags.Write);
-            swapBuffer = new(device, true, true);
+            swapBuffer = new(device, CpuAccessFlags.RW);
             drawIndirectArgs = new(device, CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
             occlusionCbs = AllocArray(2);
             occlusionCbs[0] = (void*)occlusionParamBuffer.Buffer.NativePointer;
             occlusionCbs[1] = (void*)occlusionCameraBuffer.Buffer.NativePointer;
@@ -212,7 +212,7 @@
             };*/
         }
 
-        public static void DoCulling(IGraphicsContext context, DepthMipChain mipChain)
+        public static void DoCulling(IGraphicsContext context, IShaderResourceView mipChain)
         {
             /*
             var camera = CameraManager.Culling;

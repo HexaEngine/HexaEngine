@@ -10,7 +10,7 @@
     {
         public MeshData Data;
         public readonly VertexBuffer<MeshVertex> VertexBuffer;
-        public readonly IndexBuffer IndexBuffer;
+        public readonly IndexBuffer<uint> IndexBuffer;
         public readonly uint Stride;
         public readonly uint VertexCount;
         public readonly uint IndexCount;

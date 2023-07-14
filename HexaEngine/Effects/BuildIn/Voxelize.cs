@@ -2,19 +2,14 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
-
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Numerics;
-    using System.Text;
     using System.Threading.Tasks;
 
     internal class Voxelize
@@ -61,7 +56,7 @@
             });
             voxelConstantBuffer = new(device, CpuAccessFlags.Write);
             lights = new(device, (int)VoxelizeMaxLights, CpuAccessFlags.Write);
-            voxels = new(device, VoxelResolution * VoxelResolution * VoxelResolution, false, false);
+            voxels = new(device, VoxelResolution * VoxelResolution * VoxelResolution, CpuAccessFlags.None);
         }
 
         public void Update(IGraphicsContext context, Camera camera)

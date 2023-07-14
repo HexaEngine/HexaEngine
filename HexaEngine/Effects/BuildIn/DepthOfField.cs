@@ -274,7 +274,7 @@ namespace HexaEngine.Effects.BuildIn
                 BlendFactor = Vector4.One
             });
 
-            bokehBuffer = new(device, (uint)(width * height), false, false, BufferUnorderedAccessViewFlags.Append);
+            bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
             blurTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             bokehIndirectBuffer = new(device, new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
 
@@ -283,7 +283,7 @@ namespace HexaEngine.Effects.BuildIn
 
             bokehTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
 
-            linearWrapSampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");

@@ -2,91 +2,91 @@
 {
     using HexaEngine.Rendering.Graph;
 
-    public class FXAAPass : RenderPassOld
+    public class FXAAPass : RenderPass
     {
         public FXAAPass() : base("FXAA")
         {
         }
     }
 
-    public class TAAPass : RenderPassOld
+    public class TAAPass : RenderPass
     {
         public TAAPass() : base("TAA")
         {
         }
     }
 
-    public class VelocityBufferPass : RenderPassOld
+    public class VelocityBufferPass : RenderPass
     {
         public VelocityBufferPass() : base("VelocityBuffer")
         {
         }
     }
 
-    public class ComposePass : RenderPassOld
+    public class ComposePass : RenderPass
     {
         public ComposePass() : base("Compose")
         {
         }
     }
 
-    public class AutoExposurePass : RenderPassOld
+    public class AutoExposurePass : RenderPass
     {
         public AutoExposurePass() : base("AutoExposure")
         {
         }
     }
 
-    public class BloomPass : RenderPassOld
+    public class BloomPass : RenderPass
     {
         public BloomPass() : base("Bloom")
         {
         }
     }
 
-    public class DepthOfFieldPass : RenderPassOld
+    public class DepthOfFieldPass : RenderPass
     {
         public DepthOfFieldPass() : base("DepthOfField")
         {
         }
     }
 
-    public class GodRaysPass : RenderPassOld
+    public class GodRaysPass : RenderPass
     {
         public GodRaysPass() : base("GodRays")
         {
         }
     }
 
-    public class LensFlarePass : RenderPassOld
+    public class LensFlarePass : RenderPass
     {
         public LensFlarePass() : base("LensFlare")
         {
         }
     }
 
-    public class MotionBlurPass : RenderPassOld
+    public class MotionBlurPass : RenderPass
     {
         public MotionBlurPass() : base("MotionBlur")
         {
         }
     }
 
-    public class SSRPass : RenderPassOld
+    public class SSRPass : RenderPass
     {
         public SSRPass() : base("SSR")
         {
         }
     }
 
-    public class VolumetricCloudsPass : RenderPassOld
+    public class VolumetricCloudsPass : RenderPass
     {
         public VolumetricCloudsPass() : base("VolumetricClouds")
         {
         }
     }
 
-    public class VolumetricLightsPass : RenderPassOld
+    public class VolumetricLightsPass : RenderPass
     {
         public VolumetricLightsPass() : base("VolumetricLights")
         {

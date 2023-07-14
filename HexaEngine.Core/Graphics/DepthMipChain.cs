@@ -1,21 +1,21 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using BepuPhysics.Trees;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using ImGuiNET;
     using System;
     using System.Numerics;
 
-    public unsafe class DepthMipChain : IEffect
+    public unsafe class DepthMipChain
     {
         private readonly Quad quad;
         private readonly IComputePipeline downsample;
-        private readonly IBuffer cbDownsample;
+        private readonly ConstantBuffer<Vector4> cbDownsample;
         private readonly IGraphicsPipeline copy;
         public int Height;
         public int Width;
-        private ITexture2D texture;
+        private Texture2D texture;
         private ISamplerState samplerState;
         public IRenderTargetView RTV;
         public IShaderResourceView SRV;
@@ -29,6 +29,49 @@
 
         public IShaderResourceView? Input;
 
+        public DepthMipChain(IGraphicsDevice device, DepthStencilBufferDesc desc)
+        {
+            Width = desc.Width;
+            Height = desc.Height;
+            quad = new(device);
+
+            downsample = device.CreateComputePipeline(new()
+            {
+                Path = "compute/hiz/shader.hlsl",
+            });
+            cbDownsample = new(device, CpuAccessFlags.Write);
+
+            copy = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/copy/vs.hlsl",
+                PixelShader = "effects/copy/ps.hlsl"
+            });
+
+            Mips = GetNumMipLevels(desc.Width, desc.Height);
+
+            texture = new(device, Format.R32Float, desc.Width, desc.Height, 1, Mips, CpuAccessFlags.None, GpuAccessFlags.All);
+            SRV = device.CreateShaderResourceView(texture);
+            RTV = device.CreateRenderTargetView(texture, new(desc.Width, desc.Height));
+            samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
+
+            srvs = new IShaderResourceView[Mips];
+            uavs = new IUnorderedAccessView[Mips];
+            pUavs = AllocArray((uint)Mips);
+            viewports = new Viewport[Mips];
+            int mipWidth = desc.Width;
+            int mipHeight = desc.Height;
+
+            for (int i = 0; i < Mips; i++)
+            {
+                srvs[i] = device.CreateShaderResourceView(texture, new(ShaderResourceViewDimension.Texture2D, Format.R32Float, i, 1, 0, 1));
+                uavs[i] = device.CreateUnorderedAccessView(texture, new(UnorderedAccessViewDimension.Texture2D, Format.R32Float, i, 0, 1, BufferUnorderedAccessViewFlags.None));
+                pUavs[i] = (void*)uavs[i].NativePointer;
+                viewports[i] = new(mipWidth, mipHeight);
+                mipWidth /= 2;
+                mipHeight /= 2;
+            }
+        }
+
         public DepthMipChain(IGraphicsDevice device, int width, int height)
         {
             Width = width;
@@ -39,7 +82,7 @@
             {
                 Path = "compute/hiz/shader.hlsl",
             });
-            cbDownsample = device.CreateBuffer(new Vector4(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            cbDownsample = new(device, CpuAccessFlags.Write);
 
             copy = device.CreateGraphicsPipeline(new()
             {
@@ -49,11 +92,10 @@
 
             Mips = GetNumMipLevels(width, height);
 
-            texture = device.CreateTexture2D(Format.R32Float, width, height, 1, Mips, null, BindFlags.ShaderResource | BindFlags.RenderTarget | BindFlags.UnorderedAccess);
+            texture = new(device, Format.R32Float, width, height, 1, Mips, CpuAccessFlags.None, GpuAccessFlags.All);
             SRV = device.CreateShaderResourceView(texture);
             RTV = device.CreateRenderTargetView(texture, new(width, height));
-            samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
-            MemoryManager.Register(texture);
+            samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -72,6 +114,12 @@
                 mipHeight /= 2;
             }
         }
+
+        public Viewport[] Viewports => viewports;
+
+        public IUnorderedAccessView[] UAVs => uavs;
+
+        public IShaderResourceView[] SRVs => srvs;
 
         public void Debug()
         {
@@ -99,11 +147,10 @@
             texture.Dispose();
 
             Mips = GetNumMipLevels(width, height);
-            MemoryManager.Unregister(texture);
-            texture = device.CreateTexture2D(Format.R32Float, width, height, 1, Mips, null, BindFlags.ShaderResource | BindFlags.RenderTarget | BindFlags.UnorderedAccess);
+
+            texture.Resize(device, Format.R32Float, width, height, 1, Mips, CpuAccessFlags.None, GpuAccessFlags.All);
             SRV = device.CreateShaderResourceView(texture);
             RTV = device.CreateRenderTargetView(texture, new(width, height));
-            MemoryManager.Register(texture);
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -169,7 +216,6 @@
 
         public void Dispose()
         {
-            MemoryManager.Unregister(texture);
             quad.Dispose();
             downsample.Dispose();
             cbDownsample.Dispose();
@@ -200,24 +246,6 @@
             }
 
             return numLevels;
-        }
-
-        public void BeginResize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Resize(int width, int height)
-        {
-            throw new NotImplementedException();
-        }
-
-#pragma warning disable CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
-#pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
-        {
-            throw new NotImplementedException();
         }
     }
 }

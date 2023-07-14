@@ -1,14 +1,12 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
-    public struct RenderPassMetadata
+    public class RenderPassMetadata
     {
-        public RenderPassMetadata(Name name, RenderPassPurpose purpose)
+        public RenderPassMetadata(string name)
         {
             Name = name;
-            Purpose = purpose;
         }
 
-        public Name Name;
-        public RenderPassPurpose Purpose;
+        public string Name { get; }
     }
 }

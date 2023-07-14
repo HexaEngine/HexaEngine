@@ -8,14 +8,14 @@
     {
         internal readonly ComPtr<ID3D11SamplerState> sampler;
 
-        public D3D11SamplerState(ComPtr<ID3D11SamplerState> sampler, SamplerDescription description)
+        public D3D11SamplerState(ComPtr<ID3D11SamplerState> sampler, SamplerStateDescription description)
         {
             this.sampler = sampler;
             nativePointer = new(sampler);
             Description = description;
         }
 
-        public SamplerDescription Description { get; }
+        public SamplerStateDescription Description { get; }
 
         protected override void DisposeCore()
         {

@@ -172,7 +172,7 @@
                 PixelShader = "effects/compose/ps.hlsl",
             }, macros);
             paramBuffer = new(device, new ComposeParams(bloomStrength), CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             Bloom = ResourceManager2.Shared.GetTexture("Bloom");
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Position");

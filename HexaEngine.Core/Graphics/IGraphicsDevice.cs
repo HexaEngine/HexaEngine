@@ -38,16 +38,6 @@
         IBuffer CreateBuffer(BufferDescription description);
 
         /// <summary>
-        /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/>
-        /// </summary>
-        /// <param name="description">The <see cref="BufferDescription"/> that describes the <see cref="IBuffer"/></param>
-        /// <returns>The <see cref="IBuffer"/></returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="OutOfMemoryException"></exception>
-        unsafe IBuffer CreateBuffer(void* src, uint length, BufferDescription description);
-
-        /// <summary>
         /// Creates a <see cref="IBuffer"/> with the given <see cref="BufferDescription"/> and with the initial value <paramref name="value"/><br/>
         /// </summary>
         /// <remarks>If <see cref="BufferDescription.ByteWidth"/> is 0, then <see cref="BufferDescription.ByteWidth"/> will be automatically determent by <typeparamref name="T"/></remarks>
@@ -65,17 +55,11 @@
         /// The <see cref="BufferDescription.ByteWidth"/> will be automatically determent by <typeparamref name="T"/>
         /// </summary>
         /// <typeparam name="T">The initial value type, the size must be dividable by 16</typeparam>
-        /// <param name="value">The initial value of type <typeparamref name="T"/></param>
-        /// <param name="bindFlags">Valid are <see cref="BindFlags.VertexBuffer"/>, <see cref="BindFlags.IndexBuffer"/>, <see cref="BindFlags.ConstantBuffer"/>, <see cref="BindFlags.ShaderResource"/>, <see cref="BindFlags.StreamOutput"/>, <see cref="BindFlags.UnorderedAccess"/></param>
-        /// <param name="usage">The <see cref="IBuffer"/> usage</param>
-        /// <param name="cpuAccessFlags"></param>
-        /// <param name="miscFlags"></param>
+        /// <param name="values">The initial values of type <typeparamref name="T"/></param>
+        /// <param name="count">The count of the values</param>
+        /// <param name="description">The <see cref="BufferDescription"/> that describes the <see cref="IBuffer"/></param>
         /// <returns></returns>
-        IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
-
         unsafe IBuffer CreateBuffer<T>(T* values, uint count, BufferDescription description) where T : unmanaged;
-
-        unsafe IBuffer CreateBuffer<T>(T* values, uint count, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged;
 
         IDepthStencilView CreateDepthStencilView(IResource resource, DepthStencilViewDescription description);
 
@@ -93,7 +77,7 @@
 
         IShaderResourceView CreateShaderResourceView(IBuffer buffer, ShaderResourceViewDescription description);
 
-        ISamplerState CreateSamplerState(SamplerDescription sampler);
+        ISamplerState CreateSamplerState(SamplerStateDescription sampler);
 
         ITexture1D CreateTexture1D(Texture1DDescription description);
 

@@ -6,19 +6,19 @@
     using System;
     using System.Numerics;
 
-    public class Sphere : Primitive<MeshVertex>
+    public class Sphere : Primitive<MeshVertex, uint>
     {
         public Sphere(IGraphicsDevice device) : base(device)
         {
         }
 
-        protected override (VertexBuffer<MeshVertex>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<MeshVertex>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
-            CreateSphere(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer indexBuffer);
+            CreateSphere(device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer);
             return (vertexBuffer, indexBuffer);
         }
 
-        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 32, uint LongLines = 32)
+        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, uint LatLines = 32, uint LongLines = 32)
         {
             float radius = 1;
             float x, y, z;                              // vertex position

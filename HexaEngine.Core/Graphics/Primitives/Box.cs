@@ -4,13 +4,13 @@
     using HexaEngine.Core.Graphics.Buffers;
     using System.Numerics;
 
-    public class Cube : Primitive<Vector3>
+    public class Cube : Primitive<Vector3, ushort>
     {
         public Cube(IGraphicsDevice device) : base(device)
         {
         }
 
-        protected override (VertexBuffer<Vector3>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<Vector3>, IndexBuffer<ushort>?) InitializeMesh(IGraphicsDevice device)
         {
             VertexBuffer<Vector3> vertexBuffer = new(device, CpuAccessFlags.None, new Vector3[]
             {
@@ -24,7 +24,7 @@
                 new Vector3(1.0f, 1.0f, 1.0f)
             });
 
-            IndexBuffer indexBuffer = new(device, new uint[]
+            IndexBuffer<ushort> indexBuffer = new(device, new ushort[]
             {
                 0,1,2,2,3,0,
                 4,1,0,0,5,4,

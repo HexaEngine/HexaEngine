@@ -39,7 +39,7 @@
         private ConstantBuffer<CBCamera> view;
 
         private StructuredBuffer<LightData> lights;
-        private ConstantBuffer<LightParams> lightParams;
+        private ConstantBuffer<DeferredLightParams> lightParams;
 
         private PointLight pointLight = new();
 
@@ -104,7 +104,7 @@
             depthStencil = new(device, 1024, 1024, Format.D32Float);
             textureTonemap = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             texturePreview = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             tonemap = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/tonemap/vs.hlsl",

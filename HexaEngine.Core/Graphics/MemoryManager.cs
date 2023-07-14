@@ -1,5 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using BepuPhysics.Trees;
+    using BepuUtilities.Memory;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -48,6 +50,8 @@
 
         internal static void Register(IResource resource)
         {
+            if (string.IsNullOrEmpty(resource.DebugName))
+                throw new();
             if (resource is IBuffer buffer)
                 Register(buffer);
             if (resource is ITexture1D texture1d)
@@ -60,6 +64,8 @@
 
         internal static void Register(IBuffer buffer)
         {
+            if (string.IsNullOrEmpty(buffer.DebugName))
+                throw new();
             BufferDescription description = buffer.Description;
             ulong size = (ulong)description.ByteWidth;
             lock (entries)
@@ -68,6 +74,8 @@
 
         internal static void Register(ITexture1D texture)
         {
+            if (string.IsNullOrEmpty(texture.DebugName))
+                throw new();
             Texture1DDescription description = texture.Description;
             ulong stride = (ulong)(FormatHelper.BitsPerPixel(description.Format) / 8);
             ulong size = 0;
@@ -84,6 +92,8 @@
 
         internal static void Register(ITexture2D texture)
         {
+            if (string.IsNullOrEmpty(texture.DebugName))
+                throw new();
             Texture2DDescription description = texture.Description;
             ulong stride = (ulong)(FormatHelper.BitsPerPixel(description.Format) / 8);
             ulong size = 0;
@@ -102,6 +112,8 @@
 
         internal static void Register(ITexture3D texture)
         {
+            if (string.IsNullOrEmpty(texture.DebugName))
+                throw new();
             Texture3DDescription description = texture.Description;
             ulong stride = (ulong)(FormatHelper.BitsPerPixel(description.Format) / 8);
             ulong size = 0;

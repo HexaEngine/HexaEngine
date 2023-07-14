@@ -4,7 +4,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class StructuredUavBuffer<T> : IBuffer where T : unmanaged
+    public unsafe class StructuredUavBuffer<T> : IBuffer, IStructuredUavBuffer<T> where T : unmanaged
     {
         private const int DefaultCapacity = 64;
         private readonly IGraphicsDevice device;
@@ -27,11 +27,11 @@
 
         private bool disposedValue;
 
-        public StructuredUavBuffer(IGraphicsDevice device, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredUavBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.canWrite = canWrite;
-            this.canRead = canRead;
+            canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
+            canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
             this.srvFlags = srvFlags;
             dbgName = $"StructuredUavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -62,23 +62,23 @@
             MemoryManager.Register(buffer);
         }
 
-        public StructuredUavBuffer(IGraphicsDevice device, uint intialCapacity, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredUavBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.canWrite = canWrite;
-            this.canRead = canRead;
+            canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
+            canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
             this.srvFlags = srvFlags;
             dbgName = $"StructuredUavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-            capacity = intialCapacity;
-            items = Alloc<T>(intialCapacity);
-            ZeroMemory(items, (int)intialCapacity * sizeof(T));
-            bufferDescription = new(sizeof(T) * (int)intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
-            buffer = device.CreateBuffer(items, intialCapacity, bufferDescription);
+            capacity = initialCapacity;
+            items = Alloc<T>(initialCapacity);
+            ZeroMemory(items, (int)initialCapacity * sizeof(T));
+            bufferDescription = new(sizeof(T) * (int)initialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
+            buffer = device.CreateBuffer(items, initialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
             if (canWrite || canRead)
             {
-                copyDescription = new(sizeof(T) * (int)intialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
+                copyDescription = new(sizeof(T) * (int)initialCapacity, BindFlags.ShaderResource, Usage.Dynamic, CpuAccessFlags.Write, ResourceMiscFlag.BufferStructured, sizeof(T));
                 if (canRead)
                 {
                     copyDescription.BindFlags = BindFlags.None;
@@ -90,9 +90,9 @@
                 MemoryManager.Register(copyBuffer);
             }
 
-            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)intialCapacity, uavFlags));
+            uav = device.CreateUnorderedAccessView(buffer, new(buffer, Format.Unknown, 0, (int)initialCapacity, uavFlags));
             uav.DebugName = dbgName + ".UAV";
-            srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, (int)intialCapacity, srvFlags));
+            srv = device.CreateShaderResourceView(buffer, new(buffer, Format.Unknown, 0, (int)initialCapacity, srvFlags));
             srv.DebugName = dbgName + ".SRV";
             MemoryManager.Register(buffer);
         }
@@ -329,7 +329,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(int index)
+        public void RemoveAt(int index)
         {
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
@@ -337,7 +337,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(uint index)
+        public void RemoveAt(uint index)
         {
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);

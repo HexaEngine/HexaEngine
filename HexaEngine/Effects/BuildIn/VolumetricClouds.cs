@@ -78,8 +78,8 @@
                 BlendFactor = Vector4.One,
             });
 
-            linearWrapSampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
-            pointWrapSampler = device.CreateSamplerState(SamplerDescription.PointWrap);
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+            pointWrapSampler = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 
             weatherTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
             cloudTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));

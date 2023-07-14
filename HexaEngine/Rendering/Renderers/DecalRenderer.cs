@@ -51,8 +51,8 @@
                 Rasterizer = RasterizerDescription.CullNone
             },
             new ShaderMacro[] { new("DECAL_MODIFY_NORMALS", 1) });
-            linearWrapSampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
-            pointClampSampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+            pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
             worldBuffer = new(device, CpuAccessFlags.Write);
             decalBuffer = new(device, CpuAccessFlags.Write);
 

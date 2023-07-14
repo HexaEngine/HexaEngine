@@ -4,19 +4,19 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Mathematics;
 
-    public class Quad : Primitive<OrthoVertex>
+    public class Quad : Primitive<OrthoVertex, ushort>
     {
 #nullable disable
         private static int instances;
         private static VertexBuffer<OrthoVertex> VertexBuffer;
-        private static IndexBuffer IndexBuffer;
+        private static IndexBuffer<ushort> IndexBuffer;
 #nullable enable
 
         public Quad(IGraphicsDevice device) : base(device)
         {
         }
 
-        protected override (VertexBuffer<OrthoVertex>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<OrthoVertex>, IndexBuffer<ushort>?) InitializeMesh(IGraphicsDevice device)
         {
             if (instances == 0)
             {
@@ -27,7 +27,7 @@
                     new OrthoVertex(new(1, 1, 0), new(1, 0)),
                     new OrthoVertex(new(1, -1, 0), new(1, 1))
                 });
-                IndexBuffer = new(device, new uint[] { 0, 3, 1, 0, 2, 3 }, CpuAccessFlags.None);
+                IndexBuffer = new(device, new ushort[] { 0, 3, 1, 0, 2, 3 }, CpuAccessFlags.None);
             }
 
             instances++;
@@ -48,7 +48,7 @@
     {
 #nullable disable
         private VertexBuffer<OrthoVertex> vertexBuffer;
-        private IndexBuffer indexBuffer;
+        private IndexBuffer<ushort> indexBuffer;
         private bool disposedValue;
         private readonly int size;
 #nullable enable
@@ -68,7 +68,7 @@
                     new OrthoVertex(new(1 * size, 1 * size, 0), new(1, 0)),
                     new OrthoVertex(new(1 * size, -1 * size, 0), new(1, 1))
             });
-            indexBuffer = new(device, new uint[] { 0, 3, 1, 0, 2, 3 }, CpuAccessFlags.None);
+            indexBuffer = new(device, new ushort[] { 0, 3, 1, 0, 2, 3 }, CpuAccessFlags.None);
         }
 
         public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline)

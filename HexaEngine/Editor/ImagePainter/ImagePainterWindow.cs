@@ -68,7 +68,7 @@
         {
             exporter = new(device);
             this.device = device;
-            samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
+            samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
             quad = new(device);
             copyPipeline = device.CreateGraphicsPipeline(new()
             {

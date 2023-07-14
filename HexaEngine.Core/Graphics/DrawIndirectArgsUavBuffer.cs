@@ -26,11 +26,11 @@
 
         private bool disposedValue;
 
-        public DrawIndirectArgsUavBuffer(IGraphicsDevice device, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsUavBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.canWrite = canWrite;
-            this.canRead = canRead;
+            canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
+            canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
             this.srvFlags = srvFlags;
             dbgName = $"DrawIndirectArgsUavBuffer: {filename}, Line:{lineNumber}";
@@ -59,11 +59,11 @@
             srv.DebugName = dbgName + ".SRV";
         }
 
-        public DrawIndirectArgsUavBuffer(IGraphicsDevice device, uint intialCapacity, bool canWrite, bool canRead, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DrawIndirectArgsUavBuffer(IGraphicsDevice device, uint intialCapacity, CpuAccessFlags accessFlags, BufferUnorderedAccessViewFlags uavFlags = BufferUnorderedAccessViewFlags.None, BufferExtendedShaderResourceViewFlags srvFlags = BufferExtendedShaderResourceViewFlags.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            this.canWrite = canWrite;
-            this.canRead = canRead;
+            canWrite = (accessFlags & CpuAccessFlags.Write) != 0;
+            canRead = (accessFlags & CpuAccessFlags.Read) != 0;
             this.uavFlags = uavFlags;
             this.srvFlags = srvFlags;
             dbgName = $"DrawIndirectArgsUavBuffer: {filename}, Line:{lineNumber}";

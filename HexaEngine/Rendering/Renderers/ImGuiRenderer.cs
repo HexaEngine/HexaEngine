@@ -241,7 +241,7 @@ namespace HexaEngine.Rendering.Renderers
 
             io.Fonts.TexID = fontTextureView.NativePointer;
 
-            var samplerDesc = new SamplerDescription
+            var samplerDesc = new SamplerStateDescription
             {
                 Filter = Filter.MinMagMipLinear,
                 AddressU = TextureAddressMode.Wrap,

@@ -54,7 +54,7 @@
                 Path = "compute/selection/shader.hlsl",
             });
             mouseBuffer = new(device, CpuAccessFlags.Write);
-            outputBuffer = new(device, 1, true, true);
+            outputBuffer = new(device, 1, CpuAccessFlags.RW);
             camera = ResourceManager2.Shared.GetBuffer("CBCamera");
         }
 

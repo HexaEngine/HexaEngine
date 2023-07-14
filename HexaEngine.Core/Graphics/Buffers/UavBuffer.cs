@@ -4,7 +4,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public unsafe class UavBuffer : IBuffer
+    public unsafe class UavBuffer : IBuffer, IUavBuffer
     {
         private readonly IGraphicsDevice device;
         private readonly Format format;

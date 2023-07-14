@@ -14,7 +14,7 @@
         public Skybox(IGraphicsDevice device)
         {
             this.device = device;
-            samplerState = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            samplerState = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
         }
 
         public ISamplerState SamplerState => samplerState;

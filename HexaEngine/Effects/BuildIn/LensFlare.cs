@@ -3,7 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
@@ -78,7 +77,7 @@
                 BlendFactor = default,
                 SampleMask = int.MaxValue
             }, macros);
-            sampler = device.CreateSamplerState(SamplerDescription.PointClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
 
             lightBuffer = new(device, CpuAccessFlags.Write);
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");

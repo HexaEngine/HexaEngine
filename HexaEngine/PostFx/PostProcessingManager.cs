@@ -98,7 +98,8 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                effects[i].Initialize(device, width, height, macros).Wait();
+                if (effects[i].Enabled)
+                    effects[i].Initialize(device, width, height, macros).Wait();
             }
 
             isInitialized = true;
@@ -123,7 +124,8 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                await effects[i].Initialize(device, width, height, macros);
+                if (effects[i].Enabled)
+                    await effects[i].Initialize(device, width, height, macros);
             }
 
             isInitialized = true;
@@ -212,7 +214,8 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                effects[i].Dispose();
+                if (effects[i].Enabled)
+                    effects[i].Dispose();
             }
 
             macros = new ShaderMacro[effects.Count];
@@ -228,7 +231,8 @@
                 Task[] tasks = new Task[effects.Count];
                 for (int i = 0; i < effects.Count; i++)
                 {
-                    tasks[i] = effects[i].Initialize(device, width, height, macros);
+                    if (effects[i].Enabled)
+                        tasks[i] = effects[i].Initialize(device, width, height, macros);
                 }
                 Task.WaitAll(tasks);
             }
@@ -247,7 +251,8 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                effects[i].Dispose();
+                if (effects[i].Enabled)
+                    effects[i].Dispose();
             }
 
             macros = new ShaderMacro[effects.Count];
@@ -260,7 +265,8 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                await effects[i].Initialize(device, width, height, macros);
+                if (effects[i].Enabled)
+                    await effects[i].Initialize(device, width, height, macros);
             }
             Volatile.Write(ref isReloading, false);
             isDirty = true;
@@ -285,7 +291,8 @@
 
             for (int i = 0; i < effectsSorted.Count; i++)
             {
-                effectsSorted[i].Resize(width, height);
+                if (effects[i].Enabled)
+                    effectsSorted[i].Resize(width, height);
             }
 
             for (int i = 0; i < buffers.Count; i++)
@@ -344,8 +351,11 @@
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
                     var effect = effectsSorted[i];
-                    if ((effect.Flags & PostFxFlags.PrePass) != 0)
-                        effect.Update(context);
+                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) == 0)
+                    {
+                        continue;
+                    }
+                    effect.Update(context);
                 }
 
                 context.ClearState();
@@ -384,8 +394,12 @@
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
                     var effect = effectsSorted[i];
-                    if ((effect.Flags & PostFxFlags.PrePass) == 0)
-                        effect.Update(context);
+                    if (!effect.Enabled || (effect.Flags & PostFxFlags.PrePass) != 0)
+                    {
+                        continue;
+                    }
+
+                    effect.Update(context);
                 }
 #if PostFX_Deferred
 
@@ -525,7 +539,8 @@
             {
                 for (int i = 0; i < effects.Count; i++)
                 {
-                    effects[i].Dispose();
+                    if (effects[i].Enabled)
+                        effects[i].Dispose();
                 }
                 effects.Clear();
                 effectsSorted.Clear();

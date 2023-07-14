@@ -5,7 +5,7 @@
     using HexaEngine.Mathematics;
     using System.Numerics;
 
-    public class Grid : Primitive<VertexPositionColor>
+    public class Grid : Primitive<VertexPositionColor, uint>
     {
         private const int width = 256, height = 256;
 
@@ -16,10 +16,10 @@
         {
         }
 
-        protected override (VertexBuffer<VertexPositionColor>, IndexBuffer?) InitializeMesh(IGraphicsDevice device)
+        protected override (VertexBuffer<VertexPositionColor>, IndexBuffer<uint>?) InitializeMesh(IGraphicsDevice device)
         {
             (VertexPositionColor[] vertices, uint[] indices) = GenerateGrid();
-            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer(device, indices, CpuAccessFlags.None));
+            return (new VertexBuffer<VertexPositionColor>(device, CpuAccessFlags.None, vertices), new IndexBuffer<uint>(device, indices, CpuAccessFlags.None));
         }
 
         public static (VertexPositionColor[], uint[]) GenerateGrid()

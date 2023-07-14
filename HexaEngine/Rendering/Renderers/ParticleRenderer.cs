@@ -33,7 +33,7 @@
         private readonly ConstantBuffer<SortDispatchInfo> sortDispatchInfoBuffer;
         private readonly ConstantBuffer<SimulationCBuffer> simulationBuffer;
 
-        private readonly IndexBuffer indexBuffer;
+        private readonly IndexBuffer<uint> indexBuffer;
 
         private readonly IComputePipeline particleInitDeadList;
         private readonly IComputePipeline particleReset;
@@ -125,14 +125,14 @@
         public unsafe ParticleRenderer(IGraphicsDevice device)
         {
             this.device = device;
-            deadListBuffer = new(device, MaxParticles, false, false, BufferUnorderedAccessViewFlags.Append);
-            particleBufferA = new(device, MaxParticles, false, false);
-            particleBufferB = new(device, MaxParticles, false, false);
-            viewSpacePositionsBuffer = new(device, MaxParticles, false, false);
-            aliveIndexBuffer = new(device, MaxParticles, false, false, BufferUnorderedAccessViewFlags.Counter);
+            deadListBuffer = new(device, MaxParticles, CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
+            particleBufferA = new(device, MaxParticles, CpuAccessFlags.None);
+            particleBufferB = new(device, MaxParticles, CpuAccessFlags.None);
+            viewSpacePositionsBuffer = new(device, MaxParticles, CpuAccessFlags.None);
+            aliveIndexBuffer = new(device, MaxParticles, CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Counter);
 
-            indirectRenderArgsBuffer = new(device, 1, false, false);
-            indirectSortArgsBuffer = new(device, 1, false, false);
+            indirectRenderArgsBuffer = new(device, 1, CpuAccessFlags.None);
+            indirectSortArgsBuffer = new(device, 1, CpuAccessFlags.None);
 
             deadListCountBuffer = new(device, CpuAccessFlags.None, true);
             activeListCountBuffer = new(device, CpuAccessFlags.None, true);
@@ -206,8 +206,8 @@
                 Rasterizer = RasterizerDescription.CullBack,
             });
 
-            linearClampSampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
-            linearWrapSampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
         }
 
         public unsafe void InitializeDeadList(IGraphicsContext context)

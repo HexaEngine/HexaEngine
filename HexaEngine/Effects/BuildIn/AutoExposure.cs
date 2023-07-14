@@ -25,7 +25,7 @@ namespace HexaEngine.Effects.BuildIn
         private UavTexture2D luma;
 
         public IShaderResourceView Input;
-        public IRenderTargetView Output;
+
         private bool enabled = true;
         private float minLogLuminance = -8;
         private float maxLogLuminance = 3;
@@ -166,7 +166,6 @@ namespace HexaEngine.Effects.BuildIn
 
         public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
-            Output = view;
         }
 
         public void SetInput(IShaderResourceView view, ITexture2D resource)

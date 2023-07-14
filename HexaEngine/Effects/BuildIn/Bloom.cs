@@ -1,10 +1,9 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
@@ -16,8 +15,8 @@ namespace HexaEngine.Effects.BuildIn
         private Quad quad;
         private IGraphicsPipeline downsample;
         private IGraphicsPipeline upsample;
-        private IBuffer downsampleCB;
-        private IBuffer upsampleCB;
+        private ConstantBuffer<ParamsDownsample> downsampleCB;
+        private ConstantBuffer<ParamsUpsample> upsampleCB;
         private ISamplerState sampler;
 
         private IRenderTargetView[] mipChainRTVs;
@@ -30,7 +29,7 @@ namespace HexaEngine.Effects.BuildIn
         private int width;
         private int height;
 
-        private IShaderResourceView Source;
+        private IShaderResourceView Input;
         private bool disposedValue;
         private int priority = 200;
 
@@ -79,10 +78,10 @@ namespace HexaEngine.Effects.BuildIn
             public Vector2 SrcResolution;
             public Vector2 Padd;
 
-            public ParamsDownsample(Vector2 srcResolution, Vector2 padd)
+            public ParamsDownsample(Vector2 srcResolution)
             {
                 SrcResolution = srcResolution;
-                Padd = padd;
+                Padd = default;
             }
         }
 
@@ -91,10 +90,10 @@ namespace HexaEngine.Effects.BuildIn
             public float FilterRadius;
             public Vector3 Padd;
 
-            public ParamsUpsample(float filterRadius, Vector3 padd)
+            public ParamsUpsample(float filterRadius)
             {
                 FilterRadius = filterRadius;
-                Padd = padd;
+                Padd = default;
             }
         }
 
@@ -105,10 +104,10 @@ namespace HexaEngine.Effects.BuildIn
         {
             disposedValue = false;
             quad = new(device);
-            downsampleCB = device.CreateBuffer(new ParamsDownsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
-            upsampleCB = device.CreateBuffer(new ParamsUpsample(), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write);
+            downsampleCB = new(device, CpuAccessFlags.Write);
+            upsampleCB = new(device, CpuAccessFlags.Write);
 
-            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             downsample = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -174,7 +173,7 @@ namespace HexaEngine.Effects.BuildIn
 
         public void SetInput(IShaderResourceView view, ITexture2D resource)
         {
-            Source = view;
+            Input = view;
         }
 
         public void Update(IGraphicsContext context)
@@ -182,8 +181,8 @@ namespace HexaEngine.Effects.BuildIn
             if (dirty)
             {
                 context.ClearRenderTargetView(mipChainRTVs[0], default);
-                context.Write(downsampleCB, new ParamsDownsample(new(width, height), default));
-                context.Write(upsampleCB, new ParamsUpsample(radius, default));
+                downsampleCB.Update(context, new ParamsDownsample(new(width, height)));
+                upsampleCB.Update(context, new ParamsUpsample(radius));
                 dirty = false;
             }
         }
@@ -198,7 +197,7 @@ namespace HexaEngine.Effects.BuildIn
                 }
                 else
                 {
-                    context.PSSetShaderResource(0, Source);
+                    context.PSSetShaderResource(0, Input);
                 }
 
                 context.PSSetConstantBuffer(0, downsampleCB);

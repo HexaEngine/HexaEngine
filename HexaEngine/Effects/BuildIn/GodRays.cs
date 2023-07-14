@@ -119,7 +119,7 @@
                 StencilRef = 0,
                 Topology = PrimitiveTopology.TriangleList
             }, macros);
-            sunSampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
+            sunSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             paramsSunBuffer = new(device, CpuAccessFlags.Write);
             paramsWorldBuffer = new(device, CpuAccessFlags.Write);
@@ -138,7 +138,7 @@
                 BlendFactor = default,
                 SampleMask = int.MaxValue
             }, macros);
-            sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
 

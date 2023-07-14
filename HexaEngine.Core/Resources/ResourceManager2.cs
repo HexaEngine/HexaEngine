@@ -233,7 +233,7 @@
             return AddResource(name, samplerState);
         }
 
-        public ResourceRef<ISamplerState> AddSamplerState(string name, SamplerDescription description)
+        public ResourceRef<ISamplerState> AddSamplerState(string name, SamplerStateDescription description)
         {
             lock (sharedResources)
             {
@@ -247,7 +247,7 @@
             return GetResource<ISamplerState>(name);
         }
 
-        public ResourceRefNotNull<ISamplerState> GetOrAddSamplerState(string name, SamplerDescription description)
+        public ResourceRefNotNull<ISamplerState> GetOrAddSamplerState(string name, SamplerStateDescription description)
         {
             if (TryGetResource<ISamplerState>(name, out var samplerState))
             {

@@ -4,10 +4,10 @@
     using HexaEngine.Core.Graphics.Buffers;
     using System;
 
-    public abstract class Primitive<T> : IPrimitive where T : unmanaged
+    public abstract class Primitive<Tvertex, Tindex> : IPrimitive where Tvertex : unmanaged where Tindex : unmanaged
     {
-        protected VertexBuffer<T> vertexBuffer;
-        protected IndexBuffer? indexBuffer;
+        protected VertexBuffer<Tvertex> vertexBuffer;
+        protected IndexBuffer<Tindex>? indexBuffer;
         private bool disposedValue;
 
         public Primitive(IGraphicsDevice device)
@@ -15,7 +15,7 @@
             (vertexBuffer, indexBuffer) = InitializeMesh(device);
         }
 
-        protected abstract (VertexBuffer<T>, IndexBuffer?) InitializeMesh(IGraphicsDevice device);
+        protected abstract (VertexBuffer<Tvertex>, IndexBuffer<Tindex>?) InitializeMesh(IGraphicsDevice device);
 
         public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline)
         {

@@ -16,7 +16,7 @@
         public HeightMap HeightMap;
         public Terrain Terrain;
         public VertexBuffer<TerrainVertex> VertexBuffer;
-        public IndexBuffer IndexBuffer;
+        public IndexBuffer<uint> IndexBuffer;
         public uint Stride;
         public BoundingBox BoundingBox;
         public Point2 ID;

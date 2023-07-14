@@ -678,7 +678,7 @@
             return result;
         }
 
-        public static Silk.NET.Direct3D11.SamplerDesc Convert(SamplerDescription description)
+        public static Silk.NET.Direct3D11.SamplerDesc Convert(SamplerStateDescription description)
         {
             Silk.NET.Direct3D11.SamplerDesc result = new()
             {

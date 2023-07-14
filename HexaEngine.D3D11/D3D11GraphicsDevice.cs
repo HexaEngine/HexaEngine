@@ -349,7 +349,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ISamplerState CreateSamplerState(SamplerDescription description)
+        public ISamplerState CreateSamplerState(SamplerStateDescription description)
         {
             ComPtr<ID3D11SamplerState> sampler;
             var desc = Helper.Convert(description);

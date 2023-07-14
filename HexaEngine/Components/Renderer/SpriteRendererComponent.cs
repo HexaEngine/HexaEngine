@@ -136,7 +136,7 @@
 
                 if (FileSystem.Exists(path))
                 {
-                    component.spriteAtlas = new(device, SamplerDescription.PointClamp, path);
+                    component.spriteAtlas = new(device, SamplerStateDescription.PointClamp, path);
                 }
             }, state);
         }

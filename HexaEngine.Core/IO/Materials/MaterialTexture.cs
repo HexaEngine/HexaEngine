@@ -68,7 +68,7 @@
             stream.WriteInt((int)Flags, endianness);
         }
 
-        public SamplerDescription GetSamplerDesc()
+        public SamplerStateDescription GetSamplerDesc()
         {
             return new(Filter.Anisotropic, Convert(U), Convert(V), TextureAddressMode.Clamp, 0, 16, ComparisonFunction.Never, default, 0, int.MaxValue);
         }

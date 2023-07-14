@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using System.Runtime.CompilerServices;
 
-    public unsafe class StructuredBuffer<T> : IBuffer where T : unmanaged
+    public unsafe class StructuredBuffer<T> : IStructuredBuffer<T>, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 128;
         private readonly IGraphicsDevice device;
@@ -43,10 +43,10 @@
             MemoryManager.Register(buffer);
         }
 
-        public StructuredBuffer(IGraphicsDevice device, int initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public StructuredBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-            description = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
+            description = new(sizeof(T) * (int)initialCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
                 description.Usage = Usage.Dynamic;
@@ -55,10 +55,10 @@
             {
                 description.Usage = Usage.Staging;
             }
-            capacity = (uint)initialCapacity;
+            capacity = initialCapacity;
             items = Alloc<T>(initialCapacity);
-            ZeroMemory(items, initialCapacity * sizeof(T));
-            buffer = device.CreateBuffer(items, (uint)initialCapacity, description);
+            ZeroMemory(items, (int)initialCapacity * sizeof(T));
+            buffer = device.CreateBuffer(items, initialCapacity, description);
             buffer.DebugName = dbgName;
             srv = device.CreateShaderResourceView(buffer);
             srv.DebugName = dbgName + ".SRV";
@@ -170,7 +170,7 @@
             isDirty = true;
         }
 
-        public void Remove(int index)
+        public void RemoveAt(int index)
         {
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);

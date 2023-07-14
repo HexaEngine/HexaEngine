@@ -6,18 +6,16 @@
 
     public class BrushMask : IDisposable
     {
-        private readonly IResource _resource;
+        private readonly Texture2D _resource;
         private readonly IShaderResourceView _shaderResourceView;
         private readonly ISamplerState _samplerState;
         private bool disposedValue;
 
         public BrushMask(IGraphicsDevice device, string path)
         {
-            var image = device.TextureLoader.LoadFormAssets(path);
-            _resource = image.CreateTexture2D(device, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
-            image.Dispose();
+            _resource = new(device, new TextureFileDescription(path));
             _shaderResourceView = device.CreateShaderResourceView(_resource);
-            _samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
+            _samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
         }
 
         public unsafe BrushMask(IGraphicsDevice device, Vector4[] pixels, int width, int height)
@@ -26,9 +24,9 @@
             *pData = Vector4.One;
             SubresourceData data = new(pData, width * sizeof(Vector4));
 
-            _resource = device.CreateTexture2D(Format.R32G32B32A32Float, width, height, 1, 1, new SubresourceData[] { data }, BindFlags.ShaderResource);
+            _resource = new(device, new Texture2DDescription(Format.R8G8B8A8UNorm, width, height, 1, 1, BindFlags.ShaderResource, Usage.Immutable), new SubresourceData[] { data });
             _shaderResourceView = device.CreateShaderResourceView(_resource);
-            _samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
+            _samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
 
             Free(pData);
         }

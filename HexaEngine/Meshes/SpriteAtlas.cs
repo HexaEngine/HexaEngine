@@ -8,7 +8,7 @@
         private readonly Texture2D texture;
         private readonly ISamplerState samplerState;
 
-        public SpriteAtlas(IGraphicsDevice device, SamplerDescription description, string path)
+        public SpriteAtlas(IGraphicsDevice device, SamplerStateDescription description, string path)
         {
             samplerState = device.CreateSamplerState(description);
             texture = new(device, new TextureFileDescription(path, TextureDimension.Texture2D, 0, Usage.Immutable));

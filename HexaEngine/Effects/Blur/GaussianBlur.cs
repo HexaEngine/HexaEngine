@@ -43,7 +43,7 @@
             });
 
             paramsBuffer = new(device, CpuAccessFlags.Write);
-            linearClampSampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
             intermediateTex = new(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             this.device = device;

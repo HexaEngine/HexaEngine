@@ -1,22 +1,39 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Mathematics;
-    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using static HexaEngine.Core.Utils;
 
+    public struct GBufferDescription
+    {
+        public int Width;
+        public int Height;
+        public int Count;
+        public Format[] Formats;
+
+        public GBufferDescription(int width, int height, int count, params Format[] formats)
+        {
+            Width = width;
+            Height = height;
+            Count = count;
+            Formats = formats;
+        }
+    }
+
     public unsafe class GBuffer : IDisposable
     {
+        private readonly string dbgName;
         private readonly IGraphicsDevice device;
         private readonly Format[] formats;
         private int width;
         private int height;
         private readonly uint count;
+        private readonly ITexture2D[] textures;
         private readonly IShaderResourceView[] srvs;
         private readonly IRenderTargetView[] rtvs;
-        private readonly unsafe void** pSRVs;
-        private readonly unsafe void** pRTVs;
+        private unsafe void** pSRVs;
+        private unsafe void** pRTVs;
         private bool disposedValue;
 
         public Format[] Formats => formats;
@@ -37,27 +54,57 @@
 
         public Viewport Viewport => new(Width, Height);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public GBuffer(IGraphicsDevice device, int width, int height, params Format[] formats)
+        public GBuffer(IGraphicsDevice device, GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
+            dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
             this.device = device;
-            this.formats = formats;
-            count = (uint)formats.Length;
-            this.width = width;
-            this.height = height;
+            formats = description.Formats;
+            count = (uint)description.Count;
+            width = description.Width;
+            height = description.Height;
+            textures = new ITexture2D[count];
             rtvs = new IRenderTargetView[formats.Length];
             srvs = new IShaderResourceView[formats.Length];
             pSRVs = AllocArray(Count);
             pRTVs = AllocArray(Count);
             for (int i = 0; i < Count; i++)
             {
-                ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-                SRVs[i] = device.CreateShaderResourceView(tex);
-                RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
-                PSRVs[i] = (void*)SRVs[i].NativePointer;
-                PRTVs[i] = (void*)RTVs[i].NativePointer;
-                MemoryManager.Register(tex);
-                tex.Dispose();
+                textures[i] = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+                srvs[i] = device.CreateShaderResourceView(textures[i]);
+                srvs[i].DebugName = name + ".SRV";
+                rtvs[i] = device.CreateRenderTargetView(textures[i], new(Width, Height));
+                rtvs[i].DebugName = name + ".RTV";
+                pSRVs[i] = (void*)srvs[i].NativePointer;
+                pRTVs[i] = (void*)rtvs[i].NativePointer;
+                MemoryManager.Register(textures[i]);
+            }
+        }
+
+        public GBuffer(IGraphicsDevice device, int width, int height, Format[] formats, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+            this.device = device;
+            this.formats = formats;
+            count = (uint)formats.Length;
+            this.width = width;
+            this.height = height;
+            textures = new ITexture2D[count];
+            rtvs = new IRenderTargetView[formats.Length];
+            srvs = new IShaderResourceView[formats.Length];
+            pSRVs = AllocArray(Count);
+            pRTVs = AllocArray(Count);
+            for (int i = 0; i < Count; i++)
+            {
+                textures[i] = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+                srvs[i] = device.CreateShaderResourceView(textures[i]);
+                srvs[i].DebugName = name + ".SRV";
+                rtvs[i] = device.CreateRenderTargetView(textures[i], new(Width, Height));
+                rtvs[i].DebugName = name + ".RTV";
+                pSRVs[i] = (void*)srvs[i].NativePointer;
+                pRTVs[i] = (void*)rtvs[i].NativePointer;
+                MemoryManager.Register(textures[i]);
             }
         }
 
@@ -65,8 +112,9 @@
         {
             for (int i = 0; i < Count; i++)
             {
-                RTVs[i].Dispose();
-                SRVs[i].Dispose();
+                MemoryManager.Unregister(textures[i]);
+                rtvs[i].Dispose();
+                srvs[i].Dispose();
             }
 
             this.width = width;
@@ -74,12 +122,14 @@
             for (int i = 0; i < Count; i++)
             {
                 ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-                SRVs[i] = device.CreateShaderResourceView(tex);
-                RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
-                PSRVs[i] = (void*)SRVs[i].NativePointer;
-                PRTVs[i] = (void*)RTVs[i].NativePointer;
+                var name = textures[i].DebugName = dbgName.Replace("GBuffer", $"GBuffer.{i}");
+                srvs[i] = device.CreateShaderResourceView(tex);
+                srvs[i].DebugName = name + ".SRV";
+                rtvs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
+                rtvs[i].DebugName = name + ".RTV";
+                pSRVs[i] = (void*)srvs[i].NativePointer;
+                pRTVs[i] = (void*)rtvs[i].NativePointer;
                 MemoryManager.Register(tex);
-                tex.Dispose();
             }
         }
 
@@ -89,12 +139,16 @@
             {
                 for (int i = 0; i < Count; i++)
                 {
-                    RTVs[i].Dispose();
-                    SRVs[i].Dispose();
+                    MemoryManager.Unregister(textures[i]);
+                    textures[i].Dispose();
+                    rtvs[i].Dispose();
+                    rtvs[i].Dispose();
                 }
 
-                Free(PSRVs);
-                Free(PRTVs);
+                Free(pRTVs);
+                Free(pSRVs);
+                pRTVs = null;
+                pSRVs = null;
 
                 disposedValue = true;
             }
