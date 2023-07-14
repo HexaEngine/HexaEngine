@@ -24,10 +24,10 @@
         public IndexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             items = Alloc<uint>(DefaultCapacity);
-            ZeroRange(items, DefaultCapacity);
+            ZeroMemoryT(items, (uint)DefaultCapacity);
             capacity = DefaultCapacity;
 
             description = new(sizeof(uint) * DefaultCapacity, BindFlags.IndexBuffer, Usage.Default, flags);
@@ -45,12 +45,13 @@
             }
 
             buffer = device.CreateBuffer(description);
+            MemoryManager.Register(buffer);
         }
 
         public IndexBuffer(IGraphicsDevice device, uint[] indices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = (uint)indices.Length;
             count = capacity;
@@ -77,12 +78,13 @@
 
             items = AllocCopy(indices);
             buffer = device.CreateBuffer(items, capacity, description);
+            MemoryManager.Register(buffer);
         }
 
         public IndexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"IndexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             this.capacity = capacity;
 
@@ -101,9 +103,10 @@
             }
 
             items = Alloc<uint>(capacity);
-            ZeroRange(items, capacity);
+            ZeroMemoryT(items, capacity);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -136,9 +139,11 @@
                 items = tmp;
                 capacity = value;
                 count = capacity < count ? capacity : count;
+                MemoryManager.Unregister(buffer);
                 buffer.Dispose();
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
             }
         }
 
@@ -264,6 +269,7 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
                 buffer?.Dispose();
                 capacity = 0;
                 count = 0;

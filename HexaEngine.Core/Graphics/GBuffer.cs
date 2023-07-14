@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Mathematics;
+    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using static HexaEngine.Core.Utils;
@@ -55,6 +56,7 @@
                 RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
                 PSRVs[i] = (void*)SRVs[i].NativePointer;
                 PRTVs[i] = (void*)RTVs[i].NativePointer;
+                MemoryManager.Register(tex);
                 tex.Dispose();
             }
         }
@@ -76,6 +78,7 @@
                 RTVs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
                 PSRVs[i] = (void*)SRVs[i].NativePointer;
                 PRTVs[i] = (void*)RTVs[i].NativePointer;
+                MemoryManager.Register(tex);
                 tex.Dispose();
             }
         }

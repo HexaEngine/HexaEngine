@@ -29,6 +29,16 @@
             ShadowMapIndex = 0;
         }
 
+        public LightData(PointLight light)
+        {
+            Type = (uint)light.LightType;
+            Color = light.Color * light.Intensity;
+            Position = new Vector4(light.Transform.GlobalPosition, 1);
+            Range = light.Range;
+            CastsShadows = light.ShadowMapEnable ? 1 : 0;
+            ShadowMapIndex = 0;
+        }
+
         public LightData(Spotlight light, Camera camera)
         {
             Type = (uint)light.LightType;

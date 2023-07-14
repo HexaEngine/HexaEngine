@@ -4,7 +4,9 @@
     using HexaEngine.SPIRVCross;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
+    using System.Text;
     using static Utils;
 
     public static unsafe partial class Program
@@ -80,58 +82,54 @@
             compiler.Release();
         }
 
-        private struct VP
-        {
-            public int ID;
-
-            public uint Flags;
-
-            public Vector2 Pos;
-
-            public Vector2 Size;
-
-            public Vector2 WorkPos;
-
-            public Vector2 WorkSize;
-
-            public float DpiScale;
-
-            public int ParentViewportId;
-
-            public unsafe void* DrawData;
-
-            public unsafe void* RendererUserData;
-
-            public unsafe void* PlatformUserData;
-
-            public unsafe void* PlatformHandle;
-
-            public unsafe void* PlatformHandleRaw;
-
-            public byte PlatformWindowCreated;
-
-            public byte PlatformRequestMove;
-
-            public byte PlatformRequestResize;
-
-            public byte PlatformRequestClose;
-        }
-
-        [UnmanagedCallersOnly(CallConvs = new Type[] { typeof(CallConvCdecl) })]
-        private static Vector2 Test(VP* dd)
-        {
-            return dd->Pos;
-        }
-
         public static void Main()
         {
-            delegate* unmanaged[Cdecl]<VP*, Vector2> func = &Test;
-            VP* vp = Alloc<VP>();
-            Zero(vp);
-            vp->ID = 0;
-            vp->Flags = 0;
-            vp->Pos = new Vector2(0, 0);
-            vp->Pos = func(vp);
+            string text = File.ReadAllText("FileName.txt");
+
+            string[] words = text.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            StringBuilder sb = new();
+            for (int i = 0; i < words.Length; i++)
+            {
+                sb.AppendLine($@"""{words[i]}"",");
+            }
+
+            string text2 = File.ReadAllText("FileName2.txt");
+
+            string[] words2 = text2.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            for (int i = 0; i < words2.Length; i++)
+            {
+                for (int j = 1; j < 5; j++)
+                {
+                    if (j > 1)
+                        sb.AppendLine($@"""{words2[i]}{j}"",");
+                    for (int ii = 1; ii < 5; ii++)
+                    {
+                        sb.AppendLine($@"""{words2[i]}{j}x{ii}"",");
+                    }
+                }
+            }
+
+            string text3 = File.ReadAllText("FileName3.txt");
+
+            string[] words3 = text3.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            for (int i = 0; i < words3.Length; i++)
+            {
+                sb.AppendLine($@"""{words3[i]}"",");
+            }
+
+            string text4 = File.ReadAllText("FileName4.txt");
+
+            string[] words4 = text4.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+            for (int i = 0; i < words4.Length; i++)
+            {
+                sb.AppendLine($@"""{words4[i]}"",");
+            }
+
+            File.WriteAllText("FileName.txt", sb.ToString());
         }
     }
 }

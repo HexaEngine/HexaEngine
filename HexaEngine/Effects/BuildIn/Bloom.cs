@@ -130,8 +130,8 @@ namespace HexaEngine.Effects.BuildIn
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1, Format.R16G16B16A16Float)).Value.RenderTargetView;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.ShaderResourceView;
+                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentWidth, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
+                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
@@ -155,8 +155,8 @@ namespace HexaEngine.Effects.BuildIn
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", TextureDescription.CreateTexture2DWithRTV(currentWidth, currentHeight, 1, Format.R16G16B16A16Float)).Value.RenderTargetView;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.ShaderResourceView;
+                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", new Texture2DDescription(Format.R16G16B16A16Float, currentWidth, currentWidth, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
+                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
                 currentWidth /= 2;
                 currentHeight /= 2;
             }

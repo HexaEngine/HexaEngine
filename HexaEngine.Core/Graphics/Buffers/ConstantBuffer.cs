@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics.Buffers
 {
+    using BepuPhysics.Trees;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -20,7 +21,7 @@
         /// <param name="accessFlags">The access flags.</param>
         private ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, uint length, string filename, int lineNumber)
         {
-            dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"ConstantBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
 
@@ -28,7 +29,7 @@
             {
                 count = length;
                 items = Alloc<T>(length);
-                ZeroRange(items, length);
+                ZeroMemoryT(items, length);
             }
 
             description.Usage = accessFlags switch
@@ -51,6 +52,7 @@
         {
             buffer = device.CreateBuffer(items, length, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -72,6 +74,7 @@
                 buffer = device.CreateBuffer(src, count, description);
                 buffer.DebugName = dbgName;
             }
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -92,6 +95,7 @@
 
             buffer = device.CreateBuffer(src, count, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -104,6 +108,7 @@
         {
             buffer = device.CreateBuffer(items, 1, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -121,6 +126,7 @@
 
             buffer = device.CreateBuffer<T>(default, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -194,10 +200,11 @@
             ResizeArray(&result, count, length);
             items = result;
             count = length;
-
+            MemoryManager.Unregister(buffer);
             buffer.Dispose();
             buffer = device.CreateBuffer(items, 1, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public void Update(IGraphicsContext context)
@@ -223,6 +230,7 @@
 
         public void Dispose()
         {
+            MemoryManager.Unregister(buffer);
             count = 0;
             if (items != null)
             {

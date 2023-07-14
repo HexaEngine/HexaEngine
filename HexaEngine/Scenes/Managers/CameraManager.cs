@@ -16,9 +16,8 @@
         private static Vector3 sc = new(10, 0, 0);
         private static bool first = true;
         private static CameraEditorDimension dimension;
-        public const float DegToRadFactor = 0.0174532925f;
         public const float Speed = 10F;
-        public const float AngluarSpeed = 20F;
+        public const float AngularSpeed = 20F;
 
         public static Vector3 Center { get => center; set => center = value; }
 
@@ -85,7 +84,7 @@
 
                         // Rotate the camera up and down
                         // Prevent the camera from turning upside down (1.5f = approx. Pi / 2)
-                        sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta * 2, -MathF.PI / 2, MathF.PI / 2);
+                        sc.Z = Math.Clamp(sc.Z + delta.Y * Time.Delta * 2, -float.Pi / 2, float.Pi / 2);
 
                         first = false;
 
@@ -105,7 +104,7 @@
 
                     if (delta.X != 0 | delta.Y != 0 || first)
                     {
-                        var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngluarSpeed;
+                        var re = new Vector3(delta.X, delta.Y, 0) * Time.Delta * AngularSpeed;
                         camera.Transform.Rotation += re;
                         if (camera.Transform.Rotation.Y < 270 & camera.Transform.Rotation.Y > 180)
                         {
@@ -119,7 +118,7 @@
 
                     if (Keyboard.IsDown(Key.W))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, camera.Transform.Rotation.Y * DegToRadFactor, 0f);
+                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), camera.Transform.Rotation.Y.ToRad(), 0f);
                         if (Keyboard.IsDown(Key.LShift))
                         {
                             camera.Transform.Position += Vector3.Transform(Vector3.UnitZ, rotation) * Speed * 2 * Time.Delta;
@@ -131,7 +130,7 @@
                     }
                     if (Keyboard.IsDown(Key.S))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
+                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
                         if (Keyboard.IsDown(Key.LShift))
                         {
                             camera.Transform.Position += Vector3.Transform(-Vector3.UnitZ, rotation) * Speed * 2 * Time.Delta;
@@ -143,7 +142,7 @@
                     }
                     if (Keyboard.IsDown(Key.A))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
+                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
                         if (Keyboard.IsDown(Key.LShift))
                         {
                             camera.Transform.Position += Vector3.Transform(-Vector3.UnitX, rotation) * Speed * 2 * Time.Delta;
@@ -155,7 +154,7 @@
                     }
                     if (Keyboard.IsDown(Key.D))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
+                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
                         if (Keyboard.IsDown(Key.LShift))
                         {
                             camera.Transform.Position += Vector3.Transform(Vector3.UnitX, rotation) * Speed * 2 * Time.Delta;
@@ -167,7 +166,7 @@
                     }
                     if (Keyboard.IsDown(Key.Space))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
+                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
                         if (Keyboard.IsDown(Key.LShift))
                         {
                             camera.Transform.Position += Vector3.Transform(Vector3.UnitY, rotation) * Speed * 2 * Time.Delta;
@@ -179,7 +178,7 @@
                     }
                     if (Keyboard.IsDown(Key.C))
                     {
-                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X * DegToRadFactor, 0, 0f);
+                        var rotation = Matrix4x4.CreateFromYawPitchRoll(camera.Transform.Rotation.X.ToRad(), 0, 0f);
                         if (Keyboard.IsDown(Key.LShift))
                         {
                             camera.Transform.Position += Vector3.Transform(-Vector3.UnitY, rotation) * Speed * 2 * Time.Delta;

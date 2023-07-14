@@ -29,6 +29,8 @@
         {
             this.id = id;
             joystick = sdl.JoystickOpen(id);
+            if (joystick == null)
+                SdlCheckError();
 
             var axisCount = sdl.JoystickNumAxes(joystick);
             for (int i = 0; i < axisCount; i++)
@@ -62,6 +64,7 @@
             }
 
             var guid = sdl.JoystickGetGUID(joystick);
+            SdlCheckError();
             var buffer = Alloc<byte>(33);
             sdl.JoystickGetGUIDString(guid, buffer, 33);
             var size = StringSizeNullTerminated(buffer);
@@ -72,7 +75,16 @@
 
         public int Id => id;
 
-        public string Name => sdl.JoystickNameS(joystick);
+        public string Name
+        {
+            get
+            {
+                var name = sdl.JoystickNameS(joystick);
+                if (name == null)
+                    SdlCheckError();
+                return name;
+            }
+        }
 
         public ushort Vendor => sdl.JoystickGetVendor(joystick);
 

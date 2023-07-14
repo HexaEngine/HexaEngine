@@ -22,7 +22,7 @@
 
         public StructuredBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"StructuredBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -40,11 +40,12 @@
             srv = device.CreateShaderResourceView(buffer);
             srv.DebugName = dbgName + ".SRV";
             this.device = device;
+            MemoryManager.Register(buffer);
         }
 
         public StructuredBuffer(IGraphicsDevice device, int initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"StructuredBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -62,6 +63,7 @@
             srv = device.CreateShaderResourceView(buffer);
             srv.DebugName = dbgName + ".SRV";
             this.device = device;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -97,9 +99,11 @@
                 capacity = value;
                 count = capacity < count ? capacity : count;
                 srv.Dispose();
+                MemoryManager.Unregister(buffer);
                 buffer.Dispose();
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
                 srv = device.CreateShaderResourceView(buffer);
                 srv.DebugName = dbgName + ".SRV";
             }
@@ -188,6 +192,7 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
                 srv.Dispose();
                 buffer.Dispose();
                 Free(items);

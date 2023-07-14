@@ -21,7 +21,7 @@
 
         public UavTexture2D(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, bool isSRV, bool isRTV, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"RWTexture2D: {filename}, Line:{lineNumber}";
+            dbgName = $"RWTexture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.format = format;
             this.width = width;
             this.height = height;
@@ -56,6 +56,7 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public ResourceDimension Dimension => ResourceDimension.Texture2D;
@@ -113,9 +114,14 @@
                 description.BindFlags |= BindFlags.ShaderResource;
             if (isRTV)
                 description.BindFlags |= BindFlags.RenderTarget;
-
+            texture.Dispose();
+            uav?.Dispose();
+            srv?.Dispose();
+            rtv?.Dispose();
+            MemoryManager.Unregister(texture);
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
 
             if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
             {

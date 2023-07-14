@@ -1,0 +1,4 @@
+    float, int, uint, bool,
+    min10float, min16float,
+    min12int, min16int,
+    min16uint,

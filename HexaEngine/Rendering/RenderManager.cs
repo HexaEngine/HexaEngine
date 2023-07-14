@@ -219,7 +219,7 @@
         {
             for (int i = 0; i < renderers.Count; i++)
             {
-                renderers[i].Destory();
+                renderers[i].Destroy();
             }
 
             renderers.Clear();

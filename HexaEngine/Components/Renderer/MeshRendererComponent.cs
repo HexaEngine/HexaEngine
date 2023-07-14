@@ -69,7 +69,7 @@
             UpdateModel();
         }
 
-        public void Destory()
+        public void Destroy()
         {
             renderer.Dispose();
             model?.Dispose();

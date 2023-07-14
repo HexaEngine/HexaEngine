@@ -5,9 +5,9 @@
 
     public interface ILightProbeComponent : IComponent
     {
-        public Texture? DiffuseTex { get; }
+        public Texture2D? DiffuseTex { get; }
 
-        public Texture? SpecularTex { get; }
+        public Texture2D? SpecularTex { get; }
 
         public bool IsEnabled { get; }
 

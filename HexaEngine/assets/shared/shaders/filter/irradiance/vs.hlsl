@@ -1,22 +1,18 @@
-cbuffer MatrixBuffer : register(b0)
+cbuffer mvp
 {
-	matrix worldMatrix;
-	matrix viewMatrix;
-	matrix projectionMatrix;
+    matrix viewProj;
 };
 
 struct VSOut
 {
-	float4 Pos : SV_POSITION;
-	float3 WorldPos : TEXCOORD0;
+    float4 Pos : SV_Position;
+    float3 WorldPos : TEXCOORD;
 };
 
-VSOut main(float3 aPos : POSITION)
+VSOut main(float3 pos : POSITION)
 {
-	VSOut outp;
-	outp.WorldPos = aPos;
-	outp.Pos = mul(float4(aPos, 1), worldMatrix);
-	outp.Pos = mul(outp.Pos, viewMatrix);
-	outp.Pos = mul(outp.Pos, projectionMatrix);
-	return outp;
+    VSOut output;
+    output.WorldPos = pos;
+    output.Pos = mul(float4(pos, 1), viewProj);
+    return output;
 }

@@ -18,12 +18,13 @@ namespace HexaEngine.Lights
         private int freeBlockCounts = 0;
         private bool disposedValue;
 
-        private const int size = unchecked(IResource.MaximumTexture2DSize);
+        private const int size = unchecked(8192);
         private const int maxLayers = 8;
 
         public ShadowAtlas(IGraphicsDevice device)
         {
             texture = new(device, size, size, 1, Format.D32Float);
+            texture.DebugName = "Shadow Atlas";
 
             layers = Alloc<Layer>(maxLayers);
 

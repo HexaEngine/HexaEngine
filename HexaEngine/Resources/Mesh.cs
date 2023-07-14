@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;

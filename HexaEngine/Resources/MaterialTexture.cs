@@ -4,14 +4,16 @@
 
     public class MaterialTexture : IDisposable
     {
+        public Texture2D Texture;
         public IShaderResourceView ShaderResourceView;
         public ISamplerState Sampler;
         public Core.IO.Materials.MaterialTexture Desc;
         private bool disposedValue;
 
-        public MaterialTexture(IShaderResourceView srv, ISamplerState sampler, Core.IO.Materials.MaterialTexture desc)
+        public MaterialTexture(Texture2D texture, ISamplerState sampler, Core.IO.Materials.MaterialTexture desc)
         {
-            ShaderResourceView = srv;
+            Texture = texture;
+            ShaderResourceView = texture.SRV;
             Sampler = sampler;
             Desc = desc;
         }
@@ -20,6 +22,7 @@
         {
             if (!disposedValue)
             {
+                Texture.Dispose();
                 ShaderResourceView?.Dispose();
                 Sampler?.Dispose();
                 disposedValue = true;

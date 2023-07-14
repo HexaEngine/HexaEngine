@@ -430,11 +430,9 @@
                 textures.TryAdd(fullname, texture);
             }
 
-            var tex = device.TextureLoader.LoadTexture2D(fullname, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
-            var srv = device.CreateShaderResourceView(tex);
+            var tex = new Texture2D(device, new TextureFileDescription(fullname));
             var sampler = device.CreateSamplerState(desc.GetSamplerDesc());
-            texture.EndLoad(new(srv, sampler, desc));
-            tex.Dispose();
+            texture.EndLoad(new(tex, sampler, desc));
 
             return texture;
         }

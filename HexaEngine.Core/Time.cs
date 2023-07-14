@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core
 {
-    using HexaEngine.Core.Debugging;
     using System;
     using System.Diagnostics;
 
@@ -10,18 +9,16 @@
         private static float fixedTime;
         private static float cumulativeFrameTime;
 
-        // Properties
         public static float Delta { get; private set; }
 
         public static float CumulativeFrameTime { get => cumulativeFrameTime; }
 
         public static int FixedUpdateRate { get; set; } = 3;
 
-        public static float FixedUpdatePerSecond => FixedUpdateRate / 1000F;
+        public static float FixedUpdateDelta => FixedUpdateRate / 1000F;
 
         public static event EventHandler? FixedUpdate;
 
-        // Public Methods
         public static void Initialize()
         {
             last = Stopwatch.GetTimestamp();
@@ -41,12 +38,12 @@
 
             if (deltaTime == 0 || deltaTime < 0)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Delta time cannot be 0 or less than 0");
             }
 
-            while (fixedTime > FixedUpdatePerSecond)
+            while (fixedTime > FixedUpdateDelta)
             {
-                fixedTime -= FixedUpdatePerSecond;
+                fixedTime -= FixedUpdateDelta;
                 FixedUpdate?.Invoke(null, EventArgs.Empty);
             }
         }

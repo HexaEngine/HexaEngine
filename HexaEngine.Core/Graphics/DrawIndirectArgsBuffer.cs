@@ -6,11 +6,12 @@
     public unsafe class DrawIndirectArgsBuffer<T> : IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 64;
+        private readonly string dbgName;
         private readonly IGraphicsDevice device;
 
-        private IBuffer buffer;
-        private string dbgName;
         private BufferDescription description;
+
+        private IBuffer buffer;
 
         private T* items;
         private uint count;
@@ -21,7 +22,7 @@
 
         public DrawIndirectArgsBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -38,16 +39,17 @@
             {
                 capacity = DefaultCapacity;
                 items = Alloc<T>(capacity);
-                ZeroMemory(items, (uint)(capacity * sizeof(T)));
+                ZeroMemoryT(items, capacity);
             }
 
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public DrawIndirectArgsBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -63,16 +65,17 @@
             {
                 capacity = initialCapacity;
                 items = Alloc<T>(capacity);
-                ZeroMemory(items, (uint)(capacity * sizeof(T)));
+                ZeroMemoryT(items, capacity);
             }
 
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public DrawIndirectArgsBuffer(IGraphicsDevice device, T initialData, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -96,11 +99,12 @@
                 buffer = device.CreateBuffer(&initialData, 1, description);
             }
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public DrawIndirectArgsBuffer(IGraphicsDevice device, T* initialData, uint count, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"CB: {filename}, Line:{lineNumber}";
+            dbgName = $"DrawIndirectArgsBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -123,6 +127,7 @@
                 buffer = device.CreateBuffer(initialData, count, description);
             }
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -170,9 +175,11 @@
                 capacity = value;
                 count = capacity < count ? capacity : count;
 
+                MemoryManager.Unregister(buffer);
                 buffer.Dispose();
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
             }
         }
 
@@ -252,6 +259,7 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
                 if (items != null)
                 {
                     Free(items);

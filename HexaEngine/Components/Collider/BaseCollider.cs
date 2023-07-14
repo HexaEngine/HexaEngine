@@ -113,7 +113,7 @@
             CreateBody();
         }
 
-        public virtual void Destory()
+        public virtual void Destroy()
         {
             DestroyBody();
         }

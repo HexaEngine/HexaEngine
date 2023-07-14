@@ -5,26 +5,26 @@
 
     public struct ConstantBuffer
     {
-        public int Slot;
+        public uint Slot;
         public string Name;
         public List<ConstantBufferDef> Defs = new();
 
-        public ConstantBuffer(int slot, string name) : this()
+        public ConstantBuffer(uint slot, string name) : this()
         {
             Slot = slot;
             Name = name;
         }
 
-        public void Build(StringBuilder builder)
+        public void Build(CodeWriter builder)
         {
-            builder.AppendLine($"cbuffer {Name} : register(b{Slot.ToString(CultureInfo.InvariantCulture)})");
-            builder.AppendLine("{");
-            for (int i = 0; i < Defs.Count; i++)
+            using (builder.PushBlockSemicolon($"cbuffer {Name} : register(b{Slot.ToString(CultureInfo.InvariantCulture)})"))
             {
-                ConstantBufferDef def = Defs[i];
-                builder.AppendLine($"{def.Type.GetTypeName()} {def.Name};");
+                for (int i = 0; i < Defs.Count; i++)
+                {
+                    ConstantBufferDef def = Defs[i];
+                    builder.WriteLine($"{def.Type.GetTypeName()} {def.Name};");
+                }
             }
-            builder.AppendLine("};");
         }
     }
 }

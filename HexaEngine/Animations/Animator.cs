@@ -31,7 +31,7 @@
             renderer = gameObject.GetComponent<SkinnedMeshRendererComponent>();
         }
 
-        public void Destory()
+        public void Destroy()
         {
             Stop();
             _cache.Clear();

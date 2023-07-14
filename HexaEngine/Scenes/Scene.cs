@@ -370,13 +370,6 @@
             semaphore.Release();
         }
 
-        public void Merge(GameObject node)
-        {
-            semaphore.Wait();
-            root.Merge(node);
-            semaphore.Release();
-        }
-
         public void BuildReferences()
         {
             root.BuildReferences();

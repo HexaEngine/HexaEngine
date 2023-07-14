@@ -18,7 +18,7 @@
             return (vertexBuffer, indexBuffer);
         }
 
-        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 20, uint LongLines = 20)
+        public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer indexBuffer, uint LatLines = 32, uint LongLines = 32)
         {
             float radius = 1;
             float x, y, z;                              // vertex position

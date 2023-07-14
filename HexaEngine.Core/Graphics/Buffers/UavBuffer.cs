@@ -34,7 +34,7 @@
             this.canRead = canRead;
             this.uavflags = uavflags;
             this.srvFlags = srvFlags;
-            dbgName = $"UavBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"UavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.length = length;
             bufferDescription = new(stride * (int)length, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None, 0);
             buffer = device.CreateBuffer(bufferDescription);
@@ -48,14 +48,17 @@
                     copyDescription.Usage = Usage.Staging;
                     copyDescription.CPUAccessFlags = CpuAccessFlags.RW;
                 }
+
                 copyBuffer = device.CreateBuffer(copyDescription);
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
+                MemoryManager.Register(copyBuffer);
             }
 
             uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, (int)length, uavflags));
             uav.DebugName = dbgName + ".UAV";
             srv = device.CreateShaderResourceView(buffer, new(buffer, format, 0, (int)length, srvFlags));
             srv.DebugName = dbgName + ".SRV";
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -143,14 +146,18 @@
                 uav.Dispose();
                 buffer.Dispose();
                 copyBuffer?.Dispose();
+                MemoryManager.Unregister(buffer);
                 bufferDescription.ByteWidth = stride * (int)length;
                 buffer = device.CreateBuffer(bufferDescription);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
                 if (canWrite)
                 {
+                    MemoryManager.Unregister(copyBuffer);
                     copyDescription.ByteWidth = stride * (int)value;
                     copyBuffer = device.CreateBuffer(copyDescription);
                     copyBuffer.DebugName = dbgName + ".CopyBuffer";
+                    MemoryManager.Register(copyBuffer);
                 }
 
                 uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, (int)length, uavflags));
@@ -256,6 +263,8 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
+                MemoryManager.Unregister(copyBuffer);
                 srv.Dispose();
                 uav.Dispose();
                 buffer.Dispose();
@@ -329,7 +338,7 @@
                 miscFlag = ResourceMiscFlag.BufferAllowRawViews;
             }
 
-            dbgName = $"UavBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"UavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             capacity = (uint)initialCapacity;
 
             items = Alloc<T>(initialCapacity);
@@ -338,6 +347,7 @@
             bufferDescription = new(sizeof(T) * initialCapacity, bindFlags, Usage.Default, CpuAccessFlags.None, miscFlag, 0);
             buffer = device.CreateBuffer(items, (uint)initialCapacity, bufferDescription);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
 
             // Ensures that no additional memory is used when not needed,
             // because the internal buffer is only required if reads or writes can happen.
@@ -358,12 +368,14 @@
                 }
                 copyBuffer = device.CreateBuffer(copyDescription);
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
+                MemoryManager.Register(copyBuffer);
             }
             else if (canRead)
             {
                 copyDescription = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read, ResourceMiscFlag.None, 0);
                 copyBuffer = device.CreateBuffer(copyDescription);
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
+                MemoryManager.Register(copyBuffer);
             }
 
             uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, initialCapacity, uavFlags));
@@ -511,17 +523,21 @@
                 uav.Dispose();
                 buffer.Dispose();
 
+                MemoryManager.Unregister(buffer);
                 bufferDescription.ByteWidth = sizeof(T) * (int)capacity;
                 buffer = device.CreateBuffer(items, capacity, bufferDescription);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
 
                 // canWrite/canRead check here because if no read or write access is specified we don't need that buffer
                 if (canWrite || canRead)
                 {
+                    MemoryManager.Unregister(copyBuffer);
                     copyBuffer?.Dispose();
                     copyDescription.ByteWidth = sizeof(T) * (int)value;
                     copyBuffer = device.CreateBuffer(copyDescription);
                     copyBuffer.DebugName = dbgName + ".CopyBuffer";
+                    MemoryManager.Register(copyBuffer);
                 }
 
                 uav = device.CreateUnorderedAccessView(buffer, new(buffer, format, 0, (int)capacity, uavFlags));
@@ -730,6 +746,8 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
+                MemoryManager.Unregister(copyBuffer);
                 if (items != null)
                 {
                     Free(items);

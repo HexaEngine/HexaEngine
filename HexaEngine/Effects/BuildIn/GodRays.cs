@@ -143,7 +143,7 @@
             paramsBuffer = new(device, CpuAccessFlags.Write);
 
             sunsprite = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/sun/sunsprite.png"));
-            sunBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None);
+            sunBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             noiseTex = new(device, Format.R32Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             Application.MainWindow.Dispatcher.InvokeBlocking(() =>

@@ -1,20 +1,18 @@
-﻿using HexaEngine.Core;
-
-namespace HexaEngine.PostFx
+﻿namespace HexaEngine.PostFx
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using System.Diagnostics.CodeAnalysis;
-    using Texture = Core.Graphics.Texture;
 
     public class PostProcessingManager : IDisposable
     {
         private ShaderMacro[] macros;
         private readonly List<IPostFx> effectsSorted = new();
         private readonly List<IPostFx> effects = new();
-        private readonly List<Texture> buffers = new();
+        private readonly List<Texture2D> buffers = new();
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
@@ -32,7 +30,7 @@ namespace HexaEngine.PostFx
         private readonly Quad quad;
         private readonly IGraphicsPipeline copy;
 
-        public ResourceRef<Texture> Input;
+        public ResourceRef<Texture2D> Input;
         public ResourceRef<IRenderTargetView> Output;
         public ResourceRef<ITexture2D> OutputTex;
         public Viewport Viewport;
@@ -45,7 +43,7 @@ namespace HexaEngine.PostFx
             this.device = device;
             for (int i = 0; i < bufferCount; i++)
             {
-                buffers.Add(new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float)));
+                buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW));
             }
 
             deferredContext = device.CreateDeferredContext();
@@ -76,7 +74,7 @@ namespace HexaEngine.PostFx
             isDirty = true;
         }
 
-        private void InputValueChanged(object? sender, Texture? e)
+        private void InputValueChanged(object? sender, Texture2D? e)
         {
             isDirty = true;
         }
@@ -293,7 +291,7 @@ namespace HexaEngine.PostFx
             for (int i = 0; i < buffers.Count; i++)
             {
                 buffers[i].Dispose();
-                buffers[i] = new(device, TextureDescription.CreateTexture2D(width, height, 1, Format.R16G16B16A16Float));
+                buffers[i] = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             }
 
             isDirty = true;
@@ -369,7 +367,7 @@ namespace HexaEngine.PostFx
             if (!enabled || isReloading)
             {
                 context.SetRenderTarget(Output.Value, null);
-                context.PSSetShaderResource(0, Input.Value?.ShaderResourceView);
+                context.PSSetShaderResource(0, Input.Value?.SRV);
                 context.SetViewport(Viewport);
                 quad.DrawAuto(context, copy);
                 context.ClearState();
@@ -435,7 +433,7 @@ namespace HexaEngine.PostFx
                 {
                     context.ClearState();
                     swapIndex = 0;
-                    IShaderResourceView previous = Input.Value.ShaderResourceView;
+                    IShaderResourceView previous = Input.Value.SRV;
                     for (int i = 0; i < effectsSorted.Count; i++)
                     {
                         var effect = effectsSorted[i];
@@ -447,7 +445,7 @@ namespace HexaEngine.PostFx
                         if ((effect.Flags & PostFxFlags.NoInput) == 0)
                         {
 #pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
-                            effect.SetInput(previous, (ITexture2D)Input.Value.Resource);
+                            effect.SetInput(previous, Input.Value);
 #pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
                         }
 
@@ -457,7 +455,7 @@ namespace HexaEngine.PostFx
 
                             if (i != effectsSorted.Count - 1)
                             {
-                                effect.SetOutput(buffer.RenderTargetView, (ITexture2D)buffer.Resource, buffers[swapIndex].Viewport);
+                                effect.SetOutput(buffer.RTV, buffer, buffers[swapIndex].Viewport);
                             }
                             else
                             {
@@ -472,7 +470,7 @@ namespace HexaEngine.PostFx
 
                             if (!skipSwap)
                             {
-                                previous = buffer.ShaderResourceView;
+                                previous = buffer.SRV;
                                 swapIndex++;
                                 if (swapIndex == buffers.Count)
                                 {

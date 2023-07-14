@@ -50,8 +50,12 @@
         {
             sdl = Application.sdl;
             controller = sdl.GameControllerOpen(id);
+            if (controller == null)
+                SdlCheckError();
             joystick = sdl.GameControllerGetJoystick(controller);
-            this.id = sdl.JoystickInstanceID(joystick);
+            if (controller == null)
+                SdlCheckError();
+            this.id = sdl.JoystickInstanceID(joystick).SdlThrowIfNeg();
             var axes = Enum.GetValues<GamepadAxis>();
             for (int i = 0; i < axes.Length; i++)
             {
@@ -87,7 +91,10 @@
             var mappingCount = sdl.GameControllerNumMappings();
             for (int i = 0; i < mappingCount; i++)
             {
-                mappings.Add(sdl.GameControllerMappingForIndexS(i));
+                var mapping = sdl.GameControllerMappingForIndexS(i);
+                if (mapping == null)
+                    SdlCheckError();
+                mappings.Add(mapping);
             }
 
             if (sdl.JoystickIsHaptic(joystick) == 1)
@@ -96,6 +103,7 @@
             }
 
             var guid = sdl.JoystickGetGUID(joystick);
+            SdlCheckError();
             var buffer = Alloc<byte>(33);
             sdl.JoystickGetGUIDString(guid, buffer, 33);
             var size = StringSizeNullTerminated(buffer);
@@ -116,7 +124,16 @@
 
         public int Id => id;
 
-        public string Name => sdl.GameControllerNameS(controller);
+        public string Name
+        {
+            get
+            {
+                var name = sdl.GameControllerNameS(controller);
+                if (name == null)
+                    SdlCheckError();
+                return name;
+            }
+        }
 
         public ushort Vendor => sdl.GameControllerGetVendor(controller);
 
@@ -140,7 +157,16 @@
 
         public int PlayerIndex { get => sdl.GameControllerGetPlayerIndex(controller); set => sdl.GameControllerSetPlayerIndex(controller, value); }
 
-        public string Mapping => sdl.GameControllerMappingS(controller);
+        public string Mapping
+        {
+            get
+            {
+                var mapping = sdl.GameControllerMappingS(controller); ;
+                if (mapping == null)
+                    SdlCheckError();
+                return mapping;
+            }
+        }
 
         public IReadOnlyDictionary<GamepadAxis, short> AxisStates => axisStates;
 
@@ -209,7 +235,7 @@
 
         public void AddMapping(string mapping)
         {
-            sdl.GameControllerAddMapping(mapping);
+            sdl.GameControllerAddMapping(mapping).SdlThrowIfNeg();
             mappings.Add(mapping);
         }
 
@@ -291,6 +317,7 @@
                 sensor.Value?.Dispose();
             }
             sdl.GameControllerClose(controller);
+            SdlCheckError();
         }
     }
 }

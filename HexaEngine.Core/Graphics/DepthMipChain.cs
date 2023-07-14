@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using BepuPhysics.Trees;
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using ImGuiNET;
@@ -52,6 +53,7 @@
             SRV = device.CreateShaderResourceView(texture);
             RTV = device.CreateRenderTargetView(texture, new(width, height));
             samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
+            MemoryManager.Register(texture);
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -97,10 +99,11 @@
             texture.Dispose();
 
             Mips = GetNumMipLevels(width, height);
-
+            MemoryManager.Unregister(texture);
             texture = device.CreateTexture2D(Format.R32Float, width, height, 1, Mips, null, BindFlags.ShaderResource | BindFlags.RenderTarget | BindFlags.UnorderedAccess);
             SRV = device.CreateShaderResourceView(texture);
             RTV = device.CreateRenderTargetView(texture, new(width, height));
+            MemoryManager.Register(texture);
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -166,6 +169,7 @@
 
         public void Dispose()
         {
+            MemoryManager.Unregister(texture);
             quad.Dispose();
             downsample.Dispose();
             cbDownsample.Dispose();

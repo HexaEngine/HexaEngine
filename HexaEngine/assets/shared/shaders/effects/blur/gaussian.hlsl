@@ -21,8 +21,8 @@ static const float WEIGHTS[6] =
 };
 
 // blurDirection is:
-//     vec2(1,0) for horizontal pass
-//     vec2(0,1) for vertical pass
+//     float2(1,0) for horizontal pass
+//     float2(0,1) for vertical pass
 // The sourceTexture to be blurred MUST use linear filtering!
 // pixelCoord is in [0..1]
 float4 blur(Texture2D sourceTexture, SamplerState state, float2 blurDirection, float2 pixelCoord, float2 textureDimensions)

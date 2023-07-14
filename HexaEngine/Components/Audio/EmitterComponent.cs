@@ -26,7 +26,7 @@ namespace HexaEngine.Components.Audio
             emitter.Direction = gameObject.Transform.Forward;
         }
 
-        public void Destory()
+        public void Destroy()
         {
             emitter = null;
         }

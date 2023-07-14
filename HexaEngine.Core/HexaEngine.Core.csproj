@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE;TRACELEAK</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">

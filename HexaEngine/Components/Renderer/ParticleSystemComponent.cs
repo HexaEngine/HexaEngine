@@ -109,7 +109,7 @@
             await UpdateTextureAsync();
         }
 
-        public void Destory()
+        public void Destroy()
         {
             renderer.Dispose();
             particleTexture?.Dispose();

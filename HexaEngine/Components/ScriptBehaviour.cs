@@ -160,7 +160,7 @@
             }
         }
 
-        public void Destory()
+        public void Destroy()
         {
             if (Application.InDesignMode || instance == null)
             {

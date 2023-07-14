@@ -1,13 +1,13 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
-    using HexaEngine.Mathematics;
-    using ImGuiNET;
-    using ImNodesNET;
+    using HexaEngine.ImGuiNET;
+    using HexaEngine.ImNodesNET;
+    using Newtonsoft.Json;
     using System.Collections.Generic;
 
     public class Node
     {
-        protected NodeEditor? editor;
+        private NodeEditor? editor;
         private int id;
 
         private bool isEditing;
@@ -17,23 +17,26 @@
         public readonly bool Removable = true;
         public readonly bool IsStatic;
         public string Name;
+        public string OriginalName;
 
-        [JsonIgnore]
-        public uint TitleColor = MathUtil.Pack(0xff, 0xc3, 0x30, 0x69);// 0x6930c3ff;
+        public uint TitleColor = 0x6930c3ff;
 
-        [JsonIgnore]
-        public uint TitleHoveredColor = MathUtil.Pack(0xff, 0xce, 0x60, 0x5e); //0x5e60ceff;
+        public uint TitleHoveredColor = 0x5e60ceff;
 
-        [JsonIgnore]
-        public uint TitleSelectedColor = MathUtil.Pack(0xff, 0xb8, 0x00, 0x74); //0x7400b8ff;
+        public uint TitleSelectedColor = 0x7400b8ff;
 
         public Node(int id, string name, bool removable, bool isStatic)
         {
             this.id = id;
             Name = name;
+            OriginalName = name;
             Removable = removable;
             IsStatic = isStatic;
         }
+
+        public event EventHandler<Pin>? PinValueChanging;
+
+        public event EventHandler<Pin>? PinValueChanged;
 
         public event EventHandler<Pin>? PinAdded;
 
@@ -48,9 +51,9 @@
         [JsonIgnore]
         public List<Link> Links => links;
 
+        [JsonIgnore]
         public List<Pin> Pins => pins;
 
-        [JsonIgnore]
         public bool IsEditing
         {
             get => isEditing;
@@ -60,21 +63,30 @@
             }
         }
 
-        [JsonIgnore]
         public bool IsHovered { get; set; }
 
         public virtual void Initialize(NodeEditor editor)
         {
             this.editor = editor;
             if (id == 0)
-            {
                 id = editor.GetUniqueId();
-            }
 
             for (int i = 0; i < pins.Count; i++)
             {
                 pins[i].Initialize(editor, this);
+                pins[i].ValueChanging += ValueChanging;
+                pins[i].ValueChanged += ValueChanged;
             }
+        }
+
+        private void ValueChanged(object? sender, Pin e)
+        {
+            PinValueChanged?.Invoke(this, e);
+        }
+
+        private void ValueChanging(object? sender, Pin e)
+        {
+            PinValueChanging?.Invoke(this, e);
         }
 
         public Pin GetInput(int id)
@@ -103,9 +115,7 @@
             {
                 var pin = pins[i];
                 if (pin.Id == id)
-                {
                     return pin;
-                }
             }
             return null;
         }
@@ -116,9 +126,7 @@
             {
                 var pin = pins[i];
                 if (pin.Name == name)
-                {
                     return pin;
-                }
             }
             return null;
         }
@@ -129,9 +137,7 @@
             {
                 var pin = pins[i];
                 if (pin.Name == name)
-                {
                     return true;
-                }
             }
             return false;
         }
@@ -142,9 +148,7 @@
             {
                 Link link = pin.Links[i];
                 if (link.OutputNode == other)
-                {
                     return link;
-                }
             }
             return null;
         }
@@ -155,9 +159,7 @@
             {
                 Link link = pin.Links[i];
                 if (link.InputNode == other)
-                {
                     return link;
-                }
             }
             return null;
         }
@@ -183,19 +185,13 @@
                 int index = pins.IndexOf(old);
                 old.Destroy();
                 if (editor != null)
-                {
                     pin.Initialize(editor, this);
-                }
-
                 pins[index] = pin;
             }
             else
             {
                 if (editor != null)
-                {
                     pin.Initialize(editor, this);
-                }
-
                 pins.Add(pin);
                 PinAdded?.Invoke(this, pin);
             }
@@ -214,10 +210,7 @@
             else
             {
                 if (editor != null)
-                {
                     pin.Initialize(editor, this);
-                }
-
                 pins.Add(pin);
                 PinAdded?.Invoke(this, pin);
             }
@@ -246,13 +239,11 @@
 
         public virtual void Destroy()
         {
-            if (editor == null)
-            {
-                return;
-            }
-
+            if (editor == null) return;
             for (int i = 0; i < pins.Count; i++)
             {
+                pins[i].ValueChanged -= ValueChanged;
+                pins[i].ValueChanging -= ValueChanging;
                 pins[i].Destroy();
             }
             editor.RemoveNode(this);
@@ -281,9 +272,14 @@
             {
                 ImGui.Text(Name);
                 ImGui.SameLine();
-                if (ImGui.SmallButton("Edit")) // TODO: Replace with icon
+                if (ImGui.SmallButton($"Edit##{id}")) // TODO: Replace with icon
                 {
                     isEditing = true;
+                }
+                if (ImGui.BeginItemTooltip())
+                {
+                    ImGui.Text(OriginalName);
+                    ImGui.EndTooltip();
                 }
             }
 

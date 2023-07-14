@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes
 {
-    using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
+    using HexaEngine.Editor.MaterialEditor.Generator;
     using ImGuiNET;
     using ImNodesNET;
+    using Newtonsoft.Json;
 
     public class PackNode : Node, ITypedNode
     {
@@ -17,14 +18,15 @@
         [JsonIgnore]
         public FloatPin[] InPins = new FloatPin[4];
 
-#pragma warning disable CS8618 // Non-nullable field 'Out' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
-        public PackNode(int id, bool removable, bool isStatic) : base(id, "Pack", removable, isStatic)
-#pragma warning restore CS8618 // Non-nullable field 'Out' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        public PackNode(int id, bool removable, bool isStatic) : base(id, "Components to Vector", removable, isStatic)
         {
             modes = new PinType[] { PinType.Float, PinType.Float2, PinType.Float3, PinType.Float4 };
             names = modes.Select(x => x.ToString()).ToArray();
         }
+
+        public PinType Mode { get => mode; set => mode = value; }
+
+        public int Item { get => item; set => item = value; }
 
         public override void Initialize(NodeEditor editor)
         {

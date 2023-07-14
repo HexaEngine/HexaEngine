@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
-    using ImNodesNET;
+    using HexaEngine.ImNodesNET;
+    using Newtonsoft.Json;
 
     public class Link
     {
@@ -10,11 +11,10 @@
         private readonly Pin input;
 
         private NodeEditor? editor;
-        private int id;
+        private readonly int id;
         private int outputId;
         private int inputId;
 
-        [JsonConstructor]
         public Link(int id, Node outputNode, Pin output, Node inputNode, Pin input)
         {
             this.id = id;
@@ -26,15 +26,25 @@
             inputId = input.Id;
         }
 
+        [JsonIgnore]
         public int Id => id;
 
+        [JsonIgnore]
         public Node OutputNode => outputNode;
 
+        [JsonIgnore]
         public Pin Output => output;
 
+        [JsonIgnore]
         public Node InputNode => inputNode;
 
+        [JsonIgnore]
         public Pin Input => input;
+
+        public LinkId GetId()
+        {
+            return new() { Id = id, IdInputNode = InputNode.Id, IdOutputNode = OutputNode.Id, IdInput = Input.Id, IdOutput = Output.Id };
+        }
 
         public void Draw()
         {
@@ -43,11 +53,7 @@
 
         public virtual void Destroy()
         {
-            if (editor == null)
-            {
-                return;
-            }
-
+            if (editor == null) return;
             editor.RemoveLink(this);
             OutputNode.RemoveLink(this);
             Output.RemoveLink(this);

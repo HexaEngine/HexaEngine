@@ -81,7 +81,7 @@
             await UpdateAtlasAsync(device);
         }
 
-        public void Destory()
+        public void Destroy()
         {
             renderer.Dispose();
             spriteAtlas.Dispose();

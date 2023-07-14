@@ -8,6 +8,7 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        Application.Boot();
         EditorWindow window = new() { Flags = RendererFlags.All, Title = "Editor" };
         Platform.Init(window, GraphicsBackend.D3D11, true);
         Application.Run(window);

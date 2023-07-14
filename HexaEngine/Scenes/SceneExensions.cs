@@ -114,7 +114,7 @@ namespace HexaEngine.Scenes
                 {
                     if (destroy)
                     {
-                        t.Destory();
+                        t.Destroy();
                     }
 
                     list.Remove(t);

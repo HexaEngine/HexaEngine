@@ -84,7 +84,7 @@ namespace HexaEngine.Scenes.Managers
             var scriptList = scripts[ScriptFlags.Destroy];
             for (int i = 0; i < scriptList.Count; i++)
             {
-                scriptList[i].Destory();
+                scriptList[i].Destroy();
             }
         }
     }

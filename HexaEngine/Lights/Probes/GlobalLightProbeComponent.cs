@@ -9,16 +9,16 @@
     public class GlobalLightProbeComponent : ILightProbeComponent
     {
         protected GameObject gameObject;
-        protected Texture? diffuseTex;
-        protected Texture? specularTex;
+        protected Texture2D? diffuseTex;
+        protected Texture2D? specularTex;
         protected bool isEnabled;
         protected bool isVaild;
 
         [JsonIgnore]
-        public Texture? DiffuseTex => diffuseTex;
+        public Texture2D? DiffuseTex => diffuseTex;
 
         [JsonIgnore]
-        public Texture? SpecularTex => specularTex;
+        public Texture2D? SpecularTex => specularTex;
 
         [JsonIgnore]
         public bool IsEnabled => gameObject?.IsEnabled ?? false;
@@ -43,7 +43,7 @@
             this.gameObject = gameObject;
         }
 
-        public virtual void Destory()
+        public virtual void Destroy()
         {
         }
     }

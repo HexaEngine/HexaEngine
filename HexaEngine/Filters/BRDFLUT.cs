@@ -6,15 +6,28 @@ namespace HexaEngine.Filters
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Core.Graphics.Structs;
+    using Silk.NET.DirectStorage;
+    using Silk.NET.Maths;
     using System.Threading.Tasks;
 
-    public class BRDFLUT : IEffect
+    public class BRDFLUT
     {
         private Quad quad;
         private IGraphicsPipeline pipeline;
 
         public IRenderTargetView Target;
         private bool disposedValue;
+
+        public BRDFLUT(IGraphicsDevice device, bool multiscatter, bool cloth)
+        {
+            quad = new Quad(device);
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "effects/dfg/vs.hlsl",
+                PixelShader = "effects/dfg/ps.hlsl"
+            }, new ShaderMacro[2] { new("MULTISCATTER", multiscatter ? "1" : "0"), new("CLOTH", cloth ? "1" : "0") });
+        }
 
         public void Draw(IGraphicsContext context)
         {
@@ -23,28 +36,25 @@ namespace HexaEngine.Filters
                 return;
             }
 
+            int width = (int)Target.Viewport.Width;
+            int height = (int)Target.Viewport.Height;
+            int xTileSize = width / 16;
+            int yTileSize = height / 16;
+
             context.ClearRenderTargetView(Target, default);
             context.SetRenderTarget(Target, null);
             context.SetViewport(Target.Viewport);
             quad.DrawAuto(context, pipeline);
-        }
-
-        public void BeginResize()
-        {
-        }
-
-        public void Resize(int width, int height)
-        {
-        }
-
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
-        {
-            quad = new Quad(device);
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            /*
+            for (int x = 0; x < width; x += xTileSize)
             {
-                VertexShader = "effects/brdf/vs.hlsl",
-                PixelShader = "effects/brdf/brdf.hlsl"
-            });
+                for (int y = 0; y < height; y += yTileSize)
+                {
+                    //context.SetScissorRect(x, y, x + xTileSize, y + yTileSize);
+                    quad.DrawAuto(context, pipeline);
+                    context.Flush();
+                }
+            }*/
         }
 
         protected virtual void Dispose(bool disposing)

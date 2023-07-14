@@ -14,7 +14,7 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
-    public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter
+    public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter, IDisposable
     {
         internal readonly DXGI DXGI;
         internal readonly INativeWindowSource source;
@@ -24,6 +24,8 @@
         internal ComPtr<IDXGIAdapter4> IDXGIAdapter;
         internal ComPtr<IDXGIDebug> IDXGIDebug;
         internal ComPtr<IDXGIInfoQueue> IDXGIInfoQueue;
+
+        private bool disposedValue;
 
         private readonly Guid DXGI_DEBUG_ALL = new(0xe48ae283, 0xda80, 0x490b, 0x87, 0xe6, 0x43, 0xe9, 0xa9, 0xcf, 0xda, 0x8);
         private readonly Guid DXGI_DEBUG_DX = new(0x35cdd7fc, 0x13b2, 0x421d, 0xa5, 0xd7, 0x7e, 0x44, 0x51, 0x28, 0x7d, 0x64);
@@ -293,6 +295,33 @@
             }
 
             throw new NotSupportedException();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                IDXGIInfoQueue.Release();
+                IDXGIDebug.Release();
+                IDXGIAdapter.Release();
+                IDXGIFactory.Release();
+                DXGI.Dispose();
+
+                disposedValue = true;
+            }
+        }
+
+        ~DXGIAdapterD3D11()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

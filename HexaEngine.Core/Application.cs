@@ -89,6 +89,26 @@
             };
         }
 
+        public static void Boot()
+        {
+            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
+            sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
+            sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
+            sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
+            sdl.SetHint(Sdl.HintJoystickRawinput, "0");
+            sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
+            SdlCheckError();
+
+            Keyboard.Init();
+            SdlCheckError();
+            Mouse.Init();
+            SdlCheckError();
+            Gamepads.Init();
+            SdlCheckError();
+            TouchDevices.Init();
+            SdlCheckError();
+        }
+
         public static void Run(IRenderWindow mainWindow)
         {
             Application.mainWindow = mainWindow;
@@ -102,18 +122,6 @@
 
         private static void Init()
         {
-            sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
-            sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
-            sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
-            sdl.SetHint(Sdl.HintJoystickHidapiPS4Rumble, "1");
-            sdl.SetHint(Sdl.HintJoystickRawinput, "0");
-            sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
-
-            Keyboard.Init();
-            Mouse.Init();
-            Gamepads.Init();
-            TouchDevices.Init();
-
             graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
             audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
@@ -160,6 +168,10 @@
                 sdl.PumpEvents();
                 while (sdl.PollEvent(&evnt) == (int)SdlBool.True)
                 {
+                    for (int i = 0; i < hooks.Count; i++)
+                    {
+                        hooks[i](evnt);
+                    }
                     EventType type = (EventType)evnt.Type;
                     switch (type)
                     {
@@ -468,11 +480,6 @@
                         case EventType.Lastevent:
                             break;
                     }
-
-                    for (int i = 0; i < hooks.Count; i++)
-                    {
-                        hooks[i](evnt);
-                    }
                 }
 
                 for (int i = 0; i < windows.Count; i++)
@@ -492,7 +499,11 @@
                 windows[i].Uninitialize();
             }
 
+            ((SdlWindow)mainWindow).DestroyWindow();
+
+            SdlCheckError();
             sdl.Quit();
+            //SdlCheckError();
         }
     }
 }

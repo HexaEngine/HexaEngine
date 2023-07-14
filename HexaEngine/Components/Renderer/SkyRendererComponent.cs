@@ -62,7 +62,7 @@
             await UpdateEnvAsync(device);
         }
 
-        public unsafe void Destory()
+        public unsafe void Destroy()
         {
             renderer.Dispose();
             skybox?.Dispose();

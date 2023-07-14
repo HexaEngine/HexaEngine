@@ -40,7 +40,7 @@
         private IComputePipeline clusterCulling;
 
         private ConstantBuffer<ProbeBufferParams> probeParamsBuffer;
-        private ConstantBuffer<LightBufferParams> lightParamsBuffer;
+        private ConstantBuffer<LightParams> lightParamsBuffer;
         private ConstantBuffer<ForwardLightBufferParams> forwardLightParamsBuffer;
         private ConstantBuffer<ClusterSizes> clusterSizesBuffer;
 
@@ -89,8 +89,8 @@
         public ResourceRef<IDepthStencilView> DSV;
         public ResourceRef<GBuffer> GBuffers;
         public ResourceRef<IShaderResourceView> Depth;
-        public ResourceRef<Texture> LUT;
-        public ResourceRef<Texture> AO;
+        public ResourceRef<Texture2D> LUT;
+        public ResourceRef<Texture2D> AO;
         public ResourceRef<IBuffer> Camera;
         public ResourceRef<IBuffer> Weather;
 
@@ -399,7 +399,7 @@
         public Task EndResize(int width, int height)
         {
 #nullable disable
-            Output = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float)).Value.RenderTargetView;
+            Output = ResourceManager2.Shared.UpdateTexture("LightBuffer", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
             DSV = ResourceManager2.Shared.GetDepthStencilView("GBuffer.DepthStencil");
             Depth = ResourceManager2.Shared.GetShaderResourceView("GBuffer.Depth");
 
@@ -430,8 +430,8 @@
                 deferredSrvs[4] = indirectSrvs[4] = deferredClusterdSrvs[4] = (void*)Depth.Value.NativePointer;
             }
 
-            forwardSrvs[8] = forwardClusterdSrvs[8] = indirectSrvs[5] = deferredSrvs[5] = deferredClusterdSrvs[5] = (void*)AO.Value?.ShaderResourceView.NativePointer;
-            forwardSrvs[9] = forwardClusterdSrvs[9] = indirectSrvs[9] = (void*)LUT.Value?.ShaderResourceView.NativePointer;
+            forwardSrvs[8] = forwardClusterdSrvs[8] = indirectSrvs[5] = deferredSrvs[5] = deferredClusterdSrvs[5] = (void*)AO.Value?.SRV.NativePointer;
+            forwardSrvs[9] = forwardClusterdSrvs[9] = indirectSrvs[9] = (void*)LUT.Value?.SRV.NativePointer;
             forwardSrvs[10] = indirectSrvs[10] = (void*)GlobalProbes.SRV.NativePointer;
 
             forwardSrvs[11] = forwardClusterdSrvs[11] = deferredSrvs[6] = deferredClusterdSrvs[6] = (void*)LightBuffer.SRV.NativePointer;
@@ -472,8 +472,8 @@
                             continue;
                         }
                         GlobalProbes.Add((GlobalLightProbeComponent)probe);
-                        forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.ShaderResourceView?.NativePointer ?? 0);
-                        forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.ShaderResourceView?.NativePointer ?? 0);
+                        forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.SRV?.NativePointer ?? 0);
+                        forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.SRV?.NativePointer ?? 0);
                         globalProbesCount++;
                         break;
 

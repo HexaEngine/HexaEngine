@@ -13,7 +13,7 @@
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
 
-        private ResourceRef<Texture> Velocity;
+        private ResourceRef<Texture2D> Velocity;
 
         public IRenderTargetView Output;
         public IShaderResourceView Input;
@@ -90,7 +90,7 @@
 
             nint* srvs = stackalloc nint[2];
             srvs[0] = Input.NativePointer;
-            srvs[1] = Velocity.Value.ShaderResourceView.NativePointer;
+            srvs[1] = Velocity.Value.SRV.NativePointer;
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);

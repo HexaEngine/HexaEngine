@@ -29,7 +29,7 @@
         private ResourceRef<IBuffer> Camera;
         private IRenderTargetView Output;
         private IShaderResourceView Input;
-        private ResourceRef<Texture> Bloom;
+        private ResourceRef<Texture2D> Bloom;
         private ResourceRef<IShaderResourceView> Depth;
         private ResourceRef<IShaderResourceView> Luma;
         private Texture2D LUT;
@@ -174,7 +174,7 @@
             paramBuffer = new(device, new ComposeParams(bloomStrength), CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearClamp);
 
-            Bloom = ResourceManager2.Shared.GetResource<Texture>("Bloom");
+            Bloom = ResourceManager2.Shared.GetTexture("Bloom");
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Position");
             Luma = ResourceManager2.Shared.GetResource<IShaderResourceView>("Luma");
             Camera = ResourceManager2.Shared.GetResource<IBuffer>("CBCamera");
@@ -188,7 +188,7 @@
 
         private unsafe void OnUpdate(object? sender, IDisposable? e)
         {
-            srvs[1] = (void*)(Bloom.Value?.ShaderResourceView?.NativePointer ?? 0);
+            srvs[1] = (void*)(Bloom.Value?.SRV?.NativePointer ?? 0);
             srvs[3] = (void*)(Depth.Value?.NativePointer ?? 0);
             srvs[4] = (void*)(Luma.Value?.NativePointer ?? 0);
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
@@ -199,7 +199,7 @@
         {
             srvs = AllocArray(6);
             srvs[0] = (void*)(Input?.NativePointer ?? 0);
-            srvs[1] = (void*)(Bloom.Value?.ShaderResourceView?.NativePointer ?? 0);
+            srvs[1] = (void*)(Bloom.Value?.SRV?.NativePointer ?? 0);
             srvs[2] = null;
             srvs[3] = (void*)(Depth.Value?.NativePointer ?? 0);
             srvs[4] = (void*)(Luma.Value?.NativePointer ?? 0);

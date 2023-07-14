@@ -258,7 +258,7 @@ namespace HexaEngine.Rendering.Renderers
 
         private DepthStencil depthStencil;
         private DepthStencil depthStencil2;
-        private ResourceRef<Texture> lightBuffer;
+        private ResourceRef<Texture2D> lightBuffer;
         private IDepthStencilView dsv;
         private GBuffer gbuffer;
 
@@ -268,7 +268,7 @@ namespace HexaEngine.Rendering.Renderers
 
         private BRDFLUT brdfLUT;
 
-        private Texture brdflut;
+        private Texture2D brdflut;
 
         private ConfigKey configKey;
         private float renderResolution;
@@ -359,7 +359,7 @@ namespace HexaEngine.Rendering.Renderers
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.DepthCopy", depthStencil2.SRV);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.DepthChain", hizBuffer.SRV);
             ResourceManager2.Shared.AddDepthStencilView("GBuffer.DepthStencil", depthStencil.DSV);
-            lightBuffer = ResourceManager2.Shared.AddTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float));
+            lightBuffer = ResourceManager2.Shared.AddTexture("LightBuffer", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             postProcessing = new(device, width, height);
 
@@ -378,13 +378,12 @@ namespace HexaEngine.Rendering.Renderers
 
             ssao = new HBAO();
 
-            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", TextureDescription.CreateTexture2DWithRTV(512, 512, 1, Format.R16G16Float)).Value;
+            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", new Texture2DDescription(Format.R16G16B16A16Float, 128, 128, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value;
 
             window.Dispatcher.InvokeBlocking(() =>
             {
-                brdfLUT = new();
-                brdfLUT.Initialize(device, 0, 0).Wait();
-                brdfLUT.Target = brdflut.RenderTargetView;
+                brdfLUT = new(device, false, true);
+                brdfLUT.Target = brdflut.RTV;
                 brdfLUT.Draw(context);
                 context.ClearState();
                 brdfLUT.Dispose();
@@ -554,7 +553,7 @@ namespace HexaEngine.Rendering.Renderers
             depthStencil2 = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
 
-            lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R16G16B16A16Float));
+            lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[1]);
             ResourceManager2.Shared.AddShaderResourceView("GBuffer.Misc", gbuffer.SRVs[2]);
@@ -685,7 +684,7 @@ namespace HexaEngine.Rendering.Renderers
                 context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             }
 
-            context.ClearRenderTargetView(lightBuffer.Value.RenderTargetView, default);
+            context.ClearRenderTargetView(lightBuffer.Value.RTV, default);
 #if PROFILE
             profiler.Begin("ShadowMaps");
             device.Profiler.Begin(context, "ShadowMaps");
@@ -722,14 +721,14 @@ namespace HexaEngine.Rendering.Renderers
 
             depthStencil.CopyTo(context, depthStencil2);
 
-            context.SetRenderTarget(lightBuffer.Value.RenderTargetView, dsv);
-            context.SetViewport(lightBuffer.Value.RenderTargetView.Viewport);
+            context.SetRenderTarget(lightBuffer.Value.RTV, dsv);
+            context.SetViewport(lightBuffer.Value.RTV.Viewport);
             renderers.Draw(context, RenderQueueIndex.Background, RenderPath.Default);
             context.ClearState();
 
             if (!forceForward)
             {
-                context.SetRenderTarget(lightBuffer.Value.RenderTargetView, default);
+                context.SetRenderTarget(lightBuffer.Value.RTV, default);
                 context.SetViewport(gbuffer.Viewport);
 
                 lights.DeferredPass(context);
@@ -816,16 +815,7 @@ namespace HexaEngine.Rendering.Renderers
                         ImGui.Image(srv.NativePointer, size);
                     }
                 }
-                if (resource.Value is Texture2D texture2d && texture2d.SRV != null)
-                {
-                    size.X = MathF.Min(texture2d.Width, size.X);
-                    size.Y = MathF.Min(texture2d.Height, size.Y);
-                    if (ImGui.CollapsingHeader(resource.Name))
-                    {
-                        ImGui.Image(texture2d.SRV.NativePointer, size);
-                    }
-                }
-                if (resource.Value is Texture texture && texture.ShaderResourceView != null)
+                if (resource.Value is Texture2D texture && texture.SRV != null)
                 {
                     float aspect = texture.Viewport.Height / texture.Viewport.Width;
                     size.X = MathF.Min(texture.Viewport.Width, size.X);
@@ -838,7 +828,7 @@ namespace HexaEngine.Rendering.Renderers
 
                     if (ImGui.CollapsingHeader(resource.Name))
                     {
-                        ImGui.Image(texture.ShaderResourceView.NativePointer, size);
+                        ImGui.Image(texture.SRV.NativePointer, size);
                     }
                 }
             }

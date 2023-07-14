@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Core.Resources;
     using HexaEngine.PostFx;
+    using HexaEngine.Core.Graphics.Buffers;
 
     public class TAA : IPostFx, IAntialiasing
     {
@@ -12,15 +13,22 @@
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
 
-        private ResourceRef<Texture> Velocity;
-        private ResourceRef<Texture> Previous;
+        private ConstantBuffer<TAAParams> paramsBuffer;
+
+        private ResourceRef<Texture2D> Velocity;
+        private ResourceRef<Texture2D> Previous;
 
         public IRenderTargetView Output;
         public IShaderResourceView Input;
-        public ITexture2D InputTex;
+        public ITexture2D OutputTex;
         public Viewport Viewport;
         private int priority = 400;
         private bool enabled = true;
+
+        private float alpha = 0.1f;
+        private float colorBoxSigma = 1f;
+        private bool antiFlicker = true;
+        private bool dirty = true;
 
         public event Action<bool>? OnEnabledChanged;
 
@@ -48,6 +56,48 @@
             }
         }
 
+        public float Alpha
+        {
+            get => alpha; set
+            {
+                alpha = value;
+                dirty = true;
+            }
+        }
+
+        public float ColorBoxSigma
+        {
+            get => colorBoxSigma; set
+            {
+                colorBoxSigma = value;
+                dirty = true;
+            }
+        }
+
+        public bool AntiFlicker
+        {
+            get => antiFlicker; set
+            {
+                antiFlicker = value;
+                dirty = true;
+            }
+        }
+
+        private struct TAAParams
+        {
+            public float Alpha;
+            public float ColorBoxSigma;
+            public int AntiFlicker;
+            public float padd;
+
+            public TAAParams(float alpha, float colorBoxSigma, bool antiFlicker)
+            {
+                Alpha = alpha;
+                ColorBoxSigma = colorBoxSigma;
+                AntiFlicker = antiFlicker ? 1 : 0;
+            }
+        }
+
         public async Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
         {
             quad = new Quad(device);
@@ -56,10 +106,12 @@
                 VertexShader = "effects/taa/vs.hlsl",
                 PixelShader = "effects/taa/ps.hlsl"
             }, macros);
+
+            paramsBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerDescription.LinearWrap);
 
             Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
-            Previous = ResourceManager2.Shared.AddTexture("Previous", TextureDescription.CreateTexture2D(width, height, 1, Format.R16G16B16A16Float));
+            Previous = ResourceManager2.Shared.AddTexture("Previous", new(Format.R16G16B16A16Float, width, height, 1, 1));
 
             Viewport = new(width, height);
         }
@@ -72,7 +124,7 @@
         {
             Output = view;
             Viewport = viewport;
-            InputTex = resource;
+            OutputTex = resource;
         }
 
         public void SetInput(IShaderResourceView view, ITexture2D resource)
@@ -82,6 +134,11 @@
 
         public void Update(IGraphicsContext context)
         {
+            if (dirty)
+            {
+                paramsBuffer.Update(context, new(alpha, colorBoxSigma, antiFlicker));
+                dirty = false;
+            }
         }
 
         public unsafe void Draw(IGraphicsContext context)
@@ -93,19 +150,21 @@
 
             nint* srvs = stackalloc nint[3];
             srvs[0] = Input.NativePointer;
-            srvs[1] = Previous.Value.ShaderResourceView.NativePointer;
-            srvs[2] = Velocity.Value.ShaderResourceView.NativePointer;
+            srvs[1] = Velocity.Value.SRV.NativePointer;
+            srvs[2] = Previous.Value.SRV.NativePointer;
             context.ClearRenderTargetView(Output, default);
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);
             context.PSSetShaderResources(0, 3, (void**)srvs);
+            context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, sampler);
             quad.DrawAuto(context, pipeline);
             context.PSSetSampler(0, null);
+            context.PSSetConstantBuffer(0, null);
             ZeroMemory(srvs, sizeof(nint) * 3);
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, default);
-            context.CopyResource(Previous.Value.Resource, InputTex);
+            context.CopyResource(Previous.Value, OutputTex);
         }
 
         public void Dispose()
@@ -113,6 +172,7 @@
             quad.Dispose();
             pipeline.Dispose();
             sampler.Dispose();
+            paramsBuffer.Dispose();
 
             GC.SuppressFinalize(this);
         }

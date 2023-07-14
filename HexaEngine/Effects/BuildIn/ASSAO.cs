@@ -27,7 +27,7 @@ namespace HexaEngine.Effects.BuildIn
 
         private ISamplerState samplerLinear;
 
-        public ResourceRef<Texture> Output;
+        public ResourceRef<Texture2D> Output;
         public ResourceRef<IBuffer> Camera;
         public ResourceRef<IShaderResourceView> Depth;
         public ResourceRef<IShaderResourceView> Normal;
@@ -140,7 +140,7 @@ namespace HexaEngine.Effects.BuildIn
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
-            Output = ResourceManager2.Shared.AddTexture("AOBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float));
+            Output = ResourceManager2.Shared.AddTexture("AOBuffer", new(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             quad = new Quad(device);
 
@@ -189,7 +189,7 @@ namespace HexaEngine.Effects.BuildIn
 
         public void Resize(int width, int height)
         {
-            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", TextureDescription.CreateTexture2DWithRTV(width / 2, height / 2, 1, Format.R32Float));
+            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 

@@ -34,7 +34,7 @@
             listener.Orientation = new(gameObject.Transform.Forward, gameObject.Transform.Up);
         }
 
-        public void Destory()
+        public void Destroy()
         {
             listener.Dispose();
         }

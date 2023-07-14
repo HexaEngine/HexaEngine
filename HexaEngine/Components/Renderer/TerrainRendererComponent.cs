@@ -52,7 +52,7 @@
             renderer.Initialize(grid);
         }
 
-        public void Destory()
+        public void Destroy()
         {
             Volatile.Write(ref drawable, false);
             for (int i = 0; i < grid.Count; i++)

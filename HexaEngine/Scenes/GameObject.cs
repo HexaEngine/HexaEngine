@@ -250,7 +250,7 @@
         {
             if (initialized)
             {
-                component.Destory();
+                component.Destroy();
             }
 
             components.Remove(component);
@@ -279,7 +279,7 @@
             Device = null;
             for (int i = 0; i < components.Count; i++)
             {
-                components[i].Destory();
+                components[i].Destroy();
             }
             for (int i = 0; i < children.Count; i++)
             {

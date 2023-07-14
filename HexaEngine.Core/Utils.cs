@@ -3,19 +3,131 @@
     using HexaEngine.Core.Unsafes;
     using System;
     using System.Collections.Concurrent;
-    using System.Drawing;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class Utils
     {
+        public static void Assert(bool condition)
+        {
+#if DEBUG
+            Trace.Assert(condition);
+#endif
+        }
+
+        public static void Assert(bool condition, string message)
+        {
+#if DEBUG
+            Trace.Assert(condition, message);
+#endif
+        }
+
+        public static void ThrowIf(bool condition, string message)
+        {
+            if (condition)
+            {
+                throw new(message);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ThrowIf(this Exception? exception)
+        {
+#if DEBUG
+            if (exception != null)
+            {
+                throw exception;
+            }
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SdlThrowIf(this int result)
+        {
+#if DEBUG
+            if (result == 0)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return result;
+#else
+            return result;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SdlThrowIfNeg(this int result)
+        {
+#if DEBUG
+            if (result < 0)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return result;
+#else
+            return result;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint SdlThrowIf(this uint result)
+        {
+#if DEBUG
+            if (result == 0)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return result;
+#else
+            return result;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SdlCheckError()
+        {
+#if DEBUG
+            Application.sdl.GetErrorAsException().ThrowIf();
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* SdlCheckError(void* ptr)
+        {
+#if DEBUG
+            if (ptr == null)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return ptr;
+#else
+            return ptr;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* SdlCheckError<T>(T* ptr) where T : unmanaged
+        {
+#if DEBUG
+            if (ptr == null)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return ptr;
+#else
+            return ptr;
+#endif
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string? ToStringFromUTF8(byte* ptr)
         {
             return Marshal.PtrToStringUTF8((nint)ptr);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Bitcount(this uint value)
         {
             uint v = value;
@@ -100,10 +212,11 @@
         /// <returns>The pointer, must be freed after usage.</returns>
         public static byte* ToUTF8(this string str)
         {
-            byte* dst = Alloc<byte>(str.Length + 1);
+            var byteCount = Encoding.UTF8.GetByteCount(str);
+            byte* dst = Alloc<byte>(Encoding.UTF8.GetByteCount(str) + 1);
             fixed (char* src = str)
             {
-                Encoding.UTF8.GetBytes(src, str.Length, dst, str.Length);
+                Encoding.UTF8.GetBytes(src, str.Length, dst, byteCount);
             }
             dst[str.Length] = 0;
             return dst;
@@ -314,9 +427,9 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
-        public static void ZeroMemory<T>(T* pointer) where T : unmanaged
+        public static void ZeroMemoryT<T>(T* pointer) where T : unmanaged
         {
-            ZeroMemory(pointer, (uint)sizeof(T));
+            new Span<byte>(pointer, sizeof(T)).Clear();
         }
 
         /// <summary>
@@ -325,9 +438,20 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
         /// <param name="length">The length.</param>
-        public static void ZeroRange<T>(T* pointer, uint length) where T : unmanaged
+        public static void ZeroMemoryT<T>(T* pointer, int length) where T : unmanaged
         {
-            ZeroMemory(pointer, (uint)sizeof(T) * length);
+            new Span<byte>(pointer, sizeof(T) * length).Clear();
+        }
+
+        /// <summary>
+        /// Zeroes the specified pointer range.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="length">The length.</param>
+        public static void ZeroMemoryT<T>(T* pointer, uint length) where T : unmanaged
+        {
+            new Span<byte>(pointer, sizeof(T) * (int)length).Clear();
         }
 
         /// <summary>

@@ -1,17 +1,22 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using BepuPhysics.Trees;
     using HexaEngine.Mathematics;
+    using System.Runtime.CompilerServices;
+    using static System.Net.Mime.MediaTypeNames;
 
     public class DepthStencil : IDisposable
     {
+        private readonly string dbgName;
         public readonly IResource Resource;
         public readonly IDepthStencilView DSV;
         public readonly IShaderResourceView? SRV;
         public readonly Viewport Viewport;
         private bool disposedValue;
 
-        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc)
+        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"DepthStencil: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             Format format = desc.Format;
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
             {
@@ -34,19 +39,24 @@
             Viewport = new(desc.Width, desc.Height);
 
             Resource = device.CreateTexture2D(depthStencilDesc);
+            Resource.DebugName = dbgName;
             var dsvdesc = new DepthStencilViewDescription((ITexture2D)Resource, desc.ArraySize > 1 ? DepthStencilViewDimension.Texture2DArray : DepthStencilViewDimension.Texture2D, Format.D32Float);
             dsvdesc.Format = desc.Format;
             DSV = device.CreateDepthStencilView(Resource, dsvdesc);
+            DSV.DebugName = dbgName + ".DSV";
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
             {
                 var srvdesc = new ShaderResourceViewDescription((ITexture2D)Resource, desc.ArraySize > 1 ? ShaderResourceViewDimension.Texture2DArray : ShaderResourceViewDimension.Texture2D);
                 srvdesc.Format = Format.R32Float;
                 SRV = device.CreateShaderResourceView(Resource, srvdesc);
+                SRV.DebugName = dbgName + ".SRV";
             }
+            MemoryManager.Register(Resource);
         }
 
-        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc, int mips)
+        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc, int mips, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"DepthStencil: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             Format format = desc.Format;
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
             {
@@ -69,19 +79,24 @@
             Viewport = new(desc.Width, desc.Height);
 
             Resource = device.CreateTexture2D(depthStencilDesc);
+            Resource.DebugName = dbgName;
             var dsvdesc = new DepthStencilViewDescription((ITexture2D)Resource, DepthStencilViewDimension.Texture2D);
             dsvdesc.Format = desc.Format;
             DSV = device.CreateDepthStencilView(Resource, dsvdesc);
+            DSV.DebugName = dbgName + ".DSV";
             if (desc.BindFlags.HasFlag(BindFlags.ShaderResource))
             {
                 var srvdesc = new ShaderResourceViewDescription((ITexture2D)Resource, ShaderResourceViewDimension.Texture2D);
                 srvdesc.Format = Format.R32Float;
                 SRV = device.CreateShaderResourceView(Resource, srvdesc);
+                SRV.DebugName = dbgName + ".SRV";
             }
+            MemoryManager.Register(Resource);
         }
 
-        public DepthStencil(IGraphicsDevice device, int width, int height, Format format, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
+        public DepthStencil(IGraphicsDevice device, int width, int height, Format format, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"DepthStencil: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             Format resourceFormat = GetDepthResourceFormat(format);
             Format srvFormat = GetDepthSRVFormat(format);
             Texture2DDescription depthStencilDesc = new(resourceFormat, width, height, 1, 1, flags);
@@ -89,15 +104,20 @@
             Viewport = new(width, height);
 
             Resource = device.CreateTexture2D(depthStencilDesc);
+            Resource.DebugName = dbgName;
             DSV = device.CreateDepthStencilView(Resource, new((ITexture2D)Resource, DepthStencilViewDimension.Texture2D, format));
+            DSV.DebugName = dbgName + ".DSV";
             if (flags.HasFlag(BindFlags.ShaderResource))
             {
                 SRV = device.CreateShaderResourceView(Resource, new((ITexture2D)Resource, ShaderResourceViewDimension.Texture2D, srvFormat));
+                SRV.DebugName = dbgName + ".SRV";
             }
+            MemoryManager.Register(Resource);
         }
 
-        public DepthStencil(IGraphicsDevice device, int width, int height, int array, Format format, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil)
+        public DepthStencil(IGraphicsDevice device, int width, int height, int array, Format format, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, BindFlags flags = BindFlags.ShaderResource | BindFlags.DepthStencil, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"DepthStencil: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             Format resourceFormat = GetDepthResourceFormat(format);
             Format srvFormat = GetDepthSRVFormat(format);
             Texture2DDescription depthStencilDesc = new(resourceFormat, width, height, array, 1, flags, miscFlags: miscFlag);
@@ -105,12 +125,18 @@
             Viewport = new(width, height);
             ShaderResourceViewDimension srvD = miscFlag == ResourceMiscFlag.TextureCube ? ShaderResourceViewDimension.TextureCube : ShaderResourceViewDimension.Texture2DArray;
             Resource = device.CreateTexture2D(depthStencilDesc);
+            Resource.DebugName = dbgName;
             DSV = device.CreateDepthStencilView(Resource, new((ITexture2D)Resource, DepthStencilViewDimension.Texture2DArray, format));
+            DSV.DebugName = dbgName + ".DSV";
             if (flags.HasFlag(BindFlags.ShaderResource))
             {
                 SRV = device.CreateShaderResourceView(Resource, new((ITexture2D)Resource, srvD, srvFormat));
+                SRV.DebugName = dbgName + ".SRV";
             }
+            MemoryManager.Register(Resource);
         }
+
+        public string? DebugName { get => Resource.DebugName; set => Resource.DebugName = value; }
 
         private static Format GetDepthResourceFormat(Format depthformat)
         {
@@ -173,7 +199,7 @@
                 Resource.Dispose();
                 DSV.Dispose();
                 SRV?.Dispose();
-
+                MemoryManager.Unregister(Resource);
                 disposedValue = true;
             }
         }

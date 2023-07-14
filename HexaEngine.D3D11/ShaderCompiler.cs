@@ -72,7 +72,7 @@ namespace HexaEngine.D3D11
             include->LpVtbl = callbacks;
 
             paths.TryAdd(include, Path.GetDirectoryName(Path.Combine(Paths.CurrentShaderPath, sourceName)) ?? string.Empty);
-            D3DCompiler.Compile(pSource, (nuint)source.Length, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
+            D3DCompiler.Compile(pSource, (nuint)Encoding.UTF8.GetByteCount(source) + 1, pSourceName, pMacros, include, pEntryPoint, pProfile, (uint)flags, 0, &vBlob, &vError);
             paths.Remove(include, out _);
 
             Free(callbacks);

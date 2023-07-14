@@ -20,7 +20,7 @@
 
         private ResourceRef<IBuffer> Camera;
         private ResourceRef<IShaderResourceView> Depth;
-        private ResourceRef<Texture> Velocity;
+        private ResourceRef<Texture2D> Velocity;
 
         private Viewport Viewport;
         private Matrix4x4 prevViewProj;
@@ -88,7 +88,7 @@
 
             Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
             Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
-            Velocity = ResourceManager2.Shared.AddTexture("VelocityBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32Float));
+            Velocity = ResourceManager2.Shared.AddTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             Viewport = new(width, height);
         }
@@ -100,7 +100,7 @@
 
         public void Draw(IGraphicsContext context)
         {
-            context.SetRenderTarget(Velocity.Value?.RenderTargetView, null);
+            context.SetRenderTarget(Velocity.Value?.RTV, null);
             context.SetViewport(Viewport);
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetConstantBuffer(1, Camera.Value);
@@ -112,7 +112,7 @@
 
         public void Resize(int width, int height)
         {
-            Velocity = ResourceManager2.Shared.UpdateTexture("VelocityBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32Float));
+            Velocity = ResourceManager2.Shared.UpdateTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
             Viewport = new(width, height);
         }
 

@@ -16,7 +16,7 @@ namespace HexaEngine.Rendering.Renderers
         private readonly IGraphicsPipeline pipeline;
         private readonly IBuffer constantBuffer;
         private readonly ResourceRef<IDepthStencilView> dsv;
-        private readonly ResourceRef<Texture> rtv;
+        private readonly ResourceRef<Texture2D> rtv;
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
 

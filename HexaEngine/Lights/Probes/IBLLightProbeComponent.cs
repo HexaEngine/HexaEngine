@@ -50,7 +50,7 @@
             await UpdateSpecularAsync(device);
         }
 
-        public override void Destory()
+        public override void Destroy()
         {
             Volatile.Write(ref isVaild, false);
             DiffuseTex?.Dispose();
@@ -76,17 +76,12 @@
                 {
                     try
                     {
-                        component.diffuseTex = await Texture.CreateTextureAsync(device, new TextureFileDescription(path, TextureDimension.TextureCube));
+                        component.diffuseTex = await Texture2D.CreateTextureAsync(device, new TextureFileDescription(path, TextureDimension.TextureCube));
                     }
                     catch (Exception ex)
                     {
                         ImGuiConsole.Log(ex);
-                        component.diffuseTex = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                     }
-                }
-                else
-                {
-                    component.diffuseTex = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                 }
 
                 Volatile.Write(ref component.isVaild, component.diffuseTex != null && component.specularTex != null);
@@ -112,17 +107,12 @@
                 {
                     try
                     {
-                        component.specularTex = await Texture.CreateTextureAsync(device, new TextureFileDescription(path, TextureDimension.TextureCube));
+                        component.specularTex = await Texture2D.CreateTextureAsync(device, new TextureFileDescription(path, TextureDimension.TextureCube));
                     }
                     catch (Exception ex)
                     {
                         ImGuiConsole.Log(ex);
-                        component.specularTex = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                     }
-                }
-                else
-                {
-                    component.specularTex = await Texture.CreateTextureAsync(device, TextureDimension.TextureCube, default);
                 }
 
                 Volatile.Write(ref component.isVaild, component.diffuseTex != null && component.specularTex != null);

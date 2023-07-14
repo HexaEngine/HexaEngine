@@ -6,7 +6,7 @@ struct BokehGSOutput
     float Depth : DEPTH;
 };
 
-float3 hexablur(sampler2D tex, vec2 uv)
+float3 hexablur(sampler2D tex, float2 uv)
 {
     float2 scale = 1.0 / iResolution.xy;
     float3 col = 0.0;

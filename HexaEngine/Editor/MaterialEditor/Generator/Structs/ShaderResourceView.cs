@@ -6,7 +6,7 @@
 
     public struct ShaderResourceView
     {
-        public int Slot;
+        public uint Slot;
         public string Name;
         public SType SrvType;
         public SType Type;
@@ -20,15 +20,15 @@
             Samples = samples;
         }
 
-        public void Build(StringBuilder builder)
+        public void Build(CodeWriter builder)
         {
             if (Samples > 0)
             {
-                builder.AppendLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()},{Samples.ToString(CultureInfo.InvariantCulture)}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
+                builder.WriteLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()},{Samples.ToString(CultureInfo.InvariantCulture)}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
             }
             else
             {
-                builder.AppendLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
+                builder.WriteLine($"{SrvType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(t{Slot.ToString(CultureInfo.InvariantCulture)});");
             }
         }
     }

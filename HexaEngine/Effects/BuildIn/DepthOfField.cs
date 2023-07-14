@@ -391,9 +391,15 @@ namespace HexaEngine.Effects.BuildIn
 
             linearWrapSampler.Dispose();
 
+            bokehGenerate.Dispose();
+            gaussianBlur.Dispose();
             dof.Dispose();
+            bokehDraw.Dispose();
 
             blurTex.Dispose();
+            bokehBuffer.Dispose();
+            bokehIndirectBuffer.Dispose();
+
             bokehTex.Dispose();
 
             GC.SuppressFinalize(this);

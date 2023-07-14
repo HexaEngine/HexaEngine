@@ -9,7 +9,7 @@
     {
         public void Awake(IGraphicsDevice device, GameObject gameObject);
 
-        public void Destory();
+        public void Destroy();
     }
 
     public interface IAudioComponent : IComponent
@@ -20,10 +20,6 @@
     public interface IScriptComponent : IComponent, INotifyFlagsChanged<ScriptFlags>
     {
         public void Awake()
-        {
-        }
-
-        public void Destroy()
         {
         }
 

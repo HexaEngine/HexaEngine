@@ -28,7 +28,7 @@ namespace HexaEngine.Effects.BuildIn
 
         private ISamplerState samplerLinear;
 
-        public ResourceRef<Texture> Output;
+        public ResourceRef<Texture2D> Output;
         public ResourceRef<IBuffer> Camera;
         public ResourceRef<IShaderResourceView> Depth;
         public ResourceRef<IShaderResourceView> Normal;
@@ -91,7 +91,7 @@ namespace HexaEngine.Effects.BuildIn
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
-            Output = ResourceManager2.Shared.AddTexture("AOBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float));
+            Output = ResourceManager2.Shared.AddTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             quad = new Quad(device);
 
@@ -141,7 +141,7 @@ namespace HexaEngine.Effects.BuildIn
 
         public void Resize(int width, int height)
         {
-            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32Float));
+            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             intermediateTex.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
@@ -157,7 +157,7 @@ namespace HexaEngine.Effects.BuildIn
 
             if (!enabled)
             {
-                context.ClearRenderTargetView(Output.Value.RenderTargetView, Vector4.One);
+                context.ClearRenderTargetView(Output.Value.RTV, Vector4.One);
                 return;
             }
             var camera = CameraManager.Current;
@@ -188,7 +188,7 @@ namespace HexaEngine.Effects.BuildIn
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, intermediateTex.SRV, Output.Value.RenderTargetView, (int)viewport.Width, (int)viewport.Height);
+            blur.Blur(context, intermediateTex.SRV, Output.Value.RTV, (int)viewport.Width, (int)viewport.Height);
         }
 
         protected virtual unsafe void Dispose(bool disposing)

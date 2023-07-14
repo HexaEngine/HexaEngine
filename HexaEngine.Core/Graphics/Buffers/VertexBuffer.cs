@@ -25,7 +25,7 @@
         public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = DefaultCapacity;
 
@@ -44,15 +44,16 @@
             }
 
             items = Alloc<T>(DefaultCapacity);
-            ZeroRange(items, DefaultCapacity);
+            ZeroMemoryT(items, (uint)DefaultCapacity);
             buffer = device.CreateBuffer(description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T[] vertices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = (uint)vertices.Length;
             count = capacity;
@@ -80,12 +81,13 @@
             items = AllocCopy(vertices);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T* vertices, uint count, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             capacity = count;
             this.count = capacity;
@@ -110,12 +112,13 @@
             items = AllocCopy(vertices, count);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint capacity, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
-            dbgName = $"VertexBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
             this.capacity = capacity;
 
@@ -134,9 +137,10 @@
             }
 
             items = Alloc<T>(capacity);
-            ZeroRange(items, capacity);
+            ZeroMemoryT(items, (uint)capacity);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -171,9 +175,11 @@
                 items = tmp;
                 capacity = value;
                 count = capacity < count ? capacity : count;
+                MemoryManager.Unregister(buffer);
                 buffer.Dispose();
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
             }
         }
 
@@ -291,6 +297,7 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
                 buffer?.Dispose();
                 capacity = 0;
                 count = 0;

@@ -191,14 +191,14 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("IBL Irradiance"))
+                    if (ImGui.MenuItem("IBL Diffuse Irradiance"))
                     {
-                        modals.GetOrCreate<IrradianceFilterDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<DiffuseIrradianceDialog>(() => new(this, device)).Show();
                     }
 
-                    if (ImGui.MenuItem("IBL PreFilter"))
+                    if (ImGui.MenuItem("IBL Roughness Prefilter"))
                     {
-                        modals.GetOrCreate<PreFilterDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<RoughnessPrefilterDialog>(() => new(this, device)).Show();
                     }
 
                     ImGui.EndMenu();

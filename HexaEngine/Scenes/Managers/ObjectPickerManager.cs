@@ -1,13 +1,10 @@
-﻿using HexaEngine.Core.Graphics;
-
-namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Scenes.Managers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System.Numerics;
-    using Texture = Texture;
 
     public struct SelectionResult
     {
@@ -26,7 +23,7 @@ namespace HexaEngine.Scenes.Managers
     {
         private static IGraphicsDevice device;
         private static IGraphicsPipeline pipeline;
-        private static Texture texture;
+        private static Texture2D texture;
         private static DepthStencil depthStencil;
         private static IComputePipeline computePipeline;
 
@@ -49,7 +46,7 @@ namespace HexaEngine.Scenes.Managers
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleList,
             });
-            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32UInt));
+            texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
 
             computePipeline = device.CreateComputePipeline(new()
@@ -64,7 +61,7 @@ namespace HexaEngine.Scenes.Managers
         public static void Resize(int width, int height)
         {
             texture.Dispose();
-            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32UInt));
+            texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
         }
 

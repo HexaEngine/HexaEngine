@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using Silk.NET.Core.Contexts;
+    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
@@ -22,6 +22,7 @@
         private ITexture2D texture;
         private IShaderResourceView? srv;
         private IRenderTargetView? rtv;
+        private IUnorderedAccessView? uav;
         private bool isDirty;
         private bool disposedValue;
         private int rowPitch;
@@ -30,7 +31,7 @@
 
         public Texture2D(IGraphicsDevice device, TextureFileDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             texture = device.TextureLoader.LoadTexture2D(description.Path);
             texture.DebugName = dbgName;
             this.description = texture.Description;
@@ -40,7 +41,7 @@
             mipLevels = this.description.MipLevels;
             arraySize = this.description.ArraySize;
             cpuAccessFlags = this.description.CPUAccessFlags;
-            gpuAccessFlags = description.Usage switch
+            gpuAccessFlags = this.description.Usage switch
             {
                 Usage.Default => GpuAccessFlags.RW,
                 Usage.Dynamic => GpuAccessFlags.Read,
@@ -57,7 +58,11 @@
                 local = (byte*)Alloc(rowPitch * height);
                 ZeroMemory(local, rowPitch * height);
             }
-
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
                 srv = device.CreateShaderResourceView(texture);
@@ -69,11 +74,12 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public Texture2D(IGraphicsDevice device, Format format, int width, int height, int arraySize, int mipLevels, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.format = format;
             this.width = width;
             this.height = height;
@@ -82,7 +88,7 @@
             this.cpuAccessFlags = cpuAccessFlags;
             this.gpuAccessFlags = gpuAccessFlags;
             this.miscFlag = miscFlag;
-            description = new(format, width, height, arraySize, mipLevels, BindFlags.ShaderResource | BindFlags.RenderTarget, Usage.Default, cpuAccessFlags, 1, 0, miscFlag);
+            description = new(format, width, height, arraySize, mipLevels, BindFlags.None, Usage.Default, cpuAccessFlags, 1, 0, miscFlag);
 
             if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
             {
@@ -92,6 +98,29 @@
             if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
             {
                 throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if (cpuAccessFlags != CpuAccessFlags.None && (gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot use rw with uva at the same time");
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                description.Usage = Usage.Default;
+                description.BindFlags |= BindFlags.ShaderResource;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                description.Usage = Usage.Default;
+                description.BindFlags |= BindFlags.RenderTarget;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                description.Usage = Usage.Default;
+                description.BindFlags |= BindFlags.ShaderResource;
             }
 
             if ((cpuAccessFlags & CpuAccessFlags.Write) != 0)
@@ -119,6 +148,12 @@
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
 
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
                 srv = device.CreateShaderResourceView(texture);
@@ -130,11 +165,12 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public Texture2D(IGraphicsDevice device, Texture2DDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             format = description.Format;
             width = description.Width;
             height = description.Height;
@@ -144,6 +180,21 @@
             gpuAccessFlags = GpuAccessFlags.None;
             miscFlag = description.MiscFlags;
             this.description = description;
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot read at the same time");
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if (cpuAccessFlags != CpuAccessFlags.None && (gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot use rw with uva at the same time");
+            }
 
             FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
 
@@ -156,6 +207,12 @@
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
 
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
                 srv = device.CreateShaderResourceView(texture);
@@ -167,11 +224,12 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public Texture2D(IGraphicsDevice device, Texture2DDescription description, SubresourceData[] initialData, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             format = description.Format;
             width = description.Width;
             height = description.Height;
@@ -181,6 +239,21 @@
             gpuAccessFlags = GpuAccessFlags.None;
             miscFlag = description.MiscFlags;
             this.description = description;
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot read at the same time");
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if (cpuAccessFlags != CpuAccessFlags.None && (gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot use rw with uva at the same time");
+            }
 
             FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
 
@@ -193,6 +266,12 @@
             texture = device.CreateTexture2D(description, initialData);
             texture.DebugName = dbgName;
 
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
+
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
                 srv = device.CreateShaderResourceView(texture);
@@ -204,11 +283,12 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public Texture2D(IGraphicsDevice device, Texture2DDescription description, SubresourceData initialData, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture2D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             format = description.Format;
             width = description.Width;
             height = description.Height;
@@ -218,6 +298,21 @@
             gpuAccessFlags = GpuAccessFlags.None;
             miscFlag = description.MiscFlags;
             this.description = description;
+
+            if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot read at the same time");
+            }
+
+            if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if (cpuAccessFlags != CpuAccessFlags.None && (gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                throw new ArgumentException("Cpu and Gpu cannot use rw with uva at the same time");
+            }
 
             FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
 
@@ -229,6 +324,13 @@
 
             texture = device.CreateTexture2D(description, new SubresourceData[] { initialData });
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
@@ -294,7 +396,11 @@
 
         public IRenderTargetView? RTV => rtv;
 
+        public IUnorderedAccessView? UAV => uav;
+
         public IRenderTargetView[] ArraySlices;
+
+        public Viewport Viewport => new(width, height);
 
         public nint NativePointer => texture.NativePointer;
 
@@ -460,9 +566,20 @@
                 local = (byte*)Alloc(rowPitch * height);
                 ZeroMemory(local, rowPitch * height);
             }
-
+            texture.Dispose();
+            srv?.Dispose();
+            rtv?.Dispose();
+            uav?.Dispose();
+            MemoryManager.Unregister(texture);
             texture = device.CreateTexture2D(description);
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
+
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
@@ -486,9 +603,11 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(texture);
                 texture.Dispose();
                 srv?.Dispose();
                 rtv?.Dispose();
+                uav?.Dispose();
                 if (cpuAccessFlags != CpuAccessFlags.None)
                     Free(local);
                 disposedValue = true;

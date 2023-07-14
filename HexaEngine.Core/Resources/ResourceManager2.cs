@@ -291,29 +291,11 @@
             return GetResource<GBuffer>(name);
         }
 
-        public ResourceRef<Texture> AddTexture(string name, TextureDescription description)
+        public ResourceRef<Texture2D> AddTexture(string name, Texture2DDescription description)
         {
             lock (sharedResources)
             {
-                Texture texture = new(device, description);
-                return AddResource(name, texture);
-            }
-        }
-
-        public ResourceRef<Texture> AddTexture(string name, TextureDescription description, Span<byte> rawPixelData, int rowPitch)
-        {
-            lock (sharedResources)
-            {
-                Texture texture = new(device, rawPixelData, rowPitch, description);
-                return AddResource(name, texture);
-            }
-        }
-
-        public ResourceRef<Texture> AddTexture(string name, TextureDescription description, Span<byte> rawPixelData, int rowPitch, int slicePitch)
-        {
-            lock (sharedResources)
-            {
-                Texture texture = new(device, rawPixelData, rowPitch, slicePitch, description);
+                Texture2D texture = new(device, description);
                 return AddResource(name, texture);
             }
         }
@@ -343,44 +325,19 @@
             }
         }
 
-        public ResourceRef<Texture> AddTextureColor(string name, TextureDimension dimension, Vector4 color)
+        public ResourceRef<Texture2D> GetTexture(string name)
         {
             lock (sharedResources)
             {
-                Texture texture = new(device, dimension, color);
-                return AddResource(name, texture);
+                return GetResource<Texture2D>(name);
             }
         }
 
-        public ResourceRef<Texture> AddOrUpdateTextureColor(string name, TextureDimension dimension, Vector4 color)
+        public ResourceRef<Texture2D> UpdateTexture(string name, Texture2DDescription description)
         {
             lock (sharedResources)
             {
-                if (TryGetResource<Texture>(name, out var resourceRef))
-                {
-                    var old = resourceRef.Value;
-                    resourceRef.Value = new Texture(device, dimension, color);
-                    old?.Dispose();
-                    return new(resourceRef.Resource);
-                }
-
-                return AddResource(name, new Texture(device, dimension, color));
-            }
-        }
-
-        public ResourceRef<Texture> GetTexture(string name)
-        {
-            lock (sharedResources)
-            {
-                return GetResource<Texture>(name);
-            }
-        }
-
-        public ResourceRef<Texture> UpdateTexture(string name, TextureDescription description)
-        {
-            lock (sharedResources)
-            {
-                var resource = GetResource<Texture>(name);
+                var resource = GetResource<Texture2D>(name);
                 var old = resource.Value;
                 resource.Value = new(device, description);
                 old?.Dispose();
@@ -388,11 +345,11 @@
             }
         }
 
-        public ResourceRef<Texture> UpdateTexture(string name, TextureFileDescription description)
+        public ResourceRef<Texture2D> UpdateTexture(string name, TextureFileDescription description)
         {
             lock (sharedResources)
             {
-                var resource = GetResource<Texture>(name);
+                var resource = GetResource<Texture2D>(name);
                 var old = resource.Value;
                 resource.Value = new(device, description);
                 old?.Dispose();

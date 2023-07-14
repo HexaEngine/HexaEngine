@@ -29,7 +29,7 @@
 
         public Texture3D(IGraphicsDevice device, TextureFileDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture3D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture3D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             texture = device.TextureLoader.LoadTexture3D(description.Path);
             texture.DebugName = dbgName;
             this.description = texture.Description;
@@ -68,11 +68,12 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public Texture3D(IGraphicsDevice device, Format format, int width, int height, int depth, int mipLevels, CpuAccessFlags cpuAccessFlags, GpuAccessFlags gpuAccessFlags = GpuAccessFlags.Read, ResourceMiscFlag miscFlag = ResourceMiscFlag.None, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture3D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture3D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.format = format;
             this.width = width;
             this.height = height;
@@ -129,11 +130,12 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public Texture3D(IGraphicsDevice device, Texture3DDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture3D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture3D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             format = description.Format;
             width = description.Width;
             height = description.Height;
@@ -170,7 +172,7 @@
 
         public Texture3D(IGraphicsDevice device, Texture3DDescription description, SubresourceData[] initialData, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"Texture3D: {filename}, Line:{lineNumber}";
+            dbgName = $"Texture3D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             format = description.Format;
             width = description.Width;
             height = description.Height;
@@ -203,6 +205,7 @@
                 rtv = device.CreateRenderTargetView(texture, new(width, height));
                 rtv.DebugName = dbgName + ".RTV";
             }
+            MemoryManager.Register(texture);
         }
 
         public static Task<Texture3D> CreateTextureAsync(IGraphicsDevice device, TextureFileDescription description)
@@ -413,8 +416,14 @@
                 ZeroMemory(local, rowPitch * height);
             }
 
+            texture.Dispose();
+            srv?.Dispose();
+            rtv?.Dispose();
+
+            MemoryManager.Unregister(texture);
             texture = device.CreateTexture3D(description);
             texture.DebugName = dbgName;
+            MemoryManager.Register(texture);
 
             if ((description.BindFlags & BindFlags.ShaderResource) != 0)
             {
@@ -438,6 +447,7 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(texture);
                 texture.Dispose();
                 srv?.Dispose();
                 rtv?.Dispose();

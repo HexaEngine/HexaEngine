@@ -160,7 +160,7 @@
                 {
                     if (destroy)
                     {
-                        t.Destory();
+                        t.Destroy();
                     }
 
                     Remove(t);
