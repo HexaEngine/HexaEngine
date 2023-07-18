@@ -26,9 +26,7 @@
 
         public void Invoke<T>(T context, Action<T> action)
         {
-#pragma warning disable CS8620 // Argument of type '(object? context, Action<object>)' cannot be used for parameter 'item' of type '(object, Action<object>)' in 'void ConcurrentQueue<(object, Action<object>)>.Enqueue((object, Action<object>) item)' due to differences in the nullability of reference types.
             invokes.Enqueue((context, x => action((T)x)));
-#pragma warning restore CS8620 // Argument of type '(object? context, Action<object>)' cannot be used for parameter 'item' of type '(object, Action<object>)' in 'void ConcurrentQueue<(object, Action<object>)>.Enqueue((object, Action<object>) item)' due to differences in the nullability of reference types.
         }
     }
 }

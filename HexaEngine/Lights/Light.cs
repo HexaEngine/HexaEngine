@@ -3,8 +3,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.ImGuiNET;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
     using Newtonsoft.Json;
+    using System;
     using System.Numerics;
 
     public abstract class Light : GameObject
@@ -16,6 +19,7 @@
         private float range = 50;
         private float intensity = 1;
         private bool shadowMapEnable;
+        private ShadowResolution shadowMapResolution;
 
         public abstract LightType LightType { get; }
 
@@ -49,7 +53,7 @@
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty<ShadowResolution>("Resolution")]
-        public ShadowResolution ShadowMapResolution { get; set; }
+        public ShadowResolution ShadowMapResolution { get => shadowMapResolution; set => SetAndNotify(ref shadowMapResolution, value); }
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty("Slope-Scale Depth Bias")]
@@ -118,8 +122,32 @@
 
         public abstract void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas);
 
-        public abstract void DestroyShadowMap(ShadowAtlas atlas);
+        public abstract void DestroyShadowMap();
 
         public uint GetQueueIndex() => QueueIndex;
+
+        public void ComputeImportance(Camera camera, ShadowAtlas atlas)
+        {
+            var camPos = camera.Transform.GlobalPosition;
+            var lightPos = Transform.GlobalPosition;
+            var distance = Vector3.Distance(camPos, lightPos);
+            var lightRange = range;
+            var profile = shadowMapResolution;
+
+            var maxResolution = profile switch
+            {
+                ShadowResolution.Ultra => 1024,
+                ShadowResolution.High => 512,
+                ShadowResolution.Medium => 256,
+                ShadowResolution.Low => 128,
+                _ => 1024,// Default to the highest resolution
+            };
+
+            var distanceImportance = 1.0f - MathUtil.Clamp01(distance / lightRange);
+            var scaledImportance = atlas.LayerCount - 1 - MathUtil.Clamp(distanceImportance * atlas.LayerCount, 0f, atlas.LayerCount - 1);
+            var maxResolutionIndex = atlas.SizeToIndex(maxResolution);
+            var index = (int)MathF.Floor(MathUtil.Clamp(scaledImportance, maxResolutionIndex, atlas.LayerCount - 1));
+            ImGui.Text($"index: {index}, maxResolutionIndex: {maxResolutionIndex}, scaledImportance: {scaledImportance}, distanceImportance: {distanceImportance}");
+        }
     }
 }

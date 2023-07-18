@@ -5,8 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using System.Numerics;
-    using System.Resources;
+    using System.Runtime.CompilerServices;
 
     public class ResourceManager2
     {
@@ -291,11 +290,19 @@
             return GetResource<GBuffer>(name);
         }
 
-        public ResourceRef<Texture2D> AddTexture(string name, Texture2DDescription description)
+        public ResourceRef<Texture2D> AddTexture(string name, Texture2D texture)
         {
             lock (sharedResources)
             {
-                Texture2D texture = new(device, description);
+                return AddResource(name, texture);
+            }
+        }
+
+        public ResourceRef<Texture2D> AddTexture(string name, Texture2DDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            lock (sharedResources)
+            {
+                Texture2D texture = new(device, description, filename, lineNumber);
                 return AddResource(name, texture);
             }
         }
@@ -333,13 +340,13 @@
             }
         }
 
-        public ResourceRef<Texture2D> UpdateTexture(string name, Texture2DDescription description)
+        public ResourceRef<Texture2D> UpdateTexture(string name, Texture2DDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             lock (sharedResources)
             {
                 var resource = GetResource<Texture2D>(name);
                 var old = resource.Value;
-                resource.Value = new(device, description);
+                resource.Value = new(device, description, filename, lineNumber);
                 old?.Dispose();
                 return resource;
             }

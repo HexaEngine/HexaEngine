@@ -2,6 +2,7 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
@@ -14,7 +15,7 @@
 
         public void Update(IGraphicsContext context);
 
-        public void VisibilityTest(IGraphicsContext context, Camera camera);
+        public void VisibilityTest(CullingContext context);
 
         public void DrawDepth(IGraphicsContext context);
 

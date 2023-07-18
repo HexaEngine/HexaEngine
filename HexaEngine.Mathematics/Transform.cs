@@ -403,8 +403,11 @@
                 return false;
             }
 
+            // Update the local matrix of this transform
             local = Matrix4x4.CreateScale(scale) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(position);
             Matrix4x4.Invert(local, out localInverse);
+
+            // Update the global matrix of this transform
             if (parent == null)
             {
                 global = local;
@@ -416,6 +419,7 @@
 
             Matrix4x4.Invert(global, out globalInverse);
 
+            // Update other properties based on the new global matrix
             Matrix4x4.Decompose(global, out globalScale, out globalOrientation, out globalPosition);
             forward = Vector3.Transform(Vector3.UnitZ, globalOrientation);
             backward = Vector3.Transform(-Vector3.UnitZ, globalOrientation);

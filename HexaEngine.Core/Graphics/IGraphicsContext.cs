@@ -187,16 +187,4 @@
 
         void ClearView(IUnorderedAccessView uav, Vector4 color, Rect rect);
     }
-
-    public interface IQuery : IDeviceChild
-    {
-    }
-
-    public interface IPredicate : IDeviceChild
-    {
-    }
-
-    public interface ICommandList : IDeviceChild
-    {
-    }
 }

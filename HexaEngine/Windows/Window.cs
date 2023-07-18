@@ -18,18 +18,10 @@ namespace HexaEngine.Windows
     using System.Numerics;
     using CullingManager = CullingManager;
 
-    public enum RendererFlags
-    {
-        None = 0,
-        ImGui = 1,
-        ImGuiWidgets = 2,
-        DebugDraw = 4,
-        All = ImGui | ImGuiWidgets | DebugDraw,
-    }
-
     public class Window : SdlWindow, IRenderWindow
     {
         private RenderDispatcher renderDispatcher;
+        private bool running;
         private bool firstFrame;
         private IAudioDevice audioDevice;
         private IGraphicsDevice graphicsDevice;
@@ -41,6 +33,10 @@ namespace HexaEngine.Windows
         private Task initTask;
         private bool rendererInitialized;
         private bool resize = false;
+
+        private Thread updateThread;
+
+        private readonly Barrier syncBarrier = new(2);
 
         private ImGuiManager? imGuiRenderer;
         private DebugDrawRenderer? debugDrawRenderer;
@@ -73,6 +69,7 @@ namespace HexaEngine.Windows
 
         public virtual void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
+            running = true;
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
 #if PROFILE
@@ -90,7 +87,6 @@ namespace HexaEngine.Windows
                 AudioManager.Initialize(audioDevice);
                 ResourceManager.Initialize(graphicsDevice);
                 PipelineManager.Initialize(graphicsDevice);
-                CullingManager.Initialize(graphicsDevice);
                 ObjectPickerManager.Initialize(graphicsDevice, Width, Height);
             }
 
@@ -128,7 +124,7 @@ namespace HexaEngine.Windows
             {
                 if (x.IsCompletedSuccessfully)
                 {
-                    ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
+                    ImGuiConsole.Log(LogSeverity.Information, "Renderer: Initialized");
                 }
                 if (x.IsFaulted)
                 {
@@ -146,6 +142,22 @@ namespace HexaEngine.Windows
                 SceneManager.Load(StartupScene);
                 SceneManager.Current.IsSimulating = true;
             }
+
+            updateThread = new(UpdateScene);
+            updateThread.Name = "Scene Update Worker";
+            updateThread.Start();
+        }
+
+        private void UpdateScene()
+        {
+            while (running)
+            {
+#if PROFILE
+                syncBarrier.SignalAndWait();
+#endif
+                SceneManager.Current?.Update();
+                syncBarrier.SignalAndWait();
+            }
         }
 
         private void SceneChanged(object? sender, SceneChangedEventArgs e)
@@ -160,6 +172,9 @@ namespace HexaEngine.Windows
             Device.Profiler.Begin(Context, "Total");
             sceneRenderer.Profiler.BeginFrame();
             sceneRenderer.Profiler.Begin("Total");
+#endif
+#if PROFILE
+            syncBarrier.SignalAndWait();
 #endif
             if (resize)
             {
@@ -196,21 +211,14 @@ namespace HexaEngine.Windows
                 DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
             }
 
+            swapChain.WaitForPresent();
+
             drawing &= SceneManager.Current is not null;
 
             if (drawing)
             {
-                lock (SceneManager.Current)
-                {
-                    SceneManager.Current.Tick();
-                    if (firstFrame)
-                    {
-                        Time.Initialize();
-                        firstFrame = false;
-                    }
-
-                    sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
-                }
+                SceneManager.Current.RenderUpdate(context);
+                sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
             }
 
             Designer.Draw();
@@ -254,11 +262,16 @@ namespace HexaEngine.Windows
             Device.Profiler.End(Context, "Total");
             Device.Profiler.EndFrame(context);
 #endif
+            syncBarrier.SignalAndWait();
         }
 
         public virtual void Uninitialize()
         {
+            running = false;
             OnRendererDispose();
+
+            syncBarrier.RemoveParticipant();
+            updateThread.Join();
 
             Device.Profiler.Dispose();
 
@@ -286,7 +299,6 @@ namespace HexaEngine.Windows
             sceneRenderer.Dispose();
             renderDispatcher.Dispose();
             ObjectPickerManager.Release();
-            CullingManager.Release();
             ResourceManager.Dispose();
             AudioManager.Release();
             swapChain.Dispose();

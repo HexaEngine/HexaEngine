@@ -161,7 +161,7 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 
 float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return CalcShadowFactor_Basic(state, depthAtlas, uvd);
@@ -180,36 +180,30 @@ static const float3 gridSamplingDisk[20] =
 	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
-int CubeFaceFromDirection(float3 direction)
-{
-    float3 absDirection = abs(direction);
-    int faceIndex = 0;
-
-    if (absDirection.x >= absDirection.y && absDirection.x >= absDirection.z)
-    {
-        faceIndex = (direction.x > 0.0) ? 0 : 1; // Positive X face (0), Negative X face (1)
-    }
-    else if (absDirection.y >= absDirection.x && absDirection.y >= absDirection.z)
-    {
-        faceIndex = (direction.y > 0.0) ? 2 : 3; // Positive Y face (2), Negative Y face (3)
-    }
-    else
-    {
-        faceIndex = (direction.z > 0.0) ? 4 : 5; // Positive Z face (4), Negative Z face (5)
-    }
-
-    return faceIndex;
-}
-
 #define HARD_SHADOWS_POINTLIGHTS 1
-float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
+float4 ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
 {
-    float3 light_to_pixelWS = position - light.position.xyz;
-    float depthValue = length(light_to_pixelWS) / light.range;
+    float3 lightDirection = position - light.position.xyz;
 
-    int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[face], data.views[face]);
-    uvd.z = depthValue;
+    int face = GetPointLightFace(lightDirection);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
+
+    /*return float4(uvd.xyz, 1);
+    switch (face)
+    {
+        case 0:
+            return float4(1, 0, 0, 1);
+        case 1:
+            return float4(0, 1, 0, 1);
+        case 2:
+            return float4(0, 0, 1, 1);
+        case 3:
+            return float4(1, 1, 0, 1);
+        case 4:
+            return float4(0, 1, 1, 1);
+        case 5:
+            return float4(1, 0, 1, 1);
+    }*/
 
 #if HARD_SHADOWS_POINTLIGHTS
     return CalcShadowFactor_Basic(state, depthAtlas, uvd);
@@ -343,7 +337,7 @@ Pixel main(PixelInput input)
     float3 Lo = float3(0, 0, 0);
 
 #if CLUSTERED_FORWARD
-    uint tileIndex = GetClusterIndex(input.position.z / input.position.w, camNear, camFar, screenDim, float4(position, 1));
+    uint tileIndex = GetClusterIndex(GetLinearDepth(input.position.z / input.position.w), camNear, camFar, screenDim, float4(position, 1));
 
     uint lightCount = lightGrid[tileIndex].lightCount;
     uint lightOffset = lightGrid[tileIndex].lightOffset;
@@ -379,15 +373,12 @@ Pixel main(PixelInput input)
 
         if (light.castsShadows)
         {
-#if CLUSTERED_FORWARD
-            ShadowData data = shadowData[lightIndex];
-#else
-            ShadowData data = shadowData[i];
-#endif
+            ShadowData data = shadowData[light.shadowMapIndex];
             switch (light.type)
             {
                 case POINT_LIGHT:
-                    shadowFactor = ShadowFactorPointLight(data, light, position, shadowSampler);
+                   // shadowFactor = ShadowFactorPointLight(data, light, position, shadowSampler);
+                    L = ShadowFactorPointLight(data, light, position, shadowSampler).xyz;
                     break;
                 case SPOT_LIGHT:
                     shadowFactor = ShadowFactorSpotlight(data, position, shadowSampler);
@@ -403,6 +394,10 @@ Pixel main(PixelInput input)
 
     float3 ambient = baseColor * ambient_color;
 
+    float2 screenUV = GetScreenUV(input.position);
+
+    ao *= ssao.Sample(linearClampSampler, screenUV);
+
     ambient = (ambient + BRDF_IBL(linearWrapSampler, globalDiffuse, globalSpecular, brdfLUT, F0, N, V, baseColor.xyz, roughness)) * ao;
     ambient += emissive;
 
@@ -411,7 +406,7 @@ Pixel main(PixelInput input)
 #endif
 
     Pixel output;
-    output.Color = float4(ambient + Lo * ao, baseColor.a);
+    output.Color = float4(ambient + Lo, baseColor.a);
     output.Normal = float4(N, baseColor.a);
 
 #if BAKE_FORWARD

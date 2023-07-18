@@ -11,10 +11,15 @@ namespace HexaEngine.Rendering.Passes
     {
         public ShadowMapPass() : base("ShadowMap")
         {
-            AddWriteDependency(new("#ShadowAtlas"));
+            AddWriteDependency(new("ShadowAtlas"));
         }
 
-        public override void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        {
+            creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, 8192, 8));
+        }
+
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var scene = SceneManager.Current;
             if (scene == null)

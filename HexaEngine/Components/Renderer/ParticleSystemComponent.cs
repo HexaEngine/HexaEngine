@@ -5,6 +5,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
@@ -148,7 +149,7 @@
             renderer.Update(emitter);
         }
 
-        public void VisibilityTest(IGraphicsContext context, Camera camera)
+        public void VisibilityTest(CullingContext context)
         {
             throw new NotSupportedException();
         }

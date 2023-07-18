@@ -12,5 +12,6 @@
         FixedUpdate = 8,
         PhysicsUpdate = 16,
         LateUpdate = 32,
+        RenderUpdate = 64,
     }
 }

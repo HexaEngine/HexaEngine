@@ -4,19 +4,17 @@
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using ImGuiNET;
+    using Silk.NET.SDL;
     using System;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public unsafe class DepthMipChain
     {
-        private readonly Quad quad;
-        private readonly IComputePipeline downsample;
-        private readonly ConstantBuffer<Vector4> cbDownsample;
-        private readonly IGraphicsPipeline copy;
+        private readonly string dbgName;
         public int Height;
         public int Width;
         private Texture2D texture;
-        private ISamplerState samplerState;
         public IRenderTargetView RTV;
         public IShaderResourceView SRV;
         private IShaderResourceView[] srvs;
@@ -29,30 +27,20 @@
 
         public IShaderResourceView? Input;
 
-        public DepthMipChain(IGraphicsDevice device, DepthStencilBufferDesc desc)
+        public DepthMipChain(IGraphicsDevice device, DepthStencilBufferDescription desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"DepthMipChain: {Path.GetFileName(filename)}, Line: {lineNumber}";
             Width = desc.Width;
             Height = desc.Height;
-            quad = new(device);
-
-            downsample = device.CreateComputePipeline(new()
-            {
-                Path = "compute/hiz/shader.hlsl",
-            });
-            cbDownsample = new(device, CpuAccessFlags.Write);
-
-            copy = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "effects/copy/vs.hlsl",
-                PixelShader = "effects/copy/ps.hlsl"
-            });
 
             Mips = GetNumMipLevels(desc.Width, desc.Height);
 
             texture = new(device, Format.R32Float, desc.Width, desc.Height, 1, Mips, CpuAccessFlags.None, GpuAccessFlags.All);
+            texture.DebugName = dbgName;
             SRV = device.CreateShaderResourceView(texture);
+            SRV.DebugName = dbgName + ".SRV";
             RTV = device.CreateRenderTargetView(texture, new(desc.Width, desc.Height));
-            samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
+            RTV.DebugName = dbgName + ".RTV";
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -72,30 +60,20 @@
             }
         }
 
-        public DepthMipChain(IGraphicsDevice device, int width, int height)
+        public DepthMipChain(IGraphicsDevice device, int width, int height, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
+            dbgName = $"DepthMipChain: {Path.GetFileName(filename)}, Line: {lineNumber}";
             Width = width;
             Height = height;
-            quad = new(device);
-
-            downsample = device.CreateComputePipeline(new()
-            {
-                Path = "compute/hiz/shader.hlsl",
-            });
-            cbDownsample = new(device, CpuAccessFlags.Write);
-
-            copy = device.CreateGraphicsPipeline(new()
-            {
-                VertexShader = "effects/copy/vs.hlsl",
-                PixelShader = "effects/copy/ps.hlsl"
-            });
 
             Mips = GetNumMipLevels(width, height);
 
             texture = new(device, Format.R32Float, width, height, 1, Mips, CpuAccessFlags.None, GpuAccessFlags.All);
+            texture.DebugName = dbgName;
             SRV = device.CreateShaderResourceView(texture);
+            SRV.DebugName = dbgName + ".SRV";
             RTV = device.CreateRenderTargetView(texture, new(width, height));
-            samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
+            RTV.DebugName = dbgName + ".RTV";
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -170,58 +148,8 @@
             }
         }
 
-        public void Draw(IGraphicsContext context)
-        {
-            context.SetRenderTarget(RTV, null);
-            context.PSSetShaderResource(0, Input);
-            context.SetViewport(viewports[0]);
-            quad.DrawAuto(context, copy);
-            context.ClearState();
-
-            for (uint i = 1; i < Mips; i++)
-            {
-                Vector2 texel = new(1 / viewports[i].Width * viewports[i - 1].Width, 1 / viewports[i].Height * viewports[i - 1].Height);
-                context.Write(cbDownsample, new Vector4(texel, 0, 0));
-                context.CSSetConstantBuffer(0, cbDownsample);
-                context.CSSetUnorderedAccessView(pUavs[i]);
-                context.CSSetShaderResource(0, srvs[i - 1]);
-                context.CSSetSampler(0, samplerState);
-                downsample.Dispatch(context, (uint)viewports[i].Width / 16, (uint)viewports[i].Height / 16, 1);
-            }
-
-            context.ClearState();
-        }
-
-        public void Generate(IGraphicsContext context, IShaderResourceView input)
-        {
-            context.SetRenderTarget(RTV, null);
-            context.PSSetShaderResource(0, input);
-            context.SetViewport(viewports[0]);
-            quad.DrawAuto(context, copy);
-            context.ClearState();
-
-            for (uint i = 1; i < Mips; i++)
-            {
-                Vector2 texel = new(viewports[i].Width, viewports[i].Height);
-                context.Write(cbDownsample, new Vector4(texel, 0, 0));
-                context.CSSetConstantBuffer(0, cbDownsample);
-                context.CSSetUnorderedAccessView(pUavs[i]);
-                context.CSSetShaderResource(0, srvs[i - 1]);
-                context.CSSetSampler(0, samplerState);
-                downsample.Dispatch(context, (uint)viewports[i].Width / 32 + 1, (uint)viewports[i].Height / 32 + 1, 1);
-            }
-
-            context.ClearState();
-        }
-
         public void Dispose()
         {
-            quad.Dispose();
-            downsample.Dispose();
-            cbDownsample.Dispose();
-            copy.Dispose();
-            samplerState.Dispose();
-
             for (int i = 0; i < Mips; i++)
             {
                 srvs[i].Dispose();

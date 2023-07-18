@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Assets;
     using System;
     using System.Collections.Generic;
@@ -8,18 +7,27 @@
     using System.IO;
     using System.Linq;
 
+    /// <summary>
+    /// Provides utility methods for interacting with the file system.
+    /// </summary>
     public class FileSystem
     {
         private static readonly List<Asset> assetBundles = new();
         private static readonly Dictionary<string, string> fileIndices = new();
         private static readonly List<string> sources = new();
 
+        /// <summary>
+        /// Initializes the file system by loading asset bundles and creating file indices.
+        /// </summary>
         public static void Initialize()
         {
+            // Load asset bundles and populate the assetBundles list
             foreach (string file in Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly))
             {
                 assetBundles.AddRange(new AssetArchive(file).Assets);
             }
+
+            // Create file indices for the files in the "assets" directory and its subdirectories
             foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
@@ -40,9 +48,15 @@
             }
         }
 
+        /// <summary>
+        /// Refreshes the file system by recreating the file indices.
+        /// </summary>
         public static void Refresh()
         {
+            // Clear existing file indices
             fileIndices.Clear();
+
+            // Create file indices for the files in the "assets" directory and its subdirectories
             foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
@@ -62,6 +76,7 @@
                 }
             }
 
+            // Create file indices for the files in additional sources
             foreach (var source in sources)
             {
                 foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
@@ -85,9 +100,15 @@
             }
         }
 
+        /// <summary>
+        /// Adds an additional source directory to the file system.
+        /// </summary>
+        /// <param name="source">The path to the additional source directory.</param>
         public static void AddSource(string source)
         {
             sources.Add(source);
+
+            // Create file indices for the files in the additional source directory and its subdirectories
             foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
             {
                 foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
@@ -108,17 +129,25 @@
             }
         }
 
+        /// <summary>
+        /// Removes an additional source directory from the file system.
+        /// </summary>
+        /// <param name="source">The path to the additional source directory to remove.</param>
         public static void RemoveSource(string source)
         {
             sources.Remove(source);
             Refresh();
         }
 
+        /// <summary>
+        /// Checks if a file or directory exists at the specified path.
+        /// </summary>
+        /// <param name="path">The path to check.</param>
+        /// <returns><see langword="true"/> if the file or directory exists, otherwise <see langword="false"/>.</returns>
         public static bool Exists(string? path)
         {
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'path' in 'string Path.GetFullPath(string path)'.
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'path' in 'string Path.GetFullPath(string path)'.
+
             if (string.IsNullOrWhiteSpace(realPath))
             {
                 return false;
@@ -133,10 +162,15 @@
             else
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                return assetBundles.Find(x => x.Path == rel) != null; ;
+                return assetBundles.Find(x => x.Path == rel) != null;
             }
         }
 
+        /// <summary>
+        /// Gets the relative path of the specified path within the file system.
+        /// </summary>
+        /// <param name="path">The path to get the relative path for.</param>
+        /// <returns>The relative path of the specified path.</returns>
         public static string GetRelativePath(string path)
         {
             for (int i = 0; i < sources.Count; i++)
@@ -152,10 +186,16 @@
             return path;
         }
 
+        /// <summary>
+        /// Opens a virtual stream for reading the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to open.</param>
+        /// <returns>A <see cref="VirtualStream"/> for reading the file.</returns>
         public static VirtualStream Open(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
+
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenRead(value);
@@ -173,21 +213,23 @@
                 var rel = Path.GetRelativePath("assets/", realPath);
                 var asset = assetBundles.Find(x => x.Path == rel);
 
-                if (asset == null)
-                {
-                    throw new FileNotFoundException(realPath);
-                }
-
-                return asset.GetStream();
+                return asset == null ? throw new FileNotFoundException(realPath) : asset.GetStream();
             }
 
             throw new FileNotFoundException(realPath);
         }
 
+        /// <summary>
+        /// Tries to open a virtual stream for reading the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to open.</param>
+        /// <param name="stream">When this method returns, contains the <see cref="VirtualStream"/> for reading the file, if the file exists; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the file was successfully opened; otherwise, <see langword="false"/>.</returns>
         public static bool TryOpen(string path, [NotNullWhen(true)] out VirtualStream? stream)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
+
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenRead(value);
@@ -219,6 +261,11 @@
             return false;
         }
 
+        /// <summary>
+        /// Gets the files at the specified path.
+        /// </summary>
+        /// <param name="path">The path to get the files for.</param>
+        /// <returns>An array of file paths.</returns>
         public static string[] GetFiles(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
@@ -227,6 +274,11 @@
             return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).Union(files).ToArray();
         }
 
+        /// <summary>
+        /// Reads all lines of the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to read.</param>
+        /// <returns>An array of lines read from the file.</returns>
         public static string[] ReadAllLines(string path)
         {
             var fs = Open(path);
@@ -237,6 +289,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Reads all bytes of the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to read.</param>
+        /// <returns>An array of bytes read from the file.</returns>
         public static byte[] ReadAllBytes(string path)
         {
             var fs = Open(path);
@@ -246,6 +303,11 @@
             return buffer;
         }
 
+        /// <summary>
+        /// Reads the file at the specified path into a <see cref="FileBlob"/>.
+        /// </summary>
+        /// <param name="path">The path of the file to read.</param>
+        /// <returns>A <see cref="FileBlob"/> containing the file data.</returns>
         public static unsafe FileBlob ReadBlob(string path)
         {
             var fs = Open(path);
@@ -255,6 +317,12 @@
             return blob;
         }
 
+        /// <summary>
+        /// Tries to read all lines of the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to read.</param>
+        /// <param name="lines">When this method returns, contains an array of lines read from the file if the file exists; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public static bool ReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
         {
             if (TryOpen(path, out var fs))
@@ -268,6 +336,11 @@
             return false;
         }
 
+        /// <summary>
+        /// Reads all text from the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to read.</param>
+        /// <returns>The content of the file as a string.</returns>
         public static string ReadAllText(string path)
         {
             var fs = Open(path);
@@ -278,6 +351,12 @@
             return result;
         }
 
+        /// <summary>
+        /// Tries to read all text from the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to read.</param>
+        /// <param name="text">When this method returns, contains the content of the file as a string if the file exists; otherwise, the default value.</param>
+        /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public static bool TryReadAllText(string path, [NotNullWhen(true)] out string? text)
         {
             if (TryOpen(path, out var fs))
@@ -290,6 +369,11 @@
             return false;
         }
 
+        /// <summary>
+        /// Opens a <see cref="StreamReader"/> for reading the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to open.</param>
+        /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
         public static StreamReader OpenRead(string path)
         {
             var fs = Open(path);
@@ -297,20 +381,24 @@
             return reader;
         }
 
+        /// <summary>
+        /// Opens a <see cref="Stream"/> for writing to the file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to open.</param>
+        /// <returns>A <see cref="Stream"/> for writing to the file.</returns>
         public static Stream OpenWrite(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
+
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.OpenWrite(value);
-
                 return fs;
             }
             else if (File.Exists(path))
             {
                 var fs = File.OpenWrite(path);
-
                 return fs;
             }
             else if (!string.IsNullOrWhiteSpace(realPath))
@@ -323,20 +411,24 @@
             throw new FileNotFoundException(realPath);
         }
 
+        /// <summary>
+        /// Creates a <see cref="Stream"/> for writing a new file at the specified path.
+        /// </summary>
+        /// <param name="path">The path of the file to create.</param>
+        /// <returns>A <see cref="Stream"/> for writing the new file.</returns>
         public static Stream Create(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
+
             if (fileIndices.TryGetValue(realPath, out string? value))
             {
                 var fs = File.Create(value);
-
                 return fs;
             }
             else if (File.Exists(path))
             {
                 var fs = File.Create(path);
-
                 return fs;
             }
             else if (!string.IsNullOrWhiteSpace(realPath))

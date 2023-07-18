@@ -14,7 +14,7 @@
         public readonly Viewport Viewport;
         private bool disposedValue;
 
-        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDescription desc, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DepthStencil: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             Format format = desc.Format;
@@ -54,7 +54,7 @@
             MemoryManager.Register(Resource);
         }
 
-        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDesc desc, int mips, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public DepthStencil(IGraphicsDevice device, DepthStencilBufferDescription desc, int mips, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"DepthStencil: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             Format format = desc.Format;

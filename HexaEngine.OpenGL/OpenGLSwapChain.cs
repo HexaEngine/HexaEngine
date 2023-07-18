@@ -70,5 +70,10 @@
         public void Wait()
         {
         }
+
+        public void WaitForPresent()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

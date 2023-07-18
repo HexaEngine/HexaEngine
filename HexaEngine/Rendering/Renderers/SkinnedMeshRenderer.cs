@@ -13,7 +13,7 @@
 
     public class SkinnedMeshRenderer : IDisposable
     {
-        private readonly ResourceRef<IBuffer> camera;
+        private readonly Core.Resources.ResourceRef<IBuffer> camera;
 
         private bool initialized;
 

@@ -65,5 +65,10 @@
         {
             throw new NotImplementedException();
         }
+
+        public void WaitForPresent()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

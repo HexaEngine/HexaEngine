@@ -24,8 +24,7 @@
             public float Far;
         }
 
-        private DepthStencil? osmDepthBuffer;
-        private ShadowAtlasAllocation[] allocations = new ShadowAtlasAllocation[6];
+        private ShadowAtlasRangeHandle atlasHandle;
 
         [JsonIgnore]
         public BoundingBox ShadowBox = new();
@@ -34,31 +33,24 @@
         public override LightType LightType => LightType.Point;
 
         [JsonIgnore]
-        public override bool HasShadowMap => osmDepthBuffer != null;
+        public override bool HasShadowMap => atlasHandle.IsValid;
 
         [JsonIgnore]
         public static IBuffer OSMBuffer => osmBuffer;
 
         public override IShaderResourceView? GetShadowMap()
         {
-            return osmDepthBuffer?.SRV;
-        }
-
-        public ShadowAtlasAllocation[] GetShadows()
-        {
-            return allocations;
+            return null;
         }
 
         public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
-            if (osmDepthBuffer != null)
+            if (atlasHandle.IsValid)
             {
                 return;
             }
 
-            osmDepthBuffer = new(device, ShadowMapSize, ShadowMapSize, 6, Format.D32Float, ResourceMiscFlag.TextureCube);
-
-            atlas.AllocRange(ShadowMapSize, allocations);
+            atlasHandle = atlas.AllocRange(ShadowMapSize, 6);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -66,17 +58,14 @@
             }
         }
 
-        public override void DestroyShadowMap(ShadowAtlas atlas)
+        public override void DestroyShadowMap()
         {
-            if (osmDepthBuffer == null)
+            if (!atlasHandle.IsValid)
             {
                 return;
             }
 
-            atlas.FreeRange(allocations);
-
-            osmDepthBuffer?.Dispose();
-            osmDepthBuffer = null;
+            atlasHandle.Release();
             if (Interlocked.Decrement(ref instances) == 0)
             {
                 osmBuffer?.Dispose();
@@ -92,9 +81,13 @@
             data->Softness = 1;
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
+
+            float texel = 1.0f / atlasHandle.Atlas.Size;
+
             for (int i = 0; i < 6; i++)
             {
-                coords[i] = allocations[i].Offset * allocations[i].Size;
+                var vp = atlasHandle.Allocations[i].GetViewport();
+                coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
             }
 
             OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
@@ -102,7 +95,7 @@
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer, int pass)
         {
-            if (osmDepthBuffer == null)
+            if (!atlasHandle.IsValid)
             {
                 return;
             }
@@ -113,20 +106,25 @@
             data->Softness = 1;
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
+
+            float texel = 1.0f / atlasHandle.Atlas.Size;
+
             for (int i = 0; i < 6; i++)
             {
-                coords[i] = allocations[i].Offset * allocations[i].Size;
+                var vp = atlasHandle.Allocations[i].GetViewport();
+                coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
             }
 
             OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
 
-            var viewport = allocations[pass].GetViewport();
+            var viewport = atlasHandle.Allocations[pass].GetViewport();
             osmBuffer.Local->View = views[pass];
             osmBuffer.Local->Position = Transform.GlobalPosition;
             osmBuffer.Local->Far = Range;
             osmBuffer.Update(context);
-            context.ClearView(LightManager.Current.ShadowPool.DSV, Vector4.One, viewport.Rect);
-            context.SetRenderTarget(null, LightManager.Current.ShadowPool.DSV);
+
+            context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);
+            context.SetRenderTarget(null, atlasHandle.Atlas.DSV);
             context.SetViewport(viewport);
 #nullable enable
         }

@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using HexaEngine.Rendering.Graph;
 
     public interface IPostFx : IDisposable
     {
@@ -17,11 +18,11 @@
 
         public event Action<int>? OnPriorityChanged;
 
-        Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros);
+        Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
 
         void Resize(int width, int height);
 
-        void Draw(IGraphicsContext context);
+        void Draw(IGraphicsContext context, GraphResourceBuilder creator);
 
         void PrePassDraw(IGraphicsContext context)
         {

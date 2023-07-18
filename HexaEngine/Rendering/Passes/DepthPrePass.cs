@@ -6,6 +6,7 @@ namespace HexaEngine.Rendering.Passes
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
+    using System;
 
     public class DepthPrePass : RenderPass
     {
@@ -14,7 +15,7 @@ namespace HexaEngine.Rendering.Passes
             AddWriteDependency(new("#DepthStencil"));
         }
 
-        public override void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -28,6 +29,9 @@ namespace HexaEngine.Rendering.Passes
             context.ClearDepthStencilView(depthStencil.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
             context.SetRenderTarget(null, depthStencil.DSV);
             context.SetViewport(depthStencil.Viewport);
+
+            var backgroundQueue = renderers.BackgroundQueue;
+
             renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
             context.ClearState();
         }

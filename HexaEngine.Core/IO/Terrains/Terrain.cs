@@ -7,21 +7,75 @@
     using HexaEngine.Mathematics;
     using System.Numerics;
 
+    /// <summary>
+    /// Represents a terrain mesh generated from a height map.
+    /// </summary>
     public unsafe class Terrain
     {
+        /// <summary>
+        /// The number of vertices in the terrain.
+        /// </summary>
         public uint VerticesCount;
+
+        /// <summary>
+        /// The number of indices in the terrain.
+        /// </summary>
         public uint IndicesCount;
+
+        /// <summary>
+        /// The width of the terrain.
+        /// </summary>
         public uint Width;
+
+        /// <summary>
+        /// The height of the terrain.
+        /// </summary>
         public uint Height;
+
+        /// <summary>
+        /// The array of indices that define the terrain's triangles.
+        /// </summary>
         public uint[] Indices;
+
+        /// <summary>
+        /// The array of vertex positions.
+        /// </summary>
         public Vector3[] Positions;
+
+        /// <summary>
+        /// The array of vertex UV coordinates.
+        /// </summary>
         public Vector3[] UVs;
+
+        /// <summary>
+        /// The array of vertex normals.
+        /// </summary>
         public Vector3[] Normals;
+
+        /// <summary>
+        /// The array of vertex tangents.
+        /// </summary>
         public Vector3[] Tangents;
+
+        /// <summary>
+        /// The array of vertex bitangents.
+        /// </summary>
         public Vector3[] Bitangents;
+
+        /// <summary>
+        /// The bounding box of the terrain.
+        /// </summary>
         public BoundingBox Box;
+
+        /// <summary>
+        /// The flags indicating which data is present in the terrain.
+        /// </summary>
         public TerrainFlags Flags;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Terrain"/> class from a height map.
+        /// </summary>
+        /// <param name="map">The height map.</param>
         public Terrain(HeightMap map)
         {
             Width = (uint)map.Width;
@@ -29,7 +83,7 @@
             int cols = map.Width;
             int rows = map.Height;
 
-            //Create the grid
+            // Create the grid
             VerticesCount = (uint)(rows * cols);
             IndicesCount = (uint)((rows - 1) * (cols - 1) * 2) * 3;
 
@@ -102,11 +156,23 @@
             Flags |= TerrainFlags.Tangents | TerrainFlags.Bitangents;
         }
 
+        /// <summary>
+        /// Creates an index buffer for the terrain.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <returns>The index buffer.</returns>
         public IndexBuffer<uint> CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            return new(device, Indices, accessFlags);
+            return new IndexBuffer<uint>(device, Indices, accessFlags);
         }
 
+        /// <summary>
+        /// Writes the terrain indices to an existing index buffer.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="ib">The index buffer to write to.</param>
+        /// <returns>True if the operation was successful; otherwise, false.</returns>
         public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer<uint> ib)
         {
             for (int i = 0; i < IndicesCount; i++)
@@ -117,6 +183,12 @@
             return ib.Update(context);
         }
 
+        /// <summary>
+        /// Creates a vertex buffer for the terrain.
+        /// </summary>
+        /// <param name="device">The graphics device.</param>
+        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <returns>The vertex buffer.</returns>
         public VertexBuffer<TerrainVertex> CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
             var stride = sizeof(TerrainVertex);
@@ -156,11 +228,17 @@
                 vertices[i] = vertex;
             }
 
-            VertexBuffer<TerrainVertex> vertexBuffer = new(device, accessFlags, vertices, VerticesCount);
+            VertexBuffer<TerrainVertex> vertexBuffer = new VertexBuffer<TerrainVertex>(device, vertices, VerticesCount, accessFlags);
             Free(vertices);
             return vertexBuffer;
         }
 
+        /// <summary>
+        /// Writes the terrain vertices to an existing vertex buffer.
+        /// </summary>
+        /// <param name="context">The graphics context.</param>
+        /// <param name="vb">The vertex buffer to write to.</param>
+        /// <returns>True if the operation was successful; otherwise, false.</returns>
         public bool WriteVertexBuffer(IGraphicsContext context, VertexBuffer<TerrainVertex> vb)
         {
             for (int i = 0; i < VerticesCount; i++)
@@ -198,8 +276,11 @@
             return vb.Update(context);
         }
 
+        /// <summary>
+        /// The input element descriptions for the terrain vertex format.
+        /// </summary>
         public static readonly InputElementDescription[] InputElements =
-{
+        {
             new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0),
             new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0),
             new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0),
@@ -207,6 +288,9 @@
             new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0),
         };
 
+        /// <summary>
+        /// Recalculates the terrain data, including bounding box, vertex normals, tangents, and bitangents.
+        /// </summary>
         public void Recalculate()
         {
             Box = BoundingBoxHelper.Compute(Positions);
@@ -214,6 +298,12 @@
             CalcTangentsProcess.ProcessMesh2(this);
         }
 
+        /// <summary>
+        /// Performs a ray intersection test with the terrain.
+        /// </summary>
+        /// <param name="ray">The ray to test.</param>
+        /// <param name="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
+        /// <returns>True if the ray intersects the terrain; otherwise, false.</returns>
         public bool IntersectRay(Ray ray, out Vector3 pointInTerrain)
         {
             pointInTerrain = default;
@@ -237,6 +327,13 @@
             return false;
         }
 
+        /// <summary>
+        /// Performs a ray intersection test with the transformed terrain.
+        /// </summary>
+        /// <param name="ray">The ray to test.</param>
+        /// <param name="transform">The transformation matrix to apply to the terrain.</param>
+        /// <param name="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
+        /// <returns>True if the ray intersects the transformed terrain; otherwise, false.</returns>
         public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
         {
             pointInTerrain = default;
@@ -261,16 +358,33 @@
             return false;
         }
 
+        /// <summary>
+        /// Gets the index for the specified coordinates in the terrain.
+        /// </summary>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
+        /// <returns>The index.</returns>
         public uint GetIndexFor(uint x, uint y)
         {
             return y * Width + x;
         }
 
+        /// <summary>
+        /// Gets the index for the specified coordinates in the terrain.
+        /// </summary>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
+        /// <returns>The index.</returns>
         public int GetIndexFor(int x, int y)
         {
             return (int)(x * Width + y);
         }
 
+        /// <summary>
+        /// Averages the edge of the terrain with the corresponding edge of another terrain.
+        /// </summary>
+        /// <param name="edge">The edge to average.</param>
+        /// <param name="other">The other terrain.</param>
         public void AverageEdge(Edge edge, Terrain other)
         {
             if (edge == Edge.ZPos)
@@ -322,13 +436,5 @@
                 }
             }
         }
-    }
-
-    public enum Edge
-    {
-        XPos,
-        XNeg,
-        ZPos,
-        ZNeg,
     }
 }

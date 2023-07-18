@@ -1,6 +1,9 @@
 #include "../../camera.hlsl"
 
-//wicked engine https://github.com/turanszkij/WickedEngine
+#define SSR_MAX_RAY_COUNT 16
+#define SSR_RAY_STEPS 16
+#define SSR_RAY_STEP 1.60f
+#define SSR_RAY_HIT_THRESHOLD 2.00f
 
 SamplerState point_clamp_sampler : register(s0);
 SamplerState linear_clamp_sampler : register(s1);
@@ -10,31 +13,23 @@ Texture2D normalMetallicTx : register(t0);
 Texture2D sceneTx : register(t1);
 Texture2D<float> depthTx : register(t2);
 
-
-static const int g_iMaxSteps = 16;
-static const int g_iNumBinarySearchSteps = 16;
-static const float ssr_ray_step = 1.60f;
-static const float ssr_ray_hit_threshold = 2.00f;
-
-
 struct VertexOut
 {
     float4 PosH : SV_POSITION;
     float2 Tex : TEXCOORD;
 };
 
-
 float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 {
     float fDepth;
 
-    for (int i = 0; i < g_iNumBinarySearchSteps; i++)
+    for (int i = 0; i < SSR_RAY_STEPS; i++)
     {
         float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
         vProjectedCoord.xy /= vProjectedCoord.w;
         vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 
-       //linearize depth here
+        // linearize depth here
         fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
         float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
         float fDepthDiff = vHitCoord.z - fPositionVS.z;
@@ -50,19 +45,19 @@ float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
     vProjectedCoord.xy /= vProjectedCoord.w;
     vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
 
-   //linearize depth here
+    // linearize depth here
     fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
     float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
     float fDepthDiff = vHitCoord.z - fPositionVS.z;
 
-    return float4(vProjectedCoord.xy, fDepth, abs(fDepthDiff) < ssr_ray_hit_threshold ? 1.0f : 0.0f);
+    return float4(vProjectedCoord.xy, fDepth, abs(fDepthDiff) < SSR_RAY_HIT_THRESHOLD ? 1.0f : 0.0f);
 }
 
 float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
 {
     float fDepth;
 
-    for (int i = 0; i < g_iMaxSteps; i++)
+    for (int i = 0; i < SSR_MAX_RAY_COUNT; i++)
     {
         vHitCoord += vDir;
 
@@ -82,12 +77,11 @@ float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
             return SSRBinarySearch(vDir, vHitCoord);
         }
 
-        vDir *= ssr_ray_step;
+        vDir *= SSR_RAY_STEP;
     }
-    
+
     return float4(0.0f, 0.0f, 0.0f, 0.0f);
 }
-
 
 bool bInsideScreen(in float2 vCoord)
 {
@@ -99,19 +93,18 @@ float4 main(VertexOut pin) : SV_TARGET
     float4 NormalMetallic = normalMetallicTx.Sample(linear_border_sampler, pin.Tex);
     float metallic = NormalMetallic.a;
     float4 scene_color = sceneTx.SampleLevel(linear_clamp_sampler, pin.Tex, 0);
-    
+
     if (metallic < 0.01f)
         return scene_color;
-    
+
     float3 Normal = NormalMetallic.rgb;
     Normal = 2 * Normal - 1.0;
-    Normal = normalize(mul(Normal, (float3x3)view));
-    
+    Normal = normalize(mul(Normal, (float3x3) view));
 
     float depth = depthTx.Sample(linear_clamp_sampler, pin.Tex);
     float3 Position = GetPositionVS(pin.Tex, depth);
     float3 ReflectDir = normalize(reflect(Position, Normal));
-	
+
 	//Raycast
     float3 HitPos = Position;
     float4 vCoords = SSRRayMarch(ReflectDir, HitPos);
@@ -128,5 +121,3 @@ float4 main(VertexOut pin) : SV_TARGET
     float3 reflectionColor = reflectionIntensity * sceneTx.SampleLevel(linear_clamp_sampler, vCoords.xy, 0).rgb;
     return scene_color + metallic * max(0, float4(reflectionColor, 1.0f));
 }
-
-

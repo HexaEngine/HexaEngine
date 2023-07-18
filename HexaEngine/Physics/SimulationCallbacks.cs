@@ -56,7 +56,6 @@
         {
             Events.Flush();
             Events.Dispose();
-
             Characters.Dispose();
         }
 

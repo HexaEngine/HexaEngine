@@ -12,7 +12,6 @@ namespace HexaEngine.Rendering.Passes
 
     public class HizDepthPass : ComputePass
     {
-        private Quad quad;
         private IComputePipeline downsample;
         private ConstantBuffer<Vector4> cbDownsample;
         private IGraphicsPipeline copy;
@@ -24,10 +23,8 @@ namespace HexaEngine.Rendering.Passes
             AddWriteDependency(new("HiZBuffer"));
         }
 
-        public override void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
-            quad = new(device);
-
             downsample = pipelineCreator.CreateComputePipeline(new()
             {
                 Path = "compute/hiz/shader.hlsl",
@@ -35,16 +32,16 @@ namespace HexaEngine.Rendering.Passes
 
             copy = pipelineCreator.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/copy/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl"
-            });
+            }, GraphicsPipelineState.DefaultFullscreen);
 
             cbDownsample = creator.CreateConstantBuffer<Vector4>("HiZDownsampleCB", CpuAccessFlags.Write);
             samplerState = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
-            creator.CreateDepthMipChain("HiZBuffer", new((int)creator.GetViewport().Width, (int)creator.GetViewport().Height, 1, Format.R32Float, BindFlags.None, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
+            creator.CreateDepthMipChain("HiZBuffer", new((int)creator.Viewport.Width, (int)creator.Viewport.Height, 1, Format.R32Float));
         }
 
-        public override unsafe void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var input = creator.GetDepthStencilBuffer("#DepthStencil").SRV;
             var chain = creator.GetDepthMipChain("HiZBuffer");
@@ -55,8 +52,13 @@ namespace HexaEngine.Rendering.Passes
             context.SetRenderTarget(chain.RTV, null);
             context.PSSetShaderResource(0, input);
             context.SetViewport(viewports[0]);
-            quad.DrawAuto(context, copy);
+            context.SetGraphicsPipeline(copy);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
             context.SetRenderTarget(null, null);
+
+            context.SetRenderTarget(null, null);
+            context.PSSetShaderResource(0, null);
 
             context.SetComputePipeline(downsample);
             context.CSSetConstantBuffer(0, cbDownsample);

@@ -186,24 +186,28 @@
                 var comps = node.components.ToArray();
                 if (node.initialized)
                 {
-                    foreach (var child in childs)
+                    for (int i = 0; i < childs.Length; i++)
                     {
+                        GameObject? child = childs[i];
                         node.RemoveChild(child);
                     }
 
-                    foreach (var comp in comps)
+                    for (int i = 0; i < comps.Length; i++)
                     {
+                        IComponent? comp = comps[i];
                         node.RemoveComponent(comp);
                     }
                 }
                 node.Parent?.RemoveChild(node);
-                foreach (var child in childs)
+                for (int i = 0; i < childs.Length; i++)
                 {
+                    GameObject? child = childs[i];
                     AddChild(child);
                 }
 
-                foreach (var comp in comps)
+                for (int i = 0; i < comps.Length; i++)
                 {
+                    IComponent? comp = comps[i];
                     AddComponent(comp);
                 }
             }
@@ -287,6 +291,7 @@
             }
             scene?.UnregisterChild(this);
             initialized = false;
+            scene = null;
         }
 
         public virtual Scene GetScene()
@@ -398,6 +403,16 @@
             return components;
         }
 
+        public static void RemoveComponent(GameObject gameObject, IComponent component)
+        {
+            gameObject.RemoveComponent(component);
+        }
+
+        public static void RemoveComponent(ValueTuple<GameObject, IComponent> values)
+        {
+            values.Item1.RemoveComponent(values.Item2);
+        }
+
         public virtual T? GetChild<T>() where T : GameObject
         {
             for (int i = 0; i < children.Count; i++)
@@ -448,16 +463,6 @@
                 }
                 return type;
             }
-        }
-
-        public static void RemoveComponent(GameObject gameObject, IComponent component)
-        {
-            gameObject.RemoveComponent(component);
-        }
-
-        public static void RemoveComponent(ValueTuple<GameObject, IComponent> values)
-        {
-            values.Item1.RemoveComponent(values.Item2);
         }
     }
 }

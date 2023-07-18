@@ -54,9 +54,9 @@
 
         public Viewport Viewport => new(Width, Height);
 
-        public GBuffer(IGraphicsDevice device, GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public GBuffer(IGraphicsDevice device, GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+            dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.device = device;
             formats = description.Formats;
             count = (uint)description.Count;
@@ -69,8 +69,8 @@
             pRTVs = AllocArray(Count);
             for (int i = 0; i < Count; i++)
             {
-                textures[i] = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-                var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+                textures[i] = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+                var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
                 srvs[i] = device.CreateShaderResourceView(textures[i]);
                 srvs[i].DebugName = name + ".SRV";
                 rtvs[i] = device.CreateRenderTargetView(textures[i], new(Width, Height));
@@ -81,9 +81,9 @@
             }
         }
 
-        public GBuffer(IGraphicsDevice device, int width, int height, Format[] formats, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        public GBuffer(IGraphicsDevice device, int width, int height, Format[] formats, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+            dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.device = device;
             this.formats = formats;
             count = (uint)formats.Length;
@@ -96,8 +96,8 @@
             pRTVs = AllocArray(Count);
             for (int i = 0; i < Count; i++)
             {
-                textures[i] = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
-                var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{line}";
+                textures[i] = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
+                var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
                 srvs[i] = device.CreateShaderResourceView(textures[i]);
                 srvs[i].DebugName = name + ".SRV";
                 rtvs[i] = device.CreateRenderTargetView(textures[i], new(Width, Height));
@@ -121,7 +121,7 @@
             this.height = height;
             for (int i = 0; i < Count; i++)
             {
-                ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.None);
+                ITexture2D tex = device.CreateTexture2D(formats[i], Width, Height, 1, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget);
                 var name = textures[i].DebugName = dbgName.Replace("GBuffer", $"GBuffer.{i}");
                 srvs[i] = device.CreateShaderResourceView(tex);
                 srvs[i].DebugName = name + ".SRV";

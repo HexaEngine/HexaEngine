@@ -5,11 +5,9 @@ cbuffer cb
     uint offset;
 }
 
-cbuffer LightBuffer : register(b1)
+cbuffer LightView : register(b1)
 {
     matrix view;
-    float3 position;
-    float far;
 };
 
 StructuredBuffer<float4x4> worldMatrices;
@@ -22,9 +20,7 @@ HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
 	float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-    output.position = mul(totalPosition, mat);
-    output.depth = length(output.position.xyz - position) / far;
-    output.position = mul(output.position, view);
+    output.pos = mul(float4(input.pos, 1), mat).xyz;
 
     output.TessFactor = TessellationFactor;
 	return output;
@@ -58,9 +54,9 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
     float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-    output.position = mul(totalPosition, mat);
-    output.depth = length(output.position.xyz - position) / far;
+    output.position = mul(totalPosition, mat).xyzw;
     output.position = mul(output.position, view);
+    output.depth = output.position.z / output.position.w;
 
     return output;
 }
@@ -73,9 +69,9 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID)
 
     float4x4 mat = worldMatrices[instanceId + worldMatrixOffsets[offset]];
 
-    output.position = mul(float4(input.pos, 1), mat);
-    output.depth = length(output.position.xyz - position) / far;
+    output.position = mul(float4(input.pos, 1), mat).xyzw;
     output.position = mul(output.position, view);
+    output.depth = output.position.z / output.position.w;
 
     return output;
 }

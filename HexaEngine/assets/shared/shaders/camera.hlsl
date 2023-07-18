@@ -80,3 +80,8 @@ float2 ProjectUV(float3 uv)
     uv_projected.xy /= uv_projected.w;
     return uv_projected.xy * float2(0.5f, -0.5f) + 0.5f;
 }
+
+float2 GetScreenUV(float4 vertex_position)
+{
+    return vertex_position.xy / screenDim;
+}

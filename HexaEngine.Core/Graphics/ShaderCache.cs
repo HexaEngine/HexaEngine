@@ -94,13 +94,13 @@
         {
             lock (entries)
             {
-                ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ...");
+                ImGuiConsole.Log(LogSeverity.Information, "Clearing shader cache ...");
                 for (int i = 0; i < entries.Count; i++)
                 {
                     entries[i].Free();
                 }
                 entries.Clear();
-                ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ... done");
+                ImGuiConsole.Log(LogSeverity.Information, "Clearing shader cache ... done");
             }
         }
 

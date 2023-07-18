@@ -2,12 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public class GaussianBlur : IBlur
     {
-        private readonly Quad quad;
         private readonly IGraphicsPipeline horizontal;
         private readonly IGraphicsPipeline vertical;
         private readonly ConstantBuffer<GaussianBlurParams> paramsBuffer;
@@ -24,28 +23,28 @@
             public float padd;
         }
 
-        public GaussianBlur(IGraphicsDevice device, Format format, int width, int height)
+        public GaussianBlur(IGraphicsDevice device, Format format, int width, int height, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            quad = new(device);
             horizontal = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/blur/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/horizontal.hlsl"
-            });
+            }, GraphicsPipelineState.DefaultFullscreen);
             vertical = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/blur/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/vertical.hlsl"
             }, new GraphicsPipelineState()
             {
                 Blend = BlendDescription.AlphaBlend,
-                BlendFactor = Vector4.One
+                BlendFactor = Vector4.One,
+                Topology = PrimitiveTopology.TriangleStrip
             });
 
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            paramsBuffer = new(device, CpuAccessFlags.Write, filename + "-GaussianBlur", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            intermediateTex = new(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            intermediateTex = new(device, format, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.None, filename, lineNumber);
             this.device = device;
         }
 
@@ -65,11 +64,15 @@
             context.PSSetShaderResource(0, src);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            quad.DrawAuto(context, horizontal);
+            context.SetGraphicsPipeline(horizontal);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
 
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.SRV);
-            quad.DrawAuto(context, vertical);
+            context.SetGraphicsPipeline(vertical);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);
@@ -89,11 +92,15 @@
             context.PSSetShaderResource(0, src);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            quad.DrawAuto(context, horizontal);
+            context.SetGraphicsPipeline(horizontal);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
 
             context.SetRenderTarget(dst, null);
             context.PSSetShaderResource(0, intermediateTex.SRV);
-            quad.DrawAuto(context, vertical);
+            context.SetGraphicsPipeline(vertical);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
             context.PSSetConstantBuffer(0, null);
             context.PSSetSampler(0, null);
             context.PSSetShaderResource(0, null);
@@ -110,7 +117,6 @@
         {
             if (!disposedValue)
             {
-                quad.Dispose();
                 vertical.Dispose();
                 horizontal.Dispose();
                 paramsBuffer.Dispose();

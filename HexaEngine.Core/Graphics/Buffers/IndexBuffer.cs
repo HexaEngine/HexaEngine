@@ -95,6 +95,42 @@
             MemoryManager.Register(buffer);
         }
 
+        public IndexBuffer(IGraphicsDevice device, T* indices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))
+                throw new("Index buffers can only be type of uint or ushort");
+
+            this.device = device;
+            dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
+
+            capacity = count;
+            this.count = count;
+
+            description = new(sizeof(T) * (int)capacity, BindFlags.IndexBuffer, Usage.Default, flags);
+
+            if ((flags & CpuAccessFlags.None) != 0)
+            {
+                description.Usage = Usage.Immutable;
+                buffer = device.CreateBuffer(indices, capacity, description);
+                return;
+            }
+            if ((flags & CpuAccessFlags.Write) != 0)
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if ((flags & CpuAccessFlags.Read) != 0)
+            {
+                description.Usage = Usage.Staging;
+            }
+
+            format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
+
+            items = AllocCopy(indices, count);
+            buffer = device.CreateBuffer(items, capacity, description);
+            buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
+        }
+
         public IndexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             if (typeof(T) != typeof(uint) && typeof(T) != typeof(ushort))

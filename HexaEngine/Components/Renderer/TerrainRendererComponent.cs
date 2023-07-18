@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.Properties.Editors;
@@ -95,7 +96,7 @@
             renderer.DrawShadowMap(context, light, type);
         }
 
-        public void VisibilityTest(IGraphicsContext context, Camera camera)
+        public void VisibilityTest(CullingContext context)
         {
         }
     }

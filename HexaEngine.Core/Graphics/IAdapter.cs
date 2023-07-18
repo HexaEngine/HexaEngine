@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.Debugging.Device;
+    using System.Collections.Generic;
+
     public interface IGraphicsAdapter
     {
         GraphicsBackend Backend { get; }
@@ -15,5 +18,6 @@
         void PumpDebugMessages();
 
         int PlatformScore { get; }
+        IReadOnlyList<GPU> GPUs { get; }
     }
 }

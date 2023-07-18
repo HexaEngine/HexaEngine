@@ -8,85 +8,81 @@
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    public static class CullingManager
+    public struct TypeData
     {
-        public struct CBCamera
+        public uint IndexCountPerInstance;
+        public uint StartIndexLocation;
+        public int BaseVertexLocation;
+        public uint StartInstanceLocation;
+    }
+
+    public class CullingContext
+    {
+        private readonly StructuredBuffer<TypeData> typeDataBuffer;
+        private readonly StructuredBuffer<InstanceData> instanceDataBuffer;
+        private uint currentType;
+
+        public CullingContext(StructuredBuffer<TypeData> typeDataBuffer, StructuredBuffer<InstanceData> instanceDataBuffer)
         {
-            public Matrix4x4 View;
-            public Matrix4x4 Proj;
-            public Matrix4x4 ViewInv;
-            public Matrix4x4 ProjInv;
-            public float Far;
-            public float Near;
-            public Vector2 Padd;
-
-            public CBCamera(Camera camera)
-            {
-                Proj = Matrix4x4.Transpose(camera.Transform.Projection);
-                View = Matrix4x4.Transpose(camera.Transform.View);
-                ProjInv = Matrix4x4.Transpose(camera.Transform.ProjectionInv);
-                ViewInv = Matrix4x4.Transpose(camera.Transform.ViewInv);
-                Far = camera.Far;
-                Near = camera.Near;
-                Padd = default;
-            }
-
-            public CBCamera(CameraTransform camera)
-            {
-                Proj = Matrix4x4.Transpose(camera.Projection);
-                View = Matrix4x4.Transpose(camera.View);
-                ProjInv = Matrix4x4.Transpose(camera.ProjectionInv);
-                ViewInv = Matrix4x4.Transpose(camera.ViewInv);
-                Far = camera.Far;
-                Near = camera.Near;
-                Padd = default;
-            }
+            this.typeDataBuffer = typeDataBuffer;
+            this.instanceDataBuffer = instanceDataBuffer;
         }
 
+        public void Reset()
+        {
+            typeDataBuffer.ResetCounter();
+            instanceDataBuffer.ResetCounter();
+            currentType = 0;
+        }
+
+        public void AppendType(TypeData type)
+        {
+            currentType = typeDataBuffer.Count;
+            typeDataBuffer.Add(type);
+        }
+
+        public unsafe uint GetDrawArgsOffset()
+        {
+            return currentType * (uint)sizeof(DrawIndexedInstancedIndirectArgs);
+        }
+
+        public void AppendInstance(InstanceData instance)
+        {
+            instance.Type = currentType;
+            instanceDataBuffer.Add(instance);
+        }
+    }
+
+    public class CullingManager
+    {
 #nullable disable
-        private static CullingFlags cullingFlags;
-        private static IGraphicsDevice device;
+        private readonly IGraphicsDevice device;
+        private CullingFlags cullingFlags;
 
-        private static IComputePipeline occlusion;
+        private IComputePipeline occlusion;
 
-        private static ConstantBuffer<CBCamera> occlusionCameraBuffer;
-        private static StructuredUavBuffer<uint> instanceOffsets;
-        private static StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer;
-        private static StructuredBuffer<InstanceData> instanceDataBuffer;
-        private static StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
-        private static DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
+        private ConstantBuffer<CBCamera> occlusionCameraBuffer;
+        private StructuredUavBuffer<uint> instanceOffsets;
+        private StructuredUavBuffer<Matrix4x4> instanceDataOutBuffer;
+        private StructuredBuffer<TypeData> typeDataBuffer;
+        private StructuredBuffer<InstanceData> instanceDataBuffer;
+        private StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> swapBuffer;
+        private DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> drawIndirectArgs;
 
-        private static StructuredBuffer<uint> instanceOffsetsNoCull;
-        private static StructuredBuffer<Matrix4x4> instanceDataNoCull;
+        private StructuredBuffer<uint> instanceOffsetsNoCull;
+        private StructuredBuffer<Matrix4x4> instanceDataNoCull;
 
-        private static ConstantBuffer<OcclusionParams> occlusionParamBuffer;
-        private static ISamplerState sampler;
-        private static unsafe void** occlusionSrvs;
-        private static unsafe void** occlusionUavs;
-        private static unsafe void** occlusionCbs;
+        private ConstantBuffer<OcclusionParams> occlusionParamBuffer;
+        private ISamplerState sampler;
+        private unsafe void** occlusionSrvs;
+        private unsafe void** occlusionUavs;
+        private unsafe void** occlusionCbs;
+        private CullingContext context;
 #nullable enable
 
-        public static CullingFlags CullingFlags { get => cullingFlags; set => cullingFlags = value; }
-
-        public static StructuredBuffer<uint> InstanceOffsetsNoCull => instanceOffsetsNoCull;
-
-        public static StructuredBuffer<Matrix4x4> InstanceDataNoCull => instanceDataNoCull;
-
-        public static ConstantBuffer<CBCamera> OcclusionCameraBuffer => occlusionCameraBuffer;
-
-        public static StructuredUavBuffer<uint> InstanceOffsets => instanceOffsets;
-
-        public static StructuredUavBuffer<Matrix4x4> InstanceDataOutBuffer => instanceDataOutBuffer;
-
-        public static StructuredBuffer<InstanceData> InstanceDataBuffer => instanceDataBuffer;
-
-        public static StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> SwapBuffer => swapBuffer;
-
-        public static DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> DrawIndirectArgs => drawIndirectArgs;
-
-        public static unsafe void Initialize(IGraphicsDevice device)
+        public unsafe CullingManager(IGraphicsDevice device)
         {
-            CullingManager.device = device;
+            this.device = device;
             occlusion = device.CreateComputePipeline(new()
             {
                 Path = "compute/occlusion/occlusion.hlsl",
@@ -99,6 +95,7 @@
             occlusionParamBuffer = new(device, CpuAccessFlags.Write);
             instanceOffsets = new(device, CpuAccessFlags.None);
             instanceDataOutBuffer = new(device, CpuAccessFlags.Read);
+            typeDataBuffer = new(device, CpuAccessFlags.Write);
             instanceDataBuffer = new(device, CpuAccessFlags.Write);
             swapBuffer = new(device, CpuAccessFlags.RW);
             drawIndirectArgs = new(device, CpuAccessFlags.Write);
@@ -112,20 +109,40 @@
             occlusionUavs[2] = (void*)swapBuffer.UAV.NativePointer;
             occlusionSrvs = AllocArray(2);
             occlusionSrvs[1] = (void*)instanceDataBuffer.SRV.NativePointer;
+            context = new(typeDataBuffer, instanceDataBuffer);
         }
 
-        public static void UpdateCamera(IGraphicsContext context)
+        public CullingContext Context { get => context; }
+
+        public CullingFlags CullingFlags { get => cullingFlags; set => cullingFlags = value; }
+
+        public StructuredBuffer<uint> InstanceOffsetsNoCull => instanceOffsetsNoCull;
+
+        public StructuredBuffer<Matrix4x4> InstanceDataNoCull => instanceDataNoCull;
+
+        public ConstantBuffer<CBCamera> OcclusionCameraBuffer => occlusionCameraBuffer;
+
+        public StructuredUavBuffer<uint> InstanceOffsets => instanceOffsets;
+
+        public StructuredUavBuffer<Matrix4x4> InstanceDataOutBuffer => instanceDataOutBuffer;
+
+        public StructuredBuffer<InstanceData> InstanceDataBuffer => instanceDataBuffer;
+
+        public StructuredUavBuffer<DrawIndexedInstancedIndirectArgs> SwapBuffer => swapBuffer;
+
+        public DrawIndirectArgsBuffer<DrawIndexedInstancedIndirectArgs> DrawIndirectArgs => drawIndirectArgs;
+
+        public void UpdateCamera(IGraphicsContext context, Viewport viewport)
         {
             if (CameraManager.Culling == null)
             {
                 return;
             }
 
-            occlusionCameraBuffer[0] = new(CameraManager.Culling);
-            occlusionCameraBuffer.Update(context);
+            occlusionCameraBuffer.Update(context, new(CameraManager.Culling, new(viewport.Width, viewport.Height)));
         }
 
-        public static void DoFrustumCulling(IGraphicsContext context, BoundingFrustum frustum, out int count)
+        public void DoFrustumCulling(IGraphicsContext context, BoundingFrustum frustum, out int count)
         {
             count = 0;
             /*
@@ -152,7 +169,7 @@
             */
         }
 
-        public static unsafe void DoOcclusionCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain)
+        public unsafe void DoOcclusionCulling(IGraphicsContext context, Camera camera, int instanceCount, int typeCount, DepthMipChain mipChain)
         {
             if (instanceCount == 0)
             {
@@ -212,7 +229,7 @@
             };*/
         }
 
-        public static void DoCulling(IGraphicsContext context, IShaderResourceView mipChain)
+        public void DoCulling(IGraphicsContext context, IShaderResourceView mipChain)
         {
             /*
             var camera = CameraManager.Culling;
@@ -227,7 +244,7 @@
             */
         }
 
-        public static unsafe void Release()
+        public unsafe void Release()
         {
             occlusionCameraBuffer.Dispose();
             occlusionCameraBuffer = null;
@@ -235,6 +252,8 @@
             instanceOffsets = null;
             instanceDataOutBuffer.Dispose();
             instanceDataOutBuffer = null;
+            typeDataBuffer.Dispose();
+            typeDataBuffer = null;
             instanceDataBuffer.Dispose();
             instanceDataBuffer = null;
             swapBuffer.Dispose();

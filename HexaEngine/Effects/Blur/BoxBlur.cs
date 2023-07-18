@@ -4,10 +4,10 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public class BoxBlur : IBlur
     {
-        private readonly Quad quad;
         private readonly IGraphicsPipeline pipeline;
         private readonly ConstantBuffer<BoxBlurParams> paramsBuffer;
         private readonly ISamplerState linearClampSampler;
@@ -21,15 +21,14 @@
             public float padd;
         }
 
-        public BoxBlur(IGraphicsDevice device)
+        public BoxBlur(IGraphicsDevice device, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            quad = new(device);
             pipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/blur/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/blur/box.hlsl"
-            });
-            paramsBuffer = new(device, CpuAccessFlags.Write);
+            }, GraphicsPipelineState.DefaultFullscreen);
+            paramsBuffer = new(device, CpuAccessFlags.Write, filename + "-BoxBlur", lineNumber);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
@@ -49,7 +48,9 @@
             context.PSSetConstantBuffer(0, paramsBuffer);
             context.PSSetSampler(0, linearClampSampler);
             context.PSSetShaderResource(0, src);
-            quad.DrawAuto(context, pipeline);
+            context.SetGraphicsPipeline(pipeline);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
             context.PSSetShaderResource(0, null);
             context.PSSetSampler(0, null);
             context.PSSetConstantBuffer(0, null);
@@ -61,7 +62,6 @@
         {
             if (!disposedValue)
             {
-                quad.Dispose();
                 pipeline.Dispose();
                 paramsBuffer.Dispose();
                 linearClampSampler.Dispose();

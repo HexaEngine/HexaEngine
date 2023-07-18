@@ -3,13 +3,14 @@
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Culling;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
+    using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Collections.Generic;
-    using System.Numerics;
 
     public class RenderManager : ISystem
     {
@@ -22,8 +23,8 @@
         private readonly List<IRendererComponent> transparencyQueue = new();
         private readonly List<IRendererComponent> overlayQueue = new();
         private readonly SortRendererAscending comparer = new();
-        private readonly IGraphicsDevice device;
         private readonly LightManager lights;
+        private readonly CullingManager culling;
 
         public string Name => "Renderers";
 
@@ -31,8 +32,8 @@
 
         public RenderManager(IGraphicsDevice device, LightManager lights)
         {
-            this.device = device;
             this.lights = lights;
+            culling = new(device);
         }
 
         public IReadOnlyList<IRendererComponent> BackgroundQueue => backgroundQueue;
@@ -47,14 +48,16 @@
 
         public IReadOnlyList<IRendererComponent> OverlayQueue => overlayQueue;
 
-        public void VisibilityTest(IGraphicsContext context, RenderQueueIndex index)
+        public void VisibilityTest(IGraphicsContext context, Viewport viewport, IShaderResourceView depthMip, RenderQueueIndex index)
         {
+            culling.UpdateCamera(context, viewport);
             switch (index)
             {
                 case RenderQueueIndex.Geometry:
-                    VisibilityTestList(context, geometryQueue);
+                    VisibilityTestList(culling.Context, geometryQueue);
                     break;
             }
+            culling.DoCulling(context, depthMip);
         }
 
         public void DrawDepth(IGraphicsContext context, RenderQueueIndex index)
@@ -107,12 +110,12 @@
             }
         }
 
-        private static void VisibilityTestList(IGraphicsContext context, List<IRendererComponent> renderers)
+        private static void VisibilityTestList(CullingContext context, List<IRendererComponent> renderers)
         {
             var cam = CameraManager.Current;
             for (int i = 0; i < renderers.Count; i++)
             {
-                renderers[i].VisibilityTest(context, cam);
+                renderers[i].VisibilityTest(context);
             }
         }
 

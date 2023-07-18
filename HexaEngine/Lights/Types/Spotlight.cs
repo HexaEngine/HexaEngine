@@ -21,7 +21,7 @@
         private float coneAngle;
         private float blend;
         private Matrix4x4 view;
-        private ShadowAtlasAllocation allocation;
+        private ShadowAtlasHandle atlasHandle;
 
         public const int ShadowMapSize = 2048;
 
@@ -47,7 +47,7 @@
         public float Blend { get => blend; set => SetAndNotifyWithEqualsTest(ref blend, value); }
 
         [JsonIgnore]
-        public override bool HasShadowMap => allocation.IsValid;
+        public override bool HasShadowMap => atlasHandle.IsValid;
 
         [JsonIgnore]
         internal static IBuffer PSMBuffer => psmBuffer;
@@ -64,12 +64,12 @@
 
         public override void CreateShadowMap(IGraphicsDevice device, ShadowAtlas atlas)
         {
-            if (allocation.IsValid)
+            if (atlasHandle.IsValid)
             {
                 return;
             }
 
-            allocation = atlas.Alloc(ShadowMapSize);
+            atlasHandle = atlas.Alloc(ShadowMapSize);
 
             if (Interlocked.Increment(ref instances) == 1)
             {
@@ -77,14 +77,14 @@
             }
         }
 
-        public override void DestroyShadowMap(ShadowAtlas atlas)
+        public override void DestroyShadowMap()
         {
-            if (!allocation.IsValid)
+            if (!atlasHandle.IsValid)
             {
                 return;
             }
 
-            atlas.Free(ref allocation);
+            atlasHandle.Release();
 
             if (Interlocked.Decrement(ref instances) == 0)
             {
@@ -101,22 +101,27 @@
             var views = ShadowData.GetViews(data);
             var coords = ShadowData.GetAtlasCoords(data);
 
-            coords[0] = allocation.Offset * allocation.Size;
+            float texel = 1.0f / atlasHandle.Atlas.Size;
+
+            var vp = atlasHandle.Allocation.GetViewport();
+            coords[0] = new Vector4(vp.X, vp.Y, vp.X + vp.Width, vp.Y + vp.Height) * texel;
+
+            var mapping = ShadowAtlasAllocation.GetTextureCoordsMapping((int)atlasHandle.Atlas.Size, vp);
         }
 
         public unsafe void UpdateShadowMap(IGraphicsContext context, StructuredUavBuffer<ShadowData> buffer)
         {
-            if (!allocation.IsValid)
+            if (!atlasHandle.IsValid)
             {
                 return;
             }
 #nullable disable
 
-            var viewport = allocation.GetViewport();
+            var viewport = atlasHandle.Allocation.GetViewport();
             view = PSMHelper.GetLightSpaceMatrix(Transform, ConeAngle.ToRad(), Range, ShadowFrustum);
             context.Write(psmBuffer, view);
-            context.ClearView(LightManager.Current.ShadowPool.DSV, Vector4.One, viewport.Rect);
-            context.SetRenderTarget(null, LightManager.Current.ShadowPool.DSV);
+            context.ClearView(atlasHandle.Atlas.DSV, Vector4.One, viewport.Rect);
+            context.SetRenderTarget(null, atlasHandle.Atlas.DSV);
             context.SetViewport(viewport);
 
 #nullable enable

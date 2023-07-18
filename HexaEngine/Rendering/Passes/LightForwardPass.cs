@@ -39,15 +39,18 @@ namespace HexaEngine.Rendering.Passes
         {
             AddWriteDependency(new("LightBuffer"));
             AddWriteDependency(new("GBuffer"));
-            AddReadDependency(new("AOBuffer"));
-            AddReadDependency(new("#ShadowAtlas"));
+            AddReadDependency(new("#AOBuffer"));
+            AddReadDependency(new("ShadowAtlas"));
         }
 
         private readonly bool forceForward = true;
         private readonly bool clustered = true;
 
-        public override unsafe void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
+            var viewport = creator.Viewport;
+            creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+
             lightParamsBuffer = creator.CreateConstantBuffer<ForwardLightParams>("ForwardLightParams", CpuAccessFlags.Write);
 
             linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
@@ -62,8 +65,6 @@ namespace HexaEngine.Rendering.Passes
             smps[3] = (void*)shadowSampler.NativePointer;
 
             cbs = AllocArrayAndZero(nConstantBuffers);
-            cbs[1] = (void*)creator.GetConstantBuffer<CBCamera>("CBCamera").NativePointer;
-            cbs[2] = (void*)creator.GetConstantBuffer<CBWeather>("CBWeather").NativePointer;
 
             forwardSRVs = AllocArrayAndZero(nForwardSRVs);
             forwardClusteredSRVs = AllocArrayAndZero(nForwardClusteredSRVs);
@@ -71,7 +72,7 @@ namespace HexaEngine.Rendering.Passes
             forwardRTVs = AllocArrayAndZero(nForwardRTVs);
         }
 
-        public override unsafe void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -85,7 +86,7 @@ namespace HexaEngine.Rendering.Passes
 
             var gbuffer = creator.GetGBuffer("GBuffer");
 
-            forwardSRVs[8] = forwardClusteredSRVs[8] = (void*)creator.GetTexture2D("AOBuffer").SRV.NativePointer;
+            forwardSRVs[8] = forwardClusteredSRVs[8] = (void*)creator.GetTexture2D("#AOBuffer").SRV.NativePointer;
 
             forwardSRVs[9] = forwardClusteredSRVs[9] = (void*)creator.GetTexture2D("BRDFLUT").SRV.NativePointer;
             forwardSRVs[10] = (void*)globalProbes.SRV.NativePointer;
@@ -96,9 +97,9 @@ namespace HexaEngine.Rendering.Passes
             forwardClusteredSRVs[13] = (void*)creator.GetStructuredUavBuffer<uint>("LightIndexList").SRV.NativePointer;
             forwardClusteredSRVs[14] = (void*)creator.GetStructuredUavBuffer<LightGrid>("LightGridBuffer").SRV.NativePointer;
 
-            forwardSRVs[13] = forwardClusteredSRVs[15] = (void*)creator.GetDepthStencilBuffer("#ShadowAtlas").SRV.NativePointer;
+            forwardSRVs[13] = forwardClusteredSRVs[15] = (void*)creator.GetShadowAtlas("ShadowAtlas").SRV.NativePointer;
 
-            forwardRTVs[0] = (void*)creator.GetTexture2D("LightBuffer").NativePointer;
+            forwardRTVs[0] = (void*)creator.GetTexture2D("LightBuffer").RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];
             forwardRTVs[2] = gbuffer.PRTVs[2];
 
@@ -140,17 +141,22 @@ namespace HexaEngine.Rendering.Passes
             {
                 ForwardEnd(context);
             }
+
+            void* null_rtvs = stackalloc nint[(int)nForwardRTVs];
+            context.SetRenderTargets(nForwardRTVs, (void**)null_rtvs, null);
         }
 
-        private unsafe void ForwardBegin(IGraphicsContext context, ResourceCreator creator, LightManager lights)
+        private unsafe void ForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
         {
             var lightParams = lightParamsBuffer.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParams->GlobalProbes = lights.GlobalProbes.Count;
             lightParamsBuffer.Update(context);
             cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
+            cbs[1] = (void*)creator.GetConstantBuffer<CBCamera>("CBCamera").NativePointer;
+            cbs[2] = (void*)creator.GetConstantBuffer<CBWeather>("CBWeather").NativePointer;
 
-            context.SetViewport(creator.GetViewport());
+            context.SetViewport(creator.Viewport);
             context.VSSetConstantBuffers(1, 1, &cbs[1]);
             context.DSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
@@ -171,15 +177,17 @@ namespace HexaEngine.Rendering.Passes
             context.PSSetConstantBuffers(0, nConstantBuffers, (void**)null_cbs);
         }
 
-        private unsafe void ClusteredForwardBegin(IGraphicsContext context, ResourceCreator creator, LightManager lights)
+        private unsafe void ClusteredForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
         {
             var lightParams = lightParamsBuffer.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParams->GlobalProbes = lights.GlobalProbes.Count;
             lightParamsBuffer.Update(context);
             cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
+            cbs[1] = (void*)creator.GetConstantBuffer<CBCamera>("CBCamera").NativePointer;
+            cbs[2] = null;
 
-            context.SetViewport(creator.GetViewport());
+            context.SetViewport(creator.Viewport);
             context.VSSetConstantBuffers(1, 1, &cbs[1]);
             context.DSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);

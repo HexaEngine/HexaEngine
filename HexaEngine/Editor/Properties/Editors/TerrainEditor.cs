@@ -52,7 +52,6 @@
 
     internal class TerrainEditor : IObjectEditor
     {
-        private Quad quad;
         private IGraphicsPipeline brushOverlay;
         private ConstantBuffer<CBBrush> brushBuffer;
         private ConstantBuffer<CBColorMask> maskBuffer;
@@ -109,7 +108,6 @@
             {
                 var device = context.Device;
                 var inputElements = Terrain.InputElements;
-                quad = new(device);
 
                 depthStencil = new(device, 1024, 1024, Format.D32Float);
 
@@ -150,14 +148,14 @@
 
                 maskEdit = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
                 {
-                    VertexShader = "tools/terrain/edit/mask/vs.hlsl",
+                    VertexShader = "quad.hlsl",
                     PixelShader = "tools/terrain/edit/mask/ps.hlsl",
                 }, new GraphicsPipelineState()
                 {
                     DepthStencil = depthStencilD,
                     Rasterizer = RasterizerDescription.CullBack,
                     Blend = BlendDescription.AlphaBlend,
-                    Topology = PrimitiveTopology.TriangleList,
+                    Topology = PrimitiveTopology.TriangleStrip,
                 }, inputElements);
                 maskSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
 
@@ -415,7 +413,7 @@
                                 var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.RTV.Viewport.Size - vpSize / 2f;
 
                                 context.SetViewport(new(pos, vpSize));
-                                quad.DrawAuto(context);
+                                context.DrawInstanced(4, 1, 0, 0);
 
                                 hasAffected = true;
                                 isEdited = true;

@@ -32,7 +32,6 @@
 
         private List<TextureFileNode> textureFiles = new();
 
-        private Quad quad;
         private Sphere sphere;
 
         private ConstantBuffer<Matrix4x4> world;
@@ -91,7 +90,6 @@
             editor.LinkAdded += LinkAdded;
             editor.LinkRemoved += LinkRemoved;
 
-            quad = new(device);
             sphere = new(device);
             world = new(device, Matrix4x4.Transpose(Matrix4x4.Identity), CpuAccessFlags.None);
             view = new(device, CpuAccessFlags.Write);
@@ -107,14 +105,14 @@
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             tonemap = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/tonemap/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/tonemap/ps.hlsl"
-            });
+            }, GraphicsPipelineState.DefaultFullscreen);
             fxaa = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/fxaa/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl"
-            });
+            }, GraphicsPipelineState.DefaultFullscreen);
 
             camera.Fov = 90;
             camera.Width = 1;
@@ -135,7 +133,7 @@
             context.SetRenderTarget(iblDFG.RTV, null);
             context.SetViewport(new(128, 128));
             context.SetGraphicsPipeline(dfg);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);
             context.SetRenderTarget(null, null);
         }
@@ -168,7 +166,6 @@
         {
             editor.Destroy();
 
-            quad.Dispose();
             sphere.Dispose();
 
             world.Dispose();
@@ -393,7 +390,7 @@
                 context.SetGraphicsPipeline(tonemap);
                 context.PSSetShaderResource(0, texturePreview.SRV);
                 context.PSSetSampler(0, sampler);
-                quad.DrawAuto(context);
+                context.DrawInstanced(4, 1, 0, 0);
                 context.PSSetSampler(0, null);
                 context.PSSetShaderResource(0, null);
                 context.SetGraphicsPipeline(null);
@@ -403,7 +400,7 @@
                 context.SetGraphicsPipeline(fxaa);
                 context.PSSetShaderResource(0, textureTonemap.SRV);
                 context.PSSetSampler(0, sampler);
-                quad.DrawAuto(context);
+                context.DrawInstanced(4, 1, 0, 0);
                 context.PSSetSampler(0, null);
                 context.PSSetShaderResource(0, null);
                 context.SetGraphicsPipeline(null);

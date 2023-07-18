@@ -154,10 +154,10 @@
             UnsafeList<float> randomTextureData = new();
             for (uint i = 0; i < desc.Width * desc.Height; i++)
             {
-                randomTextureData.Add(2.0f * Random.Shared.NextSingle() - 1.0f);
-                randomTextureData.Add(2.0f * Random.Shared.NextSingle() - 1.0f);
-                randomTextureData.Add(2.0f * Random.Shared.NextSingle() - 1.0f);
-                randomTextureData.Add(2.0f * Random.Shared.NextSingle() - 1.0f);
+                randomTextureData.PushBack(2.0f * Random.Shared.NextSingle() - 1.0f);
+                randomTextureData.PushBack(2.0f * Random.Shared.NextSingle() - 1.0f);
+                randomTextureData.PushBack(2.0f * Random.Shared.NextSingle() - 1.0f);
+                randomTextureData.PushBack(2.0f * Random.Shared.NextSingle() - 1.0f);
             }
 
             SubresourceData initData = default;

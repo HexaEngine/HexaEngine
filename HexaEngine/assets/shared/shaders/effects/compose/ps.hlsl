@@ -35,7 +35,7 @@ cbuffer Params
 #define LUT_TileAmount 32
 #endif
 
-float GetExposure()
+inline float GetExposure()
 {
     float avgLum = lumaTexture.Load(0);
     float keyValue = 1.03 - (2.0 / (2.0 + log2(avgLum + 1.0)));
@@ -43,19 +43,19 @@ float GetExposure()
     return exposure;
 }
 
-float ColorToLuminance(float3 color)
+inline float ColorToLuminance(float3 color)
 {
     return dot(color, float3(0.2126f, 0.7152f, 0.0722f));
 }
 
-float3 LinearTonemap(float3 color)
+inline float3 LinearTonemap(float3 color)
 {
     color = clamp(color, 0., 1.);
     color = pow(color, 1. / GAMMA);
     return color;
 }
 
-float3 ReinhardTonemap(float3 color)
+inline float3 ReinhardTonemap(float3 color)
 {
     float luma = ColorToLuminance(color);
     float toneMappedLuma = luma / (1. + luma);
@@ -66,12 +66,12 @@ float3 ReinhardTonemap(float3 color)
     return color;
 }
 
-float3 ACESFilmTonemap(float3 x)
+inline float3 ACESFilmTonemap(float3 x)
 {
     return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0);
 }
 
-float3 Uncharted2Tonemap(float3 x)
+inline float3 Uncharted2Tonemap(float3 x)
 {
     float A = 0.15;
     float B = 0.50;
@@ -83,19 +83,19 @@ float3 Uncharted2Tonemap(float3 x)
     return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;
 }
 
-float3 OECF_sRGBFast(float3 color)
+inline float3 OECF_sRGBFast(float3 color)
 {
     return pow(color.rgb, float3(1.0 / GAMMA, 1.0 / GAMMA, 1.0 / GAMMA));
 }
 
-float3 BloomMix(float2 texCoord, float3 hdr)
+inline float3 BloomMix(float2 texCoord, float3 hdr)
 {
     float3 blm = bloomTexture.Sample(linearClampSampler, texCoord).rgb;
     float3 drt = float3(0, 0, 0);
     return lerp(hdr, blm + blm * drt, float3(BloomStrength, BloomStrength, BloomStrength));
 }
 
-float ComputeFogFactor(float d)
+inline float ComputeFogFactor(float d)
 {
     //d is the distance to the geometry sampling from the camera
     //this simply returns a value that interpolates from 0 to 1
@@ -103,7 +103,7 @@ float ComputeFogFactor(float d)
     return clamp((d - FogStart) / (FogEnd - FogStart), 0, 1) * FogEnabled;
 }
 
-float3 FogMix(float2 texCoord, float3 color)
+inline float3 FogMix(float2 texCoord, float3 color)
 {
     float depth = depthTexture.Sample(linearClampSampler, texCoord);
     float3 position = GetPositionWS(texCoord, depth);
@@ -112,7 +112,7 @@ float3 FogMix(float2 texCoord, float3 color)
     return lerp(color, FogColor, factor);
 }
 
-float3 LUT(float3 color)
+inline float3 LUT(float3 color)
 {
     float2 texelsize = 1.0 / LUT_TileSizeXY;
     texelsize.x /= LUT_TileAmount;
@@ -128,15 +128,21 @@ float3 LUT(float3 color)
 
 float4 main(VSOut vs) : SV_Target
 {
+#if AutoExposure
     float exposure = GetExposure();
+#else
+    float exposure = 1;
+#endif
     float4 color = hdrTexture.Sample(linearClampSampler, vs.Tex);
 
+#if Bloom
     color.rgb = BloomMix(vs.Tex, color.rgb);
+#endif
     color.rgb = FogMix(vs.Tex, color.rgb);
     color.rgb = ACESFilmTonemap(color.rgb * exposure);
     color.rgb = OECF_sRGBFast(color.rgb);
     color.rgb = LUT(color.rgb);
-#if FXAA == 1
+#if FXAA
     color.a = dot(color.rgb, float3(0.299, 0.587, 0.114));
 #endif
 

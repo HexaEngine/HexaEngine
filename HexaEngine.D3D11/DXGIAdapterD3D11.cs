@@ -13,16 +13,20 @@
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
+    using HexaEngine.Core.Debugging.Device;
+    using InfoQueueFilter = Silk.NET.DXGI.InfoQueueFilter;
 
     public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter, IDisposable
     {
         internal readonly DXGI DXGI;
         internal readonly INativeWindowSource source;
+        internal readonly List<GPU> gpus = new();
         private readonly bool debug;
 
         internal ComPtr<IDXGIFactory7> IDXGIFactory;
         internal ComPtr<IDXGIAdapter4> IDXGIAdapter;
         internal ComPtr<IDXGIDebug> IDXGIDebug;
+
         internal ComPtr<IDXGIInfoQueue> IDXGIInfoQueue;
 
         private bool disposedValue;
@@ -40,11 +44,17 @@
             {
                 DXGI.GetDebugInterface1(0, out IDXGIDebug);
                 DXGI.GetDebugInterface1(0, out IDXGIInfoQueue);
+
+                InfoQueueFilter filter = new InfoQueueFilter();
+                filter.DenyList.NumIDs = 1;
+                filter.DenyList.PIDList = (int*)Alloc(MessageID.SetprivatedataChangingparams);
+                IDXGIInfoQueue.AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Message, false);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Info, false);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Warning, true);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Error, true);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Corruption, true);
+                Free(filter.DenyList.PIDList);
             }
 
             DXGI.CreateDXGIFactory2(debug ? 0x01u : 0x00u, out IDXGIFactory);
@@ -159,14 +169,16 @@
 
         public virtual int PlatformScore => 100;
 
+        public virtual IReadOnlyList<GPU> GPUs => gpus;
+
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
             AdapterDesc1 desc;
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            ImGuiConsole.Log(LogSeverity.Info, "Backend: Using Graphics API: D3D11");
-            ImGuiConsole.Log(LogSeverity.Info, $"Backend: Using Graphics Device: {name}");
+            ImGuiConsole.Log(LogSeverity.Information, "Backend: Using Graphics API: D3D11");
+            ImGuiConsole.Log(LogSeverity.Information, $"Backend: Using Graphics Device: {name}");
             return new D3D11GraphicsDevice(this, debug);
         }
 
@@ -179,7 +191,7 @@
                 Width = (uint)window.Width,
                 Height = (uint)window.Height,
                 Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
-                BufferCount = 2,
+                BufferCount = 3,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
                 Scaling = Silk.NET.DXGI.Scaling.Stretch,
@@ -196,8 +208,9 @@
                 ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
-            ComPtr<IDXGISwapChain1> swapChain;
-            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
+            ComPtr<IDXGISwapChain2> swapChain = default;
+            ComPtr<IDXGIOutput> output = default;
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -210,8 +223,9 @@
 
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
-            ComPtr<IDXGISwapChain1> swapChain;
-            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
+            ComPtr<IDXGISwapChain2> swapChain = default;
+            ComPtr<IDXGIOutput> output = default;
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -235,7 +249,7 @@
                 Width = (uint)width,
                 Height = (uint)height,
                 Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
-                BufferCount = 2,
+                BufferCount = 3,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
                 Scaling = Silk.NET.DXGI.Scaling.Stretch,
@@ -251,8 +265,9 @@
                 ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified,
             };
 
-            ComPtr<IDXGISwapChain1> swapChain;
-            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
+            ComPtr<IDXGISwapChain2> swapChain = default;
+            ComPtr<IDXGIOutput> output = default;
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
@@ -269,14 +284,16 @@
 
             SwapChainFullscreenDesc fullscreenDesc = Helper.Convert(fullscreenDescription);
 
-            ComPtr<IDXGISwapChain1> swapChain;
-            IDXGIFactory.CreateSwapChainForHwnd((IUnknown*)device.Device.Handle, Hwnd, &desc, &fullscreenDesc, (IDXGIOutput*)null, &swapChain.Handle);
+            ComPtr<IDXGISwapChain2> swapChain = default;
+            ComPtr<IDXGIOutput> output = default;
+            IDXGIFactory.CreateSwapChainForHwnd(device.Device, Hwnd, &desc, &fullscreenDesc, output, ref swapChain);
 
             return new DXGISwapChain(device, swapChain, (SwapChainFlag)desc.Flags);
         }
 
         private ComPtr<IDXGIAdapter4> GetHardwareAdapter()
         {
+            ComPtr<IDXGIAdapter4> selected = null;
             for (uint adapterIndex = 0;
                 (ResultCode)IDXGIFactory.EnumAdapterByGpuPreference(adapterIndex, GpuPreference.HighPerformance, out ComPtr<IDXGIAdapter4> adapter) !=
                 ResultCode.DXGI_ERROR_NOT_FOUND;
@@ -284,6 +301,8 @@
             {
                 AdapterDesc1 desc;
                 adapter.GetDesc1(&desc);
+                gpus.Add(new(new(desc.Description), desc.VendorId, desc.DeviceId, desc.SubSysId, desc.Revision, desc.DedicatedVideoMemory, desc.DedicatedSystemMemory, desc.SharedSystemMemory, desc.AdapterLuid, desc.Flags));
+
                 if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                 {
                     // Don't select the Basic Render Driver adapter.
@@ -291,10 +310,12 @@
                     continue;
                 }
 
-                return adapter;
+                selected = adapter;
             }
 
-            throw new NotSupportedException();
+            if (selected.Handle == null)
+                throw new NotSupportedException();
+            return selected;
         }
 
         protected virtual void Dispose(bool disposing)

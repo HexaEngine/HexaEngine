@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.PostFx
 {
+    using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
+    using HexaEngine.Rendering.Graph;
     using System.Diagnostics.CodeAnalysis;
 
     public class PostProcessingManager : IDisposable
@@ -12,6 +13,8 @@
         private ShaderMacro[] macros;
         private readonly List<IPostFx> effectsSorted = new();
         private readonly List<IPostFx> effects = new();
+        private readonly List<PostFxNode> nodes = new();
+        private readonly TopologicalSorter<PostFxNode> topologicalSorter = new();
         private readonly List<Texture2D> buffers = new();
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
@@ -19,48 +22,60 @@
         private int width;
         private int height;
 
-#if PostFX_Deferred
         private ICommandList? list;
-#endif
+
         private bool isDirty = true;
         private bool isInitialized = false;
         private bool isReloading;
         private int swapIndex;
 
-        private readonly Quad quad;
         private readonly IGraphicsPipeline copy;
 
-        public ResourceRef<Texture2D> Input;
-        public ResourceRef<IRenderTargetView> Output;
-        public ResourceRef<ITexture2D> OutputTex;
-        public Viewport Viewport;
+        public Texture2D input;
+        public IRenderTargetView output;
+        public ITexture2D outputTex;
+        public Viewport viewport;
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, int width, int height, int bufferCount = 2)
+        public PostProcessingManager(IGraphicsDevice device, int width, int height, int bufferCount = 4)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
             for (int i = 0; i < bufferCount; i++)
             {
-                buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW));
+                buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.None, lineNumber: i));
             }
 
             deferredContext = device.CreateDeferredContext();
             macros = Array.Empty<ShaderMacro>();
 
-            quad = new(device);
             copy = device.CreateGraphicsPipeline(new()
             {
                 PixelShader = "effects/copy/ps.hlsl",
-                VertexShader = "effects/copy/vs.hlsl",
-            });
+                VertexShader = "quad.hlsl",
+            }, GraphicsPipelineState.DefaultFullscreen);
+        }
 
-            Input = ResourceManager2.Shared.GetTexture("LightBuffer");
-            Output = ResourceManager2.Shared.GetResource<IRenderTargetView>("SwapChain.RTV");
-            OutputTex = ResourceManager2.Shared.GetResource<ITexture2D>("SwapChain");
-            Input.ValueChanged += InputValueChanged;
-            Output.ValueChanged += OutputValueChanged;
+        public Texture2D Input { get => input; set => input = value; }
+
+        public IRenderTargetView Output { get => output; set => output = value; }
+
+        public ITexture2D OutputTex { get => outputTex; set => outputTex = value; }
+
+        public Viewport Viewport
+        {
+            get => viewport;
+            set
+            {
+                if (viewport == value)
+                {
+                    return;
+                }
+
+                viewport = value;
+                Invalidate();
+            }
         }
 
         public int Count => effectsSorted.Count;
@@ -68,16 +83,6 @@
         public IReadOnlyList<IPostFx> Effects => effectsSorted;
 
         public bool Enabled { get => enabled; set => enabled = value; }
-
-        private void OutputValueChanged(object? sender, IRenderTargetView? e)
-        {
-            isDirty = true;
-        }
-
-        private void InputValueChanged(object? sender, Texture2D? e)
-        {
-            isDirty = true;
-        }
 
         public void Initialize(int width, int height)
         {
@@ -98,9 +103,12 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
+                nodes[i].Clear();
                 if (effects[i].Enabled)
-                    effects[i].Initialize(device, width, height, macros).Wait();
+                    effects[i].Initialize(device, nodes[i].Builder, width, height, macros).Wait();
             }
+
+            Sort();
 
             isInitialized = true;
         }
@@ -124,11 +132,46 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
+                nodes[i].Clear();
                 if (effects[i].Enabled)
-                    await effects[i].Initialize(device, width, height, macros);
+                    await effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
             }
 
+            Sort();
+
             isInitialized = true;
+        }
+
+        public void Add(IPostFx effect)
+        {
+            lock (effects)
+            {
+                nodes.Add(new PostFxNode(effect));
+                effects.Add(effect);
+            }
+            config.GenerateSubKeyAuto(effect, effect.Name);
+
+            if (isInitialized)
+                Reload();
+        }
+
+        public void Remove(IPostFx effect)
+        {
+            lock (effects)
+            {
+                nodes.Remove(new PostFxNode(effect));
+                effects.Remove(effect);
+            }
+
+            if (isInitialized)
+                Reload();
+        }
+
+        public void Invalidate()
+        {
+            list?.Dispose();
+            list = null;
+            isDirty = true;
         }
 
         private void OnPriorityChanged(int obj)
@@ -140,6 +183,8 @@
         {
             Reload();
         }
+
+        #region Getter
 
         public IPostFx? GetByName(string name)
         {
@@ -207,15 +252,17 @@
             return effect != null;
         }
 
+        #endregion Getter
+
         public void Reload()
         {
             Volatile.Write(ref isReloading, true);
-            Sort();
 
             for (int i = 0; i < effects.Count; i++)
             {
                 if (effects[i].Enabled)
                     effects[i].Dispose();
+                nodes[i].Clear();
             }
 
             macros = new ShaderMacro[effects.Count];
@@ -232,16 +279,16 @@
                 for (int i = 0; i < effects.Count; i++)
                 {
                     if (effects[i].Enabled)
-                        tasks[i] = effects[i].Initialize(device, width, height, macros);
+                        tasks[i] = effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
                 }
                 Task.WaitAll(tasks);
+                Sort();
+                Invalidate();
             }
             ).ContinueWith(t =>
             {
                 Volatile.Write(ref isReloading, false);
             });
-
-            isDirty = true;
         }
 
         public async Task ReloadAsync()
@@ -253,6 +300,7 @@
             {
                 if (effects[i].Enabled)
                     effects[i].Dispose();
+                nodes[i].Clear();
             }
 
             macros = new ShaderMacro[effects.Count];
@@ -266,18 +314,18 @@
             for (int i = 0; i < effects.Count; i++)
             {
                 if (effects[i].Enabled)
-                    await effects[i].Initialize(device, width, height, macros);
+                    await effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
             }
+            Sort();
+
+            Invalidate();
+
             Volatile.Write(ref isReloading, false);
-            isDirty = true;
         }
 
         public void BeginResize()
         {
-#if PostFX_Deferred
-            list?.Dispose();
-#endif
-            isDirty = true;
+            Invalidate();
         }
 
         public void EndResize(int width, int height)
@@ -301,42 +349,7 @@
                 buffers[i] = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             }
 
-            isDirty = true;
-        }
-
-        public void ResizeOutput()
-        {
-            isDirty = true;
-        }
-
-        public void SetViewport(Viewport viewport)
-        {
-            if (Viewport == viewport)
-            {
-                return;
-            }
-
-            Viewport = viewport;
-            isDirty = true;
-        }
-
-        public void Add(IPostFx effect)
-        {
-            lock (effects)
-            {
-                effects.Add(effect);
-            }
-            config.GenerateSubKeyAuto(effect, effect.Name);
-            Sort();
-        }
-
-        public void Remove(IPostFx effect)
-        {
-            lock (effects)
-            {
-                effects.Remove(effect);
-            }
-            Sort();
+            Invalidate();
         }
 
         public void PrePassDraw(IGraphicsContext context)
@@ -372,19 +385,20 @@
             }
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (!enabled || isReloading)
             {
-                context.SetRenderTarget(Output.Value, null);
-                context.PSSetShaderResource(0, Input.Value?.SRV);
-                context.SetViewport(Viewport);
-                quad.DrawAuto(context, copy);
+                context.SetRenderTarget(output, null);
+                context.PSSetShaderResource(0, input.SRV);
+                context.SetViewport(viewport);
+                context.SetGraphicsPipeline(copy);
+                context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
                 return;
             }
 
-            if (Input.Value == null || Output.Value == null)
+            if (input == null || output == null)
             {
                 return;
             }
@@ -399,55 +413,15 @@
                         continue;
                     }
 
-                    effect.Update(context);
+                    effect.Update(deferredContext);
                 }
-#if PostFX_Deferred
 
                 if (isDirty)
                 {
                     list?.Dispose();
                     deferredContext.ClearState();
                     swapIndex = 0;
-                    IShaderResourceView previous = Input.Value.ShaderResourceView;
-                    for (int i = 0; i < effectsSorted.Count; i++)
-                    {
-                        var effect = effectsSorted[i];
-                        if (!effect.Enabled)
-                            continue;
-
-                        if ((effect.Flags & PostFxFlags.NoInput) == 0)
-                        {
-                            effect.SetInput(previous);
-                        }
-
-                        if ((effect.Flags & PostFxFlags.NoOutput) == 0)
-                        {
-                            var buffer = buffers[swapIndex];
-
-                            if (i != effectsSorted.Count - 1)
-                                effect.SetOutput(buffer.RenderTargetView, buffers[swapIndex].Viewport);
-                            else
-                                effect.SetOutput(Output.Value, Viewport);
-
-                            previous = buffer.ShaderResourceView;
-                        }
-
-                        effect.Draw(deferredContext);
-                        deferredContext.ClearState();
-
-                        swapIndex++;
-                        if (swapIndex == buffers.Count)
-                            swapIndex = 0;
-                    }
-                    list = deferredContext.FinishCommandList(false);
-                    isDirty = false;
-                }
-#else
-                if (isDirty)
-                {
-                    context.ClearState();
-                    swapIndex = 0;
-                    IShaderResourceView previous = Input.Value.SRV;
+                    IShaderResourceView previous = input.SRV;
                     for (int i = 0; i < effectsSorted.Count; i++)
                     {
                         var effect = effectsSorted[i];
@@ -458,9 +432,7 @@
 
                         if ((effect.Flags & PostFxFlags.NoInput) == 0)
                         {
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
-                            effect.SetInput(previous, Input.Value);
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'view' in 'void IPostFx.SetInput(IShaderResourceView view)'.
+                            effect.SetInput(previous, input);
                         }
 
                         if ((effect.Flags & PostFxFlags.NoOutput) == 0)
@@ -473,7 +445,7 @@
                             }
                             else
                             {
-                                effect.SetOutput(Output.Value, OutputTex.Value, Viewport);
+                                effect.SetOutput(output, outputTex, viewport);
                             }
 
                             bool skipSwap = false;
@@ -493,42 +465,42 @@
                             }
                         }
 
-                        effect.Draw(context);
+                        effect.Draw(deferredContext, creator);
                     }
+                    list = deferredContext.FinishCommandList(true);
+
+                    context.ExecuteCommandList(list, false);
                     isDirty = false;
                 }
                 else
                 {
-                    context.ClearState();
-                    for (int i = 0; i < effectsSorted.Count; i++)
-                    {
-                        var effect = effectsSorted[i];
-                        if (!effect.Enabled)
-                        {
-                            continue;
-                        }
-
-                        effect.Draw(context);
-                    }
+                    context.ExecuteCommandList(list, false);
                 }
-#endif
             }
-#if PostFX_Deferred
-            if (list != null)
-            {
-                context.ExecuteCommandList(list, true);
-            }
-#endif
         }
 
         private void Sort()
         {
             lock (effectsSorted)
             {
-                effectsSorted.Clear();
-                lock (effects)
+                for (int i = 0; i < nodes.Count; i++)
                 {
-                    effectsSorted.AddRange(effects.Where(x => x.Enabled).OrderByDescending(x => x.Priority));
+                    var node = nodes[i];
+                    if (node.Enabled)
+                    {
+                        node.Builder.Build(nodes, new List<ResourceBinding>());
+                    }
+                }
+
+                var sorted = topologicalSorter.TopologicalSort(nodes);
+
+                effectsSorted.Clear();
+                for (int i = 0; i < sorted.Count; i++)
+                {
+                    if (sorted[i].Enabled)
+                    {
+                        effectsSorted.Add(sorted[i].PostFx);
+                    }
                 }
             }
         }
@@ -550,11 +522,8 @@
                     buffers[i].Dispose();
                 }
                 buffers.Clear();
-#if PostFX_Deferred
                 list?.Dispose();
-#endif
                 deferredContext.Dispose();
-                quad.Dispose();
                 copy.Dispose();
                 disposedValue = true;
             }

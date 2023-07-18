@@ -23,9 +23,6 @@
         private readonly ContactEvents contactEvents;
         private readonly CollidableProperty<PhysicsMaterial> materials;
 
-        private const float stepsize = 0.016f;
-        private float interpol;
-
         public PhysicsSystem()
         {
             dispatcher = new(Math.Max(1, Environment.ProcessorCount > 4 ? Environment.ProcessorCount - 2 : Environment.ProcessorCount - 1));
@@ -78,12 +75,7 @@
                 colliders[i].BeginUpdate();
             }
 
-            interpol += delta;
-            while (interpol > stepsize)
-            {
-                interpol -= stepsize;
-                Simulation.Timestep(stepsize, dispatcher);
-            }
+            Simulation.Timestep(delta, dispatcher);
 
             for (int i = 0; i < colliders.Count; i++)
             {

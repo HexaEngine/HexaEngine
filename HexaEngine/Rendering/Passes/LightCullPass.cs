@@ -44,10 +44,10 @@ namespace HexaEngine.Rendering.Passes
             AddWriteDependency(new("LightGridBuffer"));
         }
 
-        public override void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
-            float screenWidth = creator.GetViewport().Width;
-            float screenHeight = creator.GetViewport().Height;
+            float screenWidth = creator.Viewport.Width;
+            float screenHeight = creator.Viewport.Height;
 
             clusterBuilding = pipelineCreator.CreateComputePipeline(new()
             {
@@ -67,7 +67,7 @@ namespace HexaEngine.Rendering.Passes
             LightGridBuffer = creator.CreateStructuredUavBuffer<LightGrid>("LightGridBuffer", CLUSTER_COUNT, CpuAccessFlags.None);
         }
 
-        public override unsafe void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -75,7 +75,12 @@ namespace HexaEngine.Rendering.Passes
                 return;
             }
 
+            var lights = current.LightManager;
             var lightBuffer = current.LightManager.LightBuffer;
+
+            lights.GlobalProbes.Update(context);
+            lights.LightBuffer.Update(context);
+            lights.ShadowDataBuffer.Update(context);
 
             context.CSSetConstantBuffer(1, creator.GetConstantBuffer<CBCamera>("CBCamera"));
             if (recreateClusters)

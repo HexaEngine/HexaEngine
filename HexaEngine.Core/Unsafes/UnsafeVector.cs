@@ -2,6 +2,10 @@
 {
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents an unsafe vector.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the vector.</typeparam>
     public unsafe struct UnsafeVector<T> : IFreeable where T : unmanaged
     {
         private const int DefaultCapacity = 4;
@@ -10,15 +14,28 @@
         private int capacity;
         private T* data;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnsafeVector{T}"/> struct with the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The initial capacity of the vector.</param>
         public UnsafeVector(int capacity)
         {
             EnsureCapacity(capacity);
         }
 
+        /// <summary>
+        /// Gets the number of elements in the vector.
+        /// </summary>
         public int Size => size;
 
+        /// <summary>
+        /// Gets a pointer to the underlying data of the vector.
+        /// </summary>
         public T* Data => data;
 
+        /// <summary>
+        /// Gets or sets the capacity of the vector.
+        /// </summary>
         public int Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -37,6 +54,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the element at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the element to get or set.</param>
+        /// <returns>The element at the specified index.</returns>
         public T this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -45,12 +67,19 @@
             set => data[index] = value;
         }
 
+        /// <summary>
+        /// Initializes the vector with the default capacity.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Init()
         {
             Grow(DefaultCapacity);
         }
 
+        /// <summary>
+        /// Initializes the vector with the specified capacity.
+        /// </summary>
+        /// <param name="capacity">The initial capacity of the vector.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Init(int capacity)
         {
@@ -149,10 +178,14 @@
             size = 0;
         }
 
-        public void Resize(int v)
+        /// <summary>
+        /// Resizes the vector to the specified size. If the new size is larger than the current capacity, the capacity will be increased accordingly.
+        /// </summary>
+        /// <param name="newSize">The new size of the vector.</param>
+        public void Resize(int newSize)
         {
-            size = v;
-            EnsureCapacity(v);
+            size = newSize;
+            EnsureCapacity(newSize);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -195,6 +228,9 @@
             return -1;
         }
 
+        /// <summary>
+        /// Reverses the order of the elements in the vector.
+        /// </summary>
         public void Reverse()
         {
             new Span<T>(data, size).Reverse();

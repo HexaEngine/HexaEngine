@@ -50,7 +50,7 @@
             MemoryManager.Register(buffer);
         }
 
-        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T[] vertices, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(IGraphicsDevice device, T[] vertices, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -84,7 +84,7 @@
             MemoryManager.Register(buffer);
         }
 
-        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, T* vertices, uint count, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(IGraphicsDevice device, T* vertices, uint count, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
@@ -115,7 +115,7 @@
             MemoryManager.Register(buffer);
         }
 
-        public VertexBuffer(IGraphicsDevice device, CpuAccessFlags flags, uint capacity, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public VertexBuffer(IGraphicsDevice device, uint capacity, CpuAccessFlags flags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             this.device = device;
             dbgName = $"VertexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";

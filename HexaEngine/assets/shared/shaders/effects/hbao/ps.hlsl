@@ -77,10 +77,10 @@ float ComputeCoarseAO(float2 UV, float radius_in_pixels, float3 rand, float3 pos
         for (float step_index = 0; step_index < NUM_SAMPLING_STEPS; ++step_index)
         {
             float2 SnappedUV = round(ray_t * direction) / screenDim + UV;
-           
+
             float depth = depthTex.Sample(samplerState, SnappedUV);
             float3 S = GetPositionVS(SnappedUV, depth);
-            
+
             ray_t += step_size_in_pixels;
 
             AO += ComputeAO(pos_vs, normal_vs, S);
@@ -94,17 +94,17 @@ float ComputeCoarseAO(float2 UV, float radius_in_pixels, float3 rand, float3 pos
 float4 main(VSOut input) : SV_Target
 {
     float depth = depthTex.Sample(samplerState, input.Tex);
-    
+
     float3 pos_vs = GetPositionVS(input.Tex, depth);
 
     float3 normal_vs = mul(UnpackNormal(normalTex.Sample(samplerState, input.Tex).rgb), (float3x3) view);
-   
+
     // Compute projection of disk of radius control.R into screen space
     float radius_in_pixels = SAMPLING_RADIUS_TO_SCREEN / pos_vs.z;
-    
+
     float3 rand = noiseTex.Sample(samplerState, input.Tex * NoiseScale).xyz; //use wrap sampler
 
     float AO = ComputeCoarseAO(input.Tex, radius_in_pixels, rand, pos_vs, normal_vs);
-    
+
     return pow(AO, POWER);
 }

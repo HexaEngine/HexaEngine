@@ -1,49 +1,7 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
-    using HexaEngine.Core.Graphics;
+    using HexaEngine.Collections;
     using System;
-
-    public class RenderGraphExecuter
-    {
-        private IGraphicsDevice device;
-        private ResourceCreator resourceCreator;
-        private PipelineCreator pipelineCreator;
-        private RenderGraph renderGraph;
-        private RenderPass[] renderPasses;
-
-        public RenderGraphExecuter(IGraphicsDevice device, RenderGraph renderGraph, RenderPass[] renderPasses)
-        {
-            this.device = device;
-            this.renderGraph = renderGraph;
-            this.renderPasses = renderPasses;
-            resourceCreator = new ResourceCreator(device);
-            pipelineCreator = new PipelineCreator(device);
-        }
-
-        public ResourceCreator ResourceCreator => resourceCreator;
-
-        public void Init()
-        {
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
-            {
-                renderPasses[renderGraph.SortedNodeIndices[i]].Init(resourceCreator, pipelineCreator, device);
-            }
-        }
-
-        public void Execute(IGraphicsContext context)
-        {
-            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
-            {
-                renderPasses[renderGraph.SortedNodeIndices[i]].Execute(context, resourceCreator);
-            }
-        }
-
-        public void Release()
-        {
-            resourceCreator.ReleaseResources();
-            pipelineCreator.ReleaseResources();
-        }
-    }
 
     public class RenderGraph
     {
@@ -52,6 +10,8 @@
         private readonly Dictionary<ResourceBinding, RenderGraphNode> globalResourcesLastWrite = new();
         private readonly List<RenderGraphNode> sortedNodes = new();
         private readonly List<int> sortedNodeIndices = new();
+
+        private readonly TopologicalSorter<RenderGraphNode> sorter = new();
 
         public RenderGraph(string name)
         {
@@ -208,39 +168,22 @@
             }
         }
 
-        private void Visit(RenderGraphNode node, List<RenderGraphNode> sorted, HashSet<RenderGraphNode> visited)
-        {
-            bool isVisited = visited.Contains(node);
-            if (!isVisited)
-            {
-                visited.Add(node);
-                for (int i = 0; i < node.Dependencies.Count; i++)
-                {
-                    var dependency = node.Dependencies[i];
-                    Visit(dependency, sorted, visited);
-                }
-                sorted.Add(node);
-            }
-        }
-
         private void TopologicalSort()
         {
             sortedNodes.Clear();
-            HashSet<RenderGraphNode> visited = new();
 
-            for (int i = 0; i < nodes.Count; i++)
-            {
-                var node = nodes[i];
-                Visit(node, sortedNodes, visited);
-            }
+            var sorted = sorter.TopologicalSort(nodes);
 
-            for (int i = 0; i < sortedNodes.Count; i++)
+            for (int i = 0; i < sorted.Count; i++)
             {
-                var node = sortedNodes[i];
-                var index = nodes.IndexOf(node);
-                node.QueueIndex = index;
+                var node = sorted[i];
+                int index = nodes.IndexOf(node);
+                sorted[i].QueueIndex = index;
+                sortedNodes.Add(sorted[i]);
                 sortedNodeIndices.Add(index);
             }
+
+            sortedNodes.AddRange(sorted);
         }
     }
 }

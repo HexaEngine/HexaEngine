@@ -28,19 +28,19 @@
             {
                 OnRecompile?.Invoke();
 
-                ImGuiConsole.Log(LogSeverity.Info, "recompiling graphics pipelines ...");
+                ImGuiConsole.Log(LogSeverity.Information, "recompiling graphics pipelines ...");
                 for (int i = 0; i < graphicsPipelines.Count; i++)
                 {
                     graphicsPipelines[i].Recompile();
                 }
-                ImGuiConsole.Log(LogSeverity.Info, "recompiling graphics pipelines ... done!");
+                ImGuiConsole.Log(LogSeverity.Information, "recompiling graphics pipelines ... done!");
 
-                ImGuiConsole.Log(LogSeverity.Info, "recompiling compute pipelines ...");
+                ImGuiConsole.Log(LogSeverity.Information, "recompiling compute pipelines ...");
                 for (int i = 0; i < computePipelines.Count; i++)
                 {
                     computePipelines[i].Recompile();
                 }
-                ImGuiConsole.Log(LogSeverity.Info, "recompiling compute pipelines ... done!");
+                ImGuiConsole.Log(LogSeverity.Information, "recompiling compute pipelines ... done!");
             }
         }
 

@@ -9,7 +9,6 @@
 
     public class Noise : IDisposable
     {
-        private readonly Quad quad;
         private readonly IGraphicsPipeline pipeline;
         private readonly ConstantBuffer<NoiseParams> scaleBuffer;
         private bool disposedValue;
@@ -65,12 +64,12 @@
         public Noise(IGraphicsDevice device, NoiseType type)
         {
             ShaderMacro[] macros = { new ShaderMacro(type.ToString(), 1) };
-            quad = new(device);
+
             pipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/noise/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = $"effects/noise/ps.hlsl",
-            }, macros);
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
 
             scaleBuffer = new(device, new NoiseParams(), CpuAccessFlags.Write);
         }
@@ -82,7 +81,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -96,7 +95,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -110,7 +109,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -124,7 +123,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -138,7 +137,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -152,7 +151,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -166,7 +165,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -180,7 +179,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -194,7 +193,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -208,7 +207,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -222,7 +221,7 @@
             context.SetViewport(viewport);
             context.SetGraphicsPipeline(pipeline);
             context.PSSetConstantBuffer(0, scaleBuffer);
-            quad.DrawAuto(context);
+            context.DrawInstanced(4, 1, 0, 0);
             context.PSSetConstantBuffer(0, null);
             context.SetRenderTarget(null, null);
             context.SetViewport(default);
@@ -234,7 +233,6 @@
             if (!disposedValue)
             {
                 pipeline.Dispose();
-                quad.Dispose();
                 scaleBuffer.Dispose();
                 disposedValue = true;
             }

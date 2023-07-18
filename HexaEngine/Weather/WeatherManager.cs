@@ -15,8 +15,7 @@
 
     public class WeatherManager : ISystem
     {
-        private IGraphicsDevice device;
-        private IGraphicsContext context;
+        private bool isDirty = true;
         private ConstantBuffer<CBWeather> weatherBuffer;
         private bool hasSun = false;
 
@@ -39,50 +38,156 @@
 
         public bool HasSun => hasSun;
 
-        public Vector3 SkyColor { get => skyColor; set => skyColor = value; }
+        public Vector3 SkyColor
+        {
+            get => skyColor;
+            set
+            {
+                skyColor = value; isDirty = true;
+            }
+        }
 
-        public Vector3 AmbientColor { get => ambientColor; set => ambientColor = value; }
+        public Vector3 AmbientColor
+        {
+            get => ambientColor;
+            set
+            {
+                ambientColor = value; isDirty = true;
+            }
+        }
 
-        public Vector2 WindDirection { get => windDirection; set => windDirection = value; }
+        public Vector2 WindDirection
+        {
+            get => windDirection;
+            set
+            {
+                windDirection = value; isDirty = true;
+            }
+        }
 
-        public float WindSpeed { get => windSpeed; set => windSpeed = value; }
+        public float WindSpeed
+        {
+            get => windSpeed;
+            set
+            {
+                windSpeed = value; isDirty = true;
+            }
+        }
 
-        public float Crispiness { get => crispiness; set => crispiness = value; }
+        public float Crispiness
+        {
+            get => crispiness;
+            set
+            {
+                crispiness = value; isDirty = true;
+            }
+        }
 
-        public float Curliness { get => curliness; set => curliness = value; }
+        public float Curliness
+        {
+            get => curliness;
+            set
+            {
+                curliness = value; isDirty = true;
+            }
+        }
 
-        public float Coverage { get => coverage; set => coverage = value; }
+        public float Coverage
+        {
+            get => coverage;
+            set
+            {
+                coverage = value; isDirty = true;
+            }
+        }
 
-        public float LightAbsorption { get => lightAbsorption; set => lightAbsorption = value; }
+        public float LightAbsorption
+        {
+            get => lightAbsorption;
+            set
+            {
+                lightAbsorption = value; isDirty = true;
+            }
+        }
 
-        public float CloudsBottomHeight { get => cloudsBottomHeight; set => cloudsBottomHeight = value; }
+        public float CloudsBottomHeight
+        {
+            get => cloudsBottomHeight;
+            set
+            {
+                cloudsBottomHeight = value; isDirty = true;
+            }
+        }
 
-        public float CloudsTopHeight { get => cloudsTopHeight; set => cloudsTopHeight = value; }
+        public float CloudsTopHeight
+        {
+            get => cloudsTopHeight;
+            set
+            {
+                cloudsTopHeight = value; isDirty = true;
+            }
+        }
 
-        public float DensityFactor { get => densityFactor; set => densityFactor = value; }
+        public float DensityFactor
+        {
+            get => densityFactor;
+            set
+            {
+                densityFactor = value; isDirty = true;
+            }
+        }
 
-        public float CloudType { get => cloudType; set => cloudType = value; }
+        public float CloudType
+        {
+            get => cloudType;
+            set
+            {
+                cloudType = value; isDirty = true;
+            }
+        }
 
-        public float Turbidity { get => turbidity; set => turbidity = value; }
+        public float Turbidity
+        {
+            get => turbidity;
+            set
+            {
+                turbidity = value; isDirty = true;
+            }
+        }
 
-        public float GroundAlbedo { get => groundAlbedo; set => groundAlbedo = value; }
+        public float GroundAlbedo
+        {
+            get => groundAlbedo;
+            set
+            {
+                groundAlbedo = value; isDirty = true;
+            }
+        }
 
         public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer;
 
         public string Name { get; } = "Weather System";
 
-        public SystemFlags Flags { get; } = SystemFlags.Update;
+        public SystemFlags Flags { get; } = SystemFlags.RenderUpdate;
 
         public Task Initialize(IGraphicsDevice device)
         {
-            this.device = device;
-            context = device.Context;
             weatherBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write).Value;
             return Task.CompletedTask;
         }
 
+        public void RenderUpdate(IGraphicsContext context)
+        {
+            UpdateWeather(context);
+        }
+
         public void UpdateWeather(IGraphicsContext context)
         {
+            if (!isDirty)
+            {
+                return;
+            }
+
             var manager = LightManager.Current;
 
             if (manager == null)
@@ -133,31 +238,7 @@
             weather.Z = skyParams[(int)EnumSkyParams.Z];
 
             weatherBuffer.Update(context, weather);
-        }
-
-        public void Register(GameObject gameObject)
-        {
-        }
-
-        public void Unregister(GameObject gameObject)
-        {
-        }
-
-        public void Awake()
-        {
-        }
-
-        public void Update(float delta)
-        {
-            UpdateWeather(context);
-        }
-
-        public void FixedUpdate()
-        {
-        }
-
-        public void Destroy()
-        {
+            isDirty = false;
         }
     }
 }

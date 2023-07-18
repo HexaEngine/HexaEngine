@@ -3,15 +3,25 @@
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.Intrinsics;
+    using System.Runtime.Intrinsics.X86;
 
     public static class MathUtil
     {
         public const double DegToRadFactor = Math.PI / 180;
         public const double RadToDefFactor = 180 / Math.PI;
 
+        public const float PI = MathF.PI;
+
         public const float PI2 = 2 * MathF.PI;
 
         public const float PIDIV2 = MathF.PI / 2;
+
+        public const float SQRT2 = 1.41421356237309504880f;
+        public const float SQRT3 = 1.73205080756887729352f;
+        public const float SQRT6 = 2.44948974278317809820f;
+
+        public static readonly Vector4 SplatEpsilon = new(BitConverter.UInt32BitsToSingle(0x34000000));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Round(this float x)
@@ -352,24 +362,6 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 NormalizeEulerDeg(this Vector2 angle)
-        {
-            float normalizedX = angle.X % 360;
-            float normalizedY = angle.Y % 360;
-            if (normalizedX < 0)
-            {
-                normalizedX += 360;
-            }
-
-            if (normalizedY < 0)
-            {
-                normalizedY += 360;
-            }
-
-            return new(normalizedX, normalizedY);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Lerp(float x, float y, float s)
         {
             return x * (1 - s) + y * s;
@@ -395,9 +387,57 @@
             roll = 0;
         }
 
-        public static float Exp2(float x)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp(float value, float min, float max)
         {
-            return MathF.Pow(2, x);
+            if (min > max)
+            {
+                throw new($"The minimum was greater than the maximum");
+            }
+
+            if (value < min)
+            {
+                return min;
+            }
+            else if (value > max)
+            {
+                return max;
+            }
+
+            return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Clamp01(float value)
+        {
+            if (value < 0)
+            {
+                return 0;
+            }
+            else if (value > 1)
+            {
+                return 1;
+            }
+
+            return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 Clamp01(Vector2 v)
+        {
+            return new Vector2(Clamp01(v.X), Clamp01(v.Y));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Clamp01(Vector3 v)
+        {
+            return new Vector3(Clamp01(v.X), Clamp01(v.Y), Clamp01(v.Z));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector4 Clamp01(Vector4 v)
+        {
+            return new Vector4(Clamp01(v.X), Clamp01(v.Y), Clamp01(v.Z), Clamp01(v.W));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -418,84 +458,173 @@
             return new(MathF.Floor(vector.X), MathF.Floor(vector.Y), MathF.Floor(vector.Z), MathF.Floor(vector.W));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Ceiling(this Vector2 value)
         {
             return new Vector2(MathF.Ceiling(value.X), MathF.Ceiling(value.Y));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Ceiling(this Vector3 value)
         {
             return new Vector3(MathF.Ceiling(value.X), MathF.Ceiling(value.Y), MathF.Ceiling(value.Z));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Ceiling(this Vector4 value)
         {
             return new Vector4(MathF.Ceiling(value.X), MathF.Ceiling(value.Y), MathF.Ceiling(value.Z), MathF.Ceiling(value.W));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Pow(Vector2 a, float b)
         {
             return new(MathF.Pow(a.X, b), MathF.Pow(a.Y, b));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Pow(Vector3 a, float b)
         {
             return new(MathF.Pow(a.X, b), MathF.Pow(a.Y, b), MathF.Pow(a.Z, b));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Pow(Vector4 a, float b)
         {
             return new(MathF.Pow(a.X, b), MathF.Pow(a.Y, b), MathF.Pow(a.Z, b), MathF.Pow(a.W, b));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Pow(Vector2 a, Vector2 b)
         {
             return new(MathF.Pow(a.X, b.X), MathF.Pow(a.Y, b.Y));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Pow(Vector3 a, Vector3 b)
         {
             return new(MathF.Pow(a.X, b.X), MathF.Pow(a.Y, b.Y), MathF.Pow(a.Z, b.Z));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Pow(Vector4 a, Vector4 b)
         {
             return new(MathF.Pow(a.X, b.X), MathF.Pow(a.Y, b.Y), MathF.Pow(a.Z, b.Z), MathF.Pow(a.W, b.W));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Exp(Vector2 a)
         {
             return new(MathF.Exp(a.X), MathF.Exp(a.Y));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Exp(Vector3 a)
         {
             return new(MathF.Exp(a.X), MathF.Exp(a.Y), MathF.Exp(a.Z));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Exp(Vector4 a)
         {
             return new(MathF.Exp(a.X), MathF.Exp(a.Y), MathF.Exp(a.Z), MathF.Exp(a.W));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Exp2(float x)
+        {
+            return BitConverter.Int32BitsToSingle(((int)(x * 0x00800000 + 126.0f)) << 23);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 Exp2(Vector2 a)
         {
             return new(Exp2(a.X), Exp2(a.Y));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Exp2(Vector3 a)
         {
             return new(Exp2(a.X), Exp2(a.Y), Exp2(a.Z));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4 Exp2(Vector4 a)
         {
             return new(Exp2(a.X), Exp2(a.Y), Exp2(a.Z), Exp2(a.W));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Map01ToN1P1(this float value)
         {
             return 2 * value - 1;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool NearEqual(float v1, float v2, float epsilon)
+        {
+            float delta = MathF.Abs(v1 - v2);
+            return delta <= epsilon;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool NearEqual(Vector2 v1, Vector2 v2, Vector2 epsilon)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vDelta = Sse.Subtract(v1.AsVector128(), v2.AsVector128());
+                Vector128<float> vTemp = Vector128<float>.Zero;
+                vTemp = Sse.Subtract(vTemp, vDelta);
+                vTemp = Sse.Max(vTemp, vDelta);
+                vTemp = Sse.CompareLessThanOrEqual(vTemp, epsilon.AsVector128());
+                int mask = Sse.MoveMask(vTemp);
+                return (mask & 3) == 0x3;
+            }
+
+            float dx = MathF.Abs(v1.X - v2.X);
+            float dy = MathF.Abs(v1.Y - v2.Y);
+            return (dx <= epsilon.X) && (dy <= epsilon.Y);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool NearEqual(Vector3 v1, Vector3 v2, Vector3 epsilon)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vDelta = Sse.Subtract(v1.AsVector128(), v2.AsVector128());
+                Vector128<float> vTemp = Vector128<float>.Zero;
+                vTemp = Sse.Subtract(vTemp, vDelta);
+                vTemp = Sse.Max(vTemp, vDelta);
+                vTemp = Sse.CompareLessThanOrEqual(vTemp, epsilon.AsVector128());
+                int mask = Sse.MoveMask(vTemp);
+                return (mask & 7) == 0x7;
+            }
+
+            float dx = MathF.Abs(v1.X - v2.X);
+            float dy = MathF.Abs(v1.Y - v2.Y);
+            float dz = MathF.Abs(v1.Z - v2.Z);
+            return (dx <= epsilon.X) && (dy <= epsilon.Y) && (dz <= epsilon.Z);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool NearEqual(Vector4 v1, Vector4 v2, Vector4 epsilon)
+        {
+            if (Sse.IsSupported)
+            {
+                Vector128<float> vDelta = Sse.Subtract(v1.AsVector128(), v2.AsVector128());
+                Vector128<float> vTemp = Vector128<float>.Zero;
+                vTemp = Sse.Subtract(vTemp, vDelta);
+                vTemp = Sse.Max(vTemp, vDelta);
+                vTemp = Sse.CompareLessThanOrEqual(vTemp, epsilon.AsVector128());
+                int mask = Sse.MoveMask(vTemp);
+                return (mask & 0xf) == 0xf;
+            }
+
+            float dx = MathF.Abs(v1.X - v2.X);
+            float dy = MathF.Abs(v1.Y - v2.Y);
+            float dz = MathF.Abs(v1.Z - v2.Z);
+            float dw = MathF.Abs(v1.W - v2.W);
+            return (dx <= epsilon.X) && (dy <= epsilon.Y) && (dz <= epsilon.Z) && (dw <= epsilon.W);
         }
     }
 }

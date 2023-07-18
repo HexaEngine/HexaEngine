@@ -289,7 +289,7 @@
                 vertices[i] = vertex;
             }
 
-            VertexBuffer<MeshVertex> vertexBuffer = new(device, accessFlags, vertices, VerticesCount);
+            VertexBuffer<MeshVertex> vertexBuffer = new(device, vertices, VerticesCount, accessFlags);
             Free(vertices);
             return vertexBuffer;
         }
@@ -348,7 +348,7 @@
                 vertices[i] = vertex;
             }
 
-            VertexBuffer<SkinnedMeshVertex> vertexBuffer = new(device, accessFlags, vertices, VerticesCount);
+            VertexBuffer<SkinnedMeshVertex> vertexBuffer = new(device, vertices, VerticesCount, accessFlags);
             Free(vertices);
             return vertexBuffer;
         }

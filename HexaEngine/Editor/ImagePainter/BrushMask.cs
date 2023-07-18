@@ -13,7 +13,7 @@
 
         public BrushMask(IGraphicsDevice device, string path)
         {
-            _resource = new(device, new TextureFileDescription(path));
+            _resource = new(device, new TextureFileDescription(path), path);
             _shaderResourceView = device.CreateShaderResourceView(_resource);
             _samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
         }

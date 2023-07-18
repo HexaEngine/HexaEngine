@@ -32,7 +32,7 @@
         public Texture2D(IGraphicsDevice device, TextureFileDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"Texture2D: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
-            texture = device.TextureLoader.LoadTexture2D(description.Path);
+            texture = device.TextureLoader.LoadTexture2D(description);
             texture.DebugName = dbgName;
             this.description = texture.Description;
             format = this.description.Format;
@@ -120,7 +120,7 @@
             if ((gpuAccessFlags & GpuAccessFlags.UA) != 0)
             {
                 description.Usage = Usage.Default;
-                description.BindFlags |= BindFlags.ShaderResource;
+                description.BindFlags |= BindFlags.UnorderedAccess;
             }
 
             if ((cpuAccessFlags & CpuAccessFlags.Write) != 0)

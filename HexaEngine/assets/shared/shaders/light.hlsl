@@ -25,7 +25,7 @@ struct Light
 
     bool castsShadows;
     bool cascadedShadows;
-    float volumetricStrength;
+    int shadowMapIndex;
 
     uint1 padd;
 };
@@ -37,7 +37,7 @@ struct ShadowData
     float size;
     float softness;
     float cascadeCount;
-    float2 offsets[8];
+    float4 regions[8];
 };
 
 float3 GetShadowUVD(float3 pos, float4x4 view)
@@ -49,17 +49,34 @@ float3 GetShadowUVD(float3 pos, float4x4 view)
     return projCoords;
 }
 
-float3 GetShadowAtlasUVD(float3 pos, float size, float2 offset, float4x4 view)
+float3 GetShadowAtlasUVD(float3 pos, float size, float4 region, float4x4 view)
 {
     float4 fragPosLightSpace = mul(float4(pos, 1.0), view);
-    fragPosLightSpace.y = -fragPosLightSpace.y;
-    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    projCoords.xy = projCoords.xy * 0.5 + 0.5;
+    float3 shadowSpaceCoord = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    shadowSpaceCoord.xy = shadowSpaceCoord.xy * 0.5 + 0.5;
+    shadowSpaceCoord.y = 1 - shadowSpaceCoord.y;
 
-    projCoords.xy = (projCoords.xy * size) / SHADOW_ATLAS_SIZE;
-    projCoords.xy += (offset.xy) / SHADOW_ATLAS_SIZE;
+    return shadowSpaceCoord;
+}
 
-    return projCoords;
+int GetPointLightFace(float3 r)
+{
+    float rx = abs(r.x);
+    float ry = abs(r.y);
+    float rz = abs(r.z);
+    float d = max(rx, max(ry, rz));
+    if (d == rx)
+    {
+        return (r.x >= 0.0 ? 0 : 1);
+    }
+    else if (d == ry)
+    {
+        return (r.y >= 0.0 ? 2 : 3);
+    }
+    else
+    {
+        return (r.z >= 0.0 ? 4 : 5);
+    }
 }
 
 #define PI 3.14159265358979323846

@@ -22,7 +22,7 @@
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
-                context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
+                indexBuffer.Bind(context);
                 context.SetGraphicsPipeline(pipeline);
                 context.DrawIndexedInstanced(indexBuffer.Count, 1, 0, 0, 0);
                 context.SetIndexBuffer(null, 0, 0);
@@ -40,7 +40,7 @@
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
-                context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
+                indexBuffer.Bind(context);
                 context.DrawIndexedInstanced(indexBuffer.Count, 1, 0, 0, 0);
                 context.SetIndexBuffer(null, 0, 0);
             }
@@ -56,7 +56,7 @@
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
-                context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
+                indexBuffer.Bind(context);
                 context.DrawIndexedInstanced(indexBuffer.Count, instanceCount, 0, 0, 0);
                 context.SetIndexBuffer(null, 0, 0);
             }
@@ -71,7 +71,7 @@
         {
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             vertexCount = vertexBuffer.Count;
-            context.SetIndexBuffer(indexBuffer, Format.R32UInt, 0);
+            indexBuffer?.Bind(context);
             indexCount = indexBuffer?.Count ?? 0;
             instanceCount = 1;
         }

@@ -3,19 +3,34 @@
 namespace HexaEngine.Rendering.Passes
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Culling;
     using HexaEngine.Rendering.Graph;
+    using HexaEngine.Scenes;
 
     public class ObjectCullPass : ComputePass
     {
+        private bool isEnabled;
+
         public ObjectCullPass() : base("ObjectCull")
         {
             AddReadDependency(new("HiZBuffer"));
         }
 
-        public override void Execute(IGraphicsContext context, ResourceCreator creator)
+        public bool IsEnabled { get => isEnabled; set => isEnabled = value; }
+
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
-            CullingManager.DoCulling(context, creator.GetTexture2D("HiZBuffer").SRV);
+            if (!isEnabled)
+                return;
+
+            var current = SceneManager.Current;
+            if (current == null)
+            {
+                return;
+            }
+
+            var renderers = current.RenderManager;
+
+            renderers.VisibilityTest(context, creator.Viewport, creator.GetDepthMipChain("HiZBuffer").SRV, RenderQueueIndex.Geometry);
         }
     }
 }

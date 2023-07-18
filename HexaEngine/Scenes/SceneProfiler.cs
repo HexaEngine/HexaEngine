@@ -1,17 +1,17 @@
 ﻿namespace HexaEngine.Scenes
 {
-    using System.Collections.Generic;
+    using System.Collections.Concurrent;
     using System.Diagnostics;
 
     public readonly struct SceneProfiler
     {
-        private readonly Dictionary<object, double> stages;
-        private readonly Dictionary<object, long> startTimeStamps;
+        private readonly ConcurrentDictionary<object, double> stages;
+        private readonly ConcurrentDictionary<object, long> startTimeStamps;
 
         public SceneProfiler(int initialStageCount)
         {
-            stages = new Dictionary<object, double>(initialStageCount);
-            startTimeStamps = new Dictionary<object, long>(initialStageCount);
+            stages = new ConcurrentDictionary<object, double>(2, initialStageCount);
+            startTimeStamps = new ConcurrentDictionary<object, long>(2, initialStageCount);
         }
 
         public double this[object stage]
@@ -31,7 +31,7 @@
 
         public void Start(object o)
         {
-            startTimeStamps.Add(o, Stopwatch.GetTimestamp());
+            startTimeStamps.TryAdd(o, Stopwatch.GetTimestamp());
         }
 
         public void End(object o)
@@ -43,13 +43,13 @@
             }
 
             stages[o] = value + (timestamp - startTimeStamps[o]) / (double)Stopwatch.Frequency;
-            startTimeStamps.Remove(o);
+            startTimeStamps.TryRemove(o, out _);
         }
 
         public void Set(object o, double value)
         {
             stages[o] = value;
-            startTimeStamps.Remove(o);
+            startTimeStamps.TryRemove(o, out _);
         }
 
         public void Clear()

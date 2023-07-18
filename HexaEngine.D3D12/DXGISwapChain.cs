@@ -98,7 +98,7 @@
             }
             else
             {
-                swapChain->Present(0, DXGI.PresentAllowTearing);
+                swapChain->Present(0, DXGI.PresentAllowTearing | DXGI.PresentDONotWait);
             }
         }
 
@@ -176,6 +176,11 @@
             BackbufferDSV.Dispose();
             depthStencil.Dispose();
             swapChain->Release();
+        }
+
+        public void WaitForPresent()
+        {
+            throw new NotImplementedException();
         }
     }
 }

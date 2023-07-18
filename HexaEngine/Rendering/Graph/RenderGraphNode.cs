@@ -1,10 +1,13 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
-    public class RenderGraphNode
+    using HexaEngine.Collections;
+
+    public class RenderGraphNode : INode
     {
         public RenderGraphNode(string name)
         {
             Name = name;
+            Builder = new(this);
         }
 
         public string Name { get; }
@@ -15,7 +18,11 @@
 
         public List<ResourceBinding> Writes { get; } = new();
 
+        public GraphReferenceBuilder Builder { get; }
+
         public int QueueIndex { get; internal set; }
+
+        List<INode> INode.Dependencies => Dependencies.Cast<INode>().ToList();
 
         public override string ToString()
         {

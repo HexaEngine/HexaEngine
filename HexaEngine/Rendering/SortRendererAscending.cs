@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.Rendering
 {
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
 
-    public class SortRendererAscending : IComparer<IRendererComponent>
+    public struct SortRendererAscending : IComparer<IRendererComponent>
     {
-        int IComparer<IRendererComponent>.Compare(IRendererComponent? a, IRendererComponent? b)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly int IComparer<IRendererComponent>.Compare(IRendererComponent? a, IRendererComponent? b)
         {
             if (a == null || b == null)
             {

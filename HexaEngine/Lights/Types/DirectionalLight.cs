@@ -62,7 +62,7 @@
             }
         }
 
-        public override void DestroyShadowMap(ShadowAtlas atlas)
+        public override void DestroyShadowMap()
         {
             if (csmDepthBuffer == null)
             {

@@ -2,24 +2,29 @@
 {
     using System;
 
-    public struct LogMessage
+    public struct ConsoleMessage
     {
-        public LogSeverity Severity;
+        public ConsoleColor Severity;
         public string Message;
         public string Timestamp;
 
-        public LogMessage(LogSeverity severity, string source, string message) : this()
+        public ConsoleMessage(ConsoleColor severity, string message, string timestamp)
         {
             Severity = severity;
-            Message = $"[{source}]: {message}";
-            Timestamp = DateTime.Now.ToShortTimeString();
+            Message = message;
+            Timestamp = timestamp;
         }
 
-        public LogMessage(LogSeverity severity, string message) : this()
+        public ConsoleMessage(ConsoleColor severity, string message) : this()
         {
             Severity = severity;
             Message = message;
             Timestamp = DateTime.Now.ToShortTimeString();
+        }
+
+        public static implicit operator ConsoleMessage(LogMessage message)
+        {
+            return new((ConsoleColor)(int)message.Severity, message.Message, message.Timestamp);
         }
     }
 }

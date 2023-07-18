@@ -70,7 +70,7 @@
         /// </summary>
         public static readonly RasterizerDescription Wireframe = new(CullMode.None, FillMode.Wireframe);
 
-        public static readonly RasterizerDescription CullFrontDepthBias = new(CullMode.Front, FillMode.Solid, false, 8500, 0, 1, true, false, false, false);
+        public static readonly RasterizerDescription CullFrontDepthBias = new(CullMode.Front, FillMode.Solid, false, -1, 0, 1.0f, true, false, false, false);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RasterizerDescription"/> class.

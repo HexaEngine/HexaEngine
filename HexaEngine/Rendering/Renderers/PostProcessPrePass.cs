@@ -12,7 +12,7 @@ namespace HexaEngine.Rendering.Renderers
             AddReadDependency(new("#DepthStencil"));
         }
 
-        public override void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             //postProcessing.PrePassDraw(context);
         }

@@ -6,9 +6,82 @@ namespace HexaEngine.Lights
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System;
+    using System.Runtime.CompilerServices;
+
+    public struct ShadowAtlasDescription
+    {
+        public Format Format;
+        public int Size;
+        public int Layers;
+
+        public ShadowAtlasDescription(Format format, int size, int layers)
+        {
+            Format = format;
+            Size = size;
+            Layers = layers;
+        }
+    }
+
+    public struct ShadowAtlasRangeHandle
+    {
+        private ShadowAtlas atlas;
+        private readonly ShadowAtlasAllocation[] allocations;
+        private bool valid;
+
+        public ShadowAtlasRangeHandle(ShadowAtlas atlas, ShadowAtlasAllocation[] allocations)
+        {
+            this.atlas = atlas;
+            this.allocations = allocations;
+            valid = true;
+        }
+
+        public readonly ShadowAtlas Atlas => atlas;
+
+        public readonly ShadowAtlasAllocation[] Allocations => allocations;
+
+        public bool IsValid { readonly get => valid; internal set => valid = value; }
+
+        public void Release()
+        {
+            if (valid)
+                atlas.FreeRange(ref this);
+            atlas = null;
+        }
+    }
+
+    public struct ShadowAtlasHandle
+    {
+        private ShadowAtlas atlas;
+        private ShadowAtlasAllocation allocation;
+        private bool valid;
+
+        public ShadowAtlasHandle(ShadowAtlas atlas, ShadowAtlasAllocation allocation)
+        {
+            this.atlas = atlas;
+            this.allocation = allocation;
+            valid = true;
+        }
+
+        public readonly ShadowAtlas Atlas => atlas;
+
+        public readonly ShadowAtlasAllocation Allocation => allocation;
+
+        public bool IsValid { readonly get => valid; internal set => valid = value; }
+
+        public void Release()
+        {
+            if (valid)
+                atlas.Free(ref this);
+            atlas = null;
+        }
+    }
 
     public unsafe class ShadowAtlas : IDisposable
     {
+        private readonly string dbgName;
+        private readonly int size = unchecked(8192);
+        private readonly int layerCount = 8;
+
         private readonly Mutex mutex = new();
         private readonly DepthStencil texture;
         private readonly Layer* layers;
@@ -18,21 +91,63 @@ namespace HexaEngine.Lights
         private int freeBlockCounts = 0;
         private bool disposedValue;
 
-        private const int size = unchecked(8192);
-        private const int maxLayers = 8;
-
-        public ShadowAtlas(IGraphicsDevice device)
+        public ShadowAtlas(IGraphicsDevice device, ShadowAtlasDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            texture = new(device, size, size, 1, Format.D32Float);
+            dbgName = $"ShadowAtlas: {Path.GetFileName(filename)}, Line: {lineNumber}";
+            size = description.Size;
+            layerCount = description.Layers;
+            texture = new(device, description.Size, description.Size, 1, description.Format, ResourceMiscFlag.None, BindFlags.ShaderResource | BindFlags.DepthStencil, filename, lineNumber);
+            texture.DebugName = dbgName;
+
+            layers = Alloc<Layer>(description.Layers);
+
+            uint subSize = (uint)(description.Size / 2);
+
+            for (int i = 0; i < description.Layers; i++)
+            {
+                uint subCount = (uint)(description.Size / subSize);
+                Layer* layer = &layers[i];
+                layer->Size = new(subSize);
+                layer->Count = subCount * subCount;
+                layer->RowWidth = subCount;
+                layer->Blocks = Alloc<MemoryBlock>(layer->Count);
+
+                layerFreeBlocks.Add(layer, new());
+                layerAllocatedBlocks.Add(layer, new());
+                sizeToLayer.Add(subSize, layer);
+
+                for (uint j = 0; j < layer->Count; j++)
+                {
+                    uint x = j % subCount;
+                    uint y = j / subCount;
+                    MemoryBlock* block = &layer->Blocks[j];
+                    block->Layer = &layers[i];
+                    block->Offset = new(x, y);
+
+                    layerFreeBlocks[layer].Add(block);
+                    freeBlockCounts++;
+                }
+
+                subSize /= 2;
+            }
+        }
+
+        public ShadowAtlas(IGraphicsDevice device, int size = 8192, int layerCount = 8, Format format = Format.D32Float, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"ShadowAtlas: {Path.GetFileName(filename)}, Line: {lineNumber}";
+            this.size = size;
+            this.layerCount = layerCount;
+
+            texture = new(device, size, size, 1, format, ResourceMiscFlag.None, BindFlags.ShaderResource | BindFlags.DepthStencil, filename, lineNumber);
             texture.DebugName = "Shadow Atlas";
 
-            layers = Alloc<Layer>(maxLayers);
+            layers = Alloc<Layer>(layerCount);
 
-            uint subSize = size / 2;
+            uint subSize = (uint)(size / 2);
 
-            for (int i = 0; i < maxLayers; i++)
+            for (int i = 0; i < layerCount; i++)
             {
-                uint subCount = size / subSize;
+                uint subCount = (uint)(size / subSize);
                 Layer* layer = &layers[i];
                 layer->Size = new(subSize);
                 layer->Count = subCount * subCount;
@@ -62,6 +177,20 @@ namespace HexaEngine.Lights
         public IDepthStencilView DSV => texture.DSV;
 
         public IShaderResourceView SRV => texture.SRV;
+
+        public int LayerCount => layerCount;
+
+        public float Size => size;
+
+        public int SizeToIndex(int size)
+        {
+            for (int i = 0; i < layerCount; i++)
+            {
+                if (layers[i].Size.X == size)
+                    return i;
+            }
+            return -1;
+        }
 
         private struct Layer
         {
@@ -117,7 +246,7 @@ namespace HexaEngine.Lights
                 }
             }
 
-            for (int i = layerIndex + 1; i < maxLayers; i++)
+            for (int i = layerIndex + 1; i < layerCount; i++)
             {
                 Layer* below = &layers[i];
                 var freeBelowBlocks = layerFreeBlocks[below];
@@ -149,7 +278,7 @@ namespace HexaEngine.Lights
 
             Layer* layer = block->Layer;
 
-            for (int i = layerIndex + 1; i < maxLayers; i++)
+            for (int i = layerIndex + 1; i < layerCount; i++)
             {
                 Layer* below = &layers[i];
                 var freeBelowBlocks = layerFreeBlocks[below];
@@ -226,7 +355,7 @@ namespace HexaEngine.Lights
         {
             var maxLayer = (Layer*)sizeToLayer[size];
 
-            layerIndex = ArrayUtils.IndexOf(layers, maxLayer, maxLayers);
+            layerIndex = ArrayUtils.IndexOf(layers, maxLayer, layerCount);
             while (true)
             {
                 layer = &layers[layerIndex];
@@ -245,7 +374,7 @@ namespace HexaEngine.Lights
                 layerIndex++;
                 size /= 2;
 
-                if (layerIndex == maxLayers)
+                if (layerIndex == layerCount)
                     throw new OutOfMemoryException();
             }
         }
@@ -254,7 +383,7 @@ namespace HexaEngine.Lights
         {
             var maxLayer = (Layer*)sizeToLayer[size];
 
-            var layerIndex = ArrayUtils.IndexOf(layers, maxLayer, maxLayers);
+            var layerIndex = ArrayUtils.IndexOf(layers, maxLayer, layerCount);
             while (true)
             {
                 var layer = &layers[layerIndex];
@@ -268,7 +397,7 @@ namespace HexaEngine.Lights
                 layerIndex++;
                 size /= 2;
 
-                if (layerIndex == maxLayers)
+                if (layerIndex == layerCount)
                     return false;
             }
         }
@@ -281,7 +410,7 @@ namespace HexaEngine.Lights
         public void Clear()
         {
             mutex.WaitOne();
-            for (int i = 0; i < maxLayers; i++)
+            for (int i = 0; i < layerCount; i++)
             {
                 Layer* layer = &layers[i];
 
@@ -299,7 +428,7 @@ namespace HexaEngine.Lights
             mutex.ReleaseMutex();
         }
 
-        public ShadowAtlasAllocation Alloc(uint desiredSize)
+        public ShadowAtlasHandle Alloc(uint desiredSize)
         {
             mutex.WaitOne();
             MemoryBlock* block = AllocateFreeBlock(desiredSize, out var layer, out var layerIndex);
@@ -310,18 +439,20 @@ namespace HexaEngine.Lights
             allocation.BlockHandle = (nint)block;
             allocation.LayerHandle = (nint)layer;
             allocation.LayerIndex = layerIndex;
-            return allocation;
+            return new(this, allocation);
         }
 
-        public void AllocRange(uint desiredSize, ShadowAtlasAllocation[] allocations)
+        public ShadowAtlasRangeHandle AllocRange(uint desiredSize, int count)
         {
-            for (uint i = 0; i < allocations.Length; i++)
+            ShadowAtlasAllocation[] allocations = new ShadowAtlasAllocation[count];
+            for (uint i = 0; i < count; i++)
             {
-                allocations[i] = Alloc(desiredSize);
+                allocations[i] = Alloc(desiredSize).Allocation;
             }
+            return new(this, allocations);
         }
 
-        public void Free(ref ShadowAtlasAllocation allocation)
+        private void Free(ref ShadowAtlasAllocation allocation)
         {
             Layer* layer = (Layer*)allocation.LayerHandle;
             MemoryBlock* block = (MemoryBlock*)allocation.BlockHandle;
@@ -333,12 +464,21 @@ namespace HexaEngine.Lights
             mutex.ReleaseMutex();
         }
 
-        public void FreeRange(ShadowAtlasAllocation[] allocations)
+        public void Free(ref ShadowAtlasHandle handle)
         {
+            var allocation = handle.Allocation;
+            Free(ref allocation);
+            handle.IsValid = false;
+        }
+
+        public void FreeRange(ref ShadowAtlasRangeHandle handle)
+        {
+            var allocations = handle.Allocations;
             for (uint i = 0; i < allocations.Length; i++)
             {
                 Free(ref allocations[i]);
             }
+            handle.IsValid = false;
         }
 
         protected virtual void Dispose(bool disposing)

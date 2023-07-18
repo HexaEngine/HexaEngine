@@ -29,14 +29,14 @@
         public float Softness;
         public float CascadeCount;
 
-        public Vector2 AtlasCoord0;
-        public Vector2 AtlasCoord1;
-        public Vector2 AtlasCoord2;
-        public Vector2 AtlasCoord3;
-        public Vector2 AtlasCoord4;
-        public Vector2 AtlasCoord5;
-        public Vector2 AtlasCoord6;
-        public Vector2 AtlasCoord7;
+        public Vector4 AtlasCoord0;
+        public Vector4 AtlasCoord1;
+        public Vector4 AtlasCoord2;
+        public Vector4 AtlasCoord3;
+        public Vector4 AtlasCoord4;
+        public Vector4 AtlasCoord5;
+        public Vector4 AtlasCoord6;
+        public Vector4 AtlasCoord7;
 
         public ShadowData(PointLight light, float size)
         {
@@ -75,9 +75,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe Vector2* GetAtlasCoords(ShadowData* data)
+        public static unsafe Vector4* GetAtlasCoords(ShadowData* data)
         {
-            return (Vector2*)((byte*)data + AtlasCoordPointerOffset);
+            return (Vector4*)((byte*)data + AtlasCoordPointerOffset);
         }
     };
 }

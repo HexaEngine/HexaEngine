@@ -6,6 +6,7 @@
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
@@ -115,7 +116,7 @@
             renderer.DrawShadowMap(context, light, type);
         }
 
-        public void VisibilityTest(IGraphicsContext context, Camera camera)
+        public void VisibilityTest(CullingContext context)
         {
         }
 

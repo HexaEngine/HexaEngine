@@ -184,7 +184,22 @@
             root.RestoreState();
         }
 
-        public void Tick()
+        public void RenderUpdate(IGraphicsContext context)
+        {
+            var render = systems[SystemFlags.RenderUpdate];
+            for (int i = 0; i < render.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(render[i]);
+#endif
+                render[i].Update(Time.Delta);
+#if PROFILE
+                Profiler.End(render[i]);
+#endif
+            }
+        }
+
+        public void Update()
         {
             Profiler.Clear();
             semaphore.Wait();
@@ -209,19 +224,6 @@
 #endif
             }
 
-            var physics = systems[SystemFlags.PhysicsUpdate];
-
-            for (int i = 0; i < physics.Count; i++)
-            {
-#if PROFILE
-                Profiler.Start(physics[i]);
-#endif
-                physics[i].Update(Time.Delta);
-#if PROFILE
-                Profiler.End(physics[i]);
-#endif
-            }
-
             var late = systems[SystemFlags.LateUpdate];
 
             for (int i = 0; i < late.Count; i++)
@@ -242,6 +244,19 @@
         private void FixedUpdate(object? sender, EventArgs e)
         {
             semaphore.Wait();
+
+            var physics = systems[SystemFlags.PhysicsUpdate];
+
+            for (int i = 0; i < physics.Count; i++)
+            {
+#if PROFILE
+                Profiler.Start(physics[i]);
+#endif
+                physics[i].Update(Time.FixedDelta);
+#if PROFILE
+                Profiler.End(physics[i]);
+#endif
+            }
 
 #if PROFILE
             Profiler.Start(systems);

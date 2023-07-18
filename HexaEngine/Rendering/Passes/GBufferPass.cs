@@ -18,9 +18,9 @@ namespace HexaEngine.Rendering.Passes
 
         private readonly bool forceForward = true;
 
-        public override void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
-            var viewport = creator.GetViewport();
+            var viewport = creator.Viewport;
             creator.CreateGBuffer("GBuffer", new((int)viewport.Width, (int)viewport.Height, 4,
                 Format.R16G16B16A16Float,   // BaseColor(RGB)   Material ID(A)
                 Format.R8G8B8A8UNorm,       // Normal(XYZ)      Roughness(W)
@@ -29,11 +29,12 @@ namespace HexaEngine.Rendering.Passes
                 ));
         }
 
-        public override unsafe void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var gbuffer = creator.GetGBuffer("GBuffer");
-
+            var lightBuffer = creator.GetTexture2D("LightBuffer");
             context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
+            context.ClearRenderTargetView(lightBuffer.RTV, Vector4.Zero);
 
             if (forceForward)
                 return;

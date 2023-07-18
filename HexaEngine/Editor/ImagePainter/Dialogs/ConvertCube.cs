@@ -63,7 +63,7 @@
                             var srcTex = image.CreateTexture2D(device, Usage.Immutable, BindFlags.ShaderResource, CpuAccessFlags.None, ResourceMiscFlag.None);
                             var srv = device.CreateShaderResourceView(srcTex);
 
-                            var dstTex = device.CreateTexture2D(meta.Format, meta.Width / 4, meta.Width / 4, 6, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, ResourceMiscFlag.TextureCube);
+                            var dstTex = device.CreateTexture2D(meta.Format, meta.Width / 4, meta.Width / 4, 6, 1, null, BindFlags.ShaderResource | BindFlags.RenderTarget, misc: ResourceMiscFlag.TextureCube);
                             var rtv = new RenderTargetViewArray(device, dstTex, 6, new(meta.Width / 4, meta.Width / 4));
 
                             EquiRectangularToCubeFilter filter = new(device);

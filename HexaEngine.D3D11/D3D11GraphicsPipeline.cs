@@ -223,6 +223,22 @@
             return macros;
         }
 
+        private static bool CanSkipLayout(InputElementDescription[]? inputElements)
+        {
+            ArgumentNullException.ThrowIfNull(inputElements, nameof(inputElements));
+
+            for (int i = 0; i < inputElements.Length; i++)
+            {
+                var inputElement = inputElements[i];
+                if (inputElement.SemanticName is not "SV_VertexID" and not "SV_InstanceID")
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         private unsafe void Compile(bool bypassCache = false)
         {
             var macros = GetShaderMacros();
@@ -243,17 +259,22 @@
 
                 inputElements ??= elements;
 
-                ComPtr<ID3D11InputLayout> il;
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-                Helper.Convert(inputElements, descs);
-                device.Device.CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il.Handle);
-                Helper.Free(descs, inputElements.Length);
-                Free(descs);
-                layout = il;
+                if (!CanSkipLayout(inputElements))
+                {
+                    ComPtr<ID3D11InputLayout> il;
+                    InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
+                    Helper.Convert(inputElements, descs);
+                    device.Device.CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il.Handle);
+                    Helper.Free(descs, inputElements.Length);
+                    Free(descs);
+                    layout = il;
 
-                Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");
+                    Utils.SetDebugName(layout, $"{dbgName}.{nameof(layout)}");
+                }
+                else
+                {
+                    layout = default;
+                }
 
                 Free(shader);
             }

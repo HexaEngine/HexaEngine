@@ -40,7 +40,6 @@
         private ImageSource? source;
         private ImageSourceOverlay? overlay;
 
-        private Quad quad;
         private IGraphicsPipeline copyPipeline;
 
         private ConstantBuffer<Vector4> colorCB;
@@ -69,12 +68,12 @@
             exporter = new(device);
             this.device = device;
             samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
-            quad = new(device);
+
             copyPipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/copy/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            });
+            }, GraphicsPipelineState.DefaultFullscreen);
 
             colorCB = new(device, CpuAccessFlags.Write);
 
@@ -314,7 +313,7 @@
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.RTV.Viewport);
                 context.PSSetShaderResource(0, source.SRV);
-                quad.DrawAuto(context, copyPipeline);
+                context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
 
                 var curPosGlob = ImGui.GetCursorScreenPos();
@@ -425,7 +424,6 @@
         {
             UnloadImage();
 
-            quad?.Dispose();
             copyPipeline?.Dispose();
 
             samplerState.Dispose();

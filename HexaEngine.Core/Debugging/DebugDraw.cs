@@ -14,6 +14,7 @@ namespace HexaEngine.Editor
 
         private static Viewport viewport;
         private static Matrix4x4 camera;
+
         private const int COL32_R_SHIFT = 0;
         private const int COL32_G_SHIFT = 8;
         private const int COL32_B_SHIFT = 16;

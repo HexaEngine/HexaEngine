@@ -617,6 +617,8 @@
 
                 Profiler.Dispose();
 
+                LeakTracer.ReportLiveInstances();
+
                 Context.Dispose();
                 Device.Release();
 
@@ -629,8 +631,6 @@
                     Debug.ReportLiveDeviceObjects(RldoFlags.Detail | RldoFlags.IgnoreInternal);
                     Debug.Release();
                 }
-
-                LeakTracer.ReportLiveInstances();
 
                 D3D11.Dispose();
 

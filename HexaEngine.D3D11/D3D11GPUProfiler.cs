@@ -43,7 +43,14 @@
 
         public double this[string index]
         {
-            get => results[index];
+            get
+            {
+                if (results.TryGetValue(index, out var value))
+                {
+                    return value;
+                }
+                return -1;
+            }
         }
 
         public unsafe void CreateBlock(string name)
@@ -115,7 +122,7 @@
                         while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
                         {
                             if (!DisableLogging)
-                                ImGuiConsole.Log(LogSeverity.Info, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
+                                ImGuiConsole.Log(LogSeverity.Information, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
                             Thread.Sleep(1);
                         }
 
@@ -135,7 +142,7 @@
                             while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
                             {
                                 if (!DisableLogging)
-                                    ImGuiConsole.Log(LogSeverity.Info, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                    ImGuiConsole.Log(LogSeverity.Information, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
                                 Thread.Sleep(1);
                             }
                             ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);

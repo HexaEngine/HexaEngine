@@ -13,7 +13,7 @@
         public static unsafe bool ProcessMesh(MeshData pMesh)
         {
             const float angleEpsilon = 0.9999f;
-            UnsafeList<bool> vertexDone = new((int)pMesh.VerticesCount);
+            UnsafeList<bool> vertexDone = new(pMesh.VerticesCount);
 
             pMesh.Tangents = new Vector3[pMesh.VerticesCount];
             pMesh.Bitangents = new Vector3[pMesh.VerticesCount];
@@ -109,7 +109,7 @@
             // if they are not too far off.
             for (uint a = 0; a < pMesh.VerticesCount; a++)
             {
-                if (vertexDone[(int)a])
+                if (vertexDone[a])
                     continue;
 
                 Vector3 origPos = pMesh.Positions[a];
@@ -128,7 +128,7 @@
                 for (uint b = 0; b < verticesFound.Count; b++)
                 {
                     uint idx = verticesFound[(int)b];
-                    if (vertexDone[(int)idx])
+                    if (vertexDone[idx])
                         continue;
                     if (Vector3.Dot(meshNorm[(int)idx], origNorm) < angleEpsilon)
                         continue;
@@ -139,7 +139,7 @@
 
                     // it's similar enough -> add it to the smoothing group
                     closeVertices.Add(idx);
-                    vertexDone[(int)idx] = true;
+                    vertexDone[idx] = true;
                 }
 
                 // smooth the tangents and bitangents of all vertices that were found to be close enough

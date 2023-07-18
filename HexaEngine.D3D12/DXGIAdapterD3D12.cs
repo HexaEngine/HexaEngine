@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.D3D12
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.Versioning;
 
@@ -68,6 +70,8 @@
 
         public virtual int PlatformScore => 100;
 
+        public IReadOnlyList<GPU> GPUs { get; }
+
         [SupportedOSPlatform("windows")]
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
         {
@@ -75,8 +79,8 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            ImGuiConsole.Log(LogSeverity.Info, "Backend: Using Graphics API: D3D11");
-            ImGuiConsole.Log(LogSeverity.Info, $"Backend: Using Graphics Device: {name}");
+            ImGuiConsole.Log(LogSeverity.Information, "Backend: Using Graphics API: D3D11");
+            ImGuiConsole.Log(LogSeverity.Information, $"Backend: Using Graphics Device: {name}");
             return new D3D12GraphicsDevice(this, debug);
         }
 

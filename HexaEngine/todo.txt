@@ -2,11 +2,8 @@
 Planned:
 
 Volumetric Lights
-Bloom
 SSS (Sub Surface Scattering)
 revisit SSR (for roughness support and physical correctness)
-DoF (Depth of Field) + Bokeh 
-Motion Blur (could be annoying)
 Specular and Specular Tint Textures
 Ansiotropic (IBL and SSS)
 Cleancoat / Glossy
@@ -16,18 +13,19 @@ Emission
 
 Work in progress:
 
-Script framework
-Reintegrate Physics engine
-Assimp scene import
-Editor
-Project import
-Scene serialization
-
-
 -----------
 Done/Optimization/"Working" Stage:
 
+Graphics abstraction layer to work with different backends like D3D11, OpenGl, Vulkan, D3D12
+Skinned meshes
+Instancing
+Decal rendering
+Terrain rendering + Terrain editor
+Forward Shading
+Forward+ Shading (Clustered)
 Deferred Shading
+Deferred+ Shading (Clustered)
+GI (IBL, SSGI)
 Directional lights, Point/Omni lights, Spotlights
 Cascaded shadow mapping
 Omni directional shadow mapping
@@ -36,7 +34,25 @@ SSAO (Screen Space Ambient Occlusion)
 HBAO (Horizon Based Ambient Occlusion)
 FXAA (Fast approximate anti-aliasing)
 SSR (Screen Space Reflections)
-
+TAA
+Tonemapping
+LUT (Colorgrading)
+Godrays
+Lens flares
+Volumetric clouds
+Script framework
+Physics engine
+Audio system
+Render graphs
+Weather systems
+Assimp scene import
+Editor
+Project import
+Scene serialization
 Dynamic Mesh loading
 Dynamic Texture loading
 Texture sharing between materials
+DoF (Depth of Field) + Bokeh
+Motion Blur
+Bloom
+and more...

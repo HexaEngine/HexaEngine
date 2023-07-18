@@ -17,7 +17,6 @@ namespace HexaEngine.Rendering.Renderers
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
-    using HexaEngine.Rendering;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Rendering.Passes;
     using HexaEngine.Scenes;
@@ -32,15 +31,66 @@ namespace HexaEngine.Rendering.Renderers
             AddReadDependency(new("GBuffer"));
             AddWriteDependency(new("AOBuffer"));
         }
+
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        {
+            var viewport = creator.Viewport;
+            creator.CreateTexture2D("AOBuffer", new(Format.R32Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+        }
+    }
+
+    public class BRDFLUTPass : RenderPass
+    {
+        public BRDFLUTPass() : base("BRDFLUT")
+        {
+        }
+
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        {
+            creator.CreateTexture2D("BRDFLUT", new(Format.R16G16B16A16Float, 128, 128, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+        }
     }
 
     public class PostProcessPass : DrawPass
     {
+        private PostProcessingManager postProcessingManager;
+
         public PostProcessPass() : base("PostProcess")
         {
             AddReadDependency(new("GBuffer"));
             AddReadDependency(new("LightBuffer"));
-            AddReadDependency(new("DepthStencil"));
+            AddReadDependency(new("#DepthStencil"));
+        }
+
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        {
+            var viewport = creator.Viewport;
+            postProcessingManager = new(device, (int)viewport.Width, (int)viewport.Height);
+            postProcessingManager.Add(new VelocityBuffer());
+            postProcessingManager.Add(new HBAO());
+            postProcessingManager.Add(new VolumetricClouds());
+            postProcessingManager.Add(new SSR());
+            postProcessingManager.Add(new SSGI());
+            postProcessingManager.Add(new MotionBlur());
+            postProcessingManager.Add(new DepthOfField());
+            postProcessingManager.Add(new AutoExposure());
+            postProcessingManager.Add(new Bloom());
+            postProcessingManager.Add(new LensFlare());
+            postProcessingManager.Add(new GodRays());
+            postProcessingManager.Add(new Compose());
+            postProcessingManager.Add(new TAA());
+            postProcessingManager.Add(new FXAA());
+            postProcessingManager.Initialize((int)viewport.Width, (int)viewport.Height);
+            postProcessingManager.Enabled = true;
+        }
+
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        {
+            postProcessingManager.Input = creator.GetTexture2D("LightBuffer");
+            postProcessingManager.Output = creator.Output;
+            postProcessingManager.OutputTex = creator.OutputTex;
+            postProcessingManager.Viewport = creator.OutputViewport;
+            postProcessingManager.Draw(context, creator);
         }
     }
 
@@ -50,67 +100,41 @@ namespace HexaEngine.Rendering.Renderers
 
         public HDRPipeline() : base("HDRPipeline")
         {
+            BRDFLUTPass brdfLutPass = new();
             DepthPrePass depthPrePass = new();
             PostProcessPrePass postProcessPrePass = new();
             HizDepthPass hizDepthPass = new();
+
             ObjectCullPass objectCullPass = new();
             LightCullPass lightCullPass = new();
+            ShadowMapPass shadowMapPass = new();
             GBufferPass gBufferPass = new();
             LightForwardPass lightForwardPass = new();
-            HBAOPass aoPass = new();
-            VelocityBufferPass velocityBufferPass = new();
-            VolumetricLightsPass volumetricLightsPass = new();
-            BloomPass bloomPass = new();
-            AutoExposurePass autoExposurePass = new();
-            DepthOfFieldPass depthOfFieldPass = new();
-            MotionBlurPass motionBlurPass = new();
-            GodRaysPass godRaysPass = new();
-            LensFlarePass lensFlarePass = new();
-            VolumetricCloudsPass volumetricCloudsPass = new();
-            TAAPass taaPass = new();
-            ComposePass composePass = new();
+            PostProcessPass postProcessPass = new();
 
+            brdfLutPass.Build(this);
             depthPrePass.Build(this);
             postProcessPrePass.Build(this);
             hizDepthPass.Build(this);
             objectCullPass.Build(this);
             lightCullPass.Build(this);
+            shadowMapPass.Build(this);
             gBufferPass.Build(this);
             lightForwardPass.Build(this);
-            aoPass.Build(this);
-            velocityBufferPass.Build(this);
-            volumetricLightsPass.Build(this);
-            bloomPass.Build(this);
-            autoExposurePass.Build(this);
-            depthOfFieldPass.Build(this);
-            motionBlurPass.Build(this);
-            godRaysPass.Build(this);
-            lensFlarePass.Build(this);
-            volumetricCloudsPass.Build(this);
-            taaPass.Build(this);
-            composePass.Build(this);
+            postProcessPass.Build(this);
 
             Passes = new RenderPass[]
             {
+                brdfLutPass,
                 depthPrePass,
                 postProcessPrePass,
                 hizDepthPass,
                 objectCullPass,
                 lightCullPass,
+                shadowMapPass,
                 gBufferPass,
                 lightForwardPass,
-                aoPass,
-                velocityBufferPass,
-                volumetricLightsPass,
-                bloomPass,
-                autoExposurePass,
-                depthOfFieldPass,
-                motionBlurPass,
-                godRaysPass,
-                lensFlarePass,
-                volumetricCloudsPass,
-                taaPass,
-                composePass
+                postProcessPass
             };
         }
     }
@@ -128,9 +152,8 @@ namespace HexaEngine.Rendering.Renderers
         private ISwapChain swapChain;
         private IRenderWindow window;
 
-        private Quad quad;
-
         private ConstantBuffer<CBCamera> cameraBuffer;
+        private ConstantBuffer<CBWeather> weatherBuffer;
         private ConstantBuffer<CBTessellation> tesselationBuffer;
 
         private DepthStencil depthStencil;
@@ -158,7 +181,6 @@ namespace HexaEngine.Rendering.Renderers
         private readonly CPUProfiler profiler = new(10);
         private HDRPipeline renderGraph = new HDRPipeline();
         private RenderGraphExecuter graphExecuter;
-        private ICommandList commandList;
 
         public CPUProfiler Profiler => profiler;
 
@@ -213,92 +235,39 @@ namespace HexaEngine.Rendering.Renderers
         {
             InitializeSettings();
 
-            quad = new(device);
-
-            cameraBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write).Value;
             tesselationBuffer = new(device, CpuAccessFlags.Write);
 
-            //var resourceCreator = graphExecuter.ResourceCreator;
-            //resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
+            var resourceCreator = graphExecuter.ResourceCreator;
+            resourceCreator.Viewport = new(width, height);
 
-            gbuffer = new GBuffer(device, width, height,
-                new Format[] {
-                Format.R16G16B16A16Float,   // BaseColor(RGB)   Material ID(A)
-                Format.R8G8B8A8UNorm,       // Normal(XYZ)      Roughness(W)
-                Format.R8G8B8A8UNorm,       // Metallic         Reflectance             AO      Material Data
-                Format.R8G8B8A8UNorm        // Emission(XYZ)    Emission Strength(W)
-                }
-                );
+            cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
+            ResourceManager2.Shared.AddConstantBuffer("CBCamera", cameraBuffer);
 
-            depthStencil = new(device, width, height, Format.D32Float);
-            depthStencil2 = new(device, width, height, Format.D32Float);
-            dsv = depthStencil.DSV;
-            hizBuffer = new(device, width, height);
+            weatherBuffer = resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write);
+            ResourceManager2.Shared.AddConstantBuffer("CBWeather", weatherBuffer);
 
-            ResourceManager2.Shared.AddGBuffer("GBuffer", gbuffer);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[1]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Misc", gbuffer.SRVs[2]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Emission", gbuffer.SRVs[3]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Depth", depthStencil.SRV);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.DepthCopy", depthStencil2.SRV);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.DepthChain", hizBuffer.SRV);
-            ResourceManager2.Shared.AddDepthStencilView("GBuffer.DepthStencil", depthStencil.DSV);
-            lightBuffer = ResourceManager2.Shared.AddTexture("LightBuffer", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            var aoBuffer = resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
-            postProcessing = new(device, width, height);
+            resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float));
+            graphExecuter.Init();
 
-            postProcessing.Add(new VelocityBuffer());
-            postProcessing.Add(new VolumetricClouds());
-            postProcessing.Add(new SSR());
-            postProcessing.Add(new MotionBlur());
-            postProcessing.Add(new DepthOfField());
-            postProcessing.Add(new AutoExposure());
-            postProcessing.Add(new Bloom());
-            postProcessing.Add(new LensFlare());
-            postProcessing.Add(new GodRays());
-            postProcessing.Add(new Compose());
-            postProcessing.Add(new TAA());
-            postProcessing.Add(new FXAA());
+            ResourceManager2.Shared.AddTexture("AOBuffer", resourceCreator.GetTexture2D(aoBuffer));
 
-            ssao = new HBAO();
+            //brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", new Texture2DDescription(Format.R16G16B16A16Float, 128, 128, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value;
 
-            brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", new Texture2DDescription(Format.R16G16B16A16Float, 128, 128, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value;
-
-            window.Dispatcher.InvokeBlocking(() =>
-            {
-                brdfLUT = new(device, false, true);
-                brdfLUT.Target = brdflut.RTV;
-                brdfLUT.Draw(context);
-                context.ClearState();
-                brdfLUT.Dispose();
-                brdfLUT = null;
-            });
-
-            await postProcessing.InitializeAsync(width, height);
-            postProcessing.Enabled = true;
-
-            deferredContext = device.CreateDeferredContext();
+            //window.Dispatcher.InvokeBlocking(() =>
+            //{
+            //    brdfLUT = new(device, false, true);
+            //    brdfLUT.Target = brdflut.RTV;
+            //    brdfLUT.Draw(context);
+            //    context.ClearState();
+            //    brdfLUT.Dispose();
+            //    brdfLUT = null;
+            //});
 
             initialized = true;
             Current = this;
             window.Dispatcher.Invoke(() => WidgetManager.Register(new RendererWidget(this)));
-
-            configKey.GenerateSubKeyAuto(ssao, "HBAO");
-
-            await ssao.Initialize(device, width, height);
-#if PROFILE
-            device.Profiler.CreateBlock("Update");
-            device.Profiler.CreateBlock("PrePass");
-            device.Profiler.CreateBlock("ObjectCulling");
-            device.Profiler.CreateBlock("LightCulling");
-            device.Profiler.CreateBlock("ShadowMaps");
-            device.Profiler.CreateBlock("Geometry");
-            device.Profiler.CreateBlock("LightsDeferred");
-            device.Profiler.CreateBlock("LightsForward");
-            device.Profiler.CreateBlock("AO");
-            device.Profiler.CreateBlock("PostProcessing");
-#endif
         }
 
         private void OnWindowResizeBegin(object sender, EventArgs e)
@@ -362,48 +331,6 @@ namespace HexaEngine.Rendering.Renderers
                     Config.Global.Save();
                 };
             }
-            {
-                configKey.TryGetOrAddKeyValue("Frustum culling", true.ToString(), DataType.Bool, false, out var val);
-                if (val.GetBool())
-                {
-                    CullingManager.CullingFlags |= CullingFlags.Frustum;
-                }
-
-                val.ValueChanged += (ss, ee) =>
-                {
-                    if (val.GetBool())
-                    {
-                        CullingManager.CullingFlags |= CullingFlags.Frustum;
-                    }
-                    else
-                    {
-                        CullingManager.CullingFlags &= ~CullingFlags.Frustum;
-                    }
-
-                    Config.Global.Save();
-                };
-            }
-            {
-                configKey.TryGetOrAddKeyValue("Occlusion culling", true.ToString(), DataType.Bool, false, out var val);
-                if (val.GetBool())
-                {
-                    CullingManager.CullingFlags |= CullingFlags.Occlusion;
-                }
-
-                val.ValueChanged += (ss, ee) =>
-                {
-                    if (val.GetBool())
-                    {
-                        CullingManager.CullingFlags |= CullingFlags.Occlusion;
-                    }
-                    else
-                    {
-                        CullingManager.CullingFlags &= ~CullingFlags.Occlusion;
-                    }
-
-                    Config.Global.Save();
-                };
-            }
 
             width = rendererWidth;
             height = rendererHeight;
@@ -438,15 +365,6 @@ namespace HexaEngine.Rendering.Renderers
             depthStencil2 = new(device, width, height, Format.D32Float);
             dsv = depthStencil.DSV;
 
-            lightBuffer = ResourceManager2.Shared.UpdateTexture("LightBuffer", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Color", gbuffer.SRVs[0]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Normal", gbuffer.SRVs[1]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Misc", gbuffer.SRVs[2]);
-            ResourceManager2.Shared.AddShaderResourceView("GBuffer.Emission", gbuffer.SRVs[3]);
-            ResourceManager2.Shared.SetOrAddResource("GBuffer.Depth", depthStencil.SRV);
-            ResourceManager2.Shared.SetOrAddResource("GBuffer.DepthCopy", depthStencil2.SRV);
-            ResourceManager2.Shared.SetOrAddResource("GBuffer.DepthStencil", depthStencil.DSV);
-
             hizBuffer.Resize(device, width, height);
 
             postProcessing.EndResize(width, height);
@@ -456,37 +374,10 @@ namespace HexaEngine.Rendering.Renderers
             {
                 return;
             }
-
-            scene.LightManager.BeginResize();
-            scene.LightManager.EndResize(width, height);
         }
-
-        public unsafe void LoadScene(Scene scene)
-        {
-            scene.LightManager.BeginResize();
-            scene.LightManager.EndResize(width, height).Wait();
-        }
-
-        private const bool forceForward = true;
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera camera)
         {
-            if (sceneChanged)
-            {
-                LoadScene(scene);
-                sceneChanged = false;
-            }
-
-            if (windowResized)
-            {
-                windowResized = false;
-                ResourceManager2.Shared.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
-                ResourceManager2.Shared.SetOrAddResource("SwapChain", swapChain.Backbuffer);
-                postProcessing.ResizeOutput();
-            }
-
-            postProcessing.SetViewport(viewport);
-
             if (!initialized)
             {
                 return;
@@ -497,187 +388,218 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
-            var lights = scene.LightManager;
-            var renderers = scene.RenderManager;
-
-#if PROFILE
-            profiler.Begin("Update");
-            device.Profiler.Begin(context, "Update");
-#endif
-
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
-            renderers.Update(context);
-            lights.Update(context, camera);
-            lights.UpdateBuffers(context);
-            CullingManager.UpdateCamera(context);
+            scene.RenderManager.Update(context);
+            scene.LightManager.Update(context, graphExecuter.ResourceCreator.GetShadowAtlas(0), camera);
 
-#if PROFILE
-            device.Profiler.End(context, "Update");
-            profiler.End("Update");
-#endif
-            if (prepassEnabled)
-            {
-#if PROFILE
-                profiler.Begin("PrePass");
-                device.Profiler.Begin(context, "PrePass");
-#endif
-                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-                context.SetRenderTargets(0, null, dsv);
-                context.SetViewport(gbuffer.Viewport);
-                renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
-                context.ClearState();
+            graphExecuter.ResourceCreator.Output = swapChain.BackbufferRTV;
+            graphExecuter.ResourceCreator.OutputTex = swapChain.Backbuffer;
+            graphExecuter.ResourceCreator.OutputViewport = viewport;
+            graphExecuter.Execute(context);
 
-                postProcessing.PrePassDraw(context);
+            /*
 
-#if PROFILE
-                device.Profiler.End(context, "PrePass");
-                profiler.End("PrePass");
-#endif
-            }
-#if PROFILE
-            profiler.Begin("ObjectCulling");
-            device.Profiler.Begin(context, "ObjectCulling");
-#endif
+             if (sceneChanged)
+             {
+                 LoadScene(scene);
+                 sceneChanged = false;
+             }
 
-            hizBuffer.Generate(context, depthStencil.SRV);
-            CullingManager.DoCulling(context, hizBuffer.SRV);
+             if (windowResized)
+             {
+                 windowResized = false;
+                 ResourceManager2.Shared.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
+                 ResourceManager2.Shared.SetOrAddResource("SwapChain", swapChain.Backbuffer);
+                 postProcessing.ResizeOutput();
+             }
 
-#if PROFILE
-            device.Profiler.End(context, "ObjectCulling");
-            profiler.End("ObjectCulling");
-#endif
+             postProcessing.SetViewport(viewport);
 
-#if PROFILE
-            profiler.Begin("LightCulling");
-            device.Profiler.Begin(context, "LightCulling");
-#endif
-            if (commandList == null)
-            {
-                lights.CullLights(context);
-                commandList = deferredContext.FinishCommandList(false);
-            }
-            context.ExecuteCommandList(commandList, false);
-#if PROFILE
-            device.Profiler.End(context, "LightCulling");
-            profiler.End("LightCulling");
-#endif
+             if (!initialized)
+             {
+                 return;
+             }
 
-            if (!prepassEnabled)
-            {
-                context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-            }
+             if (camera == null)
+             {
+                 return;
+             }
 
-            context.ClearRenderTargetView(lightBuffer.Value.RTV, default);
-#if PROFILE
-            profiler.Begin("ShadowMaps");
-            device.Profiler.Begin(context, "ShadowMaps");
-#endif
-            renderers.UpdateShadowMaps(context, camera);
-#if PROFILE
-            device.Profiler.End(context, "ShadowMaps");
-            profiler.End("ShadowMaps");
-#endif
+             var lights = scene.LightManager;
+             var renderers = scene.RenderManager;
 
-#if PROFILE
-            profiler.Begin("Geometry");
-            device.Profiler.Begin(context, "Geometry");
-#endif
-            context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
-            if (!forceForward)
-            {
-                // Fill Geometry Buffer
-                context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
-                context.SetViewport(gbuffer.Viewport);
-                renderers.Draw(context, RenderQueueIndex.Geometry, RenderPath.Deferred);
-                context.ClearState();
-            }
+ #if PROFILE
+             profiler.Begin("Update");
+             device.Profiler.Begin(context, "Update");
+ #endif
 
-#if PROFILE
-            device.Profiler.End(context, "Geometry");
-            profiler.End("Geometry");
-#endif
+             renderers.Update(context);
+             lights.Update(context, camera);
+             lights.UpdateBuffers(context);
+             CullingManager.UpdateCamera(context);
 
-#if PROFILE
-            profiler.Begin("LightsDeferred");
-            device.Profiler.Begin(context, "LightsDeferred");
-#endif
+ #if PROFILE
+             device.Profiler.End(context, "Update");
+             profiler.End("Update");
+ #endif
+             if (prepassEnabled)
+             {
+ #if PROFILE
+                 profiler.Begin("PrePass");
+                 device.Profiler.Begin(context, "PrePass");
+ #endif
+                 context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+                 context.SetRenderTargets(0, null, dsv);
+                 context.SetViewport(gbuffer.Viewport);
+                 renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
+                 context.ClearState();
 
-            depthStencil.CopyTo(context, depthStencil2);
+                 postProcessing.PrePassDraw(context);
 
-            context.SetRenderTarget(lightBuffer.Value.RTV, dsv);
-            context.SetViewport(lightBuffer.Value.RTV.Viewport);
-            renderers.Draw(context, RenderQueueIndex.Background, RenderPath.Default);
-            context.ClearState();
+ #if PROFILE
+                 device.Profiler.End(context, "PrePass");
+                 profiler.End("PrePass");
+ #endif
+             }
+ #if PROFILE
+             profiler.Begin("ObjectCulling");
+             device.Profiler.Begin(context, "ObjectCulling");
+ #endif
 
-            if (!forceForward)
-            {
-                context.SetRenderTarget(lightBuffer.Value.RTV, default);
-                context.SetViewport(gbuffer.Viewport);
+             hizBuffer.Generate(context, depthStencil.SRV);
+             CullingManager.DoCulling(context, hizBuffer.SRV);
 
-                lights.DeferredPass(context);
-            }
+ #if PROFILE
+             device.Profiler.End(context, "ObjectCulling");
+             profiler.End("ObjectCulling");
+ #endif
 
-#if PROFILE
-            device.Profiler.End(context, "LightsDeferred");
-            profiler.End("LightsDeferred");
-#endif
-#if PROFILE
-            profiler.Begin("LightsForward");
-            device.Profiler.Begin(context, "LightsForward");
-#endif
-            if (forceForward)
-            {
-                var geometryQueue = renderers.GeometryQueue;
-                for (int i = 0; i < geometryQueue.Count; i++)
-                {
-                    lights.ForwardPass(context, geometryQueue[i], camera);
-                }
-            }
-            var alphaTest = renderers.AlphaTestQueue;
-            for (int i = 0; i < alphaTest.Count; i++)
-            {
-                lights.ForwardPass(context, alphaTest[i], camera);
-            }
-            var transparency = renderers.TransparencyQueue;
-            for (int i = 0; i < transparency.Count; i++)
-            {
-                lights.ForwardPass(context, transparency[i], camera);
-            }
+ #if PROFILE
+             profiler.Begin("LightCulling");
+             device.Profiler.Begin(context, "LightCulling");
+ #endif
 
-#if PROFILE
-            device.Profiler.End(context, "LightsForward");
-            profiler.End("LightsForward");
-#endif
+             lights.CullLights(context);
 
-#if PROFILE
-            profiler.Begin("AO");
-            device.Profiler.Begin(context, "AO");
-#endif
-            // SSAO Pass
-            ssao.Draw(context);
-#if PROFILE
-            device.Profiler.End(context, "AO");
-            profiler.End("AO");
-#endif
+ #if PROFILE
+             device.Profiler.End(context, "LightCulling");
+             profiler.End("LightCulling");
+ #endif
 
-#if PROFILE
-            profiler.Begin("PostProcessing");
-            device.Profiler.Begin(context, "PostProcessing");
-#endif
-            postProcessing.Draw(context);
-#if PROFILE
-            device.Profiler.End(context, "PostProcessing");
-            profiler.End("PostProcessing");
-#endif
+             if (!prepassEnabled)
+             {
+                 context.ClearDepthStencilView(dsv, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+             }
+
+             context.ClearRenderTargetView(lightBuffer.Value.RTV, default);
+ #if PROFILE
+             profiler.Begin("ShadowMaps");
+             device.Profiler.Begin(context, "ShadowMaps");
+ #endif
+             renderers.UpdateShadowMaps(context, camera);
+ #if PROFILE
+             device.Profiler.End(context, "ShadowMaps");
+             profiler.End("ShadowMaps");
+ #endif
+
+ #if PROFILE
+             profiler.Begin("Geometry");
+             device.Profiler.Begin(context, "Geometry");
+ #endif
+             context.ClearRenderTargetViews(gbuffer.Count, gbuffer.PRTVs, Vector4.Zero);
+             if (!forceForward)
+             {
+                 // Fill Geometry Buffer
+                 context.SetRenderTargets(gbuffer.Count, gbuffer.PRTVs, depthStencil.DSV);
+                 context.SetViewport(gbuffer.Viewport);
+                 renderers.Draw(context, RenderQueueIndex.Geometry, RenderPath.Deferred);
+                 context.ClearState();
+             }
+
+ #if PROFILE
+             device.Profiler.End(context, "Geometry");
+             profiler.End("Geometry");
+ #endif
+
+ #if PROFILE
+             profiler.Begin("LightsDeferred");
+             device.Profiler.Begin(context, "LightsDeferred");
+ #endif
+
+             depthStencil.CopyTo(context, depthStencil2);
+
+             context.SetRenderTarget(lightBuffer.Value.RTV, dsv);
+             context.SetViewport(lightBuffer.Value.RTV.Viewport);
+             renderers.Draw(context, RenderQueueIndex.Background, RenderPath.Default);
+             context.ClearState();
+
+             if (!forceForward)
+             {
+                 context.SetRenderTarget(lightBuffer.Value.RTV, default);
+                 context.SetViewport(gbuffer.Viewport);
+
+                 lights.DeferredPass(context);
+             }
+
+ #if PROFILE
+             device.Profiler.End(context, "LightsDeferred");
+             profiler.End("LightsDeferred");
+ #endif
+ #if PROFILE
+             profiler.Begin("LightsForward");
+             device.Profiler.Begin(context, "LightsForward");
+ #endif
+             if (forceForward)
+             {
+                 var geometryQueue = renderers.GeometryQueue;
+                 for (int i = 0; i < geometryQueue.Count; i++)
+                 {
+                     lights.ForwardPass(context, geometryQueue[i], camera);
+                 }
+             }
+             var alphaTest = renderers.AlphaTestQueue;
+             for (int i = 0; i < alphaTest.Count; i++)
+             {
+                 lights.ForwardPass(context, alphaTest[i], camera);
+             }
+             var transparency = renderers.TransparencyQueue;
+             for (int i = 0; i < transparency.Count; i++)
+             {
+                 lights.ForwardPass(context, transparency[i], camera);
+             }
+
+ #if PROFILE
+             device.Profiler.End(context, "LightsForward");
+             profiler.End("LightsForward");
+ #endif
+
+ #if PROFILE
+             profiler.Begin("AO");
+             device.Profiler.Begin(context, "AO");
+ #endif
+             // SSAO Pass
+             ssao.Draw(context);
+ #if PROFILE
+             device.Profiler.End(context, "AO");
+             profiler.End("AO");
+ #endif
+
+ #if PROFILE
+             profiler.Begin("PostProcessing");
+             device.Profiler.Begin(context, "PostProcessing");
+ #endif
+             postProcessing.Draw(context);
+ #if PROFILE
+             device.Profiler.End(context, "PostProcessing");
+             profiler.End("PostProcessing");
+ #endif
+            */
         }
-
-        private bool prepassEnabled = true;
 
         public void DrawSettings()
         {
-            hizBuffer.Debug();
             if (!initialized)
             {
                 return;
@@ -730,23 +652,6 @@ namespace HexaEngine.Rendering.Renderers
 
                 Current = null;
 
-                dsv.Dispose();
-                depthStencil.Dispose();
-                depthStencil2.Dispose();
-
-                hizBuffer.Dispose();
-                deferredContext.Dispose();
-                cameraBuffer.Dispose();
-                tesselationBuffer.Dispose();
-                quad.Dispose();
-
-                gbuffer.Dispose();
-
-                ssao.Dispose();
-
-                postProcessing.Dispose();
-
-                brdflut.Dispose();
                 disposedValue = true;
             }
         }

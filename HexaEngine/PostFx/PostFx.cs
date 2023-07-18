@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using HexaEngine.Rendering.Graph;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -65,12 +66,12 @@
             throw new NotImplementedException();
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             throw new NotImplementedException();
         }
 
-        public Task Initialize(IGraphicsDevice device, int width, int height, ShaderMacro[] macros)
+        public Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             throw new NotImplementedException();
         }

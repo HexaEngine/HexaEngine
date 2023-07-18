@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
     using HexaEngine.Core.Graphics;
-    using System;
     using System.Threading.Tasks;
 
     public class RenderPass
@@ -47,11 +46,11 @@
             }
         }
 
-        public virtual void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public virtual void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
         }
 
-        public virtual void Execute(IGraphicsContext context, ResourceCreator creator)
+        public virtual void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
         }
 
@@ -96,11 +95,6 @@
         public bool HasAnyDependencies()
         {
             return readBindings.Count != 0;
-        }
-
-        internal void Clear()
-        {
-            throw new NotImplementedException();
         }
     }
 
@@ -229,13 +223,13 @@
 
         public IDepthStencilView DepthStencilView { get; set; }
 
-        public override void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
             //deferredContext = device.CreateDeferredContext();
             //task = new(() => Update(deferredContext));
         }
 
-        public override sealed void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override sealed void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (invalidate)
             {
@@ -295,13 +289,13 @@
 
         public IDepthStencilView DepthStencilView { get; set; }
 
-        public override void Init(ResourceCreator creator, PipelineCreator pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
         {
             //deferredContext = device.CreateDeferredContext();
             //task = new(() => Update(deferredContext));
         }
 
-        public override sealed void Execute(IGraphicsContext context, ResourceCreator creator)
+        public override sealed void Execute(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (invalidate)
             {

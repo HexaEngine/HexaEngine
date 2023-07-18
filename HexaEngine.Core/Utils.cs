@@ -137,6 +137,11 @@
             return c;
         }
 
+        public static void Swap<T>(T* a, T* b) where T : unmanaged
+        {
+            (*b, *a) = (*a, *b);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo<T>(this T t, int* offset, byte* dst) where T : unmanaged
         {

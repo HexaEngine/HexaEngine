@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.OpenGL
 {
+    using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Contexts;
@@ -23,6 +24,8 @@
         public GraphicsBackend Backend => GraphicsBackend.OpenGL;
 
         public int PlatformScore => 100;
+
+        public IReadOnlyList<GPU> GPUs { get; }
 
         public static void Init(IWindow source, bool debug)
         {

@@ -31,8 +31,8 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            ImGuiConsole.Log(LogSeverity.Info, "Backend: Using Graphics API: D3D11On12");
-            ImGuiConsole.Log(LogSeverity.Info, $"Backend: Using Graphics Device: {name}");
+            ImGuiConsole.Log(LogSeverity.Information, "Backend: Using Graphics API: D3D11On12");
+            ImGuiConsole.Log(LogSeverity.Information, $"Backend: Using Graphics Device: {name}");
             return new D3D11On12GraphicsDevice(this, debug);
         }
     }
