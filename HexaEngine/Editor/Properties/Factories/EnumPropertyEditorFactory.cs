@@ -2,8 +2,8 @@
 
 namespace HexaEngine.Editor.Properties.Factories
 {
-    using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Editor.Properties;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using System.Reflection;
 
     public class EnumPropertyEditorFactory : IPropertyEditorFactory
@@ -15,7 +15,7 @@ namespace HexaEngine.Editor.Properties.Factories
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return new EnumPropertyEditor(nameAttr.Name, property.PropertyType);
+            return new EnumPropertyEditor(nameAttr.Name, property);
         }
     }
 }

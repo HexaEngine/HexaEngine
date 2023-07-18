@@ -6,8 +6,8 @@ struct VSOut
 
 cbuffer params
 {
+    float2 textureDimensions;
 	int size;
-	float3 padd;
 };
 
 Texture2D tex;
@@ -20,11 +20,7 @@ float4 main(VSOut vs) : SV_Target
 		return tex.Sample(state, vs.Tex);
 	}
 
-	float width;
-	float heigth;
-	tex.GetDimensions(width, heigth);
-
-	float2 texelSize = 1.0 / float2(width, heigth);
+    float2 texelSize = 1.0 / textureDimensions;
 
 	float4 result = 0.0;
 	float count = 0.0;

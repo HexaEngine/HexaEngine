@@ -3,6 +3,9 @@
     using System;
     using System.IO;
 
+    /// <summary>
+    /// Represents a virtual stream that provides access to a subset of a base stream.
+    /// </summary>
     public class VirtualStream : Stream
     {
         private readonly SemaphoreSlim semaphore = new(1);
@@ -11,6 +14,13 @@
         private readonly bool _leaveOpen;
         private long position;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VirtualStream"/> class with the specified base stream, start position, length, and leave-open option.
+        /// </summary>
+        /// <param name="baseStream">The base stream.</param>
+        /// <param name="start">The start position within the base stream.</param>
+        /// <param name="length">The length of the virtual stream.</param>
+        /// <param name="leaveOpen">A value indicating whether the base stream should be left open after disposing the virtual stream.</param>
         public VirtualStream(Stream baseStream, long start, long length, bool leaveOpen = false)
         {
             _baseStream = baseStream;
@@ -19,16 +29,35 @@
             _leaveOpen = leaveOpen;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the stream supports reading.
+        /// </summary>
         public override bool CanRead => _baseStream.CanRead;
 
+        /// <summary>
+        /// Gets a value indicating whether the stream supports seeking.
+        /// </summary>
         public override bool CanSeek => _baseStream.CanSeek;
 
+        /// <summary>
+        /// Gets a value indicating whether the stream supports writing.
+        /// </summary>
         public override bool CanWrite => _baseStream.CanWrite;
 
+        /// <summary>
+        /// Gets the length of the virtual stream.
+        /// </summary>
         public override long Length { get; }
 
+        /// <summary>
+        /// Gets or sets the position within the virtual stream.
+        /// </summary>
         public override long Position { get => position; set => position = value; }
 
+        /// <summary>
+        /// Releases the unmanaged resources used by the <see cref="VirtualStream"/> and optionally releases the managed resources.
+        /// </summary>
+        /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
             if (!_leaveOpen)
@@ -38,6 +67,9 @@
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Flushes the stream.
+        /// </summary>
         public override void Flush()
         {
             semaphore.Wait();
@@ -45,6 +77,10 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Reads the entire virtual stream and returns it as a byte array.
+        /// </summary>
+        /// <returns>A byte array containing the contents of the virtual stream.</returns>
         public byte[] ReadBytes()
         {
             semaphore.Wait();
@@ -59,6 +95,13 @@
             return buffer;
         }
 
+        /// <summary>
+        /// Reads a sequence of bytes from the virtual stream and advances the position within the stream by the number of bytes read.
+        /// </summary>
+        /// <param name="buffer">The buffer to read the data into.</param>
+        /// <param name="offset">The offset in the buffer at which to start writing the read data.</param>
+        /// <param name="count">The maximum number of bytes to read.</param>
+        /// <returns>The total number of bytes read into the buffer.</returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             semaphore.Wait();
@@ -90,6 +133,12 @@
             return result;
         }
 
+        /// <summary>
+        /// Sets the position within the virtual stream.
+        /// </summary>
+        /// <param name="offset">The offset relative to the <paramref name="origin"/> parameter.</param>
+        /// <param name="origin">The reference point used to obtain the new position.</param>
+        /// <returns>The new position within the virtual stream.</returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
             switch (origin)
@@ -109,16 +158,31 @@
             return Position;
         }
 
+        /// <summary>
+        /// Sets the length of the virtual stream. This operation is not supported.
+        /// </summary>
+        /// <param name="value">The desired length of the virtual stream.</param>
         public override void SetLength(long value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Writes a sequence of bytes to the virtual stream. This operation is not supported.
+        /// </summary>
+        /// <param name="buffer">The buffer containing the data to write.</param>
+        /// <param name="offset">The offset in the buffer at which to start reading the data.</param>
+        /// <param name="count">The number of bytes to write.</param>
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Copies the content of the virtual stream to another stream.
+        /// </summary>
+        /// <param name="destination">The stream to copy the content to.</param>
+        /// <param name="bufferSize">The size of the buffer used for copying.</param>
         public override void CopyTo(Stream destination, int bufferSize)
         {
             semaphore.Wait();

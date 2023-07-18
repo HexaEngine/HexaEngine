@@ -4,11 +4,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Resources;
-    using HexaEngine.Core.Scripts;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
     public static unsafe class Application
     {
@@ -18,7 +18,7 @@
         private static bool exiting = false;
         private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
         private static readonly List<IRenderWindow> windows = new();
-        private static readonly List<Action<Event>> hooks = new();
+        private static readonly List<Func<Event, bool>> hooks = new();
         private static IRenderWindow? mainWindow;
         private static bool inDesignMode;
         private static bool inEditorMode;
@@ -28,13 +28,25 @@
 
         private static IAudioDevice audioDevice;
 
-        private static IApp? App;
-
-#nullable disable
+        /// <summary>
+        /// Gets the main window of the application.
+        /// </summary>
         public static IRenderWindow MainWindow => mainWindow;
-#nullable enable
 
-        public static GraphicsBackend GraphicsBackend => graphicsDevice.Backend;
+        /// <summary>
+        /// Gets the graphics device used by the application.
+        /// </summary>
+        public static IGraphicsDevice GraphicsDevice => graphicsDevice;
+
+        /// <summary>
+        /// Gets the graphics context used by the application.
+        /// </summary>
+        public static IGraphicsContext GraphicsContext => graphicsContext;
+
+        public static GraphicsBackend GraphicsBackend
+        {
+            get; set;
+        }
 
         public enum SpecialFolder
         {
@@ -46,6 +58,9 @@
             Scenes,
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the application is in design mode.
+        /// </summary>
         public static bool InDesignMode
         {
             get => inDesignMode; set
@@ -55,6 +70,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the application is in editor mode.
+        /// </summary>
         public static bool InEditorMode
         {
             get => inEditorMode; set
@@ -64,12 +82,26 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether graphics debugging is enabled.
+        /// </summary>
         public static bool GraphicsDebugging { get; set; }
 
+        /// <summary>
+        /// Occurs when the design mode state of the application changes.
+        /// </summary>
         public static event Action<bool>? OnDesignModeChanged;
 
+        /// <summary>
+        /// Occurs when the editor mode state of the application changes.
+        /// </summary>
         public static event Action<bool>? OnEditorModeChanged;
 
+        /// <summary>
+        /// Gets the folder path for the specified special folder.
+        /// </summary>
+        /// <param name="folder">The special folder.</param>
+        /// <returns>The folder path.</returns>
         public static string GetFolder(SpecialFolder folder)
         {
             return folder switch
@@ -84,26 +116,11 @@
             };
         }
 
-        public static void Run(IRenderWindow mainWindow)
+        /// <summary>
+        /// Initializes the application and necessary subsystems.
+        /// </summary>
+        public static void Boot()
         {
-            Init();
-            Application.mainWindow = mainWindow;
-            mainWindow.Closing += MainWindow_Closing;
-
-            mainWindow.Show();
-            PlatformRun();
-        }
-
-        private static void Init()
-        {
-            var type = AssemblyManager.GetAssignableType<IApp>();
-            if (type != null)
-            {
-                App = (IApp?)Activator.CreateInstance(type);
-            }
-
-            App?.Startup();
-
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
             sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
             sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");
@@ -111,12 +128,54 @@
             sdl.SetHint(Sdl.HintJoystickRawinput, "0");
             sdl.Init(Sdl.InitEvents + Sdl.InitGamecontroller + Sdl.InitHaptic + Sdl.InitJoystick + Sdl.InitSensor);
 
-            Keyboard.Init();
-            Mouse.Init();
-            Gamepads.Init();
-            TouchDevices.Init();
+            SdlCheckError();
 
-            graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend.Auto, GraphicsDebugging);
+            Keyboard.Init();
+            SdlCheckError();
+            Mouse.Init();
+            SdlCheckError();
+            Gamepads.Init();
+            SdlCheckError();
+            TouchDevices.Init();
+            SdlCheckError();
+        }
+
+        /// <summary>
+        /// Runs the application with the specified main window.
+        /// </summary>
+        /// <param name="mainWindow">The main window of the application.</param>
+        public static void Run(IRenderWindow mainWindow)
+        {
+            Application.mainWindow = mainWindow;
+            Process.GetCurrentProcess().PriorityBoostEnabled = true;
+            mainWindow.Show();
+            Init();
+            mainWindow.Closing += MainWindowClosing;
+
+            PlatformRun();
+        }
+
+        /// <summary>
+        /// Registers a hook function that will be invoked for each event received by the application.
+        /// </summary>
+        /// <param name="hook">The hook function to register.</param>
+        public static void RegisterHook(Func<Event, bool> hook)
+        {
+            hooks.Add(hook);
+        }
+
+        /// <summary>
+        /// Unregisters a previously registered hook function from the application.
+        /// </summary>
+        /// <param name="hook">The hook function to unregister.</param>
+        public static void UnregisterHook(Func<Event, bool> hook)
+        {
+            hooks.Remove(hook);
+        }
+
+        private static void Init()
+        {
+            graphicsDevice = GraphicsAdapter.CreateGraphicsDevice(GraphicsBackend, GraphicsDebugging);
             graphicsContext = graphicsDevice.Context;
             audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
 
@@ -125,10 +184,14 @@
             {
                 windows[i].Initialize(audioDevice, graphicsDevice);
             }
-            App?.Initialize();
+
             initialized = true;
         }
 
+        /// <summary>
+        /// Registers a window to the application.
+        /// </summary>
+        /// <param name="window">The window to register.</param>
         internal static void RegisterWindow(IRenderWindow window)
         {
             windows.Add(window);
@@ -139,7 +202,7 @@
             }
         }
 
-        private static void MainWindow_Closing(object? sender, CloseEventArgs e)
+        private static void MainWindowClosing(object? sender, CloseEventArgs e)
         {
             if (!e.Handled)
             {
@@ -147,11 +210,9 @@
             }
         }
 
-        public static void RegisterHook(Action<Event> hook)
-        {
-            hooks.Add(hook);
-        }
-
+        /// <summary>
+        /// The main loop of the application.
+        /// </summary>
         private static void PlatformRun()
         {
             Event evnt;
@@ -162,6 +223,10 @@
                 sdl.PumpEvents();
                 while (sdl.PollEvent(&evnt) == (int)SdlBool.True)
                 {
+                    for (int i = 0; i < hooks.Count; i++)
+                    {
+                        hooks[i](evnt);
+                    }
                     EventType type = (EventType)evnt.Type;
                     switch (type)
                     {
@@ -199,13 +264,17 @@
 
                         case EventType.Windowevent:
                             {
-                                SdlWindow window = (SdlWindow)windowIdToWindow[evnt.Window.WindowID];
-                                window.ProcessEvent(evnt.Window);
-                                if ((WindowEventID)evnt.Window.Event == WindowEventID.Close && window == mainWindow)
+                                var even = evnt.Window;
+                                if (even.WindowID == mainWindow.WindowID)
                                 {
-                                    exiting = true;
+                                    ((SdlWindow)mainWindow).ProcessEvent(even);
+                                    if ((WindowEventID)evnt.Window.Event == WindowEventID.Close)
+                                    {
+                                        exiting = true;
+                                    }
                                 }
                             }
+
                             break;
 
                         case EventType.Syswmevent:
@@ -215,10 +284,8 @@
                             {
                                 var even = evnt.Key;
                                 Keyboard.OnKeyDown(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputKeyboard(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
                             }
                             break;
 
@@ -226,10 +293,8 @@
                             {
                                 var even = evnt.Key;
                                 Keyboard.OnKeyUp(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputKeyboard(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputKeyboard(even);
                             }
                             break;
 
@@ -240,10 +305,8 @@
                             {
                                 var even = evnt.Text;
                                 Keyboard.OnTextInput(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputText(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputText(even);
                             }
                             break;
 
@@ -254,10 +317,8 @@
                             {
                                 var even = evnt.Motion;
                                 Mouse.OnMotion(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputMouse(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
                             }
                             break;
 
@@ -265,10 +326,8 @@
                             {
                                 var even = evnt.Button;
                                 Mouse.OnButtonDown(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputMouse(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
                             }
                             break;
 
@@ -276,10 +335,8 @@
                             {
                                 var even = evnt.Button;
                                 Mouse.OnButtonUp(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputMouse(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
                             }
                             break;
 
@@ -287,10 +344,8 @@
                             {
                                 var even = evnt.Wheel;
                                 Mouse.OnWheel(even);
-                                if (windowIdToWindow.TryGetValue(even.WindowID, out var window))
-                                {
-                                    ((SdlWindow)window).ProcessInputMouse(even);
-                                }
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputMouse(even);
                             }
                             break;
 
@@ -467,21 +522,11 @@
                         case EventType.Lastevent:
                             break;
                     }
-
-                    for (int i = 0; i < hooks.Count; i++)
-                    {
-                        hooks[i](evnt);
-                    }
                 }
 
-                for (int i = 0; i < windows.Count; i++)
-                {
-                    windows[i].Render(graphicsContext);
-                }
-                for (int i = 0; i < windows.Count; i++)
-                {
-                    windows[i].ClearState();
-                }
+                mainWindow.Render(graphicsContext);
+                mainWindow.ClearState();
+                GraphicsAdapter.Current.PumpDebugMessages();
                 Time.FrameUpdate();
             }
             ResourceManager2.Shared.Dispose();
@@ -490,9 +535,11 @@
                 windows[i].Uninitialize();
             }
 
-            App?.Uninitialize();
+            ((SdlWindow)mainWindow).DestroyWindow();
 
+            SdlCheckError();
             sdl.Quit();
+            //SdlCheckError();
         }
     }
 }

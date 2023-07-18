@@ -26,8 +26,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
 	PixelInput output;
 
 	output.pos = float4(input.pos, 1);
-	output.pos = mul(output.pos, view);
-	output.pos = mul(output.pos, proj);
+    output.pos = mul(output.pos, viewProj);
 	output.color = uint4(instanceId + 1, typeId + 1, 1, vertexId + 1);
 	return output;
 }

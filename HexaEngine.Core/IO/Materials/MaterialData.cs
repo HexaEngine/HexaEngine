@@ -26,6 +26,15 @@
 
         public MaterialData()
         {
+            Properties = Array.Empty<MaterialProperty>();
+            Textures = Array.Empty<MaterialTexture>();
+        }
+
+        public MaterialData(string name)
+        {
+            Name = name;
+            Properties = Array.Empty<MaterialProperty>();
+            Textures = Array.Empty<MaterialTexture>();
         }
 
         public bool HasTexture(TextureType type)

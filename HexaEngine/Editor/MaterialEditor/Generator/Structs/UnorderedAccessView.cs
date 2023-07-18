@@ -6,7 +6,7 @@
 
     public struct UnorderedAccessView
     {
-        public int Slot;
+        public uint Slot;
         public string Name;
         public SType UavType;
         public SType Type;
@@ -18,9 +18,9 @@
             Type = type;
         }
 
-        public void Build(StringBuilder builder)
+        public void Build(CodeWriter builder)
         {
-            builder.AppendLine($"{UavType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(u{Slot.ToString(CultureInfo.InvariantCulture)});");
+            builder.WriteLine($"{UavType.GetTypeName()}<{Type.GetTypeName()}> {Name} : register(u{Slot.ToString(CultureInfo.InvariantCulture)});");
         }
     }
 }

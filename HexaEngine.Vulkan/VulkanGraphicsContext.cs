@@ -122,92 +122,92 @@
             throw new NotImplementedException();
         }
 
-        public void VSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        public void VSSetConstantBuffer(uint slot, IBuffer? constantBuffer)
         {
             throw new NotImplementedException();
         }
 
-        public void HSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        public void HSSetConstantBuffer(uint slot, IBuffer? constantBuffer)
         {
             throw new NotImplementedException();
         }
 
-        public void DSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        public void DSSetConstantBuffer(uint slot, IBuffer? constantBuffer)
         {
             throw new NotImplementedException();
         }
 
-        public void GSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        public void GSSetConstantBuffer(uint slot, IBuffer? constantBuffer)
         {
             throw new NotImplementedException();
         }
 
-        public void PSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        public void PSSetConstantBuffer(uint slot, IBuffer? constantBuffer)
         {
             throw new NotImplementedException();
         }
 
-        public void CSSetConstantBuffer(IBuffer? constantBuffer, int slot)
+        public void CSSetConstantBuffer(uint slot, IBuffer? constantBuffer)
         {
             throw new NotImplementedException();
         }
 
-        public void VSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        public void VSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView)
         {
             throw new NotImplementedException();
         }
 
-        public void HSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        public void HSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView)
         {
             throw new NotImplementedException();
         }
 
-        public void DSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        public void DSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView)
         {
             throw new NotImplementedException();
         }
 
-        public void GSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        public void GSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView)
         {
             throw new NotImplementedException();
         }
 
-        public void PSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        public void PSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView)
         {
             throw new NotImplementedException();
         }
 
-        public void CSSetShaderResource(IShaderResourceView? shaderResourceView, int slot)
+        public void CSSetShaderResource(uint slot, IShaderResourceView? shaderResourceView)
         {
             throw new NotImplementedException();
         }
 
-        public void VSSetSampler(ISamplerState? sampler, int slot)
+        public void VSSetSampler(uint slot, ISamplerState? sampler)
         {
             throw new NotImplementedException();
         }
 
-        public void HSSetSampler(ISamplerState? sampler, int slot)
+        public void HSSetSampler(uint slot, ISamplerState? sampler)
         {
             throw new NotImplementedException();
         }
 
-        public void DSSetSampler(ISamplerState? sampler, int slot)
+        public void DSSetSampler(uint slot, ISamplerState? sampler)
         {
             throw new NotImplementedException();
         }
 
-        public void GSSetSampler(ISamplerState? sampler, int slot)
+        public void GSSetSampler(uint slot, ISamplerState? sampler)
         {
             throw new NotImplementedException();
         }
 
-        public void PSSetSampler(ISamplerState? sampler, int slot)
+        public void PSSetSampler(uint slot, ISamplerState? sampler)
         {
             throw new NotImplementedException();
         }
 
-        public void CSSetSampler(ISamplerState? sampler, int slot)
+        public void CSSetSampler(uint slot, ISamplerState? sampler)
         {
             throw new NotImplementedException();
         }
@@ -227,102 +227,102 @@
             throw new NotImplementedException();
         }
 
-        public unsafe void VSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        public unsafe void VSSetConstantBuffers(uint slot, uint count, void** constantBuffers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void HSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        public unsafe void HSSetConstantBuffers(uint slot, uint count, void** constantBuffers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void DSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        public unsafe void DSSetConstantBuffers(uint slot, uint count, void** constantBuffers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void GSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        public unsafe void GSSetConstantBuffers(uint slot, uint count, void** constantBuffers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void PSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        public unsafe void PSSetConstantBuffers(uint slot, uint count, void** constantBuffers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void CSSetConstantBuffers(void** constantBuffers, uint count, int slot)
+        public unsafe void CSSetConstantBuffers(uint slot, uint count, void** constantBuffers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void VSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        public unsafe void VSSetShaderResources(uint slot, uint count, void** shaderResourceViews)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void HSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        public unsafe void HSSetShaderResources(uint slot, uint count, void** shaderResourceViews)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void DSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        public unsafe void DSSetShaderResources(uint slot, uint count, void** shaderResourceViews)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void GSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        public unsafe void GSSetShaderResources(uint slot, uint count, void** shaderResourceViews)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void PSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        public unsafe void PSSetShaderResources(uint slot, uint count, void** shaderResourceViews)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void CSSetShaderResources(void** shaderResourceViews, uint count, int slot)
+        public unsafe void CSSetShaderResources(uint slot, uint count, void** shaderResourceViews)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void VSSetSamplers(void** samplers, uint count, int slot)
+        public unsafe void VSSetSamplers(uint slot, uint count, void** samplers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void HSSetSamplers(void** samplers, uint count, int slot)
+        public unsafe void HSSetSamplers(uint slot, uint count, void** samplers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void DSSetSamplers(void** samplers, uint count, int slot)
+        public unsafe void DSSetSamplers(uint slot, uint count, void** samplers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void GSSetSamplers(void** samplers, uint count, int slot)
+        public unsafe void GSSetSamplers(uint slot, uint count, void** samplers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void PSSetSamplers(void** samplers, uint count, int slot)
+        public unsafe void PSSetSamplers(uint slot, uint count, void** samplers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void CSSetSamplers(void** samplers, uint count, int slot)
+        public unsafe void CSSetSamplers(uint slot, uint count, void** samplers)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void SetRenderTargets(void** views, uint count, IDepthStencilView? depthStencilView)
+        public unsafe void SetRenderTargets(uint count, void** views, IDepthStencilView? depthStencilView)
         {
             throw new NotImplementedException();
         }
 
-        public unsafe void ClearRenderTargetViews(void** rtvs, uint count, Vector4 value)
+        public unsafe void ClearRenderTargetViews(uint count, void** rtvs, Vector4 value)
         {
             throw new NotImplementedException();
         }
@@ -332,7 +332,7 @@
             throw new NotImplementedException();
         }
 
-        public void SetGraphicsPipeline(IGraphicsPipeline pipeline)
+        public void SetGraphicsPipeline(IGraphicsPipeline? pipeline)
         {
             throw new NotImplementedException();
         }
@@ -383,36 +383,6 @@
         }
 
         public void SetVertexBuffer(uint slot, IBuffer? vertexBuffer, uint stride, uint offset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void VSSetShaderResource(void* shaderResourceView, int slot)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void HSSetShaderResource(void* shaderResourceView, int slot)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void DSSetShaderResource(void* shaderResourceView, int slot)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void GSSetShaderResource(void* shaderResourceView, int slot)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void PSSetShaderResource(void* shaderResourceView, int slot)
-        {
-            throw new NotImplementedException();
-        }
-
-        public unsafe void CSSetShaderResource(void* shaderResourceView, int slot)
         {
             throw new NotImplementedException();
         }
@@ -468,6 +438,76 @@
         }
 
         public ICommandList FinishCommandList(bool restoreState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispatch(uint threadGroupCountX, uint threadGroupCountY, uint threadGroupCountZ)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetUnorderedAccessView(void* view, uint offset, int uavInitialCounts = -1)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetComputePipeline(IComputePipeline? pipeline)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DispatchIndirect(IBuffer dispatchArgs, uint offset)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CopyStructureCount(IBuffer dst, uint alignedByteOffset, IUnorderedAccessView uav)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetUnorderedAccessViews(uint offset, uint count, void** views, uint* uavInitialCounts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetUnorderedAccessViews(uint count, void** views, uint* uavInitialCounts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void CSSetUnorderedAccessView(uint offset, void* view, uint uavInitialCounts = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void SetViewports(uint count, Viewport* viewports)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearView(IRenderTargetView rtv, Vector4 color, Rect rect)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearView(IDepthStencilView dsv, Vector4 color, Rect rect)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearView(IUnorderedAccessView uav, Vector4 color, Rect rect)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetRenderTargetsAndUnorderedAccessViews(IRenderTargetView? renderTargetView, IDepthStencilView? depthStencilView, uint uavSlot, IUnorderedAccessView? unorderedAccessView, uint uavInitialCount = uint.MaxValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public unsafe void SetRenderTargetsAndUnorderedAccessViews(uint count, void** views, IDepthStencilView? depthStencilView, uint uavSlot, uint uavCount, void** uavs, uint* pUavInitialCount)
         {
             throw new NotImplementedException();
         }

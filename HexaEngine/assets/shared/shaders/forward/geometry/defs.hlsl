@@ -1,22 +1,3 @@
-
-#ifndef VtxColor
-#define VtxColor 0
-#endif
-#ifndef VtxPosition
-#define VtxPosition 1
-#endif
-#ifndef VtxUV
-#define VtxUV 1
-#endif
-#ifndef VtxNormal
-#define VtxNormal 1
-#endif
-#ifndef VtxTangent
-#define VtxTangent 1
-#endif
-#ifndef VtxBitangent
-#define VtxBitangent 0
-#endif
 #ifndef VtxSkinned
 #define VtxSkinned 0
 #endif
@@ -37,27 +18,22 @@
 #define MaxBoneInfluence 4
 #endif
 
+#ifndef HasBakedLightMap
+#define HasBakedLightMap 0
+#endif
+
+#ifndef BAKE_FORWARD
+#define BAKE_FORWARD 0
+#endif
+
 struct VertexInput
 {
-#if VtxColor
-    float4 color : COLOR;
-#endif
-#if VtxPosition
     float3 pos : POSITION;
-#endif
-#if VtxUV
     float3 tex : TEXCOORD;
-#endif
-#if VtxNormal
     float3 normal : NORMAL;
-#endif
-#if VtxTangent
     float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
     float3 bitangent : BINORMAL;
-#endif
-    
+
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
@@ -66,24 +42,12 @@ struct VertexInput
 
 struct HullInput
 {
-#if VtxColor
-    float4 color : COLOR;
-#endif
-#if VtxPosition
     float3 pos : POSITION;
-#endif
-#if VtxUV
     float3 tex : TEXCOORD;
-#endif
-#if VtxNormal
     float3 normal : NORMAL;
-#endif
-#if VtxTangent
     float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
     float3 bitangent : BINORMAL;
-#endif
+
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
@@ -93,24 +57,12 @@ struct HullInput
 
 struct DomainInput
 {
-#if VtxColor
-    float4 color : COLOR;
-#endif
-#if VtxPosition
     float3 pos : POSITION;
-#endif
-#if VtxUV
     float3 tex : TEXCOORD;
-#endif
-#if VtxNormal
     float3 normal : NORMAL;
-#endif
-#if VtxTangent
     float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
     float3 bitangent : BINORMAL;
-#endif
+
 #if VtxSkinned
     uint4 boneIds : BLENDINDICES;
     float4 weights : BLENDWEIGHT;
@@ -119,28 +71,22 @@ struct DomainInput
 
 struct PixelInput
 {
-#if VtxColor
-    float4 color : COLOR;
-#endif
-#if VtxPosition
     float4 position : SV_POSITION;
     float3 pos : POSITION;
-#endif
-#if VtxUV
     float3 tex : TEXCOORD;
-#endif
-#if VtxNormal
     float3 normal : NORMAL;
-#endif
-#if VtxTangent
     float3 tangent : TANGENT;
-#endif
-#if VtxBitangent
     float3 bitangent : BINORMAL;
+
+#if HasBakedLightMap
+    float3 H0 : H0;
+    float3 H1 : H1;
+    float3 H2 : H2;
+    float3 H3 : H3;
 #endif
 
-#if VtxPosition
-    float depth : DEPTH;
+#if BAKE_FORWARD
+    bool IsFrontFace : SV_IsFrontFace;
 #endif
 };
 

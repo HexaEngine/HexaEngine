@@ -2,20 +2,21 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using Silk.NET.Core.Contexts;
     using Silk.NET.DXGI;
     using System.Runtime.Versioning;
 
     public unsafe class DXGIAdapterD3D11On12 : DXGIAdapterD3D11
     {
-        public DXGIAdapterD3D11On12()
+        public DXGIAdapterD3D11On12(INativeWindowSource windowSource, bool debug) : base(windowSource, debug)
         {
         }
 
-        public new static void Init()
+        public new static void Init(INativeWindowSource windowSource, bool debug)
         {
             if (OperatingSystem.IsWindows())
             {
-                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11On12());
+                GraphicsAdapter.Adapters.Add(new DXGIAdapterD3D11On12(windowSource, debug));
             }
         }
 
@@ -30,8 +31,8 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            ImGuiConsole.Log(LogSeverity.Info, "Backend: Using Graphics API: D3D11On12");
-            ImGuiConsole.Log(LogSeverity.Info, $"Backend: Using Graphics Device: {name}");
+            ImGuiConsole.Log(LogSeverity.Information, "Backend: Using Graphics API: D3D11On12");
+            ImGuiConsole.Log(LogSeverity.Information, $"Backend: Using Graphics Device: {name}");
             return new D3D11On12GraphicsDevice(this, debug);
         }
     }

@@ -5,6 +5,7 @@
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D12;
+    using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using SubresourceData = Core.Graphics.SubresourceData;
@@ -13,7 +14,7 @@
     public unsafe class D3D12GraphicsDevice : IGraphicsDevice
     {
         internal static readonly D3D12 D3D12 = D3D12.GetApi();
-        internal readonly ComPtr<ID3D12Device> Device;
+        internal readonly ComPtr<ID3D12Device10> Device;
         internal ComPtr<ID3D12CommandAllocator> CommandAllocator;
         internal ComPtr<ID3D12CommandQueue> CommandQueue;
         internal ComPtr<ID3D12Fence> Fence;
@@ -29,7 +30,7 @@
                 Debug.EnableDebugLayer();
             }
 
-            D3D12.CreateDevice(adapter.IDXGIAdapter, D3DFeatureLevel.Level110, out Device).ThrowHResult();
+            D3D12.CreateDevice(adapter.IDXGIAdapter, D3DFeatureLevel.Level122, out Device).ThrowHResult();
 
             CommandQueueDesc commandQueueDesc = new()
             {
@@ -40,6 +41,9 @@
             Device.CreateCommandQueue(&commandQueueDesc, out CommandQueue).ThrowHResult();
 
             Device.CreateCommandAllocator(CommandListType.Direct, out CommandAllocator).ThrowHResult();
+
+            ComPtr<ID3D12GraphicsCommandList> list;
+            Device.CreateCommandList(0, CommandListType.Direct, CommandAllocator, new ComPtr<ID3D12PipelineState>(), out list);
         }
 
         public IGraphicsContext Context { get; }
@@ -54,6 +58,8 @@
 
         public GraphicsBackend Backend => GraphicsBackend.D3D12;
 
+        public IGPUProfiler Profiler { get; }
+
         public event EventHandler? OnDisposed;
 
         public IBuffer CreateBuffer(BufferDescription description)
@@ -66,12 +72,12 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
         {
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             throw new NotImplementedException();
         }
@@ -166,7 +172,7 @@
             throw new NotImplementedException();
         }
 
-        public ISamplerState CreateSamplerState(SamplerDescription sampler)
+        public ISamplerState CreateSamplerState(SamplerStateDescription sampler)
         {
             throw new NotImplementedException();
         }
@@ -368,6 +374,41 @@
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void PumpDebugMessages()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
         }
     }
 }

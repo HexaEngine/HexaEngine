@@ -2,6 +2,8 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Scenes;
+    using HexaEngine.Rendering.Renderers;
     using ImGuiNET;
 
     public class PostProcessWindow : EditorWindow
@@ -10,13 +12,13 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
-            var renderer = Application.MainWindow.Renderer;
+            SceneRenderer? renderer = SceneRenderer.Current;
             if (renderer == null)
             {
                 return;
             }
 
-            var manager = renderer.PostProcess;
+            var manager = renderer.PostProcessing;
 
             var effects = manager.Effects;
 

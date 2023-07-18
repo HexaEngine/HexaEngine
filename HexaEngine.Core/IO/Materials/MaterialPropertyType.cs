@@ -44,5 +44,7 @@
         ShininessStrength,
         Reflectivity,
         IOR,
+
+        Unknown
     }
 }

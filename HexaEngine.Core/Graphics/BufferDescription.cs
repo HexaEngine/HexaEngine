@@ -1,12 +1,25 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.Xml.Serialization;
+
     public struct BufferDescription
     {
+        [XmlAttribute]
         public int ByteWidth;
+
+        [XmlAttribute]
         public Usage Usage;
+
+        [XmlAttribute]
         public BindFlags BindFlags;
+
+        [XmlAttribute]
         public CpuAccessFlags CPUAccessFlags;
+
+        [XmlAttribute]
         public ResourceMiscFlag MiscFlags;
+
+        [XmlAttribute]
         public int StructureByteStride;
 
         /// <summary>

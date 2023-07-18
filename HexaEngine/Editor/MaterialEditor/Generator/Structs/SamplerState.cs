@@ -6,7 +6,7 @@
 
     public struct SamplerState
     {
-        public int Slot;
+        public uint Slot;
         public string Name;
         public SType SamplerType;
 
@@ -16,9 +16,9 @@
             SamplerType = samplerType;
         }
 
-        public void Build(StringBuilder builder)
+        public void Build(CodeWriter builder)
         {
-            builder.AppendLine($"{SamplerType.GetTypeName()} {Name} : register(s{Slot.ToString(CultureInfo.InvariantCulture)});");
+            builder.WriteLine($"{SamplerType.GetTypeName()} {Name} : register(s{Slot.ToString(CultureInfo.InvariantCulture)});");
         }
     }
 }

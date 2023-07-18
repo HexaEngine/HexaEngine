@@ -1,27 +1,33 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
-    using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Editor.Properties;
-    using HexaEngine.Core.Scripts;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
+    using HexaEngine.Scripts;
     using ImGuiNET;
     using System;
+    using System.Reflection;
 
     public class TypePropertyEditor : IPropertyEditor
     {
-        private readonly string id;
-        private readonly string name;
+        private ImGuiName guiName;
         private readonly Type targetType;
 
-        public TypePropertyEditor(EditorPropertyAttribute attribute)
+        public TypePropertyEditor(EditorPropertyAttribute attribute, PropertyInfo property)
         {
-            this.id = Guid.NewGuid().ToString();
-            name = attribute.Name;
+            Name = attribute.Name;
+            Property = property;
+            guiName = new(attribute.Name);
             targetType = attribute.TargetType ?? throw new InvalidOperationException();
         }
 
         public Type TargetType => targetType;
 
-        public bool Draw(object instance, ref object? value)
+        public string Name { get; }
+        public PropertyInfo Property { get; }
+
+        public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
             var types = AssemblyManager.GetAssignableTypes(targetType);
             var names = AssemblyManager.GetAssignableTypeNames(targetType);
@@ -35,7 +41,12 @@
             {
                 index = types.IndexOf((Type)value);
             }
-            if (ImGui.Combo($"{name}##{id}", ref index, names, names.Length))
+
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text(guiName.Name);
+            ImGui.TableSetColumnIndex(1);
+            if (ImGui.Combo(guiName.Id, ref index, names, names.Length))
             {
                 value = types[index];
                 return true;

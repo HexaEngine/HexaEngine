@@ -65,6 +65,7 @@
         public bool IsDisposed { get; }
 
         public nint NativePointer { get; }
+        public IGPUProfiler Profiler { get; }
 
         public event EventHandler? OnDisposed;
 
@@ -492,12 +493,12 @@
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged
         {
             throw new NotImplementedException();
         }
 
-        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : struct
+        public IBuffer CreateBuffer<T>(T value, BindFlags bindFlags, Usage usage = Usage.Default, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag miscFlags = ResourceMiscFlag.None) where T : unmanaged
         {
             throw new NotImplementedException();
         }
@@ -527,7 +528,7 @@
             throw new NotImplementedException();
         }
 
-        public ISamplerState CreateSamplerState(SamplerDescription sampler)
+        public ISamplerState CreateSamplerState(SamplerStateDescription sampler)
         {
             throw new NotImplementedException();
         }
@@ -773,6 +774,36 @@
         }
 
         public ITexture2D LoadTexture2D(string path, BindFlags flags)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipeline(ComputePipelineDesc desc, ShaderMacro[] macros, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(SdlWindow window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
         {
             throw new NotImplementedException();
         }

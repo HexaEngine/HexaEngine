@@ -1,20 +1,17 @@
 ﻿namespace HexaEngine.Core.IO.Meshes
 {
-    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Unsafes;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.IO.Meshes.Processing;
+    using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
-    using Microsoft.VisualBasic;
-    using Silk.NET.Maths;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Numerics;
-    using System.Runtime.InteropServices;
     using System.Text;
-    using System.Threading.Tasks;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
 
-    public unsafe struct MeshData
+    public unsafe class MeshData
     {
         public string Name;
         public string MaterialName;
@@ -32,6 +29,10 @@
         public Vector3[] Tangents;
         public Vector3[] Bitangents;
         public BoneData[] Bones;
+
+        private MeshData()
+        {
+        }
 
         public MeshData(string name, string materialName, BoundingBox box, BoundingSphere sphere, uint vertexCount, uint indexCount, uint weightCount, uint[] indices, Vector4[]? colors, Vector3[]? positions, Vector3[]? uvs, Vector3[]? normals, Vector3[]? tangents, Vector3[]? bitangents, BoneData[]? bones)
         {
@@ -91,7 +92,7 @@
 
         public static MeshData Read(Stream stream, Encoding encoding, Endianness endianness)
         {
-            MeshData data = default;
+            MeshData data = new();
             data.Name = stream.ReadString(encoding, endianness);
             data.MaterialName = stream.ReadString(encoding, endianness);
             data.VerticesCount = stream.ReadUInt(endianness);
@@ -234,168 +235,210 @@
             }
         }
 
-        public IBuffer CreateIndexBuffer(IGraphicsDevice device, Usage usage = Usage.Immutable, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        public IndexBuffer<uint> CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            fixed (uint* ptr = Indices)
-            {
-                return device.CreateBuffer(ptr, (uint)Indices.Length, BindFlags.IndexBuffer, usage, accessFlags);
-            }
+            return new(device, Indices, accessFlags);
         }
 
-        public void WriteIndexBuffer(IGraphicsContext context, IBuffer ib)
+        public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer<uint> ib)
         {
-            var size = sizeof(uint) * (int)IndicesCount;
-            var buffer = (uint*)Alloc(size);
             for (int i = 0; i < IndicesCount; i++)
             {
-                buffer[i] = Indices[i];
+                ib[i] = Indices[i];
             }
 
-            context.Write(ib, buffer, size);
-
-            Free(buffer);
+            return ib.Update(context);
         }
 
-        public IBuffer CreateVertexBuffer(IGraphicsDevice device, Usage usage = Usage.Immutable, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        public VertexBuffer<MeshVertex> CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
-            var stride = (int)GetStride();
+            var stride = sizeof(MeshVertex);
             var size = stride * (int)VerticesCount;
-            var buffer = (byte*)Alloc(size);
-            Zero(buffer, size);
-            int m = 0;
+            var vertices = (MeshVertex*)Alloc(size);
+            ZeroMemory(vertices, size);
 
             for (int i = 0; i < VerticesCount; i++)
             {
-                if ((Flags & VertexFlags.Colors) != 0)
-                {
-                    Colors[i].CopyTo(&m, buffer);
-                }
+                MeshVertex vertex = default;
 
                 if ((Flags & VertexFlags.Positions) != 0)
                 {
-                    Positions[i].CopyTo(&m, buffer);
+                    vertex.Position = Positions[i];
                 }
 
                 if ((Flags & VertexFlags.UVs) != 0)
                 {
-                    UVs[i].CopyTo(&m, buffer);
+                    vertex.UV = UVs[i];
                 }
 
                 if ((Flags & VertexFlags.Normals) != 0)
                 {
-                    Normals[i].CopyTo(&m, buffer);
+                    vertex.Normal = Normals[i];
                 }
 
                 if ((Flags & VertexFlags.Tangents) != 0)
                 {
-                    Tangents[i].CopyTo(&m, buffer);
+                    vertex.Tangent = Tangents[i];
                 }
 
                 if ((Flags & VertexFlags.Bitangents) != 0)
                 {
-                    Bitangents[i].CopyTo(&m, buffer);
+                    vertex.Bitangent = Bitangents[i];
+                }
+
+                vertices[i] = vertex;
+            }
+
+            VertexBuffer<MeshVertex> vertexBuffer = new(device, vertices, VerticesCount, accessFlags);
+            Free(vertices);
+            return vertexBuffer;
+        }
+
+        public VertexBuffer<SkinnedMeshVertex> CreateSkinnedVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        {
+            var stride = sizeof(SkinnedMeshVertex);
+            var size = stride * (int)VerticesCount;
+            var vertices = (SkinnedMeshVertex*)Alloc(size);
+            ZeroMemory(vertices, size);
+            int m = 0;
+
+            for (int i = 0; i < VerticesCount; i++)
+            {
+                SkinnedMeshVertex vertex = default;
+
+                if ((Flags & VertexFlags.Positions) != 0)
+                {
+                    vertex.Position = Positions[i];
+                }
+
+                if ((Flags & VertexFlags.UVs) != 0)
+                {
+                    vertex.UV = UVs[i];
+                }
+
+                if ((Flags & VertexFlags.Normals) != 0)
+                {
+                    vertex.Normal = Normals[i];
+                }
+
+                if ((Flags & VertexFlags.Tangents) != 0)
+                {
+                    vertex.Tangent = Tangents[i];
+                }
+
+                if ((Flags & VertexFlags.Bitangents) != 0)
+                {
+                    vertex.Bitangent = Bitangents[i];
                 }
 
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
                     var (boneIds, weigths) = GatherBoneData(i);
-                    fixed (uint* p = boneIds)
+                    fixed (int* p = boneIds)
                     {
-                        MemoryCopy(p, &buffer[m], sizeof(uint) * 4);
-                        m += sizeof(uint) * 4;
+                        MemoryCopy(p, vertex.BoneIds, sizeof(int) * 4);
                     }
+
                     fixed (float* p = weigths)
                     {
-                        MemoryCopy(p, &buffer[m], sizeof(float) * 4);
-                        m += sizeof(float) * 4;
+                        MemoryCopy(p, vertex.Weights, sizeof(float) * 4);
                     }
                 }
 
-                if (m % stride != 0)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                if (m > size)
-                {
-                    throw new InternalBufferOverflowException();
-                }
+                vertices[i] = vertex;
             }
 
-            var result = device.CreateBuffer((void*)buffer, (uint)size, new(size, BindFlags.VertexBuffer, usage, accessFlags));
-            Free(buffer);
-            return result;
+            VertexBuffer<SkinnedMeshVertex> vertexBuffer = new(device, vertices, VerticesCount, accessFlags);
+            Free(vertices);
+            return vertexBuffer;
         }
 
-        public void WriteVertexBuffer(IGraphicsContext context, IBuffer vb)
+        public bool WriteVertexBuffer(IGraphicsContext context, VertexBuffer<MeshVertex> vb)
         {
-            var stride = (int)GetStride();
-            var size = stride * (int)VerticesCount;
-            var buffer = (byte*)Alloc(size);
-            Zero(buffer, size);
-            int m = 0;
-
             for (int i = 0; i < VerticesCount; i++)
             {
-                if ((Flags & VertexFlags.Colors) != 0)
-                {
-                    Colors[i].CopyTo(&m, buffer);
-                }
+                MeshVertex vertex = default;
 
                 if ((Flags & VertexFlags.Positions) != 0)
                 {
-                    Positions[i].CopyTo(&m, buffer);
+                    vertex.Position = Positions[i];
                 }
 
                 if ((Flags & VertexFlags.UVs) != 0)
                 {
-                    UVs[i].CopyTo(&m, buffer);
+                    vertex.UV = UVs[i];
                 }
 
                 if ((Flags & VertexFlags.Normals) != 0)
                 {
-                    Normals[i].CopyTo(&m, buffer);
+                    vertex.Normal = Normals[i];
                 }
 
                 if ((Flags & VertexFlags.Tangents) != 0)
                 {
-                    Tangents[i].CopyTo(&m, buffer);
+                    vertex.Tangent = Tangents[i];
                 }
 
                 if ((Flags & VertexFlags.Bitangents) != 0)
                 {
-                    Bitangents[i].CopyTo(&m, buffer);
+                    vertex.Bitangent = Bitangents[i];
+                }
+
+                vb[i] = vertex;
+            }
+
+            return vb.Update(context);
+        }
+
+        public bool WriteSkinnedVertexBuffer(IGraphicsContext context, VertexBuffer<SkinnedMeshVertex> vb)
+        {
+            for (int i = 0; i < VerticesCount; i++)
+            {
+                SkinnedMeshVertex vertex = default;
+
+                if ((Flags & VertexFlags.Positions) != 0)
+                {
+                    vertex.Position = Positions[i];
+                }
+
+                if ((Flags & VertexFlags.UVs) != 0)
+                {
+                    vertex.UV = UVs[i];
+                }
+
+                if ((Flags & VertexFlags.Normals) != 0)
+                {
+                    vertex.Normal = Normals[i];
+                }
+
+                if ((Flags & VertexFlags.Tangents) != 0)
+                {
+                    vertex.Tangent = Tangents[i];
+                }
+
+                if ((Flags & VertexFlags.Bitangents) != 0)
+                {
+                    vertex.Bitangent = Bitangents[i];
                 }
 
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
                     var (boneIds, weigths) = GatherBoneData(i);
-                    fixed (uint* p = boneIds)
+                    fixed (int* p = boneIds)
                     {
-                        MemoryCopy(p, &buffer[m], sizeof(uint) * 4);
-                        m += sizeof(uint) * 4;
+                        MemoryCopy(p, vertex.BoneIds, sizeof(int) * 4);
                     }
+
                     fixed (float* p = weigths)
                     {
-                        MemoryCopy(p, &buffer[m], sizeof(float) * 4);
-                        m += sizeof(float) * 4;
+                        MemoryCopy(p, vertex.Weights, sizeof(float) * 4);
                     }
                 }
 
-                if (m % stride != 0)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                if (m > size)
-                {
-                    throw new InternalBufferOverflowException();
-                }
+                vb[i] = vertex;
             }
 
-            context.Write(vb, buffer, size);
-
-            Free(buffer);
+            return vb.Update(context);
         }
 
         public Face[] GetFacesForVertex(int vertex)
@@ -458,7 +501,7 @@
             return default;
         }
 
-        public readonly Face GetFaceAtIndex(uint index)
+        public Face GetFaceAtIndex(uint index)
         {
             var i = index * 3;
             var idx1 = Indices[i];
@@ -492,53 +535,12 @@
             return faces.ToArray();
         }
 
-        public unsafe uint GetStride()
+        public (int[] boneIds, float[] weigths) GatherBoneData(int vertexId)
         {
-            int result = 0;
-            if ((Flags & VertexFlags.Colors) != 0)
-            {
-                result += sizeof(Vector4);
-            }
-
-            if ((Flags & VertexFlags.Positions) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & VertexFlags.UVs) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & VertexFlags.Normals) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & VertexFlags.Tangents) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & VertexFlags.Bitangents) != 0)
-            {
-                result += sizeof(Vector3);
-            }
-
-            if ((Flags & VertexFlags.Skinned) != 0)
-            {
-                result += sizeof(int) * 4 + sizeof(float) * 4;
-            }
-
-            return (uint)result;
-        }
-
-        public (uint[] boneIds, float[] weigths) GatherBoneData(int vertexId)
-        {
-            uint[] boneIds = new uint[4];
+            int[] boneIds = new int[4];
             float[] weigths = new float[4];
             uint m = 0;
-            for (uint i = 0; i < Bones.Length; i++)
+            for (int i = 0; i < Bones.Length; i++)
             {
                 var bone = Bones[i];
                 for (uint j = 0; j < bone.Weights.Length; j++)
@@ -546,13 +548,17 @@
                     var weight = bone.Weights[j];
                     if (weight.VertexId == vertexId)
                     {
-                        boneIds[m] = i + 1;
+                        boneIds[m] = i;
                         weigths[m] = weight.Weight;
                         m++;
                         if (m == 4)
                         {
                             break;
                         }
+                    }
+                    else
+                    {
+                        boneIds[m] = -1;
                     }
                 }
                 if (m == 4)
@@ -564,96 +570,25 @@
             return (boneIds, weigths);
         }
 
-        public InputElementDescription[] GetInputElements()
+        public static readonly InputElementDescription[] InputElements =
         {
-            var count = ((uint)Flags).Bitcount();
-            if ((Flags & VertexFlags.Skinned) != 0)
-            {
-                count++;
-            }
-            var elements = new InputElementDescription[count];
-            int i = 0;
-            if ((Flags & VertexFlags.Colors) != 0)
-            {
-                elements[i++] = new InputElementDescription("COLOR", 0, Format.R32G32B32A32Float, 0);
-            }
+            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0, 0),
+            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
+            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
+            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
+            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
+        };
 
-            if ((Flags & VertexFlags.Positions) != 0)
-            {
-                elements[i++] = new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & VertexFlags.UVs) != 0)
-            {
-                elements[i++] = new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & VertexFlags.Normals) != 0)
-            {
-                elements[i++] = new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & VertexFlags.Tangents) != 0)
-            {
-                elements[i++] = new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & VertexFlags.Bitangents) != 0)
-            {
-                elements[i++] = new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 0);
-            }
-
-            if ((Flags & VertexFlags.Skinned) != 0)
-            {
-                elements[i++] = new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32UInt, 0);
-                elements[i++] = new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 0);
-            }
-
-            return elements;
-        }
-
-        public ShaderMacro[] GetShaderMacros()
+        public static readonly InputElementDescription[] SkinnedInputElements =
         {
-            var count = ((uint)Flags).Bitcount();
-            var macros = new ShaderMacro[count];
-            int i = 0;
-            if ((Flags & VertexFlags.Colors) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxColor", "1");
-            }
-
-            if ((Flags & VertexFlags.Positions) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxPosition", "1");
-            }
-
-            if ((Flags & VertexFlags.UVs) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxUV", "1");
-            }
-
-            if ((Flags & VertexFlags.Normals) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxNormal", "1");
-            }
-
-            if ((Flags & VertexFlags.Tangents) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxTangent", "1");
-            }
-
-            if ((Flags & VertexFlags.Bitangents) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxBitangent", "1");
-            }
-
-            if ((Flags & VertexFlags.Skinned) != 0)
-            {
-                macros[i++] = new ShaderMacro("VtxSkinned", "1");
-            }
-
-            return macros;
-        }
+            new InputElementDescription("POSITION", 0, Format.R32G32B32Float, 0, 0),
+            new InputElementDescription("TEXCOORD", 0, Format.R32G32B32Float, 12, 0),
+            new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
+            new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
+            new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
+            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32SInt, 60, 0),
+            new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 76, 0),
+        };
 
         public long IntersectRay(Ray ray)
         {
@@ -707,78 +642,25 @@
 
         public void GenerateNTB()
         {
-            GenVertexNormalsProcess.GenMeshVertexNormals(ref this);
-            CalcTangentsProcess.ProcessMesh(ref this);
-            return;
-            var faces = IndicesCount / 3;
-            UnsafeList<Vector3> tempNormal = new();
-            UnsafeList<Vector3> tempTangent = new();
+            GenVertexNormalsProcess.GenMeshVertexNormals2(this);
+            CalcTangentsProcess.ProcessMesh2(this);
+        }
 
-            for (uint i = 0; i < faces; i++)
+        public void Debone()
+        {
+            BoneCount = 0;
+            Bones = null;
+            Flags ^= VertexFlags.Skinned;
+        }
+
+        public Face[] GetFaces()
+        {
+            Face[] faces = new Face[IndicesCount / 3];
+            for (int i = 0; i < faces.Length; i++)
             {
-                var face = new Face(Indices[i * 3], Indices[i * 3 + 1], Indices[i * 3 + 2]);
-                var vtxP1 = Positions[face.Index1];
-                var vtxP2 = Positions[face.Index2];
-                var vtxP3 = Positions[face.Index3];
-
-                Vector3 v = vtxP2 - vtxP1;
-                Vector3 w = vtxP3 - vtxP1;
-
-                Vector3 normal = Vector3.Normalize(Vector3.Cross(v, w));
-
-                tempNormal.Add(normal);
-
-                float sx = UVs[face.Index2].X - UVs[face.Index1].X, sy = UVs[face.Index2].Y - UVs[face.Index1].Y;
-                float tx = UVs[face.Index3].X - UVs[face.Index1].X, ty = UVs[face.Index3].Y - UVs[face.Index1].Y;
-
-                float dirCorrection = (tx * sy - ty * sx) < 0.0f ? -1.0f : 1.0f;
-
-                if (sx * ty == sy * tx)
-                {
-                    sx = 0.0f;
-                    sy = 1.0f;
-                    tx = 1.0f;
-                    ty = 0.0f;
-                }
-
-                Vector3 tangent, bitangent;
-                tangent.X = (w.X * sy - v.X * ty) * dirCorrection;
-                tangent.Y = (w.Y * sy - v.Y * ty) * dirCorrection;
-                tangent.Z = (w.Z * sy - v.Z * ty) * dirCorrection;
-                bitangent.X = (-w.X * sx + v.X * tx) * dirCorrection;
-                bitangent.Y = (-w.Y * sx + v.Y * tx) * dirCorrection;
-                bitangent.Z = (-w.Z * sx + v.Z * tx) * dirCorrection;
-                tempTangent.Add(tangent);
+                faces[i] = new(Indices[i * 3], Indices[i * 3 + 1], Indices[i * 3 + 2]);
             }
-
-            Vector3 normalSum = default;
-            Vector3 tangentSum = default;
-
-            for (int i = 0; i < VerticesCount; ++i)
-            {
-                // Check which triangles use this vertex
-                for (int j = 0; j < faces; ++j)
-                {
-                    if (Indices[j * 3] == i || Indices[j * 3 + 1] == i || Indices[j * 3 + 2] == i)
-                    {
-                        normalSum += tempNormal[j];
-                        tangentSum += tempTangent[j];
-                    }
-                }
-
-                normalSum = Vector3.Normalize(normalSum);
-                tangentSum = Vector3.Normalize(tangentSum);
-
-                Normals[i] = normalSum;
-                Tangents[i] = tangentSum;
-                Bitangents[i] = Vector3.Cross(normalSum, tangentSum);
-
-                normalSum = default;
-                tangentSum = default;
-            }
-
-            tempNormal.Free();
-            tempTangent.Free();
+            return faces;
         }
     }
 }

@@ -210,4 +210,17 @@
             return result;
         }
     }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public struct Frustum
+    {
+        public Plane Plane0;
+        public Plane Plane1;
+        public Plane Plane2;
+        public Plane Plane3;
+
+        public Frustum()
+        {
+        }
+    }
 }

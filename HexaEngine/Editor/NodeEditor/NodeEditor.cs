@@ -1,21 +1,26 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
-    using ImGuiNET;
-    using ImNodesNET;
+    using HexaEngine.ImGuiNET;
+    using HexaEngine.ImNodesNET;
+    using Newtonsoft.Json;
     using System.Collections.Generic;
 
-    public unsafe class NodeEditor
+    public class NodeEditor
     {
         private string? state;
-        private ImNodesEditorContext* context;
+        private ImNodesEditorContextPtr context;
 
         private readonly List<Node> nodes = new();
         private readonly List<Link> links = new();
-        private int idState;
+        private int currentId;
 
         public NodeEditor()
         {
         }
+
+        public event EventHandler<Pin>? NodePinValueChanging;
+
+        public event EventHandler<Pin>? NodePinValueChanged;
 
         public event EventHandler<Node>? NodeAdded;
 
@@ -25,25 +30,145 @@
 
         public event EventHandler<Link>? LinkRemoved;
 
-        [JsonProperty(Order = 0)]
         public List<Node> Nodes => nodes;
 
-        [JsonProperty(Order = 2)]
+        [JsonIgnore]
         public List<Link> Links => links;
 
-        public int IdState { get => idState; set => idState = value; }
+        public int CurrentId { get => currentId; set => currentId = value; }
 
         public string State { get => SaveState(); set => RestoreState(value); }
 
-        public virtual void Initialize()
+        public bool Minimap { get; set; }
+
+        public ImNodesMiniMapLocation Location { get; set; }
+
+        public class NodeEditorSerializationContainer
         {
-            if (context == null)
+            public NodeEditorSerializationContainer(NodeEditor editor)
             {
-                context = ImNodes.EditorContextCreate();
+                for (int i = 0; i < editor.Nodes.Count; i++)
+                {
+                    var node = editor.Nodes[i];
+                    Nodes.Add(node);
+                    var list = PinMap[i] = new();
+                    for (int j = 0; j < node.Pins.Count; j++)
+                    {
+                        var pin = node.Pins[j];
+                        list.Add(pin);
+                    }
+                }
+                for (int i = 0; i < editor.Links.Count; i++)
+                {
+                    Links.Add(editor.Links[i].GetId());
+                }
+                State = editor.State;
+                CurrentId = editor.CurrentId;
+            }
+
+            [JsonConstructor]
+            public NodeEditorSerializationContainer()
+            {
+            }
+
+            public List<Node> Nodes { get; } = new();
+
+            public Dictionary<int, List<Pin>> PinMap { get; } = new();
+
+            public List<LinkId> Links { get; } = new();
+
+            public string State { get; set; }
+
+            public int CurrentId { get; set; }
+
+            public void Build(NodeEditor editor)
+            {
+                for (int i = 0; i < Nodes.Count; i++)
+                {
+                    var node = Nodes[i];
+                    editor.Nodes.Add(node);
+                    var list = PinMap[i];
+                    for (int j = 0; j < list.Count; j++)
+                    {
+                        node.AddPin(list[j]);
+                    }
+                }
+                editor.Initialize(false);
+                for (int i = 0; i < Links.Count; i++)
+                {
+                    editor.CreateLinkFromId(Links[i]);
+                }
+                editor.State = State;
+                editor.CurrentId = CurrentId;
+            }
+        }
+
+        private void ValueChanged(object? sender, Pin e)
+        {
+            NodePinValueChanged?.Invoke(this, e);
+        }
+
+        private void ValueChanging(object? sender, Pin e)
+        {
+            NodePinValueChanging?.Invoke(this, e);
+        }
+
+        public string Serialize()
+        {
+            NodeEditorSerializationContainer container = new(this);
+            JsonSerializerSettings settings = new()
+            {
+                Formatting = Formatting.Indented,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                ObjectCreationHandling = ObjectCreationHandling.Auto,
+                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                PreserveReferencesHandling = PreserveReferencesHandling.All,
+                CheckAdditionalContent = true,
+                MetadataPropertyHandling = MetadataPropertyHandling.Default,
+                NullValueHandling = NullValueHandling.Include,
+                MaxDepth = int.MaxValue
+            };
+
+            return JsonConvert.SerializeObject(container, settings);
+        }
+
+        public static NodeEditor Deserialize(string json)
+        {
+            JsonSerializerSettings settings = new()
+            {
+                Formatting = Formatting.Indented,
+                ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+                ObjectCreationHandling = ObjectCreationHandling.Auto,
+                TypeNameHandling = TypeNameHandling.Auto,
+                TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full,
+                ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+                PreserveReferencesHandling = PreserveReferencesHandling.All,
+                CheckAdditionalContent = true,
+                MetadataPropertyHandling = MetadataPropertyHandling.Default,
+                NullValueHandling = NullValueHandling.Include,
+                MaxDepth = int.MaxValue
+            };
+
+            var container = JsonConvert.DeserializeObject<NodeEditorSerializationContainer>(json, settings);
+            NodeEditor editor = new();
+            container.Build(editor);
+            return editor;
+        }
+
+        public virtual void Initialize(bool createContext = true)
+        {
+            if (context.IsNull)
+            {
+                if (createContext)
+                    context = ImNodes.EditorContextCreate();
 
                 for (int i = 0; i < nodes.Count; i++)
                 {
                     nodes[i].Initialize(this);
+                    nodes[i].PinValueChanging += ValueChanging;
+                    nodes[i].PinValueChanged += ValueChanged;
                 }
                 for (int i = 0; i < links.Count; i++)
                 {
@@ -54,7 +179,7 @@
 
         public int GetUniqueId()
         {
-            return idState++;
+            return currentId++;
         }
 
         public Node GetNode(int id)
@@ -63,9 +188,7 @@
             {
                 Node node = nodes[i];
                 if (node.Id == id)
-                {
                     return node;
-                }
             }
             throw new();
         }
@@ -76,11 +199,19 @@
             {
                 var node = nodes[i];
                 if (node is T t)
-                {
                     return t;
-                }
             }
             throw new KeyNotFoundException();
+        }
+
+        public IEnumerable<T> GetNodes<T>() where T : Node
+        {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                if (node is T t)
+                    yield return t;
+            }
         }
 
         public Link GetLink(int id)
@@ -89,9 +220,7 @@
             {
                 var link = links[i];
                 if (link.Id == id)
-                {
                     return link;
-                }
             }
 
             throw new KeyNotFoundException();
@@ -106,11 +235,8 @@
 
         public void AddNode(Node node)
         {
-            if (context != null)
-            {
+            if (!context.IsNull)
                 node.Initialize(this);
-            }
-
             nodes.Add(node);
             NodeAdded?.Invoke(this, node);
         }
@@ -123,11 +249,8 @@
 
         public void AddLink(Link link)
         {
-            if (context != null)
-            {
+            if (!context.IsNull)
                 link.Initialize(this);
-            }
-
             links.Add(link);
             LinkAdded?.Invoke(this, link);
         }
@@ -145,6 +268,15 @@
             return link;
         }
 
+        private Link CreateLinkFromId(LinkId id)
+        {
+            var output = GetNode(id.IdOutputNode).GetOuput(id.IdOutput);
+            var input = GetNode(id.IdInputNode).GetInput(id.IdInput);
+            Link link = new(id.Id, output.Parent, output, input.Parent, input);
+            AddLink(link);
+            return link;
+        }
+
         public string SaveState()
         {
             return ImNodes.SaveEditorStateToIniStringS(context);
@@ -152,7 +284,7 @@
 
         public void RestoreState(string state)
         {
-            if (context == null)
+            if (context.IsNull)
             {
                 this.state = state;
                 return;
@@ -162,6 +294,8 @@
 
         public void Draw()
         {
+            if (context.IsNull)
+                Initialize();
             ImNodes.EditorContextSet(context);
             ImNodes.BeginNodeEditor();
             for (int i = 0; i < Nodes.Count; i++)
@@ -172,7 +306,8 @@
             {
                 Links[i].Draw();
             }
-
+            if (Minimap)
+                ImNodes.MiniMap(Location);
             ImNodes.EndNodeEditor();
 
             int idNode1 = 0;
@@ -184,14 +319,12 @@
                 var pino = GetNode(idNode1).GetOuput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);
                 if (pini.CanCreateLink(pino) && pino.CanCreateLink(pini))
-                {
                     CreateLink(pini, pino);
-                }
             }
-            int idLink = -1;
+            int idLink = 0;
             if (ImNodes.IsLinkDestroyed(ref idLink))
             {
-                //GetLink(idLink).Destroy();
+                GetLink(idLink).Destroy();
             }
             if (ImGui.IsKeyPressed(ImGuiKey.Delete))
             {
@@ -245,6 +378,8 @@
             var nodes = this.nodes.ToArray();
             for (int i = 0; i < nodes.Length; i++)
             {
+                nodes[i].PinValueChanged -= ValueChanged;
+                nodes[i].PinValueChanging -= ValueChanging;
                 nodes[i].Destroy();
             }
             this.nodes.Clear();
@@ -261,23 +396,16 @@
             {
                 (int i, node) = walkstack.Pop();
                 if (i > node.Links.Count)
-                {
                     continue;
-                }
-
                 Link link = node.Links[i];
                 i++;
                 walkstack.Push((i, node));
                 if (link.OutputNode == node)
                 {
                     if (link.Output == endPin)
-                    {
                         return true;
-                    }
                     else
-                    {
                         walkstack.Push((0, link.InputNode));
-                    }
                 }
             }
 
@@ -306,9 +434,7 @@
                     {
                         var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
-                        {
                             stack1.Push(node.Links[i].OutputNode);
-                        }
                     }
                 }
             }
@@ -345,16 +471,12 @@
                     {
                         var src = node.Links[i].OutputNode;
                         if (includeStatic && src.IsStatic || !src.IsStatic)
-                        {
                             stack1.Push((priority + 1, node.Links[i].OutputNode));
-                        }
                     }
                 }
 
                 if (groups < priority)
-                {
                     groups = priority;
-                }
             }
             groups++;
             Node[][] nodes = new Node[groups][];
@@ -367,9 +489,7 @@
                 for (int j = 0; j < pNodes.Length; j++)
                 {
                     if (pNodes[j].Item1 == i)
-                    {
                         group.Add(pNodes[j].Item2);
-                    }
                 }
                 nodes[i] = group.ToArray();
             }
@@ -384,10 +504,7 @@
             {
                 var val = values.Pop();
                 if (val.Equals(value))
-                {
                     break;
-                }
-
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -403,10 +520,7 @@
             {
                 var val = values.Pop();
                 if (val.Equals(value))
-                {
                     break;
-                }
-
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -422,10 +536,7 @@
             {
                 var val = values.Pop();
                 if (compare(val))
-                {
                     break;
-                }
-
                 swap.Push(val);
             }
             while (swap.Count > 0)
@@ -440,9 +551,7 @@
             {
                 var value = values.ElementAt(i);
                 if (compare(value))
-                {
                     return value;
-                }
             }
 #pragma warning disable CS8603 // Possible null reference return.
             return default;

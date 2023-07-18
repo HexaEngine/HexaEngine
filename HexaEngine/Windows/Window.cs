@@ -1,4 +1,4 @@
-﻿using HexaEngine.Core.Culling;
+﻿using HexaEngine.Culling;
 
 namespace HexaEngine.Windows
 {
@@ -6,31 +6,22 @@ namespace HexaEngine.Windows
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Resources;
-    using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
     using HexaEngine.Mathematics;
-    using HexaEngine.Rendering;
+    using HexaEngine.Rendering.Renderers;
+    using HexaEngine.Resources;
+    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
     using CullingManager = CullingManager;
 
-    public enum RendererFlags
-    {
-        None = 0,
-        ImGui = 1,
-        ImGuiWidgets = 2,
-        DebugDraw = 4,
-        All = ImGui | ImGuiWidgets | DebugDraw,
-    }
-
     public class Window : SdlWindow, IRenderWindow
     {
         private RenderDispatcher renderDispatcher;
+        private bool running;
         private bool firstFrame;
         private IAudioDevice audioDevice;
         private IGraphicsDevice graphicsDevice;
@@ -42,7 +33,12 @@ namespace HexaEngine.Windows
         private Task initTask;
         private bool rendererInitialized;
         private bool resize = false;
-        private ImGuiRenderer? imGuiRenderer;
+
+        private Thread updateThread;
+
+        private readonly Barrier syncBarrier = new(2);
+
+        private ImGuiManager? imGuiRenderer;
         private DebugDrawRenderer? debugDrawRenderer;
 
         public RendererFlags Flags;
@@ -58,11 +54,14 @@ namespace HexaEngine.Windows
         public ISwapChain SwapChain => swapChain;
 
         public string? StartupScene;
+        private Viewport windowViewport;
         private Viewport renderViewport;
 
-        public Viewport RenderViewport => renderViewport;
+        public Viewport WindowViewport => windowViewport;
 
         public ISceneRenderer Renderer => sceneRenderer;
+
+        public Viewport RenderViewport => renderViewport;
 
         public Window()
         {
@@ -70,8 +69,14 @@ namespace HexaEngine.Windows
 
         public virtual void Initialize(IAudioDevice audioDevice, IGraphicsDevice graphicsDevice)
         {
+            running = true;
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
+#if PROFILE
+            graphicsDevice.Profiler.CreateBlock("Total");
+            graphicsDevice.Profiler.CreateBlock("DebugDraw");
+            graphicsDevice.Profiler.CreateBlock("ImGui");
+#endif
             graphicsContext = graphicsDevice.Context;
             swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             swapChain.Active = true;
@@ -82,7 +87,6 @@ namespace HexaEngine.Windows
                 AudioManager.Initialize(audioDevice);
                 ResourceManager.Initialize(graphicsDevice);
                 PipelineManager.Initialize(graphicsDevice);
-                CullingManager.Initialize(graphicsDevice);
                 ObjectPickerManager.Initialize(graphicsDevice, Width, Height);
             }
 
@@ -97,7 +101,7 @@ namespace HexaEngine.Windows
 
             if ((Flags & RendererFlags.ImGui) != 0)
             {
-                imGuiRenderer = new(this, graphicsDevice, swapChain);
+                imGuiRenderer = new(this, graphicsDevice, graphicsContext);
             }
 
             if ((Flags & RendererFlags.ImGuiWidgets) != 0)
@@ -120,13 +124,15 @@ namespace HexaEngine.Windows
             {
                 if (x.IsCompletedSuccessfully)
                 {
-                    ImGuiConsole.Log(LogSeverity.Info, "Renderer: Initialized");
+                    ImGuiConsole.Log(LogSeverity.Information, "Renderer: Initialized");
                 }
                 if (x.IsFaulted)
                 {
                     ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
                     ImGuiConsole.Log(x.Exception);
                 }
+
+                renderViewport = new(sceneRenderer.Width, sceneRenderer.Height);
 
                 rendererInitialized = true;
             });
@@ -135,6 +141,22 @@ namespace HexaEngine.Windows
             {
                 SceneManager.Load(StartupScene);
                 SceneManager.Current.IsSimulating = true;
+            }
+
+            updateThread = new(UpdateScene);
+            updateThread.Name = "Scene Update Worker";
+            updateThread.Start();
+        }
+
+        private void UpdateScene()
+        {
+            while (running)
+            {
+#if PROFILE
+                syncBarrier.SignalAndWait();
+#endif
+                SceneManager.Current?.Update();
+                syncBarrier.SignalAndWait();
             }
         }
 
@@ -145,6 +167,15 @@ namespace HexaEngine.Windows
 
         public void Render(IGraphicsContext context)
         {
+#if PROFILE
+            Device.Profiler.BeginFrame();
+            Device.Profiler.Begin(Context, "Total");
+            sceneRenderer.Profiler.BeginFrame();
+            sceneRenderer.Profiler.Begin("Total");
+#endif
+#if PROFILE
+            syncBarrier.SignalAndWait();
+#endif
             if (resize)
             {
                 swapChain.Resize(Width, Height);
@@ -163,7 +194,7 @@ namespace HexaEngine.Windows
 
             renderDispatcher.ExecuteQueue();
 
-            imGuiRenderer?.BeginDraw();
+            imGuiRenderer?.NewFrame();
             debugDrawRenderer?.BeginDraw();
 
             OnRenderBegin(context);
@@ -175,54 +206,74 @@ namespace HexaEngine.Windows
                 frameviewer.Update();
                 frameviewer.Draw();
                 drawing &= frameviewer.IsVisible;
-                renderViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
+                windowViewport = Application.InEditorMode ? frameviewer.Viewport : Viewport;
 
-                DebugDraw.SetCamera(CameraManager.Current);
-
-                Designer.Draw();
-                WidgetManager.Draw(context);
-                ImGuiConsole.Draw();
+                DebugDraw.SetCamera(CameraManager.Current.Transform.ViewProjection);
             }
+
+            swapChain.WaitForPresent();
 
             drawing &= SceneManager.Current is not null;
 
             if (drawing)
             {
-                lock (SceneManager.Current)
-                {
-                    SceneManager.Current.Tick();
-                    if (firstFrame)
-                    {
-                        Time.Initialize();
-                        firstFrame = false;
-                    }
-                    sceneRenderer.Profiler.Clear();
-                    sceneRenderer.Profiler.Start(sceneRenderer);
-                    sceneRenderer.Render(context, this, renderViewport, SceneManager.Current, CameraManager.Current);
-                }
+                SceneManager.Current.RenderUpdate(context);
+                sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
             }
+
+            Designer.Draw();
+            WidgetManager.Draw(context);
+            ImGuiConsole.Draw();
 
             OnRender(context);
 
             if (Application.InEditorMode)
             {
+#if PROFILE
+                Device.Profiler.Begin(Context, "DebugDraw");
+                sceneRenderer.Profiler.Begin("DebugDraw");
+#endif
                 debugDrawRenderer?.EndDraw();
+#if PROFILE
+                sceneRenderer.Profiler.End("DebugDraw");
+                Device.Profiler.End(Context, "DebugDraw");
+#endif
             }
 
-            imGuiRenderer?.EndDraw();
+#if PROFILE
+            Device.Profiler.Begin(Context, "ImGui");
+            sceneRenderer.Profiler.Begin("ImGui");
+#endif
+            context.SetRenderTarget(swapChain.BackbufferRTV, null);
+            imGuiRenderer?.EndFrame();
+#if PROFILE
+            sceneRenderer.Profiler.End("ImGui");
+            Device.Profiler.End(Context, "ImGui");
+#endif
+
+            OnRenderEnd(context);
 
             swapChain.Present();
-            if (drawing)
-            {
-                sceneRenderer.Profiler.End(sceneRenderer);
-            }
 
             swapChain.Wait();
+
+#if PROFILE
+            sceneRenderer.Profiler.End("Total");
+            Device.Profiler.End(Context, "Total");
+            Device.Profiler.EndFrame(context);
+#endif
+            syncBarrier.SignalAndWait();
         }
 
         public virtual void Uninitialize()
         {
+            running = false;
             OnRendererDispose();
+
+            syncBarrier.RemoveParticipant();
+            updateThread.Join();
+
+            Device.Profiler.Dispose();
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
             {
@@ -248,7 +299,6 @@ namespace HexaEngine.Windows
             sceneRenderer.Dispose();
             renderDispatcher.Dispose();
             ObjectPickerManager.Release();
-            CullingManager.Release();
             ResourceManager.Dispose();
             AudioManager.Release();
             swapChain.Dispose();
@@ -265,6 +315,10 @@ namespace HexaEngine.Windows
         }
 
         protected virtual void OnRender(IGraphicsContext context)
+        {
+        }
+
+        protected virtual void OnRenderEnd(IGraphicsContext context)
         {
         }
 

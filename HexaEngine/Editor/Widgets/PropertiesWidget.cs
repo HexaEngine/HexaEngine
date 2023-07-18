@@ -2,12 +2,14 @@
 
 namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Mathematics;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
@@ -25,12 +27,13 @@ namespace HexaEngine.Editor.Widgets
         public PropertiesWidget()
         {
             IsShown = true;
-            componentCache.AddRange(Assembly.GetExecutingAssembly()
-                .GetTypes()
+            componentCache.AddRange(
+                AppDomain.CurrentDomain.GetAssemblies().SelectMany(x =>
+                x.GetTypes()
                 .AsParallel()
                 .Where(x => x.IsAssignableTo(typeof(IComponent)))
                 .Select(x => x.GetCustomAttribute<EditorComponentAttribute>())
-                .Where(x => x != null));
+                .Where(x => x != null)));
             Flags = ImGuiWindowFlags.MenuBar;
         }
 
@@ -84,46 +87,65 @@ namespace HexaEngine.Editor.Widgets
             Scene scene = element.GetScene();
             Camera camera = CameraManager.Current;
 
-            string name = element.Name;
-            if (ImGui.InputText("Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
-            {
-                element.Name = name;
-            }
-
             bool isEnabled = element.IsEnabled;
-            if (ImGui.Checkbox("Enabled", ref isEnabled))
+            if (ImGui.Checkbox("##Enabled", ref isEnabled))
             {
                 element.IsEnabled = isEnabled;
+            }
+
+            ImGui.SameLine();
+
+            string name = element.Name;
+            if (ImGui.InputText("##Name", ref name, 256, ImGuiInputTextFlags.EnterReturnsTrue))
+            {
+                element.Name = name;
             }
 
             ImGui.Separator();
 
             if (ImGui.CollapsingHeader(nameof(Transform), ImGuiTreeNodeFlags.DefaultOpen))
             {
+                ImGui.BeginTable("Transform", 2, ImGuiTableFlags.SizingFixedFit);
+                ImGui.TableSetupColumn("");
+                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch);
+
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text("Position");
+                ImGui.TableSetColumnIndex(1);
                 {
                     var val = element.Transform.Position;
                     var oldVal = val;
-                    if (ImGui.InputFloat3("Position", ref val))
+                    if (ImGui.InputFloat3("##Position", ref val))
                     {
-                        Designer.History.Do(element.Transform, oldVal, val, SetPosition, RestorePosition);
+                        History.Default.Do(element.Transform, oldVal, val, SetPosition, RestorePosition);
                     }
                 }
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text("Rotation");
+                ImGui.TableSetColumnIndex(1);
                 {
                     var val = element.Transform.Rotation;
                     var oldVal = val;
-                    if (ImGui.InputFloat3("Rotation", ref val))
+                    if (ImGui.InputFloat3("##Rotation", ref val))
                     {
-                        Designer.History.Do(element.Transform, oldVal, val, SetRotation, RestoreRotation);
+                        History.Default.Do(element.Transform, oldVal, val, SetRotation, RestoreRotation);
                     }
                 }
+                ImGui.TableNextRow();
+                ImGui.TableSetColumnIndex(0);
+                ImGui.Text("Scale");
+                ImGui.TableSetColumnIndex(1);
                 {
                     var val = element.Transform.Scale;
                     var oldVal = val;
-                    if (ImGui.InputFloat3("Scale", ref val))
+                    if (ImGui.InputFloat3("##Scale", ref val))
                     {
-                        Designer.History.Do(element.Transform, oldVal, val, SetScale, RestoreScale);
+                        History.Default.Do(element.Transform, oldVal, val, SetScale, RestoreScale);
                     }
                 }
+                ImGui.EndTable();
             }
             ImGui.Separator();
 
@@ -135,7 +157,7 @@ namespace HexaEngine.Editor.Widgets
 
                 if (!editor.IsEmpty)
                 {
-                    editor.Draw();
+                    editor.Draw(context);
                 }
             }
 
@@ -204,9 +226,11 @@ namespace HexaEngine.Editor.Widgets
                 var component = element.Components[i];
                 var editor = ObjectEditorFactory.CreateEditor(component.GetType());
                 editor.Instance = component;
-                if (ImGui.CollapsingHeader(editor.Name))
+                ImGui.BeginGroup();
+
+                if (ImGui.CollapsingHeader($"{editor.Name}##{i}"))
                 {
-                    if (ImGui.BeginPopupContextWindow(editor.Name))
+                    if (ImGui.BeginPopupContextItem(editor.Name))
                     {
                         if (ImGui.MenuItem("Delete"))
                         {
@@ -215,8 +239,10 @@ namespace HexaEngine.Editor.Widgets
                         ImGui.EndPopup();
                     }
 
-                    editor?.Draw();
+                    editor?.Draw(context);
                 }
+
+                ImGui.EndGroup();
             }
 
             EndWindow();

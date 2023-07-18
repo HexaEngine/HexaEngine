@@ -2,8 +2,8 @@
 
 namespace HexaEngine.Editor.Properties.Factories
 {
-    using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Editor.Properties;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using System.Numerics;
     using System.Reflection;
 
@@ -16,7 +16,7 @@ namespace HexaEngine.Editor.Properties.Factories
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return new Vector3PropertyEditor(nameAttr.Name, nameAttr.Mode, (float)(nameAttr.Min ?? float.MinValue), (float)(nameAttr.Max ?? float.MaxValue));
+            return new Vector3PropertyEditor(nameAttr.Name, property, nameAttr.Mode, (float)(nameAttr.Min ?? float.MinValue), (float)(nameAttr.Max ?? float.MaxValue));
         }
     }
 }

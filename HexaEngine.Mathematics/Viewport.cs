@@ -15,6 +15,20 @@
         /// Initializes a new instance of the <see cref="Viewport"/> struct.
         /// </summary>
         /// <param name="width">The width of the viewport in pixels.</param>
+        public Viewport(float width)
+        {
+            X = 0.0f;
+            Y = 0.0f;
+            Width = width;
+            Height = width;
+            MinDepth = 0.0f;
+            MaxDepth = 1.0f;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Viewport"/> struct.
+        /// </summary>
+        /// <param name="width">The width of the viewport in pixels.</param>
         /// <param name="height">The height of the viewport in pixels.</param>
         public Viewport(float width, float height)
         {
@@ -136,6 +150,12 @@
                 return 0.0f;
             }
         }
+
+        public Vector2 Offset => new(X, Y);
+
+        public Vector2 Size => new(Width, Height);
+
+        public Rect Rect => new((long)X, (long)Y, (long)(X + Width), (long)(Y + Height));
 
         /// <summary>
         /// Projects a 3D vector from object space into screen space.

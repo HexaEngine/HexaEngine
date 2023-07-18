@@ -1,14 +1,31 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.Xml.Serialization;
+
     public struct Texture1DDescription
     {
+        [XmlAttribute]
         public int Width;
+
+        [XmlAttribute]
         public int MipLevels;
+
+        [XmlAttribute]
         public int ArraySize;
+
+        [XmlAttribute]
         public Format Format;
+
+        [XmlAttribute]
         public Usage Usage;
+
+        [XmlAttribute]
         public BindFlags BindFlags;
+
+        [XmlAttribute]
         public CpuAccessFlags CPUAccessFlags;
+
+        [XmlAttribute]
         public ResourceMiscFlag MiscFlags;
 
         /// <summary>

@@ -1,13 +1,12 @@
 ﻿namespace HexaEngine.Core.Input
 {
     using HexaEngine.Core.Input.Events;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
-    using Point = Mathematics.Point;
+    using Point2 = Mathematics.Point2;
 
     public static unsafe class Mouse
     {
@@ -23,7 +22,7 @@
         private static readonly MouseButtonEventArgs buttonEventArgs = new();
         private static readonly MouseWheelEventArgs wheelEventArgs = new();
 
-        private static Point pos;
+        private static Point2 pos;
         private static Vector2 delta;
         private static Vector2 deltaWheel;
 
@@ -44,6 +43,16 @@
             states.Add(MouseButton.Right, (MouseButtonState)(state & maskRight));
             states.Add(MouseButton.X1, (MouseButtonState)(state & maskX1));
             states.Add(MouseButton.X2, (MouseButtonState)(state & maskX2));
+        }
+
+        public static Vector2 Global
+        {
+            get
+            {
+                int x, y;
+                sdl.GetGlobalMouseState(&x, &y);
+                return new Vector2(x, y);
+            }
         }
 
         public static Vector2 Position => pos;
@@ -141,6 +150,14 @@
             Vector3 rayDirViewSpace = new(vx, vy, 1);
             Vector3 rayDir = Vector3.TransformNormal(rayDirViewSpace, viewInv);
             return Vector3.Normalize(rayDir);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector2 ScreenToUV(Viewport viewport)
+        {
+            var u = (pos.X - viewport.X) / viewport.Width;
+            var v = (pos.Y - viewport.Y) / viewport.Height;
+            return new Vector2(u, v);
         }
     }
 }

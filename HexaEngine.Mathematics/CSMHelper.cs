@@ -176,5 +176,13 @@
 
             return ret;
         }
+
+        public static unsafe void TransformInvView(CameraTransform camera, Matrix4x4* ret, int cascadesCount = 4)
+        {
+            for (int i = 0; i < cascadesCount; i++)
+            {
+                ret[i] = Matrix4x4.Transpose(camera.ViewInv * Matrix4x4.Transpose(ret[i]));
+            }
+        }
     }
 }

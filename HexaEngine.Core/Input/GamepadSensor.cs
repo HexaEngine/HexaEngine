@@ -21,13 +21,13 @@
             this.controller = controller;
             this.type = sensorType;
             buffer = Alloc<float>(3);
-            sdl.GameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length);
+            sdl.GameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length).SdlThrowIfNeg();
         }
 
         public bool Enabled
         {
             get => sdl.GameControllerIsSensorEnabled(controller, Helper.ConvertBack(type)) == SdlBool.True;
-            set => sdl.GameControllerSetSensorEnabled(controller, Helper.ConvertBack(type), value ? SdlBool.True : SdlBool.False);
+            set => sdl.GameControllerSetSensorEnabled(controller, Helper.ConvertBack(type), value ? SdlBool.True : SdlBool.False).SdlThrowIfNeg();
         }
 
         public GamepadSensorType Type => type;
@@ -49,7 +49,7 @@
 
         public void Flush()
         {
-            sdl.GameControllerGetSensorData(controller, Helper.ConvertBack(type), buffer, length);
+            sdl.GameControllerGetSensorData(controller, Helper.ConvertBack(type), buffer, length).SdlThrowIfNeg();
             sensorUpdateEventArgs.Data = buffer;
             sensorUpdateEventArgs.Length = length;
             sensorUpdateEventArgs.Type = type;

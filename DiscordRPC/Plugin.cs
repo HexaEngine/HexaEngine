@@ -2,9 +2,9 @@
 {
     using DiscordRPC.Entities;
     using HexaEngine.Core;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Plugins;
     using HexaEngine.Projects;
+    using HexaEngine.Scenes;
     using System;
     using System.Diagnostics;
 

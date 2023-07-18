@@ -1,10 +1,12 @@
 ﻿namespace HexaEngine.D3D12
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using Silk.NET.Core.Native;
     using Silk.NET.DXGI;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.Runtime.Versioning;
 
@@ -14,6 +16,7 @@
 
         internal IDXGIFactory4* IDXGIFactory;
         internal ComPtr<IDXGIAdapter1> IDXGIAdapter;
+        internal ComPtr<IDXGIAdapter3> IDXGIAdapter3;
 
         public DXGIAdapterD3D12()
         {
@@ -24,9 +27,10 @@
             IDXGIFactory = factory;
 
             IDXGIAdapter = GetHardwareAdapter();
+            IDXGIAdapter.QueryInterface(out IDXGIAdapter3);
         }
 
-        public static void Init()
+        public static void Init(IWindow window, bool graphicsDebugging)
         {
             if (OperatingSystem.IsWindows())
             {
@@ -34,9 +38,39 @@
             }
         }
 
+        public ulong GetMemoryBudget()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.Budget;
+        }
+
+        public ulong GetMemoryCurrentUsage()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.CurrentUsage;
+        }
+
+        public ulong GetMemoryAvailableForReservation()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.AvailableForReservation;
+        }
+
+        public ulong GetMemoryCurrentReservation()
+        {
+            QueryVideoMemoryInfo memoryInfo;
+            IDXGIAdapter3.QueryVideoMemoryInfo(0, MemorySegmentGroup.Local, &memoryInfo);
+            return memoryInfo.AvailableForReservation;
+        }
+
         public virtual GraphicsBackend Backend => GraphicsBackend.D3D11;
 
         public virtual int PlatformScore => 100;
+
+        public IReadOnlyList<GPU> GPUs { get; }
 
         [SupportedOSPlatform("windows")]
         public virtual IGraphicsDevice CreateGraphicsDevice(bool debug)
@@ -45,20 +79,22 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            ImGuiConsole.Log(LogSeverity.Info, "Backend: Using Graphics API: D3D11");
-            ImGuiConsole.Log(LogSeverity.Info, $"Backend: Using Graphics Device: {name}");
+            ImGuiConsole.Log(LogSeverity.Information, "Backend: Using Graphics API: D3D11");
+            ImGuiConsole.Log(LogSeverity.Information, $"Backend: Using Graphics Device: {name}");
             return new D3D12GraphicsDevice(this, debug);
         }
 
         [SupportedOSPlatform("windows")]
         internal ISwapChain CreateSwapChainForWindow(D3D12GraphicsDevice device, SdlWindow window)
         {
+            var (Hwnd, HDC, HInstance) = window.Win32 ?? throw new NotSupportedException();
+
             SwapChainDesc desc = new()
             {
                 BufferCount = 2,
                 BufferUsage = DXGI.UsageRenderTargetOutput,
                 SampleDesc = new(1, 0),
-                SwapEffect = SwapEffect.FlipSequential,
+                SwapEffect = Silk.NET.DXGI.SwapEffect.FlipSequential,
                 Flags = (uint)(SwapChainFlag.AllowModeSwitch | SwapChainFlag.AllowTearing),
                 Windowed = true,
                 BufferDesc = new(1, 0)
@@ -66,16 +102,15 @@
                     Format = Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm,
                     Height = (uint)window.Height,
                     Width = (uint)window.Width,
-                    Scaling = ModeScaling.Stretched,
-                    ScanlineOrdering = ModeScanlineOrder.Unspecified
+                    Scaling = Silk.NET.DXGI.ModeScaling.Stretched,
+                    ScanlineOrdering = Silk.NET.DXGI.ModeScanlineOrder.Unspecified
                 },
-                OutputWindow = window.GetWin32HWND()
+                OutputWindow = Hwnd
             };
 
             IDXGISwapChain3* swapChain;
-            IntPtr hwnd = window.GetWin32HWND();
             IDXGIFactory->CreateSwapChain((IUnknown*)device.CommandQueue.Handle, &desc, (IDXGISwapChain**)&swapChain);
-            IDXGIFactory->MakeWindowAssociation(hwnd, 1 << 0);
+            IDXGIFactory->MakeWindowAssociation(Hwnd, 1 << 0);
 
             return new DXGISwapChain(device, swapChain, (int)desc.BufferDesc.Width, (int)desc.BufferDesc.Height, 2, (SwapChainFlag)desc.Flags);
         }
@@ -133,6 +168,11 @@
             }
 
             return adapter;
+        }
+
+        public void PumpDebugMessages()
+        {
+            throw new NotImplementedException();
         }
     }
 }

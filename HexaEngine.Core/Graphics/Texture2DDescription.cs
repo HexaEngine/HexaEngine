@@ -1,17 +1,42 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.Xml.Serialization;
+
     public struct Texture2DDescription
     {
+        [XmlAttribute]
         public int Width;
+
+        [XmlAttribute]
         public int Height;
+
+        [XmlAttribute]
         public int MipLevels;
+
+        [XmlAttribute]
         public int ArraySize;
+
+        [XmlAttribute]
         public Format Format;
+
         public SampleDescription SampleDescription;
+
+        [XmlAttribute]
         public Usage Usage;
+
+        [XmlAttribute]
         public BindFlags BindFlags;
+
+        [XmlAttribute]
         public CpuAccessFlags CPUAccessFlags;
+
+        [XmlAttribute]
         public ResourceMiscFlag MiscFlags;
+
+        public Texture2DDescription()
+        {
+            SampleDescription = SampleDescription.Default;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Texture2DDescription"/> struct.

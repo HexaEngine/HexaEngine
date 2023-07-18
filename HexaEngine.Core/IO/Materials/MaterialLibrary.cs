@@ -52,10 +52,9 @@
             Materials = materials;
         }
 
-        public void Save(string dir, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.None)
+        public void Save(string path, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.None)
         {
-            Directory.CreateDirectory(dir);
-            Stream fs = File.Create(Path.Combine(dir, Path.GetFileNameWithoutExtension(Name) + ".matlib"));
+            Stream fs = File.Create(path);
 
             var stream = fs;
 

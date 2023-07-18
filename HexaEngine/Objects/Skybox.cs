@@ -1,16 +1,16 @@
 ﻿namespace HexaEngine.Objects
 {
-    using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Lights.Probes;
+    using HexaEngine.Components.Renderer;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Scenes.Components.Renderer;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Lights.Probes;
 
-    [EditorNode<Skybox>("Skybox")]
+    [EditorGameObject<Skybox>("Skybox")]
     public class Skybox : GameObject
     {
         public Skybox()
         {
-            AddComponent(new SkyboxRendererComponent());
+            AddComponent(new SkyRendererComponent());
             AddComponent(new IBLLightProbeComponent());
         }
 

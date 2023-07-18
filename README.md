@@ -9,22 +9,20 @@
 Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine.Native
 
 # Features
-- Principled BSDF
+- BRDF (Roughness, Metallic, Reflectance, Ao workflow)
 - IBL
-- Shadow Mapping (PSM, CSM, OSM)
-- Deferred rendering
-- Instancing
-- HBAO
-- HDR Bloom
-- Auto Exposure
-- Tonemapping
-- DDA SSR
+- Shadow Mapping (PSM, OSM, CSM) (note: OSM and PSM uses an shadow atlas)
+- Clustered Forward and Clustered Deferred (Hybrid renderer)
+- Many post processing effects (DoF, SSR, Tonemapping, LUT, Bloom, Motion blur)
+- Ambient Occlusion (SSAO, HBAO+, GTAO and ASSAO are comming soon)
 - Level-Editor
 - Physics Engine
 - Plugin System
-- Post-Processing Framework
-- Culling (Frustum and Occlusion)
-- Audio (Wav-file support)
+- Audio System (Wav-file support)
+- Culling (Frustum and Occlusion) (doesn't work/integrated properly)
+
+# (WIP) Material editor + Shader generator
+![image](https://github.com/JunaMeinhold/HexaEngine/assets/46632782/8a3acc3d-3fad-4083-88fd-3613ffd6b30f)
 
 # Backends
 | API     | Supported          |
@@ -32,7 +30,7 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 | D3D11   | :white_check_mark: |
 | D3D12   | :ballot_box_with_check: (wip) |
 | Vulkan  | :ballot_box_with_check: (wip) |
-| OpenGL  | :x:                |
+| OpenGL  | :ballot_box_with_check: (wip) |
 
 # Credits
 https://github.com/ocornut/imgui  

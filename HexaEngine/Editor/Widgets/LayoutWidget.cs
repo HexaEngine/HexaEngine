@@ -1,10 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Editor.Attributes;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scenes.Managers;
     using HexaEngine.Core.Unsafes;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
     using ImGuiNET;
     using System;
     using System.Collections.Generic;
@@ -15,7 +16,7 @@
 
     public class LayoutWidget : EditorWindow
     {
-        private readonly Dictionary<string, EditorNodeAttribute> cache = new();
+        private readonly Dictionary<string, EditorGameObjectAttribute> cache = new();
 
         public static bool ShowHidden;
 
@@ -30,10 +31,10 @@
                     .AsParallel()
                     .Where(x =>
                     x.IsAssignableTo(typeof(GameObject)) &&
-                    x.GetCustomAttribute<EditorNodeAttribute>() != null &&
+                    x.GetCustomAttribute<EditorGameObjectAttribute>() != null &&
                     !x.IsAbstract)))
             {
-                var attr = type.GetCustomAttribute<EditorNodeAttribute>();
+                var attr = type.GetCustomAttribute<EditorGameObjectAttribute>();
                 if (attr == null)
                 {
                     continue;
@@ -41,7 +42,7 @@
 
                 cache.Add(attr.Name, attr);
             }
-            cache.Add("Object", new EditorNodeAttribute("Object", typeof(GameObject), () => new GameObject(), x => x is GameObject));
+            cache.Add("Object", new EditorGameObjectAttribute("Object", typeof(GameObject), () => new GameObject(), x => x is GameObject));
             cache = cache.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
         }
 

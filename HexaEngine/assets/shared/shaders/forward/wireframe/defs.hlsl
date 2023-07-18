@@ -1,119 +1,55 @@
-#if (FLAT == 1)
-struct VertexInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	nointerpolation float3 normal : NORMAL;
-	nointerpolation float3 tangent : TANGENT;
-};
-
-struct HullInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	nointerpolation float3 normal : NORMAL;
-	nointerpolation float3 tangent : TANGENT;
-	float TessFactor : TESS;
-};
-
-struct DomainInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	nointerpolation float3 normal : NORMAL;
-	nointerpolation float3 tangent : TANGENT;
-};
-
-struct PixelInput
-{
-	float4 position : SV_POSITION;
-	float4 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	nointerpolation float3 normal : NORMAL;
-	nointerpolation float3 tangent : TANGENT;
-	float depth : TEXCOORD1;
-};
-
-struct PatchTess
-{
-	float EdgeTess[3] : SV_TessFactor;
-	float InsideTess : SV_InsideTessFactor;
-};
-#elif (DEPTH == 1)
-
-struct VertexInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-};
-
-struct HullInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float TessFactor : TESS;
-};
-
-struct DomainInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-};
-
-struct PixelInput
-{
-	float4 position : SV_POSITION;
-	float depth : TEXCOORD0;
-};
-
-struct PatchTess
-{
-	float EdgeTess[3] : SV_TessFactor;
-	float InsideTess : SV_InsideTessFactor;
-};
-#else
-struct VertexInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-};
-
-struct HullInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float TessFactor : TESS;
-};
-
-struct DomainInput
-{
-	float3 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-};
-
-struct PixelInput
-{
-	float4 position : SV_POSITION;
-	float4 pos : POSITION;
-	float2 tex : TEXCOORD0;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
-	float depth : TEXCOORD1;
-};
-
-struct PatchTess
-{
-	float EdgeTess[3] : SV_TessFactor;
-	float InsideTess : SV_InsideTessFactor;
-};
+#ifndef VtxColor
+#define VtxColor 0
 #endif
+#ifndef VtxPosition
+#define VtxPosition 1
+#endif
+#ifndef VtxUV
+#define VtxUV 0
+#endif
+#ifndef VtxNormal
+#define VtxNormal 0
+#endif
+#ifndef VtxTangent
+#define VtxTangent 0
+#endif
+#ifndef VtxBitangent
+#define VtxBitangent 0
+#endif
+#ifndef VtxSkinned
+#define VtxSkinned 0
+#endif
+
+
+struct VertexInput
+{
+#if VtxColor
+    float4 color : COLOR;
+#endif
+#if VtxPosition
+    float3 pos : POSITION;
+#endif
+#if VtxUV
+    float3 tex : TEXCOORD;
+#endif
+#if VtxNormal
+    float3 normal : NORMAL;
+#endif
+#if VtxTangent
+    float3 tangent : TANGENT;
+#endif
+#if VtxBitangent
+    float3 bitangent : BINORMAL;
+#endif
+    
+#if VtxSkinned
+    uint4 boneIds : BLENDINDICES;
+    float4 weights : BLENDWEIGHT;
+#endif
+};
+
+struct PixelInput
+{
+	float4 position : SV_POSITION;
+    uint vertexId : TEXCOORD;
+};

@@ -1,27 +1,27 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using ImGuiNET;
     using System;
 
-    public class OpenProjectWindow : EditorWindow
+    public class OpenProjectWindow : Modal
     {
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
         private static Action<OpenFileResult, string>? filePickerCallback;
         private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
+        private HistoryEntry historyEntry;
 
         public OpenProjectWindow()
         {
-            IsShown = true;
-            Flags = ImGuiWindowFlags.Modal | ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoDocking;
         }
 
-        protected override string Name => "Open Project";
+        public override string Name => "Open Project";
 
-        public override void DrawWindow(IGraphicsContext context)
+        protected override ImGuiWindowFlags Flags { get; } = ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.MenuBar;
+
+        public override void Draw()
         {
             if (filePicker.Draw())
             {
@@ -33,13 +33,35 @@
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
 
-            base.DrawWindow(context);
+            if (ImGui.BeginPopupModal("DeleteNonExistingProject"))
+            {
+                ImGui.Text("The selected Project doesn't exist, do you want to remove it from the History?");
+
+                if (ImGui.Button("Yes"))
+                {
+                    ProjectHistory.RemoveEntryByPath(historyEntry.Path);
+                    ImGui.CloseCurrentPopup();
+                    Show();
+                }
+                if (ImGui.Button("No"))
+                {
+                    ImGui.CloseCurrentPopup();
+                    Show();
+                }
+
+                ImGui.EndPopup();
+            }
+
+            base.Draw();
         }
 
-        public override unsafe void DrawContent(IGraphicsContext context)
+        protected override unsafe void DrawContent()
         {
-            ImGui.SetWindowPos(new(0, 0));
-            ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+            var size = ImGui.GetWindowSize();
+            var s = ImGui.GetPlatformIO().Monitors.Data[0].MainSize;
+
+            ImGui.SetWindowPos(s / 2 - size / 2);
+
             if (ImGui.BeginMenuBar())
             {
                 if (ImGui.MenuItem("Open"))
@@ -50,8 +72,11 @@
                     {
                         if (e == OpenFileResult.Ok)
                         {
-                            ProjectManager.Load(r);
-                            IsShown = false;
+                            if (File.Exists(r))
+                            {
+                                ProjectManager.Load(r);
+                                Close();
+                            }
                         }
 
                         filePicker.AllowedExtensions.Clear();
@@ -68,7 +93,7 @@
                         {
                             Directory.CreateDirectory(r.FullPath);
                             ProjectManager.Create(r.FullPath);
-                            IsShown = false;
+                            Close();
                         }
                     };
                     fileSaver.Show();
@@ -85,10 +110,30 @@
                 var entry = entries[i];
                 if (ImGui.MenuItem(entry.Fullname))
                 {
-                    ProjectManager.Load(entry.Path);
-                    IsShown = false;
+                    if (File.Exists(entry.Path))
+                    {
+                        ProjectManager.Load(entry.Path);
+                        Close();
+                    }
+                    else
+                    {
+                        historyEntry = entry;
+                        ImGui.OpenPopup("DeleteNonExistingProject");
+                    }
+                }
+                if (ImGui.BeginPopupContextItem())
+                {
+                    if (ImGui.MenuItem($"Remove from List##{i}"))
+                    {
+                        ProjectHistory.RemoveEntryByPath(historyEntry.Path);
+                    }
+                    ImGui.EndPopup();
                 }
             }
+        }
+
+        public override void Reset()
+        {
         }
     }
 }

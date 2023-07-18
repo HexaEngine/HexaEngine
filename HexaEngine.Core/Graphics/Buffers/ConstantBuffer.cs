@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics.Buffers
 {
+    using BepuPhysics.Trees;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -20,12 +21,16 @@
         /// <param name="accessFlags">The access flags.</param>
         private ConstantBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags, uint length, string filename, int lineNumber)
         {
-            dbgName = $"ConstantBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"ConstantBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             this.device = device;
             description = new(0, BindFlags.ConstantBuffer, Usage.Default, accessFlags, ResourceMiscFlag.None);
-            count = length;
-            items = Alloc<T>(length);
-            ZeroRange(items, length);
+
+            if (accessFlags != CpuAccessFlags.None)
+            {
+                count = length;
+                items = Alloc<T>(length);
+                ZeroMemoryT(items, length);
+            }
 
             description.Usage = accessFlags switch
             {
@@ -47,6 +52,7 @@
         {
             buffer = device.CreateBuffer(items, length, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -59,12 +65,16 @@
         {
             fixed (T* src = values)
             {
-                int size = (int)(count * sizeof(T));
-                System.Buffer.MemoryCopy(src, items, size, size);
-            }
+                if (description.CPUAccessFlags != CpuAccessFlags.None)
+                {
+                    int size = (int)(count * sizeof(T));
+                    System.Buffer.MemoryCopy(src, items, size, size);
+                }
 
-            buffer = device.CreateBuffer(items, count, description);
-            buffer.DebugName = dbgName;
+                buffer = device.CreateBuffer(src, count, description);
+                buffer.DebugName = dbgName;
+            }
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -75,12 +85,17 @@
         /// <param name="accessFlags">The access flags.</param>
         public ConstantBuffer(IGraphicsDevice device, T value, CpuAccessFlags accessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, accessFlags, 1, filename, lineNumber)
         {
+            count = 1;
             T* src = &value;
-            int size = (int)(count * sizeof(T));
-            System.Buffer.MemoryCopy(src, items, size, size);
+            if (description.CPUAccessFlags != CpuAccessFlags.None)
+            {
+                int size = (int)(count * sizeof(T));
+                System.Buffer.MemoryCopy(src, items, size, size);
+            }
 
-            buffer = device.CreateBuffer(items, count, description);
+            buffer = device.CreateBuffer(src, count, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         /// <summary>
@@ -93,6 +108,25 @@
         {
             buffer = device.CreateBuffer(items, 1, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConstantBuffer{T}"/> class.
+        /// </summary>
+        /// <param name="device">The device.</param>
+        /// <param name="cpuAccessFlags">The access flags.</param>
+        /// <exception cref="ArgumentException"></exception>
+        public ConstantBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, bool allowSubresourceUpdate, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0) : this(device, cpuAccessFlags, 1, filename, lineNumber)
+        {
+            if (allowSubresourceUpdate)
+            {
+                description.Usage = Usage.Default;
+            }
+
+            buffer = device.CreateBuffer<T>(default, description);
+            buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -141,6 +175,8 @@
         /// </value>
         public T* Local => items;
 
+        public ref T Data => ref items[0];
+
         public BufferDescription Description => buffer.Description;
 
         public int Length => buffer.Length;
@@ -164,10 +200,11 @@
             ResizeArray(&result, count, length);
             items = result;
             count = length;
-
+            MemoryManager.Unregister(buffer);
             buffer.Dispose();
             buffer = device.CreateBuffer(items, 1, description);
             buffer.DebugName = dbgName;
+            MemoryManager.Register(buffer);
         }
 
         public void Update(IGraphicsContext context)
@@ -180,8 +217,20 @@
             context.Write(buffer, items, buffer.Description.ByteWidth);
         }
 
+        public void Update(IGraphicsContext context, T value)
+        {
+            *items = value;
+            if (description.Usage != Usage.Dynamic)
+            {
+                throw new InvalidOperationException();
+            }
+
+            context.Write(buffer, items, buffer.Description.ByteWidth);
+        }
+
         public void Dispose()
         {
+            MemoryManager.Unregister(buffer);
             count = 0;
             if (items != null)
             {

@@ -3,9 +3,9 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
+    using HexaEngine.Scenes;
     using ImGuiNET;
 
     public static class MainMenuBar
@@ -13,7 +13,6 @@
         private static float height;
         private static bool isShown = true;
 
-        private static ImportDialog importDialog;
         private static readonly OpenFileDialog filePicker = new(Environment.CurrentDirectory);
 
         private static readonly SaveFileDialog fileSaver = new(Environment.CurrentDirectory);
@@ -28,13 +27,12 @@
 
         static MainMenuBar()
         {
-            HotkeyManager.Register("Undo-Action", () => Designer.History.TryUndo(), Key.LCtrl, Key.Z);
-            HotkeyManager.Register("Redo-Action", () => Designer.History.TryRedo(), Key.LCtrl, Key.Y);
+            HotkeyManager.Register("Undo-Action", () => History.Default.TryUndo(), Key.LCtrl, Key.Z);
+            HotkeyManager.Register("Redo-Action", () => History.Default.TryRedo(), Key.LCtrl, Key.Y);
         }
 
         internal static void Init(IGraphicsDevice device)
         {
-            importDialog = new(device);
         }
 
         internal static unsafe void Draw()
@@ -48,8 +46,6 @@
             {
                 fileSaverCallback?.Invoke(fileSaver.Result, fileSaver);
             }
-
-            importDialog.Draw();
 
             if (!isShown)
             {
@@ -70,27 +66,18 @@
                         SceneManager.Unload();
                     }
 
-                    if (ImGui.MenuItem("Import"))
-                    {
-                        if (!importDialog.Shown)
-                        {
-                            importDialog.Reset();
-                            importDialog.Show();
-                        }
-                    }
-
                     ImGui.EndMenu();
                 }
 
                 if (ImGui.BeginMenu("Edit"))
                 {
-                    if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, Designer.History.CanUndo))
+                    if (ImGui.MenuItem("Undo (CTRL+Z)", (byte*)null, false, History.Default.CanUndo))
                     {
-                        Designer.History.Undo();
+                        History.Default.Undo();
                     }
-                    if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, Designer.History.CanRedo))
+                    if (ImGui.MenuItem("Redo (CTRL+Y)", (byte*)null, false, History.Default.CanRedo))
                     {
-                        Designer.History.Redo();
+                        History.Default.Redo();
                     }
 
                     ImGui.EndMenu();
@@ -147,16 +134,31 @@
                         ImGui.EndMenu();
                     }
 
+                    ImGui.EndMenu();
+                }
+
+                if (ImGui.BeginMenu("Build"))
+                {
+                    if (ImGui.MenuItem("Build Scripts"))
+                    {
+                        Task.Run(ProjectManager.BuildScripts);
+                    }
+
+                    if (ImGui.MenuItem("Rebuild Scripts"))
+                    {
+                        Task.Run(ProjectManager.RebuildScripts);
+                    }
+
+                    if (ImGui.MenuItem("Clean Scripts"))
+                    {
+                        Task.Run(ProjectManager.CleanScripts);
+                    }
+
                     ImGui.Separator();
 
                     if (ImGui.MenuItem("Open Visual Studio"))
                     {
                         ProjectManager.OpenVisualStudio();
-                    }
-
-                    if (ImGui.MenuItem("Rebuild project"))
-                    {
-                        Task.Run(ProjectManager.UpdateScripts);
                     }
 
                     ImGui.EndMenu();
@@ -219,6 +221,10 @@
                             ShaderCache.Clear();
                             PipelineManager.Recompile();
                         }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                    }
+                    if (ImGui.MenuItem("Clear Shader Cache"))
+                    {
+                        ShaderCache.Clear();
                     }
 
                     ImGui.Separator();

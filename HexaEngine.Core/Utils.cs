@@ -2,12 +2,132 @@
 {
     using HexaEngine.Core.Unsafes;
     using System;
+    using System.Collections.Concurrent;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class Utils
     {
+        public static void Assert(bool condition)
+        {
+#if DEBUG
+            Trace.Assert(condition);
+#endif
+        }
+
+        public static void Assert(bool condition, string message)
+        {
+#if DEBUG
+            Trace.Assert(condition, message);
+#endif
+        }
+
+        public static void ThrowIf(bool condition, string message)
+        {
+            if (condition)
+            {
+                throw new(message);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ThrowIf(this Exception? exception)
+        {
+#if DEBUG
+            if (exception != null)
+            {
+                throw exception;
+            }
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SdlThrowIf(this int result)
+        {
+#if DEBUG
+            if (result == 0)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return result;
+#else
+            return result;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int SdlThrowIfNeg(this int result)
+        {
+#if DEBUG
+            if (result < 0)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return result;
+#else
+            return result;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static uint SdlThrowIf(this uint result)
+        {
+#if DEBUG
+            if (result == 0)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return result;
+#else
+            return result;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SdlCheckError()
+        {
+#if DEBUG
+            Application.sdl.GetErrorAsException().ThrowIf();
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* SdlCheckError(void* ptr)
+        {
+#if DEBUG
+            if (ptr == null)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return ptr;
+#else
+            return ptr;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* SdlCheckError<T>(T* ptr) where T : unmanaged
+        {
+#if DEBUG
+            if (ptr == null)
+            {
+                Application.sdl.GetErrorAsException().ThrowIf();
+            }
+            return ptr;
+#else
+            return ptr;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string? ToStringFromUTF8(byte* ptr)
+        {
+            return Marshal.PtrToStringUTF8((nint)ptr);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Bitcount(this uint value)
         {
             uint v = value;
@@ -17,6 +137,12 @@
             return c;
         }
 
+        public static void Swap<T>(T* a, T* b) where T : unmanaged
+        {
+            (*b, *a) = (*a, *b);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo<T>(this T t, int* offset, byte* dst) where T : unmanaged
         {
             var size = sizeof(T);
@@ -91,10 +217,11 @@
         /// <returns>The pointer, must be freed after usage.</returns>
         public static byte* ToUTF8(this string str)
         {
-            byte* dst = Alloc<byte>(str.Length + 1);
+            var byteCount = Encoding.UTF8.GetByteCount(str);
+            byte* dst = Alloc<byte>(Encoding.UTF8.GetByteCount(str) + 1);
             fixed (char* src = str)
             {
-                Encoding.UTF8.GetBytes(src, str.Length, dst, str.Length);
+                Encoding.UTF8.GetBytes(src, str.Length, dst, byteCount);
             }
             dst[str.Length] = 0;
             return dst;
@@ -305,9 +432,9 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
-        public static void Zero<T>(T* pointer) where T : unmanaged
+        public static void ZeroMemoryT<T>(T* pointer) where T : unmanaged
         {
-            Zero(pointer, (uint)sizeof(T));
+            new Span<byte>(pointer, sizeof(T)).Clear();
         }
 
         /// <summary>
@@ -316,9 +443,20 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
         /// <param name="length">The length.</param>
-        public static void ZeroRange<T>(T* pointer, uint length) where T : unmanaged
+        public static void ZeroMemoryT<T>(T* pointer, int length) where T : unmanaged
         {
-            Zero(pointer, (uint)sizeof(T) * length);
+            new Span<byte>(pointer, sizeof(T) * length).Clear();
+        }
+
+        /// <summary>
+        /// Zeroes the specified pointer range.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="length">The length.</param>
+        public static void ZeroMemoryT<T>(T* pointer, uint length) where T : unmanaged
+        {
+            new Span<byte>(pointer, sizeof(T) * (int)length).Clear();
         }
 
         /// <summary>
@@ -326,7 +464,7 @@
         /// </summary>
         /// <param name="pointer">The pointer.</param>
         /// <param name="size">The size.</param>
-        public static void Zero(void* pointer, uint size)
+        public static void ZeroMemory(void* pointer, uint size)
         {
             new Span<byte>(pointer, (int)size).Clear();
         }
@@ -336,7 +474,7 @@
         /// </summary>
         /// <param name="pointer">The pointer.</param>
         /// <param name="size">The size.</param>
-        public static void Zero(void* pointer, int size)
+        public static void ZeroMemory(void* pointer, int size)
         {
             new Span<byte>(pointer, size).Clear();
         }
@@ -346,7 +484,7 @@
         /// </summary>
         /// <param name="pointer">The pointer.</param>
         /// <param name="size">The size.</param>
-        public static void Zero(void* pointer, nint size)
+        public static void ZeroMemory(void* pointer, nint size)
         {
             byte* pointerCopy = (byte*)pointer;
             for (nint i = 0; i < size; i++)
@@ -397,20 +535,19 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="count">The count.</param>
         /// <returns></returns>
-        public static T* Malloc<T>(nint count) where T : unmanaged
-        {
-            return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
-        }
-
-        /// <summary>
-        /// Allocates the specified count of T.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="count">The count.</param>
-        /// <returns></returns>
         public static void* Malloc(nint count)
         {
             return (void*)Marshal.AllocHGlobal(count);
+        }  /// <summary>
+
+           /// Allocates the specified count of T.
+           /// </summary>
+           /// <typeparam name="T"></typeparam>
+           /// <param name="count">The count.</param>
+           /// <returns></returns>
+        public static void* Malloc(nuint count)
+        {
+            return (void*)Marshal.AllocHGlobal((nint)count);
         }
 
         /// <summary>
@@ -575,6 +712,42 @@
         }
 
         /// <summary>
+        /// Resizes the array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array">The array.</param>
+        /// <param name="oldLength">The old length.</param>
+        /// <param name="newLength">The new length.</param>
+        public static void ResizeArray<T>(ref T* array, int oldLength, int newLength) where T : unmanaged
+        {
+            var oldArray = array;
+            var newArray = Alloc<T>(newLength);
+
+            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
+            Free(oldArray);
+
+            array = newArray;
+        }
+
+        /// <summary>
+        /// Resizes the array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array">The array.</param>
+        /// <param name="oldLength">The old length.</param>
+        /// <param name="newLength">The new length.</param>
+        public static void ResizeArray<T>(ref T* array, uint oldLength, uint newLength) where T : unmanaged
+        {
+            var oldArray = array;
+            var newArray = Alloc<T>(newLength);
+
+            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
+            Free(oldArray);
+
+            array = newArray;
+        }
+
+        /// <summary>
         /// Allocates an pointer array.
         /// </summary>
         /// <param name="length">The length.</param>
@@ -584,13 +757,24 @@
         }
 
         /// <summary>
-        /// Frees the specified pointer. And automatically calls <see cref="IFreeable.Free"/>
+        /// Allocates an pointer array and zeros it.
+        /// </summary>
+        /// <param name="length">The length.</param>
+        public static void** AllocArrayAndZero(uint length)
+        {
+            var result = AllocArray(length);
+            ZeroMemory(result, (int)(sizeof(nint) * length));
+            return result;
+        }
+
+        /// <summary>
+        /// Frees the specified pointer. And automatically calls <see cref="IFreeable.Release"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="pointer">The pointer.</param>
         public static void Free<T>(T* pointer) where T : unmanaged, IFreeable
         {
-            pointer->Free();
+            pointer->Release();
             Marshal.FreeHGlobal((nint)pointer);
         }
 
@@ -764,6 +948,86 @@
         public static void Memset(void* ptr, byte value, int length)
         {
             new Span<byte>(ptr, length).Fill(value);
+        }
+
+        public static void Memset<T>(T* ptr, byte value, int count) where T : unmanaged
+        {
+            new Span<byte>(ptr, count * sizeof(T)).Fill(value);
+        }
+    }
+
+    public static unsafe class ArrayUtils
+    {
+        public static void Add<T>(ref T[] array, T value)
+        {
+            Array.Resize(ref array, array.Length + 1);
+            array[^1] = value;
+        }
+
+        public static void Remove<T>(ref T[] array, T value)
+        {
+            int index = Array.IndexOf(array, value);
+            var count = array.Length - index;
+            Buffer.BlockCopy(array, index + 1, array, index, count);
+            Array.Resize(ref array, array.Length - 1);
+        }
+
+        public static bool AddUnique<T>(this IList<T> list, T t)
+        {
+            if (list.Contains(t))
+            {
+                return false;
+            }
+
+            list.Add(t);
+
+            return true;
+        }
+
+        public static int IndexOf<T>(T* ptr, T* item, int count) where T : unmanaged
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (&ptr[i] == item)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }
+
+    public class ListPool<T>
+    {
+        private readonly ConcurrentStack<List<T>> pool = new();
+
+        public static ListPool<T> Shared { get; } = new();
+
+        public List<T> Rent()
+        {
+            if (pool.IsEmpty)
+            {
+                return new();
+            }
+            else
+            {
+                if (pool.TryPop(out var list))
+                {
+                    return list;
+                }
+                return new();
+            }
+        }
+
+        public void Return(List<T> list)
+        {
+            list.Clear();
+            pool.Push(list);
+        }
+
+        public void Clear()
+        {
+            pool.Clear();
         }
     }
 }

@@ -1,9 +1,17 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using System.ComponentModel;
+    using System.Xml.Serialization;
+
     public struct ComputePipelineDesc
     {
+        [XmlAttribute]
+        [DefaultValue(null)]
         public string? Path;
-        public string Entry;
+
+        [XmlAttribute]
+        [DefaultValue("main")]
+        public string Entry = "main";
 
         public ComputePipelineDesc()
         {

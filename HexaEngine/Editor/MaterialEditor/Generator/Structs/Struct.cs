@@ -13,23 +13,24 @@
             Name = name;
         }
 
-        public void Build(StringBuilder builder)
+        public readonly void Build(CodeWriter builder)
         {
-            builder.AppendLine($"struct {Name}");
-            builder.AppendLine("{");
-            for (int i = 0; i < Defs.Count; i++)
+            using (builder.PushBlockSemicolon($"struct {Name}"))
             {
-                StructDef def = Defs[i];
-                if (def.Type.Semantic != null)
+                for (int i = 0; i < Defs.Count; i++)
                 {
-                    builder.AppendLine($"{def.Type.GetTypeName()} {def.Name} : {def.Type.Semantic};");
-                }
-                else
-                {
-                    builder.AppendLine($"{def.Type.GetTypeName()} {def.Name};");
+                    StructDef def = Defs[i];
+                    if (def.Type.Semantic != null)
+                    {
+                        builder.WriteLine($"{def.Type.GetTypeName()} {def.Name} : {def.Type.Semantic};");
+                    }
+                    else
+                    {
+                        builder.WriteLine($"{def.Type.GetTypeName()} {def.Name};");
+                    }
                 }
             }
-            builder.AppendLine("};");
+            builder.WriteLine();
         }
     }
 }

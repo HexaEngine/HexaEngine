@@ -4,9 +4,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Assets;
-    using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.Scripts;
     using HexaEngine.Dotnet;
+    using HexaEngine.Scenes;
+    using HexaEngine.Scripts;
     using HexaEngine.Windows;
     using System;
     using System.Collections.Generic;
@@ -86,7 +86,7 @@
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
             watcher.Changed += Watcher_Changed;
             watcher.EnableRaisingEvents = true;
-            _ = Task.Factory.StartNew(UpdateScripts);
+            _ = Task.Factory.StartNew(BuildScripts);
         }
 
         private static void Watcher_Changed(object sender, FileSystemEventArgs e)
@@ -154,7 +154,7 @@
             Process.Start(psi);
         }
 
-        public static Task UpdateScripts()
+        public static Task BuildScripts()
         {
             AssemblyManager.Unload();
             if (CurrentFolder == null)
@@ -164,23 +164,61 @@
 
             string solutionName = Path.GetFileName(CurrentFolder);
             Build();
-            string outputFilePath = Path.Combine(CurrentFolder, "bin", $"{solutionName}.dll");
+            string outputFilePath = Path.Combine(CurrentFolder, solutionName, "bin", $"{solutionName}.dll");
             AssemblyManager.Load(outputFilePath);
+            return Task.CompletedTask;
+        }
+
+        public static Task RebuildScripts()
+        {
+            AssemblyManager.Unload();
+            if (CurrentFolder == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            string solutionName = Path.GetFileName(CurrentFolder);
+            Rebuild();
+            string outputFilePath = Path.Combine(CurrentFolder, solutionName, "bin", $"{solutionName}.dll");
+            AssemblyManager.Load(outputFilePath);
+            return Task.CompletedTask;
+        }
+
+        public static Task CleanScripts()
+        {
+            AssemblyManager.Unload();
+            if (CurrentFolder == null)
+            {
+                return Task.CompletedTask;
+            }
+
+            Clean();
+
             return Task.CompletedTask;
         }
 
         private static void Build()
         {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
             string solutionName = Path.GetFileName(CurrentFolder);
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'path1' in 'string Path.Combine(string path1, string path2, string path3)'.
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'path1' in 'string Path.Combine(string path1, string path2, string path3)'.
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
-            Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, "bin"));
+            Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, solutionName, "bin"));
             scriptProjectChanged = false;
+        }
+
+        private static void Rebuild()
+        {
+            string solutionName = Path.GetFileName(CurrentFolder);
+            string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
+            Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentFolder, solutionName, "bin"));
+            scriptProjectChanged = false;
+        }
+
+        private static void Clean()
+        {
+            string solutionName = Path.GetFileName(CurrentFolder);
+            string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
+            Dotnet.Clean(projectFilePath);
+            scriptProjectChanged = true;
         }
 
         private static void BuildShaders(string output)
@@ -501,7 +539,7 @@ namespace App
                 Components.Add(type);
             }
 
-            foreach (var type in AssemblyManager.GetAssignableTypes<IScript>(assembly))
+            foreach (var type in AssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
             {
                 Scripts.Add(type);
             }
@@ -523,7 +561,7 @@ namespace App
             }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            foreach (var type in AssemblyManager.GetAssignableTypes<IScript>(assembly))
+            foreach (var type in AssemblyManager.GetAssignableTypes<IScriptBehaviour>(assembly))
             {
                 Scripts.Add(type);
             }

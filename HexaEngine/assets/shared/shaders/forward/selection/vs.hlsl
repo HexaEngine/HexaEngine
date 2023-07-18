@@ -28,8 +28,7 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
 
 	float4x4 mat = instances[instanceId + offsets[typeId]];
 	output.pos = mul(float4(input.pos, 1), mat);
-	output.pos = mul(output.pos, view);
-	output.pos = mul(output.pos, proj);
+    output.pos = mul(output.pos, viewProj);
 	output.color = uint4(instanceId + 1, typeId + 1, 1, vertexId + 1);
 	return output;
 }

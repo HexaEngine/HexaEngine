@@ -12,30 +12,9 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class ConsoleColorPalette
-    {
-        private readonly Vector4[] values;
-
-        public ConsoleColorPalette()
-        {
-            values = new Vector4[Enum.GetValues<LogSeverity>().Length];
-            this[LogSeverity.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
-            this[LogSeverity.Log] = new(1.0f, 1.0f, 1.0f, 0.5f);
-            this[LogSeverity.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
-            this[LogSeverity.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
-            this[LogSeverity.Info] = new(0.46f, 0.96f, 0.46f, 1.0f);
-            this[LogSeverity.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
-        }
-
-        public ref Vector4 this[LogSeverity index]
-        {
-            get { return ref values[(int)index]; }
-        }
-    }
-
     public static class ImGuiConsole
     {
-        private static readonly List<LogMessage> messages = new();
+        private static readonly List<ConsoleMessage> messages = new();
         private static readonly List<string> history = new();
         private static readonly ConsoleTraceListener traceListener;
         private static readonly Dictionary<string, Action<string[]>> commands = new();
@@ -81,11 +60,12 @@
                     return;
                 }
 
+                semaphore.Wait();
                 if (messages.Count > 0)
                 {
                     if (messages[^1].Message.EndsWith(Environment.NewLine))
                     {
-                        messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
+                        messages.Add(new() { Severity = ConsoleColor.Trace, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
                         m_ScrollToBottom = true;
                     }
                     else
@@ -97,8 +77,9 @@
                 }
                 else
                 {
-                    messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
+                    messages.Add(new() { Severity = ConsoleColor.Trace, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
                 }
+                semaphore.Release();
             }
 
             public override void WriteLine(string? message)
@@ -108,7 +89,9 @@
                     return;
                 }
 
-                messages.Add(new() { Severity = LogSeverity.Log, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
+                semaphore.Wait();
+                messages.Add(new() { Severity = ConsoleColor.Trace, Message = message, Timestamp = DateTime.Now.ToShortTimeString() });
+                semaphore.Release();
                 m_ScrollToBottom = true;
             }
         }
@@ -127,48 +110,20 @@
 
             // Style
             m_WindowAlpha = 1;
-            consoleColorPalette[LogSeverity.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
-            consoleColorPalette[LogSeverity.Log] = new(1.0f, 1.0f, 1.0f, 0.5f);
-            consoleColorPalette[LogSeverity.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
-            consoleColorPalette[LogSeverity.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
-            consoleColorPalette[LogSeverity.Info] = new(0.46f, 0.96f, 0.46f, 1.0f);
-            consoleColorPalette[LogSeverity.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
+            consoleColorPalette[ConsoleColor.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
+            consoleColorPalette[ConsoleColor.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
+            consoleColorPalette[ConsoleColor.Trace] = new(0.46f, 0.96f, 0.46f, 1.0f);
+            consoleColorPalette[ConsoleColor.Debug] = new(0.46f, 0.96f, 0.46f, 1.0f);
+            consoleColorPalette[ConsoleColor.Information] = new(1.0f, 1.0f, 1.0f, 1.0f);
+            consoleColorPalette[ConsoleColor.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
+            consoleColorPalette[ConsoleColor.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
+            consoleColorPalette[ConsoleColor.Critical] = new(1.0f, 0.0f, 0.0f, 1.0f);
         }
 
         public static void RegisterCommand(string command, Action<string[]> callback)
         {
             commands.Add(command, callback);
             cmdAutocomplete.Add(command, callback);
-        }
-
-        public static void Log(LogSeverity type, string msg)
-        {
-            if (Redirect)
-            {
-                Debug.WriteLine(msg);
-            }
-
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
-            if (messages.Count > max_messages)
-            {
-                messages.Remove(messages[0]);
-            }
-            m_ScrollToBottom = true;
-        }
-
-        public static void Log(Exception? e)
-        {
-            if (Redirect)
-            {
-                Debug.WriteLine(e);
-            }
-
-            messages.Add(new LogMessage() { Severity = LogSeverity.Error, Message = e?.ToString() ?? string.Empty, Timestamp = DateTime.Now.ToShortTimeString() });
-            if (messages.Count > max_messages)
-            {
-                messages.Remove(messages[0]);
-            }
-            m_ScrollToBottom = true;
         }
 
         public static Task HandleError(Task task)
@@ -182,51 +137,209 @@
             return Task.CompletedTask;
         }
 
-        public static async Task LogAsync(LogSeverity type, string msg)
+        public static void Log(LogSeverity type, string message)
         {
-            await semaphore.WaitAsync();
             if (Redirect)
             {
-                Debug.WriteLine(msg);
+                Debug.WriteLine(message);
             }
 
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
+            var msg = new LogMessage(type, message);
+            semaphore.Wait();
+            messages.Add(msg);
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
             }
+            Logger.DebugListener.WriteLine(message);
             semaphore.Release();
             m_ScrollToBottom = true;
         }
 
-        public static void Log(string msg)
+        public static void Log(Exception? e)
         {
+            var message = e?.ToString() ?? "null";
             if (Redirect)
             {
-                Debug.WriteLine(msg);
+                Debug.WriteLine(message);
             }
 
-            LogSeverity type = LogSeverity.Log;
-            if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Error;
-            }
-
-            if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
+            var msg = new LogMessage(LogSeverity.Error, message);
+            semaphore.Wait();
+            messages.Add(msg);
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
             }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        private static LogSeverity Evaluate(string message)
+        {
+            LogSeverity type = LogSeverity.Information;
+            if (message.Contains("critical", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Critical;
+            }
+            else if (message.Contains("error", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Error;
+            }
+            else if (message.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+            else if (message.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Warning;
+            }
+            else if (message.Contains("info", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Information;
+            }
+            else if (message.Contains("information", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Information;
+            }
+            else if (message.Contains("debug", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Debug;
+            }
+            else if (message.Contains("dbg", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Debug;
+            }
+            else if (message.Contains("trace", StringComparison.CurrentCultureIgnoreCase))
+            {
+                type = LogSeverity.Trace;
+            }
+
+            return type;
+        }
+
+        public static void Log(object? value)
+        {
+            var message = value?.ToString() ?? "null";
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = Evaluate(message);
+
+            var msg = new LogMessage(type, message);
+            semaphore.Wait();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static void Log(string message)
+        {
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = Evaluate(message);
+            var msg = new LogMessage(type, message);
+            semaphore.Wait();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(LogSeverity type, string message)
+        {
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            var msg = new LogMessage(type, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(Exception? e)
+        {
+            var message = e?.ToString() ?? "null";
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            var msg = new LogMessage(LogSeverity.Error, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(object? value)
+        {
+            var message = value?.ToString() ?? "null";
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = Evaluate(message);
+
+            var msg = new LogMessage(type, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
+            m_ScrollToBottom = true;
+        }
+
+        public static async Task LogAsync(string message)
+        {
+            if (Redirect)
+            {
+                Debug.WriteLine(message);
+            }
+
+            LogSeverity type = Evaluate(message);
+
+            var msg = new LogMessage(type, message);
+            await semaphore.WaitAsync();
+            messages.Add(msg);
+            if (messages.Count > max_messages)
+            {
+                messages.Remove(messages[0]);
+            }
+            Logger.DebugListener.WriteLine(message);
+            semaphore.Release();
             m_ScrollToBottom = true;
         }
 
@@ -237,11 +350,13 @@
                 Debug.WriteLine(msg);
             }
 
-            messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
+            semaphore.Wait();
+            messages.Add(new LogMessage() { Severity = LogSeverity.Information, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
             }
+            semaphore.Release();
             m_ScrollToBottom = true;
         }
 
@@ -252,39 +367,8 @@
                 Debug.WriteLine(msg);
             }
 
-            messages.Add(new LogMessage() { Severity = LogSeverity.Info, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
-            if (messages.Count > max_messages)
-            {
-                messages.Remove(messages[0]);
-            }
-            m_ScrollToBottom = true;
-        }
-
-        public static async Task LogAsync(string msg)
-        {
-            if (Redirect)
-            {
-                Debug.WriteLine(msg);
-            }
-
-            await semaphore.WaitAsync();
-            LogSeverity type = LogSeverity.Log;
-            if (msg.Contains("error", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Error;
-            }
-
-            if (msg.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            if (msg.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
-            {
-                type = LogSeverity.Warning;
-            }
-
-            messages.Add(new LogMessage() { Severity = type, Message = msg, Timestamp = DateTime.Now.ToShortTimeString() });
+            semaphore.Wait();
+            messages.Add(new LogMessage() { Severity = LogSeverity.Information, Message = $"{msg}{Environment.NewLine}", Timestamp = DateTime.Now.ToShortTimeString() });
             if (messages.Count > max_messages)
             {
                 messages.Remove(messages[0]);
@@ -375,7 +459,7 @@
                     }
 
                     // Spacing between commands.
-                    if (item.Severity == LogSeverity.Command)
+                    if (item.Severity == ConsoleColor.Command)
                     {
                         // Wrap before timestamps start.
                         if (count++ != 0)
@@ -406,7 +490,7 @@
                         ImGui.SameLine(ImGui.GetColumnWidth(-1) - timestamp_width);
 
                         // Draw time stamp.
-                        ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[LogSeverity.Timestamp]);
+                        ImGui.PushStyleColor(ImGuiCol.Text, consoleColorPalette[ConsoleColor.Timestamp]);
                         ImGui.Text(item.Timestamp);
                         ImGui.PopStyleColor();
                     }
@@ -422,9 +506,9 @@
                 if (m_ScrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || m_AutoScroll))
                 {
                     ImGui.SetScrollHereY(1.0f);
-                }
 
-                m_ScrollToBottom = false;
+                    m_ScrollToBottom = false;
+                }
 
                 // Loop through command string vector.
             }
@@ -544,6 +628,12 @@
                             ImGui.CloseCurrentPopup();
                         }
 
+                        if (ImGui.Button("Clear", new(120, 0)))
+                        {
+                            messages.Clear();
+                            ImGui.CloseCurrentPopup();
+                        }
+
                         ImGui.SetItemDefaultFocus();
                         ImGui.SameLine();
                         if (ImGui.Button("Cancel", new(120, 0)))
@@ -563,12 +653,15 @@
 
                     ImGui.TextUnformatted("Color Palette");
                     ImGui.Indent();
-                    ImGui.ColorEdit4("Command##", ref consoleColorPalette[LogSeverity.Command], flags);
-                    ImGui.ColorEdit4("Log##", ref consoleColorPalette[LogSeverity.Log], flags);
-                    ImGui.ColorEdit4("Warning##", ref consoleColorPalette[LogSeverity.Warning], flags);
-                    ImGui.ColorEdit4("Error##", ref consoleColorPalette[LogSeverity.Error], flags);
-                    ImGui.ColorEdit4("Info##", ref consoleColorPalette[LogSeverity.Info], flags);
-                    ImGui.ColorEdit4("Time Stamp##", ref consoleColorPalette[LogSeverity.Timestamp], flags);
+                    ImGui.ColorEdit4("Command##", ref consoleColorPalette[ConsoleColor.Command], flags);
+                    ImGui.ColorEdit4("Time Stamp##", ref consoleColorPalette[ConsoleColor.Timestamp], flags);
+
+                    ImGui.ColorEdit4("Trace##", ref consoleColorPalette[ConsoleColor.Trace], flags);
+                    ImGui.ColorEdit4("Debug##", ref consoleColorPalette[ConsoleColor.Debug], flags);
+                    ImGui.ColorEdit4("Information##", ref consoleColorPalette[ConsoleColor.Information], flags);
+                    ImGui.ColorEdit4("Warning##", ref consoleColorPalette[ConsoleColor.Warning], flags);
+                    ImGui.ColorEdit4("Error##", ref consoleColorPalette[ConsoleColor.Error], flags);
+                    ImGui.ColorEdit4("Critical##", ref consoleColorPalette[ConsoleColor.Critical], flags);
                     ImGui.Unindent();
 
                     ImGui.Separator();
@@ -617,10 +710,10 @@
                             // Display suggestions on console.
                             if (!(m_CmdSuggestions.Count == 0))
                             {
-                                Log(LogSeverity.Command, "Suggestions: ");
+                                Log(LogSeverity.Trace, "Suggestions: ");
                                 foreach (var suggestion in m_CmdSuggestions)
                                 {
-                                    Log(LogSeverity.Log, suggestion);
+                                    Log(LogSeverity.Trace, suggestion);
                                 }
 
                                 m_CmdSuggestions.Clear();

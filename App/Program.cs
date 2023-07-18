@@ -2,6 +2,7 @@
 {
     using HexaEngine;
     using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Windows;
 
     public static class Program
@@ -11,8 +12,9 @@
         /// </summary>
         public static void Main()
         {
-            Platform.Init();
-            Application.Run(new Window() { StartupScene = Platform.StartupScene });
+            Window window = new();
+            Platform.Init(window, GraphicsBackend.D3D11);
+            Application.Run(window);
             Platform.Shutdown();
         }
     }

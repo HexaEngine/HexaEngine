@@ -5,6 +5,7 @@
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Editor.MaterialEditor;
+    using HexaEngine.Editor.PoseEditor;
 
     public static class WidgetManager
     {
@@ -22,16 +23,19 @@
             Register<MaterialsWidget>();
             Register<MeshesWidget>();
             Register<MixerWidget>();
-            Register<OpenProjectWindow>();
             Register<PublishProjectWindow>();
             Register<SceneVariablesWindow>();
             Register<DebugWindow>();
             Register<ProfilerWindow>();
             Register<MeshEditorWindow>();
+            Register<PoseEditorWindow>();
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();
             Register<ImagePainterWindow>();
+            Register<WeatherWidget>();
+            Register<RenderGraphWidget>();
+            Register<MemoryWidget>();
         }
 
         public static bool Register<T>() where T : IImGuiWindow, new()

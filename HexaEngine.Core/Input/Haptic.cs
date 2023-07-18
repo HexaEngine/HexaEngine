@@ -11,7 +11,7 @@
         private Haptic(Silk.NET.SDL.Haptic* haptic)
         {
             this.haptic = haptic;
-            id = sdl.HapticIndex(haptic);
+            id = sdl.HapticIndex(haptic).SdlThrowIfNeg();
         }
 
         public int Id => id;

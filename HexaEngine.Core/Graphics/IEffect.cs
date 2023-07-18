@@ -4,9 +4,7 @@
     {
         void Draw(IGraphicsContext context);
 
-        void BeginResize();
-
-        void EndResize(int width, int height);
+        void Resize(int width, int height);
 
         Task Initialize(IGraphicsDevice device, int width, int height);
     }

@@ -2,14 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Rendering;
 
     public class ImageSourceOverlay
     {
-        private readonly ITexture2D[] textures;
+        private readonly Texture2D[] textures;
         private readonly IShaderResourceView[] srvs;
         private readonly IRenderTargetView[] rtvs;
-        private readonly ITexture2D[] depths;
+        private readonly DepthStencil[] depths;
         private readonly IDepthStencilView[] dsvs;
         private readonly ImageSource image;
         private bool disposedValue;
@@ -17,25 +16,25 @@
         public ImageSourceOverlay(IGraphicsDevice device, ImageSource image, ISamplerState sampler)
         {
             var count = image.ImageCount;
-            textures = new ITexture2D[count];
+            textures = new Texture2D[count];
             srvs = new IShaderResourceView[count];
             rtvs = new IRenderTargetView[count];
-            depths = new ITexture2D[count];
+            depths = new DepthStencil[count];
             dsvs = new IDepthStencilView[count];
 
             for (var i = 0; i < count; i++)
             {
                 var desc = image.Textures[i].Description;
-                textures[i] = device.CreateTexture2D(desc);
-                srvs[i] = device.CreateShaderResourceView(textures[i]);
-                rtvs[i] = device.CreateRenderTargetView(textures[i], new(desc.Width, desc.Height));
-                ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
+                textures[i] = new(device, desc);
+                srvs[i] = textures[i].SRV;
+                rtvs[i] = textures[i].RTV;
+                //ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
                 desc.BindFlags = BindFlags.DepthStencil;
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
                 desc.Format = Format.D16UNorm;
-                depths[i] = device.CreateTexture2D(desc);
-                dsvs[i] = device.CreateDepthStencilView(depths[i]);
+                depths[i] = new(device, new(desc.Width, desc.Height, desc.ArraySize, Format.D16UNorm, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
+                dsvs[i] = depths[i].DSV;
             }
 
             this.image = image;
@@ -79,7 +78,7 @@
                 {
                     for (int i = 0; i < textures.Length; i++)
                     {
-                        ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
+                        //ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
                         textures[i].Dispose();
                         srvs[i].Dispose();
                         rtvs[i].Dispose();

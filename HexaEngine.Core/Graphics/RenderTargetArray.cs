@@ -46,28 +46,6 @@
 
         public IDepthStencilView? DepthStencil { get; set; }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetTargets(IGraphicsContext context)
-        {
-            //context.SetRenderTargets(views, DepthStencil);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearTargets(IGraphicsContext context)
-        {
-            foreach (IRenderTargetView view in views)
-            {
-                context.ClearRenderTargetView(view, new(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W));
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void ClearAndSetTargets(IGraphicsContext context)
-        {
-            ClearTargets(context);
-            SetTargets(context);
-        }
-
         public void ClearAndSetTarget(IGraphicsContext context, int i)
         {
             context.ClearRenderTargetView(views[i], new(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W));

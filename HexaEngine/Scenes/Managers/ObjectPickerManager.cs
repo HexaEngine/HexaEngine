@@ -1,15 +1,10 @@
-﻿using HexaEngine.Core.Graphics;
-
-namespace HexaEngine.Scenes.Managers
+﻿namespace HexaEngine.Scenes.Managers
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Instances;
     using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using System.Numerics;
-    using Texture = Texture;
 
     public struct SelectionResult
     {
@@ -26,25 +21,14 @@ namespace HexaEngine.Scenes.Managers
 
     public static class ObjectPickerManager
     {
-#pragma warning disable CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IGraphicsDevice device;
-#pragma warning restore CS8618 // Non-nullable field 'device' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'pipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static IGraphicsPipeline pipeline;
-#pragma warning restore CS8618 // Non-nullable field 'pipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'texture' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private static Texture texture;
-#pragma warning restore CS8618 // Non-nullable field 'texture' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-
-#pragma warning disable CS8618 // Non-nullable field 'computePipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+        private static Texture2D texture;
+        private static DepthStencil depthStencil;
         private static IComputePipeline computePipeline;
-#pragma warning restore CS8618 // Non-nullable field 'computePipeline' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'mouseBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
+
         private static ConstantBuffer<Vector4> mouseBuffer;
-#pragma warning restore CS8618 // Non-nullable field 'mouseBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static StructuredUavBuffer<SelectionResult> outputBuffer;
-#pragma warning restore CS8618 // Non-nullable field 'outputBuffer' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private static ResourceRef<IBuffer> camera;
 
         public static void Initialize(IGraphicsDevice device, int width, int height)
@@ -62,25 +46,28 @@ namespace HexaEngine.Scenes.Managers
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleList,
             });
-            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32UInt), DepthStencilDesc.Default);
+            texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
 
             computePipeline = device.CreateComputePipeline(new()
             {
                 Path = "compute/selection/shader.hlsl",
             });
             mouseBuffer = new(device, CpuAccessFlags.Write);
-            outputBuffer = new(device, 1, true, true);
+            outputBuffer = new(device, 1, CpuAccessFlags.RW);
             camera = ResourceManager2.Shared.GetBuffer("CBCamera");
         }
 
         public static void Resize(int width, int height)
         {
             texture.Dispose();
-            texture = new(device, TextureDescription.CreateTexture2DWithRTV(width, height, 1, Format.R32G32B32A32UInt), DepthStencilDesc.Default);
+            texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
         }
 
         public static unsafe GameObject? SelectObject(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
+            /*
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
             {
@@ -97,10 +84,13 @@ namespace HexaEngine.Scenes.Managers
             ImGuiConsole.Log(LogSeverity.Log, data.ToString());
 
             return manager.Types[(int)data.TypeId - 1].Instances[(int)data.InstanceId - 1].Parent;
+            */
+            return null;
         }
 
         public static unsafe SelectionResult Select(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)
         {
+            /*
             InstanceManager? manager = InstanceManager.Current;
             if (manager == null)
             {
@@ -134,12 +124,15 @@ namespace HexaEngine.Scenes.Managers
             outputBuffer.Read(context);
 
             return outputBuffer[0];
+            */
+            return default;
         }
 
         public static void Release()
         {
             pipeline.Dispose();
             texture.Dispose();
+            depthStencil.Dispose();
             computePipeline.Dispose();
             mouseBuffer.Dispose();
             outputBuffer.Dispose();

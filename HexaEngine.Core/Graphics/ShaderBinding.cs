@@ -2,14 +2,14 @@
 {
     public struct ShaderBinding
     {
-        public ShaderBinding(ShaderStage stage, int slot)
+        public ShaderBinding(ShaderStage stage, uint slot)
         {
             Stage = stage;
             Slot = slot;
         }
 
         public ShaderStage Stage;
-        public int Slot;
+        public uint Slot;
     }
 
     public struct BoundResource
@@ -23,7 +23,7 @@
             Bindings = new(bindings);
         }
 
-        public BoundResource(IShaderResourceView? resource, ShaderStage stage, int slot)
+        public BoundResource(IShaderResourceView? resource, ShaderStage stage, uint slot)
         {
             Resource = resource;
             Bindings = new List<ShaderBinding>();
@@ -38,27 +38,27 @@
                 switch (binding.Stage)
                 {
                     case ShaderStage.Vertex:
-                        context.VSSetShaderResource(Resource, Bindings[i].Slot);
+                        context.VSSetShaderResource(Bindings[i].Slot, Resource);
                         break;
 
                     case ShaderStage.Hull:
-                        context.HSSetShaderResource(Resource, Bindings[i].Slot);
+                        context.HSSetShaderResource(Bindings[i].Slot, Resource);
                         break;
 
                     case ShaderStage.Domain:
-                        context.DSSetShaderResource(Resource, Bindings[i].Slot);
+                        context.DSSetShaderResource(Bindings[i].Slot, Resource);
                         break;
 
                     case ShaderStage.Geometry:
-                        context.GSSetShaderResource(Resource, Bindings[i].Slot);
+                        context.GSSetShaderResource(Bindings[i].Slot, Resource);
                         break;
 
                     case ShaderStage.Pixel:
-                        context.PSSetShaderResource(Resource, Bindings[i].Slot);
+                        context.PSSetShaderResource(Bindings[i].Slot, Resource);
                         break;
 
                     case ShaderStage.Compute:
-                        context.CSSetShaderResource(Resource, Bindings[i].Slot);
+                        context.CSSetShaderResource(Bindings[i].Slot, Resource);
                         break;
                 }
             }
@@ -76,7 +76,7 @@
             Bindings = new(bindings);
         }
 
-        public BoundSampler(ISamplerState? sampler, ShaderStage stage, int slot)
+        public BoundSampler(ISamplerState? sampler, ShaderStage stage, uint slot)
         {
             Sampler = sampler;
             Bindings = new List<ShaderBinding>();
@@ -91,27 +91,27 @@
                 switch (binding.Stage)
                 {
                     case ShaderStage.Vertex:
-                        context.VSSetSampler(Sampler, Bindings[i].Slot);
+                        context.VSSetSampler(Bindings[i].Slot, Sampler);
                         break;
 
                     case ShaderStage.Hull:
-                        context.HSSetSampler(Sampler, Bindings[i].Slot);
+                        context.HSSetSampler(Bindings[i].Slot, Sampler);
                         break;
 
                     case ShaderStage.Domain:
-                        context.DSSetSampler(Sampler, Bindings[i].Slot);
+                        context.DSSetSampler(Bindings[i].Slot, Sampler);
                         break;
 
                     case ShaderStage.Geometry:
-                        context.GSSetSampler(Sampler, Bindings[i].Slot);
+                        context.GSSetSampler(Bindings[i].Slot, Sampler);
                         break;
 
                     case ShaderStage.Pixel:
-                        context.PSSetSampler(Sampler, Bindings[i].Slot);
+                        context.PSSetSampler(Bindings[i].Slot, Sampler);
                         break;
 
                     case ShaderStage.Compute:
-                        context.CSSetSampler(Sampler, Bindings[i].Slot);
+                        context.CSSetSampler(Bindings[i].Slot, Sampler);
                         break;
                 }
             }
@@ -129,7 +129,7 @@
             Bindings = new(bindings);
         }
 
-        public BoundConstant(IBuffer? constant, ShaderStage stage, int slot)
+        public BoundConstant(IBuffer? constant, ShaderStage stage, uint slot)
         {
             Constant = constant;
             Bindings = new List<ShaderBinding>();
@@ -144,27 +144,27 @@
                 switch (binding.Stage)
                 {
                     case ShaderStage.Vertex:
-                        context.VSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        context.VSSetConstantBuffer(Bindings[i].Slot, Constant);
                         break;
 
                     case ShaderStage.Hull:
-                        context.HSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        context.HSSetConstantBuffer(Bindings[i].Slot, Constant);
                         break;
 
                     case ShaderStage.Domain:
-                        context.DSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        context.DSSetConstantBuffer(Bindings[i].Slot, Constant);
                         break;
 
                     case ShaderStage.Geometry:
-                        context.GSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        context.GSSetConstantBuffer(Bindings[i].Slot, Constant);
                         break;
 
                     case ShaderStage.Pixel:
-                        context.PSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        context.PSSetConstantBuffer(Bindings[i].Slot, Constant);
                         break;
 
                     case ShaderStage.Compute:
-                        context.CSSetConstantBuffer(Constant, Bindings[i].Slot);
+                        context.CSSetConstantBuffer(Bindings[i].Slot, Constant);
                         break;
                 }
             }

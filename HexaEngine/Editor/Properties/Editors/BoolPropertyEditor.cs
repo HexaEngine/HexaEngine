@@ -1,25 +1,34 @@
 ﻿namespace HexaEngine.Editor.Properties.Editors
 {
-    using HexaEngine.Core.Editor.Properties;
+    using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Properties;
     using ImGuiNET;
+    using System.Reflection;
 
     public class BoolPropertyEditor : IPropertyEditor
     {
-        private readonly string id;
-        private readonly string name;
+        private readonly ImGuiName guiName;
 
-        public BoolPropertyEditor(string name)
+        public BoolPropertyEditor(string name, PropertyInfo property)
         {
-            this.id = Guid.NewGuid().ToString();
-            this.name = name;
+            Name = name;
+            Property = property;
+            guiName = new(name);
         }
 
-        public bool Draw(object instance, ref object? value)
+        public string Name { get; }
+
+        public PropertyInfo Property { get; }
+
+        public bool Draw(IGraphicsContext context, object instance, ref object? value)
         {
-#pragma warning disable CS8605 // Unboxing a possibly null value.
+            ImGui.TableNextRow();
+            ImGui.TableSetColumnIndex(0);
+            ImGui.Text(guiName.Name);
+            ImGui.TableSetColumnIndex(1);
             bool val = (bool)value;
-#pragma warning restore CS8605 // Unboxing a possibly null value.
-            if (ImGui.Checkbox($"{name}##{id}", ref val))
+            if (ImGui.Checkbox(guiName.Id, ref val))
             {
                 value = val;
                 return true;

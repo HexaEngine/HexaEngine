@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Graphics.Shaders;
     using System;
     using System.Buffers.Binary;
     using System.Collections.Generic;
@@ -17,6 +18,7 @@
         private const string file = "cache/shadercache.bin";
         private static readonly List<ShaderCacheEntry> entries = new();
         private static readonly SemaphoreSlim s = new(1);
+        private const int Version = 1;
 
         static ShaderCache()
         {
@@ -38,7 +40,7 @@
 
         public static IReadOnlyList<ShaderCacheEntry> Entries => entries;
 
-        public static unsafe void CacheShader(string path, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)
+        public static unsafe void CacheShader(string path, SourceLanguage language, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)
         {
             lock (entries)
             {
@@ -47,14 +49,23 @@
                     return;
                 }
 
-                var entry = new ShaderCacheEntry(path, macros, inputElements, shader->Clone());
+                var entry = new ShaderCacheEntry(path, language, macros, inputElements, shader->Clone());
                 entries.RemoveAll(x => x.Equals(entry));
                 entries.Add(entry);
                 SaveAsync();
             }
         }
 
-        public static unsafe bool GetShader(string path, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
+        /// <summary>
+        /// Returns true if succesfully found a matching shader
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="language"></param>
+        /// <param name="macros"></param>
+        /// <param name="shader"></param>
+        /// <param name="inputElements"></param>
+        /// <returns></returns>
+        public static unsafe bool GetShader(string path, SourceLanguage language, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {
             lock (entries)
             {
@@ -66,7 +77,7 @@
                 }
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                var ventry = new ShaderCacheEntry(path, macros, null, null);
+                var ventry = new ShaderCacheEntry(path, language, macros, null, null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
@@ -83,17 +94,17 @@
         {
             lock (entries)
             {
-                ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ...");
+                ImGuiConsole.Log(LogSeverity.Information, "Clearing shader cache ...");
                 for (int i = 0; i < entries.Count; i++)
                 {
                     entries[i].Free();
                 }
                 entries.Clear();
-                ImGuiConsole.Log(LogSeverity.Info, "Clearing shader cache ... done");
+                ImGuiConsole.Log(LogSeverity.Information, "Clearing shader cache ... done");
             }
         }
 
-        private static unsafe bool GetShaderInternal(string path, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
+        private static unsafe bool GetShaderInternal(string path, SourceLanguage language, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {
             lock (entries)
             {
@@ -105,7 +116,7 @@
                 }
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                var ventry = new ShaderCacheEntry(path, macros, null, null);
+                var ventry = new ShaderCacheEntry(path, language, macros, null, null);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 var entry = entries.FirstOrDefault(x => x.Equals(ventry));
                 if (entry != default)
@@ -129,10 +140,13 @@
             {
                 var span = (Span<byte>)File.ReadAllBytes(file);
                 var decoder = Encoding.UTF8.GetDecoder();
-                var count = BinaryPrimitives.ReadInt32LittleEndian(span);
+                var version = BinaryPrimitives.ReadInt32LittleEndian(span);
+                if (version != Version)
+                    return;
+                var count = BinaryPrimitives.ReadInt32LittleEndian(span[4..]);
                 entries.EnsureCapacity(count);
 
-                int idx = 4;
+                int idx = 8;
                 for (int i = 0; i < count; i++)
                 {
                     var entry = new ShaderCacheEntry();
@@ -148,12 +162,13 @@
             lock (entries)
             {
                 var encoder = Encoding.UTF8.GetEncoder();
-                var size = 4 + entries.Sum(x => x.SizeOf(encoder));
+                var size = 8 + entries.Sum(x => x.SizeOf(encoder));
                 var span = size < 2048 ? stackalloc byte[size] : new byte[size];
 
-                BinaryPrimitives.WriteInt32LittleEndian(span, entries.Count);
+                BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);
+                BinaryPrimitives.WriteInt32LittleEndian(span[4..], entries.Count);
 
-                int idx = 4;
+                int idx = 8;
                 for (var i = 0; i < entries.Count; i++)
                 {
                     var entry = entries[i];
@@ -173,12 +188,13 @@
                 lock (entries)
                 {
                     var encoder = Encoding.UTF8.GetEncoder();
-                    var size = 4 + entries.Sum(x => x.SizeOf(encoder));
+                    var size = 8 + entries.Sum(x => x.SizeOf(encoder));
                     var span = size < 2048 ? stackalloc byte[size] : new byte[size];
 
-                    BinaryPrimitives.WriteInt32LittleEndian(span, entries.Count);
+                    BinaryPrimitives.WriteInt32LittleEndian(span[0..], Version);
+                    BinaryPrimitives.WriteInt32LittleEndian(span[4..], entries.Count);
 
-                    int idx = 4;
+                    int idx = 8;
                     for (var i = 0; i < entries.Count; i++)
                     {
                         var entry = entries[i];
@@ -195,13 +211,15 @@
     public unsafe struct ShaderCacheEntry : IEquatable<ShaderCacheEntry>
     {
         public string Name;
+        public SourceLanguage Language;
         public ShaderMacro[] Macros;
         public InputElementDescription[] InputElements;
         public Shader* Shader;
 
-        public ShaderCacheEntry(string name, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* bytecode)
+        public ShaderCacheEntry(string name, SourceLanguage language, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* bytecode)
         {
             Name = name;
+            Language = language;
             Macros = macros;
             InputElements = inputElements;
             Shader = bytecode;
@@ -211,16 +229,16 @@
         {
             int idx = 0;
             idx += WriteString(dest[idx..], Name, encoder);
-            BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], Macros.Length);
-            idx += 4;
+            idx += WriteInt32(dest[idx..], (int)Language);
+            idx += WriteInt32(dest[idx..], Macros.Length);
+
             for (int i = 0; i < Macros.Length; i++)
             {
                 var macro = Macros[i];
                 idx += WriteString(dest[idx..], macro.Name, encoder);
                 idx += WriteString(dest[idx..], macro.Definition, encoder);
             }
-            BinaryPrimitives.WriteInt32LittleEndian(dest[idx..], InputElements.Length);
-            idx += 4;
+            idx += WriteInt32(dest[idx..], InputElements.Length);
             for (int i = 0; i < InputElements.Length; i++)
             {
                 var element = InputElements[i];
@@ -260,6 +278,8 @@
         {
             int idx = 0;
             idx += ReadString(src, out Name, decoder);
+            idx += ReadInt32(src[idx..], out var lang);
+            Language = (SourceLanguage)lang;
 
             // read macros
             int count = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
@@ -338,7 +358,7 @@
         {
             if (Shader != null)
             {
-                return 20 +
+                return 24 +
                     SizeOf(Name, encoder) +
                     Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
                     InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24) +
@@ -346,7 +366,7 @@
             }
             else
             {
-                return 20 +
+                return 24 +
                     SizeOf(Name, encoder) +
                     Macros.Sum(x => SizeOf(x.Name, encoder) + SizeOf(x.Definition, encoder)) +
                     InputElements.Sum(x => SizeOf(x.SemanticName, encoder) + 24);
@@ -361,6 +381,11 @@
         public bool Equals(ShaderCacheEntry other)
         {
             if (Name != other.Name)
+            {
+                return false;
+            }
+
+            if (Language != other.Language)
             {
                 return false;
             }

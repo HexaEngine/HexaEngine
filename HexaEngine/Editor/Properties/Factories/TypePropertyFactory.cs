@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Properties.Factories
 {
-    using HexaEngine.Core.Editor.Attributes;
-    using HexaEngine.Core.Editor.Properties;
+    using HexaEngine.Editor.Attributes;
+    using HexaEngine.Editor.Properties;
     using HexaEngine.Editor.Properties.Editors;
     using System;
     using System.Reflection;
@@ -15,7 +15,7 @@
 
         public IPropertyEditor Create(PropertyInfo property, EditorPropertyAttribute nameAttr)
         {
-            return new TypePropertyEditor(nameAttr);
+            return new TypePropertyEditor(nameAttr, property);
         }
     }
 }

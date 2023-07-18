@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE</DefineConstants>
+		<DefineConstants>$(DefineConstants)TRACE;SEPA;PROFILE;TRACELEAK</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='TraceLeak|AnyCPU'">
@@ -32,18 +32,27 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 		<DefineConstants>$(DefineConstants)TRACE;PROFILE</DefineConstants>
 	</PropertyGroup>
+
 	<ItemGroup>
-		<PackageReference Include="HexaEngine.ImGui" Version="2.0.11" />
-		<PackageReference Include="HexaEngine.ImGuizmo" Version="2.0.11" />
-		<PackageReference Include="HexaEngine.ImNodes" Version="2.0.11" />
-		<PackageReference Include="HexaEngine.ImPlot" Version="2.0.11" />
+	  <Compile Remove="Graphics\Passes\**" />
+	  <EmbeddedResource Remove="Graphics\Passes\**" />
+	  <None Remove="Graphics\Passes\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Hardware.Info" Version="11.1.0.1" />
+		<PackageReference Include="HexaEngine.ImGui" Version="2.0.15" />
+		<PackageReference Include="HexaEngine.ImGuizmo" Version="2.0.15" />
+		<PackageReference Include="HexaEngine.ImNodes" Version="2.0.15" />
+		<PackageReference Include="HexaEngine.ImPlot" Version="2.0.15" />
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
+		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
 		<PackageReference Include="Silk.NET.GLFW" Version="2.17.1" />
 		<PackageReference Include="Silk.NET.SDL" Version="2.17.1" />
 		<PackageReference Include="BepuPhysics" Version="2.4.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.5" />
 		<PackageReference Include="System.IO.Hashing" Version="7.0.0" />
+		<PackageReference Include="YamlDotNet" Version="13.1.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />

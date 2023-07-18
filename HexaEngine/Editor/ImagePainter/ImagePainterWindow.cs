@@ -6,6 +6,7 @@
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
+    using HexaEngine.Editor.MaterialEditor.Generator.Structs;
     using ImGuiNET;
     using System.Numerics;
 
@@ -39,7 +40,6 @@
         private ImageSource? source;
         private ImageSourceOverlay? overlay;
 
-        private Quad quad;
         private IGraphicsPipeline copyPipeline;
 
         private ConstantBuffer<Vector4> colorCB;
@@ -67,13 +67,13 @@
         {
             exporter = new(device);
             this.device = device;
-            samplerState = device.CreateSamplerState(SamplerDescription.PointWrap);
-            quad = new(device);
+            samplerState = device.CreateSamplerState(SamplerStateDescription.PointWrap);
+
             copyPipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/copy/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
-            });
+            }, GraphicsPipelineState.DefaultFullscreen);
 
             colorCB = new(device, CpuAccessFlags.Write);
 
@@ -190,14 +190,14 @@
 
                     ImGui.Separator();
 
-                    if (ImGui.MenuItem("IBL Irradiance"))
+                    if (ImGui.MenuItem("IBL Diffuse Irradiance"))
                     {
-                        modals.GetOrCreate<IrradianceFilterDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<DiffuseIrradianceDialog>(() => new(this, device)).Show();
                     }
 
-                    if (ImGui.MenuItem("IBL PreFilter"))
+                    if (ImGui.MenuItem("IBL Roughness Prefilter"))
                     {
-                        modals.GetOrCreate<PreFilterDialog>(() => new(this, device)).Show();
+                        modals.GetOrCreate<RoughnessPrefilterDialog>(() => new(this, device)).Show();
                     }
 
                     ImGui.EndMenu();
@@ -312,8 +312,8 @@
                 context.ClearRenderTargetView(overlay.RTV, default);
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.RTV.Viewport);
-                context.PSSetShaderResource(source.SRV, 0);
-                quad.DrawAuto(context, copyPipeline);
+                context.PSSetShaderResource(0, source.SRV);
+                context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
 
                 var curPosGlob = ImGui.GetCursorScreenPos();
@@ -335,7 +335,7 @@
                     }
                     isDown = changed;
 
-                    context.PSSetConstantBuffer(colorCB, 0);
+                    context.PSSetConstantBuffer(0, colorCB);
 
                     brushes.Current.Apply(context);
 
@@ -424,8 +424,9 @@
         {
             UnloadImage();
 
-            quad?.Dispose();
             copyPipeline?.Dispose();
+
+            samplerState.Dispose();
 
             colorCB.Dispose();
 

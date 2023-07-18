@@ -3,27 +3,34 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Xml.Serialization;
 
     public struct DepthStencilDescription : IEquatable<DepthStencilDescription>
     {
         public const int DefaultStencilReadMask = unchecked(255);
         public const int DefaultStencilWriteMask = unchecked(255);
 
+        [XmlAttribute]
         [DefaultValue(true)]
         public bool DepthEnable;
 
+        [XmlAttribute]
         [DefaultValue(DepthWriteMask.All)]
         public DepthWriteMask DepthWriteMask;
 
+        [XmlAttribute]
         [DefaultValue(ComparisonFunction.LessEqual)]
         public ComparisonFunction DepthFunc;
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool StencilEnable;
 
+        [XmlAttribute]
         [DefaultValue(DefaultStencilReadMask)]
         public byte StencilReadMask;
 
+        [XmlAttribute]
         [DefaultValue(DefaultStencilWriteMask)]
         public byte StencilWriteMask;
 

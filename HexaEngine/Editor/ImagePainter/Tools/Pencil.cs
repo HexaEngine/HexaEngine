@@ -9,7 +9,6 @@
     public class Pencil : Tool
     {
         private Vector2 brushSize = Vector2.One;
-        private Quad quad;
         private IGraphicsPipeline brushPipeline;
         private Vector2 oldPos;
         public override string Icon => "\xED63##PencilTool";
@@ -18,7 +17,6 @@
 
         public override void Init(IGraphicsDevice device)
         {
-            quad = new(device);
             DepthStencilDescription depthStencil = new()
             {
                 DepthEnable = true,
@@ -32,7 +30,7 @@
             };
             brushPipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/brush/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/brush/ps.hlsl",
             }, new GraphicsPipelineState()
             {
@@ -40,7 +38,7 @@
                 BlendFactor = Vector4.Zero,
                 DepthStencil = depthStencil,
                 Rasterizer = RasterizerDescription.CullBack,
-                Topology = PrimitiveTopology.TriangleList,
+                Topology = PrimitiveTopology.TriangleStrip,
                 SampleMask = int.MaxValue,
                 StencilRef = 1,
             });
@@ -62,7 +60,7 @@
             var pos = position * ratio - size / 2f;
 
             context.SetViewport(new(pos, size));
-            quad.DrawAuto(context, brushPipeline);
+            context.DrawInstanced(4, 1, 0, 0);
             oldPos = position;
         }
 
@@ -72,13 +70,12 @@
             var pos = position * ratio - size / 2f;
 
             context.SetViewport(new(pos, size));
-            quad.DrawAuto(context, brushPipeline);
+            context.DrawInstanced(4, 1, 0, 0);
         }
 
         public override void Dispose()
         {
             brushPipeline.Dispose();
-            quad.Dispose();
         }
     }
 }

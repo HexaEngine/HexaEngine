@@ -39,6 +39,8 @@
 
         public int RedoCount => redostack.Count;
 
+        public static History Default { get; } = new();
+
         private struct HistoryItem
         {
             public Action<object> DoAction;

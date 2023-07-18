@@ -40,5 +40,10 @@
             frustum.Initialize(viewproj);
             return Matrix4x4.Transpose(viewproj);
         }
+
+        public static unsafe void TransformInvView(CameraTransform camera, ref Matrix4x4 view)
+        {
+            view = Matrix4x4.Transpose(camera.ViewInv * Matrix4x4.Transpose(view));
+        }
     }
 }

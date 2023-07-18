@@ -1,49 +1,38 @@
-struct VSOut
+static const int SAMPLE_COUNT = 6;
+
+static const float OFFSETS[6] =
 {
-	float4 Pos : SV_Position;
-	float2 Tex : TEXCOORD;
+    -4.48876136715687,
+    -2.493755926496706,
+    -0.49874988611319804,
+    1.4962530470023068,
+    3.4912585165653676,
+    5
 };
 
-cbuffer params
+static const float WEIGHTS[6] =
 {
-	int size;
-	float3 padd;
+    0.17240384242538973,
+    0.1848610194629113,
+    0.190472258826138,
+    0.1885828129221358,
+    0.17941572863649413,
+    0.08426433772693104
 };
 
-Texture2D tex;
-SamplerState state;
-
-float4 main(VSOut vs) : SV_Target
+// blurDirection is:
+//     float2(1,0) for horizontal pass
+//     float2(0,1) for vertical pass
+// The sourceTexture to be blurred MUST use linear filtering!
+// pixelCoord is in [0..1]
+float4 blur(Texture2D sourceTexture, SamplerState state, float2 blurDirection, float2 pixelCoord, float2 textureDimensions)
 {
-	float width;
-	float heigth;
-	tex.GetDimensions(width, heigth);
-
-	float Pi = 6.28318530718; // Pi*2
-
-	// GAUSSIAN BLUR SETTINGS {{{
-	float Directions = 16.0; // BLUR DIRECTIONS (Default 16.0 - More is better but slower)
-	float Quality = 3.0; // BLUR QUALITY (Default 4.0 - More is better but slower)
-	float Size = 8.0; // BLUR SIZE (Radius)
-	// GAUSSIAN BLUR SETTINGS }}}
-
-	float2 Radius = Size / float2(width, heigth);
-
-	// Normalized pixel coordinates (from 0 to 1)
-	float2 uv = vs.Tex;
-
-	// Pixel colour
-	float4 Color = tex.Sample(state, uv);
-
-	// Blur calculations
-	for (float d = 0.0; d < Pi; d += Pi / Directions)
-	{
-		for (float i = 1.0 / Quality; i <= 1.0; i += 1.0 / Quality)
-		{
-			Color += tex.Sample(state, uv + float2(cos(d), sin(d)) * Radius * i);
-		}
-	}
-
-	// Output to screen
-	return Color / Quality * Directions - 15.0;
+    float4 result = 0.0;
+    for (int i = 0; i < SAMPLE_COUNT; ++i)
+    {
+        float2 offset = blurDirection * OFFSETS[i] / textureDimensions;
+        float weight = WEIGHTS[i];
+        result += sourceTexture.Sample(state, pixelCoord + offset) * weight;
+    }
+    return result;
 }

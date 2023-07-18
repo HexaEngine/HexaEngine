@@ -1,26 +1,21 @@
 #include "defs.hlsl"
+#include "../../camera.hlsl"
 
-cbuffer cb
+cbuffer worldBuffer : register(b2)
 {
-	uint offset;
+    float4x4 world;
 }
 
-StructuredBuffer<float4x4> instances;
-StructuredBuffer<uint> offsets;
-
-HullInput main(VertexInput input, uint instanceId : SV_InstanceID)
+PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexId : SV_VertexID)
 {
-	HullInput output;
-
-	float4x4 mat = instances[instanceId + offsets[offset]];
-	output.pos = mul(float4(input.pos, 1), mat).xyz;
-	output.tex = input.tex;
-	output.normal = mul(input.normal, (float3x3)mat);
-
-#if (DEPTH != 1)
-	output.tangent = mul(input.tangent, (float3x3)mat);
+    PixelInput output;
+    output.position = float4(input.pos, 1);
+#if VtxNormal
+    output.position += float4(input.normal * 0.0001f, 0);
 #endif
-
-	output.TessFactor = 1;
-	return output;
+    output.position = mul(output.position, world);
+    output.position = mul(output.position, viewProj);
+    output.vertexId = vertexId;
+    
+    return output;
 }

@@ -1,118 +1,90 @@
 #include "../../camera.hlsl"
 
+Texture2D scene_texture : register(t0);
+Texture2D blurred_texture : register(t1);
+Texture2D depth_map : register(t2);
 
-struct VSOut
-{
-    float4 Pos : SV_Position;
-    float2 Tex : TEXCOORD;
-};
+SamplerState linear_wrap_sampler : register(s0);
 
-Texture2D positionTex : register(t0);
-Texture2D noiseTex : register(t1);
-Texture2D focusTex : register(t2);
-Texture2D outOfFocusTex : register(t3);
-
-SamplerState samplerState
-{
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
-
-cbuffer Params
+cbuffer DofParams
 {
     float focusRange;
-    float padding;
     float2 focusCenter;
-    bool enabled;
-    bool autoFocusEnabled;
-    int autoFocusSamples;
-    float autoFocusRadius;
+    bool autofocus;
+    float autofocusSamples;
+    float autofocusRadius;
 };
 
-
-
-float4 main(VSOut input) : SV_TARGET
+float FocusPoint()
 {
-    float2 texCoord = input.Tex;
-    float4 focusColor = focusTex.Sample(samplerState, texCoord);
-    if (!enabled)
-    {
-        return focusColor;
-    }
-
-    float depth = SampleLinearDepth(positionTex, samplerState, texCoord);
-
-    if (depth <= 0)
-    {
-        return focusColor;
-    }
-
-    float4 outOfFocusColor = outOfFocusTex.Sample(samplerState, texCoord);
     float focusPoint;
 
-    if (autoFocusEnabled && autoFocusSamples > 0)
+    if (autofocusRadius && autofocusSamples > 0)
     {
-        float width;
-        float heigth;
-        positionTex.GetDimensions(width, heigth);
-
-        float2 texelSize = 1.0 / float2(width, heigth);
+        float2 texelSize = 1.0 / screenDim;
 
         float result = 0.0;
         float count = 0.0;
-#if DEBUG
-		bool isFocus;
-		float maxZ = 0;
-		float currentZ = 0;
-#endif
+
 		[unroll(8)]
-        for (int x = -autoFocusSamples; x <= autoFocusSamples; ++x)
+        for (int x = -autofocusSamples; x <= autofocusSamples; ++x)
         {
 			[unroll(8)]
-            for (int y = -autoFocusSamples; y <= autoFocusSamples; ++y)
+            for (int y = -autofocusSamples; y <= autofocusSamples; ++y)
             {
-                float2 offset = float2(float(x), float(y)) * autoFocusRadius * texelSize;
-                float d = SampleLinearDepth(positionTex, samplerState, focusCenter + offset);
+                float2 offset = float2(x, y) * autofocusRadius * texelSize;
+                float d = SampleLinearDepth(depth_map, linear_wrap_sampler, focusCenter + offset);
                 result += d;
                 count++;
-#if DEBUG
-				if (d > maxZ)
-					maxZ = d;
-				float2 diff = input.Tex - (focusCenter + offset);
-				if (diff.x < 2.5f * texelSize.x && diff.y < 2.5f * texelSize.y && diff.x > -2.5f * texelSize.x && diff.y > -2.5f * texelSize.y)
-				{
-					isFocus = true;
-					currentZ = d;
-				}
-#endif
             }
         }
 
         result /= count;
         focusPoint = result;
-
-#if DEBUG
-		if (isFocus)
-		{
-			return float4(0, currentZ / maxZ, 0, 1);
-		}
-#endif
     }
     else
     {
-        focusPoint = SampleLinearDepth(positionTex, samplerState, focusCenter);
+        focusPoint = SampleLinearDepth(depth_map, linear_wrap_sampler, focusCenter);
     }
 
+    return focusPoint;
+}
 
+float BlurFactor(in float depth)
+{
+    float focusPoint = FocusPoint();
     float blur = (depth - focusPoint) / focusRange;
     blur = clamp(blur, -1, 1);
     if (blur < 0)
     {
         blur = blur * -half4(1, 0, 0, 1);
     }
+    return blur;
+}
 
-    float4 color = lerp(focusColor, outOfFocusColor, blur);
+float3 DistanceDOF(float3 colorFocus, float3 colorBlurred, float depth)
+{
+    float blurFactor = BlurFactor(depth);
+    return lerp(colorFocus, colorBlurred, blurFactor);
+}
+
+struct VertexOut
+{
+    float4 PosH : SV_POSITION;
+    float2 Tex : TEXCOORD;
+};
+
+float4 main(VertexOut pin) : SV_TARGET
+{
+    float4 color = scene_texture.Sample(linear_wrap_sampler, pin.Tex);
+
+    float depth = depth_map.Sample(linear_wrap_sampler, pin.Tex);
+
+    float3 colorBlurred = blurred_texture.Sample(linear_wrap_sampler, pin.Tex).xyz;
+
+    depth = GetLinearDepth(depth);
+
+    color = float4(DistanceDOF(color.xyz, colorBlurred, depth), 1.0);
 
     return color;
 }

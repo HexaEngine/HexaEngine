@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Xml.Serialization;
 
     public struct BlendDescription : IEquatable<BlendDescription>
     {
@@ -16,9 +17,11 @@
 
         public const int SimultaneousRenderTargetCount = unchecked(8);
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool AlphaToCoverageEnable = false;
 
+        [XmlAttribute]
         [DefaultValue(false)]
         public bool IndependentBlendEnable = false;
 
@@ -46,6 +49,25 @@
                 RenderTarget[i].SourceBlendAlpha = srcBlendAlpha;
                 RenderTarget[i].DestinationBlendAlpha = destBlendAlpha;
                 RenderTarget[i].BlendOperationAlpha = BlendOperation.Add;
+                RenderTarget[i].RenderTargetWriteMask = ColorWriteEnable.All;
+                RenderTarget[i].IsBlendEnabled = IsBlendEnabled(ref RenderTarget[i]);
+            }
+        }
+
+        public BlendDescription(Blend sourceBlend, Blend destinationBlend, Blend srcBlendAlpha, Blend destBlendAlpha, BlendOperation blendOperation, BlendOperation blendOperationAlpha)
+            : this()
+        {
+            AlphaToCoverageEnable = false;
+            IndependentBlendEnable = false;
+
+            for (int i = 0; i < SimultaneousRenderTargetCount; i++)
+            {
+                RenderTarget[i].SourceBlend = sourceBlend;
+                RenderTarget[i].DestinationBlend = destinationBlend;
+                RenderTarget[i].BlendOperation = blendOperation;
+                RenderTarget[i].SourceBlendAlpha = srcBlendAlpha;
+                RenderTarget[i].DestinationBlendAlpha = destBlendAlpha;
+                RenderTarget[i].BlendOperationAlpha = blendOperationAlpha;
                 RenderTarget[i].RenderTargetWriteMask = ColorWriteEnable.All;
                 RenderTarget[i].IsBlendEnabled = IsBlendEnabled(ref RenderTarget[i]);
             }

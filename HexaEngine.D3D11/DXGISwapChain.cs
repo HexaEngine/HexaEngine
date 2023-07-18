@@ -8,11 +8,12 @@
     using System;
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
-    public unsafe class DXGISwapChain : DeviceChildBase, ISwapChain
+    public unsafe partial class DXGISwapChain : DeviceChildBase, ISwapChain
     {
-        private ComPtr<IDXGISwapChain1> swapChain;
-        private SwapChainFlag flags;
+        private ComPtr<IDXGISwapChain2> swapChain;
+        private readonly SwapChainFlag flags;
         private ComPtr<ID3D11Texture2D> backbuffer;
         private ITexture2D depthStencil;
         private long fpsStartTime;
@@ -21,8 +22,9 @@
         private bool limitFPS;
         private int targetFPS = 120;
         private bool active;
+        private void* waitObject;
 
-        internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain1> swapChain, SwapChainFlag flags)
+        internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain2> swapChain, SwapChainFlag flags)
         {
             Device = device;
             this.swapChain = swapChain;
@@ -40,6 +42,7 @@
             Width = description.Width;
             Height = description.Height;
             Viewport = new(0, 0, Width, Height);
+            waitObject = (flags & SwapChainFlag.FrameLatencyWaitableObject) != 0 ? swapChain.GetFrameLatencyWaitableObject() : null;
         }
 
         public ITexture2D Backbuffer { get; private set; }
@@ -101,6 +104,17 @@
             if (!vSync && limitFPS)
             {
                 LimitFrameRate();
+            }
+        }
+
+        [LibraryImport("kernel32.dll")]
+        private static partial int WaitForSingleObjectEx(void* handle, ulong dwMilliseconds, [MarshalAs(System.Runtime.InteropServices.UnmanagedType.Bool)] bool bAlertable);
+
+        public void WaitForPresent()
+        {
+            if (waitObject != null)
+            {
+                WaitForSingleObjectEx(waitObject, 1000, true);
             }
         }
 

@@ -19,18 +19,12 @@
 
         private void Recompile(IGraphicsPipeline pipeline)
         {
-            if (task == null || task.IsCompleted)
-            {
-                task = Task.Factory.StartNew(pipeline.Recompile);
-            }
+            pipeline.Recompile();
         }
 
         private void Recompile(IComputePipeline pipeline)
         {
-            if (task == null || task.IsCompleted)
-            {
-                task = Task.Factory.StartNew(pipeline.Recompile);
-            }
+            pipeline.Recompile();
         }
 
         public override void DrawContent(IGraphicsContext context)
@@ -49,7 +43,7 @@
             for (int i = 0; i < PipelineManager.ComputePipelines.Count; i++)
             {
                 IComputePipeline pipeline = PipelineManager.ComputePipelines[i];
-                if (ImGui.Button(pipeline.Name))
+                if (ImGui.Button(pipeline.DebugName))
                 {
                     Recompile(pipeline);
                 }

@@ -52,7 +52,7 @@
         public ShaderSourceFile(string name, ShaderMacro[] macros, InputElementDescription[] inputElements, Shader* shader)
         {
             Name = name;
-            Bytecode = shader->GetBytes();
+            Bytecode = shader->ToArray();
             InputElements = inputElements;
             Macros = macros;
         }

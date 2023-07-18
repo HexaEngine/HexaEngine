@@ -3,7 +3,6 @@
 namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -14,7 +13,8 @@ namespace HexaEngine.Editor
         private static readonly DebugDrawCommandQueue queue = new();
 
         private static Viewport viewport;
-        private static Camera camera;
+        private static Matrix4x4 camera;
+
         private const int COL32_R_SHIFT = 0;
         private const int COL32_G_SHIFT = 8;
         private const int COL32_B_SHIFT = 16;
@@ -74,12 +74,12 @@ namespace HexaEngine.Editor
             return viewport;
         }
 
-        public static void SetCamera(Camera camera)
+        public static void SetCamera(Matrix4x4 camera)
         {
             DebugDraw.camera = camera;
         }
 
-        public static Camera GetCamera()
+        public static Matrix4x4 GetCamera()
         {
             return camera;
         }
@@ -400,6 +400,22 @@ namespace HexaEngine.Editor
             Vector3 rayDirection = normalize ? normDirection : direction;
 
             cmd.Vertices[1].Position = rayDirection + origin;
+
+            cmd.Vertices[0].Color = color;
+            cmd.Vertices[1].Color = color;
+        }
+
+        public static void DrawLine(string id, Vector3 origin, Vector3 destination, Vector4 col)
+        {
+            uint color = ColorConvertFloat4ToU32(col);
+            if (queue.Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
+            {
+                cmd.Vertices = Alloc<DebugDrawVert>(2);
+                cmd.Indices = AllocCopy(new ushort[] { 0, 1 });
+            }
+
+            cmd.Vertices[0].Position = origin;
+            cmd.Vertices[1].Position = destination;
 
             cmd.Vertices[0].Color = color;
             cmd.Vertices[1].Color = color;
@@ -1037,6 +1053,29 @@ new Vector3(+1, +1, +1),
                     cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
                     cmd.Indices[i] = (ushort)i;
                     cmd.Indices[i + 1] = (ushort)(i + 1);
+                    i += 2;
+                }
+            }
+
+            {
+                int half = size / 2;
+
+                int i = 0;
+                for (int x = -half; x <= half; x++)
+                {
+                    var pos0 = Vector3.Transform(new Vector3(x, 0, -half), matrix);
+                    var pos1 = Vector3.Transform(new Vector3(x, 0, half), matrix);
+                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
+                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
+                    i += 2;
+                }
+
+                for (int z = -half; z <= half; z++)
+                {
+                    var pos0 = Vector3.Transform(new Vector3(-half, 0, z), matrix);
+                    var pos1 = Vector3.Transform(new Vector3(half, 0, z), matrix);
+                    cmd.Vertices[i] = new(pos0, Vector2.Zero, color);
+                    cmd.Vertices[i + 1] = new(pos1, Vector2.Zero, color);
                     i += 2;
                 }
             }

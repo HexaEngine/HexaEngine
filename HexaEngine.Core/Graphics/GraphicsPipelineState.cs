@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Numerics;
+    using System.Xml.Serialization;
 
     public struct GraphicsPipelineState : IEquatable<GraphicsPipelineState>
     {
@@ -11,18 +12,34 @@
         public DepthStencilDescription DepthStencil;
         public BlendDescription Blend;
 
+        [XmlAttribute]
         [DefaultValue(PrimitiveTopology.TriangleList)]
         public PrimitiveTopology Topology;
 
         public Vector4 BlendFactor;
 
+        [XmlAttribute]
         [DefaultValue(int.MaxValue)]
         public uint SampleMask;
 
+        [XmlAttribute]
         [DefaultValue(0)]
         public uint StencilRef;
 
+        public GraphicsPipelineState()
+        {
+            Rasterizer = RasterizerDescription.CullBack;
+            DepthStencil = DepthStencilDescription.Default;
+            Blend = BlendDescription.Opaque;
+            Topology = PrimitiveTopology.TriangleList;
+            BlendFactor = default;
+            SampleMask = int.MaxValue;
+            StencilRef = 0;
+        }
+
         public static GraphicsPipelineState Default => new() { DepthStencil = DepthStencilDescription.Default, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleList, BlendFactor = default, SampleMask = int.MaxValue };
+
+        public static GraphicsPipelineState DefaultFullscreen => new() { DepthStencil = DepthStencilDescription.None, Rasterizer = RasterizerDescription.CullBack, Blend = BlendDescription.Opaque, Topology = PrimitiveTopology.TriangleStrip, BlendFactor = default, SampleMask = int.MaxValue };
 
         public override bool Equals(object? obj)
         {

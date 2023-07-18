@@ -342,6 +342,198 @@
             return true;
         }
 
+        /// <summary>
+        /// Computes the image row pitch in bytes, and the slice ptich (size in bytes of the image)
+        /// based on DXGI format, width, and height
+        /// </summary>
+        /// <param name="fmt"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="rowPitch"></param>
+        /// <param name="slicePitch"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        public static bool ComputePitch(Format fmt, int width, int height, ref int rowPitch, ref int slicePitch, CPFlags flags)
+        {
+            int pitch;
+            int slice;
+            switch (fmt)
+            {
+                case Format.BC1Typeless:
+                case Format.BC1UNorm:
+                case Format.BC1UNormSRGB:
+                case Format.BC4Typeless:
+                case Format.BC4UNorm:
+                case Format.BC4SNorm:
+                    Trace.Assert(IsCompressed(fmt));
+                    {
+                        if ((flags & CPFlags.BadDXTNTails) != 0)
+                        {
+                            int nbw = width >> 2;
+                            int nbh = height >> 2;
+                            pitch = Math.Max(1, (nbw) * 8);
+                            slice = Math.Max(1, pitch * (nbh));
+                        }
+                        else
+                        {
+                            int nbw = Math.Max(1, ((width) + 3) / 4);
+                            int nbh = Math.Max(1, ((height) + 3 / 4));
+                            pitch = nbw * 8;
+                            slice = pitch * nbh;
+                        }
+                    }
+                    break;
+
+                case Format.BC2Typeless:
+                case Format.BC2UNorm:
+                case Format.BC2UNormSRGB:
+                case Format.BC3Typeless:
+                case Format.BC3UNorm:
+                case Format.BC3UNormSRGB:
+                case Format.BC5Typeless:
+                case Format.BC5UNorm:
+                case Format.BC5SNorm:
+                case Format.BC6HTypeless:
+                case Format.BC6HUF16:
+                case Format.BC6HSF16:
+                case Format.BC7Typeless:
+                case Format.BC7UNorm:
+                case Format.BC7UNormSRGB:
+                    Debug.Assert(IsCompressed(fmt));
+                    {
+                        if ((flags & CPFlags.BadDXTNTails) != 0)
+                        {
+                            int nbw = width >> 2;
+                            int nbh = height >> 2;
+                            pitch = Math.Max(1, (nbw) * 16);
+                            slice = Math.Max(1, pitch * (nbh));
+                        }
+                        else
+                        {
+                            int nbw = Math.Max(1, ((width) + 3) / 4);
+                            int nbh = Math.Max(1, ((height) + 3) / 4);
+                            pitch = nbw * 16;
+                            slice = pitch * nbh;
+                        }
+                    }
+                    break;
+
+                case Format.R8G8B8G8UNorm:
+                case Format.G8R8G8B8UNorm:
+                case Format.YUY2:
+                    Debug.Assert(IsPacked(fmt));
+                    pitch = (((width) + 1) >> 1) * 4;
+                    slice = pitch * (height);
+                    break;
+
+                case Format.Y210:
+                case Format.Y216:
+                    Debug.Assert(IsPacked(fmt));
+                    pitch = (((width) + 1) >> 1) * 8;
+                    slice = pitch * (height);
+                    break;
+
+                case Format.NV12:
+                case Format.Opaque420:
+                    if (height % 2 != 0)
+                    {
+                        // Requires a height alignment of 2.
+                        return false;
+                    }
+                    Debug.Assert(IsPlanar(fmt));
+                    pitch = (((width) + 1) >> 1) * 2;
+                    slice = pitch * ((height) + (((height) + 1) >> 1));
+                    break;
+
+                case Format.P010:
+                case Format.P016:
+                    if (height % 2 != 0)
+                    {
+                        // Requires a height alignment of 2.
+                        return false;
+                    }
+
+                    goto case Format.NV11;
+
+                case Format.NV11:
+                    Debug.Assert(IsPlanar(fmt));
+                    pitch = (((width) + 3) >> 2) * 4;
+                    slice = pitch * (height) * 2;
+                    break;
+
+                default:
+                    Debug.Assert(!IsCompressed(fmt) && !IsPacked(fmt) && !IsPlanar(fmt));
+                    {
+                        int bpp;
+
+                        if ((flags & CPFlags.BPP24) != 0)
+                        {
+                            bpp = 24;
+                        }
+                        else if ((flags & CPFlags.BPP16) != 0)
+                        {
+                            bpp = 16;
+                        }
+                        else if ((flags & CPFlags.BPP8) != 0)
+                        {
+                            bpp = 8;
+                        }
+                        else
+                        {
+                            bpp = (int)BitsPerPixel(fmt);
+                        }
+
+                        if (bpp == 0)
+                        {
+                            return false;
+                        }
+
+                        if ((flags & (CPFlags.LegacyDWORD | CPFlags.Paragraph | CPFlags.YMM | CPFlags.ZMM | CPFlags.Page4K)) != 0)
+                        {
+                            if ((flags & CPFlags.Page4K) != 0)
+                            {
+                                pitch = ((width) * bpp + 32767) / 32768 * 4096;
+                                slice = pitch * (height);
+                            }
+                            else if ((flags & CPFlags.ZMM) != 0)
+                            {
+                                pitch = ((width) * bpp + 511) / 512 * 64;
+                                slice = pitch * (height);
+                            }
+                            else if ((flags & CPFlags.YMM) != 0)
+                            {
+                                pitch = ((width) * bpp + 255) / 256 * 32;
+                                slice = pitch * (height);
+                            }
+                            else if ((flags & CPFlags.Paragraph) != 0)
+                            {
+                                pitch = ((width) * bpp + 127) / 128 * 16;
+                                slice = pitch * (height);
+                            }
+                            else // DWORD alignment
+                            {
+                                // Special computation for some incorrectly created DDS files based on
+                                // legacy DirectDraw assumptions about pitch alignment
+                                pitch = ((width) * bpp + 31) / 32 * sizeof(uint);
+                                slice = pitch * (height);
+                            }
+                        }
+                        else
+                        {
+                            // Default byte alignment
+                            pitch = ((width) * bpp + 7) / 8;
+                            slice = pitch * (height);
+                        }
+                    }
+                    break;
+            }
+
+            rowPitch = pitch;
+            slicePitch = slice;
+
+            return true;
+        }
+
         public static ulong ComputeScanlines(Format fmt, ulong height)
         {
             switch (fmt)

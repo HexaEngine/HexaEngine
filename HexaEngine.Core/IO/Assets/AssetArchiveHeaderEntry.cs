@@ -29,7 +29,7 @@
         public long Length;
 
         /// <summary>
-        /// Decompressed size, is the same as lenght if the Compression is set to none.
+        /// Decompressed size, is the same as length if the Compression is set to none.
         /// </summary>
         public long ActualLength;
 

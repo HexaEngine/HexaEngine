@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes.Operations
 {
-    public class DivideNode : MathOpBaseNode
+    public class DivideNode : FuncOperatorBaseNode
     {
         public DivideNode(int id, bool removable, bool isStatic) : base(id, "Divide", removable, isStatic)
         {

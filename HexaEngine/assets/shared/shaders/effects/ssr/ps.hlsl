@@ -1,120 +1,123 @@
 #include "../../camera.hlsl"
-struct VSOut
+
+#define SSR_MAX_RAY_COUNT 16
+#define SSR_RAY_STEPS 16
+#define SSR_RAY_STEP 1.60f
+#define SSR_RAY_HIT_THRESHOLD 2.00f
+
+SamplerState point_clamp_sampler : register(s0);
+SamplerState linear_clamp_sampler : register(s1);
+SamplerState linear_border_sampler : register(s2);
+
+Texture2D normalMetallicTx : register(t0);
+Texture2D sceneTx : register(t1);
+Texture2D<float> depthTx : register(t2);
+
+struct VertexOut
 {
-	float4 Pos : SV_Position;
-	float2 Tex : TEXCOORD;
+    float4 PosH : SV_POSITION;
+    float2 Tex : TEXCOORD;
 };
 
-static const float g_FarPlaneDist = 100;
-
-static const int g_maxBinarySearchStep = 40;
-static const int g_maxRayStep = 70;
-static const float g_depthbias = 0.00001f;
-static const float g_rayStepScale = 1.05f;
-static const float g_maxThickness = 1.8f;
-static const float g_maxRayLength = 200.f;
-
-Texture2D colorTexture : register(t0);
-Texture2D positionTexture : register(t1);
-Texture2D normalTexture : register(t2);
-
-SamplerState samplerState;
-
-float Noise(float2 seed)
+float4 SSRBinarySearch(float3 vDir, inout float3 vHitCoord)
 {
-	return frac(sin(dot(seed.xy, float2(12.9898, 78.233))) * 43758.5453);
+    float fDepth;
+
+    for (int i = 0; i < SSR_RAY_STEPS; i++)
+    {
+        float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
+        vProjectedCoord.xy /= vProjectedCoord.w;
+        vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+
+        // linearize depth here
+        fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
+        float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
+        float fDepthDiff = vHitCoord.z - fPositionVS.z;
+
+        if (fDepthDiff <= 0.0f)
+            vHitCoord += vDir;
+
+        vDir *= 0.5f;
+        vHitCoord -= vDir;
+    }
+
+    float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
+    vProjectedCoord.xy /= vProjectedCoord.w;
+    vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+
+    // linearize depth here
+    fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
+    float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
+    float fDepthDiff = vHitCoord.z - fPositionVS.z;
+
+    return float4(vProjectedCoord.xy, fDepth, abs(fDepthDiff) < SSR_RAY_HIT_THRESHOLD ? 1.0f : 0.0f);
 }
 
-float3 GetTexCoordXYLinearDepthZ(float3 viewPos)
+float4 SSRRayMarch(float3 vDir, inout float3 vHitCoord)
 {
-	float4 projPos = mul(float4(viewPos, 1.f), proj);
-	projPos.xy /= projPos.w;
-	projPos.xy = projPos.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-	projPos.z = viewPos.z / 100;
-	return projPos.xyz;
+    float fDepth;
+
+    for (int i = 0; i < SSR_MAX_RAY_COUNT; i++)
+    {
+        vHitCoord += vDir;
+
+        float4 vProjectedCoord = mul(float4(vHitCoord, 1.0f), proj);
+        vProjectedCoord.xy /= vProjectedCoord.w;
+        vProjectedCoord.xy = vProjectedCoord.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+
+        fDepth = depthTx.SampleLevel(point_clamp_sampler, vProjectedCoord.xy, 0);
+
+        float3 fPositionVS = GetPositionVS(vProjectedCoord.xy, fDepth);
+
+        float fDepthDiff = vHitCoord.z - fPositionVS.z;
+
+		[branch]
+        if (fDepthDiff > 0.0f)
+        {
+            return SSRBinarySearch(vDir, vHitCoord);
+        }
+
+        vDir *= SSR_RAY_STEP;
+    }
+
+    return float4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-float4 BinarySearch(float3 dir, float3 viewPos)
+bool bInsideScreen(in float2 vCoord)
 {
-	float3 texCoord = float3(0.f, 0.f, 0.f);
-	float srcdepth = 0.f;
-	float depthDiff = 0.f;
-
-	[loop]
-	for (int i = 0; i < g_maxBinarySearchStep; ++i)
-	{
-		texCoord = GetTexCoordXYLinearDepthZ(viewPos);
-		srcdepth = positionTexture.SampleLevel(samplerState, texCoord.xy, 0).w;
-		depthDiff = srcdepth.x - texCoord.z;
-
-		if (depthDiff > 0.f)
-		{
-			viewPos += dir;
-			dir *= 0.5f;
-		}
-
-		viewPos -= dir;
-	}
-
-	texCoord = GetTexCoordXYLinearDepthZ(viewPos);
-	srcdepth = positionTexture.SampleLevel(samplerState, texCoord.xy, 0).w;
-	depthDiff = abs(srcdepth - texCoord.z);
-	float4 result = float4(0.f, 0.f, 0.f, 0.f);
-	if (texCoord.z < 0.9999f && depthDiff < g_depthbias)
-	{
-		result = colorTexture.SampleLevel(samplerState, texCoord.xy, 0);
-	}
-
-	return result;
+    return !(vCoord.x < 0 || vCoord.x > 1 || vCoord.y < 0 || vCoord.y > 1);
 }
 
-float4 main(VSOut input) : SV_TARGET
+float4 main(VertexOut pin) : SV_TARGET
 {
-	float4 gpos = positionTexture.SampleLevel(samplerState, input.Tex, 0);
-	float4 gnormal = normalTexture.SampleLevel(samplerState, input.Tex, 0);
+    float4 NormalMetallic = normalMetallicTx.Sample(linear_border_sampler, pin.Tex);
+    float metallic = NormalMetallic.a;
+    float4 scene_color = sceneTx.SampleLevel(linear_clamp_sampler, pin.Tex, 0);
 
-	if (gpos.w == 0)
-		return float4(0, 0, 0, 0);
+    if (metallic < 0.01f)
+        return scene_color;
 
-	if (gnormal.w == 1)
-		return float4(0, 0, 0, 0);
+    float3 Normal = NormalMetallic.rgb;
+    Normal = 2 * Normal - 1.0;
+    Normal = normalize(mul(Normal, (float3x3) view));
 
-	float4 pos = float4(gpos.xyz, 1);
-	float3 viewPos = mul(pos, view).xyz;
+    float depth = depthTx.Sample(linear_clamp_sampler, pin.Tex);
+    float3 Position = GetPositionVS(pin.Tex, depth);
+    float3 ReflectDir = normalize(reflect(Position, Normal));
 
-	float3 normal = mul(gnormal.xyz, (float3x3) view);
+	//Raycast
+    float3 HitPos = Position;
+    float4 vCoords = SSRRayMarch(ReflectDir, HitPos);
 
-	float3 incidentVec = normalize(viewPos);
-	float3 viewNormal = normalize(normal);
+    float2 vCoordsEdgeFact = float2(1, 1) - pow(saturate(abs(vCoords.xy - float2(0.5f, 0.5f)) * 2), 8);
+    float fScreenEdgeFactor = saturate(min(vCoordsEdgeFact.x, vCoordsEdgeFact.y));
+    float reflectionIntensity =
+		saturate(
+			fScreenEdgeFactor * // screen fade
+			saturate(ReflectDir.z) // camera facing fade
+			* (vCoords.w) // / 2 + 0.5f) // rayhit binary fade
+			);
 
-	float3 reflectVec = reflect(incidentVec, viewNormal);
-	reflectVec = normalize(reflectVec);
-	reflectVec *= g_rayStepScale;
-
-	float3 reflectPos = viewPos;
-
-	float thickness = g_maxThickness;
-
-	[loop]
-	for (int i = 0; i < g_maxRayStep; ++i)
-	{
-		float3 texCoord = GetTexCoordXYLinearDepthZ(reflectPos);
-		float srcdepth = positionTexture.SampleLevel(samplerState, texCoord.xy, 0).w;
-
-		float depthDiff = texCoord.z - srcdepth;
-		if (depthDiff > g_depthbias && depthDiff < thickness)
-		{
-			float4 reflectColor = BinarySearch(reflectVec, reflectPos);
-
-			float edgeFade = 1.f - pow(length(texCoord.xy - 0.5f) * 2.f, 2.f);
-			reflectColor.a *= pow(0.75f, (length(reflectPos - viewPos) / g_maxRayLength)) * edgeFade;
-			return reflectColor;
-		}
-		else
-		{
-			reflectPos += (i + Noise(texCoord.xy)) * reflectVec;
-		}
-	}
-
-	return float4(0.f, 0, 0, 0.f);
+    float3 reflectionColor = reflectionIntensity * sceneTx.SampleLevel(linear_clamp_sampler, vCoords.xy, 0).rgb;
+    return scene_color + metallic * max(0, float4(reflectionColor, 1.0f));
 }

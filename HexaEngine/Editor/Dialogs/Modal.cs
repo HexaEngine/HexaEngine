@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
     using ImGuiNET;
+    using System.Numerics;
     using System.Runtime.CompilerServices;
 
     public abstract class Modal
@@ -13,7 +14,7 @@
 
         protected abstract ImGuiWindowFlags Flags { get; }
 
-        public unsafe void Draw()
+        public virtual void Draw()
         {
             if (signalShow)
             {
@@ -31,7 +32,7 @@
                 signalClose = false;
             }
             windowEnded = false;
-
+            ImGui.SetWindowPos(ImGui.GetIO().DisplaySize * 0.5f, ImGuiCond.Appearing);
             DrawContent();
 
             if (!windowEnded)

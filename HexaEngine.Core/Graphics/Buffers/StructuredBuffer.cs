@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using System.Runtime.CompilerServices;
 
-    public unsafe class StructuredBuffer<T> : IBuffer where T : unmanaged
+    public unsafe class StructuredBuffer<T> : IStructuredBuffer<T>, IBuffer where T : unmanaged
     {
         private const int DefaultCapacity = 128;
         private readonly IGraphicsDevice device;
@@ -22,7 +22,7 @@
 
         public StructuredBuffer(IGraphicsDevice device, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
-            dbgName = $"StructuredBuffer: {filename}, Line:{lineNumber}";
+            dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             description = new(sizeof(T) * DefaultCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
             if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
             {
@@ -34,12 +34,36 @@
             }
             capacity = DefaultCapacity;
             items = Alloc<T>(DefaultCapacity);
-            Zero(items, DefaultCapacity * sizeof(T));
+            ZeroMemory(items, DefaultCapacity * sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, description);
             buffer.DebugName = dbgName;
             srv = device.CreateShaderResourceView(buffer);
             srv.DebugName = dbgName + ".SRV";
             this.device = device;
+            MemoryManager.Register(buffer);
+        }
+
+        public StructuredBuffer(IGraphicsDevice device, uint initialCapacity, CpuAccessFlags cpuAccessFlags, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            dbgName = $"StructuredBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
+            description = new(sizeof(T) * (int)initialCapacity, BindFlags.ShaderResource, Usage.Default, cpuAccessFlags, ResourceMiscFlag.BufferStructured, sizeof(T));
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Write))
+            {
+                description.Usage = Usage.Dynamic;
+            }
+            if (cpuAccessFlags.HasFlag(CpuAccessFlags.Read))
+            {
+                description.Usage = Usage.Staging;
+            }
+            capacity = initialCapacity;
+            items = Alloc<T>(initialCapacity);
+            ZeroMemory(items, (int)initialCapacity * sizeof(T));
+            buffer = device.CreateBuffer(items, initialCapacity, description);
+            buffer.DebugName = dbgName;
+            srv = device.CreateShaderResourceView(buffer);
+            srv.DebugName = dbgName + ".SRV";
+            this.device = device;
+            MemoryManager.Register(buffer);
         }
 
         public event EventHandler? OnDisposed
@@ -75,9 +99,11 @@
                 capacity = value;
                 count = capacity < count ? capacity : count;
                 srv.Dispose();
+                MemoryManager.Unregister(buffer);
                 buffer.Dispose();
                 buffer = device.CreateBuffer(items, capacity, description);
                 buffer.DebugName = dbgName;
+                MemoryManager.Register(buffer);
                 srv = device.CreateShaderResourceView(buffer);
                 srv.DebugName = dbgName + ".SRV";
             }
@@ -144,7 +170,7 @@
             isDirty = true;
         }
 
-        public void Remove(int index)
+        public void RemoveAt(int index)
         {
             var size = (count - index) * sizeof(T);
             Buffer.MemoryCopy(&items[index + 1], &items[index], size, size);
@@ -166,6 +192,7 @@
         {
             if (!disposedValue)
             {
+                MemoryManager.Unregister(buffer);
                 srv.Dispose();
                 buffer.Dispose();
                 Free(items);

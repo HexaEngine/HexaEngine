@@ -1,7 +1,12 @@
 #include "defs.hlsl"
 #include "../../light.hlsl"
 #include "../../camera.hlsl"
-#include "../../brdf.hlsl"
+#include "../../shadow.hlsl"
+#include "../../weather.hlsl"
+
+#if CLUSTERED_FORWARD
+#include "../../cluster.hlsl"
+#endif
 
 #ifndef BaseColor
 #define BaseColor float4(0.8,0.8,0.8,1)
@@ -11,30 +16,6 @@
 #endif
 #ifndef Metalness
 #define Metalness 0
-#endif
-#ifndef Specular
-#define Specular 0.5
-#endif
-#ifndef SpecularTint
-#define SpecularTint 0
-#endif
-#ifndef Sheen
-#define Sheen 0
-#endif
-#ifndef SheenTint
-#define SheenTint 1
-#endif
-#ifndef Clearcoat
-#define Clearcoat 0
-#endif
-#ifndef ClearcoatGloss
-#define ClearcoatGloss 1
-#endif
-#ifndef Anisotropic
-#define Anisotropic 0
-#endif
-#ifndef Subsurface
-#define Subsurface 0
 #endif
 #ifndef Ao
 #define Ao 1
@@ -104,226 +85,43 @@ Texture2D ambientOcclusionRoughnessMetalnessTexture : register(t7);
 SamplerState ambientOcclusionRoughnessMetalnessSampler : register(s7);
 #endif
 
-Texture2D brdfLUT : register(t8);
-Texture2D ssao : register(t9);
+Texture2D ssao : register(t8);
+Texture2D brdfLUT : register(t9);
 
 StructuredBuffer<GlobalProbe> globalProbes : register(t10);
+StructuredBuffer<Light> lights : register(t11);
+StructuredBuffer<ShadowData> shadowData : register(t12);
 
-StructuredBuffer<DirectionalLight> directionalLights : register(t11);
-StructuredBuffer<PointLight> pointLights : register(t12);
-StructuredBuffer<Spotlight> spotlights : register(t13);
+#if !CLUSTERED_FORWARD
+Texture2D depthAtlas : register(t13);
+Texture2DArray depthCSM : register(t14);
 
-StructuredBuffer<DirectionalLightSD> directionalLightSDs : register(t14);
-StructuredBuffer<PointLightSD> pointLightSDs : register(t15);
-StructuredBuffer<SpotlightSD> spotlightSDs : register(t16);
+TextureCube globalDiffuse : register(t15);
+TextureCube globalSpecular : register(t16);
+#endif
 
-TextureCube globalDiffuse[4] : register(t17);
-TextureCube globalSpecular[4] : register(t21);
+#if CLUSTERED_FORWARD
+StructuredBuffer<uint> lightIndexList : register(t13); //MAX_CLUSTER_LIGHTS * 16^3
+StructuredBuffer<LightGrid> lightGrid : register(t14); //16^3
 
-Texture2DArray depthCSM : register(t25);
-TextureCube depthOSM[32] : register(t26);
-Texture2D depthPSM[32] : register(t58);
+Texture2D depthAtlas : register(t15);
+Texture2DArray depthCSM : register(t16);
 
-SamplerState SampleTypePoint : register(s8);
-SamplerState SampleTypeAnsio : register(s9);
+TextureCube globalDiffuse : register(t17);
+TextureCube globalSpecular : register(t18);
+#endif
 
+SamplerState linearClampSampler : register(s8);
+SamplerState linearWrapSampler : register(s9);
+SamplerState pointClampSampler : register(s10);
+SamplerComparisonState shadowSampler : register(s11);
+
+#if !CLUSTERED_FORWARD
 cbuffer constants : register(b0)
 {
-    uint directionalLightCount;
-    uint pointLightCount;
-    uint spotlightCount;
-    uint PaddLight0;
-    uint directionalLightSDCount;
-    uint pointLightSDCount;
-    uint spotlightSDCount;
-    uint PaddLight1;
-    uint globalProbeCount;
-    uint localProbeCount;
-    uint PaddLight2;
-    uint PaddLight3;
+    uint cLightCount;
 };
-
-float ShadowCalculation(SpotlightSD light, float3 fragPos, float bias, Texture2D depthTex, SamplerState state)
-{
-#if HARD_SHADOWS
-	float4 fragPosLightSpace = mul(float4(fragPos, 1.0), light.view);
-	fragPosLightSpace.y = -fragPosLightSpace.y;
-	float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-	float currentDepth = projCoords.z;
-
-	projCoords = projCoords * 0.5 + 0.5;
-
-	float depth = depthTex.Sample(state, projCoords.xy).r;
-	float shadow += (currentDepth - bias) > depth ? 1.0 : 0.0;
-
-	if (currentDepth > 1.0)
-		shadow = 0;
-
-	return shadow;
-#else
-    float4 fragPosLightSpace = mul(float4(fragPos, 1.0), light.view);
-    fragPosLightSpace.y = -fragPosLightSpace.y;
-    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    float currentDepth = projCoords.z;
-
-    projCoords = projCoords * 0.5 + 0.5;
-
-    float w;
-    float h;
-    depthTex.GetDimensions(w, h);
-
-	// PCF
-    float shadow = 0.0;
-    float2 texelSize = 1.0 / float2(w, h);
-	[unroll]
-    for (int x = -1; x <= 1; ++x)
-    {
-		[unroll]
-        for (int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = depthTex.Sample(state, projCoords.xy + float2(x, y) * texelSize).r;
-            shadow += (currentDepth - bias) > pcfDepth ? 1.0 : 0.0;
-        }
-    }
-
-    shadow /= 9;
-
-    if (currentDepth > 1.0)
-        shadow = 0;
-
-    return shadow;
 #endif
-}
-
-// array of offset direction for sampling
-float3 gridSamplingDisk[20] =
-{
-    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
-   float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
-   float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
-   float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
-   float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
-};
-
-float ShadowCalculation(PointLightSD light, float3 fragPos, float3 V, TextureCube depthTex, SamplerState state)
-{
-#if (HARD_SHADOWS)
-	// get vector between fragment position and light position
-	float3 fragToLight = fragPos - light.position;
-	// use the light to fragment vector to sample from the depth map
-	float closestDepth = depthTex.Sample(state, fragToLight).r; //texture(depthMap, fragToLight).r;
-	// it is currently in linear range between [0,1]. Re-transform back to original value
-	closestDepth *= light.far;
-	// now get current linear depth as the length between the fragment and light position
-	float currentDepth = length(fragToLight);
-	// now test for shadows
-	float bias = 0.05;
-	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
-
-	return shadow;
-#else
-	// get vector between fragment position and light position
-    float3 fragToLight = fragPos - light.position;
-	// now get current linear depth as the length between the fragment and light position
-    float currentDepth = length(fragToLight);
-    float shadow = 0.0;
-    float bias = 0.15;
-    float viewDistance = length(V);
-    float diskRadius = (1.0 + (viewDistance / light.far)) / 25.0;
-
-	[unroll]
-    for (int i = 0; i < 20; ++i)
-    {
-        float closestDepth = depthTex.Sample(state, fragToLight + gridSamplingDisk[i] * diskRadius).r;
-        closestDepth *= light.far; // undo mapping [0;1]
-        shadow += (currentDepth - bias) > closestDepth ? 1.0 : 0.0;
-    }
-    shadow /= 20;
-    return shadow;
-#endif
-}
-
-float ShadowCalculation(DirectionalLightSD light, float3 fragPosWorldSpace, float3 normal, Texture2DArray depthTex, SamplerState state)
-{
-    float cascadePlaneDistances[16] = (float[16]) light.cascades;
-    float farPlane = cam_far;
-
-    float w;
-    float h;
-    uint cascadeCount;
-    depthTex.GetDimensions(w, h, cascadeCount);
-
-	// select cascade layer
-    float4 fragPosViewSpace = mul(float4(fragPosWorldSpace, 1.0), view);
-    float depthValue = abs(fragPosViewSpace.z);
-    float cascadePlaneDistance;
-    uint layer = cascadeCount;
-    for (uint i = 0; i < cascadeCount; ++i)
-    {
-        if (depthValue < cascadePlaneDistances[i])
-        {
-            cascadePlaneDistance = cascadePlaneDistances[i];
-            layer = i;
-            break;
-        }
-    }
-
-    float4 fragPosLightSpace = mul(float4(fragPosWorldSpace, 1.0), light.views[layer]);
-    fragPosLightSpace.y = -fragPosLightSpace.y;
-    float3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
-    float currentDepth = projCoords.z;
-    projCoords = projCoords * 0.5 + 0.5;
-
-	// calculate bias (based on depth map resolution and slope)
-    normal = normalize(normal);
-    float bias = max(0.05 * (1.0 - dot(normal, light.dir)), 0.005);
-    const float biasModifier = 0.5f;
-    if (layer == cascadeCount)
-    {
-        bias *= 1 / (farPlane * biasModifier);
-    }
-    else
-    {
-        bias *= 1 / (cascadePlaneDistance * biasModifier);
-    }
-
-#if (HARD_SHADOWS)
-	float depth = depthTex.Sample(state, float3(projCoords.xy, layer)).r;
-	float shadow = (currentDepth - bias) > depth ? 1.0 : 0.0;
-
-	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-	if (currentDepth > 1.0)
-	{
-		shadow = 0.0;
-	}
-
-	return shadow;
-#else
-	// PCF
-    float shadow = 0.0;
-    float2 texelSize = 1.0 / float2(w, h);
-	[unroll]
-    for (int x = -1; x <= 1; ++x)
-    {
-		[unroll]
-        for (int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = depthTex.Sample(state, float3(projCoords.xy + float2(x, y) * texelSize, layer)).r;
-            shadow += (currentDepth - bias) > pcfDepth ? 1.0 : 0.0;
-        }
-    }
-
-    shadow /= 9;
-
-	// keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
-    if (currentDepth > 1.0)
-    {
-        shadow = 0.0;
-    }
-
-    return shadow;
-#endif
-}
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW, float3 bitangent)
 {
@@ -361,211 +159,261 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
     return bumpedNormalW;
 }
 
+float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
+{
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
+
+#if HARD_SHADOWS_SPOTLIGHTS
+    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
+#else
+    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
+#endif
+}
+
+// array of offset direction for sampling
+static const float3 gridSamplingDisk[20] =
+{
+    float3(1, 1, 1), float3(1, -1, 1), float3(-1, -1, 1), float3(-1, 1, 1),
+	float3(1, 1, -1), float3(1, -1, -1), float3(-1, -1, -1), float3(-1, 1, -1),
+	float3(1, 1, 0), float3(1, -1, 0), float3(-1, -1, 0), float3(-1, 1, 0),
+	float3(1, 0, 1), float3(-1, 0, 1), float3(1, 0, -1), float3(-1, 0, -1),
+	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
+};
+
+#define HARD_SHADOWS_POINTLIGHTS 1
+float4 ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
+{
+    float3 lightDirection = position - light.position.xyz;
+
+    int face = GetPointLightFace(lightDirection);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
+
+    /*return float4(uvd.xyz, 1);
+    switch (face)
+    {
+        case 0:
+            return float4(1, 0, 0, 1);
+        case 1:
+            return float4(0, 1, 0, 1);
+        case 2:
+            return float4(0, 0, 1, 1);
+        case 3:
+            return float4(1, 1, 0, 1);
+        case 4:
+            return float4(0, 1, 1, 1);
+        case 5:
+            return float4(1, 0, 1, 1);
+    }*/
+
+#if HARD_SHADOWS_POINTLIGHTS
+    return CalcShadowFactor_Basic(state, depthAtlas, uvd);
+#else
+    return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
+#endif
+}
+
+float ShadowFactorDirectionalLight(ShadowData data, float3 position, Texture2D depthTex, SamplerComparisonState state)
+{
+    float3 uvd = GetShadowUVD(position, data.views[0]);
+
+#if HARD_SHADOWS_DIRECTIONAL
+    return CalcShadowFactor_Basic(state, depthTex, uvd);
+#else
+    return CalcShadowFactor_PCF3x3(state, depthTex, uvd, data.size, 1);
+#endif
+}
+
+float ShadowFactorDirectionalLightCascaded(ShadowData data, float camFar, float4x4 camView, float3 position, Texture2DArray depthTex, SamplerComparisonState state)
+{
+    float cascadePlaneDistances[8] = (float[8]) data.cascades;
+    float farPlane = camFar;
+
+	// select cascade layer
+    float4 fragPosViewSpace = mul(float4(position, 1.0), camView);
+    float depthValue = abs(fragPosViewSpace.z);
+    float cascadePlaneDistance;
+    uint layer = data.cascadeCount;
+    for (uint i = 0; i < data.cascadeCount; ++i)
+    {
+        if (depthValue < cascadePlaneDistances[i])
+        {
+            cascadePlaneDistance = cascadePlaneDistances[i];
+            layer = i;
+            break;
+        }
+    }
+
+    float3 uvd = GetShadowUVD(position, data.views[layer]);
+
+#if HARD_SHADOWS_DIRECTIONAL_CASCADED
+    return CSMCalcShadowFactor_Basic(state, depthTex, layer, uvd, data.size, data.softness);
+#else
+    return CSMCalcShadowFactor_PCF3x3(state, depthTex, layer, uvd, data.size, data.softness);
+#endif
+}
+
+float3 GetHBasisIrradiance(in float3 n, in float3 H0, in float3 H1, in float3 H2, in float3 H3)
+{
+    float3 color = 0.0f;
+
+    // Band 0
+    color += H0 * (1.0f / sqrt(2.0f * 3.14159f));
+
+    // Band 1
+    color += H1 * -sqrt(1.5f / 3.14159f) * n.y;
+    color += H2 * sqrt(1.5f / 3.14159f) * (2 * n.z - 1.0f);
+    color += H3 * -sqrt(1.5f / 3.14159f) * n.x;
+
+    return color;
+}
+
 struct Pixel
 {
     float4 Color : SV_Target0;
-    float4 Position : SV_Target1;
-    float4 Normal : SV_Target2;
+    float4 Normal : SV_Target1;
 };
 
+[earlydepthstencil]
 Pixel main(PixelInput input)
 {
     float3 position = input.pos;
-#if VtxColor
-    float4 baseColor = input.color;
-#else
     float4 baseColor = BaseColor;
-#endif
-#if VtxNormal
     float3 normal = normalize(input.normal);
-#endif
-#if VtxTangent
     float3 tangent = normalize(input.tangent);
-#endif
-#if VtxBitangent
     float3 bitangent = normalize(input.bitangent);
-#endif
-    float3 emissive = Emissive.
-    xyz;
+
     float opacity = 1;
 
     float ao = Ao;
-    float specular = Specular;
-    float specularTint = SpecularTint;
-    float sheen = Sheen;
-    float sheenTint = SheenTint;
-    float clearcoat = Clearcoat;
-    float clearcoatGloss = ClearcoatGloss;
-    float anisotropic = Anisotropic;
-    float subsurface = Subsurface;
     float roughness = Roughness;
-    float metalness = Metalness;
-	
-#if VtxUV
+    float metallic = Metalness;
+    float3 emissive = Emissive;
+
 #if HasBaseColorTex
 	float4 color = baseColorTexture.Sample(baseColorTextureSampler, (float2) input.tex);
     baseColor = float4(color.rgb * color.a, color.a);
 #endif
 
-#if VtxTangent
 #if HasNormalTex
-#if VtxBitangent
     normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent, bitangent);
-#else
-	normal = NormalSampleToWorldSpace(normalTexture.Sample(normalTextureSampler, (float2) input.tex).rgb, normal, tangent);
 #endif
-#endif
-#endif
-	
+
 #if HasRoughnessTex
     roughness = roughnessTexture.Sample(roughnessTextureSampler, (float2) input.tex).r;
 #endif
-	
+
 #if HasMetalnessTex
-    metalness = metalnessTexture.Sample(metalnessTextureSampler, (float2) input.tex).r;
+    metallic = metalnessTexture.Sample(metalnessTextureSampler, (float2) input.tex).r;
 #endif
-	
+
 #if HasEmissiveTex
     emissive = emissiveTexture.Sample(emissiveTextureSampler, (float2) input.tex).rgb;
 #endif
-	
+
 #if HasAmbientOcclusionTex
     ao = ambientOcclusionTexture.Sample(ambientOcclusionTextureSampler, (float2) input.tex).r;
 #endif
-	
+
 #if HasRoughnessMetalnessTex
     float2 rm = roughnessMetalnessTexture.Sample(roughnessMetalnessTextureSampler, (float2) input.tex).gb;
     roughness = rm.x;
-    metalness = rm.y;
+    metallic = rm.y;
 #endif
 #if HasAmbientOcclusionRoughnessMetalnessTex
     float3 orm = ambientOcclusionRoughnessMetalnessTexture.Sample(ambientOcclusionRoughnessMetalnessSampler, (float2) input.tex).rgb;
     ao = orm.r;
     roughness = orm.g;
-    metalness = orm.b;
-#endif
+    metallic = orm.b;
 #endif
 
     if (baseColor.a < 0.1f)
         discard;
 
-    float3 N = normal;
-    float3 X = tangent;
-#if VtxBitangent
-	float3 Y = bitangent;
-#else
-    float3 Y = normalize(cross(N, X));
-#endif
+    float3 N = normalize(normal);
     float3 V = normalize(GetCameraPos() - position);
 
-    float3 Lo = 0;
+    float3 F0 = lerp(float3(0.04f, 0.04f, 0.04f), baseColor.rgb, metallic);
+
+    float3 Lo = float3(0, 0, 0);
+
+#if CLUSTERED_FORWARD
+    uint tileIndex = GetClusterIndex(GetLinearDepth(input.position.z / input.position.w), camNear, camFar, screenDim, float4(position, 1));
+
+    uint lightCount = lightGrid[tileIndex].lightCount;
+    uint lightOffset = lightGrid[tileIndex].lightOffset;
+#else
+    uint lightCount = cLightCount;
+#endif
 
     [loop]
-    for (uint x = 0; x < directionalLightCount; x++)
+    for (uint i = 0; i < lightCount; i++)
     {
-        DirectionalLight light = directionalLights[x];
-        float3 L = normalize(-light.dir);
-        float3 radiance = light.color.rgb;
-        Lo += BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
-    }
+        float3 L = 0;
+#if CLUSTERED_FORWARD
+        uint lightIndex = lightIndexList[lightOffset + i];
+        Light light = lights[lightIndex];
+#else
+        Light light = lights[i];
+#endif
 
-    [unroll(32)]
-    for (uint y = 0; y < directionalLightSDCount; y++)
-    {
-        DirectionalLightSD light = directionalLightSDs[y];
-        float bias = max(0.05f * (1.0 - dot(N, V)), 0.005f);
-        float shadow = ShadowCalculation(light, position, N, depthCSM, SampleTypeAnsio);
-        float3 L = normalize(-light.dir);
-        float3 radiance = light.color.rgb;
-        Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
-    }
-
-    [loop]
-    for (uint z = 0; z < pointLightCount; z++)
-    {
-        PointLight light = pointLights[z];
-        float3 LN = light.position - position;
-        float distance = length(LN);
-        float3 L = normalize(LN);
-
-        float attenuation = 1.0 / (distance * distance);
-        float3 radiance = light.color.rgb * attenuation;
-
-        Lo += BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
-    }
-
-    [unroll(32)]
-    for (uint zd = 0; zd < pointLightSDCount; zd++)
-    {
-        PointLightSD light = pointLightSDs[zd];
-        float3 LN = light.position - position;
-        float distance = length(LN);
-        float3 L = normalize(LN);
-
-        float attenuation = 1.0 / (distance * distance);
-        float3 radiance = light.color.rgb * attenuation;
-        float shadow = ShadowCalculation(light, position, V, depthOSM[zd], SampleTypeAnsio);
-        Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
-    }
-
-    [loop]
-    for (uint w = 0; w < spotlightCount; w++)
-    {
-        Spotlight light = spotlights[w];
-        float3 LN = light.pos - position;
-        float3 L = normalize(LN);
-
-        float theta = dot(L, normalize(-light.dir));
-        if (theta > light.cutOff)
+        switch (light.type)
         {
-            float distance = length(LN);
-            float attenuation = 1.0 / (distance * distance);
-            float epsilon = light.cutOff - light.outerCutOff;
-            float falloff = 1;
-            if (epsilon != 0)
-                falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
-            float3 radiance = light.color.rgb * attenuation * falloff;
-            Lo += BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+            case POINT_LIGHT:
+                L += PointLightBRDF(light, position, F0, V, N, baseColor.rgb, roughness, metallic);
+                break;
+            case SPOT_LIGHT:
+                L += SpotlightBRDF(light, position, F0, V, N, baseColor.rgb, roughness, metallic);
+                break;
+            case DIRECTIONAL_LIGHT:
+                L += DirectionalLightBRDF(light, F0, V, N, baseColor.rgb, roughness, metallic);
+                break;
         }
-    }
 
-    [unroll(32)]
-    for (uint wd = 0; wd < spotlightSDCount; wd++)
-    {
-        SpotlightSD light = spotlightSDs[wd];
-        float3 LN = light.pos - position;
-        float3 L = normalize(LN);
+        float shadowFactor = 1;
 
-        float theta = dot(L, normalize(-light.dir));
-        if (theta > light.cutOff)
+        if (light.castsShadows)
         {
-            float distance = length(LN);
-            float attenuation = 1.0 / (distance * distance);
-            float epsilon = light.cutOff - light.outerCutOff;
-            float falloff = 1;
-            if (epsilon != 0)
-                falloff = 1 - smoothstep(0.0, 1.0, (theta - light.outerCutOff) / epsilon);
-            float3 radiance = light.color.rgb * attenuation * falloff;
-            float cosTheta = dot(N, -L);
-            float bias = clamp(0.005 * tan(acos(cosTheta)), 0, 0.01);
-            float shadow = ShadowCalculation(light, position, bias, depthPSM[wd], SampleTypeAnsio);
-
-            Lo += (1.0f - shadow) * BRDF(L, V, N, X, Y, baseColor.xyz, specular, specularTint, metalness, roughness, sheen, sheenTint, clearcoat, clearcoatGloss, anisotropic, subsurface) * radiance;
+            ShadowData data = shadowData[light.shadowMapIndex];
+            switch (light.type)
+            {
+                case POINT_LIGHT:
+                   // shadowFactor = ShadowFactorPointLight(data, light, position, shadowSampler);
+                    L = ShadowFactorPointLight(data, light, position, shadowSampler).xyz;
+                    break;
+                case SPOT_LIGHT:
+                    shadowFactor = ShadowFactorSpotlight(data, position, shadowSampler);
+                    break;
+                case DIRECTIONAL_LIGHT:
+                    shadowFactor = ShadowFactorDirectionalLightCascaded(data, camFar, view, position, depthCSM, shadowSampler);
+                    break;
+            }
         }
+
+        Lo += L * shadowFactor;
     }
 
-	
-    float3 ambient = emissive;
-	
-	[unroll(4)]
-    for (uint i = 0; i < globalProbeCount; i++)
-    {
-        ambient += BRDFIndirect(SampleTypeAnsio, globalDiffuse[i], globalSpecular[i], brdfLUT, N, V, baseColor.xyz, metalness, roughness, clearcoat, clearcoatGloss, sheen, sheenTint, ao, anisotropic);
-    }
-	
+    float3 ambient = baseColor * ambient_color;
+
+    float2 screenUV = GetScreenUV(input.position);
+
+    ao *= ssao.Sample(linearClampSampler, screenUV);
+
+    ambient = (ambient + BRDF_IBL(linearWrapSampler, globalDiffuse, globalSpecular, brdfLUT, F0, N, V, baseColor.xyz, roughness)) * ao;
+    ambient += emissive;
+
+#if HasBakedLightMap
+    ambient += GetHBasisIrradiance(normal, input.H0, input.H1, input.H2, input.H3) / 3.14159f;
+#endif
+
     Pixel output;
-    output.Color = float4(ambient + Lo * ao, baseColor.a);
-    output.Position = float4(position, input.depth);
+    output.Color = float4(ambient + Lo, baseColor.a);
     output.Normal = float4(N, baseColor.a);
+
+#if BAKE_FORWARD
+	// For baking we render without backface culling, so that we still get occlusions inside meshes that
+	// don't have full modeled interiors. If it is a backface triangle, we output pure black.
+    output.Color = input.IsFrontFace ? output.Color : 0.0f;
+#endif
+
     return output;
 }

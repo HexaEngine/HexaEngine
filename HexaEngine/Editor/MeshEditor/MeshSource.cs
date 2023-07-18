@@ -1,15 +1,16 @@
 ﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
+    using HexaEngine.Core.Meshes;
     using System.Numerics;
 
     public unsafe class MeshSource : IDisposable
     {
         public MeshData Data;
-        public readonly IBuffer VB;
-        public readonly IBuffer IB;
-        public readonly IBuffer IDB;
+        public readonly VertexBuffer<MeshVertex> VertexBuffer;
+        public readonly IndexBuffer<uint> IndexBuffer;
         public readonly uint Stride;
         public readonly uint VertexCount;
         public readonly uint IndexCount;
@@ -23,38 +24,35 @@
         public MeshSource(IGraphicsDevice device, MeshData data)
         {
             Data = data;
-            VB = data.CreateVertexBuffer(device, Usage.Dynamic, CpuAccessFlags.Write);
-            IB = data.CreateIndexBuffer(device, Usage.Dynamic, CpuAccessFlags.Write);
-            var id = 0;
-            IDB = device.CreateBuffer(&id, 4, BindFlags.ConstantBuffer, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.None);
-            Stride = data.GetStride();
+            VertexBuffer = data.CreateVertexBuffer(device, CpuAccessFlags.Write);
+            IndexBuffer = data.CreateIndexBuffer(device, CpuAccessFlags.Write);
+            Stride = (uint)sizeof(MeshVertex);
 
             VertexCount = data.VerticesCount;
             IndexCount = data.IndicesCount;
 
-            ShaderMacro[] macros = data.GetShaderMacros();
-            InputElementDescription[] inputElements = data.GetInputElements();
+            InputElementDescription[] inputElements = MeshData.InputElements;
 
             Solid = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "forward/solid2/vs.hlsl",
-                PixelShader = "forward/solid2/ps.hlsl",
+                VertexShader = "forward/solid/vs.hlsl",
+                PixelShader = "forward/solid/ps.hlsl",
             },
             new GraphicsPipelineState()
             {
                 Blend = BlendDescription.Opaque,
                 BlendFactor = Vector4.Zero,
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
+                Rasterizer = RasterizerDescription.CullNone,
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
 
             Overlay = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "forward/wireframe2/vs.hlsl",
-                PixelShader = "forward/wireframe2/ps.hlsl",
+                VertexShader = "forward/wireframe/vs.hlsl",
+                PixelShader = "forward/wireframe/ps.hlsl",
             },
             new GraphicsPipelineState()
             {
@@ -65,13 +63,13 @@
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
 
             Normals = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "debugging/normals2/vs.hlsl",
-                GeometryShader = "debugging/normals2/gs.hlsl",
-                PixelShader = "debugging/normals2/ps.hlsl",
+                VertexShader = "debugging/normals/vs.hlsl",
+                GeometryShader = "debugging/normals/gs.hlsl",
+                PixelShader = "debugging/normals/ps.hlsl",
             },
             new GraphicsPipelineState()
             {
@@ -82,7 +80,7 @@
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
 
             Points = device.CreateGraphicsPipeline(new()
             {
@@ -99,34 +97,32 @@
                 Topology = PrimitiveTopology.PointList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,
-            }, inputElements, macros);
+            }, inputElements);
         }
 
         public void Update(IGraphicsContext context, bool ib, bool vb)
         {
             if (ib)
             {
-                Data.WriteIndexBuffer(context, IB);
+                Data.WriteIndexBuffer(context, IndexBuffer);
             }
 
             if (vb)
             {
-                Data.WriteVertexBuffer(context, VB);
+                Data.WriteVertexBuffer(context, VertexBuffer);
             }
         }
 
         public void Bind(IGraphicsContext context)
         {
-            context.VSSetConstantBuffer(IDB, 0);
-            context.SetIndexBuffer(IB, Format.R32UInt, 0);
-            context.SetVertexBuffer(VB, Stride);
+            context.SetIndexBuffer(IndexBuffer, Format.R32UInt, 0);
+            context.SetVertexBuffer(VertexBuffer, Stride);
         }
 
         public void Draw(IGraphicsContext context)
         {
-            context.SetIndexBuffer(IB, Format.R32UInt, 0);
-            context.SetVertexBuffer(VB, Stride);
-            context.VSSetConstantBuffer(IDB, 0);
+            context.SetIndexBuffer(IndexBuffer, Format.R32UInt, 0);
+            context.SetVertexBuffer(VertexBuffer, Stride);
             context.DrawIndexedInstanced(IndexCount, 1, 0, 0, 0);
         }
 
@@ -134,9 +130,8 @@
         {
             if (!disposedValue)
             {
-                VB.Dispose();
-                IB.Dispose();
-                IDB.Dispose();
+                VertexBuffer.Dispose();
+                IndexBuffer.Dispose();
                 Solid.Dispose();
                 Overlay.Dispose();
                 Normals.Dispose();

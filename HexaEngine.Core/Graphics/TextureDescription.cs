@@ -41,7 +41,7 @@
             int arraySize,
             int mipLevels,
             SampleDescription sampleDescription,
-            Format format = Format.R32G32B32A32Float,
+            Format format,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -83,7 +83,7 @@
             int depth,
             int arraySize,
             int mipLevels,
-            Format format = Format.R32G32B32A32Float,
+            Format format,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -123,7 +123,7 @@
             int height,
             int depth,
             int mipLevels,
-            Format format = Format.R32G32B32A32Float,
+            Format format,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -159,7 +159,7 @@
             TextureDimension dimension,
             int width,
             int height,
-            Format format = Format.R32G32B32A32Float,
+            Format format,
             Usage usage = Usage.Default,
             BindFlags bindFlags = BindFlags.ShaderResource,
             CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None,
@@ -263,7 +263,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture1D(int width, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1D(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -279,7 +279,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture1DWithRTV(int width, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1DWithRTV(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -296,7 +296,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture1DArray(int width, int arraySize, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1DArray(int width, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -313,7 +313,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture1DArrayWithRTV(int width, int arraySize, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture1DArrayWithRTV(int width, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture1D, width, 0, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -330,7 +330,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture2D(int width, int height, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2D(int width, int height, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -347,7 +347,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture2DWithRTV(int width, int height, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2DWithRTV(int width, int height, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -365,7 +365,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture2DArray(int width, int height, int arraySize, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2DArray(int width, int height, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -383,7 +383,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture2DArrayWithRTV(int width, int height, int arraySize, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture2DArrayWithRTV(int width, int height, int arraySize, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture2D, width, height, 0, arraySize, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -399,7 +399,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTextureCube(int width, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        public static TextureDescription CreateTextureCube(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -415,7 +415,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTextureCubeWithRTV(int width, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        public static TextureDescription CreateTextureCubeWithRTV(int width, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -432,7 +432,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTextureCubeArrayWithRTV(int width, int size, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
+        public static TextureDescription CreateTextureCubeArrayWithRTV(int width, int size, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.TextureCube)
         {
             return new TextureDescription(TextureDimension.TextureCube, width, width, 0, 6 * size, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -450,7 +450,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture3D(int width, int height, int depth, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture3D(int width, int height, int depth, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture3D, width, height, depth, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -468,7 +468,7 @@
         /// <param dbgName="cpuAccessFlags">The cpu access flags.</param>
         /// <param dbgName="resourceOptionFlags">The resource option flags.</param>
         /// <returns></returns>
-        public static TextureDescription CreateTexture3DWithRTV(int width, int height, int depth, int mips, Format format = Format.R32G32B32A32Float, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
+        public static TextureDescription CreateTexture3DWithRTV(int width, int height, int depth, int mips, Format format, Usage usage = Usage.Default, BindFlags bindFlags = BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags cpuAccessFlags = CpuAccessFlags.None, ResourceMiscFlag resourceOptionFlags = ResourceMiscFlag.None)
         {
             return new TextureDescription(TextureDimension.Texture3D, width, height, depth, mips, format, usage, bindFlags, cpuAccessFlags, resourceOptionFlags);
         }
@@ -636,7 +636,7 @@
         }
     }
 
-    public struct DepthStencilBufferDesc
+    public struct DepthStencilBufferDescription
     {
         public Format Format;
         public int Width;
@@ -648,11 +648,11 @@
         public DepthStencilViewFlags ViewFlags;
         public SampleDescription SampleDescription;
 
-        public static DepthStencilBufferDesc CreateDepthBufferSRV(int width, int height) => new(width, height, 1, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
+        public static DepthStencilBufferDescription CreateDepthBufferSRV(int width, int height) => new(width, height, 1, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
 
-        public static DepthStencilBufferDesc CreateDepthBufferSRV(int width, int height, int arraySize) => new(width, height, arraySize, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
+        public static DepthStencilBufferDescription CreateDepthBufferSRV(int width, int height, int arraySize) => new(width, height, arraySize, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
 
-        public DepthStencilBufferDesc(int width, int height, int arraySize, Format format, BindFlags bindFlags, Usage usage, CpuAccessFlags cPUAccessFlags, DepthStencilViewFlags viewFlags, SampleDescription sampleDescription)
+        public DepthStencilBufferDescription(int width, int height, int arraySize, Format format, BindFlags bindFlags, Usage usage, CpuAccessFlags cPUAccessFlags, DepthStencilViewFlags viewFlags, SampleDescription sampleDescription)
         {
             Width = width;
             Height = height;
@@ -663,6 +663,19 @@
             CPUAccessFlags = cPUAccessFlags;
             ViewFlags = viewFlags;
             SampleDescription = sampleDescription;
+        }
+
+        public DepthStencilBufferDescription(int width, int height, int arraySize, Format format, BindFlags bindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None, DepthStencilViewFlags viewFlags = DepthStencilViewFlags.None)
+        {
+            Width = width;
+            Height = height;
+            ArraySize = arraySize;
+            Format = format;
+            BindFlags = bindFlags;
+            Usage = usage;
+            CPUAccessFlags = cPUAccessFlags;
+            ViewFlags = viewFlags;
+            SampleDescription = SampleDescription.Default;
         }
     }
 }

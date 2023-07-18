@@ -239,6 +239,7 @@
         /// <param name="v2">Triangle Corner 3</param>
         /// <param name="pointInTriangle">Intersection point if boolean returns true</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Intersects2(in Vector3 v0, in Vector3 v1, in Vector3 v2, out Vector3 pointInTriangle)
         {
             pointInTriangle = default;
@@ -287,6 +288,52 @@
             }
         }
 
+        public static bool RayIntersectsTriangle(Ray ray, Triangle inTriangle, out Vector3 outIntersectionPoint)
+        {
+            outIntersectionPoint = default;
+            const float EPSILON = 0.0000001f;
+
+            Vector3 rayOrigin = ray.Position;
+            Vector3 rayVector = ray.Direction;
+
+            Vector3 vertex0 = inTriangle.Point1;
+            Vector3 vertex1 = inTriangle.Point2;
+            Vector3 vertex2 = inTriangle.Point3;
+            Vector3 edge1, edge2, h, s, q;
+            float a, f, u, v;
+            edge1 = vertex1 - vertex0;
+            edge2 = vertex2 - vertex0;
+            h = Vector3.Cross(rayVector, edge2);
+            a = Vector3.Dot(edge1, h);
+
+            if (a > -EPSILON && a < EPSILON)
+                return false;    // This ray is parallel to this triangle.
+
+            f = 1.0f / a;
+            s = rayOrigin - vertex0;
+            u = f * Vector3.Dot(s, h);
+
+            if (u < 0.0 || u > 1.0)
+                return false;
+
+            q = Vector3.Cross(s, edge1);
+            v = f * Vector3.Dot(rayVector, q);
+
+            if (v < 0.0 || u + v > 1.0)
+                return false;
+
+            // At this stage we can compute t to find out where the intersection point is on the line.
+            float t = f * Vector3.Dot(edge2, q);
+
+            if (t > EPSILON) // ray intersection
+            {
+                outIntersectionPoint = rayOrigin + rayVector * t;
+                return true;
+            }
+            else // This means that there is a line intersection but not a ray intersection.
+                return false;
+        }
+
         /// <summary>
         /// Compares two <see cref="Ray"/> objects for inequality.
         /// </summary>
@@ -316,6 +363,12 @@
         public string ToString(string? format, IFormatProvider? formatProvider)
         {
             return $"Position:{Position.ToString(format, formatProvider)} Direction:{Direction.ToString(format, formatProvider)}";
+        }
+
+        public static Ray Transform(Ray ray, Matrix4x4 transform)
+        {
+            Ray result = new(Vector3.Transform(ray.Position, transform), Vector3.TransformNormal(ray.Direction, transform));
+            return result;
         }
     }
 }

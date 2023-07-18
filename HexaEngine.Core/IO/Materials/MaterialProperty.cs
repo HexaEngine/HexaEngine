@@ -38,6 +38,27 @@
             SetFloat4(value);
         }
 
+        public static int GetByteCount(MaterialValueType type)
+        {
+            return type switch
+            {
+                MaterialValueType.Float => 4,
+                MaterialValueType.Float2 => 8,
+                MaterialValueType.Float3 => 12,
+                MaterialValueType.Float4 => 16,
+                MaterialValueType.Bool => 1,
+                MaterialValueType.UInt8 => 1,
+                MaterialValueType.UInt16 => 2,
+                MaterialValueType.UInt32 => 4,
+                MaterialValueType.UInt64 => 8,
+                MaterialValueType.Int8 => 1,
+                MaterialValueType.Int16 => 2,
+                MaterialValueType.Int32 => 4,
+                MaterialValueType.Int64 => 8,
+                _ => throw new ArgumentOutOfRangeException(nameof(type)),
+            };
+        }
+
         public void Read(Stream src, Encoding encoding, Endianness endianness)
         {
             Name = src.ReadString(encoding, endianness) ?? string.Empty;

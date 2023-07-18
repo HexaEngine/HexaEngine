@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
+    using HexaEngine.Scenes;
     using ImGuiNET;
 
     public class SceneVariablesWindow : EditorWindow
