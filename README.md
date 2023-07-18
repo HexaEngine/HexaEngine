@@ -15,8 +15,8 @@ Native libs source can be found under https://github.com/JunaMeinhold/HexaEngine
 - Clustered Forward and Clustered Deferred (Hybrid renderer)
 - Many post processing effects (DoF, SSR, Tonemapping, LUT, Bloom, Motion blur)
 - Ambient Occlusion (SSAO, HBAO+, GTAO and ASSAO are comming soon)
-- Level-Editor
-- Physics Engine
+- Level-Editor (still in work, but it's usable)
+- Physics Engine (multiple usable collider types are already implemented)
 - Plugin System
 - Audio System (Wav-file support)
 - Culling (Frustum and Occlusion) (doesn't work/integrated properly)
