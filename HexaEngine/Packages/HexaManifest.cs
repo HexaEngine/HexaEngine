@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Packages
 {
-    public class HexaManifest
+    public class PackageMetadata
     {
         public string Version { get; set; }
 

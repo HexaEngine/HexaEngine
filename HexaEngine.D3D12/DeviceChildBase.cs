@@ -24,7 +24,7 @@
                 uint len;
                 Guid guid = D3DDebugObjectName;
                 child->GetPrivateData(&guid, &len, null);
-                byte* pName = Alloc<byte>(len);
+                byte* pName = AllocT<byte>(len);
                 child->GetPrivateData(&guid, &len, pName);
                 string str = Utils.ToStr(pName, len);
                 Free(pName);

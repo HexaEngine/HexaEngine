@@ -67,7 +67,7 @@
         /// <summary>
         /// Creates a new instance of the <see cref="SdlWindow"/> class.
         /// </summary>
-        public SdlWindow()
+        public SdlWindow(WindowFlags flags = WindowFlags.Resizable)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -78,18 +78,39 @@
                 Kind = NativeWindowFlags.Sdl;
             }
 
-            PlatformConstruct();
+            PlatformConstruct(flags);
+        }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="SdlWindow"/> class.
+        /// </summary>
+        public SdlWindow(int x, int y, int width, int height, WindowFlags flags = WindowFlags.Resizable)
+        {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Kind = NativeWindowFlags.Win32;
+            }
+            else
+            {
+                Kind = NativeWindowFlags.Sdl;
+            }
+
+            PlatformConstruct(flags);
         }
 
         /// <summary>
         /// Method called to construct the platform-specific window.
         /// </summary>
-        internal void PlatformConstruct()
+        internal void PlatformConstruct(WindowFlags flags)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 
-            WindowFlags flags = WindowFlags.Resizable | WindowFlags.Hidden;
+            flags |= WindowFlags.Hidden;
 
             switch (Application.GraphicsBackend)
             {

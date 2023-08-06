@@ -1,4 +1,9 @@
-﻿namespace HexaEngine.Core.Debugging
+﻿// Copyright (c) 2020 - present, Roland Munguia
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
+// Modified and ported by me.
+
+namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Collections;
     using ImGuiNET;
@@ -7,6 +12,7 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Numerics;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -37,6 +43,7 @@
         private static readonly string m_ConsoleName = "Console";
         private static bool m_consoleOpen;
         private static readonly SemaphoreSlim semaphore = new(1);
+        private static unsafe ImGuiInputTextCallback inputTextCallback = InputCallback;
         private const int max_messages = 4096;
 
         static ImGuiConsole()
@@ -48,6 +55,10 @@
             RegisterCommand("clear", _ =>
             {
                 messages.Clear();
+            });
+            RegisterCommand("info", _ =>
+            {
+                Log(LogSeverity.Information, $"HexaEngine: v{Assembly.GetExecutingAssembly().GetName().Version}");
             });
         }
 
@@ -527,7 +538,7 @@
 
             // Input widget. (Width an always fixed width)
             ImGui.PushItemWidth(-ImGui.GetStyle().ItemSpacing.X * 7);
-            if (ImGui.InputText("Input", ref m_Buffer, m_Buffer_size, inputTextFlags))
+            if (ImGui.InputText("Input", ref m_Buffer, m_Buffer_size, inputTextFlags, inputTextCallback))
             {
                 // Validate.
                 if (!string.IsNullOrWhiteSpace(m_Buffer))
@@ -726,7 +737,7 @@
                             // Autocomplete only when one work is available.
                             if (!(m_CmdSuggestions.Count == 0) && m_CmdSuggestions.Count == 1)
                             {
-                                buffer[startSubtrPos..data->BufTextLen].Fill((char)0);
+                                buffer[startSubtrPos..data->BufTextLen].Clear();
                                 string ne = m_CmdSuggestions[0];
                                 m_CmdSuggestions.Clear();
                                 data->Buf = (byte*)Marshal.StringToCoTaskMemUTF8(ne).ToPointer();
@@ -740,7 +751,7 @@
                                 if (!string.IsNullOrEmpty(partial))
                                 {
                                     int newLen = data->BufTextLen - startSubtrPos;
-                                    buffer[startSubtrPos..data->BufTextLen].Fill((char)0);
+                                    buffer[startSubtrPos..data->BufTextLen].Clear();
                                     partial.CopyTo(buffer[startSubtrPos..]);
                                     data->BufDirty = 1;
                                 }

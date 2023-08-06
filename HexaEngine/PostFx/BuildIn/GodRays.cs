@@ -3,8 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Noise;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
@@ -14,11 +12,10 @@
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using System;
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public class GodRays : IPostFx
+    public class GodRays : PostFxBase
     {
         private IGraphicsDevice device;
         private Core.Graphics.Primitives.Plane quad1;
@@ -38,8 +35,7 @@
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
-        private bool enabled = true;
-        private int priority = 98;
+
         private float godraysDensity = 0.975f;
         private float godraysWeight = 0.25f;
         private float godraysDecay = 0.825f;
@@ -47,39 +43,33 @@
 
         private bool sunPresent;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "GodRays";
 
-        public event Action<int>? OnPriorityChanged;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
 
-        public string Name => "GodRays";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
-
-        public bool Enabled
+        public float Density
         {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
+            get => godraysDensity;
+            set => NotifyPropertyChangedAndSet(ref godraysDensity, value);
         }
 
-        public int Priority
+        public float Weight
         {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
+            get => godraysWeight;
+            set => NotifyPropertyChangedAndSet(ref godraysWeight, value);
         }
 
-        public float Density { get => godraysDensity; set => godraysDensity = value; }
+        public float Decay
+        {
+            get => godraysDecay;
+            set => NotifyPropertyChangedAndSet(ref godraysDecay, value);
+        }
 
-        public float Weight { get => godraysWeight; set => godraysWeight = value; }
-
-        public float Decay { get => godraysDecay; set => godraysDecay = value; }
-
-        public float Exposure { get => godraysExposure; set => godraysExposure = value; }
+        public float Exposure
+        {
+            get => godraysExposure;
+            set => NotifyPropertyChangedAndSet(ref godraysExposure, value);
+        }
 
         public struct GodRaysParams
         {
@@ -97,7 +87,7 @@
             public float AlbedoFactor;
         }
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -166,25 +156,25 @@
             Viewport = new(width, height);
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             sunBuffer.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None);
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
         private const float MaxLightDist = 1.3f;
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
             var camera = CameraManager.Current;
             var lights = LightManager.Current;
@@ -243,7 +233,7 @@
             }
         }
 
-        public unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (!sunPresent)
                 return;
@@ -262,7 +252,7 @@
             quad1.DrawAuto(context, sun);
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null || !sunPresent)
             {
@@ -279,7 +269,7 @@
             context.ClearState();
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             quad1.Dispose();
             sun.Dispose();
@@ -294,7 +284,6 @@
             sunsprite.Dispose();
             sunBuffer.Dispose();
             noiseTex.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

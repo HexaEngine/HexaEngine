@@ -28,7 +28,7 @@
                 return string.Empty;
             }
 
-            byte* pName = Alloc<byte>(len);
+            byte* pName = AllocT<byte>(len);
             child->GetPrivateData(&guid, &len, pName);
             string str = ToStr(pName, len);
             Free(pName);

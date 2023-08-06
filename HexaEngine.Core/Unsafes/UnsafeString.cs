@@ -1,14 +1,15 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
-    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
     /// <summary>
     /// Represents an unsafe UTF-8 string.
     /// </summary>
-    public unsafe struct UnsafeUTF8String : IFreeable
+    public unsafe struct UnsafeString : IFreeable
     {
+        private const int NullTerminatorSize = 1;
+
         /// <summary>
         /// A pointer to the UTF-8 string.
         /// </summary>
@@ -20,39 +21,41 @@
         public nint Length;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnsafeUTF8String"/> struct with the specified string.
+        /// Initializes a new instance of the <see cref="UnsafeString"/> struct with the specified string.
         /// </summary>
         /// <param name="str">The string to initialize the UnsafeUTF8String with.</param>
-        public UnsafeUTF8String(string str)
+        public UnsafeString(string str)
         {
-            int sizeInBytes = (str.Length + 1) * sizeof(byte);
+            int stringLength = Encoding.UTF8.GetByteCount(str);
+            int sizeInBytes = (stringLength + NullTerminatorSize) * sizeof(byte);
             Ptr = (byte*)Marshal.AllocHGlobal(sizeInBytes);
             fixed (char* strPtr = str)
             {
-                MemoryCopy(strPtr, Ptr, sizeInBytes, sizeInBytes);
+                Encoding.UTF8.GetBytes(strPtr, stringLength, Ptr, sizeInBytes);
             }
-            Length = str.Length;
+            Ptr[stringLength] = (byte)'\0';
+            Length = stringLength;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnsafeUTF8String"/> struct with the specified pointer and length.
+        /// Initializes a new instance of the <see cref="UnsafeString"/> struct with the specified pointer and length.
         /// </summary>
         /// <param name="ptr">A pointer to the UTF-8 string.</param>
         /// <param name="length">The length of the UTF-8 string.</param>
-        public UnsafeUTF8String(byte* ptr, nint length)
+        public UnsafeString(byte* ptr, nint length)
         {
             Ptr = ptr;
             Length = length;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnsafeUTF8String"/> struct with the specified length.
+        /// Initializes a new instance of the <see cref="UnsafeString"/> struct with the specified length.
         /// The contents of the string will be initialized to null bytes.
         /// </summary>
         /// <param name="length">The length of the UTF-8 string.</param>
-        public UnsafeUTF8String(nint length)
+        public UnsafeString(nint length)
         {
-            nint sizeInBytes = length * sizeof(byte);
+            nint sizeInBytes = (length + NullTerminatorSize) * sizeof(byte);
             Ptr = (byte*)Marshal.AllocHGlobal(sizeInBytes);
             Length = length;
             ZeroMemory(Ptr, sizeInBytes);
@@ -70,7 +73,7 @@
         /// </summary>
         /// <param name="other">The UnsafeUTF8String to compare with.</param>
         /// <returns><c>true</c> if the strings are equal; otherwise, <c>false</c>.</returns>
-        public bool Compare(UnsafeUTF8String* other)
+        public bool Compare(UnsafeString* other)
         {
             if (Length != other->Length)
             {
@@ -95,7 +98,7 @@
         {
             int sizeInBytes = newSize * sizeof(byte);
             var newPtr = (byte*)Marshal.AllocHGlobal(sizeInBytes);
-            MemoryCopy(Ptr, newPtr, sizeInBytes, sizeInBytes);
+            MemcpyT(Ptr, newPtr, sizeInBytes, sizeInBytes);
             Marshal.FreeHGlobal((nint)Ptr);
             Ptr = newPtr;
         }
@@ -112,7 +115,7 @@
         /// Implicitly converts an UnsafeUTF8String to a string.
         /// </summary>
         /// <param name="ptr">The UnsafeUTF8String to convert.</param>
-        public static implicit operator string(UnsafeUTF8String ptr)
+        public static implicit operator string(UnsafeString ptr)
         {
             return Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(ptr.Ptr));
         }
@@ -121,7 +124,7 @@
         /// Implicitly converts a string to an UnsafeUTF8String.
         /// </summary>
         /// <param name="str">The string to convert.</param>
-        public static implicit operator UnsafeUTF8String(string str)
+        public static implicit operator UnsafeString(string str)
         {
             return new(str);
         }
@@ -130,7 +133,7 @@
         /// Implicitly converts an UnsafeUTF8String to a pointer.
         /// </summary>
         /// <param name="str">The UnsafeUTF8String to convert.</param>
-        public static implicit operator byte*(UnsafeUTF8String str) => str.Ptr;
+        public static implicit operator byte*(UnsafeString str) => str.Ptr;
 
         /// <summary>
         /// Returns a string that represents the UnsafeUTF8String.

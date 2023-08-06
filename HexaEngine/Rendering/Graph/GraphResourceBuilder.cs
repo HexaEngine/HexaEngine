@@ -57,6 +57,12 @@
         private readonly List<ISamplerState> samplerStates = new();
         private readonly Dictionary<string, int> nameToSamplerState = new();
 
+        public IReadOnlyList<Texture2D> Textures => textures2d;
+
+        public IReadOnlyList<ShadowAtlas> ShadowAtlas => shadowAtlas;
+
+        public IReadOnlyList<GBuffer> GBuffers => gBuffers;
+
         internal void CreateResources()
         {
             int gid = 0;

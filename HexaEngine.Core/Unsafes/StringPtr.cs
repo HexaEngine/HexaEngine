@@ -6,9 +6,9 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
-    public unsafe struct UnsafeString : IFreeable, IEquatable<UnsafeString>
+    public unsafe struct UnsafeOldString : IFreeable, IEquatable<UnsafeOldString>
     {
-        public UnsafeString(string str)
+        public UnsafeOldString(string str)
         {
             nint len = str.Length * sizeof(char);
             Ptr = (char*)Marshal.AllocHGlobal(len);
@@ -19,13 +19,13 @@
             Length = str.Length;
         }
 
-        public UnsafeString(char* ptr, int length)
+        public UnsafeOldString(char* ptr, int length)
         {
             Ptr = ptr;
             Length = length;
         }
 
-        public UnsafeString(int length)
+        public UnsafeOldString(int length)
         {
             Ptr = (char*)Marshal.AllocHGlobal(length * sizeof(char));
             Length = length;
@@ -34,7 +34,7 @@
         public char* Ptr;
         public int Length;
 
-        public bool Compare(UnsafeString* other)
+        public bool Compare(UnsafeOldString* other)
         {
             if (Length != other->Length)
             {
@@ -51,7 +51,7 @@
             return true;
         }
 
-        public static int Write(UnsafeString* str, Endianness endianness, Span<byte> dest)
+        public static int Write(UnsafeOldString* str, Endianness endianness, Span<byte> dest)
         {
             Span<char> srcChars = new(str->Ptr, str->Length + 1);
             Span<byte> src = MemoryMarshal.AsBytes(srcChars);
@@ -69,13 +69,13 @@
             return src.Length + 4;
         }
 
-        public static int Read(UnsafeString** ppStr, Endianness endianness, Span<byte> src)
+        public static int Read(UnsafeOldString** ppStr, Endianness endianness, Span<byte> src)
         {
             int length = endianness == Endianness.LittleEndian ? BinaryPrimitives.ReadInt32LittleEndian(src) : BinaryPrimitives.ReadInt32BigEndian(src);
-            UnsafeString* pStr = Alloc<UnsafeString>();
+            UnsafeOldString* pStr = AllocT<UnsafeOldString>();
 
             *ppStr = pStr;
-            pStr->Ptr = Alloc<char>(length);
+            pStr->Ptr = AllocT<char>(length);
             fixed (byte* srcPtr = src.Slice(4, length))
             {
                 Unsafe.CopyBlock(pStr->Ptr, srcPtr, (uint)length);
@@ -95,42 +95,42 @@
             return (Length + 1) * sizeof(char) + 4;
         }
 
-        public static implicit operator string(UnsafeString ptr)
+        public static implicit operator string(UnsafeOldString ptr)
         {
             return new(ptr.Ptr);
         }
 
-        public static implicit operator UnsafeString(string str)
+        public static implicit operator UnsafeOldString(string str)
         {
             return new(str);
         }
 
-        public static implicit operator ReadOnlySpan<char>(UnsafeString ptr)
+        public static implicit operator ReadOnlySpan<char>(UnsafeOldString ptr)
         {
             return new(ptr.Ptr, ptr.Length);
         }
 
-        public static implicit operator Span<char>(UnsafeString ptr)
+        public static implicit operator Span<char>(UnsafeOldString ptr)
         {
             return new(ptr.Ptr, ptr.Length);
         }
 
-        public static implicit operator char*(UnsafeString ptr)
+        public static implicit operator char*(UnsafeOldString ptr)
         {
             return ptr.Ptr;
         }
 
-        public static bool operator ==(UnsafeString left, UnsafeString right)
+        public static bool operator ==(UnsafeOldString left, UnsafeOldString right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(UnsafeString left, UnsafeString right)
+        public static bool operator !=(UnsafeOldString left, UnsafeOldString right)
         {
             return !(left == right);
         }
 
-        public static bool operator ==(UnsafeString left, string right)
+        public static bool operator ==(UnsafeOldString left, string right)
         {
             if (left.Length != right.Length)
                 return false;
@@ -141,12 +141,12 @@
             return chars1.SequenceEqual(chars2);
         }
 
-        public static bool operator !=(UnsafeString left, string right)
+        public static bool operator !=(UnsafeOldString left, string right)
         {
             return !(left == right);
         }
 
-        public static bool operator ==(string left, UnsafeString right)
+        public static bool operator ==(string left, UnsafeOldString right)
         {
             if (left.Length != right.Length)
                 return false;
@@ -157,7 +157,7 @@
             return chars1.SequenceEqual(chars2);
         }
 
-        public static bool operator !=(string left, UnsafeString right)
+        public static bool operator !=(string left, UnsafeOldString right)
         {
             return !(left == right);
         }
@@ -169,10 +169,10 @@
 
         public override readonly bool Equals(object? obj)
         {
-            return obj is UnsafeString @string && Equals(@string);
+            return obj is UnsafeOldString @string && Equals(@string);
         }
 
-        public readonly bool Equals(UnsafeString other)
+        public readonly bool Equals(UnsafeOldString other)
         {
             if (Length != other.Length)
                 return false;

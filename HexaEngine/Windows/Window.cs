@@ -16,7 +16,6 @@ namespace HexaEngine.Windows
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
-    using CullingManager = CullingManager;
 
     public class Window : SdlWindow, IRenderWindow
     {
@@ -106,7 +105,7 @@ namespace HexaEngine.Windows
 
             if ((Flags & RendererFlags.ImGuiWidgets) != 0)
             {
-                WidgetManager.Init(graphicsDevice);
+                WindowManager.Init(graphicsDevice);
             }
 
             if ((Flags & RendererFlags.DebugDraw) != 0)
@@ -222,7 +221,7 @@ namespace HexaEngine.Windows
             }
 
             Designer.Draw();
-            WidgetManager.Draw(context);
+            WindowManager.Draw(context);
             ImGuiConsole.Draw();
 
             OnRender(context);
@@ -277,7 +276,7 @@ namespace HexaEngine.Windows
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
             {
-                WidgetManager.Dispose();
+                WindowManager.Dispose();
             }
 
             if (imGuiRenderer is not null)

@@ -4,14 +4,13 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
-    public class Bloom : IPostFx
+    public class Bloom : PostFxBase
     {
         private IGraphicsPipeline downsample;
         private IGraphicsPipeline upsample;
@@ -22,45 +21,16 @@ namespace HexaEngine.Effects.BuildIn
         private IRenderTargetView[] mipChainRTVs;
         private IShaderResourceView[] mipChainSRVs;
 
-        private bool enabled = true;
         private float radius = 0.003f;
-        private bool dirty;
 
         private int width;
         private int height;
 
         private IShaderResourceView Input;
-        private bool disposedValue;
-        private int priority = 200;
 
-        public event Action<bool> OnEnabledChanged;
+        public override string Name => "Bloom";
 
-        public event Action<int> OnPriorityChanged;
-
-        public string Name => "Bloom";
-
-        public PostFxFlags Flags => PostFxFlags.NoOutput;
-
-        public bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                enabled = value;
-                dirty = true;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority;
-            set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
+        public override PostFxFlags Flags => PostFxFlags.NoOutput;
 
         public float Radius
         {
@@ -99,7 +69,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddSource("Bloom")
@@ -115,7 +85,6 @@ namespace HexaEngine.Effects.BuildIn
                 .RunAfter("LensFlare")
                 .RunBefore("AutoExposure");
 
-            disposedValue = false;
             downsampleCB = new(device, CpuAccessFlags.Write);
             upsampleCB = new(device, CpuAccessFlags.Write);
 
@@ -141,7 +110,7 @@ namespace HexaEngine.Effects.BuildIn
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentWidth, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), lineNumber: i).Value.RTV;
+                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), lineNumber: i).Value.RTV;
                 mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
                 currentWidth /= 2;
                 currentHeight /= 2;
@@ -155,7 +124,7 @@ namespace HexaEngine.Effects.BuildIn
             dirty = true;
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             int currentWidth = width / 2;
             int currentHeight = height / 2;
@@ -166,7 +135,7 @@ namespace HexaEngine.Effects.BuildIn
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", new Texture2DDescription(Format.R16G16B16A16Float, currentWidth, currentWidth, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
+                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", new Texture2DDescription(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
                 mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
                 currentWidth /= 2;
                 currentHeight /= 2;
@@ -179,16 +148,16 @@ namespace HexaEngine.Effects.BuildIn
             dirty = true;
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
             if (dirty)
             {
@@ -199,7 +168,7 @@ namespace HexaEngine.Effects.BuildIn
             }
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.PSSetConstantBuffer(0, downsampleCB);
             context.PSSetSampler(0, sampler);
@@ -238,30 +207,13 @@ namespace HexaEngine.Effects.BuildIn
             context.SetGraphicsPipeline(null);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                downsample.Dispose();
-                upsample.Dispose();
-                downsampleCB.Dispose();
-                upsampleCB.Dispose();
-                sampler.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~Bloom()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            downsample.Dispose();
+            upsample.Dispose();
+            downsampleCB.Dispose();
+            upsampleCB.Dispose();
+            sampler.Dispose();
         }
     }
 }

@@ -31,7 +31,7 @@
             this.device = device;
             dbgName = $"IndexBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
 
-            items = Alloc<T>(DefaultCapacity);
+            items = AllocT<T>(DefaultCapacity);
             ZeroMemoryT(items, (uint)DefaultCapacity);
             capacity = DefaultCapacity;
 
@@ -157,7 +157,7 @@
 
             format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
 
-            items = Alloc<T>(capacity);
+            items = AllocT<T>(capacity);
             ZeroMemoryT(items, capacity);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
@@ -186,7 +186,7 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = Alloc<T>((int)value);
+                var tmp = AllocT<T>((int)value);
                 var oldsize = count * sizeof(uint);
                 var newsize = value * sizeof(uint);
                 Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);

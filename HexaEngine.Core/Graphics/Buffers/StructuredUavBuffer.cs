@@ -36,7 +36,7 @@
             this.srvFlags = srvFlags;
             dbgName = $"StructuredUavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             capacity = DefaultCapacity;
-            items = Alloc<T>(DefaultCapacity);
+            items = AllocT<T>(DefaultCapacity);
             ZeroMemory(items, DefaultCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
@@ -71,7 +71,7 @@
             this.srvFlags = srvFlags;
             dbgName = $"StructuredUavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             capacity = initialCapacity;
-            items = Alloc<T>(initialCapacity);
+            items = AllocT<T>(initialCapacity);
             ZeroMemory(items, (int)initialCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * (int)initialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.BufferStructured, sizeof(T));
             buffer = device.CreateBuffer(items, initialCapacity, bufferDescription);
@@ -189,7 +189,7 @@
                     return;
                 }
 
-                var tmp = Alloc<T>((int)value);
+                var tmp = AllocT<T>((int)value);
                 ZeroMemory(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);

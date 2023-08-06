@@ -1,8 +1,6 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Rendering.Renderers;
     using ImGuiNET;
 
@@ -27,7 +25,7 @@
             {
                 var effect = effects[i];
 
-                ImGui.Text($"{effect.Name}:{effect.Priority},{i}");
+                ImGui.Text($"{effect.Name},{i}");
             }
             ImGui.EndListBox();
         }

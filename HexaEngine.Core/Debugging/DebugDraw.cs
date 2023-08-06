@@ -94,7 +94,7 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             if (queue.Draw(id, PrimitiveTopology.LineList, 24, BoundingFrustum.CornerCount, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(BoundingFrustum.CornerCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(BoundingFrustum.CornerCount);
                 cmd.Indices = AllocCopy(new ushort[]
                 {
                 0,1,
@@ -127,7 +127,7 @@ namespace HexaEngine.Editor
             if (queue.Draw(id, PrimitiveTopology.LineList, 24, vertexCount, out var cmd))
             {
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4 });
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
             }
 
             cmd.Vertices[0].Position = new Vector3(box.Min.X, box.Max.Y, box.Min.Z);
@@ -345,7 +345,7 @@ namespace HexaEngine.Editor
 75,74,
 32,61,
             });
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
             }
 
             TransformWithColor(cmd.Vertices, spherePositions, vertexCount, Matrix4x4.CreateScale(sphere.Radius) * Matrix4x4.CreateTranslation(sphere.Center), color);
@@ -356,7 +356,7 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             if (queue.Draw(id, PrimitiveTopology.LineStrip, 3, 3, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(3);
+                cmd.Vertices = AllocT<DebugDrawVert>(3);
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1, 2 });
             }
 
@@ -390,7 +390,7 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             if (queue.Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(2);
+                cmd.Vertices = AllocT<DebugDrawVert>(2);
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1 });
             }
 
@@ -410,7 +410,7 @@ namespace HexaEngine.Editor
             uint color = ColorConvertFloat4ToU32(col);
             if (queue.Draw(id, PrimitiveTopology.LineStrip, 2, 2, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(2);
+                cmd.Vertices = AllocT<DebugDrawVert>(2);
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1 });
             }
 
@@ -428,8 +428,8 @@ namespace HexaEngine.Editor
 
             if (queue.Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(c_ringSegments + 1);
-                cmd.Indices = Alloc<ushort>(c_ringSegments + 1);
+                cmd.Vertices = AllocT<DebugDrawVert>(c_ringSegments + 1);
+                cmd.Indices = AllocT<ushort>(c_ringSegments + 1);
                 for (ushort i = 0; i < c_ringSegments + 1; i++)
                 {
                     cmd.Indices[i] = i;
@@ -467,8 +467,8 @@ namespace HexaEngine.Editor
 
             if (queue.Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(c_ringSegments + 1);
-                cmd.Indices = Alloc<ushort>(c_ringSegments + 1);
+                cmd.Vertices = AllocT<DebugDrawVert>(c_ringSegments + 1);
+                cmd.Indices = AllocT<ushort>(c_ringSegments + 1);
                 for (ushort i = 0; i < c_ringSegments + 1; i++)
                 {
                     cmd.Indices[i] = i;
@@ -506,8 +506,8 @@ namespace HexaEngine.Editor
 
             if (queue.Draw(id, PrimitiveTopology.LineStrip, c_ringSegments + 1, c_ringSegments + 1, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(c_ringSegments + 1);
-                cmd.Indices = Alloc<ushort>(c_ringSegments + 1);
+                cmd.Vertices = AllocT<DebugDrawVert>(c_ringSegments + 1);
+                cmd.Indices = AllocT<ushort>(c_ringSegments + 1);
                 for (ushort i = 0; i < c_ringSegments + 1; i++)
                 {
                     cmd.Indices[i] = i;
@@ -558,7 +558,7 @@ new Vector3(+1, +1, +1),
             if (queue.Draw(id, PrimitiveTopology.LineList, 24, vertexCount, out var cmd))
             {
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 1, 5, 2, 6, 3, 7, 4, 5, 5, 6, 6, 7, 7, 4 });
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
             }
 
             TransformWithColor(cmd.Vertices, pos, vertexCount, Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
@@ -571,7 +571,7 @@ new Vector3(+1, +1, +1),
             if (queue.Draw(id, PrimitiveTopology.LineList, 96 * 2, vertexCount, out var cmd))
             {
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 27, 28, 28, 29, 29, 30, 31, 0, 33, 32, 34, 33, 35, 34, 36, 35, 37, 36, 38, 37, 39, 38, 40, 23, 41, 40, 42, 41, 43, 42, 44, 43, 45, 44, 46, 45, 47, 46, 48, 47, 49, 48, 50, 49, 51, 50, 52, 51, 53, 52, 54, 53, 55, 7, 56, 55, 57, 56, 58, 57, 59, 58, 60, 59, 61, 60, 62, 32, 63, 62, 64, 63, 65, 64, 66, 65, 67, 66, 15, 68, 69, 15, 70, 69, 71, 70, 72, 71, 73, 72, 74, 73, 47, 75, 76, 47, 77, 76, 78, 77, 79, 78, 80, 79, 81, 80, 82, 81, 83, 31, 84, 83, 85, 84, 86, 85, 87, 86, 88, 87, 32, 89, 7, 54, 68, 67, 23, 39, 89, 88, 30, 31, 31, 82, 75, 74, 32, 61 });
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
             }
 
             TransformWithColor(cmd.Vertices, spherePositions, vertexCount, Matrix4x4.CreateScale(radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
@@ -847,7 +847,7 @@ new Vector3(+1, +1, +1),
 122,121,
 109,123,
             });
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
             }
 
             TransformWithColor(cmd.Vertices, capsulePositions, vertexCount, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
@@ -999,7 +999,7 @@ new Vector3(+1, +1, +1),
 32,63,
 24,56,
             });
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
             }
 
             TransformWithColor(cmd.Vertices, cylinderPositions, vertexCount, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
@@ -1011,7 +1011,7 @@ new Vector3(+1, +1, +1),
             uint color = ColorConvertFloat4ToU32(col);
             if (queue.Draw(id, PrimitiveTopology.LineStrip, 4, vertexCount, out var cmd))
             {
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
                 cmd.Indices = AllocCopy(new ushort[] { 0, 1, 2, 3 });
             }
 
@@ -1028,8 +1028,8 @@ new Vector3(+1, +1, +1),
             if (queue.Draw(id, PrimitiveTopology.LineList, vertexCount, vertexCount, out var cmd))
             {
                 cmd.EnableDepth = true;
-                cmd.Vertices = Alloc<DebugDrawVert>(vertexCount);
-                cmd.Indices = Alloc<ushort>(vertexCount);
+                cmd.Vertices = AllocT<DebugDrawVert>(vertexCount);
+                cmd.Indices = AllocT<ushort>(vertexCount);
 
                 int half = size / 2;
 

@@ -65,7 +65,7 @@
 
             var guid = sdl.JoystickGetGUID(joystick);
             SdlCheckError();
-            var buffer = Alloc<byte>(33);
+            var buffer = AllocT<byte>(33);
             sdl.JoystickGetGUIDString(guid, buffer, 33);
             var size = StringSizeNullTerminated(buffer);
             var value = Encoding.ASCII.GetString(buffer, size - 1);

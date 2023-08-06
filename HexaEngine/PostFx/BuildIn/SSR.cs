@@ -5,10 +5,9 @@
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System;
     using System.Threading.Tasks;
 
-    public class SSR : IPostFx
+    public class SSR : PostFxBase
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipelineSSR;
@@ -20,36 +19,12 @@
         public IRenderTargetView Output;
         public Viewport Viewport;
         public IShaderResourceView Input;
-        private bool enabled = true;
-        private int priority = 401;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name { get; } = "SSR";
 
-        public event Action<int>? OnPriorityChanged;
+        public override PostFxFlags Flags { get; } = PostFxFlags.None;
 
-        public string Name { get; } = "SSR";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.None;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -77,11 +52,7 @@
             }, GraphicsPipelineState.DefaultFullscreen, macros);
         }
 
-        public void Resize(int width, int height)
-        {
-        }
-
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
                 return;
@@ -107,22 +78,18 @@
             context.ClearState();
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
-        {
-        }
-
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipelineSSR.Dispose();
             pointClampSampler.Dispose();

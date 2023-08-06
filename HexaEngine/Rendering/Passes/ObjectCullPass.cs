@@ -1,7 +1,6 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
@@ -17,7 +16,7 @@ namespace HexaEngine.Rendering.Passes
 
         public bool IsEnabled { get => isEnabled; set => isEnabled = value; }
 
-        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             if (!isEnabled)
                 return;

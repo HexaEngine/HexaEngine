@@ -54,6 +54,8 @@
 
         public Viewport Viewport => new(Width, Height);
 
+        public string DebugName => dbgName;
+
         public GBuffer(IGraphicsDevice device, GBufferDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             dbgName = $"GBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";

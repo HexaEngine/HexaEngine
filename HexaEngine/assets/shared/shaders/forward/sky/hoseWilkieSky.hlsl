@@ -6,7 +6,6 @@ struct VertexOut
     float3 Dir : POSITION;
 };
 
-
 float3 HosekWilkie(float cos_theta, float gamma, float cos_gamma)
 {
     float3 chi = (1 + cos_gamma * cos_gamma) / pow(1 + H * H - 2 * cos_gamma * H, float3(1.5f, 1.5f, 1.5f));
@@ -27,8 +26,11 @@ float4 main(VertexOut pin) : SV_TARGET
 {
     float3 dir = normalize(pin.Dir);
 
+    if (dir.y < 0)
+        return float4(0, 0, 0, 1);
+
     float3 col = HosekWilkieSky(dir, light_dir.xyz);
 
     return float4(col, 1.0);
-    
+
 }

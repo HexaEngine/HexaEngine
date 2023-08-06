@@ -43,7 +43,7 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = Alloc<T>(value);
+                var tmp = AllocT<T>(value);
                 var oldsize = size * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(data, tmp, newsize, oldsize > newsize ? newsize : oldsize);
@@ -123,7 +123,7 @@
 
             fixed (T* src = values)
             {
-                MemoryCopy(src, &data[size], capacity * sizeof(T), values.Length * sizeof(T));
+                MemcpyT(src, &data[size], capacity * sizeof(T), values.Length * sizeof(T));
             }
             size += values.Length;
         }

@@ -3872,7 +3872,7 @@
 
             SkyParameters parameters = default;
 
-            for (int i = 0; i < SkyParameters.Count - 1; ++i)
+            for (int i = 0; i < SkyParameters.Count; i++)
             {
                 var param = parameters[i];
                 fixed (double* dataset = datasetsRGB[0])

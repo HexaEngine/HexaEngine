@@ -1,7 +1,6 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
@@ -22,7 +21,7 @@ namespace HexaEngine.Rendering.Passes
         {
         }
 
-        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -31,8 +30,6 @@ namespace HexaEngine.Rendering.Passes
             }
 
             var lights = current.LightManager;
-
-            base.Execute(context, creator);
 
             GlobalProbes.ResetCounter();
             LightBuffer.ResetCounter();

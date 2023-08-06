@@ -3,6 +3,7 @@
 #include "../../camera.hlsl"
 #include "../../shadow.hlsl"
 #include "../../weather.hlsl"
+#include "../../gbuffer.hlsl"
 
 #if CLUSTERED_FORWARD
 #include "../../cluster.hlsl"
@@ -407,7 +408,7 @@ Pixel main(PixelInput input)
 
     Pixel output;
     output.Color = float4(ambient + Lo, baseColor.a);
-    output.Normal = float4(N, baseColor.a);
+    output.Normal = float4(PackNormal(N), baseColor.a);
 
 #if BAKE_FORWARD
 	// For baking we render without backface culling, so that we still get occlusions inside meshes that

@@ -1,7 +1,6 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Graph;
@@ -15,7 +14,7 @@ namespace HexaEngine.Rendering.Passes
             AddWriteDependency(new("#DepthStencil"));
         }
 
-        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -30,9 +29,28 @@ namespace HexaEngine.Rendering.Passes
             context.SetRenderTarget(null, depthStencil.DSV);
             context.SetViewport(depthStencil.Viewport);
 
-            var backgroundQueue = renderers.BackgroundQueue;
+            profiler?.Begin("PrePass.Geometry");
+            var geometry = renderers.GeometryQueue;
+            for (int i = 0; i < geometry.Count; i++)
+            {
+                var renderer = geometry[i];
+                profiler?.Begin($"PrePass.{renderer.DebugName}");
+                renderer.DrawDepth(context);
+                profiler?.End($"PrePass.{renderer.DebugName}");
+            }
+            profiler?.End("PrePass.Geometry");
 
-            renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
+            profiler?.Begin("PrePass.Transparency");
+            var transparency = renderers.TransparencyQueue;
+            for (int i = 0; i < transparency.Count; i++)
+            {
+                var renderer = transparency[i];
+                profiler?.Begin($"PrePass.{renderer.DebugName}");
+                renderer.DrawDepth(context);
+                profiler?.End($"PrePass.{renderer.DebugName}");
+            }
+            profiler?.End("PrePass.Transparency");
+
             context.ClearState();
         }
     }

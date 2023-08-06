@@ -45,7 +45,7 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(HexaItem));
                     if (!payload.IsNull)
                     {
-                        string path = *(UnsafeString*)payload.Data;
+                        string path = *(UnsafeOldString*)payload.Data;
                         // TODO: Add global drag drop handler
                     }
                 }
@@ -56,7 +56,7 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeString(item.GetAbsolutePath());
+                    var str = new UnsafeOldString(item.GetAbsolutePath());
                     ImGui.SetDragDropPayload(nameof(HexaItem), &str, (uint)sizeof(nint));
                 }
                 ImGui.Text(item.Name);

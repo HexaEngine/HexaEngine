@@ -99,7 +99,7 @@ namespace HexaEngine.Lights
             texture = new(device, description.Size, description.Size, 1, description.Format, ResourceMiscFlag.None, BindFlags.ShaderResource | BindFlags.DepthStencil, filename, lineNumber);
             texture.DebugName = dbgName;
 
-            layers = Alloc<Layer>(description.Layers);
+            layers = AllocT<Layer>(description.Layers);
 
             uint subSize = (uint)(description.Size / 2);
 
@@ -110,7 +110,7 @@ namespace HexaEngine.Lights
                 layer->Size = new(subSize);
                 layer->Count = subCount * subCount;
                 layer->RowWidth = subCount;
-                layer->Blocks = Alloc<MemoryBlock>(layer->Count);
+                layer->Blocks = AllocT<MemoryBlock>(layer->Count);
 
                 layerFreeBlocks.Add(layer, new());
                 layerAllocatedBlocks.Add(layer, new());
@@ -141,7 +141,7 @@ namespace HexaEngine.Lights
             texture = new(device, size, size, 1, format, ResourceMiscFlag.None, BindFlags.ShaderResource | BindFlags.DepthStencil, filename, lineNumber);
             texture.DebugName = "Shadow Atlas";
 
-            layers = Alloc<Layer>(layerCount);
+            layers = AllocT<Layer>(layerCount);
 
             uint subSize = (uint)(size / 2);
 
@@ -152,7 +152,7 @@ namespace HexaEngine.Lights
                 layer->Size = new(subSize);
                 layer->Count = subCount * subCount;
                 layer->RowWidth = subCount;
-                layer->Blocks = Alloc<MemoryBlock>(layer->Count);
+                layer->Blocks = AllocT<MemoryBlock>(layer->Count);
 
                 layerFreeBlocks.Add(layer, new());
                 layerAllocatedBlocks.Add(layer, new());
@@ -177,6 +177,10 @@ namespace HexaEngine.Lights
         public IDepthStencilView DSV => texture.DSV;
 
         public IShaderResourceView SRV => texture.SRV;
+
+        public string DebugName => dbgName;
+
+        public Viewport Viewport => texture.Viewport;
 
         public int LayerCount => layerCount;
 

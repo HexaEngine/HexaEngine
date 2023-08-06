@@ -366,7 +366,7 @@
             return default;
         }
 
-        public virtual bool TryGetComponent<T>([NotNullWhen(true)] out T? value) where T : class, IComponent
+        public virtual bool TryGetComponent<T>([NotNullWhen(true)] out T? value) where T : IComponent
         {
             for (int i = 0; i < components.Count; i++)
             {
@@ -389,6 +389,16 @@
                     yield return t;
                 }
             }
+        }
+
+        public bool HasComponent<T>() where T : IComponent
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                if (components[i] is T)
+                    return true;
+            }
+            return false;
         }
 
         public virtual IEnumerable<T> GetComponentsFromChilds<T>() where T : IComponent

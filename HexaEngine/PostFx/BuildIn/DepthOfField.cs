@@ -5,7 +5,6 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Mathematics;
@@ -14,10 +13,9 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class DepthOfField : IPostFx
+    public class DepthOfField : PostFxBase
     {
         private IGraphicsDevice device;
-        private bool enabled = true;
         private bool bokehEnabled = true;
 
         private ConstantBuffer<BokehParams> cbBokeh;
@@ -39,163 +37,86 @@ namespace HexaEngine.Effects.BuildIn
         private int width;
         private int height;
 
-        private int autoFocusSamples;
-        private int bokehRadius;
-        private float bokehSeparation;
-        private float bokehMaxThreshold;
-        private float focusRange;
-        private bool dirty;
+        private float focusRange = 20f;
+        private Vector2 focusPoint = new(0.5f);
+        private bool autoFocusEnabled = true;
+        private float autoFocusRadius = 30;
+        private int autoFocusSamples = 1;
+
+        private float bokehBlurThreshold = 0.9f;
+        private float bokehLumThreshold = 1.0f;
+        private float bokehRadiusScale = 25f;
+        private float bokehColorScale = 1.0f;
+        private float bokehFallout = 0.9f;
 
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
 
-        private int priority = 500;
-        private bool autoFocusEnabled;
-        private float autoFocusRadius;
-        private int blurRadius;
-        private float bokehMinThreshold;
-        private Vector2 focusPoint;
-
         #region Props
 
-        public event Action<bool> OnEnabledChanged;
+        public override string Name => "DepthOfField";
 
-        public event Action<int> OnPriorityChanged;
-
-        public bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                enabled = value;
-                dirty = true;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public string Name => "DepthOfField";
-
-        public PostFxFlags Flags => PostFxFlags.None;
-
-        public int Priority
-        {
-            get => priority;
-            set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public bool AutoFocusEnabled
-        {
-            get => autoFocusEnabled;
-            set
-            {
-                autoFocusEnabled = value;
-                dirty = true;
-            }
-        }
-
-        public int AutoFocusSamples
-        {
-            get => autoFocusSamples;
-            set
-            {
-                autoFocusSamples = value;
-                dirty = true;
-            }
-        }
-
-        public float AutoFocusRadius
-        {
-            get => autoFocusRadius;
-            set
-            {
-                autoFocusRadius = value;
-                dirty = true;
-            }
-        }
-
-        public bool BokehEnabled
-        {
-            get => bokehEnabled;
-            set
-            {
-                bokehEnabled = value;
-                dirty = true;
-            }
-        }
-
-        public int BlurRadius
-        {
-            get => blurRadius;
-            set
-            {
-                blurRadius = value;
-                dirty = true;
-            }
-        }
-
-        public int BokehRadius
-        {
-            get => bokehRadius;
-            set
-            {
-                bokehRadius = value;
-                dirty = true;
-            }
-        }
-
-        public float BokehSeparation
-        {
-            get => bokehSeparation;
-            set
-            {
-                bokehSeparation = value;
-                dirty = true;
-            }
-        }
-
-        public float BokehMinThreshold
-        {
-            get => bokehMinThreshold;
-            set
-            {
-                bokehMinThreshold = value;
-                dirty = true;
-            }
-        }
-
-        public float BokehMaxThreshold
-        {
-            get => bokehMaxThreshold;
-            set
-            {
-                bokehMaxThreshold = value;
-                dirty = true;
-            }
-        }
+        public override PostFxFlags Flags => PostFxFlags.None;
 
         public float FocusRange
         {
             get => focusRange;
-            set
-            {
-                focusRange = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref focusRange, value);
         }
 
         public Vector2 FocusPoint
         {
             get => focusPoint;
-            set
-            {
-                focusPoint = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref focusPoint, value);
+        }
+
+        public bool AutoFocusEnabled
+        {
+            get => autoFocusEnabled;
+            set => NotifyPropertyChangedAndSet(ref autoFocusEnabled, value);
+        }
+
+        public float AutoFocusRadius
+        {
+            get => autoFocusRadius;
+            set => NotifyPropertyChangedAndSet(ref autoFocusRadius, value);
+        }
+
+        public int AutoFocusSamples
+        {
+            get => autoFocusSamples;
+            set => NotifyPropertyChangedAndSet(ref autoFocusSamples, value);
+        }
+
+        public float BokehBlurThreshold
+        {
+            get => bokehBlurThreshold;
+            set => NotifyPropertyChangedAndSet(ref bokehBlurThreshold, value);
+        }
+
+        public float BokehLumThreshold
+        {
+            get => bokehLumThreshold;
+            set => NotifyPropertyChangedAndSet(ref bokehLumThreshold, value);
+        }
+
+        public float BokehRadiusScale
+        {
+            get => bokehRadiusScale;
+            set => NotifyPropertyChangedAndSet(ref bokehRadiusScale, value);
+        }
+
+        public float BokehColorScale
+        {
+            get => bokehColorScale;
+            set => NotifyPropertyChangedAndSet(ref bokehColorScale, value);
+        }
+
+        public float BokehFallout
+        {
+            get => bokehFallout;
+            set => NotifyPropertyChangedAndSet(ref bokehFallout, value);
         }
 
         #endregion Props
@@ -241,7 +162,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -297,7 +218,7 @@ namespace HexaEngine.Effects.BuildIn
             linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             this.width = width;
             this.height = height;
@@ -305,38 +226,43 @@ namespace HexaEngine.Effects.BuildIn
             blurTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            DofParams dofParams = default;
-            dofParams.FocusRange = 20.0f;
-            dofParams.FocusPoint = new(0.5f, 0.5f);
-            dofParams.AutoFocusEnabled = 1;
-            dofParams.AutoFocusSamples = 1;
-            dofParams.AutoFocusRadius = 30;
-            cbDof.Update(context, dofParams);
+            if (dirty)
+            {
+                DofParams dofParams = default;
+                dofParams.FocusRange = focusRange;
+                dofParams.FocusPoint = focusPoint;
+                dofParams.AutoFocusEnabled = autoFocusEnabled ? 1 : 0;
+                dofParams.AutoFocusSamples = autoFocusSamples;
+                dofParams.AutoFocusRadius = autoFocusRadius;
+                cbDof.Update(context, dofParams);
 
-            BokehParams bokehParams = default;
-            bokehParams.DofParams = dofParams;
-            bokehParams.BlurThreshold = 0.9f;
-            bokehParams.LumThreshold = 1.0f;
-            bokehParams.RadiusScale = 25.0f;
-            bokehParams.ColorScale = 1.0f;
-            bokehParams.Fallout = 0.9f;
-            cbBokeh.Update(context, bokehParams);
+                BokehParams bokehParams = default;
+                bokehParams.DofParams = dofParams;
+                bokehParams.BlurThreshold = bokehBlurThreshold;
+                bokehParams.LumThreshold = bokehLumThreshold;
+                bokehParams.RadiusScale = bokehRadiusScale;
+                bokehParams.ColorScale = bokehColorScale;
+                bokehParams.Fallout = bokehFallout;
+                cbBokeh.Update(context, bokehParams);
+
+                dirty = false;
+            }
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
             {
@@ -393,7 +319,7 @@ namespace HexaEngine.Effects.BuildIn
             context.SetRenderTarget(null, null);
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             cbBokeh.Dispose();
             cbDof.Dispose();
@@ -410,8 +336,6 @@ namespace HexaEngine.Effects.BuildIn
             bokehIndirectBuffer.Dispose();
 
             bokehTex.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

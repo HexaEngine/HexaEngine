@@ -3,16 +3,14 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
-    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class Compose : IPostFx
+    public class Compose : PostFxBase
     {
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<ComposeParams> paramBuffer;
@@ -26,7 +24,6 @@
         private Vector3 fogColor = Vector3.Zero;
         private float lutAmountChroma = 1;
         private float lutAmountLuma = 1;
-        private bool dirty;
 
         private IRenderTargetView Output;
         private IShaderResourceView Input;
@@ -35,110 +32,51 @@
         private Texture2D LUT;
 
         public Viewport Viewport;
-        private int priority = 0;
-        private bool enabled = true;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "Compose";
 
-        public event Action<int>? OnPriorityChanged;
-
-        public string Name => "Compose";
-
-        public PostFxFlags Flags => PostFxFlags.None;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
+        public override PostFxFlags Flags => PostFxFlags.None;
 
         public unsafe float BloomStrength
         {
             get => bloomStrength;
-            set
-            {
-                paramBuffer.Local->BloomStrength = value;
-                bloomStrength = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref bloomStrength, value);
         }
 
         public unsafe bool FogEnabled
         {
             get => fogEnabled;
-            set
-            {
-                paramBuffer.Local->FogEnabled = value ? 1 : 0;
-                fogEnabled = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref fogEnabled, value);
         }
 
         public unsafe float FogStart
         {
             get => fogStart;
-            set
-            {
-                fogStart = value;
-                paramBuffer.Local->FogStart = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref fogStart, value);
         }
 
         public unsafe float FogEnd
         {
             get => fogEnd;
-            set
-            {
-                fogEnd = value;
-                paramBuffer.Local->FogEnd = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref fogEnd, value);
         }
 
         public unsafe Vector3 FogColor
         {
             get => fogColor;
-            set
-            {
-                fogColor = value;
-                paramBuffer.Local->FogColor = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref fogColor, value);
         }
 
         public unsafe float LUTAmountChroma
         {
             get => lutAmountChroma;
-            set
-            {
-                lutAmountChroma = value;
-                paramBuffer.Local->LUTAmountChroma = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref lutAmountChroma, value);
         }
 
         public unsafe float LUTAmountLuma
         {
             get => lutAmountLuma;
-            set
-            {
-                lutAmountLuma = value;
-                paramBuffer.Local->LUTAmountLuma = value;
-                dirty = true;
-            }
+            set => NotifyPropertyChangedAndSet(ref lutAmountLuma, value);
         }
 
         #region Structs
@@ -163,7 +101,7 @@
 
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("Bloom")
@@ -205,32 +143,41 @@
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public unsafe void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override unsafe void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
             srvs[0] = (void*)view.NativePointer;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
             if (dirty)
             {
-                paramBuffer.Update(context);
+                ComposeParams composeParams;
+                composeParams.BloomStrength = bloomStrength;
+                composeParams.FogEnabled = fogEnabled ? 1 : 0;
+                composeParams.FogStart = fogStart;
+                composeParams.FogEnd = fogEnd;
+                composeParams.FogColor = fogColor;
+                composeParams.LUTAmountChroma = lutAmountChroma;
+                composeParams.LUTAmountLuma = lutAmountLuma;
+                composeParams.padd = default;
+                paramBuffer.Update(context, composeParams);
                 dirty = false;
             }
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output is null)
             {
@@ -253,14 +200,14 @@
             context.ClearState();
         }
 
-        public unsafe void Dispose()
+        protected override unsafe void DisposeCore()
         {
             pipeline.Dispose();
             sampler.Dispose();
             paramBuffer.Dispose();
             LUT.Dispose();
             Free(srvs);
-            GC.SuppressFinalize(this);
+            srvs = null;
         }
     }
 }

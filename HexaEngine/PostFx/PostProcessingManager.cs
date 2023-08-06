@@ -2,8 +2,8 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Graph;
     using System.Diagnostics.CodeAnalysis;
@@ -84,12 +84,12 @@
 
         public bool Enabled { get => enabled; set => enabled = value; }
 
-        public void Initialize(int width, int height)
+        public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
             for (int i = 0; i < effects.Count; i++)
             {
                 effects[i].OnEnabledChanged += OnEnabledChanged;
-                effects[i].OnPriorityChanged += OnPriorityChanged;
+                effects[i].PropertyChanged += PropertyChanged;
             }
 
             this.width = width;
@@ -105,7 +105,10 @@
             {
                 nodes[i].Clear();
                 if (effects[i].Enabled)
+                {
                     effects[i].Initialize(device, nodes[i].Builder, width, height, macros).Wait();
+                    profiler?.CreateStage(effects[i].Name);
+                }
             }
 
             Sort();
@@ -113,12 +116,16 @@
             isInitialized = true;
         }
 
+        private void PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Invalidate();
+        }
+
         public async Task InitializeAsync(int width, int height)
         {
             for (int i = 0; i < effects.Count; i++)
             {
                 effects[i].OnEnabledChanged += OnEnabledChanged;
-                effects[i].OnPriorityChanged += OnPriorityChanged;
             }
 
             this.width = width;
@@ -142,7 +149,7 @@
             isInitialized = true;
         }
 
-        public void Add(IPostFx effect)
+        public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T effect) where T : class, IPostFx
         {
             lock (effects)
             {
@@ -172,11 +179,6 @@
             list?.Dispose();
             list = null;
             isDirty = true;
-        }
-
-        private void OnPriorityChanged(int obj)
-        {
-            Reload();
         }
 
         private void OnEnabledChanged(bool obj)
@@ -352,7 +354,7 @@
             Invalidate();
         }
 
-        public void PrePassDraw(IGraphicsContext context)
+        public void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (!enabled || isReloading)
             {
@@ -380,12 +382,12 @@
                         continue;
                     }
 
-                    effect.PrePassDraw(context);
+                    effect.PrePassDraw(context, creator);
                 }
             }
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public void Draw(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             if (!enabled || isReloading)
             {
@@ -412,8 +414,9 @@
                     {
                         continue;
                     }
-
+                    profiler?.Begin(effect.Name);
                     effect.Update(deferredContext);
+                    profiler?.End(effect.Name);
                 }
 
                 if (isDirty)

@@ -24,5 +24,7 @@
         public void Draw(IGraphicsContext context, RenderPath path);
 
         public void Bake(IGraphicsContext context);
+
+        public string DebugName { get; }
     }
 }

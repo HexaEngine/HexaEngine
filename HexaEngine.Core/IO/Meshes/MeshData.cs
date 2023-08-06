@@ -336,12 +336,12 @@
                     var (boneIds, weigths) = GatherBoneData(i);
                     fixed (int* p = boneIds)
                     {
-                        MemoryCopy(p, vertex.BoneIds, sizeof(int) * 4);
+                        MemcpyT(p, vertex.BoneIds, sizeof(int) * 4);
                     }
 
                     fixed (float* p = weigths)
                     {
-                        MemoryCopy(p, vertex.Weights, sizeof(float) * 4);
+                        MemcpyT(p, vertex.Weights, sizeof(float) * 4);
                     }
                 }
 
@@ -426,12 +426,12 @@
                     var (boneIds, weigths) = GatherBoneData(i);
                     fixed (int* p = boneIds)
                     {
-                        MemoryCopy(p, vertex.BoneIds, sizeof(int) * 4);
+                        MemcpyT(p, vertex.BoneIds, sizeof(int) * 4);
                     }
 
                     fixed (float* p = weigths)
                     {
-                        MemoryCopy(p, vertex.Weights, sizeof(float) * 4);
+                        MemcpyT(p, vertex.Weights, sizeof(float) * 4);
                     }
                 }
 

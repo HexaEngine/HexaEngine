@@ -19,20 +19,20 @@
 
         public void DrawAuto(IGraphicsContext context, IGraphicsPipeline pipeline)
         {
+            context.SetGraphicsPipeline(pipeline);
             context.SetVertexBuffer(vertexBuffer, vertexBuffer.Stride);
             if (indexBuffer != null)
             {
                 indexBuffer.Bind(context);
-                context.SetGraphicsPipeline(pipeline);
                 context.DrawIndexedInstanced(indexBuffer.Count, 1, 0, 0, 0);
                 context.SetIndexBuffer(null, 0, 0);
             }
             else
             {
-                context.SetGraphicsPipeline(pipeline);
                 context.DrawInstanced(vertexBuffer.Count, 1, 0, 0);
             }
             context.SetVertexBuffer(null, 0);
+            context.SetGraphicsPipeline(null);
         }
 
         public void DrawAuto(IGraphicsContext context)
@@ -74,6 +74,12 @@
             indexBuffer?.Bind(context);
             indexCount = indexBuffer?.Count ?? 0;
             instanceCount = 1;
+        }
+
+        public void Unbind(IGraphicsContext context)
+        {
+            context.SetVertexBuffer(null, 0);
+            context.SetIndexBuffer(null, 0, 0);
         }
 
         protected virtual void Dispose(bool disposing)

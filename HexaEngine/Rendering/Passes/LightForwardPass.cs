@@ -1,7 +1,6 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
@@ -9,6 +8,7 @@ namespace HexaEngine.Rendering.Passes
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
+    using HexaEngine.Scenes.Managers;
 
     public class LightForwardPass : RenderPass
     {
@@ -35,7 +35,7 @@ namespace HexaEngine.Rendering.Passes
         private const uint nForwardClusteredSRVs = 8 + 11;
         private const uint nForwardClusteredIndirectSRVsBase = 8 + 9;
 
-        public LightForwardPass() : base("Lightning")
+        public LightForwardPass() : base("LightForward")
         {
             AddWriteDependency(new("LightBuffer"));
             AddWriteDependency(new("GBuffer"));
@@ -46,7 +46,7 @@ namespace HexaEngine.Rendering.Passes
         private readonly bool forceForward = true;
         private readonly bool clustered = true;
 
-        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
             var viewport = creator.Viewport;
             creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
@@ -72,13 +72,15 @@ namespace HexaEngine.Rendering.Passes
             forwardRTVs = AllocArrayAndZero(nForwardRTVs);
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var current = SceneManager.Current;
             if (current == null)
             {
                 return;
             }
+
+            profiler?.Begin("LightForward.Update");
 
             var renderers = current.RenderManager;
             var lights = current.LightManager;
@@ -105,6 +107,10 @@ namespace HexaEngine.Rendering.Passes
 
             context.SetRenderTargets(nForwardRTVs, forwardRTVs, creator.GetDepthStencilBuffer("#DepthStencil").DSV);
 
+            profiler?.End("LightForward.Update");
+
+            profiler?.Begin("LightForward.Begin");
+
             if (clustered)
             {
                 ClusteredForwardBegin(context, creator, lights);
@@ -114,24 +120,67 @@ namespace HexaEngine.Rendering.Passes
                 ForwardBegin(context, creator, lights);
             }
 
+            profiler?.End("LightForward.Begin");
+
             if (forceForward)
             {
-                var geometryQueue = renderers.GeometryQueue;
-                for (int i = 0; i < geometryQueue.Count; i++)
+                profiler?.Begin("LightForward.Background");
+                var background = renderers.BackgroundQueue;
+                for (int i = 0; i < background.Count; i++)
                 {
-                    geometryQueue[i].Draw(context, RenderPath.Forward);
+                    var renderer = background[i];
+                    profiler?.Begin($"LightForward.{renderer.DebugName}");
+                    renderer.Draw(context, RenderPath.Forward);
+                    profiler?.End($"LightForward.{renderer.DebugName}");
                 }
+                profiler?.End("LightForward.Background");
+
+                profiler?.Begin("LightForward.Geometry");
+                var geometry = renderers.GeometryQueue;
+                for (int i = 0; i < geometry.Count; i++)
+                {
+                    var renderer = geometry[i];
+                    profiler?.Begin($"LightForward.{renderer.DebugName}");
+                    renderer.Draw(context, RenderPath.Forward);
+                    profiler?.End($"LightForward.{renderer.DebugName}");
+                }
+                profiler?.End("LightForward.Geometry");
             }
+
+            profiler?.Begin("LightForward.AlphaTest");
             var alphaTest = renderers.AlphaTestQueue;
             for (int i = 0; i < alphaTest.Count; i++)
             {
-                alphaTest[i].Draw(context, RenderPath.Forward);
+                var renderer = alphaTest[i];
+                profiler?.Begin($"LightForward.{renderer.DebugName}");
+                renderer.Draw(context, RenderPath.Forward);
+                profiler?.End($"LightForward.{renderer.DebugName}");
             }
+            profiler?.End("LightForward.AlphaTest");
+
+            profiler?.Begin("LightForward.GeometryLast");
+            var geometryLast = renderers.TransparencyQueue;
+            for (int i = 0; i < geometryLast.Count; i++)
+            {
+                var renderer = geometryLast[i];
+                profiler?.Begin($"LightForward.{renderer.DebugName}");
+                renderer.Draw(context, RenderPath.Forward);
+                profiler?.End($"LightForward.{renderer.DebugName}");
+            }
+            profiler?.End("LightForward.GeometryLast");
+
+            profiler?.Begin("LightForward.Transparency");
             var transparency = renderers.TransparencyQueue;
             for (int i = 0; i < transparency.Count; i++)
             {
-                transparency[i].Draw(context, RenderPath.Forward);
+                var renderer = transparency[i];
+                profiler?.Begin($"LightForward.{renderer.DebugName}");
+                renderer.Draw(context, RenderPath.Forward);
+                profiler?.End($"LightForward.{renderer.DebugName}");
             }
+            profiler?.End("LightForward.Transparency");
+
+            profiler?.Begin("LightForward.End");
 
             if (clustered)
             {
@@ -144,6 +193,8 @@ namespace HexaEngine.Rendering.Passes
 
             void* null_rtvs = stackalloc nint[(int)nForwardRTVs];
             context.SetRenderTargets(nForwardRTVs, (void**)null_rtvs, null);
+
+            profiler?.End("LightForward.End");
         }
 
         private unsafe void ForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
@@ -179,6 +230,7 @@ namespace HexaEngine.Rendering.Passes
 
         private unsafe void ClusteredForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
         {
+            var cam = CameraManager.Current;
             var lightParams = lightParamsBuffer.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParams->GlobalProbes = lights.GlobalProbes.Count;

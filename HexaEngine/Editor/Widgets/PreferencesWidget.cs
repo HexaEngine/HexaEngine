@@ -5,7 +5,6 @@
     using HexaEngine.Core.Input;
     using ImGuiNET;
     using System.Collections.Generic;
-    using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
 
@@ -40,12 +39,15 @@
         {
             Config config = Config.Global;
             List<ConfigKey> keys = config.Keys;
-            ImGui.BeginChild("Keys", new Vector2(100, 0));
+            ImGui.BeginTable("Config", 2, ImGuiTableFlags.SizingStretchProp);
+
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch, 1);
+            ImGui.TableNextColumn();
+
             for (int i = 0; i < keys.Count; i++)
             {
                 DisplayKeyNode(keys[i]);
             }
-            ImGui.EndChild();
 
             void DisplayKeyNode(ConfigKey key)
             {
@@ -74,8 +76,10 @@
                     ImGui.TreePop();
                 }
             }
-            ImGui.SameLine();
-            ImGui.BeginChild("Settings");
+            //ImGui.SameLine();
+            ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch, 5);
+            ImGui.TableNextColumn();
+
             if (displayedKey != null)
             {
                 ImGui.InputText("Search", ref filter, 256);
@@ -88,7 +92,7 @@
                 {
                     var value = displayedKey.Values[j];
 
-                    if (!string.IsNullOrEmpty(filter) && !value.Name.Contains(filter))
+                    if (!string.IsNullOrEmpty(filter) && !value.Name.Contains(filter, StringComparison.InvariantCultureIgnoreCase))
                     {
                         continue;
                     }
@@ -358,7 +362,8 @@
                     }
                 }
             }
-            ImGui.EndChild();
+
+            ImGui.EndTable();
         }
     }
 }

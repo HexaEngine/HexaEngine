@@ -92,7 +92,7 @@
 
         public Node[]? Bones => bones;
 
-        public override void Init(IGraphicsDevice device)
+        protected override void InitWindow(IGraphicsDevice device)
         {
             importDialog = new(device);
             var sw = Application.MainWindow.SwapChain;
@@ -674,7 +674,7 @@
             }
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
             Unload();
             worldBuffer.Dispose();

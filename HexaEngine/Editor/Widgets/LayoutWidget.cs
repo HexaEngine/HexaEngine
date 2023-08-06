@@ -154,7 +154,7 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
                     if (!payload.IsNull)
                     {
-                        string id = *(UnsafeString*)payload.Data;
+                        string id = *(UnsafeOldString*)payload.Data;
                         var gameObject = SceneManager.Current.Find(id);
                         GameObject.Selected.MoveSelection(element);
                     }
@@ -165,7 +165,7 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeString(element.Name);
+                    var str = new UnsafeOldString(element.Name);
                     ImGui.SetDragDropPayload(nameof(GameObject), (&str), (uint)sizeof(Guid));
                 }
                 ImGui.Text(element.Name);
@@ -242,7 +242,7 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
                     if (!payload.IsNull)
                     {
-                        string id = *(UnsafeString*)payload.Data;
+                        string id = *(UnsafeOldString*)payload.Data;
                         var child = scene.Find(id);
                         if (child != null)
                         {

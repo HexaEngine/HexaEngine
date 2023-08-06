@@ -5,6 +5,9 @@
     using System.Xml;
     using System.Xml.Serialization;
 
+    /// <summary>
+    /// This Utility is used to use the dotnet cli
+    /// </summary>
     public static class Dotnet
     {
         private static string Execute(string parameters)
@@ -222,46 +225,5 @@
 
             return Execute($"publish \"{path}\"  -o \"{outputDirectory}\"" + sb);
         }
-    }
-
-    public class PublishOptions
-    {
-        public string Profile { get; set; } = "Debug";
-
-        public string? RuntimeIdentifer { get; set; }
-
-        public string? Framework { get; set; }
-
-        public bool SelfContained { get; set; } = false;
-
-        public bool PublishSingleFile { get; set; } = false;
-
-        public bool PublishReadyToRun { get; set; } = false;
-
-        public DebugType DebugType { get; set; } = DebugType.Full;
-
-        public bool DebugSymbols { get; set; } = true;
-    }
-
-    public enum DebugType
-    {
-        Full,
-        PDBOnly,
-        Portable,
-        Embedded,
-        None
-    }
-
-    public enum SlnCommand
-    {
-        Add,
-        Remove
-    }
-
-    public enum DotnetTemplate
-    {
-        Sln,
-        Classlib,
-        Console,
     }
 }

@@ -36,7 +36,7 @@ namespace HexaEngine.D3D11
 #endif
             byte* pSource = source.ToUTF8();
 
-            var pMacros = macros.Length > 0 ? Alloc<D3DShaderMacro>(macros.Length + 1) : null;
+            var pMacros = macros.Length > 0 ? AllocT<D3DShaderMacro>(macros.Length + 1) : null;
 
             for (int i = 0; i < macros.Length; i++)
             {
@@ -67,7 +67,7 @@ namespace HexaEngine.D3D11
             callbacks[0] = pOpen;
             callbacks[1] = pClose;
 
-            ID3DInclude* include = (ID3DInclude*)Malloc(sizeof(ID3DInclude) + sizeof(nint));
+            ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
 
             include->LpVtbl = callbacks;
 
@@ -168,7 +168,7 @@ namespace HexaEngine.D3D11
             Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out error);
             if (shaderBlob != null)
             {
-                Shader* pShader = Alloc<Shader>();
+                Shader* pShader = AllocT<Shader>();
                 pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
@@ -204,7 +204,7 @@ namespace HexaEngine.D3D11
             Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out error);
             if (shaderBlob != null)
             {
-                Shader* pShader = Alloc<Shader>();
+                Shader* pShader = AllocT<Shader>();
                 pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;

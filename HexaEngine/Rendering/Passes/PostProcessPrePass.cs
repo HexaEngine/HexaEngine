@@ -1,7 +1,6 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Rendering.Graph;
 
@@ -12,7 +11,7 @@ namespace HexaEngine.Rendering.Renderers
             AddReadDependency(new("#DepthStencil"));
         }
 
-        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             //postProcessing.PrePassDraw(context);
         }

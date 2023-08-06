@@ -341,7 +341,7 @@
             dbgName = $"UavBuffer: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
             capacity = (uint)initialCapacity;
 
-            items = Alloc<T>(initialCapacity);
+            items = AllocT<T>(initialCapacity);
             ZeroMemory(items, initialCapacity * sizeof(T));
 
             bufferDescription = new(sizeof(T) * initialCapacity, bindFlags, Usage.Default, CpuAccessFlags.None, miscFlag, 0);
@@ -507,7 +507,7 @@
                 // Null check here because if no read or write access is specified we don't need that buffer
                 if (items != null)
                 {
-                    var tmp = Alloc<T>((int)value);
+                    var tmp = AllocT<T>((int)value);
                     ZeroMemory(tmp, DefaultCapacity * sizeof(T));
                     var oldSize = count * sizeof(T);
                     var newSize = value * sizeof(T);

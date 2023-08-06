@@ -46,6 +46,9 @@
         }
 
         [JsonIgnore]
+        public string DebugName { get; private set; } = nameof(SkinnedMeshRenderer);
+
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
@@ -96,6 +99,7 @@
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
+            DebugName = gameObject.Name + DebugName;
             this.gameObject = gameObject;
 
             renderer = new(device);

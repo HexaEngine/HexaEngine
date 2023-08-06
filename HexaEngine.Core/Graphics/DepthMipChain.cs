@@ -163,7 +163,7 @@
             texture.Dispose();
         }
 
-        private static int GetNumMipLevels(int width, int height)
+        public static int GetNumMipLevels(int width, int height)
         {
             int numLevels = 1;
             while (width > 1 && height > 1)

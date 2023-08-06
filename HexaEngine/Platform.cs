@@ -18,7 +18,7 @@
     {
         private static bool editor;
 
-        public static void Init(Window window, GraphicsBackend backend, bool editor = false)
+        public static void Init(IWindow window, GraphicsBackend backend, bool editor = false)
         {
             Application.GraphicsBackend = backend;
 #if DEBUG
@@ -61,11 +61,11 @@
                 Application.InDesignMode = true;
                 Application.InEditorMode = true;
             }
-            else
+            else if (window is Window window1)
             {
                 AppConfig = AppConfig.Load();
                 AssemblyManager.Load(AppConfig.ScriptAssembly);
-                window.StartupScene = StartupScene;
+                window1.StartupScene = StartupScene;
             }
 
             FileSystem.Initialize();

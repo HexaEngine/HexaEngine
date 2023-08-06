@@ -89,12 +89,12 @@
         public Shader* GetProgramBinary(uint program)
         {
             var length = gl.GetProgram(program, GLEnum.ProgramBinaryLength);
-            var buffer = (byte*)Malloc(length + 4);
+            var buffer = (byte*)Alloc((nint)(length + 4));
             uint written;
             GLEnum format;
             gl.GetProgramBinary(program, (uint)length, &written, &format, buffer + 4);
 
-            var shader = Alloc<Shader>();
+            var shader = AllocT<Shader>();
             shader->Bytecode = buffer;
             shader->Length = (nuint)(length + 4);
             var span = shader->AsSpan();

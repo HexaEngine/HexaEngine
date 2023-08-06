@@ -340,7 +340,7 @@ namespace HexaEngine.Rendering.Renderers
             Trace.Assert(io.BackendRendererUserData == null, "Already initialized a renderer backend!");
 
             // Setup backend capabilities flags
-            var bd = Alloc<RendererData>();
+            var bd = AllocT<RendererData>();
             io.BackendRendererUserData = bd;
             io.BackendRendererName = "ImGui_Generic_Renderer".ToUTF8();
             io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset; // We can honor the ImDrawCmd::VtxOffset field, allowing for large meshes.
@@ -407,7 +407,7 @@ namespace HexaEngine.Rendering.Renderers
         private static unsafe void CreateWindow(ImGuiViewport* viewport)
         {
             ViewportData vd = new();
-            ViewportDataHandle* vh = Alloc<ViewportDataHandle>();
+            ViewportDataHandle* vh = AllocT<ViewportDataHandle>();
             viewportData.Add(vh, vd);
             viewport->RendererUserData = vh;
 

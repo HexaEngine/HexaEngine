@@ -32,7 +32,7 @@
             string baseDir = ToStringFromUTF8((byte*)userdata);
             string path = Path.Combine(baseDir, requested);
 
-            ShadercIncludeResult* result = Alloc<ShadercIncludeResult>();
+            ShadercIncludeResult* result = AllocT<ShadercIncludeResult>();
 
             var blob = FileSystem.ReadBlob(path);
             result->Content = blob.Data;
@@ -136,7 +136,7 @@
                 var length = Shaderc.ShadercResultGetLength(result);
                 var bytecode = Shaderc.ShadercResultGetBytes(result);
 
-                il.Bytecode = (byte*)Malloc(length);
+                il.Bytecode = (byte*)Alloc(length);
                 il.Length = (int)length;
                 Memcpy(bytecode, il.Bytecode, length, length);
 

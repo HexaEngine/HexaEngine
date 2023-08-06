@@ -39,7 +39,7 @@
 	  <None Remove="Graphics\Passes\**" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Hardware.Info" Version="11.1.0.1" />
+		<PackageReference Include="Hardware.Info" Version="11.1.1" />
 		<PackageReference Include="HexaEngine.ImGui" Version="2.0.15" />
 		<PackageReference Include="HexaEngine.ImGuizmo" Version="2.0.15" />
 		<PackageReference Include="HexaEngine.ImNodes" Version="2.0.15" />

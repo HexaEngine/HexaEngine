@@ -107,8 +107,8 @@ namespace HexaEngine.Rendering.Renderers
             for (int i = 0; i < queue.Commands.Count; i++)
             {
                 var cmd = queue.Commands[i];
-                MemoryCopy(cmd.Vertices, vertexResourcePointer, cmd.nVertices);
-                MemoryCopy(cmd.Indices, indexResourcePointer, cmd.nIndices);
+                MemcpyT(cmd.Vertices, vertexResourcePointer, cmd.nVertices);
+                MemcpyT(cmd.Indices, indexResourcePointer, cmd.nIndices);
                 vertexResourcePointer += cmd.nVertices;
                 indexResourcePointer += cmd.nIndices;
             }

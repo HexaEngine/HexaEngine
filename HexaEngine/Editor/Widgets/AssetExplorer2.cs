@@ -179,7 +179,7 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(String));
                     if (!payload.IsNull)
                     {
-                        string ft = *(UnsafeString*)payload.Data;
+                        string ft = *(UnsafeOldString*)payload.Data;
                         if (Directory.Exists(ft))
                         {
                             var fname = Path.GetFileName(ft);
@@ -202,8 +202,8 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeString(dir.Path);
-                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeString));
+                    var str = new UnsafeOldString(dir.Path);
+                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeOldString));
                 }
                 ImGui.Text(dir.Name);
                 ImGui.EndDragDropSource();
@@ -257,8 +257,8 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeString(file.Path);
-                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeString));
+                    var str = new UnsafeOldString(file.Path);
+                    ImGui.SetDragDropPayload(nameof(String), (&str), (uint)sizeof(UnsafeOldString));
                 }
                 ImGui.Text(file.Name);
                 ImGui.EndDragDropSource();
@@ -357,7 +357,7 @@
                             var payload = ImGui.AcceptDragDropPayload(nameof(String));
                             if (!payload.IsNull)
                             {
-                                string ft = *(UnsafeString*)payload.Data;
+                                string ft = *(UnsafeOldString*)payload.Data;
                                 if (Directory.Exists(ft))
                                 {
                                     var fname = Path.GetFileName(ft);

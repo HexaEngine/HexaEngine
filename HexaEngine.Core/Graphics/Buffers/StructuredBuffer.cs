@@ -33,7 +33,7 @@
                 description.Usage = Usage.Staging;
             }
             capacity = DefaultCapacity;
-            items = Alloc<T>(DefaultCapacity);
+            items = AllocT<T>(DefaultCapacity);
             ZeroMemory(items, DefaultCapacity * sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, description);
             buffer.DebugName = dbgName;
@@ -56,7 +56,7 @@
                 description.Usage = Usage.Staging;
             }
             capacity = initialCapacity;
-            items = Alloc<T>(initialCapacity);
+            items = AllocT<T>(initialCapacity);
             ZeroMemory(items, (int)initialCapacity * sizeof(T));
             buffer = device.CreateBuffer(items, initialCapacity, description);
             buffer.DebugName = dbgName;
@@ -90,7 +90,7 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = Alloc<T>((int)value);
+                var tmp = AllocT<T>((int)value);
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);

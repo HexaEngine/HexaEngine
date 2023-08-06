@@ -2,21 +2,16 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System;
-    using System.Numerics;
     using System.Threading.Tasks;
 
-    public class SSGI : IPostFx
+    public class SSGI : PostFxBase
     {
         private IGraphicsDevice device;
-        private bool enabled = false;
         private IGraphicsPipeline pipelineSSGI;
         private ConstantBuffer<SSGIParams> ssgiParams;
         private Texture2D inputChain;
@@ -29,35 +24,10 @@
         public Viewport Viewport;
         public IShaderResourceView Input;
         public ITexture2D InputTex;
-        private bool isDirty = false;
 
-        private int priority = 402;
+        public override string Name { get; } = "SSGI";
 
-        public event Action<bool>? OnEnabledChanged;
-
-        public event Action<int>? OnPriorityChanged;
-
-        public string Name { get; } = "SSGI";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
         #region Structs
 
@@ -79,7 +49,7 @@
 
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -112,7 +82,7 @@
 
             copy = await device.CreateGraphicsPipelineAsync(new()
             {
-                VertexShader = "effects/copy/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",
             });
 
@@ -122,15 +92,7 @@
             blur = new(device, Format.R16G16B16A16Float, width, height);
         }
 
-        public void Update(IGraphicsContext context)
-        {
-        }
-
-        public void Resize(int width, int height)
-        {
-        }
-
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
                 return;
@@ -162,19 +124,19 @@
             context.SetRenderTarget(null, null);
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
             InputTex = resource;
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipelineSSGI.Dispose();
             linearWrapSampler.Dispose();

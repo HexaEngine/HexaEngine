@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
 
     public class RenderGraphExecuter
@@ -21,20 +22,25 @@
 
         public GraphResourceBuilder ResourceCreator => resourceCreator;
 
-        public void Init()
+        public void Init(ICPUProfiler? profiler)
         {
             for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
             {
-                renderPasses[renderGraph.SortedNodeIndices[i]].Init(resourceCreator, pipelineCreator, device);
+                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                pass.Init(resourceCreator, pipelineCreator, device, profiler);
+                profiler?.CreateStage(pass.Name);
             }
             resourceCreator.CreateResources();
         }
 
-        public void Execute(IGraphicsContext context)
+        public void Execute(IGraphicsContext context, ICPUProfiler? profiler)
         {
             for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
             {
-                renderPasses[renderGraph.SortedNodeIndices[i]].Execute(context, resourceCreator);
+                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                profiler?.Begin(pass.Name);
+                pass.Execute(context, resourceCreator, profiler);
+                profiler?.End(pass.Name);
             }
         }
 

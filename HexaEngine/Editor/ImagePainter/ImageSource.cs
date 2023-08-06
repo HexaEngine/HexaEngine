@@ -92,7 +92,7 @@
                 var capture = device.TextureLoader.CaptureTexture(device.Context, textures[i]);
                 var imageSrc = capture.GetImages()[0];
                 var imageDst = images[i];
-                MemoryCopy((void*)imageSrc.Pixels, imageDst.Pixels, imageSrc.RowPitch * imageSrc.Height);
+                Memcpy((void*)imageSrc.Pixels, imageDst.Pixels, imageSrc.RowPitch * imageSrc.Height);
                 capture.Dispose();
             }
 

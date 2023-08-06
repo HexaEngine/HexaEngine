@@ -112,7 +112,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = Alloc<float>(NoiseSize * NoiseSize * NoiseStride);
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;

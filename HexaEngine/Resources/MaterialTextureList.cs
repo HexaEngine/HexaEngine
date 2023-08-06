@@ -55,8 +55,8 @@
                 samplers = AllocArray(capacity);
                 ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
                 ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
-                MemoryCopy(tmpShaderResourceViews, shaderResourceViews, capacity * sizeof(nint), oldCapacity * sizeof(nint));
-                MemoryCopy(tmpSamplers, samplers, capacity * sizeof(nint), oldCapacity * sizeof(nint));
+                Memcpy(tmpShaderResourceViews, shaderResourceViews, capacity * sizeof(nint), oldCapacity * sizeof(nint));
+                Memcpy(tmpSamplers, samplers, capacity * sizeof(nint), oldCapacity * sizeof(nint));
                 Free(tmpShaderResourceViews);
                 Free(tmpSamplers);
             }

@@ -34,7 +34,7 @@
         /// <param name="length">Length of the file blob data to allocate.</param>
         public FileBlob(nint length)
         {
-            Data = (byte*)Malloc(length);
+            Data = (byte*)Alloc(length);
             Length = length;
         }
 

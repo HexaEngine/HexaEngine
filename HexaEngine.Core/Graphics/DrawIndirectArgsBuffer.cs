@@ -38,7 +38,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = DefaultCapacity;
-                items = Alloc<T>(capacity);
+                items = AllocT<T>(capacity);
                 ZeroMemoryT(items, capacity);
             }
 
@@ -64,7 +64,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = initialCapacity;
-                items = Alloc<T>(capacity);
+                items = AllocT<T>(capacity);
                 ZeroMemoryT(items, capacity);
             }
 
@@ -90,7 +90,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = 1;
-                items = Alloc<T>(capacity);
+                items = AllocT<T>(capacity);
                 items[0] = initialData;
                 buffer = device.CreateBuffer(items, capacity, description);
             }
@@ -167,7 +167,7 @@
                     return;
                 }
 
-                var tmp = Alloc<T>((int)value);
+                var tmp = AllocT<T>((int)value);
                 System.Buffer.MemoryCopy(items, tmp, value * sizeof(T), count * sizeof(T) > value * sizeof(T) ? value * sizeof(T) : count * sizeof(T));
                 Free(items);
                 items = tmp;

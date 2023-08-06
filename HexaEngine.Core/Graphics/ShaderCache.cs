@@ -309,8 +309,8 @@
 
             int len = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
-            Shader = Alloc<Shader>();
-            Shader->Bytecode = Alloc<byte>(len);
+            Shader = AllocT<Shader>();
+            Shader->Bytecode = AllocT<byte>(len);
             Shader->Length = (nuint)len;
             fixed (void* ptr = src.Slice(idx, len))
             {

@@ -2,8 +2,6 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -11,11 +9,10 @@
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Weather;
-    using System;
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public class VolumetricClouds : IPostFx
+    public class VolumetricClouds : PostFxBase
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;
@@ -33,36 +30,11 @@
         public IShaderResourceView Input;
         public Viewport Viewport;
 
-        private bool enabled = true;
-        private int priority = 340;
+        public override string Name { get; } = "VolumetricClouds";
 
-        public string Name { get; } = "VolumetricClouds";
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public event Action<bool>? OnEnabledChanged;
-
-        public event Action<int>? OnPriorityChanged;
-
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -100,11 +72,11 @@
             gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null || WeatherManager.Current == null || !WeatherManager.Current.HasSun)
             {
@@ -134,24 +106,24 @@
             gaussianBlur.Blur(context, intermediateTex.SRV, Output, (int)Viewport.Width, (int)Viewport.Height);
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             intermediateTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             gaussianBlur.Resize(Format.R16G16B16A16Float, width, height);
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipeline.Dispose();
             linearWrapSampler.Dispose();
@@ -162,8 +134,6 @@
 
             intermediateTex.Dispose();
             gaussianBlur.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

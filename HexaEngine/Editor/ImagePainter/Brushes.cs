@@ -16,7 +16,7 @@
 
         public BrushMask? Current => current;
 
-        public override void Init(IGraphicsDevice device)
+        protected override void InitWindow(IGraphicsDevice device)
         {
             this.device = device;
             string[] brushes = FileSystem.GetFiles("assets/textures/brushes");
@@ -66,13 +66,13 @@
             ImGui.EndListBox();
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
             for (int i = 0; i < masks.Count; i++)
             {
                 masks[i].Dispose();
             }
-            base.Dispose();
+            base.DisposeCore();
         }
 
         public static void Register<T>(T mask) where T : BrushMask

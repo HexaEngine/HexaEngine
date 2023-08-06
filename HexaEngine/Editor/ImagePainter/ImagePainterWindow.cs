@@ -63,7 +63,7 @@
 
         public ImageSource? Source => source;
 
-        public override unsafe void Init(IGraphicsDevice device)
+        protected override unsafe void InitWindow(IGraphicsDevice device)
         {
             exporter = new(device);
             this.device = device;
@@ -420,7 +420,7 @@
             overlay = new(device, source, samplerState);
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
             UnloadImage();
 

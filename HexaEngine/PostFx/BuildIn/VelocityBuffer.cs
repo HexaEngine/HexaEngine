@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
@@ -12,7 +11,7 @@
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public class VelocityBuffer : IPostFx
+    public class VelocityBuffer : PostFxBase
     {
         private IGraphicsPipeline pipeline;
         private ConstantBuffer<VelocityBufferParams> paramsBuffer;
@@ -24,36 +23,15 @@
         private Viewport Viewport;
         private float scale = 64;
 
-        private bool enabled = true;
-        private int priority = 1000;
+        public override string Name => "VelocityBuffer";
 
-        public event Action<bool>? OnEnabledChanged;
+        public override PostFxFlags Flags => PostFxFlags.NoOutput | PostFxFlags.NoInput;
 
-        public event Action<int>? OnPriorityChanged;
-
-        public string Name => "VelocityBuffer";
-
-        public PostFxFlags Flags => PostFxFlags.NoOutput | PostFxFlags.NoInput;
-
-        public bool Enabled
+        public float Scale
         {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
+            get => scale;
+            set => NotifyPropertyChangedAndSet(ref scale, value);
         }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public float Scale { get => scale; set => scale = value; }
 
         #region Structs
 
@@ -71,7 +49,7 @@
 
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder.AddSource("VelocityBuffer");
 
@@ -90,12 +68,16 @@
             Viewport = new(width, height);
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            paramsBuffer.Update(context, new(scale));
+            if (dirty)
+            {
+                paramsBuffer.Update(context, new(scale));
+                dirty = false;
+            }
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             var depth = creator.GetDepthStencilBuffer("#DepthStencil");
             var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -111,21 +93,13 @@
             context.ClearState();
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             Velocity = ResourceManager2.Shared.UpdateTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
             Viewport = new(width, height);
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-        }
-
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-        }
-
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipeline.Dispose();
             paramsBuffer.Dispose();

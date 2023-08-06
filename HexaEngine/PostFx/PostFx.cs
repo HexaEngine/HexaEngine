@@ -5,6 +5,7 @@
     using HexaEngine.Rendering.Graph;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Threading.Tasks;
     using System.Xml;
     using System.Xml.Schema;
@@ -39,6 +40,8 @@
         public event Action<bool> OnEnabledChanged;
 
         public event Action<int> OnPriorityChanged;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public void Save(string path)
         {

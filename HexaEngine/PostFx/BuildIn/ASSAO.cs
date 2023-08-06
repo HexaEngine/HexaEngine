@@ -101,7 +101,7 @@ namespace HexaEngine.Effects.BuildIn
 
             public float DepthPrecisionOffsetMod;
             public float NegRecEffectRadius;                     // -1.0 / EffectRadius
-            public float LoadCounterAvgDiv;                      // 1.0 / ( halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].sizeX * halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].sizeY )
+            public float LoadCounterAvgDiv;                      // 1.0 / ( halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].SizeX * halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].sizeY )
             public float AdaptiveSampleCountLimit;
 
             public float InvSharpness;
@@ -154,7 +154,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = Alloc<float>(NoiseSize * NoiseSize * NoiseStride);
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;

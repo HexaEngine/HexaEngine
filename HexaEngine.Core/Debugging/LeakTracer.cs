@@ -5,6 +5,7 @@
     using HexaEngine.Core.Graphics;
     using System.Collections.Concurrent;
     using System.Diagnostics;
+    using System.Runtime.CompilerServices;
 
 #endif
 
@@ -21,6 +22,7 @@
         /// Allocates an object for tracking memory leaks.
         /// </summary>
         /// <param name="obj">The object to allocate.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Allocate(object obj)
         {
 #if TRACELEAK
@@ -32,6 +34,7 @@
         /// Releases an object from memory leak tracking.
         /// </summary>
         /// <param name="obj">The object to release.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Release(object obj)
         {
 #if TRACELEAK

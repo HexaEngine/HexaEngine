@@ -4,7 +4,6 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Mathematics;
@@ -63,13 +62,29 @@ namespace HexaEngine.Effects.BuildIn
 
         public string Name => "SSAO";
 
-        public bool Enabled { get => enabled; set => enabled = value; }
+        public bool Enabled
+        {
+            get => enabled;
+            set => enabled = value;
+        }
 
-        public float TapSize { get => tapSize; set => tapSize = value; }
+        public float TapSize
+        {
+            get => tapSize;
+            set => tapSize = value;
+        }
 
-        public uint NumTaps { get => numTaps; set => numTaps = value; }
+        public uint NumTaps
+        {
+            get => numTaps;
+            set => numTaps = value;
+        }
 
-        public float Power { get => power; set => power = value; }
+        public float Power
+        {
+            get => power;
+            set => power = value;
+        }
 
         #endregion Properties
 
@@ -91,7 +106,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = Alloc<float>(NoiseSize * NoiseSize * NoiseStride);
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;

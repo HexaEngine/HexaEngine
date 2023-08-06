@@ -47,7 +47,7 @@
 
                 InfoQueueFilter filter = new InfoQueueFilter();
                 filter.DenyList.NumIDs = 1;
-                filter.DenyList.PIDList = (int*)Alloc(MessageID.SetprivatedataChangingparams);
+                filter.DenyList.PIDList = (int*)AllocT(MessageID.SetprivatedataChangingparams);
                 IDXGIInfoQueue.AddStorageFilterEntries(DXGI_DEBUG_ALL, &filter);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Message, false);
                 IDXGIInfoQueue.SetBreakOnSeverity(DXGI_DEBUG_ALL, InfoQueueMessageSeverity.Info, false);
@@ -114,7 +114,7 @@
 
                 if (hr.IsSuccess)
                 {
-                    InfoQueueMessage* message = (InfoQueueMessage*)Malloc(messageLength);
+                    InfoQueueMessage* message = (InfoQueueMessage*)Alloc(messageLength);
 
                     hr = IDXGIInfoQueue.GetMessageA(DXGI_DEBUG_ALL, i, message, &messageLength);
 

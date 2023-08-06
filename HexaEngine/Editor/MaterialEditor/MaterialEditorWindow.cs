@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
@@ -19,7 +18,6 @@
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
-    using System.Diagnostics;
     using System.IO;
     using System.Numerics;
     using System.Reflection;
@@ -74,7 +72,7 @@
 
         protected override string Name { get; } = "Material Editor";
 
-        public override void Init(IGraphicsDevice device)
+        protected override void InitWindow(IGraphicsDevice device)
         {
             this.device = device;
             generator.OnPreBuildTable += Generator_OnPreBuildTable;
@@ -124,7 +122,7 @@
 
             dfg = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/dfg/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/dfg/ps.hlsl"
             }, new ShaderMacro[2] { new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0") });
 
@@ -162,7 +160,7 @@
             table.SetBaseSampler(2);
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
             editor.Destroy();
 

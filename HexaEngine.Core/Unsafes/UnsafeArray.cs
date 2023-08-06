@@ -1,9 +1,6 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
-    using HexaEngine.Mathematics;
     using System;
-    using System.Buffers.Binary;
-    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Represents an unsafe array of elements of type T.
@@ -11,14 +8,17 @@
     /// <typeparam name="T">The type of the elements.</typeparam>
     public unsafe struct UnsafeArray<T> where T : unmanaged
     {
+        private T* pointer;
+        private uint length;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UnsafeArray{T}"/> struct with an existing array.
         /// </summary>
         /// <param name="array">The existing array to create an unsafe array from.</param>
         public UnsafeArray(T[] array)
         {
-            Ptr = AllocCopy(array);
-            Length = array.Length;
+            pointer = AllocCopy(array);
+            length = (uint)array.Length;
         }
 
         /// <summary>
@@ -26,72 +26,57 @@
         /// </summary>
         /// <param name="ptr">The pointer to the start of the array.</param>
         /// <param name="length">The length of the array.</param>
-        public UnsafeArray(T* ptr, int length)
+        public UnsafeArray(T* ptr, uint length)
         {
-            Ptr = ptr;
-            Length = length;
+            pointer = ptr;
+            this.length = length;
         }
 
         /// <summary>
-        /// Gets or sets the pointer to the start of the array.
+        /// Initializes a new instance of the <see cref="UnsafeArray{T}"/> struct with a pointer and length.
         /// </summary>
-        public T* Ptr;
-
-        /// <summary>
-        /// Gets or sets the length of the array.
-        /// </summary>
-        public int Length;
-
-        /// <summary>
-        /// Writes the contents of the unsafe array to a span of bytes, using the specified endianness.
-        /// </summary>
-        /// <param name="str">The unsafe array to write.</param>
-        /// <param name="endianness">The endianness to use when writing the length of the array.</param>
-        /// <param name="dest">The destination span of bytes to write to.</param>
-        /// <returns>The number of bytes written.</returns>
-        public static int Write(UnsafeArray<T>* str, Endianness endianness, Span<byte> dest)
+        /// <param name="ptr">The pointer to the start of the array.</param>
+        /// <param name="length">The length of the array.</param>
+        public UnsafeArray(uint length)
         {
-            Span<T> srcChars = new(str->Ptr, str->Length);
-            Span<byte> src = MemoryMarshal.AsBytes(srcChars);
-            if (endianness == Endianness.LittleEndian)
-            {
-                BinaryPrimitives.WriteInt32LittleEndian(dest, src.Length);
-            }
-
-            if (endianness == Endianness.BigEndian)
-            {
-                BinaryPrimitives.WriteInt32BigEndian(dest, src.Length);
-            }
-
-            src.CopyTo(dest[4..]);
-            return src.Length + 4;
+            pointer = AllocT<T>(length);
+            ZeroMemoryT(pointer, length);
+            this.length = length;
         }
 
-        /// <summary>
-        /// Reads the contents of a span of bytes into the unsafe array, using the specified endianness.
-        /// </summary>
-        /// <param name="str">The unsafe array to read into.</param>
-        /// <param name="endianness">The endianness to use when reading the length of the array.</param>
-        /// <param name="src">The source span of bytes to read from.</param>
-        /// <returns>The number of bytes read.</returns>
-        public static int Read(UnsafeArray<T>* str, Endianness endianness, Span<byte> src)
+        public readonly T* Data => pointer;
+
+        public readonly uint Length => length;
+
+        public T this[int index]
         {
-            int length = endianness == Endianness.LittleEndian ? BinaryPrimitives.ReadInt32LittleEndian(src) : BinaryPrimitives.ReadInt32BigEndian(src);
-            fixed (byte* srcPtr = src.Slice(4, length))
-            {
-                str->Ptr = (T*)srcPtr;
-            }
-            str->Length = length;
-            return length + 4;
+            get { return pointer[index]; }
+            set { pointer[index] = value; }
+        }
+
+        public T this[uint index]
+        {
+            get { return pointer[index]; }
+            set { pointer[index] = value; }
+        }
+
+        public T* GetPointer(uint index)
+        {
+            return &pointer[index];
+        }
+
+        public T* GetPointer(int index)
+        {
+            return &pointer[index];
         }
 
         /// <summary>
         /// Gets the size in bytes of the unsafe array.
         /// </summary>
         /// <returns>The size in bytes of the unsafe array.</returns>
-        public int Sizeof()
+        public readonly uint Sizeof()
         {
-            return Length * sizeof(T) + 4;
+            return length * (uint)sizeof(T) + 4;
         }
 
         /// <summary>
@@ -99,7 +84,9 @@
         /// </summary>
         public void Release()
         {
-            Free(Ptr);
+            Free(pointer);
+            pointer = null;
+            length = 0;
         }
 
         /// <summary>
@@ -109,7 +96,7 @@
         /// <returns>A span of elements of type T.</returns>
         public static implicit operator Span<T>(UnsafeArray<T> ptr)
         {
-            return new Span<T>(ptr.Ptr, ptr.Length);
+            return new Span<T>(ptr.pointer, (int)ptr.Length);
         }
 
         /// <summary>

@@ -14,7 +14,7 @@
         private ImNodesContextPtr nodesContext;
         private ImPlotContextPtr plotContext;
 
-        public unsafe ImGuiManager(SdlWindow window, IGraphicsDevice device, IGraphicsContext context)
+        public unsafe ImGuiManager(SdlWindow window, IGraphicsDevice device, IGraphicsContext context, ImGuiConfigFlags flags = ImGuiConfigFlags.NavEnableKeyboard | ImGuiConfigFlags.NavEnableGamepad | ImGuiConfigFlags.DockingEnable | ImGuiConfigFlags.ViewportsEnable)
         {
             guiContext = ImGui.CreateContext(null);
             ImGui.SetCurrentContext(guiContext);
@@ -33,10 +33,7 @@
             ImPlot.StyleColorsDark(ImPlot.GetStyle());
 
             var io = ImGui.GetIO();
-            io.ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;     // Enable Keyboard Controls
-            io.ConfigFlags |= ImGuiConfigFlags.NavEnableGamepad;      // Enable Gamepad Controls
-            io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;         // Enable Docking
-            io.ConfigFlags |= ImGuiConfigFlags.ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
+            io.ConfigFlags |= flags;
             io.ConfigViewportsNoAutoMerge = false;
             io.ConfigViewportsNoTaskBarIcon = false;
 

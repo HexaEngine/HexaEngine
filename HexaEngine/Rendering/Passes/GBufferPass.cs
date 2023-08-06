@@ -1,7 +1,6 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Graph;
@@ -18,7 +17,7 @@ namespace HexaEngine.Rendering.Passes
 
         private readonly bool forceForward = true;
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
             var viewport = creator.Viewport;
             creator.CreateGBuffer("GBuffer", new((int)viewport.Width, (int)viewport.Height, 4,
@@ -29,7 +28,7 @@ namespace HexaEngine.Rendering.Passes
                 ));
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var gbuffer = creator.GetGBuffer("GBuffer");
             var lightBuffer = creator.GetTexture2D("LightBuffer");

@@ -84,7 +84,7 @@
                 }
                 if (ImGui.BeginMenu("View"))
                 {
-                    WidgetManager.DrawMenu();
+                    WindowManager.DrawMenu();
 
                     ImGui.EndMenu();
                 }

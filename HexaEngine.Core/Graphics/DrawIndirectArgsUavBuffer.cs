@@ -35,7 +35,7 @@
             this.srvFlags = srvFlags;
             dbgName = $"DrawIndirectArgsUavBuffer: {filename}, Line:{lineNumber}";
             capacity = DefaultCapacity;
-            items = Alloc<T>(DefaultCapacity);
+            items = AllocT<T>(DefaultCapacity);
             ZeroMemory(items, DefaultCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * DefaultCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
             buffer = device.CreateBuffer(items, DefaultCapacity, bufferDescription);
@@ -68,7 +68,7 @@
             this.srvFlags = srvFlags;
             dbgName = $"DrawIndirectArgsUavBuffer: {filename}, Line:{lineNumber}";
             capacity = intialCapacity;
-            items = Alloc<T>(intialCapacity);
+            items = AllocT<T>(intialCapacity);
             ZeroMemory(items, (int)intialCapacity * sizeof(T));
             bufferDescription = new(sizeof(T) * (int)intialCapacity, BindFlags.UnorderedAccess | BindFlags.ShaderResource, Usage.Default, CpuAccessFlags.None, ResourceMiscFlag.DrawIndirectArguments, sizeof(T));
             buffer = device.CreateBuffer(items, intialCapacity, bufferDescription);
@@ -184,7 +184,7 @@
                     return;
                 }
 
-                var tmp = Alloc<T>((int)value);
+                var tmp = AllocT<T>((int)value);
                 ZeroMemory(tmp, DefaultCapacity * sizeof(T));
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);

@@ -1,9 +1,6 @@
-﻿#nullable disable
-
-using HexaEngine;
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
@@ -15,11 +12,11 @@ namespace HexaEngine.Rendering.Passes
         private bool recreateClusters = true;
 
         public const uint CLUSTERS_X = 16;
-        public const uint CLUSTERS_Y = 16;
-        public const uint CLUSTERS_Z = 16;
+        public const uint CLUSTERS_Y = 9;
+        public const uint CLUSTERS_Z = 24;
 
         public const uint CLUSTERS_X_THREADS = 16;
-        public const uint CLUSTERS_Y_THREADS = 16;
+        public const uint CLUSTERS_Y_THREADS = 9;
         public const uint CLUSTERS_Z_THREADS = 4;
 
         public const uint CLUSTER_COUNT = CLUSTERS_X * CLUSTERS_Y * CLUSTERS_Z;
@@ -44,7 +41,7 @@ namespace HexaEngine.Rendering.Passes
             AddWriteDependency(new("LightGridBuffer"));
         }
 
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
             float screenWidth = creator.Viewport.Width;
             float screenHeight = creator.Viewport.Height;
@@ -59,7 +56,8 @@ namespace HexaEngine.Rendering.Passes
             });
 
             lightParamsBuffer = new(device, CpuAccessFlags.Write);
-            clusterSizesBuffer = new(device, new ClusterSizes(screenWidth / CLUSTERS_X, screenHeight / CLUSTERS_Y), CpuAccessFlags.Write);
+
+            clusterSizesBuffer = new(device, new ClusterSizes(CLUSTERS_X, CLUSTERS_Y, CLUSTERS_Z, (uint)MathF.Ceiling(screenWidth / CLUSTERS_X)), CpuAccessFlags.Write);
 
             ClusterBuffer = creator.CreateStructuredUavBuffer<Cluster>("ClusterBuffer", CLUSTER_COUNT, CpuAccessFlags.None);
             LightIndexCounter = creator.CreateStructuredUavBuffer<uint>("LightIndexCounter", 1, CpuAccessFlags.None);
@@ -67,7 +65,7 @@ namespace HexaEngine.Rendering.Passes
             LightGridBuffer = creator.CreateStructuredUavBuffer<LightGrid>("LightGridBuffer", CLUSTER_COUNT, CpuAccessFlags.None);
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -78,6 +76,8 @@ namespace HexaEngine.Rendering.Passes
             var lights = current.LightManager;
             var lightBuffer = current.LightManager.LightBuffer;
 
+            profiler?.Begin("LightCull.Update");
+
             lights.GlobalProbes.Update(context);
             lights.LightBuffer.Update(context);
             lights.ShadowDataBuffer.Update(context);
@@ -85,6 +85,7 @@ namespace HexaEngine.Rendering.Passes
             context.CSSetConstantBuffer(1, creator.GetConstantBuffer<CBCamera>("CBCamera"));
             if (recreateClusters)
             {
+                profiler?.Begin("RecreateClusters");
                 context.CSSetConstantBuffer(0, clusterSizesBuffer);
                 context.CSSetUnorderedAccessView(0, (void*)ClusterBuffer.UAV.NativePointer);
 
@@ -94,9 +95,15 @@ namespace HexaEngine.Rendering.Passes
 
                 context.CSSetUnorderedAccessView(0, null);
                 recreateClusters = false;
+                profiler?.End("RecreateClusters");
             }
 
             lightParamsBuffer.Update(context, new(lightBuffer.Count));
+
+            profiler?.End("LightCull.Update");
+
+            profiler?.Begin("LightCull.Dispatch");
+
             context.CSSetConstantBuffer(0, lightParamsBuffer);
 
             nint* srvs = stackalloc nint[] { ClusterBuffer.SRV.NativePointer, lightBuffer.SRV.NativePointer };
@@ -114,6 +121,8 @@ namespace HexaEngine.Rendering.Passes
             context.CSSetUnorderedAccessViews(0, 3, (void**)uavs, null);
             context.CSSetConstantBuffer(1, null);
             context.CSSetConstantBuffer(0, null);
+
+            profiler?.End("LightCull.Dispatch");
         }
     }
 }

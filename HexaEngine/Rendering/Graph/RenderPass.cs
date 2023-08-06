@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using System.Threading.Tasks;
 
@@ -46,11 +47,11 @@
             }
         }
 
-        public virtual void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public virtual void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
         }
 
-        public virtual void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public virtual void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
         }
 
@@ -206,120 +207,5 @@
         public IRenderTargetView RenderTargetView { get; set; }
 
         public IDepthStencilView DepthStencilView { get; set; }
-    }
-
-    public class DeferredDrawPass : RenderPass
-    {
-        private readonly IGraphicsContext deferredContext;
-        private ICommandList commandList;
-        private readonly Task task;
-        protected bool invalidate;
-
-        public DeferredDrawPass(string name) : base(name)
-        {
-        }
-
-        public IRenderTargetView RenderTargetView { get; set; }
-
-        public IDepthStencilView DepthStencilView { get; set; }
-
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
-        {
-            //deferredContext = device.CreateDeferredContext();
-            //task = new(() => Update(deferredContext));
-        }
-
-        public override sealed void Execute(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            if (invalidate)
-            {
-                commandList.Dispose();
-                Bind(deferredContext);
-                Record(deferredContext);
-                commandList = deferredContext.FinishCommandList(false);
-            }
-
-            task.Wait();
-            task.Start();
-            context.ExecuteCommandList(commandList, false);
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            context.SetRenderTarget(RenderTargetView, DepthStencilView);
-        }
-
-        public virtual void Update(IGraphicsContext context)
-        {
-        }
-
-        public virtual void Record(IGraphicsContext context)
-        {
-        }
-    }
-
-    public class MultiTargetDrawPass : RenderPass
-    {
-        public MultiTargetDrawPass(string name) : base(name)
-        {
-        }
-
-        public IRenderTargetView[] RenderTargetViews { get; set; }
-
-        public IDepthStencilView DepthStencilView { get; set; }
-
-        public void Bind(IGraphicsContext context)
-        {
-            //context.SetRenderTargets();
-        }
-    }
-
-    public class DeferredMultiTargetDrawPass : RenderPass
-    {
-        private readonly IGraphicsContext deferredContext;
-        private ICommandList commandList;
-        private readonly Task task;
-        protected bool invalidate;
-
-        public DeferredMultiTargetDrawPass(string name) : base(name)
-        {
-        }
-
-        public IRenderTargetView[] RenderTargetViews { get; set; }
-
-        public IDepthStencilView DepthStencilView { get; set; }
-
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
-        {
-            //deferredContext = device.CreateDeferredContext();
-            //task = new(() => Update(deferredContext));
-        }
-
-        public override sealed void Execute(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            if (invalidate)
-            {
-                commandList.Dispose();
-                Record(deferredContext);
-                commandList = deferredContext.FinishCommandList(false);
-            }
-
-            task.Wait();
-            task.Start();
-            context.ExecuteCommandList(commandList, false);
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            //context.SetRenderTargets();
-        }
-
-        public virtual void Update(IGraphicsContext context)
-        {
-        }
-
-        public virtual void Record(IGraphicsContext context)
-        {
-        }
     }
 }

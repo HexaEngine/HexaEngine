@@ -2,6 +2,7 @@
 
 namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
@@ -50,7 +51,7 @@ namespace HexaEngine.Rendering.Passes
             AddReadDependency(new("BRDFLUT"));
         }
 
-        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler profiler)
         {
             probeParamsBuffer = creator.CreateConstantBuffer<ProbeBufferParams>("ProbeBufferParams", CpuAccessFlags.Write);
             lightParamsBuffer = creator.CreateConstantBuffer<DeferredLightParams>("DeferredLightParams", CpuAccessFlags.Write);
@@ -117,7 +118,7 @@ namespace HexaEngine.Rendering.Passes
             }, new ShaderMacro[] { new("CLUSTERED_DEFERRED", 1) });
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
         {
             if (forceForward)
                 return;

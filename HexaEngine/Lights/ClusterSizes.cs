@@ -1,16 +1,18 @@
 ﻿namespace HexaEngine.Lights
 {
-    using System.Numerics;
-
     public struct ClusterSizes
     {
-        public Vector2 Size;
-        public Vector2 padd;
+        public uint GridSizeX;
+        public uint GridSizeY;
+        public uint GridSizeZ;
+        public uint SizeX;
 
-        public ClusterSizes(float width, float height)
+        public ClusterSizes(uint gridSizeX, uint gridSizeY, uint gridSizeZ, uint sizeX)
         {
-            Size = new(width, height);
-            padd = default;
+            GridSizeX = gridSizeX;
+            GridSizeY = gridSizeY;
+            GridSizeZ = gridSizeZ;
+            SizeX = sizeX;
         }
     }
 }

@@ -8,12 +8,8 @@
     using Silk.NET.DXGI;
     using Silk.NET.SDL;
     using System;
-    using System.Diagnostics;
     using System.Globalization;
     using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
-    using System.Runtime.Versioning;
-    using System.Text;
     using D3D11SubresourceData = Silk.NET.Direct3D11.SubresourceData;
     using Format = Core.Graphics.Format;
     using Query = Core.Graphics.Query;
@@ -448,7 +444,7 @@
             Texture1DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
-                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
                 Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
@@ -475,7 +471,7 @@
 
             if (subresources != null)
             {
-                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
                 Device.CreateTexture1D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
@@ -504,7 +500,7 @@
             Texture2DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
-                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
                 Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
@@ -531,7 +527,7 @@
 
             if (subresources != null)
             {
-                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
                 Device.CreateTexture2D(&desc, data, &texture.Handle).ThrowHResult();
                 Free(data);
@@ -560,7 +556,7 @@
             Texture3DDesc desc = Helper.Convert(description);
             if (subresources != null)
             {
-                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
                 Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowHResult();
             }
@@ -586,7 +582,7 @@
 
             if (subresources != null)
             {
-                D3D11SubresourceData* data = Alloc<D3D11SubresourceData>(subresources.Length);
+                D3D11SubresourceData* data = AllocT<D3D11SubresourceData>(subresources.Length);
                 Helper.Convert(subresources, data);
                 Device.CreateTexture3D(&desc, data, &texture.Handle).ThrowHResult();
             }

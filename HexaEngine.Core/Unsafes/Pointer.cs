@@ -127,7 +127,7 @@
         /// </summary>
         public Pointer()
         {
-            Data = Alloc<T>();
+            Data = AllocT<T>();
         }
 
         /// <summary>

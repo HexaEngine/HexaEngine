@@ -6,7 +6,7 @@
 
         string DebugName { get; }
 
-        GraphicsPipelineState State { get; set; }
+        GraphicsPipelineState State { get; }
 
         void BeginDraw(IGraphicsContext context);
 

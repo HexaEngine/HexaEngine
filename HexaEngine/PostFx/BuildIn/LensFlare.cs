@@ -12,7 +12,7 @@
     using System.Numerics;
     using System.Threading.Tasks;
 
-    public class LensFlare : IPostFx
+    public class LensFlare : PostFxBase
     {
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
@@ -29,36 +29,12 @@
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
-        private bool enabled = true;
-        private int priority = 99;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "LensFlare";
 
-        public event Action<int>? OnPriorityChanged;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
-        public string Name => "LensFlare";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -103,26 +79,26 @@
             Viewport = new(width, height);
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
             {
@@ -178,7 +154,7 @@
             }
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipeline.Dispose();
             sampler.Dispose();

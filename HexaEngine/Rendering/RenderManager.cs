@@ -36,6 +36,8 @@
             culling = new(device);
         }
 
+        public IReadOnlyList<IRendererComponent> Renderers => renderers;
+
         public IReadOnlyList<IRendererComponent> BackgroundQueue => backgroundQueue;
 
         public IReadOnlyList<IRendererComponent> GeometryQueue => geometryQueue;

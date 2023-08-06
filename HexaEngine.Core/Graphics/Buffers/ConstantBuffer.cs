@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Graphics.Buffers
 {
-    using BepuPhysics.Trees;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -28,7 +27,7 @@
             if (accessFlags != CpuAccessFlags.None)
             {
                 count = length;
-                items = Alloc<T>(length);
+                items = AllocT<T>(length);
                 ZeroMemoryT(items, length);
             }
 

@@ -3,12 +3,11 @@
 namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
 
-    public class FXAA : IPostFx, IAntialiasing
+    public class FXAA : PostFxBase, IAntialiasing
     {
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
@@ -16,36 +15,12 @@ namespace HexaEngine.Effects.BuildIn
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
-        private bool enabled = false;
-        private int priority = -1;
 
-        public event Action<bool> OnEnabledChanged;
+        public override string Name => "FXAA";
 
-        public event Action<int> OnPriorityChanged;
+        public override PostFxFlags Flags => PostFxFlags.None;
 
-        public string Name => "FXAA";
-
-        public PostFxFlags Flags => PostFxFlags.None;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder.RunAfter("Compose");
             pipeline = await device.CreateGraphicsPipelineAsync(new()
@@ -56,26 +31,18 @@ namespace HexaEngine.Effects.BuildIn
             sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicClamp);
         }
 
-        public void Resize(int width, int height)
-        {
-        }
-
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
-        {
-        }
-
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
             {
@@ -95,12 +62,10 @@ namespace HexaEngine.Effects.BuildIn
             context.SetRenderTarget(null, null);
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipeline.Dispose();
             sampler.Dispose();
-
-            GC.SuppressFinalize(this);
         }
 
         public void Draw(IGraphicsContext context)
