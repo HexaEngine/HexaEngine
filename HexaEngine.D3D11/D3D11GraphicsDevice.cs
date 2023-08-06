@@ -291,7 +291,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport)
+        public IRenderTargetView CreateRenderTargetView(IResource resource)
         {
             RenderTargetViewDescription description;
             if (resource is IBuffer)
@@ -332,16 +332,16 @@
                 throw new NotSupportedException();
             }
 
-            return CreateRenderTargetView(resource, description, viewport);
+            return CreateRenderTargetView(resource, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport)
+        public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description)
         {
             ComPtr<ID3D11RenderTargetView> rtv;
             var desc = Helper.Convert(description);
             Device.CreateRenderTargetView((ID3D11Resource*)resource.NativePointer, &desc, &rtv.Handle).ThrowHResult();
-            return new D3D11RenderTargetView(rtv, description, viewport);
+            return new D3D11RenderTargetView(rtv, description);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

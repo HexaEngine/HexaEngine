@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Mathematics;
     using System;
     using System.Runtime.CompilerServices;
 
@@ -53,7 +54,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -80,6 +81,8 @@
         public IRenderTargetView? RTV => rtv;
 
         public IUnorderedAccessView? UAV => uav;
+
+        public Viewport Viewport => new(width, height);
 
         public nint NativePointer => texture.NativePointer;
 
@@ -138,7 +141,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
         }

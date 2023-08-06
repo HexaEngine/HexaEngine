@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

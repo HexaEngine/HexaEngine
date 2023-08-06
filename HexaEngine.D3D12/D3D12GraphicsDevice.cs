@@ -162,12 +162,12 @@
             throw new NotImplementedException();
         }
 
-        public IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport)
+        public IRenderTargetView CreateRenderTargetView(IResource resource)
         {
             throw new NotImplementedException();
         }
 
-        public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport)
+        public IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description)
         {
             throw new NotImplementedException();
         }

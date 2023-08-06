@@ -13,9 +13,7 @@
         private readonly Dictionary<string, ResourceRef> sharedResources = new();
         private readonly IGraphicsDevice device;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public static ResourceManager2 Shared { get; internal set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         public ResourceManager2(IGraphicsDevice device)
         {

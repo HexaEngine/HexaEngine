@@ -75,7 +75,7 @@
                 var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
                 srvs[i] = device.CreateShaderResourceView(textures[i]);
                 srvs[i].DebugName = name + ".SRV";
-                rtvs[i] = device.CreateRenderTargetView(textures[i], new(Width, Height));
+                rtvs[i] = device.CreateRenderTargetView(textures[i]);
                 rtvs[i].DebugName = name + ".RTV";
                 pSRVs[i] = (void*)srvs[i].NativePointer;
                 pRTVs[i] = (void*)rtvs[i].NativePointer;
@@ -102,7 +102,7 @@
                 var name = textures[i].DebugName = $"GBuffer.{i}: {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
                 srvs[i] = device.CreateShaderResourceView(textures[i]);
                 srvs[i].DebugName = name + ".SRV";
-                rtvs[i] = device.CreateRenderTargetView(textures[i], new(Width, Height));
+                rtvs[i] = device.CreateRenderTargetView(textures[i]);
                 rtvs[i].DebugName = name + ".RTV";
                 pSRVs[i] = (void*)srvs[i].NativePointer;
                 pRTVs[i] = (void*)rtvs[i].NativePointer;
@@ -127,7 +127,7 @@
                 var name = textures[i].DebugName = dbgName.Replace("GBuffer", $"GBuffer.{i}");
                 srvs[i] = device.CreateShaderResourceView(tex);
                 srvs[i].DebugName = name + ".SRV";
-                rtvs[i] = device.CreateRenderTargetView(tex, new(Width, Height));
+                rtvs[i] = device.CreateRenderTargetView(tex);
                 rtvs[i].DebugName = name + ".RTV";
                 pSRVs[i] = (void*)srvs[i].NativePointer;
                 pRTVs[i] = (void*)rtvs[i].NativePointer;

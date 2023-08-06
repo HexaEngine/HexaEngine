@@ -23,7 +23,7 @@
             views = new IRenderTargetView[resources.Length];
             for (int i = 0; i < resources.Length; i++)
             {
-                views[i] = device.CreateRenderTargetView(resources[i], viewport);
+                views[i] = device.CreateRenderTargetView(resources[i]);
                 views[i].DebugName = nameof(RenderTargetViewArray) + "." + i;
             }
         }
@@ -37,7 +37,7 @@
             for (int i = 0; i < arraySize; i++)
             {
                 description.Texture2DArray.FirstArraySlice = i;
-                views[i] = device.CreateRenderTargetView(resource, description, viewport);
+                views[i] = device.CreateRenderTargetView(resource, description);
                 views[i].DebugName = nameof(RenderTargetViewArray) + "." + i;
             }
         }

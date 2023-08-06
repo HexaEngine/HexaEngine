@@ -2,11 +2,9 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
-    using HexaEngine.Editor.MaterialEditor.Generator.Structs;
     using ImGuiNET;
     using System.Numerics;
 
@@ -311,7 +309,7 @@
 
                 context.ClearRenderTargetView(overlay.RTV, default);
                 context.SetRenderTarget(overlay.RTV, default);
-                context.SetViewport(overlay.RTV.Viewport);
+                context.SetViewport(overlay.Viewport);
                 context.PSSetShaderResource(0, source.SRV);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
@@ -339,12 +337,12 @@
 
                     brushes.Current.Apply(context);
 
-                    Vector2 ratio = new Vector2(source.RTV.Viewport.Width, source.RTV.Viewport.Height) / size;
+                    Vector2 ratio = new Vector2(source.Viewport.Width, source.Viewport.Height) / size;
 
                     if (moved || first)
                     {
                         context.SetRenderTarget(source.RTV, overlay.DSV);
-                        context.SetViewport(source.RTV.Viewport);
+                        context.SetViewport(source.Viewport);
                         toolbox.Current?.Draw(curPos, ratio, context);
                     }
                     else

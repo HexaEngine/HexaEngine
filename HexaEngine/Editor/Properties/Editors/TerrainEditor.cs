@@ -2,10 +2,8 @@
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Terrains;
@@ -18,8 +16,6 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
-    using System.Buffers.Binary;
-    using System.Diagnostics;
     using System.Numerics;
     using System.Text;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
@@ -404,13 +400,13 @@
                                 context.PSSetConstantBuffer(0, maskBuffer);
                                 context.SetRenderTarget(tuple.Value.Item2.RTV, depthStencil.DSV);
                                 context.SetGraphicsPipeline(maskEdit);
-                                context.SetViewport(tuple.Value.Item2.RTV.Viewport);
+                                context.SetViewport(tuple.Value.Item2.Viewport);
 
                                 Matrix4x4.Invert(cell.Transform, out var inverse);
-                                var tlSize = tuple.Value.Item2.RTV.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
+                                var tlSize = tuple.Value.Item2.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
                                 var vpSize = new Vector2(size) * tlSize;
                                 var local = Vector3.Transform(position, inverse);
-                                var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.RTV.Viewport.Size - vpSize / 2f;
+                                var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.Viewport.Size - vpSize / 2f;
 
                                 context.SetViewport(new(pos, vpSize));
                                 context.DrawInstanced(4, 1, 0, 0);

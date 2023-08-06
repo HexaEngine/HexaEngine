@@ -2,12 +2,14 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Mathematics;
 
     public class ImageSource : IDisposable
     {
         private readonly ITexture2D[] textures;
         private readonly IShaderResourceView[] srvs;
         private readonly IRenderTargetView[] rtvs;
+        private readonly Viewport[] viewports;
         private int arrayIndex;
         private int mipLevel;
         private int index;
@@ -21,13 +23,15 @@
             textures = new ITexture2D[count];
             srvs = new IShaderResourceView[count];
             rtvs = new IRenderTargetView[count];
+            viewports = new Viewport[count];
 
             for (var i = 0; i < count; i++)
             {
                 textures[i] = image.CreateTexture2D(device, i, Usage.Default, BindFlags.ShaderResource | BindFlags.RenderTarget, CpuAccessFlags.None, ResourceMiscFlag.None);
                 var desc = textures[i].Description;
                 srvs[i] = device.CreateShaderResourceView(textures[i]);
-                rtvs[i] = device.CreateRenderTargetView(textures[i], new(desc.Width, desc.Height));
+                rtvs[i] = device.CreateRenderTargetView(textures[i]);
+                viewports[i] = new(desc.Width, desc.Height);
             }
         }
 
@@ -65,11 +69,15 @@
 
         public IRenderTargetView RTV => rtvs[index];
 
+        public Viewport Viewport => viewports[index];
+
         public ITexture2D[] Textures => textures;
 
         public IShaderResourceView[] SRVs => srvs;
 
         public IRenderTargetView[] RTVs => rtvs;
+
+        public Viewport[] Viewports => viewports;
 
         public int ImageCount => textures.Length;
 

@@ -20,6 +20,7 @@ namespace HexaEngine.Effects.BuildIn
 
         private IRenderTargetView[] mipChainRTVs;
         private IShaderResourceView[] mipChainSRVs;
+        private Viewport[] viewports;
 
         private float radius = 0.003f;
 
@@ -107,11 +108,13 @@ namespace HexaEngine.Effects.BuildIn
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
+            viewports = new Viewport[levels];
 
             for (int i = 0; i < levels; i++)
             {
                 mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), lineNumber: i).Value.RTV;
                 mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
+                viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
@@ -132,11 +135,13 @@ namespace HexaEngine.Effects.BuildIn
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
+            viewports = new Viewport[levels];
 
             for (int i = 0; i < levels; i++)
             {
                 mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", new Texture2DDescription(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
                 mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
+                viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
@@ -185,7 +190,7 @@ namespace HexaEngine.Effects.BuildIn
                 }
 
                 context.SetRenderTarget(mipChainRTVs[i], null);
-                context.SetViewport(mipChainRTVs[i].Viewport);
+                context.SetViewport(viewports[i]);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.PSSetShaderResource(0, null);
                 context.SetRenderTarget(null, null);
@@ -197,7 +202,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
                 context.PSSetShaderResource(0, mipChainSRVs[i]);
-                context.SetViewport(mipChainRTVs[i - 1].Viewport);
+                context.SetViewport(viewports[i - 1]);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.PSSetShaderResource(0, null);
                 context.SetRenderTarget(null, null);

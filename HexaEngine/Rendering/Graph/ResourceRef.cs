@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Resources
+﻿namespace HexaEngine.Graph
 {
     using System;
     using System.Runtime.CompilerServices;
@@ -139,7 +139,7 @@
 
         private void OnValueChanged(object? sender, IDisposable? disposable)
         {
-            ValueChanged?.Invoke(this, (disposable as T) ?? throw new NullReferenceException());
+            ValueChanged?.Invoke(this, disposable as T ?? throw new NullReferenceException());
         }
 
         public event EventHandler<T?>? ValueChanged;

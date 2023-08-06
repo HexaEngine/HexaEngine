@@ -2,11 +2,14 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
 
     public class GraphResourceBuilder
     {
+        private readonly List<ResourceRef> resources = new();
+        private readonly Dictionary<string, ResourceRef> sharedResources = new();
         private readonly IGraphicsDevice device;
         private Viewport viewport;
         private Viewport outputViewport;
