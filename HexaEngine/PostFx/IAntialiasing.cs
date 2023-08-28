@@ -13,7 +13,7 @@ namespace HexaEngine.PostFx
 
         public bool Enabled { get; set; }
 
-        Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+        Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
 
         void Resize(int width, int height);
 

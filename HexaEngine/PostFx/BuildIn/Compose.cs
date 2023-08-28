@@ -101,7 +101,7 @@
 
         #endregion Structs
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("Bloom")
@@ -124,8 +124,33 @@
             Luma.Resource.ValueChanged += OnUpdate;
         }
 
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .AddBinding("Bloom")
+                .AddBinding("AutoExposure")
+                .RunAfter("!AllNotReferenced");
+
+            pipeline = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/compose/ps.hlsl",
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+            paramBuffer = new(device, new ComposeParams(bloomStrength), CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+
+            Bloom = ResourceManager2.Shared.GetTexture("Bloom");
+            Luma = ResourceManager2.Shared.GetResource<IShaderResourceView>("Luma");
+            LUT = new Texture2D(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lut.png", mipLevels: 1));
+            InitUnsafe();
+            Bloom.Resource.ValueChanged += OnUpdate;
+            Luma.Resource.ValueChanged += OnUpdate;
+        }
+
         private unsafe void OnUpdate(object? sender, IDisposable? e)
         {
+            if (!initialized)
+                return;
             srvs[1] = (void*)(Bloom.Value?.SRV?.NativePointer ?? 0);
             srvs[4] = (void*)(Luma.Value?.NativePointer ?? 0);
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
@@ -207,7 +232,9 @@
             paramBuffer.Dispose();
             LUT.Dispose();
             Free(srvs);
+            Free(cbvs);
             srvs = null;
+            cbvs = null;
         }
     }
 }

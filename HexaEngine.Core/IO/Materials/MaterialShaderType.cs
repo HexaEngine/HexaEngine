@@ -2,11 +2,18 @@
 {
     public enum MaterialShaderType
     {
-        None = 0,
+        Unknown = 0,
         VertexShader,
         HullShader,
         DomainShader,
         GeometryShader,
         PixelShader,
+        ComputeShader,
+        VertexShaderFile,
+        HullShaderFile,
+        DomainShaderFile,
+        GeometryShaderFile,
+        PixelShaderFile,
+        ComputeShaderFile
     }
 }

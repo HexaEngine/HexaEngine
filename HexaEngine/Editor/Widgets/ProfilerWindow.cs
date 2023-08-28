@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using BepuPhysics;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.ImGuiNET;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
@@ -21,6 +21,7 @@
         private bool gpu = false;
         private bool scene = false;
         private bool physics = false;
+        private bool flame = false;
 
         public ProfilerWindow()
         {
@@ -77,7 +78,7 @@
 
         public float SampleLatency => 1f / SamplesPerSecond;
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             if (ImGui.BeginMenuBar())
             {
@@ -89,6 +90,7 @@
                     ImGui.Checkbox("GPU Profile (heavy performance impact)", ref gpu);
                     ImGui.Checkbox("Scene Profile (low~med performance impact)", ref scene);
                     ImGui.Checkbox("Physics Profile (low~med performance impact)", ref physics);
+                    ImGui.Checkbox("Flame Graph", ref flame);
                     ImGui.Separator();
                     if (ImGui.RadioButton("Samples Low (100)", samplesPerSecond == 100))
                     {
@@ -107,6 +109,15 @@
                 ImGui.EndMenuBar();
             }
             SampleInterpolated(context);
+            if (flame)
+            {
+                var renderer = SceneRenderer.Current;
+
+                if (renderer == null)
+                    return;
+                var profiler = renderer.Profiler;
+                ImGuiWidgetFlameGraph.PlotFlame("Flame", profiler.Getter, profiler.Current, profiler.StageCount, ref selected);
+            }
             if (full)
             {
                 DrawFull(context);
@@ -313,6 +324,7 @@
 
         private float accum = 0;
         private int samplesPerSecond = 1000;
+        private int selected;
 
         public void SampleInterpolated(IGraphicsContext context)
         {

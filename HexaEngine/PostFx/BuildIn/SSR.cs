@@ -24,7 +24,7 @@
 
         public override PostFxFlags Flags { get; } = PostFxFlags.None;
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -52,6 +52,34 @@
             }, GraphicsPipelineState.DefaultFullscreen, macros);
         }
 
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .RunBefore("Compose")
+                .RunAfter("TAA")
+                .RunAfter("HBAO")
+                .RunAfter("MotionBlur")
+                .RunAfter("DepthOfField")
+                .RunAfter("GodRays")
+                .RunAfter("VolumetricClouds")
+                .RunBefore("SSGI")
+                .RunBefore("LensFlare")
+                .RunBefore("Bloom")
+                .RunBefore("AutoExposure");
+
+            this.device = device;
+
+            pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
+            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            linearBorderSampler = device.CreateSamplerState(SamplerStateDescription.LinearBorder);
+
+            pipelineSSR = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/ssr/ps.hlsl",
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+        }
+
         public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
@@ -63,9 +91,9 @@
 
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, gbuffer.SRVs[1]);
-            context.PSSetShaderResource(1, Input);
-            context.PSSetShaderResource(2, depth.SRV);
+            context.PSSetShaderResource(0, depth.SRV);
+            context.PSSetShaderResource(1, gbuffer.SRVs[1]);
+            context.PSSetShaderResource(2, Input);
             context.PSSetShaderResource(3, gbuffer.SRVs[2]);
             context.PSSetConstantBuffer(1, camera);
             context.PSSetSampler(0, pointClampSampler);

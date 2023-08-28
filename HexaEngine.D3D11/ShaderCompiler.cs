@@ -12,7 +12,6 @@ namespace HexaEngine.D3D11
     using Silk.NET.Direct3D.Compilers;
     using Silk.NET.Direct3D11;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -25,7 +24,7 @@ namespace HexaEngine.D3D11
 
         public unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
         {
-            Debug.WriteLine($"Compiling: {sourceName}");
+            Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
             error = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
@@ -100,14 +99,14 @@ namespace HexaEngine.D3D11
 
             if (vBlob == null)
             {
-                Debug.WriteLine($"Error: {sourceName}");
+                Logger.Error($"Error: {sourceName}");
                 return false;
             }
 
             shaderBlob = new(vBlob->Buffer.ToArray());
             vBlob->Release();
 
-            Debug.WriteLine($"Done: {sourceName}");
+            Logger.Info($"Done: {sourceName}");
 
             return true;
         }
@@ -176,7 +175,7 @@ namespace HexaEngine.D3D11
 
             if (error != null)
             {
-                ImGuiConsole.Log(error);
+                Logger.Log(error);
             }
         }
 
@@ -211,7 +210,7 @@ namespace HexaEngine.D3D11
             }
             if (error != null)
             {
-                ImGuiConsole.Log(error);
+                Logger.Log(error);
             }
         }
 

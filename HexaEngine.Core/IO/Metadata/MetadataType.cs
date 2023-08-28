@@ -12,9 +12,10 @@
         Float,
         Double,
         String,
-        Vector2,
-        Vector3,
-        Vector4,
+        Float2,
+        Float3,
+        Float4,
+        Float4x4,
         Metadata,
     }
 }

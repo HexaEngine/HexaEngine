@@ -49,11 +49,30 @@
 
         #endregion Structs
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder.AddSource("VelocityBuffer");
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/velocity/ps.hlsl",
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+
+            paramsBuffer = new(device, CpuAccessFlags.Write);
+
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+
+            Velocity = ResourceManager2.Shared.AddTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+
+            Viewport = new(width, height);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder.AddSource("VelocityBuffer");
+
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/velocity/ps.hlsl",

@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Lights.Probes;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Rendering;
@@ -14,15 +13,15 @@
 
     public partial class LightManager : ISystem
     {
-        private readonly List<ILightProbeComponent> probes = new();
+        private readonly List<Probe> probes = new();
         private readonly List<Light> lights = new();
         private readonly List<Light> activeLights = new();
 
-        private readonly ConcurrentQueue<ILightProbeComponent> probeUpdateQueue = new();
+        private readonly ConcurrentQueue<Probe> probeUpdateQueue = new();
         private readonly ConcurrentQueue<Light> lightUpdateQueue = new();
         public readonly ConcurrentQueue<IRendererComponent> RendererUpdateQueue = new();
 
-        public StructuredUavBuffer<GlobalProbeData> GlobalProbes;
+        public StructuredUavBuffer<ProbeData> GlobalProbes;
         public StructuredUavBuffer<LightData> LightBuffer;
         public StructuredUavBuffer<ShadowData> ShadowDataBuffer;
 
@@ -37,7 +36,7 @@
 
         public static LightManager? Current => SceneManager.Current?.LightManager;
 
-        public IReadOnlyList<ILightProbeComponent> Probes => probes;
+        public IReadOnlyList<Probe> Probes => probes;
 
         public IReadOnlyList<Light> Lights => lights;
 
@@ -88,9 +87,9 @@
             {
                 AddLight(light);
             }
-            if (gameObject.TryGetComponent<ILightProbeComponent>(out var component))
+            if (gameObject is Probe probe)
             {
-                AddProbe(component);
+                AddProbe(probe);
             }
         }
 
@@ -101,9 +100,9 @@
                 light.DestroyShadowMap();
                 RemoveLight(light);
             }
-            if (gameObject.TryGetComponent<ILightProbeComponent>(out var component))
+            if (gameObject is Probe probe)
             {
-                RemoveProbe(component);
+                RemoveProbe(probe);
             }
         }
 
@@ -118,7 +117,7 @@
             }
         }
 
-        public unsafe void AddProbe(ILightProbeComponent probe)
+        public unsafe void AddProbe(Probe probe)
         {
             lock (probes)
             {
@@ -138,7 +137,7 @@
             }
         }
 
-        public unsafe void RemoveProbe(ILightProbeComponent probe)
+        public unsafe void RemoveProbe(Probe probe)
         {
             lock (probes)
             {
@@ -218,39 +217,17 @@
             LightBuffer.ResetCounter();
             LightBuffer.Clear(context);
             ShadowDataBuffer.ResetCounter();
-            uint globalProbesCount = 0;
             uint csmCount = 0;
 
             for (int i = 0; i < probes.Count; i++)
             {
                 var probe = probes[i];
-                if (!(probe.IsEnabled && probe.IsVaild))
+                if (!probe.IsEnabled)
                 {
                     continue;
                 }
 
-                switch (probe.Type)
-                {
-                    case ProbeType.Global:
-                        if (globalProbesCount == MaxGlobalLightProbes)
-                        {
-                            continue;
-                        }
-                        GlobalProbes.Add((GlobalLightProbeComponent)probe);
-                        //forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.SRV?.NativePointer ?? 0);
-                        //forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.SRV?.NativePointer ?? 0);
-                        globalProbesCount++;
-                        break;
-
-                    case ProbeType.Local:
-                        break;
-                }
-            }
-
-            for (uint i = globalProbesCount; i < MaxGlobalLightProbes; i++)
-            {
-                //forwardSrvs[nForwardIndirectSrvsBase + i] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + i] = indirectSrvs[nIndirectSrvsBase + i] = null;
-                //forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + i] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + i] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + i] = null;
+                // extend code or move it directly to the pass code.
             }
 
             for (int i = 0; i < activeLights.Count; i++)

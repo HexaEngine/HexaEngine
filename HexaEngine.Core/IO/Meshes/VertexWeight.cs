@@ -16,13 +16,13 @@
 
         public void Read(Stream stream, Endianness endianness)
         {
-            VertexId = stream.ReadUInt(endianness);
+            VertexId = stream.ReadUInt32(endianness);
             Weight = stream.ReadFloat(endianness);
         }
 
         public void Write(Stream stream, Endianness endianness)
         {
-            stream.WriteUInt(VertexId, endianness);
+            stream.WriteUInt32(VertexId, endianness);
             stream.WriteFloat(Weight, endianness);
         }
     }

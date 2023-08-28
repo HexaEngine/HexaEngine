@@ -95,17 +95,17 @@
             MeshData data = new();
             data.Name = stream.ReadString(encoding, endianness);
             data.MaterialName = stream.ReadString(encoding, endianness);
-            data.VerticesCount = stream.ReadUInt(endianness);
-            data.IndicesCount = stream.ReadUInt(endianness);
-            data.BoneCount = stream.ReadUInt(endianness);
+            data.VerticesCount = stream.ReadUInt32(endianness);
+            data.IndicesCount = stream.ReadUInt32(endianness);
+            data.BoneCount = stream.ReadUInt32(endianness);
             data.Box = BoundingBox.Read(stream, endianness);
             data.Sphere = BoundingSphere.Read(stream, endianness);
-            data.Flags = (VertexFlags)stream.ReadInt(endianness);
+            data.Flags = (VertexFlags)stream.ReadInt32(endianness);
 
             data.Indices = new uint[data.IndicesCount];
             for (ulong i = 0; i < data.IndicesCount; i++)
             {
-                data.Indices[i] = stream.ReadUInt(endianness);
+                data.Indices[i] = stream.ReadUInt32(endianness);
             }
 
             if ((data.Flags & VertexFlags.Colors) != 0)
@@ -172,16 +172,16 @@
         {
             stream.WriteString(Name, encoding, endianness);
             stream.WriteString(MaterialName, encoding, endianness);
-            stream.WriteUInt(VerticesCount, endianness);
-            stream.WriteUInt(IndicesCount, endianness);
-            stream.WriteUInt(BoneCount, endianness);
+            stream.WriteUInt32(VerticesCount, endianness);
+            stream.WriteUInt32(IndicesCount, endianness);
+            stream.WriteUInt32(BoneCount, endianness);
             Box.Write(stream, endianness);
             Sphere.Write(stream, endianness);
-            stream.WriteInt((int)Flags, endianness);
+            stream.WriteInt32((int)Flags, endianness);
 
             for (ulong i = 0; i < IndicesCount; i++)
             {
-                stream.WriteUInt(Indices[i], endianness);
+                stream.WriteUInt32(Indices[i], endianness);
             }
 
             if ((Flags & VertexFlags.Colors) != 0)

@@ -49,7 +49,7 @@
 
         #endregion Structs
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -81,6 +81,49 @@
             macros);
 
             copy = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/copy/ps.hlsl",
+            });
+
+            ssgiParams = new(device, new SSGIParams(), CpuAccessFlags.Write);
+            inputChain = new(device, Format.R16G16B16A16Float, width, height, 1, 10, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.GenerateMips);
+            outputBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            blur = new(device, Format.R16G16B16A16Float, width, height);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .RunBefore("Compose")
+                .RunAfter("TAA")
+                .RunAfter("HBAO")
+                .RunAfter("MotionBlur")
+                .RunAfter("DepthOfField")
+                .RunAfter("GodRays")
+                .RunAfter("VolumetricClouds")
+                .RunAfter("SSR")
+                .RunBefore("LensFlare")
+                .RunBefore("Bloom")
+                .RunBefore("AutoExposure");
+
+            this.device = device;
+
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+
+            pipelineSSGI = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/ssgi/ps.hlsl",
+            },
+            new GraphicsPipelineState()
+            {
+                Blend = BlendDescription.Opaque,
+                Topology = PrimitiveTopology.TriangleStrip
+            },
+            macros);
+
+            copy = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/copy/ps.hlsl",

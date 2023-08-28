@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using System.Threading.Tasks;
 
     public class RenderPass
     {
@@ -11,17 +10,21 @@
         private readonly List<ResourceTarget> writeBindings = new();
 
         private readonly string name;
+        private readonly RenderPassType type;
         private readonly RenderPassMetadata metadata;
         private int index = 0;
         private RenderGraphNode node;
 
-        public RenderPass(string name)
+        public RenderPass(string name, RenderPassType type = RenderPassType.Default)
         {
             this.name = name;
-            metadata = new(name);
+            this.type = type;
+            metadata = new(name, type);
         }
 
         public string Name => name;
+
+        public RenderPassType Type => type;
 
         public RenderPassMetadata Metadata => metadata;
 
@@ -170,37 +173,16 @@
         }
     }
 
-    public class ClearRenderTargetPass : RenderPass
-    {
-        public ClearRenderTargetPass(string name) : base(name)
-        {
-        }
-    }
-
-    public class ClearMultiRenderTargetPass : RenderPass
-    {
-        public ClearMultiRenderTargetPass(string name) : base(name)
-        {
-        }
-    }
-
-    public class ClearDepthStencilPass : RenderPass
-    {
-        public ClearDepthStencilPass(string name) : base(name)
-        {
-        }
-    }
-
     public class ComputePass : RenderPass
     {
-        public ComputePass(string name) : base(name)
+        public ComputePass(string name, RenderPassType type = RenderPassType.Default) : base(name, type)
         {
         }
     }
 
     public class DrawPass : RenderPass
     {
-        public DrawPass(string name) : base(name)
+        public DrawPass(string name, RenderPassType type = RenderPassType.Default) : base(name, type)
         {
         }
 

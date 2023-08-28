@@ -133,24 +133,24 @@
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(SemanticName, encoding, endianness);
-            stream.WriteInt(SemanticIndex, endianness);
-            stream.WriteInt((int)Format, endianness);
-            stream.WriteInt(Slot, endianness);
-            stream.WriteInt(AlignedByteOffset, endianness);
-            stream.WriteInt((int)Classification, endianness);
-            stream.WriteInt(InstanceDataStepRate, endianness);
+            stream.WriteInt32(SemanticIndex, endianness);
+            stream.WriteInt32((int)Format, endianness);
+            stream.WriteInt32(Slot, endianness);
+            stream.WriteInt32(AlignedByteOffset, endianness);
+            stream.WriteInt32((int)Classification, endianness);
+            stream.WriteInt32(InstanceDataStepRate, endianness);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
             SemanticName = stream.ReadString(encoding, endianness);
-            SemanticIndex = stream.ReadInt(endianness);
-            Format = (Format)stream.ReadInt(endianness);
-            Slot = stream.ReadInt(endianness);
-            AlignedByteOffset = stream.ReadInt(endianness);
-            Classification = (InputClassification)stream.ReadInt(endianness);
-            InstanceDataStepRate = stream.ReadInt(endianness);
+            SemanticIndex = stream.ReadInt32(endianness);
+            Format = (Format)stream.ReadInt32(endianness);
+            Slot = stream.ReadInt32(endianness);
+            AlignedByteOffset = stream.ReadInt32(endianness);
+            Classification = (InputClassification)stream.ReadInt32(endianness);
+            InstanceDataStepRate = stream.ReadInt32(endianness);
         }
     }
 }

@@ -31,6 +31,7 @@
 
         private GCHandle gcHandle;
         private Guid guid = Guid.NewGuid();
+        private object? tag;
 
         [JsonIgnore]
         public readonly IntPtr Pointer;
@@ -142,6 +143,21 @@
 
         public virtual List<IComponent> Components => components;
 
+        [JsonIgnore]
+        public object? Tag
+        {
+            get => tag;
+            set
+            {
+                if (SetAndNotifyWithRefEqualsTest(ref tag, value))
+                {
+                    TagChanged?.Invoke(value);
+                }
+            }
+        }
+
+        public event Action<object?>? TagChanged;
+
         public event Action<GameObject>? Transformed;
 
         protected void OverwriteTransform(Transform transform)
@@ -176,6 +192,7 @@
             {
                 children[i].RestoreState();
             }
+            tag = null;
         }
 
         public void Merge(GameObject node)
@@ -292,6 +309,7 @@
             scene?.UnregisterChild(this);
             initialized = false;
             scene = null;
+            tag = null;
         }
 
         public virtual Scene GetScene()

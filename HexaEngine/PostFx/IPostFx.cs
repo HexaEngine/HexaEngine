@@ -4,8 +4,10 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Graph;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Runtime.CompilerServices;
 
+    [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     public abstract class PostFxBase : IPostFx
     {
         protected bool initialized = false;
@@ -15,6 +17,8 @@
         public abstract string Name { get; }
 
         public abstract PostFxFlags Flags { get; }
+
+        public bool Initialized => initialized;
 
         public unsafe bool Enabled
         {
@@ -31,13 +35,21 @@
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        async Task IPostFx.Initialize(HexaEngine.Core.Graphics.IGraphicsDevice device, HexaEngine.PostFx.PostFxDependencyBuilder builder, int width, int height, HexaEngine.Core.Graphics.ShaderMacro[] macros)
+        async Task IPostFx.InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
-            await Initialize(device, builder, width, height, macros);
+            await InitializeAsync(device, builder, width, height, macros);
             initialized = true;
         }
 
-        public abstract Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+        public abstract Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+
+        void IPostFx.Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            Initialize(device, builder, width, height, macros);
+            initialized = true;
+        }
+
+        public abstract void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
 
         public virtual void Resize(int width, int height)
         {
@@ -96,6 +108,11 @@
             DisposeInternal();
             GC.SuppressFinalize(this);
         }
+
+        private string GetDebuggerDisplay()
+        {
+            return $"{Name}, {(Initialized ? "I" : "")}{(Enabled ? "E" : "")}{(dirty ? "D" : "")}, {Flags}";
+        }
     }
 
     public interface IPostFx : INotifyPropertyChanged, IDisposable
@@ -104,11 +121,15 @@
 
         public PostFxFlags Flags { get; }
 
+        public bool Initialized { get; }
+
         public bool Enabled { get; set; }
 
         public event Action<bool>? OnEnabledChanged;
 
-        Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+        Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+
+        void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
 
         void Resize(int width, int height);
 

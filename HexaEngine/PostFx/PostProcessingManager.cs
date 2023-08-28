@@ -106,7 +106,7 @@
                 nodes[i].Clear();
                 if (effects[i].Enabled)
                 {
-                    effects[i].Initialize(device, nodes[i].Builder, width, height, macros).Wait();
+                    effects[i].InitializeAsync(device, nodes[i].Builder, width, height, macros).Wait();
                     profiler?.CreateStage(effects[i].Name);
                 }
             }
@@ -141,7 +141,7 @@
             {
                 nodes[i].Clear();
                 if (effects[i].Enabled)
-                    await effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
+                    await effects[i].InitializeAsync(device, nodes[i].Builder, width, height, macros);
             }
 
             Sort();
@@ -260,48 +260,41 @@
         {
             Volatile.Write(ref isReloading, true);
 
-            for (int i = 0; i < effects.Count; i++)
-            {
-                if (effects[i].Enabled)
-                    effects[i].Dispose();
-                nodes[i].Clear();
-            }
-
             macros = new ShaderMacro[effects.Count];
 
             for (int i = 0; i < effects.Count; i++)
             {
                 var effect = effects[i];
+                if (effect.Initialized)
+                    effect.Dispose();
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
+                nodes[i].Clear();
             }
 
-            Task.Factory.StartNew(async () =>
+            Parallel.For(0, effects.Count, i =>
             {
-                Task[] tasks = new Task[effects.Count];
-                for (int i = 0; i < effects.Count; i++)
+                var effect = effects[i];
+                if (effect.Enabled)
                 {
-                    if (effects[i].Enabled)
-                        tasks[i] = effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
+                    effect.Initialize(device, nodes[i].Builder, width, height, macros);
                 }
-                Task.WaitAll(tasks);
-                Sort();
-                Invalidate();
-            }
-            ).ContinueWith(t =>
-            {
-                Volatile.Write(ref isReloading, false);
             });
+
+            Sort();
+            Invalidate();
+
+            Volatile.Write(ref isReloading, false);
         }
 
         public async Task ReloadAsync()
         {
             Volatile.Write(ref isReloading, true);
-            Sort();
 
             for (int i = 0; i < effects.Count; i++)
             {
-                if (effects[i].Enabled)
-                    effects[i].Dispose();
+                var effect = effects[i];
+                if (effect.Initialized)
+                    effect.Dispose();
                 nodes[i].Clear();
             }
 
@@ -315,11 +308,14 @@
 
             for (int i = 0; i < effects.Count; i++)
             {
-                if (effects[i].Enabled)
-                    await effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
+                var effect = effects[i];
+                if (effect.Enabled)
+                {
+                    await effect.InitializeAsync(device, nodes[i].Builder, width, height, macros);
+                }
             }
-            Sort();
 
+            Sort();
             Invalidate();
 
             Volatile.Write(ref isReloading, false);
@@ -421,6 +417,11 @@
 
                 if (isDirty)
                 {
+                    for (int i = 0; i < buffers.Count; i++)
+                    {
+                        var buffer = buffers[i];
+                        context.ClearRenderTargetView(buffer.RTV, default);
+                    }
                     list?.Dispose();
                     deferredContext.ClearState();
                     swapIndex = 0;

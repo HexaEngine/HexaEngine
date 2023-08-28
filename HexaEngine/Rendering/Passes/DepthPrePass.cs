@@ -2,10 +2,8 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Rendering;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System;
 
     public class DepthPrePass : RenderPass
     {

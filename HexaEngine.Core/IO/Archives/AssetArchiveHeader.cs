@@ -7,7 +7,8 @@
     public struct AssetArchiveHeader
     {
         public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6e, 0x73, 0x41, 0x72, 0x63, 0x68, 0x69, 0x76, 0x65, 0x00 };
-        public const ulong Version = 12;
+        public static readonly Version Version = 12;
+        public static readonly Version MinVersion = 12;
 
         public Endianness Endianness;
         public Compression Compression;
@@ -22,14 +23,14 @@
             }
 
             Endianness = (Endianness)stream.ReadByte();
-            if (!stream.Compare(Version, Endianness))
+            if (!stream.CompareVersion(MinVersion, Version, Endianness, out var version))
             {
-                throw new InvalidDataException();
+                throw new InvalidDataException($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
             }
 
-            Compression = (Compression)stream.ReadInt(Endianness);
+            Compression = (Compression)stream.ReadInt32(Endianness);
 
-            int count = stream.ReadInt(Endianness);
+            int count = stream.ReadInt32(Endianness);
             Entries = new AssetArchiveHeaderEntry[count];
 
             for (int i = 0; i < count; i++)
@@ -44,8 +45,8 @@
             stream.Write(MagicNumber);
             stream.WriteByte((byte)Endianness);
             stream.WriteUInt64(Version, Endianness);
-            stream.WriteInt((int)Compression, Endianness);
-            stream.WriteInt(Entries.Length, Endianness);
+            stream.WriteInt32((int)Compression, Endianness);
+            stream.WriteInt32(Entries.Length, Endianness);
             for (int i = 0; i < Entries.Length; i++)
             {
                 Entries[i].Write(stream, encoding, Endianness);

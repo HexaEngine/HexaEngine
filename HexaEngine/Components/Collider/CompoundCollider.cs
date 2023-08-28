@@ -52,7 +52,7 @@
             if (Type == ColliderType.Static)
             {
                 builder.Dispose();
-                ImGuiConsole.Log(LogSeverity.Warning, "Compound cannot be a static type");
+                Logger.Warn("Compound cannot be a static type");
                 return;
             }
 

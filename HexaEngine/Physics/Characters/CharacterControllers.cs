@@ -254,7 +254,7 @@ namespace HexaEngine.Physics.Characters
                 pool.Take(maximumCharacterCount, out SupportCandidates);
                 for (int i = 0; i < maximumCharacterCount; ++i)
                 {
-                    //Initialize the depths to a value that guarantees replacement.
+                    //InitializeAsync the depths to a value that guarantees replacement.
                     SupportCandidates[i].Depth = float.MinValue;
                 }
             }

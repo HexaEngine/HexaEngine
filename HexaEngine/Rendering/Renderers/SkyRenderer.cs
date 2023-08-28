@@ -45,7 +45,7 @@
             new GraphicsPipelineState()
             {
                 Rasterizer = RasterizerDescription.CullNone,
-                DepthStencil = DepthStencilDescription.DepthRead,
+                DepthStencil = DepthStencilDescription.None,
                 Blend = BlendDescription.AlphaBlend
             });
             uniformColorSky = device.CreateGraphicsPipeline(new()
@@ -56,7 +56,7 @@
             new GraphicsPipelineState()
             {
                 Rasterizer = RasterizerDescription.CullNone,
-                DepthStencil = DepthStencilDescription.DepthRead,
+                DepthStencil = DepthStencilDescription.None,
                 Blend = BlendDescription.AlphaBlend
             });
             hoseWilkieSky = device.CreateGraphicsPipeline(new()
@@ -67,7 +67,7 @@
             new GraphicsPipelineState()
             {
                 Rasterizer = RasterizerDescription.CullNone,
-                DepthStencil = DepthStencilDescription.DepthRead,
+                DepthStencil = DepthStencilDescription.None,
                 Blend = BlendDescription.AlphaBlend,
                 BlendFactor = Vector4.One,
             });

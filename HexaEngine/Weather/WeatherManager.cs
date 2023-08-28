@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Resources;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics.HosekWilkie;
@@ -16,7 +15,7 @@
     public class WeatherManager : ISystem
     {
         private bool isDirty = true;
-        private ConstantBuffer<CBWeather> weatherBuffer;
+        private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer = ResourceManager2.Shared.GetConstantBuffer<CBWeather>("CBWeather");
         private bool hasSun = false;
 
         public static WeatherManager? Current => SceneManager.Current?.WeatherManager;
@@ -164,7 +163,7 @@
             }
         }
 
-        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer;
+        public ConstantBuffer<CBWeather> WeatherBuffer => weatherBuffer.Value;
 
         public string Name { get; } = "Weather System";
 
@@ -172,22 +171,11 @@
 
         public Task Initialize(IGraphicsDevice device)
         {
-            weatherBuffer = ResourceManager2.Shared.SetOrAddConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write).Value;
             return Task.CompletedTask;
         }
 
-        public void RenderUpdate(IGraphicsContext context)
+        public void Update(IGraphicsContext context)
         {
-            UpdateWeather(context);
-        }
-
-        public void UpdateWeather(IGraphicsContext context)
-        {
-            if (!isDirty)
-            {
-                return;
-            }
-
             var manager = LightManager.Current;
 
             if (manager == null)
@@ -237,7 +225,7 @@
             weather.I = skyParams[(int)EnumSkyParams.I];
             weather.Z = skyParams[(int)EnumSkyParams.Z];
 
-            weatherBuffer.Update(context, weather);
+            weatherBuffer.Value?.Update(context, weather);
             isDirty = false;
         }
     }

@@ -121,7 +121,7 @@
                 }
                 catch (Exception e)
                 {
-                    ImGuiConsole.Log(e);
+                    Logger.Log(e);
                 }
             }
         }
@@ -139,7 +139,7 @@
             }
             catch (Exception e)
             {
-                ImGuiConsole.Log(e);
+                Logger.Log(e);
             }
         }
 
@@ -156,7 +156,7 @@
             }
             catch (Exception e)
             {
-                ImGuiConsole.Log(e);
+                Logger.Log(e);
             }
         }
 
@@ -173,7 +173,7 @@
             }
             catch (Exception e)
             {
-                ImGuiConsole.Log(e);
+                Logger.Log(e);
             }
 
             instance = null;
@@ -189,7 +189,7 @@
             Type? type = AssemblyManager.GetType(ScriptType);
             if (type == null)
             {
-                ImGuiConsole.Log($"Couldn't load script: {ScriptType}");
+                Logger.Error($"Couldn't load script: {ScriptType}");
                 return;
             }
 
@@ -246,7 +246,7 @@
             }
             catch (Exception e)
             {
-                ImGuiConsole.Log(e);
+                Logger.Log(e);
             }
         }
 

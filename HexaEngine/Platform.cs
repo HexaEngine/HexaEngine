@@ -25,7 +25,6 @@
             Application.GraphicsDebugging = true;
 #endif
             Platform.editor = editor;
-            Logger.Initialize();
 
             switch (backend)
             {
@@ -83,6 +82,7 @@
             }
 
             PluginManager.Unload();
+            Logger.Close();
         }
     }
 }

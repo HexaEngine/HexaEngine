@@ -162,7 +162,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -195,6 +195,62 @@ namespace HexaEngine.Effects.BuildIn
             }, GraphicsPipelineState.DefaultFullscreen, macros);
 
             bokehDraw = await device.CreateGraphicsPipelineAsync(new()
+            {
+                PixelShader = "effects/bokeh/mask.hlsl",
+                GeometryShader = "effects/bokeh/gs.hlsl",
+                VertexShader = "effects/bokeh/vs.hlsl",
+            }, new GraphicsPipelineState()
+            {
+                Topology = PrimitiveTopology.PointList,
+                Blend = BlendDescription.Additive,
+                BlendFactor = Vector4.One
+            });
+
+            bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
+            blurTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            bokehIndirectBuffer = new(device, new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
+
+            cbBokeh = new(device, CpuAccessFlags.Write);
+            cbDof = new(device, CpuAccessFlags.Write);
+
+            bokehTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
+
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .RunBefore("Compose")
+                .RunAfter("TAA")
+                .RunAfter("HBAO")
+                .RunAfter("MotionBlur")
+                .RunBefore("GodRays")
+                .RunBefore("VolumetricClouds")
+                .RunBefore("SSR")
+                .RunBefore("SSGI")
+                .RunBefore("LensFlare")
+                .RunBefore("Bloom")
+                .RunBefore("AutoExposure");
+
+            this.width = width;
+            this.height = height;
+            this.device = device;
+
+            bokehGenerate = device.CreateComputePipeline(new()
+            {
+                Path = "compute/bokeh/shader.hlsl",
+            }, macros);
+            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
+            DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
+
+            dof = device.CreateGraphicsPipeline(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/dof/ps.hlsl"
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+
+            bokehDraw = device.CreateGraphicsPipeline(new()
             {
                 PixelShader = "effects/bokeh/mask.hlsl",
                 GeometryShader = "effects/bokeh/gs.hlsl",

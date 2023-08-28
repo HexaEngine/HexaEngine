@@ -77,8 +77,9 @@ namespace HexaEngine.Editor.Dialogs
             OnlyAllowFolders = false;
         }
 
-        public SaveFileDialog(string startingPath, string? searchFilter = null)
+        public SaveFileDialog(string? startingPath, string? searchFilter = null)
         {
+            startingPath ??= Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (File.Exists(startingPath))
             {
                 startingPath = Path.GetDirectoryName(startingPath) ?? string.Empty;
@@ -104,6 +105,7 @@ namespace HexaEngine.Editor.Dialogs
                 }
 
                 AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
+                OnlyAllowFilteredExtensions = true;
             }
 
             currentDir = new DirectoryInfo(startingPath);

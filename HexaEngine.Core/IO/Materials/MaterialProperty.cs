@@ -62,9 +62,9 @@
         public void Read(Stream src, Encoding encoding, Endianness endianness)
         {
             Name = src.ReadString(encoding, endianness) ?? string.Empty;
-            Type = (MaterialPropertyType)src.ReadInt(endianness);
-            ValueType = (MaterialValueType)src.ReadInt(endianness);
-            Length = src.ReadInt(endianness);
+            Type = (MaterialPropertyType)src.ReadInt32(endianness);
+            ValueType = (MaterialValueType)src.ReadInt32(endianness);
+            Length = src.ReadInt32(endianness);
             Data = src.ReadBytes(Length);
             Endianness = endianness;
         }
@@ -72,9 +72,9 @@
         public void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
             dst.WriteString(Name, encoding, endianness);
-            dst.WriteInt((int)Type, endianness);
-            dst.WriteInt((int)ValueType, endianness);
-            dst.WriteInt(Length, endianness);
+            dst.WriteInt32((int)Type, endianness);
+            dst.WriteInt32((int)ValueType, endianness);
+            dst.WriteInt32(Length, endianness);
             dst.Write(Data);
         }
 

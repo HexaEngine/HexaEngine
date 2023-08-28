@@ -1,106 +1,86 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using System;
-    using System.Diagnostics;
+    using System.Collections.Concurrent;
     using System.IO;
     using System.Text;
 
-    public class DebugListener : TraceListener
+    public class FileLogWriter : ILogWriter
     {
-        private SemaphoreSlim semaphore = new(1);
-#if DEBUG
         private readonly BufferedStream stream;
-#endif
+        private readonly ConcurrentQueue<string> queue = new();
+        private readonly Task logWriterTask;
+        private bool running = true;
+        private bool disposedValue;
 
-        public DebugListener(string file)
+        public FileLogWriter(string file)
         {
-#if DEBUG
             var fileInfo = new FileInfo(file);
             fileInfo.Directory?.Create();
             stream = new(File.Create(file));
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-#endif
+            logWriterTask = new(LogWriterTaskVoid, TaskCreationOptions.LongRunning);
+            logWriterTask.Start();
         }
 
-#if DEBUG
+        private void LogWriterTaskVoid()
+        {
+            while (running)
+            {
+                while (queue.TryDequeue(out var message))
+                {
+                    stream.Write(Encoding.UTF8.GetBytes(message));
+                }
 
-        private void CurrentDomain_ProcessExit(object? sender, EventArgs e)
+                Thread.Sleep(1);
+            }
+        }
+
+        public void Clear()
+        {
+            stream.Position = 0;
+            stream.SetLength(0);
+        }
+
+        public void Flush()
         {
             stream.Flush();
-            stream.Close();
         }
 
-        private void Application_ApplicationClosing(object sender, EventArgs e)
+        public void Write(string message)
         {
-            stream.Flush();
-            stream.Close();
+            queue.Enqueue(message);
         }
 
-#endif
-
-        public override void Write(string? message)
+        public Task WriteAsync(string message)
         {
-            if (message == null)
+            queue.Enqueue(message);
+            return Task.CompletedTask;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
             {
-                return;
+                running = false;
+                logWriterTask.Wait();
+                logWriterTask.Dispose();
+                stream.Dispose();
+
+                disposedValue = true;
             }
-#if DEBUG
-            semaphore.Wait();
-            stream.Write(Encoding.UTF8.GetBytes(message));
-            semaphore.Release();
-#endif
         }
 
-        public override void WriteLine(string? message)
+        ~FileLogWriter()
         {
-            if (message == null)
-            {
-                return;
-            }
-#if DEBUG
-            semaphore.Wait();
-            stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
-            semaphore.Release();
-#endif
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: false);
         }
 
-        public async Task WriteAsync(string? message)
+        public void Dispose()
         {
-            if (message == null)
-            {
-                return;
-            }
-#if DEBUG
-            await semaphore.WaitAsync();
-            stream.Write(Encoding.UTF8.GetBytes(message));
-            semaphore.Release();
-#endif
-        }
-
-        public async Task WriteLineAsync(string? message)
-        {
-            if (message == null)
-            {
-                return;
-            }
-#if DEBUG
-            await semaphore.WaitAsync();
-            stream.Write(Encoding.UTF8.GetBytes(message + "\n"));
-            semaphore.Release();
-#endif
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-#if DEBUG
-            WriteLine(e.ExceptionObject);
-            if (e.IsTerminating)
-            {
-                stream.Flush();
-                stream.Close();
-            }
-#endif
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

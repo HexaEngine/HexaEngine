@@ -11,12 +11,12 @@
         public void Write(Stream stream, Endianness endianness)
         {
             stream.WriteDouble(Time, endianness);
-            stream.WriteInt(Values.Length, endianness);
+            stream.WriteInt32(Values.Length, endianness);
             for (int i = 0; i < Values.Length; i++)
             {
-                stream.WriteUInt(Values[i], endianness);
+                stream.WriteUInt32(Values[i], endianness);
             }
-            stream.WriteInt(Weights.Length, endianness);
+            stream.WriteInt32(Weights.Length, endianness);
             for (int i = 0; i < Weights.Length; i++)
             {
                 stream.WriteDouble(Weights[i], endianness);
@@ -26,13 +26,13 @@
         public void Read(Stream stream, Endianness endianness)
         {
             Time = stream.ReadDouble(endianness);
-            int valueCount = stream.ReadInt(endianness);
+            int valueCount = stream.ReadInt32(endianness);
             Values = new uint[valueCount];
             for (int i = 0; i < valueCount; i++)
             {
-                Values[i] = stream.ReadUInt(endianness);
+                Values[i] = stream.ReadUInt32(endianness);
             }
-            int weightCount = stream.ReadInt(endianness);
+            int weightCount = stream.ReadInt32(endianness);
             Weights = new double[weightCount];
             for (int i = 0; i < weightCount; i++)
             {

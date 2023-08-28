@@ -467,7 +467,7 @@
         private MaterialValueType newPropValueType;
 
         private string newTexPath = string.Empty;
-        private TextureType newTexType;
+        private MaterialTextureType newTexType;
 
         public bool EditMaterial(MaterialManager manager, MaterialData material)
         {
@@ -530,7 +530,7 @@
 
             if (ImGui.BeginPopup("AddMaterialTexture", ImGuiWindowFlags.None))
             {
-                ComboEnumHelper<TextureType>.Combo("Type", ref newTexType);
+                ComboEnumHelper<MaterialTextureType>.Combo("Type", ref newTexType);
                 ImGui.InputText("Path", ref newTexPath, 256);
 
                 if (ImGui.Button("Cancel"))

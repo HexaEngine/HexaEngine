@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
-    using System;
     using System.Numerics;
 
     public unsafe class RingBuffer<T> where T : struct, INumber<T>

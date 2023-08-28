@@ -146,22 +146,4 @@
             return wrapper;
         }
     }
-
-    public class BinaryAsset
-    {
-        public BinaryAsset(AssetType type, long pointer, long length, string path, byte[] data)
-        {
-            Type = type;
-            Pointer = pointer;
-            Length = length;
-            Path = path;
-            this.data = data;
-        }
-
-        public readonly AssetType Type;
-        public readonly long Pointer;
-        public readonly long Length;
-        public readonly string Path;
-        public readonly byte[] data;
-    }
 }

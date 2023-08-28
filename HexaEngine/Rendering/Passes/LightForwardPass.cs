@@ -105,6 +105,8 @@
             forwardRTVs[1] = gbuffer.PRTVs[1];
             forwardRTVs[2] = gbuffer.PRTVs[2];
 
+            context.ClearRenderTargetViews(1, &forwardRTVs[0], default);
+
             context.SetRenderTargets(nForwardRTVs, forwardRTVs, creator.GetDepthStencilBuffer("#DepthStencil").DSV);
 
             profiler?.End("LightForward.Update");

@@ -1,10 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.Debugging.Device;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using Silk.NET.Core.Attributes;
-    using Silk.NET.Core;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
@@ -13,7 +12,6 @@
     using System;
     using System.Runtime.InteropServices;
     using System.Text;
-    using HexaEngine.Core.Debugging.Device;
     using InfoQueueFilter = Silk.NET.DXGI.InfoQueueFilter;
 
     public unsafe class DXGIAdapterD3D11 : IGraphicsAdapter, IDisposable
@@ -123,13 +121,13 @@
                         string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(message->PDescription));
 
                         if (message->Producer == DXGI_DEBUG_DX)
-                            ImGuiConsole.Log($"DX {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            Logger.Log($"DX {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
                         if (message->Producer == DXGI_DEBUG_DXGI)
-                            ImGuiConsole.Log($"DXGI {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            Logger.Log($"DXGI {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
                         if (message->Producer == DXGI_DEBUG_APP)
-                            ImGuiConsole.Log($"APP {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            Logger.Log($"APP {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
                         if (message->Producer == DXGI_DEBUG_D3D11)
-                            ImGuiConsole.Log($"D3D11 {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
+                            Logger.Log($"D3D11 {Convert(message->Severity)}: {msg} [ {Convert(message->Category)} ]");
 
                         Free(message);
                     }
@@ -177,8 +175,8 @@
             IDXGIAdapter.GetDesc1(&desc);
             string name = new(desc.Description);
 
-            ImGuiConsole.Log(LogSeverity.Information, "Backend: Using Graphics API: D3D11");
-            ImGuiConsole.Log(LogSeverity.Information, $"Backend: Using Graphics Device: {name}");
+            Logger.Info("Backend: Using Graphics API: D3D11");
+            Logger.Info($"Backend: Using Graphics Device: {name}");
             return new D3D11GraphicsDevice(this, debug);
         }
 

@@ -16,36 +16,48 @@
         private static readonly Dictionary<string, string> fileIndices = new();
         private static readonly List<string> sources = new();
 
+        public static event Action? FileSystemInitialized;
+
+        public static event Action? FileSystemReload;
+
+        public static event Action<string>? SourceAdded;
+
+        public static event Action<string>? SourceRemoved;
+
         /// <summary>
         /// Initializes the file system by loading asset bundles and creating file indices.
         /// </summary>
         public static void Initialize()
         {
             // Load asset bundles and populate the assetBundles list
-            foreach (string file in Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly))
+            string[] bundles = Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly);
+            for (int i = 0; i < bundles.Length; i++)
             {
+                string file = bundles[i];
                 assetBundles.AddRange(new AssetArchive(file).Assets);
             }
 
             // Create file indices for the files in the "assets" directory and its subdirectories
-            foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
+            string[] directories = Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly);
+            for (int i = 0; i < directories.Length; i++)
             {
-                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                string dir = directories[i];
+                string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                for (int j = 0; j < files.Length; j++)
                 {
+                    string file = files[j];
                     var abs = Path.GetFullPath(file);
                     var rel = Path.GetRelativePath(dir, abs);
                     var log = Path.Combine("assets\\", rel);
 
-                    if (fileIndices.ContainsKey(log))
+                    if (!fileIndices.TryAdd(log, abs))
                     {
                         fileIndices[log] = abs;
                     }
-                    else
-                    {
-                        fileIndices.Add(log, abs);
-                    }
                 }
             }
+
+            FileSystemInitialized?.Invoke();
         }
 
         /// <summary>
@@ -56,87 +68,110 @@
             // Clear existing file indices
             fileIndices.Clear();
 
-            // Create file indices for the files in the "assets" directory and its subdirectories
-            foreach (string dir in Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly))
             {
-                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                // Create file indices for the files in the "assets" directory and its subdirectories
+                string[] directories = Directory.GetDirectories("assets\\", "*", SearchOption.TopDirectoryOnly);
+                for (int i = 0; i < directories.Length; i++)
                 {
-                    var abs = Path.GetFullPath(file);
-                    var rel = Path.GetRelativePath(dir, abs);
-                    var log = Path.Combine("assets\\", rel);
+                    string dir = directories[i];
+                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                    for (int j = 0; j < files.Length; j++)
+                    {
+                        string file = files[j];
+                        var abs = Path.GetFullPath(file);
+                        var rel = Path.GetRelativePath(dir, abs);
+                        var log = Path.Combine("assets\\", rel);
 
-                    if (fileIndices.ContainsKey(log))
-                    {
-                        fileIndices[log] = abs;
-                    }
-                    else
-                    {
-                        fileIndices.Add(log, abs);
+                        if (!fileIndices.TryAdd(log, abs))
+                        {
+                            fileIndices[log] = abs;
+                        }
                     }
                 }
             }
 
             // Create file indices for the files in additional sources
-            foreach (var source in sources)
+            for (int i = 0; i < sources.Count; i++)
             {
-                foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
+                string source = sources[i];
+                string[] directories = Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly);
+                for (int j = 0; j < directories.Length; j++)
                 {
-                    foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                    string dir = directories[j];
+                    string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                    for (int ii = 0; ii < files.Length; ii++)
                     {
+                        string file = files[ii];
                         var abs = Path.GetFullPath(file);
                         var rel = Path.GetRelativePath(source, abs);
                         var log = Path.Combine("assets\\", rel);
 
-                        if (fileIndices.ContainsKey(log))
+                        if (!fileIndices.TryAdd(log, abs))
                         {
                             fileIndices[log] = abs;
-                        }
-                        else
-                        {
-                            fileIndices.Add(log, abs);
                         }
                     }
                 }
             }
+
+            FileSystemReload?.Invoke();
         }
 
         /// <summary>
         /// Adds an additional source directory to the file system.
         /// </summary>
         /// <param name="source">The path to the additional source directory.</param>
-        public static void AddSource(string source)
+        public static void AddSource(string? source)
         {
+            if (source == null || !Directory.Exists(source))
+            {
+                return;
+            }
+
             sources.Add(source);
 
             // Create file indices for the files in the additional source directory and its subdirectories
-            foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly))
+            string[] directories = Directory.GetDirectories(source, "*", SearchOption.TopDirectoryOnly);
+            for (int i = 0; i < directories.Length; i++)
             {
-                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                string dir = directories[i];
+                string[] files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                for (int j = 0; j < files.Length; j++)
                 {
+                    string file = files[j];
                     var abs = Path.GetFullPath(file);
                     var rel = Path.GetRelativePath(source, abs);
                     var log = Path.Combine("assets\\", rel);
 
-                    if (fileIndices.ContainsKey(log))
+                    if (!fileIndices.TryAdd(log, abs))
                     {
                         fileIndices[log] = abs;
                     }
-                    else
-                    {
-                        fileIndices.Add(log, abs);
-                    }
                 }
             }
+
+            SourceAdded?.Invoke(source);
         }
 
         /// <summary>
         /// Removes an additional source directory from the file system.
         /// </summary>
         /// <param name="source">The path to the additional source directory to remove.</param>
-        public static void RemoveSource(string source)
+        public static bool RemoveSource(string? source)
         {
-            sources.Remove(source);
-            Refresh();
+            if (source == null)
+            {
+                return false;
+            }
+
+            if (sources.Remove(source))
+            {
+                Refresh();
+                SourceRemoved?.Invoke(source);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -146,6 +181,11 @@
         /// <returns><see langword="true"/> if the file or directory exists, otherwise <see langword="false"/>.</returns>
         public static bool Exists(string? path)
         {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return false;
+            }
+
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
 
             if (string.IsNullOrWhiteSpace(realPath))
@@ -265,7 +305,7 @@
         /// Gets the files at the specified path.
         /// </summary>
         /// <param name="path">The path to get the files for.</param>
-        /// <returns>An array of file paths.</returns>
+        /// <returns>An bundles of file paths.</returns>
         public static string[] GetFiles(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
@@ -278,7 +318,7 @@
         /// Reads all lines of the file at the specified path.
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
-        /// <returns>An array of lines read from the file.</returns>
+        /// <returns>An bundles of lines read from the file.</returns>
         public static string[] ReadAllLines(string path)
         {
             var fs = Open(path);
@@ -293,7 +333,7 @@
         /// Reads all bytes of the file at the specified path.
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
-        /// <returns>An array of bytes read from the file.</returns>
+        /// <returns>An bundles of bytes read from the file.</returns>
         public static byte[] ReadAllBytes(string path)
         {
             var fs = Open(path);
@@ -321,14 +361,15 @@
         /// Tries to read all lines of the file at the specified path.
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
-        /// <param name="lines">When this method returns, contains an array of lines read from the file if the file exists; otherwise, the default value.</param>
+        /// <param name="lines">When this method returns, contains an bundles of lines read from the file if the file exists; otherwise, the default value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
-        public static bool ReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
+        public static bool TryReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
         {
             if (TryOpen(path, out var fs))
             {
                 var reader = new StreamReader(fs);
                 lines = reader.ReadToEnd().Split(Environment.NewLine);
+                reader.Dispose();
                 return true;
             }
 

@@ -1,13 +1,10 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Lights;
     using System.Threading.Tasks;
 
@@ -61,7 +58,7 @@ namespace HexaEngine.Resources
                 macros = macros.Append(new ShaderMacro("VtxSkinned", "1")).ToArray();
             }
             var matflags = material.Flags;
-            var custom = material.VertexShader != null && material.PixelShader != null;
+            var custom = material.HasShader(MaterialShaderType.VertexShaderFile) && material.HasShader(MaterialShaderType.PixelShaderFile);
 
             bool twoSided = false;
             if (material.TryGetProperty(MaterialPropertyType.TwoSided, out var twosidedProp))
@@ -97,11 +94,11 @@ namespace HexaEngine.Resources
             {
                 GraphicsPipelineDesc pipelineDesc = new()
                 {
-                    VertexShader = material.VertexShader,
-                    HullShader = material.HullShader,
-                    DomainShader = material.DomainShader,
-                    GeometryShader = material.GeometryShader,
-                    PixelShader = material.PixelShader,
+                    VertexShader = material.GetShader(MaterialShaderType.VertexShaderFile).Source,
+                    HullShader = material.GetShader(MaterialShaderType.HullShaderFile).Source,
+                    DomainShader = material.GetShader(MaterialShaderType.DomainShaderFile).Source,
+                    GeometryShader = material.GetShader(MaterialShaderType.GeometryShaderFile).Source,
+                    PixelShader = material.GetShader(MaterialShaderType.PixelShaderFile).Source,
                 };
 
                 GraphicsPipelineState pipelineState = new()
@@ -240,7 +237,7 @@ namespace HexaEngine.Resources
                 macros = macros.Append(new ShaderMacro("VtxSkinned", "1")).ToArray();
             }
             var matflags = material.Flags;
-            var custom = material.VertexShader != null && material.PixelShader != null;
+            var custom = material.HasShader(MaterialShaderType.VertexShaderFile) && material.HasShader(MaterialShaderType.PixelShaderFile);
 
             bool twoSided = false;
             if (material.TryGetProperty(MaterialPropertyType.TwoSided, out var twosidedProp))
@@ -276,11 +273,11 @@ namespace HexaEngine.Resources
             {
                 GraphicsPipelineDesc pipelineDesc = new()
                 {
-                    VertexShader = material.VertexShader,
-                    HullShader = material.HullShader,
-                    DomainShader = material.DomainShader,
-                    GeometryShader = material.GeometryShader,
-                    PixelShader = material.PixelShader,
+                    VertexShader = material.GetShader(MaterialShaderType.VertexShaderFile).Source,
+                    HullShader = material.GetShader(MaterialShaderType.HullShaderFile).Source,
+                    DomainShader = material.GetShader(MaterialShaderType.DomainShaderFile).Source,
+                    GeometryShader = material.GetShader(MaterialShaderType.GeometryShaderFile).Source,
+                    PixelShader = material.GetShader(MaterialShaderType.PixelShaderFile).Source,
                 };
 
                 GraphicsPipelineState pipelineState = new()

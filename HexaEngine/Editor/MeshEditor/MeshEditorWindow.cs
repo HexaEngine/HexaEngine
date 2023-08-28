@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
@@ -19,8 +20,8 @@
 
     public unsafe class MeshEditorWindow : EditorWindow
     {
-        private readonly OpenFileDialog openDialog = new();
-        private readonly SaveFileDialog saveDialog = new();
+        private readonly OpenFileDialog openDialog = new(null, ".model");
+        private readonly SaveFileDialog saveDialog = new(null, ".model");
         private ModelImportDialog importDialog;
         private IGraphicsDevice device;
 
@@ -38,7 +39,7 @@
         private bool drawTangents = false;
         private bool drawBitangents = false;
 
-        private string CurrentFile;
+        private string? CurrentFile;
 
         private ModelFile? model;
         private MeshSource? selectedMesh;
@@ -61,7 +62,7 @@
         private const float speed = 5;
         private static bool first = true;
 
-        private VertexSelection selection = new();
+        private readonly VertexSelection selection = new();
         private Vector3 selectionNormal;
 
         private bool gimbalGrabbed;
@@ -108,17 +109,40 @@
 
         public void Save()
         {
-            model?.Save(CurrentFile, Encoding.UTF8);
+            SaveAs(CurrentFile);
         }
 
-        public void Save(string dir)
+        public void SaveAs(string? filename)
         {
-            model?.Save(dir + Path.GetFileName(CurrentFile), Encoding.UTF8);
+            if (filename == null || model == null)
+                return;
+            try
+            {
+                model.Save(filename, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save model: {filename}", ex.Message);
+                Logger.Error($"Failed to save model: {filename}");
+                Logger.Log(ex);
+            }
         }
 
         public void Load(string path)
         {
-            model = ModelFile.LoadExternal(path);
+            try
+            {
+                model = ModelFile.LoadExternal(path);
+            }
+            catch (Exception ex)
+            {
+                model = null;
+                MessageBox.Show($"Failed to load model: {path}", ex.Message);
+                Logger.Error($"Failed to load model: {path}");
+                Logger.Log(ex);
+                return;
+            }
+
             sources = new MeshSource[model.Meshes.Length];
             for (int i = 0; i < model.Meshes.Length; i++)
             {
@@ -306,7 +330,7 @@
             {
                 if (saveDialog.Result == SaveFileResult.Ok)
                 {
-                    Save(saveDialog.CurrentFolder);
+                    SaveAs(saveDialog.FullPath);
                 }
             }
 
@@ -451,6 +475,12 @@
                     ntbView.Local->Size = 0.05f * MathF.Min(meshSource.Data.Box.Extent.Length(), 1);
                     ntbView.Update(context);
 
+                    if (drawWireframe && meshSource.Overlay.IsValid && meshSource.Overlay.IsInitialized)
+                    {
+                        context.SetGraphicsPipeline(meshSource.Overlay);
+                        meshSource.Draw(context);
+                    }
+
                     if (drawObject && meshSource.Solid.IsValid && meshSource.Solid.IsInitialized)
                     {
                         boneBuffer.ResetCounter();
@@ -472,12 +502,6 @@
                         boneBuffer.Update(context);
                         context.VSSetShaderResource(0, boneBuffer.SRV);
                         context.SetGraphicsPipeline(meshSource.Solid);
-                        meshSource.Draw(context);
-                    }
-
-                    if (drawWireframe && meshSource.Overlay.IsValid && meshSource.Overlay.IsInitialized)
-                    {
-                        context.SetGraphicsPipeline(meshSource.Overlay);
                         meshSource.Draw(context);
                     }
 

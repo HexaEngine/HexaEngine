@@ -22,7 +22,7 @@
 
         public override PostFxFlags Flags { get; }
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("VelocityBuffer")
@@ -39,6 +39,34 @@
                 .RunBefore("AutoExposure");
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/motionblur/ps.hlsl"
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+
+            Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
+
+            Viewport = new(width, height);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .AddBinding("VelocityBuffer")
+                .RunBefore("Compose")
+                .RunAfter("TAA")
+                .RunAfter("HBAO")
+                .RunBefore("DepthOfField")
+                .RunBefore("GodRays")
+                .RunBefore("VolumetricClouds")
+                .RunBefore("SSR")
+                .RunBefore("SSGI")
+                .RunBefore("LensFlare")
+                .RunBefore("Bloom")
+                .RunBefore("AutoExposure");
+
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/motionblur/ps.hlsl"

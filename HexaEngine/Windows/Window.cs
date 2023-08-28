@@ -1,11 +1,10 @@
-﻿using HexaEngine.Culling;
-
-namespace HexaEngine.Windows
+﻿namespace HexaEngine.Windows
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
@@ -123,12 +122,12 @@ namespace HexaEngine.Windows
             {
                 if (x.IsCompletedSuccessfully)
                 {
-                    ImGuiConsole.Log(LogSeverity.Information, "Renderer: Initialized");
+                    Logger.Info("Renderer: Initialized");
                 }
                 if (x.IsFaulted)
                 {
-                    ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
-                    ImGuiConsole.Log(x.Exception);
+                    Logger.Error("Renderer: Failed InitializeAsync");
+                    Logger.Log(x.Exception);
                 }
 
                 renderViewport = new(sceneRenderer.Width, sceneRenderer.Height);
@@ -223,6 +222,7 @@ namespace HexaEngine.Windows
             Designer.Draw();
             WindowManager.Draw(context);
             ImGuiConsole.Draw();
+            MessageBoxes.Draw();
 
             OnRender(context);
 

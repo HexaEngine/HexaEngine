@@ -1,7 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.UI;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
@@ -369,8 +371,11 @@
                 image.Dispose();
                 CurrentFile = path;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show($"Failed to load file: {path}", ex.Message);
+                Logger.Error($"Failed to load file: {path}");
+                Logger.Log(ex);
                 UnloadImage();
             }
         }
@@ -382,8 +387,11 @@
                 UnloadImage();
                 LoadImage(srcImage);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                MessageBox.Show($"Failed to load srcImage", ex.Message);
+                Logger.Error($"Failed to load srcImage");
+                Logger.Log(ex);
             }
         }
 

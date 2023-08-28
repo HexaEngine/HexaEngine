@@ -38,5 +38,18 @@
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             return true;
         }
+
+        protected bool SetAndNotifyWithRefEqualsTest<T>(ref T? field, T? value, [CallerMemberName] string name = "") where T : class
+        {
+            if (ReferenceEquals(field, value))
+            {
+                return false;
+            }
+
+            PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(name));
+            field = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            return true;
+        }
     }
 }

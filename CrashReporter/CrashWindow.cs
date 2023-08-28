@@ -10,6 +10,7 @@
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using System;
+    using System.Diagnostics;
     using System.Numerics;
 
     public class CrashWindow : SdlWindow, IRenderWindow
@@ -21,11 +22,22 @@
         private ISwapChain swapChain;
         private bool resize;
         private bool firstFrame;
+        private string? reportFile;
         private string reportMessage;
 
         public CrashWindow() : base(WindowPosCentered, WindowPosCentered, 700, 400, Silk.NET.SDL.WindowFlags.Borderless)
         {
-            reportMessage = File.ReadAllText(@"C:\Users\juna\source\repos\JunaMeinhold\HexaEngine\Editor\bin\Debug\net8.0\logs\crash-2023-18-7--11-48-38.log");
+            var args = Environment.GetCommandLineArgs();
+
+            if (args.Length > 1 && File.Exists(args[1]))
+            {
+                reportFile = args[1];
+                reportMessage = File.ReadAllText(args[1]);
+            }
+            else
+            {
+                reportMessage = "Couldn't load crash report!";
+            }
         }
 
         public RenderDispatcher Dispatcher => throw new NotSupportedException();
@@ -89,6 +101,7 @@
             if (ImGui.BeginChild(1, new Vector2(0, -footerHeightToReserve), false, ImGuiWindowFlags.HorizontalScrollbar))
             {
                 ImGui.TextColored(new(1, 0, 0, 1), "Oops something went wrong!");
+                ImGui.Text(reportFile ?? string.Empty);
                 ImGui.Separator();
                 ImGui.Text(reportMessage);
             }
@@ -98,6 +111,11 @@
             if (ImGui.Button("Ok"))
             {
                 Close();
+            }
+            ImGui.SameLine();
+            if (reportFile != null && ImGui.Button("Open Log"))
+            {
+                Process.Start(reportFile);
             }
 
             if (!shown)

@@ -177,6 +177,16 @@
             return GetResource<IBuffer>(name);
         }
 
+        public ResourceRef<IConstantBuffer> GetConstantBuffer(string name)
+        {
+            return GetResource<IConstantBuffer>(name);
+        }
+
+        public ResourceRef<ConstantBuffer<T>> GetConstantBuffer<T>(string name) where T : unmanaged
+        {
+            return GetResource<ConstantBuffer<T>>(name);
+        }
+
         public ResourceRef<IConstantBuffer> AddConstantBuffer(string name, IConstantBuffer buffer)
         {
             return AddResource(name, buffer);

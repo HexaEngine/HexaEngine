@@ -97,11 +97,51 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Properties
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             this.device = device;
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/hbao/ps.hlsl",
+            }, GraphicsPipelineState.DefaultFullscreen);
+            paramsBuffer = new(device, CpuAccessFlags.Write);
+            intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            blur = new(device, Format.R32Float, width, height);
+
+            unsafe
+            {
+                Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
+
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
+
+                SubresourceData initialData = default;
+                initialData.DataPointer = (nint)pixelData;
+                initialData.RowPitch = NoiseSize * NoiseStride;
+
+                int idx = 0;
+                for (int i = 0; i < NoiseSize * NoiseSize; i++)
+                {
+                    float rand = Random.Shared.NextSingle() * float.Pi * 2.0f;
+                    pixelData[idx++] = MathF.Sin(rand);
+                    pixelData[idx++] = MathF.Cos(rand);
+                    pixelData[idx++] = Random.Shared.NextSingle();
+                    pixelData[idx++] = 1.0f;
+                }
+
+                noiseTex = new(device, description, initialData);
+            }
+
+            samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
+            viewport = new(width, height);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            this.device = device;
+
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/hbao/ps.hlsl",

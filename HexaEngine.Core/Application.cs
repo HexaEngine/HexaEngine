@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core
 {
     using HexaEngine.Core.Audio;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.Resources;
@@ -121,6 +122,9 @@
         /// </summary>
         public static void Boot()
         {
+            CrashLogger.Initialize();
+            ImGuiConsole.Initialize();
+
             sdl.SetHint(Sdl.HintMouseFocusClickthrough, "1");
             sdl.SetHint(Sdl.HintAutoUpdateJoysticks, "1");
             sdl.SetHint(Sdl.HintJoystickHidapiPS4, "1");

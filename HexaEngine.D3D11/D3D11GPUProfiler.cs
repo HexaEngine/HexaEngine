@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using Silk.NET.Core;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using System.Collections.Generic;
@@ -122,7 +121,7 @@
                         while (ctx.GetData(query.DisjointQuery, null, 0, 0) == 1)
                         {
                             if (!DisableLogging)
-                                ImGuiConsole.Log(LogSeverity.Information, $"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
+                                Logger.Info($"Waiting for disjoint timestamp of {name} in frame {currentFrame}");
                             Thread.Sleep(1);
                         }
 
@@ -130,7 +129,7 @@
                         if (disjoint.Disjoint)
                         {
                             if (!DisableLogging)
-                                ImGuiConsole.Log(LogSeverity.Warning, $"Disjoint Timestamp Flag in {name}");
+                                Logger.Warn($"Disjoint Timestamp Flag in {name}");
                         }
                         else
                         {
@@ -142,7 +141,7 @@
                             while (ctx.GetData(query.TimestampQueryEnd, null, 0, 0) == 1)
                             {
                                 if (!DisableLogging)
-                                    ImGuiConsole.Log(LogSeverity.Information, $"Waiting for frame end timestamp of {name} in frame {currentFrame}");
+                                    Logger.Info($"Waiting for frame end timestamp of {name} in frame {currentFrame}");
                                 Thread.Sleep(1);
                             }
                             ctx.GetData(query.TimestampQueryEnd, &end, sizeof(ulong), 0);

@@ -36,6 +36,7 @@
         public int Priority { get; set; }
 
         public PostFxPassCollection Passes { get; set; } = new();
+        public bool Initialized { get; }
 
         public event Action<bool> OnEnabledChanged;
 
@@ -74,7 +75,12 @@
             throw new NotImplementedException();
         }
 
-        public Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             throw new NotImplementedException();
         }

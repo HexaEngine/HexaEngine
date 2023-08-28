@@ -2,25 +2,22 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Metadata;
     using HexaEngine.Mathematics;
     using System.Numerics;
     using System.Text;
 
     public class MaterialData
     {
-        public static readonly MaterialData Empty = new() { Properties = new MaterialProperty[] { new MaterialProperty("BaseColor", MaterialPropertyType.BaseColor, Endianness.LittleEndian, new Vector4(1, 0, 1, 1)) }, Textures = Array.Empty<MaterialTexture>() };
+        public static readonly MaterialData Empty = new() { Properties = new MaterialProperty[] { new MaterialProperty("BaseColor", MaterialPropertyType.BaseColor, Endianness.LittleEndian, new Vector4(1, 0, 1, 1)) }, Textures = Array.Empty<MaterialTexture>(), Shaders = Array.Empty<MaterialShader>(), Metadata = Metadata.Empty };
 
         public string Name = string.Empty;
 
         public MaterialProperty[] Properties;
         public MaterialTexture[] Textures;
+        public MaterialShader[] Shaders;
 
-        public string? VertexShader;
-        public string? HullShader;
-        public string? DomainShader;
-        public string? GeometryShader;
-        public string? PixelShader;
-        public string? ComputeShader;
+        public Metadata Metadata;
 
         public MaterialFlags Flags = MaterialFlags.Depth;
 
@@ -28,6 +25,8 @@
         {
             Properties = Array.Empty<MaterialProperty>();
             Textures = Array.Empty<MaterialTexture>();
+            Shaders = Array.Empty<MaterialShader>();
+            Metadata = new();
         }
 
         public MaterialData(string name)
@@ -35,14 +34,16 @@
             Name = name;
             Properties = Array.Empty<MaterialProperty>();
             Textures = Array.Empty<MaterialTexture>();
+            Shaders = Array.Empty<MaterialShader>();
+            Metadata = new();
         }
 
-        public bool HasTexture(TextureType type)
+        public bool HasProperty(MaterialPropertyType type)
         {
-            for (int i = 0; i < Textures.Length; i++)
+            for (int i = 0; i < Properties.Length; i++)
             {
-                var tex = Textures[i];
-                if (tex.Type == type && !string.IsNullOrWhiteSpace(tex.File))
+                var tex = Properties[i];
+                if (tex.Type == type && tex.ValueType != MaterialValueType.Unknown)
                 {
                     return true;
                 }
@@ -78,7 +79,20 @@
             return false;
         }
 
-        public MaterialTexture GetTexture(TextureType type)
+        public bool HasTexture(MaterialTextureType type)
+        {
+            for (int i = 0; i < Textures.Length; i++)
+            {
+                var tex = Textures[i];
+                if (tex.Type == type && !string.IsNullOrWhiteSpace(tex.File))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public MaterialTexture GetTexture(MaterialTextureType type)
         {
             for (int i = 0; i < Textures.Length; i++)
             {
@@ -91,7 +105,7 @@
             return default;
         }
 
-        public bool TryGetTexture(TextureType type, out MaterialTexture texture)
+        public bool TryGetTexture(MaterialTextureType type, out MaterialTexture texture)
         {
             for (int i = 0; i < Textures.Length; i++)
             {
@@ -103,6 +117,47 @@
                 }
             }
             texture = default;
+            return false;
+        }
+
+        public bool HasShader(MaterialShaderType type)
+        {
+            for (int i = 0; i < Shaders.Length; i++)
+            {
+                var tex = Shaders[i];
+                if (tex.Type == type && tex.Type != MaterialShaderType.Unknown)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public MaterialShader GetShader(MaterialShaderType type)
+        {
+            for (int i = 0; i < Shaders.Length; i++)
+            {
+                var shader = Shaders[i];
+                if (shader.Type == type)
+                {
+                    return shader;
+                }
+            }
+            return default;
+        }
+
+        public bool TryGetShader(MaterialShaderType type, out MaterialShader shader)
+        {
+            for (int i = 0; i < Shaders.Length; i++)
+            {
+                var shd = Shaders[i];
+                if (shd.Type == type)
+                {
+                    shader = shd;
+                    return true;
+                }
+            }
+            shader = default;
             return false;
         }
 
@@ -128,7 +183,7 @@
             MaterialData material = new();
             material.Name = src.ReadString(encoding, endianness);
 
-            var propertyCount = src.ReadInt(endianness);
+            var propertyCount = src.ReadInt32(endianness);
             material.Properties = new MaterialProperty[propertyCount];
 
             for (int i = 0; i < propertyCount; i++)
@@ -136,21 +191,23 @@
                 material.Properties[i].Read(src, encoding, endianness);
             }
 
-            material.Flags = (MaterialFlags)src.ReadInt(endianness);
+            material.Flags = (MaterialFlags)src.ReadInt32(endianness);
 
-            var textureCount = src.ReadInt(endianness);
+            var textureCount = src.ReadInt32(endianness);
             material.Textures = new MaterialTexture[textureCount];
             for (int i = 0; i < textureCount; i++)
             {
                 material.Textures[i] = MaterialTexture.Read(src, encoding, endianness);
             }
 
-            material.VertexShader = src.ReadString(encoding, endianness);
-            material.HullShader = src.ReadString(encoding, endianness);
-            material.DomainShader = src.ReadString(encoding, endianness);
-            material.GeometryShader = src.ReadString(encoding, endianness);
-            material.PixelShader = src.ReadString(encoding, endianness);
-            material.ComputeShader = src.ReadString(encoding, endianness);
+            var shaderCount = src.ReadInt32(endianness);
+            material.Shaders = new MaterialShader[shaderCount];
+            for (int i = 0; i < shaderCount; i++)
+            {
+                material.Shaders[i] = MaterialShader.Read(src, encoding, endianness);
+            }
+
+            material.Metadata = Metadata.ReadFrom(src, encoding, endianness);
 
             return material;
         }
@@ -159,26 +216,27 @@
         {
             dst.WriteString(Name, encoding, endianness);
 
-            dst.WriteInt(Properties.Length, endianness);
+            dst.WriteInt32(Properties.Length, endianness);
             for (int i = 0; i < Properties.Length; i++)
             {
                 Properties[i].Write(dst, encoding, endianness);
             }
 
-            dst.WriteInt((int)Flags, endianness);
+            dst.WriteInt32((int)Flags, endianness);
 
-            dst.WriteInt(Textures.Length, endianness);
+            dst.WriteInt32(Textures.Length, endianness);
             for (int i = 0; i < Textures.Length; i++)
             {
                 Textures[i].Write(dst, encoding, endianness);
             }
 
-            dst.WriteString(VertexShader, encoding, endianness);
-            dst.WriteString(HullShader, encoding, endianness);
-            dst.WriteString(DomainShader, encoding, endianness);
-            dst.WriteString(GeometryShader, encoding, endianness);
-            dst.WriteString(PixelShader, encoding, endianness);
-            dst.WriteString(ComputeShader, encoding, endianness);
+            dst.WriteInt32(Shaders.Length, endianness);
+            for (int i = 0; i < Shaders.Length; i++)
+            {
+                Shaders[i].Write(dst, encoding, endianness);
+            }
+
+            Metadata.Write(dst, encoding, endianness);
         }
     }
 }

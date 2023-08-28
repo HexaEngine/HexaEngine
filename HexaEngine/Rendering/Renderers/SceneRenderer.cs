@@ -7,112 +7,36 @@ namespace HexaEngine.Rendering.Renderers
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Resources;
-    using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
-    using HexaEngine.Filters;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
-    using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
-    using HexaEngine.Rendering.Passes;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System;
     using System.Numerics;
 
-    public class HDRPipeline : RenderGraph
-    {
-        public RenderPass[] Passes;
-
-        public HDRPipeline() : base("HDRPipeline")
-        {
-            BRDFLUTPass brdfLutPass = new();
-            DepthPrePass depthPrePass = new();
-            PostProcessPrePass postProcessPrePass = new();
-            HizDepthPass hizDepthPass = new();
-
-            ObjectCullPass objectCullPass = new();
-            LightCullPass lightCullPass = new();
-            ShadowMapPass shadowMapPass = new();
-            GBufferPass gBufferPass = new();
-            LightForwardPass lightForwardPass = new();
-            PostProcessPass postProcessPass = new();
-
-            brdfLutPass.Build(this);
-            depthPrePass.Build(this);
-            postProcessPrePass.Build(this);
-            hizDepthPass.Build(this);
-            objectCullPass.Build(this);
-            lightCullPass.Build(this);
-            shadowMapPass.Build(this);
-            gBufferPass.Build(this);
-            lightForwardPass.Build(this);
-            postProcessPass.Build(this);
-
-            Passes = new RenderPass[]
-            {
-                brdfLutPass,
-                depthPrePass,
-                postProcessPrePass,
-                hizDepthPass,
-                objectCullPass,
-                lightCullPass,
-                shadowMapPass,
-                gBufferPass,
-                lightForwardPass,
-                postProcessPass
-            };
-        }
-    }
-
-    public class RendererSettings
-    {
-        public float RenderResolution { get; set; }
-
-        public int RendererWidth { get; set; }
-
-        public int RendererHeight { get; set; }
-
-        public bool VSync { get; set; }
-
-        public bool LimitFPS { get; set; }
-
-        public int FPSTarget { get; set; }
-    }
-
     public class SceneRenderer : ISceneRenderer
     {
-        private ViewportShading shading = Application.InDesignMode ? ViewportShading.Solid : ViewportShading.Rendered;
-
-        private bool initialized;
-        private bool disposedValue;
         private IGraphicsDevice device;
-        private IGraphicsContext context;
-        private IGraphicsContext deferredContext;
-        private PostProcessingManager postProcessing;
         private ISwapChain swapChain;
         private IRenderWindow window;
+
+        private readonly RendererSettings settings = new();
+        private readonly CPUFlameProfiler profiler = new();
+        private readonly HDRPipeline renderGraph = new();
+        private RenderGraphExecuter graphExecuter;
 
         private ConstantBuffer<CBCamera> cameraBuffer;
         private ConstantBuffer<CBWeather> weatherBuffer;
         private ConstantBuffer<CBTessellation> tesselationBuffer;
 
+        private bool initialized;
+        private bool disposedValue;
+
         private DepthStencil depthStencil;
-        private DepthStencil depthStencil2;
-        private ResourceRef<Texture2D> lightBuffer;
-        private IDepthStencilView dsv;
-        private GBuffer gbuffer;
-
-        private DepthMipChain hizBuffer;
-
-        private IAmbientOcclusion ssao;
-
-        private BRDFLUT brdfLUT;
-
-        private Texture2D brdflut;
 
         private ConfigKey configKey;
         private float RenderResolution;
@@ -120,20 +44,13 @@ namespace HexaEngine.Rendering.Renderers
         private int height;
         private int rendererWidth;
         private int rendererHeight;
-        private bool windowResized;
-        private bool sceneChanged;
-        private RendererSettings settings = new();
-        private readonly CPUProfiler profiler = new(10);
-        private HDRPipeline renderGraph = new HDRPipeline();
-        private RenderGraphExecuter graphExecuter;
 
-        public CPUProfiler Profiler => profiler;
+        public ICPUFlameProfiler Profiler => profiler;
 
-        public PostProcessingManager PostProcessing => postProcessing;
-
-        public ViewportShading Shading { get => shading; set => shading = value; }
+        public ViewportShading Shading { get; set; }
 
         public RenderGraph RenderGraph => renderGraph;
+
         public int Width => width;
 
         public int Height => height;
@@ -156,14 +73,11 @@ namespace HexaEngine.Rendering.Renderers
         {
             Config.Global.Sort();
             this.device = device;
-            context = device.Context;
             this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
             this.window = window;
-            swapChain.Resizing += OnWindowResizeBegin;
-            swapChain.Resized += OnWindowResizeEnd;
+
             ResourceManager2.Shared.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
             ResourceManager2.Shared.SetOrAddResource("SwapChain", swapChain.Backbuffer);
-            SceneManager.SceneChanged += SceneChanged;
 
             configKey = Config.Global.GetOrCreateKey("Renderer");
             var configKey1 = Config.Global.GenerateSubKeyAuto(settings, "RendererSettings");
@@ -198,35 +112,13 @@ namespace HexaEngine.Rendering.Renderers
             var aoBuffer = resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float));
-            graphExecuter.Init(profiler1);
+            graphExecuter.Init(profiler);
 
             ResourceManager2.Shared.AddTexture("AOBuffer", resourceCreator.GetTexture2D(aoBuffer));
-
-            //brdflut = ResourceManager2.Shared.AddTexture("BRDFLUT", new Texture2DDescription(Format.R16G16B16A16Float, 128, 128, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value;
-
-            //window.Dispatcher.InvokeBlocking(() =>
-            //{
-            //    brdfLUT = new(device, false, true);
-            //    brdfLUT.Target = brdflut.RTV;
-            //    brdfLUT.Draw(context);
-            //    context.ClearState();
-            //    brdfLUT.Dispose();
-            //    brdfLUT = null;
-            //});
 
             initialized = true;
             Current = this;
             window.Dispatcher.Invoke(() => WindowManager.Register(new RendererWidget(this)));
-        }
-
-        private void OnWindowResizeBegin(object sender, EventArgs e)
-        {
-            postProcessing?.BeginResize();
-        }
-
-        private void SceneChanged(object sender, SceneChangedEventArgs e)
-        {
-            sceneChanged = true;
         }
 
         private void InitializeSettings()
@@ -287,11 +179,6 @@ namespace HexaEngine.Rendering.Renderers
             Config.Global.Save();
         }
 
-        private void OnWindowResizeEnd(object sender, ResizedEventArgs args)
-        {
-            windowResized = true;
-        }
-
         private void OnRendererResizeBegin()
         {
             if (!initialized)
@@ -309,14 +196,7 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
-            gbuffer.Resize(width, height);
             depthStencil = new(device, width, height, Format.D32Float);
-            depthStencil2 = new(device, width, height, Format.D32Float);
-            dsv = depthStencil.DSV;
-
-            hizBuffer.Resize(device, width, height);
-
-            postProcessing.EndResize(width, height);
 
             var scene = SceneManager.Current;
             if (scene == null)
@@ -325,7 +205,6 @@ namespace HexaEngine.Rendering.Renderers
             }
         }
 
-        private static readonly CPUFlameProfiler profiler1 = new();
         private int selected = -1;
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera camera)
@@ -339,24 +218,18 @@ namespace HexaEngine.Rendering.Renderers
             {
                 return;
             }
-            profiler1.BeginFrame();
 
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
             scene.RenderManager.Update(context);
+            scene.WeatherManager.Update(context);
             scene.LightManager.Update(context, graphExecuter.ResourceCreator.GetShadowAtlas(0), camera);
 
             graphExecuter.ResourceCreator.Output = swapChain.BackbufferRTV;
             graphExecuter.ResourceCreator.OutputTex = swapChain.Backbuffer;
             graphExecuter.ResourceCreator.OutputViewport = viewport;
-            graphExecuter.Execute(context, profiler1);
-
-            profiler1.EndFrame();
-
-            if (ImGui.Begin("Dbg"))
-                ImGuiWidgetFlameGraph.PlotFlame("Test Flame", profiler1.Getter, profiler1.Current, profiler1.StageCount, ref selected);
-            ImGui.End();
+            graphExecuter.Execute(context, profiler);
         }
 
         public void DrawSettings()

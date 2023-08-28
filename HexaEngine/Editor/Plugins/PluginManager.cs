@@ -44,7 +44,7 @@
                 }
                 catch (Exception ex)
                 {
-                    ImGuiConsole.Log(ex);
+                    Logger.Log(ex);
                 }
             }
 
@@ -58,7 +58,7 @@
                 }
                 catch (Exception ex)
                 {
-                    ImGuiConsole.Log(ex);
+                    Logger.Log(ex);
                 }
             }
         }
@@ -80,7 +80,7 @@
                 }
                 catch (Exception ex)
                 {
-                    ImGuiConsole.Log(ex);
+                    Logger.Log(ex);
                 }
             }
             plugins.Clear();

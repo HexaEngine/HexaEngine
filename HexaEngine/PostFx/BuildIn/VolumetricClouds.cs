@@ -34,7 +34,7 @@
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -51,6 +51,44 @@
 
             this.device = device;
             pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/clouds/ps.hlsl",
+            }, new GraphicsPipelineState()
+            {
+                Blend = BlendDescription.AlphaBlend,
+                BlendFactor = Vector4.One,
+                Topology = PrimitiveTopology.TriangleStrip
+            });
+
+            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+            pointWrapSampler = device.CreateSamplerState(SamplerStateDescription.PointWrap);
+
+            weatherTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/weather.dds"));
+            cloudTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/cloud.dds"));
+            worleyTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
+
+            intermediateTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
+            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .RunBefore("Compose")
+                .RunAfter("TAA")
+                .RunAfter("HBAO")
+                .RunAfter("MotionBlur")
+                .RunAfter("DepthOfField")
+                .RunAfter("GodRays")
+                .RunBefore("SSR")
+                .RunBefore("SSGI")
+                .RunBefore("LensFlare")
+                .RunBefore("Bloom")
+                .RunBefore("AutoExposure");
+
+            this.device = device;
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/clouds/ps.hlsl",

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
-    using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Mathematics;
     using System.Diagnostics;
     using System.IO;
@@ -14,6 +13,13 @@
 
         public MaterialLibraryHeader Header;
         public MaterialData[] Materials;
+
+        public MaterialLibrary()
+        {
+            Name = string.Empty;
+            Header = default;
+            Materials = Array.Empty<MaterialData>();
+        }
 
         public MaterialLibrary(string path)
         {

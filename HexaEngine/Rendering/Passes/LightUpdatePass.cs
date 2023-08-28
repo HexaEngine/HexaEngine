@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Lights;
-    using HexaEngine.Lights.Probes;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Rendering.Graph;
@@ -13,7 +12,7 @@
 
     public class LightUpdatePass : RenderPass
     {
-        public StructuredUavBuffer<GlobalProbeData> GlobalProbes;
+        public StructuredUavBuffer<ProbeData> GlobalProbes;
         public StructuredUavBuffer<LightData> LightBuffer;
         public StructuredUavBuffer<ShadowData> ShadowDataBuffer;
 
@@ -44,33 +43,12 @@
             for (int i = 0; i < probes.Count; i++)
             {
                 var probe = probes[i];
-                if (!(probe.IsEnabled && probe.IsVaild))
+                if (!(probe.IsEnabled))
                 {
                     continue;
                 }
 
-                switch (probe.Type)
-                {
-                    case ProbeType.Global:
-                        if (globalProbesCount == LightManager.MaxGlobalLightProbes)
-                        {
-                            continue;
-                        }
-                        GlobalProbes.Add((GlobalLightProbeComponent)probe);
-                        //forwardSrvs[nForwardIndirectSrvsBase + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + globalProbesCount] = (void*)(probe.DiffuseTex?.SRV?.NativePointer ?? 0);
-                        //forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + globalProbesCount] = (void*)(probe.SpecularTex?.SRV?.NativePointer ?? 0);
-                        globalProbesCount++;
-                        break;
-
-                    case ProbeType.Local:
-                        break;
-                }
-            }
-
-            for (uint i = globalProbesCount; i < LightManager.MaxGlobalLightProbes; i++)
-            {
-                //forwardSrvs[nForwardIndirectSrvsBase + i] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + i] = indirectSrvs[nIndirectSrvsBase + i] = null;
-                //forwardSrvs[nForwardIndirectSrvsBase + MaxGlobalLightProbes + i] = forwardClusterdSrvs[nForwardClusterdIndirectSrvsBase + MaxGlobalLightProbes + i] = indirectSrvs[nIndirectSrvsBase + MaxGlobalLightProbes + i] = null;
+                // needs to extended.
             }
 
             for (int i = 0; i < activeLights.Count; i++)

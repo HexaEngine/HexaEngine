@@ -1,7 +1,9 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Exporters
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Core.UI;
     using ImGuiNET;
 
     public class DDSExporter : BaseExporter
@@ -98,40 +100,49 @@
             var image = Image;
             bool recreated = false;
 
-            if (generateMipMaps)
+            try
             {
-                IScratchImage image1 = image.GenerateMipMaps(TexFilterFlags.Default);
+                if (generateMipMaps)
+                {
+                    IScratchImage image1 = image.GenerateMipMaps(TexFilterFlags.Default);
+                    if (recreated)
+                    {
+                        image.Dispose();
+                    }
+                    image = image1;
+                    recreated = true;
+                }
+
+                if (baseFormat != format)
+                {
+                    IScratchImage image1;
+                    if (FormatHelper.IsCompressed(format))
+                    {
+                        image1 = image.Compress(device, format, compressFlags);
+                    }
+                    else
+                    {
+                        image1 = image.Convert(format, TexFilterFlags.Default);
+                    }
+                    if (recreated)
+                    {
+                        image.Dispose();
+                    }
+                    image = image1;
+                    recreated = true;
+                }
+
+                image.SaveToFile(Path, TexFileFormat.DDS, (int)DDSFlags.None);
                 if (recreated)
                 {
                     image.Dispose();
                 }
-                image = image1;
-                recreated = true;
             }
-
-            if (baseFormat != format)
+            catch (Exception ex)
             {
-                IScratchImage image1;
-                if (FormatHelper.IsCompressed(format))
-                {
-                    image1 = image.Compress(device, format, compressFlags);
-                }
-                else
-                {
-                    image1 = image.Convert(format, TexFilterFlags.Default);
-                }
-                if (recreated)
-                {
-                    image.Dispose();
-                }
-                image = image1;
-                recreated = true;
-            }
-
-            image.SaveToFile(Path, TexFileFormat.DDS, (int)DDSFlags.None);
-            if (recreated)
-            {
-                image.Dispose();
+                MessageBox.Show($"Failed to export image to: {Path}", ex.Message);
+                Logger.Error($"Failed to export image to: {Path}");
+                Logger.Log(ex);
             }
         }
     }

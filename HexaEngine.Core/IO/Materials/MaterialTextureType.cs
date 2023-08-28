@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
-    public enum TextureType
+    public enum MaterialTextureType
     {
         None = 0,
         Diffuse = 1,

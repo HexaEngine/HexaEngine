@@ -20,10 +20,21 @@ namespace HexaEngine.Effects.BuildIn
 
         public override PostFxFlags Flags => PostFxFlags.None;
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder.RunAfter("Compose");
             pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/fxaa/ps.hlsl"
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+            sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicClamp);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder.RunAfter("Compose");
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl"

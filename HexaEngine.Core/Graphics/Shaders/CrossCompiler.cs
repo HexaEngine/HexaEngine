@@ -52,7 +52,7 @@
         private static void ErrorCallback(void* userdata, byte* error)
         {
             var message = ToStringFromUTF8(error);
-            ImGuiConsole.Log(LogSeverity.Error, message);
+            Logger.Error(message);
         }
 
         public static bool CompileSPIRVFromSource(string source, string filename, string entrypoint, ShaderMacro[] macros, ShaderKind kind, SourceLanguage language, out ShaderSpirvIL il, [NotNullWhen(false)] out string? error)

@@ -37,7 +37,7 @@
 
                 if (extension == ".hexlvl")
                 {
-                    task = SceneManager.AsyncLoad(SceneSerializer.Deserialize(path)).ContinueWith(ImGuiConsole.HandleError);
+                    task = SceneManager.AsyncLoad(SceneSerializer.Deserialize(path)).ContinueWith(Logger.HandleError);
                 }
             }
         }

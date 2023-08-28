@@ -63,7 +63,7 @@
             }
         }
 
-        public override async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("VelocityBuffer")
@@ -79,6 +79,36 @@
                 .RunBefore("AutoExposure");
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
+            {
+                VertexShader = "quad.hlsl",
+                PixelShader = "effects/taa/ps.hlsl"
+            }, GraphicsPipelineState.DefaultFullscreen, macros);
+
+            paramsBuffer = new(device, CpuAccessFlags.Write);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
+
+            Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
+            Previous = ResourceManager2.Shared.AddTexture("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1));
+
+            Viewport = new(width, height);
+        }
+
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        {
+            builder
+                .AddBinding("VelocityBuffer")
+                .RunBefore("Compose")
+                .RunBefore("HBAO")
+                .RunBefore("DepthOfField")
+                .RunBefore("GodRays")
+                .RunBefore("VolumetricClouds")
+                .RunBefore("SSR")
+                .RunBefore("SSGI")
+                .RunBefore("LensFlare")
+                .RunBefore("Bloom")
+                .RunBefore("AutoExposure");
+
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/taa/ps.hlsl"

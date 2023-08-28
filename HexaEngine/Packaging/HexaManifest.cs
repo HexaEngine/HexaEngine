@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Packages
+﻿namespace HexaEngine.Packaging
 {
     public class PackageMetadata
     {
