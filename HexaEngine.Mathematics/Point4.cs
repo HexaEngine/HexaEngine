@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
 
     public struct Point4 : IEquatable<Point4>
     {
@@ -74,6 +75,27 @@
             Y = y;
             Z = z;
             W = w;
+        }
+
+        public unsafe int this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            readonly get
+            {
+                fixed (Point4* p = &this)
+                {
+                    return ((int*)p)[index];
+                }
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set
+            {
+                fixed (Point4* p = &this)
+                {
+                    ((int*)p)[index] = value;
+                }
+            }
         }
 
         public override bool Equals(object? obj)

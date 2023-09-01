@@ -333,16 +333,7 @@
 
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
-                    var (boneIds, weigths) = GatherBoneData(i);
-                    fixed (int* p = boneIds)
-                    {
-                        MemcpyT(p, vertex.BoneIds, sizeof(int) * 4);
-                    }
-
-                    fixed (float* p = weigths)
-                    {
-                        MemcpyT(p, vertex.Weights, sizeof(float) * 4);
-                    }
+                    (vertex.BoneIds, vertex.Weights) = GatherBoneData(i);
                 }
 
                 vertices[i] = vertex;
@@ -423,16 +414,7 @@
 
                 if ((Flags & VertexFlags.Skinned) != 0)
                 {
-                    var (boneIds, weigths) = GatherBoneData(i);
-                    fixed (int* p = boneIds)
-                    {
-                        MemcpyT(p, vertex.BoneIds, sizeof(int) * 4);
-                    }
-
-                    fixed (float* p = weigths)
-                    {
-                        MemcpyT(p, vertex.Weights, sizeof(float) * 4);
-                    }
+                    (vertex.BoneIds, vertex.Weights) = GatherBoneData(i);
                 }
 
                 vb[i] = vertex;
@@ -535,11 +517,12 @@
             return faces.ToArray();
         }
 
-        public (int[] boneIds, float[] weigths) GatherBoneData(int vertexId)
+        public (Point4 boneIds, Vector4 weigths) GatherBoneData(int vertexId)
         {
-            int[] boneIds = new int[4];
-            float[] weigths = new float[4];
-            uint m = 0;
+            Point4 boneIds = default;
+            Vector4 weigths = default;
+
+            int m = 0;
             for (int i = 0; i < Bones.Length; i++)
             {
                 var bone = Bones[i];

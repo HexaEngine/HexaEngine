@@ -1,9 +1,4 @@
-﻿// Copyright (c) 2020 - present, Roland Munguia
-// Distributed under the MIT License (http://opensource.org/licenses/MIT)
-
-// Modified and ported by me.
-
-namespace HexaEngine.Core.Debugging
+﻿namespace HexaEngine.Core.Debugging
 {
     using HexaEngine.Core.Collections;
     using ImGuiNET;
@@ -12,8 +7,6 @@ namespace HexaEngine.Core.Debugging
     using System.Linq;
     using System.Numerics;
     using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -27,7 +20,6 @@ namespace HexaEngine.Core.Debugging
         private static bool coloredOutput;
         private static bool scrollToBottom;
         private static bool autoScroll;
-        private static bool wasPrevFrameTabCompletion;
         private static string textFilter = string.Empty;
         private static string buffer = "";
         private static readonly uint bufferSize = 256;
@@ -39,10 +31,10 @@ namespace HexaEngine.Core.Debugging
         private static bool resetModal;
         private static float windowAlpha = 1;
         private static readonly ConsoleColorPalette consoleColorPalette = new();
-        private static readonly string m_ConsoleName = "Console";
+        private static readonly string consoleName = "Console";
         private static bool consoleOpen;
-        private static ConsoleColor foregroundColor;
-        private static ConsoleColor backgroundColor;
+        private static ConsoleColor foregroundColor = ConsoleColor.White;
+        private static ConsoleColor backgroundColor = ConsoleColor.Black;
         private static readonly SemaphoreSlim semaphore = new(1);
         private static readonly unsafe ImGuiInputTextCallback inputTextCallback = InputCallback;
         private const int maxMessages = 4096;
@@ -55,7 +47,14 @@ namespace HexaEngine.Core.Debugging
 
             RegisterCommand("clear", _ =>
             {
-                messages.Clear();
+                Clear();
+            });
+            RegisterCommand("help", _ =>
+            {
+                foreach (var cmd in commands)
+                {
+                    WriteLine(cmd.Key);
+                }
             });
             RegisterCommand("info", _ =>
             {
@@ -142,7 +141,7 @@ namespace HexaEngine.Core.Debugging
                 {
                     if (messages[^1].Message.EndsWith(Environment.NewLine))
                     {
-                        messages.Add(new(foregroundColor, message));
+                        messages.Add(new(foregroundColor, backgroundColor, message));
                         scrollToBottom = true;
                     }
                     else
@@ -154,7 +153,7 @@ namespace HexaEngine.Core.Debugging
                 }
                 else
                 {
-                    messages.Add(new(foregroundColor, message));
+                    messages.Add(new(foregroundColor, backgroundColor, message));
                 }
             }
         }
@@ -187,7 +186,7 @@ namespace HexaEngine.Core.Debugging
             {
                 if (messages[^1].Message.EndsWith(Environment.NewLine))
                 {
-                    messages.Add(new(foregroundColor, message ?? "<null>"));
+                    messages.Add(new(foregroundColor, backgroundColor, message ?? "<null>"));
                     scrollToBottom = true;
                 }
                 else
@@ -199,7 +198,7 @@ namespace HexaEngine.Core.Debugging
             }
             else
             {
-                messages.Add(new(foregroundColor, message ?? "<null>"));
+                messages.Add(new(foregroundColor, backgroundColor, message ?? "<null>"));
             }
 
             if (messages.Count > maxMessages)
@@ -215,7 +214,7 @@ namespace HexaEngine.Core.Debugging
         public static void WriteLine(string? msg)
         {
             semaphore.Wait();
-            messages.Add(new(foregroundColor, $"{msg}{Environment.NewLine}"));
+            messages.Add(new(foregroundColor, backgroundColor, $"{msg}{Environment.NewLine}"));
             if (messages.Count > maxMessages)
             {
                 messages.Remove(messages[0]);
@@ -226,16 +225,17 @@ namespace HexaEngine.Core.Debugging
 
         public static void WriteLine(object? value) => WriteLine(value?.ToString());
 
+        public static void Clear()
+        {
+            semaphore.Wait();
+            messages.Clear();
+            semaphore.Release();
+        }
+
         public static void Draw()
         {
-            //semaphore.Wait();
-            ///////////////////////////////////////////////////////////////////////////
-            // Window and Settings ////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////
-
-            // Begin Console Window.
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, windowAlpha);
-            if (!ImGui.Begin(m_ConsoleName, ref consoleOpen, ImGuiWindowFlags.MenuBar))
+            if (!ImGui.Begin(consoleName, ref consoleOpen, ImGuiWindowFlags.MenuBar))
             {
                 ImGui.PopStyleVar();
                 ImGui.End();
@@ -243,33 +243,18 @@ namespace HexaEngine.Core.Debugging
             }
             ImGui.PopStyleVar();
 
-            ///////////////
-            // Menu bar  //
-            ///////////////
             MenuBar();
 
-            ////////////////
-            // Filter bar //
-            ////////////////
             if (filterBar)
             { FilterBar(); }
 
-            //////////////////
-            // Console Logs //
-            //////////////////
             LogWindow();
 
-            // Section off.
             ImGui.Separator();
-
-            ///////////////////////////////////////////////////////////////////////////
-            // Command-line ///////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////
 
             InputBar();
 
             ImGui.End();
-            //semaphore.Release();
         }
 
         private static void FilterBar()
@@ -280,7 +265,21 @@ namespace HexaEngine.Core.Debugging
 
         private static unsafe void LogWindow()
         {
+            float suggestionHeight = 0;
+
             float footerHeightToReserve = ImGui.GetStyle().ItemSpacing.Y + ImGui.GetFrameHeightWithSpacing();
+
+            if (cmdSuggestions.Count > 0)
+            {
+                suggestionHeight = ImGui.GetStyle().ChildBorderSize + ImGui.GetStyle().ItemSpacing.Y * 2;
+                for (int i = 0; i < cmdSuggestions.Count; i++)
+                {
+                    suggestionHeight += ImGui.GetStyle().ItemSpacing.Y + ImGui.CalcTextSize(cmdSuggestions[i]).Y;
+                }
+                footerHeightToReserve += suggestionHeight;
+                footerHeightToReserve += ImGui.GetStyle().ItemSpacing.Y;
+            }
+
             if (ImGui.BeginChild("ScrollRegion##", new Vector2(0, -footerHeightToReserve), false, 0))
             {
                 // Display colored command output.
@@ -349,13 +348,26 @@ namespace HexaEngine.Core.Debugging
                 // Loop through command string vector.
             }
             ImGui.EndChild();
+
+            if (cmdSuggestions.Count > 0)
+            {
+                if (ImGui.BeginChild("Suggestions", new(0, suggestionHeight), true))
+                {
+                    for (int i = 0; i < cmdSuggestions.Count; i++)
+                    {
+                        ImGui.Text(cmdSuggestions[i]);
+                    }
+
+                    ImGui.EndChild();
+                }
+            }
         }
 
         private static unsafe void InputBar()
         {
             // Variables.
             ImGuiInputTextFlags inputTextFlags =
-                    ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackCompletion |
+                    ImGuiInputTextFlags.CallbackHistory | ImGuiInputTextFlags.CallbackCharFilter | ImGuiInputTextFlags.CallbackCompletion | ImGuiInputTextFlags.CallbackAlways |
                     ImGuiInputTextFlags.EnterReturnsTrue;
 
             // Only reclaim after enter key is pressed!
@@ -368,6 +380,8 @@ namespace HexaEngine.Core.Debugging
                 // Validate.
                 if (!string.IsNullOrWhiteSpace(buffer))
                 {
+                    WriteLine("> " + buffer);
+
                     string[] args = buffer.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                     // Run command line input.
                     if (commands.TryGetValue(args[0], out var command))
@@ -389,17 +403,20 @@ namespace HexaEngine.Core.Debugging
                 // Keep focus.
                 reclaimFocus = true;
 
+                if (history.Contains(buffer))
+                {
+                    history.Remove(buffer);
+                }
+
+                history.Add(buffer);
+                historyIndex = history.Count;
+
                 // Clear command line.
                 buffer = new(new char[buffer.Length]);
-            }
-            ImGui.PopItemWidth();
 
-            // Reset suggestions when client provides char input.
-            if (ImGui.IsItemEdited() && !wasPrevFrameTabCompletion)
-            {
                 cmdSuggestions.Clear();
             }
-            wasPrevFrameTabCompletion = false;
+            ImGui.PopItemWidth();
 
             // Auto-focus on window apparition
             ImGui.SetItemDefaultFocus();
@@ -500,78 +517,87 @@ namespace HexaEngine.Core.Debugging
         private static unsafe int InputCallback(ImGuiInputTextCallbackData* data)
         {
             // Exit if no buffer.
-            if (data->BufTextLen == 0 && data->EventFlag != ImGuiInputTextFlags.CallbackHistory)
+            if (data->BufTextLen == 0 && data->EventFlag != ImGuiInputTextFlags.CallbackHistory && data->EventFlag != ImGuiInputTextFlags.CallbackAlways)
             {
                 return 0;
             }
 
             // Get input string and console.
-            string input_str = Encoding.UTF8.GetString(data->Buf, data->BufTextLen);
-            string trim_str = input_str.Trim();
+            Span<byte> input_str = new(data->Buf, data->BufTextLen);
 
-            int startPos = ImGuiConsole.buffer.IndexOf(' ');
+            int startPos = input_str.IndexOf((byte)' ');
             startPos = startPos == -1 ? 0 : startPos;
-            int endPos = ImGuiConsole.buffer.LastIndexOf(' ');
-            endPos = endPos == -1 ? ImGuiConsole.buffer.Length : endPos;
+            int endPos = input_str.LastIndexOf((byte)' ');
+            endPos = endPos == -1 ? input_str.Length : endPos;
 
-            Span<char> buffer = new(data->Buf, data->BufSize);
+            Span<byte> trim_str = new(data->Buf + startPos, endPos);
+
+            Span<byte> buffer = new(data->Buf, data->BufSize);
 
             switch (data->EventFlag)
             {
                 case ImGuiInputTextFlags.CallbackCompletion:
                     {
                         // Find last word.
-                        int startSubtrPos = trim_str.LastIndexOf(' ');
+                        int startSubtrPos = trim_str.LastIndexOf((byte)' ');
                         startSubtrPos = startSubtrPos == -1 ? 0 : startSubtrPos;
 
                         // Validate str
-                        if (!string.IsNullOrEmpty(trim_str))
+                        if (trim_str.Length != 0 && cmdSuggestions.Count != 0)
                         {
-                            // Display suggestions on console.
-                            if (!(cmdSuggestions.Count == 0))
-                            {
-                                var old = foregroundColor;
-                                foregroundColor = ConsoleColor.Gray;
-                                WriteLine("Suggestions: ");
-                                foreach (var suggestion in cmdSuggestions)
-                                {
-                                    WriteLine(suggestion);
-                                }
-                                foregroundColor = old;
-
-                                cmdSuggestions.Clear();
-                            }
-
                             // Get partial completion and suggestions.
-                            string partial = trim_str.Substring(startSubtrPos, endPos);
-                            cmdSuggestions.AddRange(cmdAutocomplete.StartingWith(partial).Select(x => x.Key));
+                            Span<byte> partial = trim_str[startSubtrPos..];
 
                             // Autocomplete only when one work is available.
-                            if (!(cmdSuggestions.Count == 0) && cmdSuggestions.Count == 1)
+                            if (cmdSuggestions.Count == 1)
                             {
                                 buffer[startSubtrPos..data->BufTextLen].Clear();
                                 string ne = cmdSuggestions[0];
                                 cmdSuggestions.Clear();
-                                data->Buf = (byte*)Marshal.StringToHGlobalAnsi(ne);
+
+                                data->Buf = (byte*)ImGui.MemAlloc((nuint)ne.Length);
+                                Encoding.UTF8.GetBytes(ne, new Span<byte>(data->Buf, ne.Length));
                                 data->BufTextLen = ne.Length;
                                 data->CursorPos = ne.Length;
                                 data->BufDirty = 1;
                             }
                             else
                             {
-                                // Partially complete word.
-                                if (!string.IsNullOrEmpty(partial))
+                                int st = 0;
+                                int len = cmdSuggestions.Min(x => x.Length);
+                                bool dirty = false;
+                                for (int i = 0; i < len; i++, st++)
                                 {
-                                    int newLen = data->BufTextLen - startSubtrPos;
-                                    buffer[startSubtrPos..data->BufTextLen].Clear();
-                                    partial.CopyTo(buffer[startSubtrPos..]);
+                                    char c = cmdSuggestions[0][i];
+                                    bool exit = false;
+                                    for (int j = 1; j < cmdSuggestions.Count; j++)
+                                    {
+                                        if (c != cmdSuggestions[j][i])
+                                        {
+                                            exit = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (exit)
+                                    {
+                                        break;
+                                    }
+
+                                    buffer[i] = (byte)c;
+                                    dirty = true;
+                                }
+
+                                if (dirty)
+                                {
+                                    data->BufTextLen = st;
+                                    data->CursorPos = st;
                                     data->BufDirty = 1;
+                                    trim_str = new(data->Buf + startPos, st);
+                                    UpdateSuggestions(trim_str);
                                 }
                             }
                         }
-
-                        // We have performed the completion event.
-                        wasPrevFrameTabCompletion = true;
                     }
                     break;
 
@@ -585,14 +611,14 @@ namespace HexaEngine.Core.Debugging
                         {
                             if (historyIndex > 0)
                             {
-                                --historyIndex;
+                                historyIndex--;
                             }
                         }
                         else
                         {
-                            if (historyIndex < history.Count)
+                            if (historyIndex + 1 < history.Count)
                             {
-                                ++historyIndex;
+                                historyIndex++;
                             }
                         }
 
@@ -600,17 +626,47 @@ namespace HexaEngine.Core.Debugging
                         string prevCommand = history[historyIndex];
 
                         // Insert commands.
-                        Unsafe.Copy(data->Buf, ref prevCommand);
+                        for (int i = 0; i < prevCommand.Length; i++)
+                        {
+                            buffer[i] = (byte)prevCommand[i];
+                        }
+
                         data->BufTextLen = prevCommand.Length;
+                        data->CursorPos = prevCommand.Length;
+                        data->BufDirty = 1;
                     }
                     break;
 
-                case ImGuiInputTextFlags.CallbackCharFilter:
                 case ImGuiInputTextFlags.CallbackAlways:
+                    {
+                        UpdateSuggestions(trim_str);
+                    }
+
+                    break;
+
+                case ImGuiInputTextFlags.CallbackCharFilter:
+
                 default:
                     break;
             }
             return 1;
+        }
+
+        private static void UpdateSuggestions(Span<byte> trim_str)
+        {
+            // Find last word.
+            int startSubtrPos = trim_str.LastIndexOf((byte)' ');
+            startSubtrPos = startSubtrPos == -1 ? 0 : startSubtrPos;
+
+            cmdSuggestions.Clear();
+
+            // Validate str
+            if (trim_str.Length != 0)
+            {
+                // Get partial completion and suggestions.
+                string partial = Encoding.UTF8.GetString(trim_str[startSubtrPos..]);
+                cmdSuggestions.AddRange(cmdAutocomplete.StartingWith(partial).Select(x => x.Key));
+            }
         }
     }
 }

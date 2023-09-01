@@ -100,6 +100,13 @@
         {
             DebugName = gameObject.Name + DebugName;
             this.gameObject = gameObject;
+
+            modelManager = gameObject.GetScene().ModelManager;
+            materialManager = gameObject.GetScene().MaterialManager;
+
+            renderer = new(device);
+
+            UpdateModel();
         }
 
         public void Destroy()
@@ -186,7 +193,6 @@
                     component.model = new(source, library);
                     await component.model.LoadAsync();
                     component.renderer.Initialize(component.model);
-
                     component.gameObject.SendUpdateTransformed();
                 }
             }, this);

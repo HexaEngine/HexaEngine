@@ -5,19 +5,22 @@
     public struct ConsoleMessage
     {
         public ConsoleColor ForegroundColor;
+        public ConsoleColor BackgroundColor;
         public string Message;
         public string Timestamp;
 
-        public ConsoleMessage(ConsoleColor foregroundColor, string message, string timestamp)
+        public ConsoleMessage(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string message, string timestamp)
         {
             ForegroundColor = foregroundColor;
+            BackgroundColor = backgroundColor;
             Message = message;
             Timestamp = timestamp;
         }
 
-        public ConsoleMessage(ConsoleColor foregroundColor, string message) : this()
+        public ConsoleMessage(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string message) : this()
         {
             ForegroundColor = foregroundColor;
+            BackgroundColor = backgroundColor;
             Message = message;
             Timestamp = DateTime.Now.ToShortTimeString();
         }
@@ -38,7 +41,7 @@
 
         public static implicit operator ConsoleMessage(LogMessage message)
         {
-            return new(GetForegroundFromSeverity(message.Severity), message.Message, message.Timestamp);
+            return new(GetForegroundFromSeverity(message.Severity), ImGuiConsole.BackgroundColor, message.Message, message.Timestamp);
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using Hardware.Info;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Text;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -23,19 +24,6 @@
             task.Start();
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Logger.Writers.Add(FileLogWriter);
-        }
-
-        private static string Humanize(ulong s)
-        {
-            if (s > 1099511627776)
-                return $"{s / 1099511627776f}TiB";
-            if (s > 1073741824)
-                return $"{s / 1073741824f}GiB";
-            if (s > 1048576)
-                return $"{s / 1048576f}MiB";
-            if (s > 1024)
-                return $"{s / 1024f}KiB";
-            return $"{s}B";
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -65,15 +53,15 @@
                 sb.AppendLine("System Info:");
                 sb.AppendLine($"\tOS: {info.OperatingSystem.Name} {info.OperatingSystem.VersionString}");
                 sb.AppendLine($"\tCPU: {info.CpuList[0].Manufacturer} {info.CpuList[0].Name}");
-                sb.AppendLine($"\tRAM Physical: {Humanize(info.MemoryStatus.TotalPhysical - info.MemoryStatus.AvailablePhysical)}/{Humanize(info.MemoryStatus.TotalPhysical)}");
-                sb.AppendLine($"\tRAM Virtual: {Humanize(info.MemoryStatus.TotalVirtual - info.MemoryStatus.AvailableVirtual)}/{Humanize(info.MemoryStatus.TotalVirtual)}");
+                sb.AppendLine($"\tRAM Physical: {(info.MemoryStatus.TotalPhysical - info.MemoryStatus.AvailablePhysical).FormatDataSize()}/{info.MemoryStatus.TotalPhysical.FormatDataSize()}");
+                sb.AppendLine($"\tRAM Virtual: {(info.MemoryStatus.TotalVirtual - info.MemoryStatus.AvailableVirtual).FormatDataSize()}/{info.MemoryStatus.TotalVirtual.FormatDataSize()}");
                 if (GraphicsAdapter.Current != null)
                 {
                     sb.AppendLine($"\tGraphics API: {GraphicsAdapter.Current.Backend}");
                     for (int i = 0; i < GraphicsAdapter.Current.GPUs.Count; i++)
                     {
                         var gpu = GraphicsAdapter.Current.GPUs[i];
-                        sb.AppendLine($"\tGPU{i}: {gpu.Description}, DeviceId: {gpu.DeviceId}, VendorId: {gpu.VendorId}, Rev: {gpu.Revision}, DedicatedVideoMem: {Humanize(gpu.DedicatedVideoMemory)}, DedicatedSystemMem: {Humanize(gpu.DedicatedSystemMemory)}, SharedSystemMem: {Humanize(gpu.SharedSystemMemory)}");
+                        sb.AppendLine($"\tGPU{i}: {gpu.Description}, DeviceId: {gpu.DeviceId}, VendorId: {gpu.VendorId}, Rev: {gpu.Revision}, DedicatedVideoMem: {gpu.DedicatedVideoMemory.FormatDataSize()}, DedicatedSystemMem: {gpu.DedicatedSystemMemory.FormatDataSize()}, SharedSystemMem: {gpu.SharedSystemMemory.FormatDataSize()}");
                     }
                 }
                 else

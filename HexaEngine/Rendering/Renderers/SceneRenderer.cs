@@ -103,13 +103,8 @@ namespace HexaEngine.Rendering.Renderers
             resourceCreator.Viewport = new(width, height);
 
             cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write, false);
-            ResourceManager2.Shared.AddConstantBuffer("CBCamera", cameraBuffer.Value);
-
             weatherBuffer = resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, false);
-            ResourceManager2.Shared.AddConstantBuffer("CBWeather", weatherBuffer.Value);
-
             aoBuffer = resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
-            ResourceManager2.Shared.AddTexture("AOBuffer", aoBuffer.Value);
 
             resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), false);
             graphExecuter.Init(profiler);

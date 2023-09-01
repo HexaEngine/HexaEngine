@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Meshes
 {
+    using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
 
@@ -36,12 +37,12 @@
         /// <summary>
         /// The array of bone IDs influencing the vertex.
         /// </summary>
-        public fixed int BoneIds[4];
+        public Point4 BoneIds;
 
         /// <summary>
         /// The array of bone weights influencing the vertex.
         /// </summary>
-        public fixed float Weights[4];
+        public Vector4 Weights;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkinnedMeshVertex"/> struct.
