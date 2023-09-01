@@ -8,7 +8,7 @@
     public class RoutedEventArgs : EventArgs
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the event is handled.
+        /// Gets or sets a _value indicating whether the event is handled.
         /// </summary>
         /// <remarks>
         /// Setting this property to <see langword="true"/> indicates that the event has been handled

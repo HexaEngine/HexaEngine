@@ -7,6 +7,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
 
+    [Obsolete("Do not use! Will be removed soon!")]
     public class ResourceManager2
     {
         private readonly List<ResourceRef> resources = new();

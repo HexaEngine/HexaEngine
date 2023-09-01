@@ -3,7 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Meshes;
     using System.Numerics;
 
@@ -11,8 +10,6 @@
     {
         private readonly IGraphicsPipeline pipeline;
         private readonly ConstantBuffer<Constants> constantBuffer;
-
-        private readonly ResourceRef<IBuffer> camera;
 
         private struct Constants
         {
@@ -32,7 +29,6 @@
                 Topology = PrimitiveTopology.TriangleStrip
             });
             constantBuffer = new(device, CpuAccessFlags.Write);
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
         }
 
         public void Draw(IGraphicsContext context, SpriteBatch batch, SpriteAtlas atlas, Matrix4x4 transform)
@@ -52,7 +48,6 @@
             context.SetGraphicsPipeline(pipeline);
             context.VSSetShaderResource(0, batch.Buffer.SRV);
             context.VSSetConstantBuffer(0, constantBuffer);
-            context.VSSetConstantBuffer(1, camera.Value);
 
             context.PSSetShaderResource(0, atlas.SRV);
             context.PSSetSampler(0, atlas.SamplerState);

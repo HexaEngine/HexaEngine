@@ -13,7 +13,6 @@
     using HexaEngine.Meshes;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Renderers;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -101,13 +100,6 @@
         {
             DebugName = gameObject.Name + DebugName;
             this.gameObject = gameObject;
-
-            renderer = new(device);
-
-            modelManager = gameObject.GetScene().ModelManager;
-            materialManager = gameObject.GetScene().MaterialManager;
-
-            UpdateModel();
         }
 
         public void Destroy()

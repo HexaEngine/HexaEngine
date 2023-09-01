@@ -413,7 +413,7 @@
                 ImGui.Text("No material open");
                 return;
             }
-            if (!ImGui.Begin("Add node"))
+            if (!ImGui.Begin("ObjectAdded node"))
             {
                 ImGui.End();
                 return;
@@ -431,7 +431,7 @@
 
             if (ImGui.CollapsingHeader("Methods"))
             {
-                if (ImGui.MenuItem("Normal Map"))
+                if (ImGui.MenuItem("normal Map"))
                 {
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);

@@ -144,9 +144,9 @@
         /// <summary>
         /// Gets or sets the <see cref="T"/> at the specified index.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The <see cref="T"/>.
-        /// </value>
+        /// </_value>
         /// <param dbgName="index">The index.</param>
         /// <returns></returns>
         public T this[int index]
@@ -161,17 +161,17 @@
         /// <summary>
         /// Gets the buffer.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The buffer.
-        /// </value>
+        /// </_value>
         public IBuffer Buffer => buffer;
 
         /// <summary>
         /// Gets the local buffer.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The local buffer.
-        /// </value>
+        /// </_value>
         public T* Local => items;
 
         public ref T Data => ref items[0];

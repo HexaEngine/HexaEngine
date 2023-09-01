@@ -32,7 +32,7 @@
                 srvs[i] = textures[i].SRV;
                 rtvs[i] = textures[i].RTV;
                 viewports[i] = new(desc.Width, desc.Height);
-                //ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
+                //ImGuiRenderer.Samplers.ObjectAdded(srvs[i].NativePointer, sampler);
                 desc.BindFlags = BindFlags.DepthStencil;
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
@@ -86,7 +86,7 @@
                 {
                     for (int i = 0; i < textures.Length; i++)
                     {
-                        //ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
+                        //ImGuiRenderer.Samplers.ObjectRemoved(srvs[i].NativePointer);
                         textures[i].Dispose();
                         srvs[i].Dispose();
                         rtvs[i].Dispose();

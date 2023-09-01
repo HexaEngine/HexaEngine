@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering;
@@ -12,14 +13,26 @@
 
     public class LightForwardPass : RenderPass
     {
-        private ConstantBuffer<ForwardLightParams> lightParamsBuffer;
+        private ResourceRef<DepthStencil> depthStencil;
+        private ResourceRef<GBuffer> gbuffer;
+        private ResourceRef<Texture2D> AOBuffer;
+        private ResourceRef<Texture2D> brdfLUT;
+        private ResourceRef<StructuredUavBuffer<uint>> lightIndexList;
+        private ResourceRef<StructuredUavBuffer<LightGrid>> lightGridBuffer;
+        private ResourceRef<ShadowAtlas> shadowAtlas;
+        private ResourceRef<Texture2D> lightBuffer;
 
-        private ISamplerState linearClampSampler;
-        private ISamplerState linearWrapSampler;
-        private ISamplerState pointClampSampler;
-        private ISamplerState shadowSampler;
+        private ResourceRef<ISamplerState> linearClampSampler;
+        private ResourceRef<ISamplerState> linearWrapSampler;
+        private ResourceRef<ISamplerState> pointClampSampler;
+        private ResourceRef<ISamplerState> shadowSampler;
+
+        private ResourceRef<ConstantBuffer<ForwardLightParams>> lightParamsBuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<ConstantBuffer<CBWeather>> weather;
 
         private unsafe void** cbs;
+
         private const uint nConstantBuffers = 3;
         private unsafe void** smps;
         private const uint nSamplers = 4;
@@ -48,23 +61,30 @@
 
         public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
+            depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
+            gbuffer = creator.GetGBuffer("GBuffer");
+            AOBuffer = creator.GetTexture2D("#AOBuffer");
+
+            brdfLUT = creator.GetTexture2D("BRDFLUT");
+
+            lightIndexList = creator.GetStructuredUavBuffer<uint>("LightIndexList");
+            lightGridBuffer = creator.GetStructuredUavBuffer<LightGrid>("LightGridBuffer");
+
+            shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
+
             var viewport = creator.Viewport;
-            creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            lightBuffer = creator.CreateTexture2D("LightBuffer", new(Format.R16G16B16A16Float, (int)viewport.Width, (int)viewport.Height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
-            lightParamsBuffer = creator.CreateConstantBuffer<ForwardLightParams>("ForwardLightParams", CpuAccessFlags.Write);
-
+            smps = AllocArrayAndZero(nSamplers);
             linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
             shadowSampler = creator.CreateSamplerState("LinearComparisonBorder", SamplerStateDescription.ComparisonLinearBorder);
 
-            smps = AllocArrayAndZero(nSamplers);
-            smps[0] = (void*)linearClampSampler.NativePointer;
-            smps[1] = (void*)linearWrapSampler.NativePointer;
-            smps[2] = (void*)pointClampSampler.NativePointer;
-            smps[3] = (void*)shadowSampler.NativePointer;
-
             cbs = AllocArrayAndZero(nConstantBuffers);
+            lightParamsBuffer = creator.CreateConstantBuffer<ForwardLightParams>("ForwardLightParams", CpuAccessFlags.Write);
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
             forwardSRVs = AllocArrayAndZero(nForwardSRVs);
             forwardClusteredSRVs = AllocArrayAndZero(nForwardClusteredSRVs);
@@ -86,28 +106,33 @@
             var lights = current.LightManager;
             var globalProbes = lights.GlobalProbes;
 
-            var gbuffer = creator.GetGBuffer("GBuffer");
+            var gbuffer = this.gbuffer.Value;
 
-            forwardSRVs[8] = forwardClusteredSRVs[8] = (void*)creator.GetTexture2D("#AOBuffer").SRV.NativePointer;
+            smps[0] = (void*)linearClampSampler.Value.NativePointer;
+            smps[1] = (void*)linearWrapSampler.Value.NativePointer;
+            smps[2] = (void*)pointClampSampler.Value.NativePointer;
+            smps[3] = (void*)shadowSampler.Value.NativePointer;
 
-            forwardSRVs[9] = forwardClusteredSRVs[9] = (void*)creator.GetTexture2D("BRDFLUT").SRV.NativePointer;
+            forwardSRVs[8] = forwardClusteredSRVs[8] = (void*)AOBuffer.Value.SRV.NativePointer;
+
+            forwardSRVs[9] = forwardClusteredSRVs[9] = (void*)brdfLUT.Value.SRV.NativePointer;
             forwardSRVs[10] = (void*)globalProbes.SRV.NativePointer;
 
             forwardSRVs[11] = forwardClusteredSRVs[11] = (void*)lights.LightBuffer.SRV.NativePointer;
             forwardSRVs[12] = forwardClusteredSRVs[12] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
 
-            forwardClusteredSRVs[13] = (void*)creator.GetStructuredUavBuffer<uint>("LightIndexList").SRV.NativePointer;
-            forwardClusteredSRVs[14] = (void*)creator.GetStructuredUavBuffer<LightGrid>("LightGridBuffer").SRV.NativePointer;
+            forwardClusteredSRVs[13] = (void*)lightIndexList.Value.SRV.NativePointer;
+            forwardClusteredSRVs[14] = (void*)lightGridBuffer.Value.SRV.NativePointer;
 
-            forwardSRVs[13] = forwardClusteredSRVs[15] = (void*)creator.GetShadowAtlas("ShadowAtlas").SRV.NativePointer;
+            forwardSRVs[13] = forwardClusteredSRVs[15] = (void*)shadowAtlas.Value.SRV.NativePointer;
 
-            forwardRTVs[0] = (void*)creator.GetTexture2D("LightBuffer").RTV.NativePointer;
+            forwardRTVs[0] = (void*)lightBuffer.Value.RTV.NativePointer;
             forwardRTVs[1] = gbuffer.PRTVs[1];
             forwardRTVs[2] = gbuffer.PRTVs[2];
 
             context.ClearRenderTargetViews(1, &forwardRTVs[0], default);
 
-            context.SetRenderTargets(nForwardRTVs, forwardRTVs, creator.GetDepthStencilBuffer("#DepthStencil").DSV);
+            context.SetRenderTargets(nForwardRTVs, forwardRTVs, depthStencil.Value.DSV);
 
             profiler?.End("LightForward.Update");
 
@@ -201,17 +226,19 @@
 
         private unsafe void ForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
         {
+            var lightParamsBuffer = this.lightParamsBuffer.Value;
             var lightParams = lightParamsBuffer.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParams->GlobalProbes = lights.GlobalProbes.Count;
             lightParamsBuffer.Update(context);
-            cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
-            cbs[1] = (void*)creator.GetConstantBuffer<CBCamera>("CBCamera").NativePointer;
-            cbs[2] = (void*)creator.GetConstantBuffer<CBWeather>("CBWeather").NativePointer;
+            cbs[0] = (void*)lightParamsBuffer.NativePointer;
+            cbs[1] = (void*)camera.Value.NativePointer;
+            cbs[2] = (void*)weather.Value.NativePointer;
 
             context.SetViewport(creator.Viewport);
             context.VSSetConstantBuffers(1, 1, &cbs[1]);
             context.DSSetConstantBuffers(1, 1, &cbs[1]);
+            context.GSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
             context.PSSetConstantBuffers(0, nConstantBuffers, cbs);
             context.PSSetShaderResources(8, nForwardSRVs, forwardSRVs);
@@ -233,12 +260,13 @@
         private unsafe void ClusteredForwardBegin(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
         {
             var cam = CameraManager.Current;
+            var lightParamsBuffer = this.lightParamsBuffer.Value;
             var lightParams = lightParamsBuffer.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParams->GlobalProbes = lights.GlobalProbes.Count;
             lightParamsBuffer.Update(context);
             cbs[0] = (void*)lightParamsBuffer.Buffer?.NativePointer;
-            cbs[1] = (void*)creator.GetConstantBuffer<CBCamera>("CBCamera").NativePointer;
+            cbs[1] = (void*)camera.Value.NativePointer;
             cbs[2] = null;
 
             context.SetViewport(creator.Viewport);

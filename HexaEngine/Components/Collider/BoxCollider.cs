@@ -19,7 +19,7 @@
         public float Height
         { get => height; set { height = value; update = true; } }
 
-        [EditorProperty("Depth")]
+        [EditorProperty("depth")]
         public float Depth
         { get => depth; set { depth = value; update = true; } }
 

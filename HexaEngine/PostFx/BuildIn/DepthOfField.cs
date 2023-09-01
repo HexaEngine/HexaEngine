@@ -7,6 +7,7 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
     using HexaEngine.Effects.Blur;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -21,7 +22,8 @@ namespace HexaEngine.Effects.BuildIn
         private ConstantBuffer<BokehParams> cbBokeh;
         private ConstantBuffer<DofParams> cbDof;
         private ISamplerState linearWrapSampler;
-
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private IComputePipeline bokehGenerate;
         private GaussianBlur gaussianBlur;
         private IGraphicsPipeline dof;
@@ -162,7 +164,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -177,61 +179,8 @@ namespace HexaEngine.Effects.BuildIn
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
-            this.width = width;
-            this.height = height;
-            this.device = device;
-
-            bokehGenerate = await device.CreateComputePipelineAsync(new()
-            {
-                Path = "compute/bokeh/shader.hlsl",
-            }, macros);
-            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
-            DispatchArgs = new((uint)MathF.Ceiling(width / 32f), (uint)MathF.Ceiling(height / 32f), 1);
-
-            dof = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/dof/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-
-            bokehDraw = await device.CreateGraphicsPipelineAsync(new()
-            {
-                PixelShader = "effects/bokeh/mask.hlsl",
-                GeometryShader = "effects/bokeh/gs.hlsl",
-                VertexShader = "effects/bokeh/vs.hlsl",
-            }, new GraphicsPipelineState()
-            {
-                Topology = PrimitiveTopology.PointList,
-                Blend = BlendDescription.Additive,
-                BlendFactor = Vector4.One
-            });
-
-            bokehBuffer = new(device, (uint)(width * height), CpuAccessFlags.None, BufferUnorderedAccessViewFlags.Append);
-            blurTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            bokehIndirectBuffer = new(device, new DrawInstancedIndirectArgs(0, 1, 0, 0), CpuAccessFlags.None);
-
-            cbBokeh = new(device, CpuAccessFlags.Write);
-            cbDof = new(device, CpuAccessFlags.Write);
-
-            bokehTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/bokeh/hex.dds"));
-
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunBefore("GodRays")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             this.width = width;
             this.height = height;
@@ -325,13 +274,10 @@ namespace HexaEngine.Effects.BuildIn
                 return;
             }
 
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
             if (bokehEnabled)
             {
                 context.SetComputePipeline(bokehGenerate);
-                nint* srvs_bokeh = stackalloc nint[] { Input.NativePointer, depth.SRV.NativePointer };
+                nint* srvs_bokeh = stackalloc nint[] { Input.NativePointer, depth.Value.SRV.NativePointer };
                 context.CSSetShaderResources(0, 2, (void**)srvs_bokeh);
                 context.CSSetUnorderedAccessView(0, (void*)bokehBuffer.UAV.NativePointer, 0);
                 context.CSSetConstantBuffer(0, cbBokeh);
@@ -348,10 +294,10 @@ namespace HexaEngine.Effects.BuildIn
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetSampler(0, linearWrapSampler);
-            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, blurTex.SRV.NativePointer, depth.SRV.NativePointer };
+            nint* srvs_dof = stackalloc nint[] { Input.NativePointer, blurTex.SRV.NativePointer, depth.Value.SRV.NativePointer };
             context.PSSetShaderResources(0, 3, (void**)srvs_dof);
             context.PSSetConstantBuffer(0, cbDof);
-            context.PSSetConstantBuffer(1, camera);
+            context.PSSetConstantBuffer(1, camera.Value);
             context.SetGraphicsPipeline(dof);
             context.DrawInstanced(4, 1, 0, 0);
             context.SetGraphicsPipeline(null);

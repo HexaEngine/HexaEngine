@@ -22,11 +22,11 @@
         /// </summary>
         /// <param name="semanticName">The HLSL semantic associated with this element in a shader input-signature.</param>
         /// <param name="semanticIndex">The semantic index for the element. A semantic index modifies a semantic, with an integer index number. A semantic index is only needed in a case where there is more than one element with the same semantic.</param>
-        /// <param name="format">The <see cref="Vortice.DXGI.Format"/> value that specifies the format of the element data.</param>
+        /// <param name="format">The <see cref="Vortice.DXGI.Format"/> _value that specifies the format of the element data.</param>
         /// <param name="offset">Offset, in bytes, between each element. Use <see cref="AppendAligned"/> (0xffffffff) for convenience to define the current element directly after the previous one, including any packing if necessary.</param>
         /// <param name="slot">The input-assembler slot.</param>
-        /// <param name="slotClass">A <see cref="InputClassification"/> value that identifies the input data class for a single input slot.</param>
-        /// <param name="stepRate">The number of instances to draw using the same per-instance data before advancing in the buffer by one element. This value must be 0 for an element that contains per-vertex data (the slot class is set to the <see cref="InputClassification.PerVertexData"/> member of <see cref="InputClassification"/>).</param>
+        /// <param name="slotClass">A <see cref="InputClassification"/> _value that identifies the input data class for a single input slot.</param>
+        /// <param name="stepRate">The number of instances to draw using the same per-instance data before advancing in the buffer by one element. This _value must be 0 for an element that contains per-vertex data (the slot class is set to the <see cref="InputClassification.PerVertexData"/> member of <see cref="InputClassification"/>).</param>
         public InputElementDescription(string semanticName, int semanticIndex, Format format, int offset, int slot, InputClassification slotClass, int stepRate)
         {
             SemanticName = semanticName;
@@ -43,7 +43,7 @@
         /// </summary>
         /// <param name="semanticName">The HLSL semantic associated with this element in a shader input-signature.</param>
         /// <param name="semanticIndex">The semantic index for the element. A semantic index modifies a semantic, with an integer index number. A semantic index is only needed in a case where there is more than one element with the same semantic.</param>
-        /// <param name="format">The <see cref="Format"/> value that specifies the format of the element data.</param>
+        /// <param name="format">The <see cref="Format"/> _value that specifies the format of the element data.</param>
         /// <param name="offset">Offset, in bytes, between each element. Use <see cref="AppendAligned"/> (0xffffffff) for convenience to define the current element directly after the previous one, including any packing if necessary.</param>
         /// <param name="slot">The input-assembler slot.</param>
         public InputElementDescription(string semanticName, int semanticIndex, Format format, int offset, int slot)
@@ -62,7 +62,7 @@
         /// </summary>
         /// <param name="semanticName">The HLSL semantic associated with this element in a shader input-signature.</param>
         /// <param name="semanticIndex">The semantic index for the element. A semantic index modifies a semantic, with an integer index number. A semantic index is only needed in a case where there is more than one element with the same semantic.</param>
-        /// <param name="format">The <see cref="Format"/> value that specifies the format of the element data.</param>
+        /// <param name="format">The <see cref="Format"/> _value that specifies the format of the element data.</param>
         /// <param name="slot">The input-assembler slot.</param>
         public InputElementDescription(string semanticName, int semanticIndex, Format format, int slot)
         {

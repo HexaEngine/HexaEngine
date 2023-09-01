@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using System.Numerics;
@@ -10,7 +9,6 @@
     public class TerrainRenderer : IDisposable
     {
         private readonly ConstantBuffer<Matrix4x4> worldBuffer;
-        private readonly ResourceRef<IBuffer> camera;
 
         private TerrainGrid? grid;
 
@@ -20,7 +18,6 @@
         public TerrainRenderer(IGraphicsDevice device)
         {
             worldBuffer = new(device, CpuAccessFlags.Write);
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
         }
 
         public void Initialize(TerrainGrid grid)
@@ -70,7 +67,7 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawForward(context, camera.Value))
+                    if (!layer.BeginDrawForward(context))
                         continue;
                     context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     layer.EndDrawForward(context);
@@ -103,7 +100,7 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawDeferred(context, camera.Value))
+                    if (!layer.BeginDrawDeferred(context))
                         continue;
                     context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     layer.EndDrawDeferred(context);
@@ -134,7 +131,7 @@
                 for (int j = 0; j < cell.DrawLayers.Count; j++)
                 {
                     var layer = cell.DrawLayers[j];
-                    if (!layer.BeginDrawDepth(context, camera.Value))
+                    if (!layer.BeginDrawDepth(context))
                         continue;
                     context.DrawIndexedInstanced(cell.IndexCount, 1, 0, 0, 0);
                     layer.EndDrawDepth(context);

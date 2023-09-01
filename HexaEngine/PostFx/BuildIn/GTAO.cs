@@ -4,8 +4,6 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
@@ -23,11 +21,6 @@ namespace HexaEngine.Effects.BuildIn
         private Viewport viewport;
 
         private ISamplerState samplerLinear;
-
-        public ResourceRef<Texture2D> Output;
-        public ResourceRef<IBuffer> Camera;
-        public ResourceRef<IShaderResourceView> Depth;
-        public ResourceRef<IShaderResourceView> Normal;
 
         private bool disposedValue;
         private int enabled;
@@ -97,7 +90,6 @@ namespace HexaEngine.Effects.BuildIn
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
-            Output = ResourceManager2.Shared.AddTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -130,10 +122,6 @@ namespace HexaEngine.Effects.BuildIn
                 noiseTex = new(device, description, initialData);
             }
 
-            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
-            Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
-            Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             viewport = new(width, height);
         }
@@ -144,8 +132,6 @@ namespace HexaEngine.Effects.BuildIn
 
         public void Resize(int width, int height)
         {
-            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
-
             intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             viewport = new(width, height);
@@ -153,10 +139,6 @@ namespace HexaEngine.Effects.BuildIn
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output is null)
-            {
-                return;
-            }
         }
 
         protected virtual unsafe void Dispose(bool disposing)

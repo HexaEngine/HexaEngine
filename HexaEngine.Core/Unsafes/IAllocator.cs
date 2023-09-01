@@ -13,9 +13,9 @@
         void* Alloc(nint width);
 
         /// <summary>
-        /// Allocates a block of memory for a single value of type <typeparamref name="T"/>.
+        /// Allocates a block of memory for a single _value of type <typeparamref name="T"/>.
         /// </summary>
-        /// <typeparam name="T">The type of the value to allocate memory for.</typeparam>
+        /// <typeparam name="T">The type of the _value to allocate memory for.</typeparam>
         /// <returns>A pointer to the allocated memory block.</returns>
         T* Alloc<T>() where T : unmanaged;
 
@@ -52,7 +52,7 @@
         /// <summary>
         /// Frees the memory block pointed to by the specified pointer and releases any resources associated with it.
         /// </summary>
-        /// <typeparam name="T">The type of the value stored in the memory block.</typeparam>
+        /// <typeparam name="T">The type of the _value stored in the memory block.</typeparam>
         /// <param name="ptr">A pointer to the memory block to free.</param>
         void Free<T>(T* ptr) where T : unmanaged, IFreeable;
 

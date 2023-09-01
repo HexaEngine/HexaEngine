@@ -26,7 +26,7 @@ namespace HexaEngine.Meshes
                 vertex[1] = v1;
                 vertex[2] = v2;
                 ComputeNormal();
-                //triangles.Add(this);
+                //triangles.ObjectAdded(this);
                 for (int i = 0; i < 3; i++)
                 {
                     vertex[i].face.Add(this);
@@ -40,7 +40,7 @@ namespace HexaEngine.Meshes
             public void Destory()
             {
                 int i;
-                //triangles.Remove(this);
+                //triangles.ObjectRemoved(this);
                 for (i = 0; i < 3; i++)
                 {
                     vertex[i]?.face.Remove(this);
@@ -121,7 +121,7 @@ namespace HexaEngine.Meshes
             {
                 position = v;
                 id = _id;
-                //vertices.Add(this);
+                //vertices.ObjectAdded(this);
             }
 
             public void Destory()
@@ -132,7 +132,7 @@ namespace HexaEngine.Meshes
                     neighbor[0].neighbor.Remove(this);
                     neighbor.Remove(neighbor[0]);
                 }
-                //vertices.Remove(this);
+                //vertices.ObjectRemoved(this);
             }
 
             public void RemoveIfNonNeighbor(Vertex n)
@@ -297,7 +297,7 @@ namespace HexaEngine.Meshes
 
         private Vertex MinimumCostEdge()
         {
-            // Find the edge that when collapsed will affect model the least.
+            // FindByName the edge that when collapsed will affect model the least.
             // This funtion actually returns a Vertex, the second vertex
             // of the edge (collapse candidate) is stored in the vertex data.
             // Serious optimization opportunity here: this function currently

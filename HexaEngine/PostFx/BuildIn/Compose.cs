@@ -3,7 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -27,11 +26,13 @@
 
         private IRenderTargetView Output;
         private IShaderResourceView Input;
-        private ResourceRef<Texture2D> Bloom;
-        private ResourceRef<IShaderResourceView> Luma;
+        private Graph.ResourceRef<Texture2D> Bloom;
+        private Graph.ResourceRef<Texture2D> Luma;
         private Texture2D LUT;
 
         public Viewport Viewport;
+        private Graph.ResourceRef<DepthStencil> depth;
+        private Graph.ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         public override string Name => "Compose";
 
@@ -101,30 +102,7 @@
 
         #endregion Structs
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .AddBinding("Bloom")
-                .AddBinding("AutoExposure")
-                .RunAfter("!AllNotReferenced");
-
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/compose/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-            paramBuffer = new(device, new ComposeParams(bloomStrength), CpuAccessFlags.Write);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-
-            Bloom = ResourceManager2.Shared.GetTexture("Bloom");
-            Luma = ResourceManager2.Shared.GetResource<IShaderResourceView>("Luma");
-            LUT = new Texture2D(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lut.png", mipLevels: 1));
-            InitUnsafe();
-            Bloom.Resource.ValueChanged += OnUpdate;
-            Luma.Resource.ValueChanged += OnUpdate;
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("Bloom")
@@ -139,12 +117,15 @@
             paramBuffer = new(device, new ComposeParams(bloomStrength), CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            Bloom = ResourceManager2.Shared.GetTexture("Bloom");
-            Luma = ResourceManager2.Shared.GetResource<IShaderResourceView>("Luma");
+            Bloom = creator.GetTexture2D("Bloom");
+            Luma = creator.GetTexture2D("Luma");
             LUT = new Texture2D(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lut.png", mipLevels: 1));
             InitUnsafe();
             Bloom.Resource.ValueChanged += OnUpdate;
             Luma.Resource.ValueChanged += OnUpdate;
+
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
         }
 
         private unsafe void OnUpdate(object? sender, IDisposable? e)
@@ -162,7 +143,7 @@
             srvs[0] = (void*)(Input?.NativePointer ?? 0);
             srvs[1] = (void*)(Bloom.Value?.SRV?.NativePointer ?? 0);
             srvs[2] = null;
-            srvs[4] = (void*)(Luma.Value?.NativePointer ?? 0);
+            srvs[4] = (void*)(Luma.Value?.SRV?.NativePointer ?? 0);
             srvs[5] = (void*)(LUT.SRV?.NativePointer ?? 0);
             cbvs = AllocArray(2);
             cbvs[0] = (void*)paramBuffer.Buffer.NativePointer;
@@ -209,11 +190,8 @@
                 return;
             }
 
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
-            srvs[3] = (void*)(depth.SRV?.NativePointer ?? 0);
-            cbvs[1] = (void*)camera.NativePointer;
+            srvs[3] = (void*)(depth.Value.SRV?.NativePointer ?? 0);
+            cbvs[1] = (void*)camera.Value.NativePointer;
 
             context.SetRenderTarget(Output, default);
             context.SetViewport(Viewport);

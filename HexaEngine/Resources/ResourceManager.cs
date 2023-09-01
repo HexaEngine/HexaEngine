@@ -24,10 +24,7 @@
             ResourceManager.device = device;
         }
 
-        /// <summary>
-        /// Begins to ignore cleanup
-        /// </summary>
-        public static void BeginPauseCleanup()
+        public static void BeginNoCleanupRegion()
         {
             if (suppressCleanup)
             {
@@ -37,10 +34,7 @@
             suppressCleanup = true;
         }
 
-        /// <summary>
-        /// Ends cleanup free region, this causes an full cleanup
-        /// </summary>
-        public static void EndPauseCleanup()
+        public static void EndNoCleanupRegion()
         {
             if (!suppressCleanup)
             {
@@ -64,12 +58,28 @@
                     material.Value.Dispose();
                 }
             }
+            foreach (var material in terrainMaterials.ToArray())
+            {
+                if (!material.Value.IsUsed)
+                {
+                    terrainMaterials.Remove(material.Key, out _);
+                    material.Value.Dispose();
+                }
+            }
             foreach (var texture in textures.ToArray())
             {
                 if (!texture.Value.IsUsed)
                 {
                     textures.Remove(texture.Key, out _);
                     texture.Value.Dispose();
+                }
+            }
+            foreach (var pipeline in pipelines.ToArray())
+            {
+                if (!pipeline.Value.IsUsed)
+                {
+                    pipelines.Remove(pipeline.Key, out _);
+                    pipeline.Value.Dispose();
                 }
             }
         }

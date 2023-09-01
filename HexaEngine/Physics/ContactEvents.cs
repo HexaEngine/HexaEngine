@@ -420,7 +420,7 @@ namespace HexaEngine.Physics
             //For simplicity, this is completely sequential. Note that it's technically possible to extract more parallelism, but the complexity cost is high and you would need
             //very large numbers of events being processed to make it worth it.
 
-            //Remove any stale collisions. Stale collisions are those which should have received a new manifold update but did not because the manifold is no longer active.
+            //ObjectRemoved any stale collisions. Stale collisions are those which should have received a new manifold update but did not because the manifold is no longer active.
             for (int i = 0; i < listenerCount; ++i)
             {
                 ref var listener = ref listeners[i];

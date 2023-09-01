@@ -1,12 +1,9 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Terrains;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Lights;
     using System.Numerics;
     using System.Threading.Tasks;
@@ -375,6 +372,22 @@ namespace HexaEngine.Resources
 
             context.DSSetConstantBuffer(1, camera);
             context.VSSetConstantBuffer(1, camera);
+            context.SetGraphicsPipeline(depthOnly);
+            return true;
+        }
+
+        public bool BeginDrawDepth(IGraphicsContext context)
+        {
+            if (!initialized)
+            {
+                return false;
+            }
+
+            if (!depthOnly.IsValid)
+            {
+                return false;
+            }
+
             context.SetGraphicsPipeline(depthOnly);
             return true;
         }

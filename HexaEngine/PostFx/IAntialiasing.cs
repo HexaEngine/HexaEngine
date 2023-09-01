@@ -1,11 +1,10 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.PostFx
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using HexaEngine.Rendering.Graph;
 
     public interface IAntialiasing
     {
@@ -13,7 +12,7 @@ namespace HexaEngine.PostFx
 
         public bool Enabled { get; set; }
 
-        Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+        void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
         void Resize(int width, int height);
 

@@ -151,8 +151,8 @@
                     {
                         var skele = mesh.Animature;
                         var bone = mesh.Bones[j];
-                        var noriginMtx = scene.Find(skele?.Relationships[bone.Name].ParentName)?.Transform.Local ?? Matrix4x4.Identity;
-                        var ndestMtx = scene.Find(bone.Name)?.Transform.Local ?? Matrix4x4.Identity;
+                        var noriginMtx = scene.FindByName(skele?.Relationships[bone.Name].ParentName)?.Transform.Local ?? Matrix4x4.Identity;
+                        var ndestMtx = scene.FindByName(bone.Name)?.Transform.Local ?? Matrix4x4.Identity;
                         var originMtx = noriginMtx * skele?.GetTransform(skele?.Relationships[bone.Name].ParentName) ?? Matrix4x4.Identity;
                         var destMtx = ndestMtx * skele?.GetTransform(bone.Name) ?? Matrix4x4.Identity;
                         var origin = Vector3.Zero.ApplyMatrix(originMtx);
@@ -173,13 +173,13 @@
 
             if (drawColliders)
             {
-                for (int i = 0; i < scene.Nodes.Count; i++)
+                for (int i = 0; i < scene.GameObjects.Count; i++)
                 {
-                    var node = scene.Nodes[i];
-                    Transform transform = scene.Nodes[i].Transform;
-                    for (int j = 0; j < scene.Nodes[i].Components.Count; j++)
+                    var node = scene.GameObjects[i];
+                    Transform transform = scene.GameObjects[i].Transform;
+                    for (int j = 0; j < scene.GameObjects[i].Components.Count; j++)
                     {
-                        IComponent component = scene.Nodes[i].Components[j];
+                        IComponent component = scene.GameObjects[i].Components[j];
                         if (component is BoxCollider box)
                         {
                             DebugDraw.DrawBox(node.Name + j, transform.GlobalPosition, transform.GlobalOrientation, box.Width, box.Height, box.Depth, Vector4.One);

@@ -77,7 +77,7 @@
                 //manager.Rename(material.Name, name);
             }
 
-            if (ImGui.Button("Add Property"))
+            if (ImGui.Button("ObjectAdded Property"))
             {
                 ImGui.OpenPopup("AddMaterialProperty");
             }
@@ -95,7 +95,7 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     var props = material.Properties;
                     ArrayUtils.Add(ref props, new(newPropName, newPropType, newPropValueType, default, default, new byte[MaterialProperty.GetByteCount(newPropValueType)]));
@@ -122,7 +122,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.Button("Add Texture"))
+            if (ImGui.Button("ObjectAdded Texture"))
             {
                 ImGui.OpenPopup("AddMaterialTexture");
             }
@@ -137,7 +137,7 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     var textures = material.Textures;
                     ArrayUtils.Add(ref textures, new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));

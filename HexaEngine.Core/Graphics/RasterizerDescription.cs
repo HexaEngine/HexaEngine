@@ -75,8 +75,8 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="RasterizerDescription"/> class.
         /// </summary>
-        /// <param name="cullMode">A <see cref="CullMode"/> value that specifies that triangles facing the specified direction are not drawn..</param>
-        /// <param name="fillMode">A <see cref="FillMode"/> value that specifies the fill mode to use when rendering.</param>
+        /// <param name="cullMode">A <see cref="CullMode"/> _value that specifies that triangles facing the specified direction are not drawn..</param>
+        /// <param name="fillMode">A <see cref="FillMode"/> _value that specifies the fill mode to use when rendering.</param>
         public RasterizerDescription(CullMode cullMode, FillMode fillMode)
         {
             CullMode = cullMode;

@@ -263,7 +263,7 @@
         /// Tries to open a virtual stream for reading the file at the specified path.
         /// </summary>
         /// <param name="path">The path of the file to open.</param>
-        /// <param name="stream">When this method returns, contains the <see cref="VirtualStream"/> for reading the file, if the file exists; otherwise, the default value.</param>
+        /// <param name="stream">When this method returns, contains the <see cref="VirtualStream"/> for reading the file, if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully opened; otherwise, <see langword="false"/>.</returns>
         public static bool TryOpen(string path, [NotNullWhen(true)] out VirtualStream? stream)
         {
@@ -361,7 +361,7 @@
         /// Tries to read all lines of the file at the specified path.
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
-        /// <param name="lines">When this method returns, contains an bundles of lines read from the file if the file exists; otherwise, the default value.</param>
+        /// <param name="lines">When this method returns, contains an bundles of lines read from the file if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public static bool TryReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
         {
@@ -396,7 +396,7 @@
         /// Tries to read all text from the file at the specified path.
         /// </summary>
         /// <param name="path">The path of the file to read.</param>
-        /// <param name="text">When this method returns, contains the content of the file as a string if the file exists; otherwise, the default value.</param>
+        /// <param name="text">When this method returns, contains the content of the file as a string if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public static bool TryReadAllText(string path, [NotNullWhen(true)] out string? text)
         {

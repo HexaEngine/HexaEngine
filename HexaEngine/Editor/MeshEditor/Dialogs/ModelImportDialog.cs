@@ -64,9 +64,9 @@ namespace HexaEngine.Editor.MeshEditor.Dialogs
                 ImGui.CheckboxFlags("Optimize Meshes", ref flags, (int)PostProcessSteps.OptimizeMeshes);
                 ImGui.CheckboxFlags("Optimize Graph", ref flags, (int)PostProcessSteps.OptimizeGraph);
                 ImGui.CheckboxFlags("Improve Cache Locality", ref flags, (int)PostProcessSteps.ImproveCacheLocality);
-                ImGui.CheckboxFlags("Find Degenerates", ref flags, (int)PostProcessSteps.FindDegenerates);
-                ImGui.CheckboxFlags("Find Invalid Data", ref flags, (int)PostProcessSteps.FindInvalidData);
-                ImGui.CheckboxFlags("Find Instances", ref flags, (int)PostProcessSteps.FindInstances);
+                ImGui.CheckboxFlags("FindByName Degenerates", ref flags, (int)PostProcessSteps.FindDegenerates);
+                ImGui.CheckboxFlags("FindByName Invalid Data", ref flags, (int)PostProcessSteps.FindInvalidData);
+                ImGui.CheckboxFlags("FindByName Instances", ref flags, (int)PostProcessSteps.FindInstances);
                 ImGui.CheckboxFlags("Flip UVs", ref flags, (int)PostProcessSteps.FlipUVs);
                 ImGui.CheckboxFlags("Generate UVs", ref flags, (int)PostProcessSteps.GenerateUVCoords);
                 ImGui.CheckboxFlags("Generate Normals", ref flags, (int)PostProcessSteps.GenerateNormals);

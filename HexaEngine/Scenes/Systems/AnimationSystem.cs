@@ -1,26 +1,25 @@
-﻿using HexaEngine.Core.Scenes;
-
-namespace HexaEngine.Scenes.Systems
+﻿namespace HexaEngine.Scenes.Systems
 {
+    using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
-    using System.Collections.Generic;
 
     public class AnimationSystem : ISystem
     {
-        private readonly List<IAnimator> animations = new();
+        private readonly ComponentTypeQuery<IAnimator> animations = new();
         private readonly Scene scene;
 
         public string Name => "Animations";
 
-        public SystemFlags Flags => SystemFlags.Update;
+        public SystemFlags Flags => SystemFlags.Awake | SystemFlags.Update;
 
         public AnimationSystem(Scene scene)
         {
             this.scene = scene;
         }
 
-        public void Awake()
+        public void Awake(Scene scene)
         {
+            scene.QueryManager.AddQuery(animations);
         }
 
         public void Destroy()
@@ -37,16 +36,6 @@ namespace HexaEngine.Scenes.Systems
             {
                 animations[i].Update(scene, delta);
             }
-        }
-
-        public void Register(GameObject gameObject)
-        {
-            animations.AddComponentIfIs(gameObject);
-        }
-
-        public void Unregister(GameObject gameObject)
-        {
-            animations.RemoveComponentIfIs(gameObject);
         }
     }
 }

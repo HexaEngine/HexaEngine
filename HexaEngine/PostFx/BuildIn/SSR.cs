@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System.Threading.Tasks;
 
     public class SSR : PostFxBase
     {
@@ -19,12 +20,15 @@
         public IRenderTargetView Output;
         public Viewport Viewport;
         public IShaderResourceView Input;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<GBuffer> gbuffer;
 
         public override string Name { get; } = "SSR";
 
         public override PostFxFlags Flags { get; } = PostFxFlags.None;
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -39,33 +43,9 @@
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
-            this.device = device;
-
-            pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-            linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            linearBorderSampler = device.CreateSamplerState(SamplerStateDescription.LinearBorder);
-
-            pipelineSSR = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/ssr/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            gbuffer = creator.GetGBuffer("GBuffer");
 
             this.device = device;
 
@@ -85,17 +65,13 @@
             if (Output == null)
                 return;
 
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            var gbuffer = creator.GetGBuffer("GBuffer");
-
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
-            context.PSSetShaderResource(0, depth.SRV);
-            context.PSSetShaderResource(1, gbuffer.SRVs[1]);
+            context.PSSetShaderResource(0, depth.Value.SRV);
+            context.PSSetShaderResource(1, gbuffer.Value.SRVs[1]);
             context.PSSetShaderResource(2, Input);
-            context.PSSetShaderResource(3, gbuffer.SRVs[2]);
-            context.PSSetConstantBuffer(1, camera);
+            context.PSSetShaderResource(3, gbuffer.Value.SRVs[2]);
+            context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, pointClampSampler);
             context.PSSetSampler(1, linearClampSampler);
             context.PSSetSampler(2, linearBorderSampler);

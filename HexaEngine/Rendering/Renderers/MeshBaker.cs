@@ -297,7 +297,7 @@
         // Bakes all vertices of a single mesh
         private void BakeMesh(IGraphicsContext context, Model model, Mesh mesh, uint meshIdx, uint bounce, MeshRendererComponent meshRenderer, SkyRendererComponent skyRenderer)
         {
-            // Find the position, normal, tangent, and binormal elements
+            // FindByName the position, normal, tangent, and binormal elements
             int posOffset = 0xFFFFFFF;
             int nmlOffset = 0xFFFFFFF;
             int tangentOffset = 0xFFFFFFF;
@@ -448,7 +448,7 @@
                     }
                     else
                     {
-                        // TODO: Add way to suppress shadow mapping and directional lights
+                        // TODO: ObjectAdded way to suppress shadow mapping and directional lights
                         LightManager.Current.BakePass(context, meshRenderer, camera);
                     }
 

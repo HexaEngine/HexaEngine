@@ -459,61 +459,17 @@ namespace HexaEngine.Resources
             return true;
         }
 
-        public bool BeginDrawForward(IGraphicsContext context, IBuffer camera)
-        {
-            if (!initialized)
-            {
-                return false;
-            }
-
-            if (!forward.IsValid)
-            {
-                return false;
-            }
-
-            context.SetGraphicsPipeline(forward);
-            context.DSSetConstantBuffer(1, camera);
-            context.VSSetConstantBuffer(1, camera);
-            context.PSSetConstantBuffer(1, camera);
-            return true;
-        }
-
         public void EndDrawForward(IGraphicsContext context)
         {
             context.SetGraphicsPipeline(null);
-            context.PSSetConstantBuffer(1, null);
-            context.DSSetConstantBuffer(1, null);
-            context.VSSetConstantBuffer(1, null);
-        }
-
-        public bool BeginDrawDeferred(IGraphicsContext context, IBuffer camera)
-        {
-            if (!initialized)
-            {
-                return false;
-            }
-
-            if (!deferred.IsValid)
-            {
-                return false;
-            }
-
-            context.SetGraphicsPipeline(deferred);
-            context.DSSetConstantBuffer(1, camera);
-            context.VSSetConstantBuffer(1, camera);
-            context.PSSetConstantBuffer(1, camera);
-            return true;
         }
 
         public void EndDrawDeferred(IGraphicsContext context)
         {
             context.SetGraphicsPipeline(null);
-            context.PSSetConstantBuffer(1, null);
-            context.DSSetConstantBuffer(1, null);
-            context.VSSetConstantBuffer(1, null);
         }
 
-        public bool BeginDrawDepth(IGraphicsContext context, IBuffer camera)
+        public bool BeginDrawDepth(IGraphicsContext context)
         {
             if (!initialized)
             {
@@ -525,18 +481,12 @@ namespace HexaEngine.Resources
                 return false;
             }
 
-            context.PSSetConstantBuffer(1, camera);
-            context.DSSetConstantBuffer(1, camera);
-            context.VSSetConstantBuffer(1, camera);
             context.SetGraphicsPipeline(depthOnly);
             return true;
         }
 
         public void EndDrawDepth(IGraphicsContext context)
         {
-            context.PSSetConstantBuffer(1, null);
-            context.DSSetConstantBuffer(1, null);
-            context.VSSetConstantBuffer(1, null);
             context.SetGraphicsPipeline(null);
         }
 

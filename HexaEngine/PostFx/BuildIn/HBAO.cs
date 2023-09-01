@@ -5,6 +5,7 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Effects.Blur;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -21,6 +22,11 @@ namespace HexaEngine.Effects.BuildIn
         private Texture2D intermediateTex;
         private GaussianBlur blur;
 
+        private ResourceRef<Texture2D> ao;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<GBuffer> gbuffer;
+
         private Viewport viewport;
 
         private ISamplerState samplerLinear;
@@ -30,6 +36,7 @@ namespace HexaEngine.Effects.BuildIn
         private float samplingStep = 0.004f;
         private uint numSamplingSteps = 4;
         private float power = 1;
+
         private const int NoiseSize = 4;
         private const int NoiseStride = 4;
 
@@ -97,48 +104,13 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Properties
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            this.device = device;
+            ao = creator.GetTexture2D("#AOBuffer");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            gbuffer = creator.GetGBuffer("GBuffer");
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/hbao/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen);
-            paramsBuffer = new(device, CpuAccessFlags.Write);
-            intermediateTex = new(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(device, Format.R32Float, width, height);
-
-            unsafe
-            {
-                Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
-
-                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
-
-                SubresourceData initialData = default;
-                initialData.DataPointer = (nint)pixelData;
-                initialData.RowPitch = NoiseSize * NoiseStride;
-
-                int idx = 0;
-                for (int i = 0; i < NoiseSize * NoiseSize; i++)
-                {
-                    float rand = Random.Shared.NextSingle() * float.Pi * 2.0f;
-                    pixelData[idx++] = MathF.Sin(rand);
-                    pixelData[idx++] = MathF.Cos(rand);
-                    pixelData[idx++] = Random.Shared.NextSingle();
-                    pixelData[idx++] = 1.0f;
-                }
-
-                noiseTex = new(device, description, initialData);
-            }
-
-            samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-            viewport = new(width, height);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
             this.device = device;
 
             pipeline = device.CreateGraphicsPipeline(new()
@@ -205,15 +177,10 @@ namespace HexaEngine.Effects.BuildIn
 
         public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
-            var ao = creator.GetTexture2D("#AOBuffer");
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            var gbuffer = creator.GetGBuffer("GBuffer");
+            context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 
-            context.ClearRenderTargetView(ao.RTV, Vector4.One);
-
-            nint* srvs = stackalloc nint[] { depth.SRV.NativePointer, gbuffer.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
-            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.NativePointer };
+            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
+            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.Value.NativePointer };
             context.SetRenderTarget(intermediateTex.RTV, null);
             context.SetViewport(viewport);
             context.PSSetShaderResources(0, 3, (void**)srvs);
@@ -229,7 +196,7 @@ namespace HexaEngine.Effects.BuildIn
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, intermediateTex.SRV, ao.RTV, (int)viewport.Width, (int)viewport.Height);
+            blur.Blur(context, intermediateTex.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
         }
 
         protected override unsafe void DisposeCore()

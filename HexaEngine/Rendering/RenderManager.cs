@@ -7,15 +7,15 @@
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
+    using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using System;
     using System.Collections.Generic;
 
     public class RenderManager : ISystem
     {
         private readonly FlaggedList<RendererFlags, IRendererComponent> rendererComponents = new();
-        private readonly List<IRendererComponent> renderers = new();
+        private readonly ComponentTypeQuery<IRendererComponent> renderers = new();
         private readonly List<IRendererComponent> backgroundQueue = new();
         private readonly List<IRendererComponent> geometryQueue = new();
         private readonly List<IRendererComponent> alphaTestQueue = new();
@@ -28,10 +28,12 @@
 
         public string Name => "Renderers";
 
-        public SystemFlags Flags => SystemFlags.None;
+        public SystemFlags Flags => SystemFlags.Awake;
 
         public RenderManager(IGraphicsDevice device, LightManager lights)
         {
+            renderers.OnAdded += RendererOnAdded;
+            renderers.OnRemoved += RendererOnRemoved;
             this.lights = lights;
             culling = new(device);
         }
@@ -49,6 +51,11 @@
         public IReadOnlyList<IRendererComponent> TransparencyQueue => transparencyQueue;
 
         public IReadOnlyList<IRendererComponent> OverlayQueue => overlayQueue;
+
+        public void Awake(Scene scene)
+        {
+            scene.QueryManager.AddQuery(renderers);
+        }
 
         public void VisibilityTest(IGraphicsContext context, Viewport viewport, IShaderResourceView depthMip, RenderQueueIndex index)
         {
@@ -118,22 +125,6 @@
             for (int i = 0; i < renderers.Count; i++)
             {
                 renderers[i].VisibilityTest(context);
-            }
-        }
-
-        public void Register(GameObject gameObject)
-        {
-            if (gameObject.AddComponentIfIs<IRendererComponent>(AddRenderer))
-            {
-                gameObject.Transformed += GameObjectTransformed;
-            }
-        }
-
-        public void Unregister(GameObject gameObject)
-        {
-            if (gameObject.RemoveComponentIfIs<IRendererComponent>(RemoveRenderer))
-            {
-                gameObject.Transformed -= GameObjectTransformed;
             }
         }
 
@@ -227,7 +218,6 @@
                 renderers[i].Destroy();
             }
 
-            renderers.Clear();
             backgroundQueue.Clear();
             geometryQueue.Clear();
             alphaTestQueue.Clear();
@@ -236,9 +226,41 @@
             overlayQueue.Clear();
         }
 
-        public void AddRenderer(IRendererComponent renderer)
+        private void RendererOnRemoved(GameObject gameObject, IRendererComponent renderer)
         {
-            renderers.Add(renderer);
+            gameObject.OnTransformed -= GameObjectTransformed;
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
+            {
+                backgroundQueue.Remove(renderer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.AlphaTest)
+            {
+                geometryQueue.Remove(renderer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
+            {
+                alphaTestQueue.Remove(renderer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
+            {
+                geometryLastQueue.Remove(renderer);
+                return;
+            }
+            if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
+            {
+                transparencyQueue.Remove(renderer);
+                return;
+            }
+
+            overlayQueue.Remove(renderer);
+        }
+
+        private void RendererOnAdded(GameObject gameObject, IRendererComponent renderer)
+        {
+            gameObject.OnTransformed += GameObjectTransformed;
             if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
             {
                 backgroundQueue.Add(renderer);
@@ -273,91 +295,6 @@
             overlayQueue.Add(renderer);
             overlayQueue.Sort(comparer);
             return;
-        }
-
-        public void RemoveRenderer(IRendererComponent renderer)
-        {
-            renderers.Remove(renderer);
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.Geometry)
-            {
-                backgroundQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.AlphaTest)
-            {
-                geometryQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.GeometryLast)
-            {
-                alphaTestQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.Transparency)
-            {
-                geometryLastQueue.Remove(renderer);
-                return;
-            }
-            if (renderer.QueueIndex < (uint)RenderQueueIndex.Overlay)
-            {
-                transparencyQueue.Remove(renderer);
-                return;
-            }
-
-            overlayQueue.Remove(renderer);
-        }
-
-        public void RemoveRenderer(IRendererComponent renderer, uint index)
-        {
-            renderers.Remove(renderer);
-            if (index < (uint)RenderQueueIndex.Geometry)
-            {
-                backgroundQueue.Remove(renderer);
-                return;
-            }
-            if (index < (uint)RenderQueueIndex.AlphaTest)
-            {
-                geometryQueue.Remove(renderer);
-                return;
-            }
-            if (index < (uint)RenderQueueIndex.GeometryLast)
-            {
-                alphaTestQueue.Remove(renderer);
-                return;
-            }
-            if (index < (uint)RenderQueueIndex.Transparency)
-            {
-                geometryLastQueue.Remove(renderer);
-                return;
-            }
-            if (index < (uint)RenderQueueIndex.Overlay)
-            {
-                transparencyQueue.Remove(renderer);
-                return;
-            }
-
-            overlayQueue.Remove(renderer);
-        }
-
-        public void UpdateQueueIndex(IRendererComponent renderer, uint oldQueueIndex)
-        {
-            RemoveRenderer(renderer, oldQueueIndex);
-            AddRenderer(renderer);
-        }
-
-        public void Awake()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(float delta)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void FixedUpdate()
-        {
-            throw new NotImplementedException();
         }
     }
 }

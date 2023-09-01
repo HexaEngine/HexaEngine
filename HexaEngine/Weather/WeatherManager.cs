@@ -3,19 +3,19 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics.HosekWilkie;
     using HexaEngine.Meshes;
+    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     public class WeatherManager : ISystem
     {
         private bool isDirty = true;
-        private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer = ResourceManager2.Shared.GetConstantBuffer<CBWeather>("CBWeather");
+        private ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
         private bool hasSun = false;
 
         public static WeatherManager? Current => SceneManager.Current?.WeatherManager;
@@ -167,11 +167,11 @@
 
         public string Name { get; } = "Weather System";
 
-        public SystemFlags Flags { get; } = SystemFlags.RenderUpdate;
+        public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.GraphicsUpdate;
 
-        public Task Initialize(IGraphicsDevice device)
+        public void Awake(Scene scene)
         {
-            return Task.CompletedTask;
+            weatherBuffer = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBWeather>("CBWeather");
         }
 
         public void Update(IGraphicsContext context)

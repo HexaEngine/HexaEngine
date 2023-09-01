@@ -35,21 +35,13 @@
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        async Task IPostFx.InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        void IPostFx.Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
-            await InitializeAsync(device, builder, width, height, macros);
+            Initialize(device, builder, creator, width, height, macros);
             initialized = true;
         }
 
-        public abstract Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
-
-        void IPostFx.Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            Initialize(device, builder, width, height, macros);
-            initialized = true;
-        }
-
-        public abstract void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+        public abstract void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
         public virtual void Resize(int width, int height)
         {
@@ -127,9 +119,7 @@
 
         public event Action<bool>? OnEnabledChanged;
 
-        Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
-
-        void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros);
+        void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 
         void Resize(int width, int height);
 

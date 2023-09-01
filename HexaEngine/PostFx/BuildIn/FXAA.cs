@@ -7,7 +7,7 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
 
-    public class FXAA : PostFxBase, IAntialiasing
+    public class FXAA : PostFxBase
     {
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
@@ -20,18 +20,7 @@ namespace HexaEngine.Effects.BuildIn
 
         public override PostFxFlags Flags => PostFxFlags.None;
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder.RunAfter("Compose");
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/fxaa/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-            sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicClamp);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder.RunAfter("Compose");
             pipeline = device.CreateGraphicsPipeline(new()
@@ -39,7 +28,7 @@ namespace HexaEngine.Effects.BuildIn
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/fxaa/ps.hlsl"
             }, GraphicsPipelineState.DefaultFullscreen, macros);
-            sampler = device.CreateSamplerState(SamplerStateDescription.AnisotropicClamp);
+            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
@@ -77,11 +66,6 @@ namespace HexaEngine.Effects.BuildIn
         {
             pipeline.Dispose();
             sampler.Dispose();
-        }
-
-        public void Draw(IGraphicsContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -2,14 +2,22 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Graph;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
 
     public class DepthPrePass : RenderPass
     {
+        private ResourceRef<DepthStencil> depthStencil;
+
         public DepthPrePass() : base("PrePass")
         {
             AddWriteDependency(new("#DepthStencil"));
+        }
+
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        {
+            depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
@@ -22,10 +30,10 @@
 
             var renderers = current.RenderManager;
 
-            var depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            context.ClearDepthStencilView(depthStencil.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-            context.SetRenderTarget(null, depthStencil.DSV);
-            context.SetViewport(depthStencil.Viewport);
+            var depthStencilBuffer = depthStencil.Value;
+            context.ClearDepthStencilView(depthStencilBuffer.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+            context.SetRenderTarget(null, depthStencilBuffer.DSV);
+            context.SetViewport(depthStencilBuffer.Viewport);
 
             profiler?.Begin("PrePass.Geometry");
             var geometry = renderers.GeometryQueue;

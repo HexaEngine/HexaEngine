@@ -44,7 +44,7 @@ namespace HexaEngine.Physics.Characters
         public Vector2 TargetVelocity;
 
         /// <summary>
-        /// Depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
+        /// depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
         /// </summary>
 		public float Depth;
 
@@ -315,7 +315,7 @@ namespace HexaEngine.Physics.Characters
         public Vector2 TargetVelocity;
 
         /// <summary>
-        /// Depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
+        /// depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
         /// </summary>
 		public float Depth;
 

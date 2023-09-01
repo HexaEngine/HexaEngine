@@ -339,12 +339,12 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether the mouse is hovering over the window.
+        /// Gets a _value indicating whether the mouse is hovering over the window.
         /// </summary>
         public bool Hovering => hovering;
 
         /// <summary>
-        /// Gets a value indicating whether the window has input focus.
+        /// Gets a _value indicating whether the window has input focus.
         /// </summary>
         public bool Focused => focused;
 
@@ -381,7 +381,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the cursor is locked to the window.
+        /// Gets or sets a _value indicating whether the cursor is locked to the window.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public bool LockCursor
@@ -396,7 +396,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the window is resizable.
+        /// Gets or sets a _value indicating whether the window is resizable.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public bool Resizable
@@ -411,7 +411,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the window has a border.
+        /// Gets or sets a _value indicating whether the window has a border.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public bool Bordered

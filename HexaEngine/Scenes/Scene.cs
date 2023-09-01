@@ -6,6 +6,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Lights;
+    using HexaEngine.Queries;
     using HexaEngine.Rendering;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Scenes.Systems;
@@ -30,6 +31,7 @@
         private AnimationManager animationManager = new();
         private MaterialManager materialManager = new();
         private WeatherManager weatherManager = new();
+        private QueryManager queryManager;
 
         private readonly SemaphoreSlim semaphore = new(1);
         private string? path;
@@ -65,7 +67,7 @@
         public LightManager LightManager => lightManager;
 
         [JsonIgnore]
-        public List<GameObject> Nodes => nodes;
+        public List<GameObject> GameObjects => nodes;
 
         [JsonIgnore]
         public Camera? CurrentCamera => ActiveCamera >= 0 && ActiveCamera < cameras.Count ? cameras[ActiveCamera] : null;
@@ -92,9 +94,16 @@
         public AnimationManager AnimationManager { get => animationManager; set => animationManager = value; }
 
         [JsonIgnore]
+        public QueryManager QueryManager { get => queryManager; set => queryManager = value; }
+
+        [JsonIgnore]
         public SceneProfiler Profiler { get; } = new(10);
 
         public SceneVariables Variables { get; } = new();
+
+        public event Action<GameObject>? OnGameObjectAdded;
+
+        public event Action<GameObject>? OnGameObjectRemoved;
 
         public GameObject Root => root;
 
@@ -102,10 +111,10 @@
 
         public void Initialize(IGraphicsDevice device)
         {
+            queryManager = new(this);
             lightManager = new();
             meshManager ??= new();
             lightManager.Initialize(device).Wait();
-            weatherManager.Initialize(device).Wait();
             systems.Add(new AudioSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
@@ -127,16 +136,16 @@
             var awake = systems[SystemFlags.Awake];
             for (int i = 0; i < awake.Count; i++)
             {
-                awake[i].Awake();
+                awake[i].Awake(this);
             }
         }
 
         public async Task InitializeAsync(IGraphicsDevice device)
         {
+            queryManager = new(this);
             lightManager = new();
             meshManager ??= new();
             await lightManager.Initialize(device);
-            await weatherManager.Initialize(device);
             systems.Add(new AudioSystem());
             systems.Add(new AnimationSystem(this));
             systems.Add(scriptManager);
@@ -158,7 +167,7 @@
             var awake = systems[SystemFlags.Awake];
             for (int i = 0; i < awake.Count; i++)
             {
-                awake[i].Awake();
+                awake[i].Awake(this);
             }
         }
 
@@ -184,9 +193,9 @@
             root.RestoreState();
         }
 
-        public void RenderUpdate(IGraphicsContext context)
+        public void GraphicsUpdate(IGraphicsContext context)
         {
-            var render = systems[SystemFlags.RenderUpdate];
+            var render = systems[SystemFlags.GraphicsUpdate];
             for (int i = 0; i < render.Count; i++)
             {
 #if PROFILE
@@ -279,7 +288,37 @@
             semaphore.Release();
         }
 
-        public GameObject? Find(string? name)
+        /// <summary>
+        /// Searches an GameObject by it's Guid.
+        /// </summary>
+        /// <param name="guid">The unique identifier of the GameObject.</param>
+        /// <returns>The found GameObject or null, if the name was not found.</returns>
+        public GameObject? FindByGuid(Guid? guid)
+        {
+            if (guid == null)
+            {
+                return null;
+            }
+
+            semaphore.Wait();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Guid == guid.Value)
+                {
+                    semaphore.Release();
+                    return nodes[i];
+                }
+            }
+            semaphore.Release();
+            return null;
+        }
+
+        /// <summary>
+        /// Searches an GameObject by it's name. NOTE: Names are not unique. Use Guid lookup or FullName lookups to find a specific GameObject.
+        /// </summary>
+        /// <param name="name">The name of the GameObject.</param>
+        /// <returns>The found GameObject or null, if the name was not found.</returns>
+        public GameObject? FindByName(string? name)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -299,6 +338,87 @@
             return null;
         }
 
+        /// <summary>
+        /// Searches an GameObject by it's full name.
+        /// </summary>
+        /// <param name="name">The full name of the GameObject.</param>
+        /// <returns>The found GameObject or null, if the name was not found.</returns>
+        public GameObject? FindByFullName(string? name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return null;
+            }
+
+            semaphore.Wait();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].FullName == name)
+                {
+                    semaphore.Release();
+                    return nodes[i];
+                }
+            }
+            semaphore.Release();
+            return null;
+        }
+
+        public GameObject? FindByTag(object? tag)
+        {
+            if (tag == null)
+            {
+                return null;
+            }
+
+            semaphore.Wait();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Tag == tag)
+                {
+                    semaphore.Release();
+                    return nodes[i];
+                }
+            }
+            semaphore.Release();
+            return null;
+        }
+
+        public IEnumerable<GameObject> FindAllByName(string? name)
+        {
+            if (name == null)
+            {
+                yield break;
+            }
+
+            semaphore.Wait();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Name == name)
+                {
+                    yield return nodes[i];
+                }
+            }
+            semaphore.Release();
+        }
+
+        public IEnumerable<GameObject> FindAllByTag(object? tag)
+        {
+            if (tag == null)
+            {
+                yield break;
+            }
+
+            semaphore.Wait();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (nodes[i].Tag == tag)
+                {
+                    yield return nodes[i];
+                }
+            }
+            semaphore.Release();
+        }
+
         public string GetAvailableName(string name)
         {
             return GetNewName(name);
@@ -306,7 +426,7 @@
 
         private string GetNewName(string name)
         {
-            if (Find(name) == null)
+            if (FindByName(name) == null)
             {
                 return name;
             }
@@ -314,7 +434,7 @@
             string result = name;
 
             int i = 0;
-            while (Find(result) != null)
+            while (FindByName(result) != null)
             {
                 i++;
                 result = $"{name} {i}";
@@ -335,6 +455,8 @@
             {
                 systems[i].Register(node);
             }
+
+            OnGameObjectAdded?.Invoke(node);
         }
 
         internal void UnregisterChild(GameObject node)
@@ -349,6 +471,8 @@
             {
                 systems[i].Unregister(node);
             }
+
+            OnGameObjectRemoved?.Invoke(node);
         }
 
         private class SceneRootNode : GameObject

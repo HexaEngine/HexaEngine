@@ -53,7 +53,7 @@
             var scene = SceneManager.Current;
             if (ImGui.BeginPopupContextWindow("LayoutContextMenu"))
             {
-                if (ImGui.BeginMenu("Add"))
+                if (ImGui.BeginMenu("ObjectAdded"))
                 {
                     foreach (var item in cache)
                     {
@@ -154,8 +154,8 @@
                     var payload = ImGui.AcceptDragDropPayload(nameof(GameObject));
                     if (!payload.IsNull)
                     {
-                        string id = *(UnsafeOldString*)payload.Data;
-                        var gameObject = SceneManager.Current.Find(id);
+                        Guid id = *(Guid*)payload.Data;
+                        var gameObject = SceneManager.Current.FindByGuid(id);
                         GameObject.Selected.MoveSelection(element);
                     }
                 }
@@ -165,8 +165,8 @@
             {
                 unsafe
                 {
-                    var str = new UnsafeOldString(element.Name);
-                    ImGui.SetDragDropPayload(nameof(GameObject), (&str), (uint)sizeof(Guid));
+                    Guid id = element.Guid;
+                    ImGui.SetDragDropPayload(nameof(GameObject), &id, (uint)sizeof(Guid));
                 }
                 ImGui.Text(element.Name);
                 ImGui.EndDragDropSource();
@@ -243,7 +243,7 @@
                     if (!payload.IsNull)
                     {
                         string id = *(UnsafeOldString*)payload.Data;
-                        var child = scene.Find(id);
+                        var child = scene.FindByName(id);
                         if (child != null)
                         {
                             scene.AddChild(child);

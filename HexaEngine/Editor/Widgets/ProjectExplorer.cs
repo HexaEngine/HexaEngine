@@ -46,7 +46,7 @@
                     if (!payload.IsNull)
                     {
                         string path = *(UnsafeOldString*)payload.Data;
-                        // TODO: Add global drag drop handler
+                        // TODO: ObjectAdded global drag drop handler
                     }
                 }
                 ImGui.EndDragDropTarget();

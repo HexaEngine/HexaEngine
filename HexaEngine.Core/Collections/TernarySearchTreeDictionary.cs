@@ -113,11 +113,11 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Gets the number of key-and-value pairs contained in the <see cref="TstDictionary"/>.
+        /// Gets the number of key-and-_value pairs contained in the <see cref="TstDictionary"/>.
         /// </summary>
-        /// <value>
-        /// The number of key-and-value pairs contained in the <see cref="TstDictionary"/>.
-        /// </value>
+        /// <_value>
+        /// The number of key-and-_value pairs contained in the <see cref="TstDictionary"/>.
+        /// </_value>
         /// <remarks>
         /// Complexity: O(N)
         /// </remarks>
@@ -177,17 +177,17 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key.
+        /// Gets or sets the _value associated with the specified key.
         /// </summary>
         /// <remarks>
         /// [C#] In C#, this property is the indexer for the <see cref="TstDictionary"/> class.
         /// </remarks>
-        /// <param name="key">The key whose value to get or set.</param>
-        /// <value>
-        /// The value associated with the specified key.
+        /// <param name="key">The key whose _value to get or set.</param>
+        /// <_value>
+        /// The _value associated with the specified key.
         /// If the specified key is not found, attempting to get it returns a null reference
         /// (Nothing in Visual Basic), and attempting to set it creates a new element using the specified key.
-        /// </value>
+        /// </_value>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is a null reference</exception>
         /// <exception cref="ArgumentException">
         /// The property is set and <paramref name="key"/> is an empty string
@@ -235,10 +235,10 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Adds an element with the specified key and value into the <see cref="TstDictionary"/>.
+        /// Adds an element with the specified key and _value into the <see cref="TstDictionary"/>.
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
-        /// <param name="value">The value of the element to add. The value can be a null reference (Nothing in Visual Basic).</param>
+        /// <param name="value">The _value of the element to add. The _value can be a null reference (Nothing in Visual Basic).</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="key"/> is a null reference (Nothing in Visual Basic).
         /// </exception>
@@ -254,7 +254,7 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Adds an element with the specified key and value into the <see cref="TstDictionary"/>.
+        /// Adds an element with the specified key and _value into the <see cref="TstDictionary"/>.
         /// </summary>
         /// <param name="item">The element to add.</param>
         /// <exception cref="ArgumentNullException">
@@ -513,10 +513,10 @@ namespace HexaEngine.Core.Collections
             }
         }
 
-        /// <summary>Gets the value associated with the specified key.</summary>
+        /// <summary>Gets the _value associated with the specified key.</summary>
         /// <returns><c>true</c> if the <see cref="T:System.Collections.Generic.Dictionary`2" /> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <param name="key">The key of the value to get.</param>
-        /// <param name="value">When this method returns, contains the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.</param>
+        /// <param name="key">The key of the _value to get.</param>
+        /// <param name="value">When this method returns, contains the _value associated with the specified key, if the key is found; otherwise, the default _value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.</param>
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key" /> is null.
         /// </exception>
@@ -670,12 +670,12 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Get a value indicating whether access to the <see cref="TstDictionary"/> is synchronized (thread-safe).
+        /// Get a _value indicating whether access to the <see cref="TstDictionary"/> is synchronized (thread-safe).
         /// </summary>
-        /// <value>
+        /// <_value>
         /// true if access to the <see cref="TstDictionary"/> is synchronized (thread-safe);
         /// otherwise, false. The default is false.
-        /// </value>
+        /// </_value>
         bool ICollection.IsSynchronized
         {
             get { return false; }
@@ -684,9 +684,9 @@ namespace HexaEngine.Core.Collections
         /// <summary>
         /// Gets an object that can be used to synchronize access to the <see cref="TstDictionary"/>.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// An object that can be used to synchronize access to the <see cref="TstDictionary"/>.
-        /// </value>
+        /// </_value>
         object ICollection.SyncRoot
         {
             get { return this; }
@@ -837,7 +837,7 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the current element in the collection.
             /// </summary>
-            /// <value>The current element in the collection.</value>
+            /// <_value>The current element in the collection.</_value>
             public KeyValuePair<string, S> Current
             {
                 get
@@ -855,7 +855,7 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the current element in the collection.
             /// </summary>
-            /// <value>The current element in the collection.</value>
+            /// <_value>The current element in the collection.</_value>
             object IEnumerator.Current
             {
                 get { return Current; }
@@ -961,32 +961,32 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the split character.
             /// </summary>
-            /// <value>
+            /// <_value>
             /// The split character.
-            /// </value>
+            /// </_value>
             public char SplitChar
             {
                 get { return _splitChar; }
             }
 
             /// <summary>
-            /// Gets a value indicating wheter the node is a key.
+            /// Gets a _value indicating wheter the node is a key.
             /// </summary>
-            /// <value>
+            /// <_value>
             /// true is the node is a key, false otherwize.
-            /// </value>
+            /// </_value>
             public bool IsKey
             {
                 get { return _value.Key != null; }
             }
 
             /// <summary>
-            /// Gets the node value.
+            /// Gets the node _value.
             /// </summary>
-            /// <value>
-            /// The node value.
-            /// </value>
-            /// <exception cref="InvalidOperationException">The node does not hold a key-value pair.</exception>
+            /// <_value>
+            /// The node _value.
+            /// </_value>
+            /// <exception cref="InvalidOperationException">The node does not hold a key-_value pair.</exception>
             public KeyValuePair<string, S> Value
             {
                 get { return _value; }
@@ -996,9 +996,9 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the node low child.
             /// </summary>
-            /// <value>
+            /// <_value>
             /// The low child.
-            /// </value>
+            /// </_value>
             public TstDictionaryEntry<S>? LowChild
             {
                 get { return _lowChild; }
@@ -1008,9 +1008,9 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the node ep child.
             /// </summary>
-            /// <value>
+            /// <_value>
             /// The eq child.
-            /// </value>
+            /// </_value>
             public TstDictionaryEntry<S>? EqChild
             {
                 get { return _eqChild; }
@@ -1020,9 +1020,9 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the node high child.
             /// </summary>
-            /// <value>
+            /// <_value>
             /// The high child.
-            /// </value>
+            /// </_value>
             public TstDictionaryEntry<S>? HighChild
             {
                 get { return _highChild; }
@@ -1030,11 +1030,11 @@ namespace HexaEngine.Core.Collections
             }
 
             /// <summary>
-            /// Gets a value indicating wheter the node has children.
+            /// Gets a _value indicating wheter the node has children.
             /// </summary>
-            /// <value>
+            /// <_value>
             /// true if the node has children, false otherwize.
-            /// </value>
+            /// </_value>
             public bool HasChildren
             {
                 get { return LowChild != null || EqChild != null || HighChild != null; }

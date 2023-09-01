@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Effects.BuildIn;
+    using HexaEngine.Graph;
     using HexaEngine.ImGuiNET;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -10,6 +11,7 @@
     public class PostProcessPass : DrawPass
     {
         private PostProcessingManager postProcessingManager;
+        private ResourceRef<Texture2D> lightBuffer;
 
         public PostProcessPass() : base("PostProcess")
         {
@@ -20,8 +22,9 @@
 
         public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
+            lightBuffer = creator.GetTexture2D("LightBuffer");
             var viewport = creator.Viewport;
-            postProcessingManager = new(device, (int)viewport.Width, (int)viewport.Height);
+            postProcessingManager = new(device, creator, (int)viewport.Width, (int)viewport.Height);
             postProcessingManager.Add(new VelocityBuffer());
             postProcessingManager.Add(new HBAO());
             postProcessingManager.Add(new VolumetricClouds());
@@ -42,7 +45,7 @@
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
-            postProcessingManager.Input = creator.GetTexture2D("LightBuffer");
+            postProcessingManager.Input = lightBuffer.Value;
             postProcessingManager.Output = creator.Output;
             postProcessingManager.OutputTex = creator.OutputTex;
             postProcessingManager.Viewport = creator.OutputViewport;

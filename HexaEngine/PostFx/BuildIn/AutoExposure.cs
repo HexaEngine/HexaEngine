@@ -5,7 +5,7 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -15,6 +15,7 @@ namespace HexaEngine.Effects.BuildIn
     public class AutoExposure : PostFxBase
     {
         private bool initialized = false;
+        private GraphResourceBuilder creator;
         private int width;
         private int height;
         private bool dirty;
@@ -24,7 +25,7 @@ namespace HexaEngine.Effects.BuildIn
 
         private IComputePipeline lumaAvgCompute;
         private ConstantBuffer<LumaAvgParams> lumaAvgParams;
-        private UavTexture2D lumaTex;
+        private ResourceRef<Texture2D> lumaTex;
 
         public IShaderResourceView Input;
 
@@ -108,7 +109,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddSource("AutoExposure")
@@ -124,51 +125,7 @@ namespace HexaEngine.Effects.BuildIn
                 .RunAfter("LensFlare")
                 .RunAfter("Bloom");
 
-            this.width = width;
-            this.height = height;
-
-            LumaAvgParams lumaAvg;
-            lumaAvg.PixelCount = (uint)(width * height);
-            lumaAvg.MinLogLuminance = minLogLuminance;
-            lumaAvg.LogLuminanceRange = Math.Abs(maxLogLuminance) + Math.Abs(minLogLuminance);
-            lumaAvg.TimeDelta = Time.Delta;
-            lumaAvg.Tau = tau;
-            lumaAvg.Padd = default;
-
-            lumaAvgParams = new(device, lumaAvg, CpuAccessFlags.Write);
-
-            LumaParams luma;
-            luma.MinLogLuminance = minLogLuminance;
-            luma.OneOverLogLuminanceRange = 1.0f / lumaAvg.LogLuminanceRange;
-            luma.InputWidth = (uint)width;
-            luma.InputHeight = (uint)height;
-
-            lumaParams = new(device, luma, CpuAccessFlags.Write);
-
-            lumaCompute = await device.CreateComputePipelineAsync(new("compute/luma/shader.hlsl"));
-            lumaAvgCompute = await device.CreateComputePipelineAsync(new("compute/lumaAvg/shader.hlsl"));
-
-            histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
-
-            lumaTex = new(device, Format.R32Float, 1, 1, 1, 1, true, false, ResourceMiscFlag.None);
-            ResourceManager2.Shared.AddShaderResourceView("Luma", lumaTex.SRV);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .AddSource("AutoExposure")
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
-                .RunAfter("SSGI")
-                .RunAfter("LensFlare")
-                .RunAfter("Bloom");
+            this.creator = creator;
 
             this.width = width;
             this.height = height;
@@ -196,8 +153,7 @@ namespace HexaEngine.Effects.BuildIn
 
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
 
-            lumaTex = new(device, Format.R32Float, 1, 1, 1, 1, true, false, ResourceMiscFlag.None);
-            ResourceManager2.Shared.AddShaderResourceView("Luma", lumaTex.SRV);
+            lumaTex = creator.CreateTexture2D("Luma", new Texture2DDescription(Format.R32Float, 1, 1, 1, 1, BindFlags.ShaderResource | BindFlags.UnorderedAccess), false);
         }
 
         public override unsafe void Resize(int width, int height)
@@ -250,7 +206,7 @@ namespace HexaEngine.Effects.BuildIn
             context.CSSetConstantBuffer(0, null);
             context.CSSetShaderResource(0, null);
 
-            nint* lumaAvgUAVs = stackalloc nint[] { histogram.UAV.NativePointer, lumaTex.UAV.NativePointer };
+            nint* lumaAvgUAVs = stackalloc nint[] { histogram.UAV.NativePointer, lumaTex.Value.UAV.NativePointer };
             uint* initialCount = stackalloc uint[] { uint.MaxValue, uint.MaxValue };
             context.CSSetConstantBuffer(0, lumaAvgParams);
             context.CSSetUnorderedAccessViews(2, (void**)lumaAvgUAVs, initialCount);
@@ -268,7 +224,7 @@ namespace HexaEngine.Effects.BuildIn
 
             lumaAvgCompute.Dispose();
             lumaAvgParams.Dispose();
-            lumaTex.Dispose();
+            creator.RemoveResource("Luma");
         }
     }
 }

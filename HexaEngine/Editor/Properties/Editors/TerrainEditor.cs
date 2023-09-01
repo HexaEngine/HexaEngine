@@ -192,7 +192,7 @@
 
             if (ImGui.CollapsingHeader("Layers"))
             {
-                if (ImGui.Button("Add Layer"))
+                if (ImGui.Button("ObjectAdded Layer"))
                 {
                     grid.Layers.Add(new("New Layer"));
                 }
@@ -280,7 +280,7 @@
 
                     if (ImGui.TreeNode($"{cell.ID}"))
                     {
-                        if (cell.Right == null && ImGui.Button($"{cell.ID} Add Tile X+"))
+                        if (cell.Right == null && ImGui.Button($"{cell.ID} ObjectAdded Tile X+"))
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
@@ -297,7 +297,7 @@
                             ImGui.SameLine();
                         }
 
-                        if (cell.Top == null && ImGui.Button($"{cell.ID} Add Tile Z+"))
+                        if (cell.Top == null && ImGui.Button($"{cell.ID} ObjectAdded Tile Z+"))
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
@@ -478,7 +478,7 @@
                 manager.Rename(material.Name, name);
             }
 
-            if (ImGui.Button("Add Property"))
+            if (ImGui.Button("ObjectAdded Property"))
             {
                 ImGui.OpenPopup("AddMaterialProperty");
             }
@@ -496,7 +496,7 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     var props = material.Properties;
                     ArrayUtils.Add(ref props, new(newPropName, newPropType, newPropValueType, default, default, new byte[MaterialProperty.GetByteCount(newPropValueType)]));
@@ -523,7 +523,7 @@
 
             ImGui.Separator();
 
-            if (ImGui.Button("Add Texture"))
+            if (ImGui.Button("ObjectAdded Texture"))
             {
                 ImGui.OpenPopup("AddMaterialTexture");
             }
@@ -538,7 +538,7 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     var textures = material.Textures;
                     ArrayUtils.Add(ref textures, new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
@@ -643,7 +643,7 @@
             }
 
             bool result = false;
-            //TODO: Add new material texture system
+            //TODO: ObjectAdded new material texture system
             if (hasChanged && !isActive)
             {
                 manager.Update(material);

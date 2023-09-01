@@ -69,12 +69,12 @@
     public interface IWindow : INativeWindow, INativeWindowSource
     {
         /// <summary>
-        /// Gets or sets a value indicating whether the window has a border.
+        /// Gets or sets a _value indicating whether the window has a border.
         /// </summary>
         bool Bordered { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the window is focused.
+        /// Gets a _value indicating whether the window is focused.
         /// </summary>
         bool Focused { get; }
 
@@ -84,17 +84,17 @@
         int Height { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether the mouse is hovering over the window.
+        /// Gets a _value indicating whether the mouse is hovering over the window.
         /// </summary>
         bool Hovering { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the cursor is locked within the window.
+        /// Gets or sets a _value indicating whether the cursor is locked within the window.
         /// </summary>
         bool LockCursor { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the window is resizable.
+        /// Gets or sets a _value indicating whether the window is resizable.
         /// </summary>
         bool Resizable { get; set; }
 

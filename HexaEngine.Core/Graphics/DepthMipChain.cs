@@ -6,7 +6,7 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
-    public unsafe class DepthMipChain
+    public unsafe class DepthMipChain : IDisposable
     {
         private readonly string dbgName;
         public int Height;

@@ -56,11 +56,11 @@
         public ShadowResolution ShadowMapResolution { get => shadowMapResolution; set => SetAndNotify(ref shadowMapResolution, value); }
 
         [EditorCategory("Shadow Map", "Shadows")]
-        [EditorProperty("Slope-Scale Depth Bias")]
+        [EditorProperty("Slope-Scale depth Bias")]
         public float ShadowMapSlopeScaleDepthBias { get; set; }
 
         [EditorCategory("Shadow Map", "Shadows")]
-        [EditorProperty("Normal Bias")]
+        [EditorProperty("normal Bias")]
         public float ShadowMapNormalBias { get; set; }
 
         #endregion Shadow Map
@@ -84,7 +84,7 @@
         public float ContactShadowsMaxRayDistance { get; set; }
 
         [EditorCategory("Contact Shadows", "Shadows")]
-        [EditorProperty("Max Depth Distance")]
+        [EditorProperty("Max depth Distance")]
         public float ContactShadowsMaxDepthDistance { get; set; }
 
         #endregion Contact Shadows

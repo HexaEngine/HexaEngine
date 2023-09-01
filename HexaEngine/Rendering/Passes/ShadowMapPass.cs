@@ -2,14 +2,17 @@
 {
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Lights.Types;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
+    using HexaEngine.Lights.Types;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
 
     public class ShadowMapPass : DrawPass
     {
+        private ResourceRef<ShadowAtlas> shadowAtlas;
+
         public ShadowMapPass() : base("ShadowMap")
         {
             AddWriteDependency(new("ShadowAtlas"));
@@ -17,7 +20,7 @@
 
         public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
-            creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, 8192, 8));
+            shadowAtlas = creator.CreateShadowAtlas("ShadowAtlas", new(Format.D32Float, 8192, 8));
         }
 
         public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)

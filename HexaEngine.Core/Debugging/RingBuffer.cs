@@ -50,7 +50,7 @@
                 value = default;
             }
 
-            // Subtract the oldest value from the sum if the buffer is full
+            // Subtract the oldest _value from the sum if the buffer is full
             if (count == length)
             {
                 sum -= rawValues[tail];
@@ -61,7 +61,7 @@
                 countT++;
             }
 
-            // Add the new value to the sum
+            // Add the new _value to the sum
             sum += value;
 
             avgValues[head] = CalculateAverage();
@@ -75,7 +75,7 @@
         {
             if (count == 0)
             {
-                // The buffer is empty, return the default value of T
+                // The buffer is empty, return the default _value of T
                 return default;
             }
 
@@ -132,7 +132,7 @@
                 value = default;
             }
 
-            // Subtract the oldest value from the sum if the buffer is full
+            // Subtract the oldest _value from the sum if the buffer is full
             if (count == length)
             {
                 sum -= rawValues[tail];
@@ -143,7 +143,7 @@
                 countT++;
             }
 
-            // Add the new value to the sum
+            // Add the new _value to the sum
             sum += value;
 
             avgValues[head] = CalculateAverage();
@@ -157,7 +157,7 @@
         {
             if (count == 0)
             {
-                // The buffer is empty, return the default value of T
+                // The buffer is empty, return the default _value of T
                 return default;
             }
 

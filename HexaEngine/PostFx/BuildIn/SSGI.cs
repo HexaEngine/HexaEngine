@@ -3,11 +3,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Effects.Blur;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System.Threading.Tasks;
 
     public class SSGI : PostFxBase
     {
@@ -24,6 +24,9 @@
         public Viewport Viewport;
         public IShaderResourceView Input;
         public ITexture2D InputTex;
+        private ResourceRef<DepthMipChain> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<GBuffer> gbuffer;
 
         public override string Name { get; } = "SSGI";
 
@@ -49,7 +52,7 @@
 
         #endregion Structs
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -64,48 +67,9 @@
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
-            this.device = device;
-
-            linearWrapSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            pipelineSSGI = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/ssgi/ps.hlsl",
-            },
-            new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.Opaque,
-                Topology = PrimitiveTopology.TriangleStrip
-            },
-            macros);
-
-            copy = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/copy/ps.hlsl",
-            });
-
-            ssgiParams = new(device, new SSGIParams(), CpuAccessFlags.Write);
-            inputChain = new(device, Format.R16G16B16A16Float, width, height, 1, 10, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.GenerateMips);
-            outputBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            blur = new(device, Format.R16G16B16A16Float, width, height);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+            depth = creator.GetDepthMipChain("HiZBuffer");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            gbuffer = creator.GetGBuffer("GBuffer");
 
             this.device = device;
 
@@ -140,17 +104,13 @@
             if (Output == null)
                 return;
 
-            var depth = creator.GetDepthMipChain("HiZBuffer");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            var gbuffer = creator.GetGBuffer("GBuffer");
-
             context.SetRenderTarget(Output, null);
             context.SetViewport(Viewport);
             context.PSSetShaderResource(0, Input);
-            context.PSSetShaderResource(1, depth.SRV);
-            context.PSSetShaderResource(2, gbuffer.SRVs[1]);
+            context.PSSetShaderResource(1, depth.Value.SRV);
+            context.PSSetShaderResource(2, gbuffer.Value.SRVs[1]);
             context.PSSetConstantBuffer(0, ssgiParams);
-            context.PSSetConstantBuffer(1, camera);
+            context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, linearWrapSampler);
 
             context.SetGraphicsPipeline(pipelineSSGI);

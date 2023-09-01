@@ -22,7 +22,7 @@
             pipelineCreator = new GraphPipelineBuilder(device);
         }
 
-        public GraphResourceBuilder ResourceCreator => resourceCreator;
+        public GraphResourceBuilder ResourceBuilder => resourceCreator;
 
         public void Init(ICPUProfiler? profiler)
         {

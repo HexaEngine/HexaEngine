@@ -29,9 +29,8 @@ namespace HexaEngine.Rendering.Renderers
         private readonly HDRPipeline renderGraph = new();
         private RenderGraphExecuter graphExecuter;
 
-        private ConstantBuffer<CBCamera> cameraBuffer;
-        private ConstantBuffer<CBWeather> weatherBuffer;
-        private ConstantBuffer<CBTessellation> tesselationBuffer;
+        private HexaEngine.Graph.ResourceRef<ConstantBuffer<CBCamera>> cameraBuffer;
+        private HexaEngine.Graph.ResourceRef<ConstantBuffer<CBWeather>> weatherBuffer;
 
         private bool initialized;
         private bool disposedValue;
@@ -50,6 +49,8 @@ namespace HexaEngine.Rendering.Renderers
         public ViewportShading Shading { get; set; }
 
         public RenderGraph RenderGraph => renderGraph;
+
+        public GraphResourceBuilder ResourceBuilder => graphExecuter.ResourceBuilder;
 
         public int Width => width;
 
@@ -98,23 +99,20 @@ namespace HexaEngine.Rendering.Renderers
         {
             InitializeSettings();
 
-            tesselationBuffer = new(device, CpuAccessFlags.Write);
-
-            var resourceCreator = graphExecuter.ResourceCreator;
+            var resourceCreator = graphExecuter.ResourceBuilder;
             resourceCreator.Viewport = new(width, height);
 
-            cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write);
-            ResourceManager2.Shared.AddConstantBuffer("CBCamera", cameraBuffer);
+            cameraBuffer = resourceCreator.CreateConstantBuffer<CBCamera>("CBCamera", CpuAccessFlags.Write, false);
+            ResourceManager2.Shared.AddConstantBuffer("CBCamera", cameraBuffer.Value);
 
-            weatherBuffer = resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write);
-            ResourceManager2.Shared.AddConstantBuffer("CBWeather", weatherBuffer);
+            weatherBuffer = resourceCreator.CreateConstantBuffer<CBWeather>("CBWeather", CpuAccessFlags.Write, false);
+            ResourceManager2.Shared.AddConstantBuffer("CBWeather", weatherBuffer.Value);
 
-            var aoBuffer = resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            aoBuffer = resourceCreator.CreateTexture2D("#AOBuffer", new(Format.R16Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
+            ResourceManager2.Shared.AddTexture("AOBuffer", aoBuffer.Value);
 
-            resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float));
+            resourceCreator.CreateDepthStencilBuffer("#DepthStencil", new(width, height, 1, Format.D32Float), false);
             graphExecuter.Init(profiler);
-
-            ResourceManager2.Shared.AddTexture("AOBuffer", resourceCreator.GetTexture2D(aoBuffer));
 
             initialized = true;
             Current = this;
@@ -206,6 +204,7 @@ namespace HexaEngine.Rendering.Renderers
         }
 
         private int selected = -1;
+        private HexaEngine.Graph.ResourceRef<Texture2D> aoBuffer;
 
         public unsafe void Render(IGraphicsContext context, IRenderWindow window, Mathematics.Viewport viewport, Scene scene, Camera camera)
         {
@@ -219,16 +218,17 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
+            var cameraBuffer = this.cameraBuffer.Value;
             cameraBuffer[0] = new CBCamera(camera, new(width, height), cameraBuffer[0]);
             cameraBuffer.Update(context);
 
             scene.RenderManager.Update(context);
             scene.WeatherManager.Update(context);
-            scene.LightManager.Update(context, graphExecuter.ResourceCreator.GetShadowAtlas(0), camera);
+            scene.LightManager.Update(context, graphExecuter.ResourceBuilder.GetShadowAtlas(0), camera);
 
-            graphExecuter.ResourceCreator.Output = swapChain.BackbufferRTV;
-            graphExecuter.ResourceCreator.OutputTex = swapChain.Backbuffer;
-            graphExecuter.ResourceCreator.OutputViewport = viewport;
+            graphExecuter.ResourceBuilder.Output = swapChain.BackbufferRTV;
+            graphExecuter.ResourceBuilder.OutputTex = swapChain.Backbuffer;
+            graphExecuter.ResourceBuilder.OutputViewport = viewport;
             graphExecuter.Execute(context, profiler);
         }
 
@@ -239,7 +239,7 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
-            var tex = graphExecuter.ResourceCreator.Textures;
+            var tex = graphExecuter.ResourceBuilder.Textures;
 
             for (int i = 0; i < tex.Count; i++)
             {
@@ -265,7 +265,7 @@ namespace HexaEngine.Rendering.Renderers
                 }
             }
 
-            var shadowAtlas = graphExecuter.ResourceCreator.ShadowAtlas;
+            var shadowAtlas = graphExecuter.ResourceBuilder.ShadowAtlas;
             for (int i = 0; i < shadowAtlas.Count; i++)
             {
                 var size = ImGui.GetWindowContentRegionMax();
@@ -290,7 +290,7 @@ namespace HexaEngine.Rendering.Renderers
                 }
             }
 
-            var gBuffers = graphExecuter.ResourceCreator.GBuffers;
+            var gBuffers = graphExecuter.ResourceBuilder.GBuffers;
             for (int i = 0; i < gBuffers.Count; i++)
             {
                 var size = ImGui.GetWindowContentRegionMax();

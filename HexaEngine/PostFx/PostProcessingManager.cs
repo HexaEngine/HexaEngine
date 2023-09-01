@@ -19,6 +19,7 @@
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
+        private readonly GraphResourceBuilder creator;
         private int width;
         private int height;
 
@@ -38,10 +39,11 @@
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, int width, int height, int bufferCount = 4)
+        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
+            this.creator = creator;
             for (int i = 0; i < bufferCount; i++)
             {
                 buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.None, lineNumber: i));
@@ -106,7 +108,7 @@
                 nodes[i].Clear();
                 if (effects[i].Enabled)
                 {
-                    effects[i].InitializeAsync(device, nodes[i].Builder, width, height, macros).Wait();
+                    effects[i].Initialize(device, nodes[i].Builder, creator, width, height, macros);
                     profiler?.CreateStage(effects[i].Name);
                 }
             }
@@ -119,34 +121,6 @@
         private void PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             Invalidate();
-        }
-
-        public async Task InitializeAsync(int width, int height)
-        {
-            for (int i = 0; i < effects.Count; i++)
-            {
-                effects[i].OnEnabledChanged += OnEnabledChanged;
-            }
-
-            this.width = width;
-            this.height = height;
-            macros = new ShaderMacro[effects.Count];
-            for (int i = 0; i < effects.Count; i++)
-            {
-                var effect = effects[i];
-                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
-            }
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                nodes[i].Clear();
-                if (effects[i].Enabled)
-                    await effects[i].InitializeAsync(device, nodes[i].Builder, width, height, macros);
-            }
-
-            Sort();
-
-            isInitialized = true;
         }
 
         public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T effect) where T : class, IPostFx
@@ -276,44 +250,9 @@
                 var effect = effects[i];
                 if (effect.Enabled)
                 {
-                    effect.Initialize(device, nodes[i].Builder, width, height, macros);
+                    effect.Initialize(device, nodes[i].Builder, creator, width, height, macros);
                 }
             });
-
-            Sort();
-            Invalidate();
-
-            Volatile.Write(ref isReloading, false);
-        }
-
-        public async Task ReloadAsync()
-        {
-            Volatile.Write(ref isReloading, true);
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                var effect = effects[i];
-                if (effect.Initialized)
-                    effect.Dispose();
-                nodes[i].Clear();
-            }
-
-            macros = new ShaderMacro[effects.Count];
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                var effect = effects[i];
-                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
-            }
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                var effect = effects[i];
-                if (effect.Enabled)
-                {
-                    await effect.InitializeAsync(device, nodes[i].Builder, width, height, macros);
-                }
-            }
 
             Sort();
             Invalidate();

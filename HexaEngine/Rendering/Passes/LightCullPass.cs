@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
@@ -23,16 +24,17 @@
 
         public const uint CLUSTER_MAX_LIGHTS = 128;
 
-        private StructuredUavBuffer<Cluster> ClusterBuffer;
-        private StructuredUavBuffer<uint> LightIndexCounter;
-        private StructuredUavBuffer<uint> LightIndexList;
-        private StructuredUavBuffer<LightGrid> LightGridBuffer;
+        private ResourceRef<StructuredUavBuffer<Cluster>> ClusterBuffer;
+        private ResourceRef<StructuredUavBuffer<uint>> LightIndexCounter;
+        private ResourceRef<StructuredUavBuffer<uint>> LightIndexList;
+        private ResourceRef<StructuredUavBuffer<LightGrid>> LightGridBuffer;
 
         private IComputePipeline clusterBuilding;
         private IComputePipeline clusterCulling;
 
-        private ConstantBuffer<CullLightParams> lightParamsBuffer;
-        private ConstantBuffer<ClusterSizes> clusterSizesBuffer;
+        private ResourceRef<ConstantBuffer<CullLightParams>> lightParamsBuffer;
+        private ResourceRef<ConstantBuffer<ClusterSizes>> clusterSizesBuffer;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         public LightCullPass() : base("LightCull")
         {
@@ -43,6 +45,8 @@
 
         public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+
             float screenWidth = creator.Viewport.Width;
             float screenHeight = creator.Viewport.Height;
 
@@ -55,9 +59,9 @@
                 Path = "compute/clustered/culling.hlsl"
             });
 
-            lightParamsBuffer = new(device, CpuAccessFlags.Write);
+            lightParamsBuffer = creator.CreateConstantBuffer<CullLightParams>("CBCullLightParams", CpuAccessFlags.Write);
 
-            clusterSizesBuffer = new(device, new ClusterSizes(CLUSTERS_X, CLUSTERS_Y, CLUSTERS_Z, (uint)MathF.Ceiling(screenWidth / CLUSTERS_X)), CpuAccessFlags.Write);
+            clusterSizesBuffer = creator.CreateConstantBuffer("CBClusterSizes", new ClusterSizes(CLUSTERS_X, CLUSTERS_Y, CLUSTERS_Z, (uint)MathF.Ceiling(screenWidth / CLUSTERS_X)), CpuAccessFlags.Write);
 
             ClusterBuffer = creator.CreateStructuredUavBuffer<Cluster>("ClusterBuffer", CLUSTER_COUNT, CpuAccessFlags.None);
             LightIndexCounter = creator.CreateStructuredUavBuffer<uint>("LightIndexCounter", 1, CpuAccessFlags.None);
@@ -82,12 +86,12 @@
             lights.LightBuffer.Update(context);
             lights.ShadowDataBuffer.Update(context);
 
-            context.CSSetConstantBuffer(1, creator.GetConstantBuffer<CBCamera>("CBCamera"));
+            context.CSSetConstantBuffer(1, camera.Value);
             if (recreateClusters)
             {
                 profiler?.Begin("RecreateClusters");
-                context.CSSetConstantBuffer(0, clusterSizesBuffer);
-                context.CSSetUnorderedAccessView(0, (void*)ClusterBuffer.UAV.NativePointer);
+                context.CSSetConstantBuffer(0, clusterSizesBuffer.Value);
+                context.CSSetUnorderedAccessView(0, (void*)ClusterBuffer.Value.UAV.NativePointer);
 
                 context.SetComputePipeline(clusterBuilding);
                 context.Dispatch(CLUSTERS_X, CLUSTERS_Y, CLUSTERS_Z);
@@ -98,17 +102,17 @@
                 profiler?.End("RecreateClusters");
             }
 
-            lightParamsBuffer.Update(context, new(lightBuffer.Count));
+            lightParamsBuffer.Value.Update(context, new(lightBuffer.Count));
 
             profiler?.End("LightCull.Update");
 
             profiler?.Begin("LightCull.Dispatch");
 
-            context.CSSetConstantBuffer(0, lightParamsBuffer);
+            context.CSSetConstantBuffer(0, lightParamsBuffer.Value);
 
-            nint* srvs = stackalloc nint[] { ClusterBuffer.SRV.NativePointer, lightBuffer.SRV.NativePointer };
+            nint* srvs = stackalloc nint[] { ClusterBuffer.Value.SRV.NativePointer, lightBuffer.SRV.NativePointer };
             context.CSSetShaderResources(0, 2, (void**)srvs);
-            nint* uavs = stackalloc nint[] { LightIndexCounter.UAV.NativePointer, LightIndexList.UAV.NativePointer, LightGridBuffer.UAV.NativePointer };
+            nint* uavs = stackalloc nint[] { LightIndexCounter.Value.UAV.NativePointer, LightIndexList.Value.UAV.NativePointer, LightGridBuffer.Value.UAV.NativePointer };
             context.CSSetUnorderedAccessViews(0, 3, (void**)uavs, null);
 
             context.SetComputePipeline(clusterCulling);

@@ -80,7 +80,7 @@
             throw new NotImplementedException();
         }
 
-        public void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             throw new NotImplementedException();
         }
@@ -129,22 +129,22 @@
                     case nameof(GraphicsPass):
                         {
                             XmlSerializer xmlSerializer = new(typeof(GraphicsPass));
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.ObjectAdded(IPostFxPass item)'.
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             Add((IPostFxPass)xmlSerializer.Deserialize(reader));
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.ObjectAdded(IPostFxPass item)'.
                         }
                         break;
 
                     case nameof(ComputePass):
                         {
                             XmlSerializer xmlSerializer = new(typeof(ComputePass));
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
+#pragma warning disable CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.ObjectAdded(IPostFxPass item)'.
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                             Add((IPostFxPass)xmlSerializer.Deserialize(reader));
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.Add(IPostFxPass item)'.
+#pragma warning restore CS8604 // Possible null reference argument for parameter 'item' in 'void List<IPostFxPass>.ObjectAdded(IPostFxPass item)'.
                         }
                         break;
 

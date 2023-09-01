@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Renderers
+﻿namespace HexaEngine.Rendering.Renderers
 {
     public class RendererSettings
     {

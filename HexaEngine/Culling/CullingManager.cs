@@ -156,7 +156,7 @@
             {
                 var type = manager.Types[i];
                 type.UpdateInstanceBuffer((uint)i, instanceDataNoCull, instanceDataBuffer, swapBuffer, frustum, (cullingFlags & CullingFlags.Frustum) != 0);
-                instanceOffsetsNoCull.Add(offset);
+                instanceOffsetsNoCull.ObjectAdded(offset);
                 offset += (uint)type.Count;
             }
 

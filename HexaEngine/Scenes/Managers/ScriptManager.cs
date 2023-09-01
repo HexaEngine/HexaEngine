@@ -14,7 +14,7 @@ namespace HexaEngine.Scenes.Managers
 
         public string Name => "Scripts";
 
-        public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Update | SystemFlags.FixedUpdate | SystemFlags.Destory;
+        public SystemFlags Flags { get; } = SystemFlags.Awake | SystemFlags.Update | SystemFlags.FixedUpdate | SystemFlags.Destroy;
 
         public IReadOnlyList<IScriptComponent> Scripts => (IReadOnlyList<IScriptComponent>)scripts;
 
@@ -56,7 +56,7 @@ namespace HexaEngine.Scenes.Managers
             }
         }
 
-        public void Awake()
+        public void Awake(Scene scene)
         {
             if (Application.InDesignMode)
             {

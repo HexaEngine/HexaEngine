@@ -26,11 +26,12 @@
         private bool isHidden = false;
 
         public Transform Transform = new();
+        private Guid guid = Guid.NewGuid();
         private string name = string.Empty;
+        private string? fullName;
         private bool isEditorSelected;
 
         private GCHandle gcHandle;
-        private Guid guid = Guid.NewGuid();
         private object? tag;
 
         [JsonIgnore]
@@ -48,28 +49,66 @@
             gcHandle.Free();
         }
 
+        /// <summary>
+        /// Gets or sets the unique identifier.
+        /// </summary>
+        /// <value>
+        /// The unique identifier.
+        /// </value>
         public Guid Guid
         {
             get => guid;
-            set => guid = value;
+            set
+            {
+                if (SetAndNotifyWithEqualsTest(ref guid, value))
+                {
+                    fullName = null;
+                }
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>
+        /// The name.
+        /// </value>
         public string Name
         {
             get => name;
             set
             {
-                if (initialized)
+                if (SetAndNotifyWithEqualsTest(ref name, value))
                 {
-                    name = GetScene().GetAvailableName(value);
-                }
-                else
-                {
-                    name = value;
+                    fullName = null;
+                    OnNameChanged?.Invoke(this, value);
                 }
             }
         }
 
+        /// <summary>
+        /// Gets the full name of the GameObject, which is a unique combination of its name and Guid.
+        /// The full name is lazily generated when accessed for the first time and will be
+        /// reinitialized if either the name or Guid property is modified.
+        /// </summary>
+        /// <value>
+        /// The full name of the GameObject.
+        /// </value>
+        [JsonIgnore]
+        public string FullName
+        {
+            get
+            {
+                return fullName ??= $"{name}##{guid}";
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is enabled; otherwise, <c>false</c>.
+        /// </value>
         public bool IsEnabled
         {
             get => isEnabled;
@@ -88,6 +127,12 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is hidden.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is hidden; otherwise, <c>false</c>.
+        /// </value>
         public bool IsHidden
         {
             get => isHidden;
@@ -96,12 +141,14 @@
 
         [JsonIgnore]
         public virtual GameObject? Parent
-
         {
             get => parent;
             set
             {
-                parent = value;
+                if (SetAndNotifyWithRefEqualsTest(ref parent, value))
+                {
+                    OnParentChanged?.Invoke(this, value);
+                }
             }
         }
 
@@ -151,14 +198,24 @@
             {
                 if (SetAndNotifyWithRefEqualsTest(ref tag, value))
                 {
-                    TagChanged?.Invoke(value);
+                    OnTagChanged?.Invoke(this, value);
                 }
             }
         }
 
-        public event Action<object?>? TagChanged;
+        public Type Type => type ??= GetType();
 
-        public event Action<GameObject>? Transformed;
+        public event Action<GameObject, string>? OnNameChanged;
+
+        public event Action<GameObject, object?>? OnTagChanged;
+
+        public event Action<GameObject, GameObject?>? OnParentChanged;
+
+        public event Action<GameObject>? OnTransformed;
+
+        public event Action<GameObject, IComponent>? OnComponentAdded;
+
+        public event Action<GameObject, IComponent>? OnComponentRemoved;
 
         protected void OverwriteTransform(Transform transform)
         {
@@ -168,12 +225,12 @@
 
         protected virtual void TransformUpdated(object? sender, EventArgs e)
         {
-            Transformed?.Invoke(this);
+            OnTransformed?.Invoke(this);
         }
 
         public void SendUpdateTransformed()
         {
-            Transformed?.Invoke(this);
+            OnTransformed?.Invoke(this);
         }
 
         public void SaveState()
@@ -265,6 +322,7 @@
             {
                 component.Awake(Device, this);
             }
+            OnComponentAdded?.Invoke(this, component);
         }
 
         public virtual void RemoveComponent(IComponent component)
@@ -275,6 +333,7 @@
             }
 
             components.Remove(component);
+            OnComponentRemoved?.Invoke(this, component);
         }
 
         public virtual void Initialize(IGraphicsDevice device)
@@ -409,6 +468,30 @@
             }
         }
 
+        public virtual IEnumerable<IComponent> GetComponents(Func<IComponent, bool> selector)
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                var component = components[i];
+                if (selector(component))
+                {
+                    yield return component;
+                }
+            }
+        }
+
+        public virtual IEnumerable<T> GetComponents<T>(Func<T, bool> selector) where T : IComponent
+        {
+            for (int i = 0; i < components.Count; i++)
+            {
+                var component = components[i];
+                if (component is T t && selector(t))
+                {
+                    yield return t;
+                }
+            }
+        }
+
         public bool HasComponent<T>() where T : IComponent
         {
             for (int i = 0; i < components.Count; i++)
@@ -478,18 +561,6 @@
                 {
                     yield return t;
                 }
-            }
-        }
-
-        public Type Type
-        {
-            get
-            {
-                if (type == null)
-                {
-                    type = GetType();
-                }
-                return type;
             }
         }
     }

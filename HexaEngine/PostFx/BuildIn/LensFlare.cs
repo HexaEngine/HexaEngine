@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
@@ -10,10 +11,10 @@
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     public class LensFlare : PostFxBase
     {
+        private ResourceRef<DepthStencil> depth;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
         private ConstantBuffer<Vector4> lightBuffer;
@@ -34,7 +35,7 @@
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -49,50 +50,7 @@
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "effects/lensflare/vs.hlsl",
-                GeometryShader = "effects/lensflare/gs.hlsl",
-                PixelShader = "effects/lensflare/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Additive,
-                Topology = PrimitiveTopology.PointList,
-                BlendFactor = default,
-                SampleMask = int.MaxValue
-            }, macros);
-            sampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
-
-            lightBuffer = new(device, CpuAccessFlags.Write);
-
-            lens0 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex1.png"));
-            lens1 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex2.png"));
-            lens2 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex3.png"));
-            lens3 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex4.png"));
-            lens4 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex5.png"));
-            lens5 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex6.png"));
-            lens6 = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/lens/tex7.png"));
-
-            Viewport = new(width, height);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
-                .RunAfter("SSGI")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -157,8 +115,6 @@
                 return;
             }
 
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-
             for (int i = 0; i < lights.ActiveCount; i++)
             {
                 var light = lights.Active[i];
@@ -183,7 +139,7 @@
                     srvs[4] = lens4.SRV.NativePointer;
                     srvs[5] = lens5.SRV.NativePointer;
                     srvs[6] = lens6.SRV.NativePointer;
-                    srvs[7] = depth.SRV.NativePointer;
+                    srvs[7] = depth.Value.SRV.NativePointer;
 
                     context.SetRenderTarget(Output, default);
                     context.SetViewport(Viewport);

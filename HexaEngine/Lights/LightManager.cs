@@ -112,7 +112,7 @@
             {
                 lights.Add(light);
                 lightUpdateQueue.Enqueue(light);
-                light.Transformed += LightTransformed;
+                light.OnTransformed += LightTransformed;
                 light.PropertyChanged += LightPropertyChanged;
             }
         }
@@ -131,7 +131,7 @@
             lock (lights)
             {
                 light.PropertyChanged -= LightPropertyChanged;
-                light.Transformed -= LightTransformed;
+                light.OnTransformed -= LightTransformed;
                 lights.Remove(light);
                 activeLights.Remove(light);
             }
@@ -324,7 +324,7 @@
                 context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
             }
 
-            context.SetViewport(Output.Viewport);
+            context.SetViewport(ao.Viewport);
             context.VSSetConstantBuffers(1, 1, &cbs[1]);
             context.DSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
@@ -363,7 +363,7 @@
                 context.SetRenderTargets(nForwardRtvs, forwardRtvs, DSV.Value);
             }
 
-            context.SetViewport(Output.Viewport);
+            context.SetViewport(ao.Viewport);
             context.VSSetConstantBuffers(1, 1, &cbs[1]);
             context.DSSetConstantBuffers(1, 1, &cbs[1]);
             context.CSSetConstantBuffers(1, 1, &cbs[1]);
@@ -392,7 +392,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public void Awake()
+        public void Awake(Scene scene)
         {
         }
 

@@ -85,7 +85,6 @@
                 AudioManager.Initialize(audioDevice);
                 ResourceManager.Initialize(graphicsDevice);
                 PipelineManager.Initialize(graphicsDevice);
-                ObjectPickerManager.Initialize(graphicsDevice, Width, Height);
             }
 
             if (Application.InEditorMode)
@@ -178,7 +177,6 @@
             {
                 swapChain.Resize(Width, Height);
                 resize = false;
-                ObjectPickerManager.Resize(Width, Height);
             }
 
             if (firstFrame)
@@ -215,7 +213,7 @@
 
             if (drawing)
             {
-                SceneManager.Current.RenderUpdate(context);
+                SceneManager.Current.GraphicsUpdate(context);
                 sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
             }
 
@@ -297,7 +295,6 @@
 
             sceneRenderer.Dispose();
             renderDispatcher.Dispose();
-            ObjectPickerManager.Release();
             ResourceManager.Dispose();
             AudioManager.Release();
             swapChain.Dispose();

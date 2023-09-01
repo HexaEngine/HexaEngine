@@ -1,11 +1,10 @@
 ﻿namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
-    using System.Threading.Tasks;
 
     public class MotionBlur : PostFxBase
     {
@@ -22,35 +21,7 @@
 
         public override PostFxFlags Flags { get; }
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .AddBinding("VelocityBuffer")
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunBefore("DepthOfField")
-                .RunBefore("GodRays")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
-
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/motionblur/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
-
-            Viewport = new(width, height);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("VelocityBuffer")
@@ -73,7 +44,7 @@
             }, GraphicsPipelineState.DefaultFullscreen, macros);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
+            Velocity = creator.GetTexture2D("VelocityBuffer");
 
             Viewport = new(width, height);
         }

@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes.Managers;
     using HexaEngine.Weather;
@@ -23,7 +22,6 @@
         private readonly IGraphicsPipeline skybox;
         private readonly IGraphicsPipeline uniformColorSky;
         private readonly IGraphicsPipeline hoseWilkieSky;
-        private readonly ResourceRef<IBuffer> camera;
         private readonly ConstantBuffer<CBWorld> worldBuffer;
 
         private ISamplerState samplerState;
@@ -71,8 +69,6 @@
                 Blend = BlendDescription.AlphaBlend,
                 BlendFactor = Vector4.One,
             });
-
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
         }
 
         public void Initialize(Skybox skybox)
@@ -114,7 +110,6 @@
                     if (!initialized)
                         return;
                     context.VSSetConstantBuffer(0, worldBuffer);
-                    context.VSSetConstantBuffer(1, camera.Value);
                     context.PSSetShaderResource(0, environment.SRV);
                     context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, skybox);
@@ -122,7 +117,6 @@
 
                 case SkyType.UniformColor:
                     context.VSSetConstantBuffer(0, worldBuffer);
-                    context.VSSetConstantBuffer(1, camera.Value);
                     context.PSSetConstantBuffer(2, WeatherManager.Current.WeatherBuffer);
                     context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, uniformColorSky);
@@ -130,7 +124,6 @@
 
                 case SkyType.HosekWilkie:
                     context.VSSetConstantBuffer(0, worldBuffer);
-                    context.VSSetConstantBuffer(1, camera.Value);
                     context.PSSetConstantBuffer(2, WeatherManager.Current.WeatherBuffer);
                     context.PSSetSampler(0, samplerState);
                     cube.DrawAuto(context, hoseWilkieSky);

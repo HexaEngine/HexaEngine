@@ -298,7 +298,7 @@
                 ImGui.Checkbox("Gimbal", ref drawGimbal);
                 ImGui.Checkbox("Grid", ref drawGrid);
                 ImGui.Checkbox("Object", ref drawObject);
-                ImGui.Checkbox("Nodes", ref drawNodes);
+                ImGui.Checkbox("GameObjects", ref drawNodes);
                 ImGui.Checkbox("Wireframe", ref drawWireframe);
 
                 ImGui.Separator();

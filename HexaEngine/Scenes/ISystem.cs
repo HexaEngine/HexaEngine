@@ -4,6 +4,7 @@ namespace HexaEngine.Scenes
 {
     using HexaEngine.Collections;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Rendering.Graph;
 
     public interface ISystem : IHasFlags<SystemFlags>
     {
@@ -17,11 +18,15 @@ namespace HexaEngine.Scenes
         {
         }
 
-        public void Awake()
+        public void Awake(Scene scene)
         {
         }
 
-        public void RenderUpdate(IGraphicsContext context)
+        public void GraphicsAwake(IGraphicsDevice device, GraphResourceBuilder creator)
+        {
+        }
+
+        public void GraphicsUpdate(IGraphicsContext context)
         {
         }
 

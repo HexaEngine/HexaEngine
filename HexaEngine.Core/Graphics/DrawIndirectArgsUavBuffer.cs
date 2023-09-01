@@ -122,17 +122,17 @@
         /// <summary>
         /// Gets the uav.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The uav.
-        /// </value>
+        /// </_value>
         public IUnorderedAccessView UAV => uav;
 
         /// <summary>
         /// Gets the SRV.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The SRV.
-        /// </value>
+        /// </_value>
         public IShaderResourceView SRV => srv;
 
         /// <summary>
@@ -141,27 +141,27 @@
         public IBuffer? CopyBuffer => copyBuffer;
 
         /// <summary>
-        /// Gets a value indicating whether this instance can write.
+        /// Gets a _value indicating whether this instance can write.
         /// </summary>
-        /// <value>
+        /// <_value>
         ///   <c>true</c> if this instance can write; otherwise, <c>false</c>.
-        /// </value>
+        /// </_value>
         public bool CanWrite => canWrite;
 
         /// <summary>
-        /// Gets a value indicating whether this instance can read.
+        /// Gets a _value indicating whether this instance can read.
         /// </summary>
-        /// <value>
+        /// <_value>
         ///   <c>true</c> if this instance can read; otherwise, <c>false</c>.
-        /// </value>
+        /// </_value>
         public bool CanRead => canRead;
 
         /// <summary>
         /// Gets or sets the capacity.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The capacity.
-        /// </value>
+        /// </_value>
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -218,17 +218,17 @@
         /// <summary>
         /// Gets the description.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The description.
-        /// </value>
+        /// </_value>
         public BufferDescription Description => buffer.Description;
 
         /// <summary>
         /// Gets the length.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The length.
-        /// </value>
+        /// </_value>
         public int Length => buffer.Length;
 
         /// <summary>
@@ -239,33 +239,33 @@
         /// <summary>
         /// Gets the dimension.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The dimension.
-        /// </value>
+        /// </_value>
         public ResourceDimension Dimension => buffer.Dimension;
 
         /// <summary>
         /// Gets the native pointer.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The native pointer.
-        /// </value>
+        /// </_value>
         public nint NativePointer => buffer.NativePointer;
 
         /// <summary>
         /// Gets or sets the dbgName of the debug.
         /// </summary>
-        /// <value>
+        /// <_value>
         /// The dbgName of the debug.
-        /// </value>
+        /// </_value>
         public string? DebugName { get => buffer.DebugName; set => buffer.DebugName = value; }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is disposed.
+        /// Gets a _value indicating whether this instance is disposed.
         /// </summary>
-        /// <value>
+        /// <_value>
         ///   <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
-        /// </value>
+        /// </_value>
         public bool IsDisposed => buffer.IsDisposed;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

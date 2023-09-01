@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Effects.Noise;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
@@ -13,7 +14,6 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     public class GodRays : PostFxBase
     {
@@ -42,6 +42,8 @@
         private float godraysExposure = 2.0f;
 
         private bool sunPresent;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
         public override string Name => "GodRays";
 
@@ -87,7 +89,7 @@
             public float AlbedoFactor;
         }
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -102,74 +104,8 @@
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
-            this.device = device;
-            quad1 = new(device, 5);
-
-            sun = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "forward/sun/vs.hlsl",
-                PixelShader = "forward/sun/ps.hlsl"
-            }, new GraphicsPipelineState()
-            {
-                Blend = BlendDescription.AlphaBlend,
-                BlendFactor = Vector4.One,
-                DepthStencil = DepthStencilDescription.DepthRead,
-                Rasterizer = RasterizerDescription.CullBack,
-                SampleMask = int.MaxValue,
-                StencilRef = 0,
-                Topology = PrimitiveTopology.TriangleList
-            }, macros);
-            sunSampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            paramsSunBuffer = new(device, CpuAccessFlags.Write);
-            paramsWorldBuffer = new(device, CpuAccessFlags.Write);
-
-            godrays = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/godrays/ps.hlsl"
-            },
-            new GraphicsPipelineState()
-            {
-                DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.CullBack,
-                Blend = BlendDescription.Additive,
-                Topology = PrimitiveTopology.TriangleStrip,
-                BlendFactor = default,
-                SampleMask = int.MaxValue
-            }, macros);
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-
-            paramsBuffer = new(device, CpuAccessFlags.Write);
-
-            sunsprite = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/sun/sunsprite.png"));
-            sunBuffer = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-
-            noiseTex = new(device, Format.R32Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            Application.MainWindow.Dispatcher.InvokeBlocking(() =>
-            {
-                Noise noise = new(device, NoiseType.Blue2D);
-                noise.Draw2D(device.Context, noiseTex.RTV, new(1024), Vector2.One);
-                noise.Dispose();
-            });
-
-            Viewport = new(width, height);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             this.device = device;
             quad1 = new(device, 5);
@@ -311,10 +247,10 @@
             var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             context.ClearRenderTargetView(sunBuffer.RTV, default);
-            context.SetRenderTarget(sunBuffer.RTV, depth.DSV);
+            context.SetRenderTarget(sunBuffer.RTV, depth.Value.DSV);
             context.SetViewport(Viewport);
             context.VSSetConstantBuffer(0, paramsWorldBuffer);
-            context.VSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera.Value);
             context.PSSetConstantBuffer(0, paramsSunBuffer);
             context.PSSetShaderResource(0, sunsprite.SRV);
             context.PSSetSampler(0, sunSampler);

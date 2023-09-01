@@ -2,14 +2,13 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using System;
     using System.Numerics;
-    using System.Threading.Tasks;
 
     public class VelocityBuffer : PostFxBase
     {
@@ -22,6 +21,9 @@
 
         private Viewport Viewport;
         private float scale = 64;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private GraphResourceBuilder creator;
 
         public override string Name => "VelocityBuffer";
 
@@ -49,28 +51,13 @@
 
         #endregion Structs
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
+            this.creator = creator;
             builder.AddSource("VelocityBuffer");
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/velocity/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-
-            paramsBuffer = new(device, CpuAccessFlags.Write);
-
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
-
-            Velocity = ResourceManager2.Shared.AddTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
-
-            Viewport = new(width, height);
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder.AddSource("VelocityBuffer");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -82,7 +69,7 @@
 
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = ResourceManager2.Shared.AddTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            Velocity = creator.CreateTexture2D("VelocityBuffer", new(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false);
 
             Viewport = new(width, height);
         }
@@ -98,15 +85,12 @@
 
         public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-
             context.SetRenderTarget(Velocity.Value?.RTV, null);
             context.SetViewport(Viewport);
             context.PSSetConstantBuffer(0, paramsBuffer);
-            context.PSSetConstantBuffer(1, camera);
+            context.PSSetConstantBuffer(1, camera.Value);
             context.PSSetSampler(0, sampler);
-            context.PSSetShaderResource(0, depth.SRV);
+            context.PSSetShaderResource(0, depth.Value.SRV);
             context.SetGraphicsPipeline(pipeline);
             context.DrawInstanced(4, 1, 0, 0);
             context.ClearState();
@@ -114,7 +98,7 @@
 
         public override void Resize(int width, int height)
         {
-            Velocity = ResourceManager2.Shared.UpdateTexture("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+            creator.UpdateTexture2D("VelocityBuffer", new Texture2DDescription(Format.R32G32Float, width, height, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
             Viewport = new(width, height);
         }
 
@@ -123,6 +107,7 @@
             pipeline.Dispose();
             paramsBuffer.Dispose();
             sampler.Dispose();
+            creator.RemoveResource("VelocityBuffer");
             GC.SuppressFinalize(this);
         }
     }

@@ -1,38 +1,221 @@
 ﻿namespace TestApp
 {
+    using System;
+
+    public unsafe struct BufferHandle
+    {
+        public void* Buffer;
+        public int Start;
+        public int Length;
+
+        public readonly Span<byte> Span => new(Buffer, Length);
+
+        public readonly int End => Start + Length;
+    }
+
+    public unsafe class NativeBuffer(int size)
+    {
+        private readonly List<Pointer<BufferHandle>> handles = new();
+        private readonly void* buffer = Alloc(size);
+        private readonly int size = size;
+        private int totalAvailable = size;
+        private int totalFragmented;
+
+        private int head;
+
+        public IReadOnlyList<Pointer<BufferHandle>> Handles => handles;
+
+        public int TotalAvailable => totalAvailable;
+
+        public int TotalFragmented => totalFragmented;
+
+        /// <summary>
+        /// Rents an buffer from the pool.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public Pointer<BufferHandle> Rent(int size)
+        {
+            if (totalAvailable < size)
+            {
+                throw new Exception("Buffer is full");
+            }
+
+            if (head + size > this.size)
+            {
+                Consolidate();
+            }
+
+            if (head + size > this.size)
+            {
+                throw new Exception("Could not defragment");
+            }
+
+            Pointer<BufferHandle> handle = new();
+            handle.Data->Buffer = (byte*)buffer + head;
+            handle.Data->Start = head;
+            handle.Data->Length = size;
+
+            totalAvailable -= size;
+            head += size;
+
+            handles.Add(handle);
+
+            return handle;
+        }
+
+        /// <summary>
+        /// Returns an buffer back to the pool
+        /// </summary>
+        /// <param name="handle"></param>
+        public void Return(Pointer<BufferHandle> handle)
+        {
+            var start = handle.Data->Start;
+            var end = handle.Data->End;
+            var len = handle.Data->Length;
+
+            if (end == head)
+            {
+                head -= len;
+            }
+            else
+            {
+                totalFragmented += len;
+            }
+
+            handles.Remove(handle);
+            totalAvailable += handle.Data->Length;
+            handle.Free();
+
+            if (totalAvailable == size)
+            {
+                head = 0;
+                totalFragmented = 0;
+            }
+        }
+
+        /// <summary>
+        /// Defragments the buffer
+        /// </summary>
+        public void Consolidate()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("### Consolidate Start");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            int last = 0;
+            foreach (var handle in handles.OrderBy(x => x.Data->Start))
+            {
+                if (handle.Data->Start == 0)
+                {
+                    last = handle.Data->End;
+                    continue;
+                }
+
+                if (handle.Data->Start > last)
+                {
+                    MoveTo(handle, last);
+                }
+
+                last = handle.Data->End;
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("### Consolidate End");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            head = last;
+            totalFragmented = 0;
+        }
+
+        private void MoveTo(BufferHandle* handle, int position)
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($"Moved Block: Start: {handle->Start}, End: {handle->End}, Length: {handle->Length} to Start: {position}");
+            Console.ForegroundColor = ConsoleColor.White;
+            Span<byte> span = new(buffer, size);
+            handle->Span.CopyTo(span[position..]);
+            handle->Buffer = (byte*)buffer + position;
+            handle->Start = position;
+        }
+    }
+
     public static partial class Program
     {
-        public static async ValueTask<string> Execute1()
+        public static void Main()
         {
-            await Task.Delay(100);
-            return "Test1" + Thread.CurrentThread.Name;
+            NativeBuffer buffer = new(8192 * 16);
+
+            RandomizedTest(buffer, 1837819);
+            RandomizedTest(buffer, 46463);
+            RandomizedTest(buffer, 534534);
+            RandomizedTest(buffer, 7567);
+            RandomizedTest(buffer, 234234);
+            RandomizedTest(buffer, 75673);
+            RandomizedTest(buffer, 34537);
         }
 
-        public static async ValueTask<string> Execute2()
+        private static void RandomizedTest(NativeBuffer buffer, int seed)
         {
-            await Task.Delay(300);
-            return "Test2" + Thread.CurrentThread.Name;
+            List<Pointer<BufferHandle>> handles = new();
+
+            Random random = new(seed);
+
+            AllocateRandom(random, buffer, handles);
+
+            PrintMemoryUsage(buffer);
+
+            FreeRandom(random, buffer, handles);
+
+            PrintMemoryUsage(buffer);
+
+            AllocateRandom(random, buffer, handles);
+
+            PrintMemoryUsage(buffer);
+
+            FreeAll(buffer, handles);
+
+            PrintMemoryUsage(buffer);
         }
 
-        public static async ValueTask<string> Execute3()
+        private static void AllocateRandom(Random random, NativeBuffer buffer, List<Pointer<BufferHandle>> handles)
         {
-            await Task.Delay(200);
-            return "Test3" + Thread.CurrentThread.Name;
+            while (buffer.TotalAvailable > 0)
+            {
+                handles.Add(buffer.Rent(random.Next(Math.Min(256, buffer.TotalAvailable), buffer.TotalAvailable)));
+            }
         }
 
-        public static async Task Main()
+        private static void FreeRandom(Random random, NativeBuffer buffer, List<Pointer<BufferHandle>> handles)
         {
-            var l1 = Execute1();
-            var l2 = Execute2();
-            var l3 = Execute3();
+            var toRemove = handles.Count / 2;
+            for (int i = 0; i < toRemove; i++)
+            {
+                var idx = random.Next(0, handles.Count);
+                var handle = handles[idx];
+                buffer.Return(handle);
+                handles.RemoveAt(idx);
+            }
+        }
 
-            Console.WriteLine("Test4" + Thread.CurrentThread.Name);
-            Console.WriteLine("Test5" + Thread.CurrentThread.Name);
-            Console.WriteLine("Test6" + Thread.CurrentThread.Name);
+        private static void FreeAll(NativeBuffer buffer, List<Pointer<BufferHandle>> handles)
+        {
+            for (int i = 0; i < handles.Count; i++)
+            {
+                buffer.Return(handles[i]);
+            }
+            handles.Clear();
+        }
 
-            Console.WriteLine(await l1);
-            Console.WriteLine(await l2);
-            Console.WriteLine(await l3);
+        private static unsafe void PrintMemoryUsage(NativeBuffer manager)
+        {
+            Console.WriteLine($"Memory Usage: Total Free: {manager.TotalAvailable}, Fragmented: {manager.TotalFragmented}");
+            foreach (var handle in manager.Handles)
+            {
+                Console.WriteLine($"Block: Start: {handle.Data->Start}, End: {handle.Data->End}, Length: {handle.Data->Length}");
+            }
+            Console.WriteLine();
         }
     }
 }

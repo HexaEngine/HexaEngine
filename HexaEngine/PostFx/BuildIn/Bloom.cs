@@ -4,7 +4,6 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -14,6 +13,7 @@ namespace HexaEngine.Effects.BuildIn
     {
         private IGraphicsPipeline downsample;
         private IGraphicsPipeline upsample;
+        private GraphResourceBuilder creator;
         private ConstantBuffer<ParamsDownsample> downsampleCB;
         private ConstantBuffer<ParamsUpsample> upsampleCB;
         private ISamplerState sampler;
@@ -70,7 +70,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public override async Task InitializeAsync(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddSource("Bloom")
@@ -86,62 +86,7 @@ namespace HexaEngine.Effects.BuildIn
                 .RunAfter("LensFlare")
                 .RunBefore("AutoExposure");
 
-            downsampleCB = new(device, CpuAccessFlags.Write);
-            upsampleCB = new(device, CpuAccessFlags.Write);
-
-            sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
-
-            downsample = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/bloom/downsample/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-            upsample = await device.CreateGraphicsPipelineAsync(new()
-            {
-                VertexShader = "quad.hlsl",
-                PixelShader = "effects/bloom/upsample/ps.hlsl",
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
-
-            int currentWidth = width / 2;
-            int currentHeight = height / 2;
-            int levels = Math.Min(TextureHelper.ComputeMipLevels(currentWidth, currentHeight), 8);
-
-            mipChainRTVs = new IRenderTargetView[levels];
-            mipChainSRVs = new IShaderResourceView[levels];
-            viewports = new Viewport[levels];
-
-            for (int i = 0; i < levels; i++)
-            {
-                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), lineNumber: i).Value.RTV;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
-                viewports[i] = new(currentWidth, currentHeight);
-                currentWidth /= 2;
-                currentHeight /= 2;
-            }
-
-            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
-
-            this.width = width;
-            this.height = height;
-
-            dirty = true;
-        }
-
-        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
-        {
-            builder
-                .AddSource("Bloom")
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
-                .RunAfter("SSGI")
-                .RunAfter("LensFlare")
-                .RunBefore("AutoExposure");
+            this.creator = creator;
 
             downsampleCB = new(device, CpuAccessFlags.Write);
             upsampleCB = new(device, CpuAccessFlags.Write);
@@ -169,14 +114,13 @@ namespace HexaEngine.Effects.BuildIn
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), lineNumber: i).Value.RTV;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
+                var tex = creator.CreateTexture2D($"Bloom{(i == 0 ? "" : $".{i}")}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
+                mipChainRTVs[i] = tex.RTV;
+                mipChainSRVs[i] = tex.SRV;
                 viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
-
-            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
 
             this.width = width;
             this.height = height;
@@ -196,14 +140,15 @@ namespace HexaEngine.Effects.BuildIn
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", new Texture2DDescription(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
+                var name = $"Bloom{(i == 0 ? "" : $".{i}")}";
+                creator.RemoveResource(name);
+                var tex = creator.CreateTexture2D(name, new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
+                mipChainRTVs[i] = tex.RTV;
+                mipChainSRVs[i] = tex.SRV;
                 viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
-
-            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
 
             this.width = width;
             this.height = height;
@@ -276,6 +221,11 @@ namespace HexaEngine.Effects.BuildIn
             downsampleCB.Dispose();
             upsampleCB.Dispose();
             sampler.Dispose();
+
+            for (int i = 0; i < mipChainRTVs.Length; i++)
+            {
+                creator.RemoveResource($"Bloom{(i == 0 ? "" : $".{i}")}");
+            }
         }
     }
 }

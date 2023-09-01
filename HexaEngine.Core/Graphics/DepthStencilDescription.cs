@@ -112,8 +112,8 @@
         /// Initializes a new instance of the <see cref="DepthStencilDescription"/> struct.
         /// </summary>
         /// <param name="depthEnable">Specifies whether to enable depth testing. Set this member to <b>true</b> to enable depth testing.</param>
-        /// <param name="depthWriteEnable">Specifies a value that identifies a portion of the depth-stencil buffer that can be modified by depth data.</param>
-        /// <param name="depthFunc">A <see cref="ComparisonFunction"/> value that identifies a function that compares depth data against existing depth data.</param>
+        /// <param name="depthWriteEnable">Specifies a _value that identifies a portion of the depth-stencil buffer that can be modified by depth data.</param>
+        /// <param name="depthFunc">A <see cref="ComparisonFunction"/> _value that identifies a function that compares depth data against existing depth data.</param>
         /// <param name="stencilEnable">Specifies whether to enable stencil testing. Set this member to <b>true</b> to enable stencil testing.</param>
         /// <param name="stencilReadMask">Identify a portion of the depth-stencil buffer for reading stencil data.</param>
         /// <param name="stencilWriteMask">Identify a portion of the depth-stencil buffer for writing stencil data.</param>
