@@ -325,6 +325,8 @@ namespace HexaEngine.Rendering.Renderers
                     return;
                 }
 
+                graphExecuter.Release();
+
                 Current = null;
 
                 disposedValue = true;

@@ -498,13 +498,20 @@
 
             resourceRef ??= AddResource<TType>(name);
 
+            var idx = lazyDescs.IndexOf(new LazyInitDesc<TDesc>(default, resourceRef.Resource, null));
+            var contains = idx != -1;
+
             if (!lazyInit)
             {
                 TType resource = constructor(device, description);
                 resourceRef.Value = resource;
                 group.Add(resource);
+                if (contains)
+                {
+                    lazyDescs.RemoveAt(idx);
+                }
             }
-            else
+            else if (!contains)
             {
                 lazyDescs.Add(new(description, resourceRef.Resource, constructor));
             }

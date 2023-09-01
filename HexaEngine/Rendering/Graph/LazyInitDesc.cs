@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graph;
 
-    public struct LazyInitDesc<T>
+    public struct LazyInitDesc<T> : IEquatable<LazyInitDesc<T>>
     {
         public T Desc;
         public ResourceRef Ref;
@@ -21,6 +21,31 @@
             var resource = (TType)Constructor(device, Desc);
             Ref.Value = resource;
             group.Add(resource);
+        }
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is LazyInitDesc<T> desc && Equals(desc);
+        }
+
+        public readonly bool Equals(LazyInitDesc<T> other)
+        {
+            return EqualityComparer<ResourceRef>.Default.Equals(Ref, other.Ref);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(Ref);
+        }
+
+        public static bool operator ==(LazyInitDesc<T> left, LazyInitDesc<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(LazyInitDesc<T> left, LazyInitDesc<T> right)
+        {
+            return !(left == right);
         }
     }
 }

@@ -30,7 +30,6 @@
             {
                 var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
                 pass.Init(resourceCreator, pipelineCreator, device, profiler);
-                profiler?.CreateStage(pass.Name);
             }
             resourceCreator.CreateResources();
         }
@@ -82,6 +81,11 @@
         {
             resourceCreator.ReleaseResources();
             pipelineCreator.ReleaseResources();
+            for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
+            {
+                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                pass.Release();
+            }
         }
     }
 }

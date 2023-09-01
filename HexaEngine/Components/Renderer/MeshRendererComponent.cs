@@ -13,7 +13,6 @@
     using HexaEngine.Meshes;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Renderers;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System;
@@ -35,7 +34,7 @@
         {
         }
 
-        [EditorProperty("Model", null, "*.mesh")]
+        [EditorProperty("Model", null, ".model")]
         public string Model
         {
             get => modelPath;

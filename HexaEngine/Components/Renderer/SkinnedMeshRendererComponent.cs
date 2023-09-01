@@ -33,7 +33,7 @@
         {
         }
 
-        [EditorProperty("Model", null, "*.mesh")]
+        [EditorProperty("Model", null, ".model")]
         public string Model
         {
             get => modelPath;

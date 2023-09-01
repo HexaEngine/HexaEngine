@@ -28,7 +28,7 @@
 
         public string Name => "Renderers";
 
-        public SystemFlags Flags => SystemFlags.Awake;
+        public SystemFlags Flags => SystemFlags.Awake | SystemFlags.Destroy;
 
         public RenderManager(IGraphicsDevice device, LightManager lights)
         {
@@ -224,6 +224,8 @@
             geometryLastQueue.Clear();
             transparencyQueue.Clear();
             overlayQueue.Clear();
+
+            culling.Release();
         }
 
         private void RendererOnRemoved(GameObject gameObject, IRendererComponent renderer)

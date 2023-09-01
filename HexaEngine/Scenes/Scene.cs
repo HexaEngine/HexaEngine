@@ -29,8 +29,8 @@
         private LightManager lightManager;
         private RenderManager renderManager;
         private AnimationManager animationManager = new();
-        private MaterialManager materialManager = new();
-        private WeatherManager weatherManager = new();
+        private readonly MaterialManager materialManager = new();
+        private readonly WeatherManager weatherManager = new();
         private QueryManager queryManager;
 
         private readonly SemaphoreSlim semaphore = new(1);

@@ -53,7 +53,7 @@
             var scene = SceneManager.Current;
             if (ImGui.BeginPopupContextWindow("LayoutContextMenu"))
             {
-                if (ImGui.BeginMenu("ObjectAdded"))
+                if (ImGui.BeginMenu("Add"))
                 {
                     foreach (var item in cache)
                     {

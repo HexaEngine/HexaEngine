@@ -68,5 +68,10 @@
             }
             ImGui.End();
         }
+
+        public override void Release()
+        {
+            postProcessingManager.Dispose();
+        }
     }
 }

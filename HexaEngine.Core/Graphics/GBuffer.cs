@@ -5,22 +5,6 @@
     using System.Runtime.CompilerServices;
     using static HexaEngine.Core.Utils;
 
-    public struct GBufferDescription
-    {
-        public int Width;
-        public int Height;
-        public int Count;
-        public Format[] Formats;
-
-        public GBufferDescription(int width, int height, int count, params Format[] formats)
-        {
-            Width = width;
-            Height = height;
-            Count = count;
-            Formats = formats;
-        }
-    }
-
     public unsafe class GBuffer : IDisposable
     {
         private readonly string dbgName;
@@ -144,7 +128,7 @@
                     MemoryManager.Unregister(textures[i]);
                     textures[i].Dispose();
                     rtvs[i].Dispose();
-                    rtvs[i].Dispose();
+                    srvs[i].Dispose();
                 }
 
                 Free(pRTVs);
