@@ -27,8 +27,6 @@
 
         public const int MaxGlobalLightProbes = 1;
         public const int MaxDirectionalLightSDs = 1;
-        public const int MaxPointLightSDs = 32;
-        public const int MaxSpotlightSDs = 32;
 
         public LightManager()
         {
@@ -215,7 +213,6 @@
         {
             GlobalProbes.ResetCounter();
             LightBuffer.ResetCounter();
-            LightBuffer.Clear(context);
             ShadowDataBuffer.ResetCounter();
             uint csmCount = 0;
 
@@ -247,7 +244,6 @@
                             light.QueueIndex = ShadowDataBuffer.Count;
                             LightBuffer.Add(new((DirectionalLight)light));
                             ShadowDataBuffer.Add(new((DirectionalLight)light, DirectionalLight.ShadowMapSize));
-                            //forwardSrvs[14] = forwardClusterdSrvs[16] = deferredSrvs[9] = deferredClusterdSrvs[11] = (void*)light.GetShadowMap()?.NativePointer;
                             ((DirectionalLight)light).UpdateShadowBuffer(ShadowDataBuffer, camera);
                             csmCount++;
                             break;

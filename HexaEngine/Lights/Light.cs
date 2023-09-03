@@ -49,7 +49,7 @@
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty<ShadowUpdateMode>("Update Mode")]
-        public ShadowUpdateMode ShadowMapUpdateMode { get; set; }
+        public ShadowUpdateMode ShadowMapUpdateMode { get; set; } = ShadowUpdateMode.OnDemand;
 
         [EditorCategory("Shadow Map", "Shadows")]
         [EditorProperty<ShadowResolution>("Resolution")]
