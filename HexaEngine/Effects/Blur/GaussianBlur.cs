@@ -23,7 +23,7 @@
             public float padd;
         }
 
-        public GaussianBlur(IGraphicsDevice device, Format format, int width, int height, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        public GaussianBlur(IGraphicsDevice device, Format format, int width, int height, bool alphaBlend = false, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
             horizontal = device.CreateGraphicsPipeline(new()
             {
@@ -36,7 +36,7 @@
                 PixelShader = "effects/blur/vertical.hlsl"
             }, new GraphicsPipelineState()
             {
-                Blend = BlendDescription.AlphaBlend,
+                Blend = alphaBlend ? BlendDescription.AlphaBlend : BlendDescription.Opaque,
                 BlendFactor = Vector4.One,
                 Topology = PrimitiveTopology.TriangleStrip
             });

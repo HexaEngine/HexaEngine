@@ -7,7 +7,7 @@
     public unsafe class Material : IDisposable
     {
         private readonly string name;
-        public MaterialData desc;
+        private MaterialData desc;
 
         public ResourceInstance<MaterialShader>? Shader;
 
@@ -26,6 +26,8 @@
         public string Name => name;
 
         public bool IsUsed => Volatile.Read(ref instances) != 0;
+
+        public MaterialData Desc => desc;
 
         public bool BeginDrawForward(IGraphicsContext context)
         {

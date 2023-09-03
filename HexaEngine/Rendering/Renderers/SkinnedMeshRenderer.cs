@@ -43,6 +43,16 @@
             offsetBuffer = new(device, CpuAccessFlags.Write);
         }
 
+        public SkinnedMeshRenderer(IGraphicsDevice device, StructuredBuffer<Matrix4x4> transformBuffer, StructuredBuffer<uint> transformOffsetBuffer, StructuredBuffer<Matrix4x4> boneTransformBuffer, StructuredBuffer<uint> boneTransformOffsetBuffer)
+        {
+            this.transformBuffer = transformBuffer;
+            this.transformOffsetBuffer = transformOffsetBuffer;
+            this.boneTransformBuffer = boneTransformBuffer;
+            this.boneTransformOffsetBuffer = boneTransformOffsetBuffer;
+            offsetBuffer = new(device, CpuAccessFlags.Write);
+            sharedBuffers = true;
+        }
+
         public void Initialize(SkinnedModel model)
         {
             globals = model.Globals;

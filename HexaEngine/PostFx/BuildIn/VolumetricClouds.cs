@@ -79,7 +79,7 @@
             worleyTex = new(device, new TextureFileDescription(Paths.CurrentAssetsPath + "textures/clouds/worley.dds"));
 
             intermediateTex = new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height);
+            gaussianBlur = new(device, Format.R16G16B16A16Float, width, height, true);
         }
 
         public override void Update(IGraphicsContext context)

@@ -4,7 +4,6 @@ namespace HexaEngine.Rendering.Renderers
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Resources;
     using System;
     using System.Numerics;
 
@@ -15,8 +14,7 @@ namespace HexaEngine.Rendering.Renderers
         private readonly IGraphicsContext context;
         private readonly IGraphicsPipeline pipeline;
         private readonly IBuffer constantBuffer;
-        private readonly ResourceRef<IDepthStencilView> dsv;
-        private readonly ResourceRef<Texture2D> rtv;
+
         private IBuffer vertexBuffer;
         private IBuffer indexBuffer;
 
@@ -56,9 +54,6 @@ namespace HexaEngine.Rendering.Renderers
             vertexBuffer = device.CreateBuffer(new BufferDescription(vertexBufferSize * sizeof(DebugDrawVert), BindFlags.VertexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             indexBuffer = device.CreateBuffer(new BufferDescription(indexBufferSize * sizeof(int), BindFlags.IndexBuffer, Usage.Dynamic, CpuAccessFlags.Write));
             constantBuffer = device.CreateBuffer(new BufferDescription(sizeof(Matrix4x4), BindFlags.ConstantBuffer, Usage.Dynamic, CpuAccessFlags.Write));
-
-            dsv = ResourceManager2.Shared.GetDepthStencilView("GBuffer.DepthStencil");
-            rtv = ResourceManager2.Shared.GetTexture("LightBuffer");
         }
 
         public void BeginDraw()
@@ -69,10 +64,6 @@ namespace HexaEngine.Rendering.Renderers
         public void EndDraw()
         {
             DebugDraw.Render();
-            if (rtv.Value == null)
-            {
-                return;
-            }
             context.SetRenderTarget(swapChain.BackbufferRTV, null);
             context.SetViewport(DebugDraw.GetViewport());
             Render(DebugDraw.GetQueue(), DebugDraw.GetCamera());

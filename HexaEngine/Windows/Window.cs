@@ -70,11 +70,7 @@
             running = true;
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
-#if PROFILE
-            graphicsDevice.Profiler.CreateBlock("Total");
-            graphicsDevice.Profiler.CreateBlock("DebugDraw");
-            graphicsDevice.Profiler.CreateBlock("ImGui");
-#endif
+
             graphicsContext = graphicsDevice.Context;
             swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             swapChain.Active = true;
@@ -224,6 +220,8 @@
 
             OnRender(context);
 
+            context.SetRenderTarget(swapChain.BackbufferRTV, null);
+
             if (Application.InEditorMode)
             {
 #if PROFILE
@@ -241,7 +239,6 @@
             Device.Profiler.Begin(Context, "ImGui");
             sceneRenderer.Profiler.Begin("ImGui");
 #endif
-            context.SetRenderTarget(swapChain.BackbufferRTV, null);
             imGuiRenderer?.EndFrame();
 #if PROFILE
             sceneRenderer.Profiler.End("ImGui");

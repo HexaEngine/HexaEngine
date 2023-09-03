@@ -629,6 +629,12 @@
             CalcTangentsProcess.ProcessMesh2(this);
         }
 
+        public void GenerateBounds()
+        {
+            Box = BoundingBoxHelper.Compute(Positions);
+            Sphere = BoundingSphere.CreateFromBoundingBox(Box);
+        }
+
         public void Debone()
         {
             BoneCount = 0;

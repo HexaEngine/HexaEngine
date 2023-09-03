@@ -25,5 +25,10 @@
         /// Indicates if one or more shaders have errors.
         /// </summary>
         bool IsValid { get; }
+
+        /// <summary>
+        /// Indicates that the pipeline is ready to draw
+        /// </summary>
+        bool IsReady => IsInitialized && IsValid;
     }
 }

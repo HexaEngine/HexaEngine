@@ -563,6 +563,15 @@
 		<None Update="assets\shared\shaders\light.hlsl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\tools\mesh\basic\defs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\mesh\basic\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\tools\mesh\basic\vs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\tools\terrain\edit\brush\defs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -760,6 +769,8 @@
 
 
 	<ItemGroup>
+	  <Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
+	  <Folder Include="assets\shared\shaders\tools\mesh\textured\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
 	</ItemGroup>
 </Project>

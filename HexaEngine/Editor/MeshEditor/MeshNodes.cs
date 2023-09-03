@@ -17,7 +17,7 @@
             IsShown = true;
         }
 
-        protected override string Name => "Model GameObjects";
+        protected override string Name => "Model Nodes";
 
         public Node? Selected => selected;
 

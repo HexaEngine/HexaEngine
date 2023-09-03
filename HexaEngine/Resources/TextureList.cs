@@ -4,15 +4,15 @@
     using HexaEngine.Core.IO.Materials;
     using System.Collections;
 
-    public unsafe class MaterialTextureList : IList<ResourceInstance<MaterialTexture>?>, IDisposable
+    public unsafe class TextureList : IList<MaterialTexture>, IDisposable
     {
         private const uint DefaultCapacity = 4;
-        private readonly List<ResourceInstance<MaterialTexture>?> textures = new();
+        private readonly List<MaterialTexture> textures = new();
         private uint capacity;
         private uint count;
         private uint startSlot;
 
-        public MaterialTextureList()
+        public TextureList()
         {
             capacity = DefaultCapacity;
             shaderResourceViews = AllocArray(capacity);
@@ -35,9 +35,9 @@
 
         public void** Samplers => samplers;
 
-        public bool IsReadOnly => ((ICollection<ResourceInstance<MaterialTexture>>)textures).IsReadOnly;
+        public bool IsReadOnly => false;
 
-        public ResourceInstance<MaterialTexture>? this[int index]
+        public MaterialTexture this[int index]
         {
             get => textures[index];
             set => textures[index] = value;
@@ -62,12 +62,12 @@
             }
         }
 
-        public void Add(ResourceInstance<MaterialTexture>? texture)
+        public void Add(MaterialTexture texture)
         {
             textures.Add(texture);
         }
 
-        public void Remove(ResourceInstance<MaterialTexture> texture)
+        public void Remove(MaterialTexture texture)
         {
             textures.Remove(texture);
         }
@@ -82,12 +82,12 @@
             {
                 var texture = textures[i];
 
-                if (texture == null || texture.Value == null)
+                if (texture == null)
                 {
                     continue;
                 }
 
-                var slot = GetIndexFor(texture.Value.Desc.Type);
+                var slot = GetIndexFor(texture.Desc.Type);
 
                 if (slot == uint.MaxValue)
                 {
@@ -95,8 +95,8 @@
                 }
 
                 EnsureCapacity(slot + 1);
-                shaderResourceViews[slot] = (void*)texture.Value.ShaderResourceView.NativePointer;
-                samplers[slot] = (void*)texture.Value.Sampler.NativePointer;
+                shaderResourceViews[slot] = (void*)texture.ShaderResourceView.NativePointer;
+                samplers[slot] = (void*)texture.Sampler.NativePointer;
                 count = Math.Max(slot + 1, count);
                 startSlot = Math.Min(slot, startSlot);
             }
@@ -108,24 +108,24 @@
             {
                 var texture = textures[i];
 
-                if (texture == null || texture.Value == null)
+                if (texture == null)
                 {
                     continue;
                 }
 
-                var slot = GetIndexFor(texture.Value.Desc.Type);
+                var slot = GetIndexFor(texture.Desc.Type);
 
                 if (slot == uint.MaxValue)
                 {
                     continue;
                 }
 
-                context.PSSetShaderResource(slot, texture.Value.ShaderResourceView);
-                context.PSSetSampler(slot, texture.Value.Sampler);
+                context.PSSetShaderResource(slot, texture.ShaderResourceView);
+                context.PSSetSampler(slot, texture.Sampler);
             }
         }
 
-        public bool Contains(ResourceInstance<MaterialTexture>? texture)
+        public bool Contains(MaterialTexture texture)
         {
             return textures.Contains(texture);
         }
@@ -177,7 +177,7 @@
             }
         }
 
-        ~MaterialTextureList()
+        ~TextureList()
         {
             Dispose(disposing: false);
         }
@@ -188,14 +188,14 @@
             GC.SuppressFinalize(this);
         }
 
-        public int IndexOf(ResourceInstance<MaterialTexture>? item)
+        public int IndexOf(MaterialTexture item)
         {
-            return ((IList<ResourceInstance<MaterialTexture>?>)textures).IndexOf(item);
+            return ((IList<MaterialTexture>)textures).IndexOf(item);
         }
 
-        public void Insert(int index, ResourceInstance<MaterialTexture>? item)
+        public void Insert(int index, MaterialTexture item)
         {
-            ((IList<ResourceInstance<MaterialTexture>?>)textures).Insert(index, item);
+            ((IList<MaterialTexture>)textures).Insert(index, item);
         }
 
         public void RemoveAt(int index)
@@ -211,19 +211,19 @@
             ((ICollection<MaterialTexture>)textures).Clear();
         }
 
-        public void CopyTo(ResourceInstance<MaterialTexture>[] array, int arrayIndex)
+        public void CopyTo(MaterialTexture[] array, int arrayIndex)
         {
-            ((ICollection<ResourceInstance<MaterialTexture>?>)textures).CopyTo(array, arrayIndex);
+            ((ICollection<MaterialTexture>)textures).CopyTo(array, arrayIndex);
         }
 
-        bool ICollection<ResourceInstance<MaterialTexture>?>.Remove(ResourceInstance<MaterialTexture>? item)
+        bool ICollection<MaterialTexture>.Remove(MaterialTexture item)
         {
-            return ((ICollection<ResourceInstance<MaterialTexture>?>)textures).Remove(item);
+            return ((ICollection<MaterialTexture>)textures).Remove(item);
         }
 
-        public IEnumerator<ResourceInstance<MaterialTexture>?> GetEnumerator()
+        public IEnumerator<MaterialTexture> GetEnumerator()
         {
-            return ((IEnumerable<ResourceInstance<MaterialTexture>?>)textures).GetEnumerator();
+            return ((IEnumerable<MaterialTexture>)textures).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

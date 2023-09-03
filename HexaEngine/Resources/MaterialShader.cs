@@ -403,7 +403,7 @@ namespace HexaEngine.Resources
             initialized = true;
         }
 
-        public void Recompile()
+        public void Reload()
         {
             initialized = false;
             forward.Dispose();
@@ -415,7 +415,7 @@ namespace HexaEngine.Resources
             Compile();
         }
 
-        public async Task RecompileAsync()
+        public async Task ReloadAsync()
         {
             initialized = false;
             forward.Dispose();
@@ -425,6 +425,18 @@ namespace HexaEngine.Resources
             osm.Dispose();
             psm.Dispose();
             await CompileAsync();
+        }
+
+        public void Recompile()
+        {
+            initialized = false;
+            forward.Recompile();
+            deferred.Recompile();
+            depthOnly.Recompile();
+            csm.Recompile();
+            osm.Recompile();
+            psm.Recompile();
+            initialized = true;
         }
 
         public bool BeginDrawForward(IGraphicsContext context)
