@@ -67,7 +67,7 @@
         /// <summary>
         /// Creates a new instance of the <see cref="SdlWindow"/> class.
         /// </summary>
-        public SdlWindow()
+        public SdlWindow(WindowFlags flags = WindowFlags.Resizable)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -78,18 +78,39 @@
                 Kind = NativeWindowFlags.Sdl;
             }
 
-            PlatformConstruct();
+            PlatformConstruct(flags);
+        }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="SdlWindow"/> class.
+        /// </summary>
+        public SdlWindow(int x, int y, int width, int height, WindowFlags flags = WindowFlags.Resizable)
+        {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Kind = NativeWindowFlags.Win32;
+            }
+            else
+            {
+                Kind = NativeWindowFlags.Sdl;
+            }
+
+            PlatformConstruct(flags);
         }
 
         /// <summary>
         /// Method called to construct the platform-specific window.
         /// </summary>
-        internal void PlatformConstruct()
+        internal void PlatformConstruct(WindowFlags flags)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(title);
             byte* ptr = (byte*)Unsafe.AsPointer(ref bytes[0]);
 
-            WindowFlags flags = WindowFlags.Resizable | WindowFlags.Hidden;
+            flags |= WindowFlags.Hidden;
 
             switch (Application.GraphicsBackend)
             {
@@ -318,12 +339,12 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether the mouse is hovering over the window.
+        /// Gets a _value indicating whether the mouse is hovering over the window.
         /// </summary>
         public bool Hovering => hovering;
 
         /// <summary>
-        /// Gets a value indicating whether the window has input focus.
+        /// Gets a _value indicating whether the window has input focus.
         /// </summary>
         public bool Focused => focused;
 
@@ -360,7 +381,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the cursor is locked to the window.
+        /// Gets or sets a _value indicating whether the cursor is locked to the window.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public bool LockCursor
@@ -375,7 +396,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the window is resizable.
+        /// Gets or sets a _value indicating whether the window is resizable.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public bool Resizable
@@ -390,7 +411,7 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the window has a border.
+        /// Gets or sets a _value indicating whether the window has a border.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public bool Bordered

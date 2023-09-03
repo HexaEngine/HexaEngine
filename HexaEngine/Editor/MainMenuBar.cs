@@ -5,8 +5,11 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
+    using HexaEngine.Resources;
     using HexaEngine.Scenes;
     using ImGuiNET;
+    using System;
+    using System.Diagnostics;
 
     public static class MainMenuBar
     {
@@ -20,6 +23,9 @@
         private static Action<SaveFileResult, SaveFileDialog>? fileSaverCallback;
         private static Task? recompileShadersTask;
         private static bool recompileShadersTaskIsComplete = true;
+        private static float progress = -1;
+        private static string? progressOverlay;
+        private static long progressOverlayTime;
 
         public static bool IsShown { get => isShown; set => isShown = value; }
 
@@ -84,7 +90,7 @@
                 }
                 if (ImGui.BeginMenu("View"))
                 {
-                    WidgetManager.DrawMenu();
+                    WindowManager.DrawMenu();
 
                     ImGui.EndMenu();
                 }
@@ -213,13 +219,25 @@
                 if (ImGui.BeginMenu("Debug"))
                 {
                     ImGui.TextDisabled("Shaders");
-                    if (ImGui.MenuItem("Recompile Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
+                    if (ImGui.MenuItem("Reload All Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
                     {
                         recompileShadersTaskIsComplete = false;
                         recompileShadersTask = Task.Run(() =>
                         {
                             ShaderCache.Clear();
                             PipelineManager.Recompile();
+                        }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
+                    }
+                    if (ImGui.MenuItem("Reload Material Shaders", (byte*)null, false, recompileShadersTaskIsComplete))
+                    {
+                        recompileShadersTaskIsComplete = false;
+                        recompileShadersTask = Task.Run(() =>
+                        {
+                            progressOverlay = "Reload Shaders";
+                            progress = 0.1f;
+                            ResourceManager.RecompileShaders();
+                            progress = 1;
+                            progressOverlay = "Reload Shaders Done";
                         }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });
                     }
                     if (ImGui.MenuItem("Clear Shader Cache"))
@@ -237,6 +255,21 @@
                 }
 
                 height = ImGui.GetWindowHeight();
+
+                if (progress != -1)
+                {
+                    ImGui.ProgressBar(progress, new(200, 0), progressOverlay);
+                    if (progress == 1 && progressOverlayTime == 0)
+                    {
+                        progressOverlayTime = Stopwatch.GetTimestamp() + Stopwatch.Frequency;
+                    }
+                    else if (progressOverlayTime != 0 && progressOverlayTime < Stopwatch.GetTimestamp())
+                    {
+                        progress = -1;
+                        progressOverlay = null;
+                        progressOverlayTime = 0;
+                    }
+                }
 
                 ImGui.EndMainMenuBar();
             }

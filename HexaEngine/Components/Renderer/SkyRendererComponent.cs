@@ -27,6 +27,9 @@
         private SkyType skyType;
 
         [JsonIgnore]
+        public string DebugName { get; private set; } = nameof(SkyRenderer);
+
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
 
         [JsonIgnore]
@@ -56,6 +59,7 @@
 
         public async void Awake(IGraphicsDevice device, GameObject gameObject)
         {
+            DebugName = gameObject.Name + DebugName;
             this.gameObject = gameObject;
             this.device = device;
             renderer = new(device);

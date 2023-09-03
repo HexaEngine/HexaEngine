@@ -18,7 +18,7 @@
 
         public Shader* Clone()
         {
-            Shader* result = Alloc<Shader>();
+            Shader* result = AllocT<Shader>();
             result->Bytecode = AllocCopy(Bytecode, (int)Length);
             result->Length = Length;
             return result;
@@ -26,7 +26,7 @@
 
         public static Shader* CreateFrom(byte[] bytes)
         {
-            Shader* result = Alloc<Shader>();
+            Shader* result = AllocT<Shader>();
             fixed (byte* ptr = bytes)
             {
                 result->Bytecode = AllocCopy(ptr, bytes.Length);
@@ -51,7 +51,7 @@
             byte[] bytes = new byte[Length];
             fixed (byte* ptr = bytes)
             {
-                MemoryCopy(Bytecode, ptr, Length, Length);
+                Memcpy(Bytecode, ptr, Length, Length);
             }
             return bytes;
         }

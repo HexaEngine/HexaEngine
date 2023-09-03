@@ -2,10 +2,8 @@
 {
     using HexaEngine.Components.Renderer;
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Terrains;
@@ -18,8 +16,6 @@
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
-    using System.Buffers.Binary;
-    using System.Diagnostics;
     using System.Numerics;
     using System.Text;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
@@ -196,7 +192,7 @@
 
             if (ImGui.CollapsingHeader("Layers"))
             {
-                if (ImGui.Button("Add Layer"))
+                if (ImGui.Button("ObjectAdded Layer"))
                 {
                     grid.Layers.Add(new("New Layer"));
                 }
@@ -284,7 +280,7 @@
 
                     if (ImGui.TreeNode($"{cell.ID}"))
                     {
-                        if (cell.Right == null && ImGui.Button($"{cell.ID} Add Tile X+"))
+                        if (cell.Right == null && ImGui.Button($"{cell.ID} ObjectAdded Tile X+"))
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
@@ -301,7 +297,7 @@
                             ImGui.SameLine();
                         }
 
-                        if (cell.Top == null && ImGui.Button($"{cell.ID} Add Tile Z+"))
+                        if (cell.Top == null && ImGui.Button($"{cell.ID} ObjectAdded Tile Z+"))
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
@@ -404,13 +400,13 @@
                                 context.PSSetConstantBuffer(0, maskBuffer);
                                 context.SetRenderTarget(tuple.Value.Item2.RTV, depthStencil.DSV);
                                 context.SetGraphicsPipeline(maskEdit);
-                                context.SetViewport(tuple.Value.Item2.RTV.Viewport);
+                                context.SetViewport(tuple.Value.Item2.Viewport);
 
                                 Matrix4x4.Invert(cell.Transform, out var inverse);
-                                var tlSize = tuple.Value.Item2.RTV.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
+                                var tlSize = tuple.Value.Item2.Viewport.Size / new Vector2(cell.BoundingBox.Size.X, cell.BoundingBox.Size.Z);
                                 var vpSize = new Vector2(size) * tlSize;
                                 var local = Vector3.Transform(position, inverse);
-                                var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.RTV.Viewport.Size - vpSize / 2f;
+                                var pos = new Vector2(local.X, local.Z) / tlSize * tuple.Value.Item2.Viewport.Size - vpSize / 2f;
 
                                 context.SetViewport(new(pos, vpSize));
                                 context.DrawInstanced(4, 1, 0, 0);
@@ -471,7 +467,7 @@
         private MaterialValueType newPropValueType;
 
         private string newTexPath = string.Empty;
-        private TextureType newTexType;
+        private MaterialTextureType newTexType;
 
         public bool EditMaterial(MaterialManager manager, MaterialData material)
         {
@@ -482,7 +478,7 @@
                 manager.Rename(material.Name, name);
             }
 
-            if (ImGui.Button("Add Property"))
+            if (ImGui.Button("ObjectAdded Property"))
             {
                 ImGui.OpenPopup("AddMaterialProperty");
             }
@@ -500,7 +496,7 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     var props = material.Properties;
                     ArrayUtils.Add(ref props, new(newPropName, newPropType, newPropValueType, default, default, new byte[MaterialProperty.GetByteCount(newPropValueType)]));
@@ -527,14 +523,14 @@
 
             ImGui.Separator();
 
-            if (ImGui.Button("Add Texture"))
+            if (ImGui.Button("ObjectAdded Texture"))
             {
                 ImGui.OpenPopup("AddMaterialTexture");
             }
 
             if (ImGui.BeginPopup("AddMaterialTexture", ImGuiWindowFlags.None))
             {
-                ComboEnumHelper<TextureType>.Combo("Type", ref newTexType);
+                ComboEnumHelper<MaterialTextureType>.Combo("Type", ref newTexType);
                 ImGui.InputText("Path", ref newTexPath, 256);
 
                 if (ImGui.Button("Cancel"))
@@ -542,7 +538,7 @@
                     ImGui.CloseCurrentPopup();
                 }
                 ImGui.SameLine();
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     var textures = material.Textures;
                     ArrayUtils.Add(ref textures, new(newTexType, newTexPath, BlendMode.Default, TextureOp.None, 0, 0, TextureMapMode.Wrap, TextureMapMode.Wrap, TextureFlags.None));
@@ -647,7 +643,7 @@
             }
 
             bool result = false;
-            //TODO: Add new material texture system
+            //TODO: ObjectAdded new material texture system
             if (hasChanged && !isActive)
             {
                 manager.Update(material);

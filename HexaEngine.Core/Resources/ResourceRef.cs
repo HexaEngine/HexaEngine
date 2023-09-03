@@ -3,6 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
+    [Obsolete("Do not use! Will be removed soon!")]
     public class ResourceRef
     {
         private IDisposable? _value;
@@ -36,6 +37,7 @@
         }
     }
 
+    [Obsolete("Do not use! Will be removed soon!")]
     public class ResourceRefNotNull
     {
         private readonly ResourceRef resource;
@@ -70,6 +72,7 @@
         public ResourceRef Resource => resource;
     }
 
+    [Obsolete("Do not use! Will be removed soon!")]
     public class ResourceRef<T> where T : class, IDisposable
     {
         private readonly ResourceRef resource;
@@ -104,6 +107,7 @@
         public event EventHandler<T?>? ValueChanged;
     }
 
+    [Obsolete("Do not use! Will be removed soon!")]
     public class ResourceRefNotNull<T> where T : class, IDisposable
     {
         private readonly ResourceRefNotNull resource;

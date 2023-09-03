@@ -5,5 +5,6 @@
         None = 0,
         Drawable,
         Bone,
+        Reference
     }
 }

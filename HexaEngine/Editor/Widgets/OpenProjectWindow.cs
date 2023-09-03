@@ -123,7 +123,7 @@
                 }
                 if (ImGui.BeginPopupContextItem())
                 {
-                    if (ImGui.MenuItem($"Remove from List##{i}"))
+                    if (ImGui.MenuItem($"ObjectRemoved from List##{i}"))
                     {
                         ProjectHistory.RemoveEntryByPath(historyEntry.Path);
                     }

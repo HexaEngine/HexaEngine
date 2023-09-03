@@ -85,7 +85,7 @@ namespace HexaEngine.Editor.Dialogs
 
 #pragma warning disable CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
 
-        public OpenFileDialog(string startingPath, string? searchFilter = null)
+        public OpenFileDialog(string? startingPath = null, string? searchFilter = null)
 #pragma warning restore CS8618 // Non-nullable field 'currentFolder' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         {
             if (File.Exists(startingPath))
@@ -94,11 +94,7 @@ namespace HexaEngine.Editor.Dialogs
             }
             else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
             {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
-                {
-                    startingPath = AppContext.BaseDirectory;
-                }
+                startingPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             }
 
             if (searchFilter != null)
@@ -113,6 +109,7 @@ namespace HexaEngine.Editor.Dialogs
                 }
 
                 AllowedExtensions.AddRange(searchFilter.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries));
+                OnlyAllowFilteredExtensions = true;
             }
 
             currentDir = new DirectoryInfo(startingPath);

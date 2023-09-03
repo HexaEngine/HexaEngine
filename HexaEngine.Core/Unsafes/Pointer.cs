@@ -127,7 +127,7 @@
         /// </summary>
         public Pointer()
         {
-            Data = Alloc<T>();
+            Data = AllocT<T>();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether the <see cref="Pointer{T}"/> is null.
+        /// Gets a _value indicating whether the <see cref="Pointer{T}"/> is null.
         /// </summary>
         public bool IsNull => Data == null;
 

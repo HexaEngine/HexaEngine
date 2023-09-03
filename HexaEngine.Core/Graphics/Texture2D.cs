@@ -71,7 +71,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -162,7 +162,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -221,7 +221,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -280,7 +280,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -342,12 +342,12 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
 
                 for (int i = 0; i < description.ArraySize; i++)
                 {
-                    ArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2D, firstArraySlice: i, arraySize: 1), new(width, height));
+                    ArraySlices[i] = device.CreateRenderTargetView(texture, new RenderTargetViewDescription(texture, RenderTargetViewDimension.Texture2D, firstArraySlice: i, arraySize: 1));
                     ArraySlices[i].DebugName = dbgName + $".RTV.{i}";
                 }
             }
@@ -589,7 +589,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
         }

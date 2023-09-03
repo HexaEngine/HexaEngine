@@ -39,21 +39,21 @@
             Duration = stream.ReadDouble(Header.Endianness);
             TicksPerSecond = stream.ReadDouble(Header.Endianness);
 
-            var nodeChannelCount = stream.ReadInt(Header.Endianness);
+            var nodeChannelCount = stream.ReadInt32(Header.Endianness);
             NodeChannels = new(nodeChannelCount);
             for (int i = 0; i < nodeChannelCount; i++)
             {
                 NodeChannels.Add(NodeChannel.ReadFrom(stream, Header.Encoding, Header.Endianness));
             }
 
-            var meshChannelCount = stream.ReadInt(Header.Endianness);
+            var meshChannelCount = stream.ReadInt32(Header.Endianness);
             MeshChannels = new(meshChannelCount);
             for (int i = 0; i < meshChannelCount; i++)
             {
                 MeshChannels.Add(MeshChannel.ReadFrom(stream, Header.Encoding, Header.Endianness));
             }
 
-            var morphMeshChannelCount = stream.ReadInt(Header.Endianness);
+            var morphMeshChannelCount = stream.ReadInt32(Header.Endianness);
             MorphMeshChannels = new(morphMeshChannelCount);
             for (int i = 0; i < morphMeshChannelCount; i++)
             {
@@ -100,17 +100,17 @@
             stream.WriteString(Name, encoding, endianness);
             stream.WriteDouble(Duration, endianness);
             stream.WriteDouble(TicksPerSecond, endianness);
-            stream.WriteInt(NodeChannels.Count, endianness);
+            stream.WriteInt32(NodeChannels.Count, endianness);
             for (int i = 0; i < NodeChannels.Count; i++)
             {
                 NodeChannels[i].Write(stream, encoding, endianness);
             }
-            stream.WriteInt(MeshChannels.Count, endianness);
+            stream.WriteInt32(MeshChannels.Count, endianness);
             for (int i = 0; i < MeshChannels.Count; i++)
             {
                 MeshChannels[i].Write(stream, encoding, endianness);
             }
-            stream.WriteInt(MorphMeshChannels.Count, endianness);
+            stream.WriteInt32(MorphMeshChannels.Count, endianness);
             for (int i = 0; i < MorphMeshChannels.Count; i++)
             {
                 MorphMeshChannels[i].Write(stream, encoding, endianness);

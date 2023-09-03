@@ -328,7 +328,7 @@
         private static void CheckIndexOverflow(uint value)
         {
             if (value >= uint.MaxValue)
-                throw new IndexOutOfRangeException("Index value out of range: cannot tesselate primitive so finely");
+                throw new IndexOutOfRangeException("Index _value out of range: cannot tesselate primitive so finely");
         }
     }
 }

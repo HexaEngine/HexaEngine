@@ -4,14 +4,15 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Blur;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
+    using HexaEngine.Rendering.Graph;
+    using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class SSAO : IEffect, IAmbientOcclusion
+    public class SSAO
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;
@@ -24,10 +25,10 @@ namespace HexaEngine.Effects.BuildIn
 
         private ISamplerState samplerLinear;
 
-        public ResourceRef<Texture2D> Output;
-        public ResourceRef<IBuffer> Camera;
-        public ResourceRef<IShaderResourceView> Depth;
-        public ResourceRef<IShaderResourceView> Normal;
+        private ResourceRef<Texture2D> ao;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<GBuffer> gbuffer;
 
         private bool disposedValue;
         private bool enabled;
@@ -63,20 +64,40 @@ namespace HexaEngine.Effects.BuildIn
 
         public string Name => "SSAO";
 
-        public bool Enabled { get => enabled; set => enabled = value; }
+        public bool Enabled
+        {
+            get => enabled;
+            set => enabled = value;
+        }
 
-        public float TapSize { get => tapSize; set => tapSize = value; }
+        public float TapSize
+        {
+            get => tapSize;
+            set => tapSize = value;
+        }
 
-        public uint NumTaps { get => numTaps; set => numTaps = value; }
+        public uint NumTaps
+        {
+            get => numTaps;
+            set => numTaps = value;
+        }
 
-        public float Power { get => power; set => power = value; }
+        public float Power
+        {
+            get => power;
+            set => power = value;
+        }
 
         #endregion Properties
 
-        public async Task Initialize(IGraphicsDevice device, int width, int height)
+        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height)
         {
             this.device = device;
-            Output = ResourceManager2.Shared.AddTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
+
+            ao = creator.GetTexture2D("#AOBuffer");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            gbuffer = creator.GetGBuffer("GBuffer");
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -91,7 +112,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = Alloc<float>(NoiseSize * NoiseSize * NoiseStride);
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;
@@ -109,10 +130,6 @@ namespace HexaEngine.Effects.BuildIn
                 noiseTex = new(device, description, initialData);
             }
 
-            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
-            Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
-            Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             viewport = new(width, height);
         }
@@ -123,8 +140,6 @@ namespace HexaEngine.Effects.BuildIn
 
         public void Resize(int width, int height)
         {
-            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
-
             intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             viewport = new(width, height);
@@ -132,14 +147,14 @@ namespace HexaEngine.Effects.BuildIn
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output is null)
+            if (ao is null)
             {
                 return;
             }
 
             if (!enabled)
             {
-                context.ClearRenderTargetView(Output.Value.RTV, Vector4.One);
+                context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
                 return;
             }
 
@@ -150,8 +165,8 @@ namespace HexaEngine.Effects.BuildIn
             ssaoParams.NoiseScale = viewport.Size / NoiseSize;
             paramsBuffer.Update(context, ssaoParams);
 
-            nint* srvs = stackalloc nint[] { Depth.Value.NativePointer, Normal.Value.NativePointer, noiseTex.SRV.NativePointer };
-            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, Camera.Value.NativePointer };
+            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
+            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.Value.NativePointer };
             context.SetRenderTarget(intermediateBuffer.RTV, null);
             context.SetViewport(viewport);
 
@@ -173,7 +188,7 @@ namespace HexaEngine.Effects.BuildIn
 
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, intermediateBuffer.SRV, Output.Value.RTV, (int)viewport.Width, (int)viewport.Height);
+            blur.Blur(context, intermediateBuffer.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
         }
 
         protected virtual unsafe void Dispose(bool disposing)

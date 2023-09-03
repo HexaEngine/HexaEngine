@@ -503,7 +503,7 @@
         /// </summary>
         /// <param dbgName="obj">The object to compare with the current instance.</param>
         /// <returns>
-        ///   <see langword="true" /> if <paramref dbgName="obj" /> and this instance are the same type and represent the same value; otherwise, <see langword="false" />.
+        ///   <see langword="true" /> if <paramref dbgName="obj" /> and this instance are the same type and represent the same _value; otherwise, <see langword="false" />.
         /// </returns>
         public override bool Equals(object? obj)
         {

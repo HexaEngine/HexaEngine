@@ -65,7 +65,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -127,7 +127,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -165,7 +165,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
         }
@@ -202,7 +202,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
             MemoryManager.Register(texture);
@@ -433,7 +433,7 @@
 
             if ((description.BindFlags & BindFlags.RenderTarget) != 0)
             {
-                rtv = device.CreateRenderTargetView(texture, new(width, height));
+                rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
         }

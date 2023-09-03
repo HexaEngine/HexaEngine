@@ -55,8 +55,8 @@
                 samplers = AllocArray(capacity);
                 ZeroMemory(samplers, (uint)(sizeof(nint) * capacity));
                 ZeroMemory(shaderResourceViews, (uint)(sizeof(nint) * capacity));
-                MemoryCopy(tmpShaderResourceViews, shaderResourceViews, capacity * sizeof(nint), oldCapacity * sizeof(nint));
-                MemoryCopy(tmpSamplers, samplers, capacity * sizeof(nint), oldCapacity * sizeof(nint));
+                Memcpy(tmpShaderResourceViews, shaderResourceViews, capacity * sizeof(nint), oldCapacity * sizeof(nint));
+                Memcpy(tmpSamplers, samplers, capacity * sizeof(nint), oldCapacity * sizeof(nint));
                 Free(tmpShaderResourceViews);
                 Free(tmpSamplers);
             }
@@ -130,33 +130,33 @@
             return textures.Contains(texture);
         }
 
-        public static uint GetIndexFor(TextureType type)
+        public static uint GetIndexFor(MaterialTextureType type)
         {
             return type switch
             {
-                TextureType.None => uint.MaxValue,
-                TextureType.Diffuse => 0,
-                TextureType.Specular => uint.MaxValue,
-                TextureType.Ambient => uint.MaxValue,
-                TextureType.Emissive => 4,
-                TextureType.Height => uint.MaxValue,
-                TextureType.Normal => 1,
-                TextureType.Shininess => uint.MaxValue,
-                TextureType.Opacity => uint.MaxValue,
-                TextureType.Displacement => uint.MaxValue,
-                TextureType.AmbientOcclusionRoughnessMetalness => 7,
-                TextureType.Reflection => uint.MaxValue,
-                TextureType.BaseColor => 0,
-                TextureType.NormalCamera => uint.MaxValue,
-                TextureType.EmissionColor => uint.MaxValue,
-                TextureType.Metalness => 3,
-                TextureType.Roughness => 2,
-                TextureType.AmbientOcclusion => 5,
-                TextureType.Sheen => uint.MaxValue,
-                TextureType.Clearcoat => uint.MaxValue,
-                TextureType.Transmission => uint.MaxValue,
-                TextureType.RoughnessMetalness => 6,
-                TextureType.Unknown => uint.MaxValue,
+                MaterialTextureType.None => uint.MaxValue,
+                MaterialTextureType.Diffuse => 0,
+                MaterialTextureType.Specular => uint.MaxValue,
+                MaterialTextureType.Ambient => uint.MaxValue,
+                MaterialTextureType.Emissive => 4,
+                MaterialTextureType.Height => uint.MaxValue,
+                MaterialTextureType.Normal => 1,
+                MaterialTextureType.Shininess => uint.MaxValue,
+                MaterialTextureType.Opacity => uint.MaxValue,
+                MaterialTextureType.Displacement => uint.MaxValue,
+                MaterialTextureType.AmbientOcclusionRoughnessMetalness => 7,
+                MaterialTextureType.Reflection => uint.MaxValue,
+                MaterialTextureType.BaseColor => 0,
+                MaterialTextureType.NormalCamera => uint.MaxValue,
+                MaterialTextureType.EmissionColor => uint.MaxValue,
+                MaterialTextureType.Metalness => 3,
+                MaterialTextureType.Roughness => 2,
+                MaterialTextureType.AmbientOcclusion => 5,
+                MaterialTextureType.Sheen => uint.MaxValue,
+                MaterialTextureType.Clearcoat => uint.MaxValue,
+                MaterialTextureType.Transmission => uint.MaxValue,
+                MaterialTextureType.RoughnessMetalness => 6,
+                MaterialTextureType.Unknown => uint.MaxValue,
                 _ => uint.MaxValue,
             };
         }
@@ -200,7 +200,7 @@
 
         public void RemoveAt(int index)
         {
-            ((IList<ResourceInstance<MaterialTexture>?>)textures).RemoveAt(index);
+            ((IList<MaterialTexture>)textures).RemoveAt(index);
             Update();
         }
 
@@ -208,7 +208,7 @@
         {
             startSlot = 0;
             count = 0;
-            ((ICollection<ResourceInstance<MaterialTexture>?>)textures).Clear();
+            ((ICollection<MaterialTexture>)textures).Clear();
         }
 
         public void CopyTo(ResourceInstance<MaterialTexture>[] array, int arrayIndex)

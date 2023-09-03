@@ -3,6 +3,8 @@
 namespace HexaEngine.Scenes
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Resources;
     using HexaEngine.Scenes.Serialization;
@@ -26,7 +28,7 @@ namespace HexaEngine.Scenes
         /// <summary>
         /// Occurs when [scene changed].
         /// </summary>
-        public static event EventHandler<SceneChangedEventArgs> SceneChanged;
+        public static event EventHandler<SceneChangedEventArgs>? SceneChanged;
 
         public static void Save()
         {
@@ -40,17 +42,36 @@ namespace HexaEngine.Scenes
                 return;
             }
 
-            SceneSerializer.Serialize(Current, Current.Path);
+            if (SceneSerializer.TrySerialize(Current, Current.Path, out var ex))
+            {
+                return;
+            }
+            else if (Application.InEditorMode)
+            {
+                MessageBox.Show("Failed to save scene", ex.Message);
+                Logger.Log(ex);
+            }
+            else
+            {
+                Logger.Throw(ex);
+            }
         }
 
         public static void Load(string path)
         {
-            Load(SceneSerializer.Deserialize(path));
-        }
-
-        public static void Load(IRenderWindow window, string path)
-        {
-            Load(window, SceneSerializer.Deserialize(path));
+            if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
+            {
+                Load(scene);
+            }
+            else if (Application.InEditorMode)
+            {
+                MessageBox.Show("Failed to load scene", ex.Message);
+                Logger.Log(ex);
+            }
+            else
+            {
+                Logger.Throw(ex);
+            }
         }
 
         /// <summary>
@@ -104,55 +125,6 @@ namespace HexaEngine.Scenes
             }, new Tuple<IRenderWindow, Scene>(window, scene));
         }
 
-        /// <summary>
-        /// Loads the specified scene and disposes the old Scene automatically.<br/>
-        /// Calls <see cref="Scene.Initialize"/> from <paramref dbgName="scene"/><br/>
-        /// Calls <see cref="Scene.Dispose"/> if <see cref="Current"/> != <see langword="null"/><br/>
-        /// Notifies <see cref="SceneChanged"/><br/>
-        /// Forces the GC to Collect.<br/>
-        /// </summary>
-        /// <param dbgName="scene">The scene.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Load(IRenderWindow window, Scene scene)
-        {
-            GameObject.Selected.ClearSelection();
-            window.Dispatcher.InvokeBlocking(state =>
-            {
-                var values = (Tuple<IRenderWindow, Scene>)state;
-                var window = values.Item1;
-                var scene = values.Item2;
-                if (Current == null)
-                {
-                    scene.Initialize(window.Device);
-                    Current = scene;
-                    SceneChanged?.Invoke(null, new(null, scene));
-                    return;
-                }
-                lock (Current)
-                {
-                    var old = Current;
-                    Current = null;
-                    if (scene == null)
-                    {
-                        old?.Uninitialize();
-                        ResourceManager.Release();
-                        Current = null;
-                    }
-                    else
-                    {
-                        old?.Uninitialize();
-                        ResourceManager.Release();
-                        scene.Initialize(window.Device);
-                        Current = scene;
-                    }
-
-                    SceneChanged?.Invoke(null, new(old, scene));
-                }
-                GC.WaitForPendingFinalizers();
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<IRenderWindow, Scene>(window, scene));
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Reload()
         {
@@ -163,11 +135,11 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     var window = (IRenderWindow)state;
-                    ResourceManager.BeginPauseCleanup();
+                    ResourceManager.BeginNoCleanupRegion();
                     Current?.Uninitialize();
                     Current.Initialize(window.Device);
                     SceneChanged?.Invoke(null, new(Current, Current));
-                    ResourceManager.EndPauseCleanup();
+                    ResourceManager.EndNoCleanupRegion();
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -184,7 +156,7 @@ namespace HexaEngine.Scenes
             {
                 lock (Current)
                 {
-                    ResourceManager.BeginPauseCleanup();
+                    ResourceManager.BeginNoCleanupRegion();
                     Current?.Uninitialize();
                 }
                 GC.WaitForPendingFinalizers();
@@ -203,7 +175,7 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     Current.Initialize(window.Device);
-                    ResourceManager.EndPauseCleanup();
+                    ResourceManager.EndNoCleanupRegion();
                     SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
@@ -213,12 +185,19 @@ namespace HexaEngine.Scenes
 
         public static async Task AsyncLoad(string path)
         {
-            await AsyncLoad(SceneSerializer.Deserialize(path));
-        }
-
-        public static async Task AsyncLoad(IRenderWindow window, string path)
-        {
-            await AsyncLoad(window, SceneSerializer.Deserialize(path));
+            if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
+            {
+                await AsyncLoad(scene);
+            }
+            else if (Application.InEditorMode)
+            {
+                MessageBox.Show("Failed to load scene", ex.Message);
+                Logger.Log(ex);
+            }
+            else
+            {
+                Logger.Throw(ex);
+            }
         }
 
         /// <summary>
@@ -232,52 +211,6 @@ namespace HexaEngine.Scenes
             GameObject.Selected.ClearSelection();
             var window = Application.MainWindow;
 
-            await window.Dispatcher.InvokeAsync(async state =>
-            {
-                var values = (Tuple<IRenderWindow, Scene>)state;
-                var window = values.Item1;
-                var scene = values.Item2;
-                if (Current == null)
-                {
-                    await scene.InitializeAsync(window.Device);
-                    Current = scene;
-                    SceneChanged?.Invoke(null, new(null, scene));
-                    return;
-                }
-                lock (Current)
-                {
-                    var old = Current;
-                    Current = null;
-                    if (scene == null)
-                    {
-                        old?.Uninitialize();
-                        ResourceManager.Release();
-                        Current = null;
-                    }
-                    else
-                    {
-                        old?.Uninitialize();
-                        ResourceManager.Release();
-                        scene.Initialize(window.Device);
-                        Current = scene;
-                    }
-
-                    SceneChanged?.Invoke(null, new(old, scene));
-                }
-                GC.WaitForPendingFinalizers();
-                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-            }, new Tuple<IRenderWindow, Scene>(window, scene));
-        }
-
-        /// <summary>
-        /// Asynchronouses loads the scene over <see cref="Load(Scene)"/>
-        /// </summary>
-        /// <param dbgName="scene">The scene.</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task AsyncLoad(IRenderWindow window, Scene scene)
-        {
-            GameObject.Selected.ClearSelection();
             await window.Dispatcher.InvokeAsync(async state =>
             {
                 var values = (Tuple<IRenderWindow, Scene>)state;

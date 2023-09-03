@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
     using HexaEngine.Core.Windows;
-    using HexaEngine.Mathematics;
     using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
@@ -70,10 +69,10 @@
         IBuffer CreateBuffer(BufferDescription description);
 
         /// <summary>
-        /// Creates a buffer with the given description and initial value.
+        /// Creates a buffer with the given description and initial _value.
         /// </summary>
-        /// <typeparam name="T">The type of the initial value.</typeparam>
-        /// <param name="value">The initial value of the buffer.</param>
+        /// <typeparam name="T">The type of the initial _value.</typeparam>
+        /// <param name="value">The initial _value of the buffer.</param>
         /// <param name="description">The description of the buffer.</param>
         /// <returns>The created buffer.</returns>
         IBuffer CreateBuffer<T>(T value, BufferDescription description) where T : unmanaged;
@@ -107,18 +106,18 @@
         /// Creates a render target view for a resource.
         /// </summary>
         /// <param name="resource">The resource to create the view for.</param>
-        /// <param name="viewport">The viewport associated with the render target.</param>
+        ///
         /// <returns>The created render target view.</returns>
-        IRenderTargetView CreateRenderTargetView(IResource resource, Viewport viewport);
+        IRenderTargetView CreateRenderTargetView(IResource resource);
 
         /// <summary>
         /// Creates a render target view for a resource.
         /// </summary>
         /// <param name="resource">The resource to create the view for.</param>
         /// <param name="description">The description of the render target view.</param>
-        /// <param name="viewport">The viewport associated with the render target.</param>
+        ///
         /// <returns>The created render target view.</returns>
-        IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description, Viewport viewport);
+        IRenderTargetView CreateRenderTargetView(IResource resource, RenderTargetViewDescription description);
 
         /// <summary>
         /// Creates a shader resource view for a resource.

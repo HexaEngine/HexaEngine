@@ -49,10 +49,10 @@
         /// <summary>
         /// Gets the default allocator.
         /// </summary>
-        public static readonly unsafe Allocator* Default = Alloc<Allocator>();
+        public static readonly unsafe Allocator* Default = Utils.AllocT<Allocator>();
 
         /// <inheritdoc/>
-        public unsafe void* Allocate(nint width)
+        public unsafe void* Alloc(nint width)
         {
             byte* result = (byte*)Marshal.AllocHGlobal(width);
             for (nint i = 0; i < width; i++)
@@ -64,7 +64,21 @@
         }
 
         /// <inheritdoc/>
-        public unsafe void** Allocate(uint width, uint height)
+        public unsafe void* ReAlloc(void* pv, nint width)
+        {
+            byte* result = (byte*)Marshal.ReAllocHGlobal((nint)pv, width);
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public unsafe T* ReAlloc<T>(T* pv, uint count) where T : unmanaged
+        {
+            T* result = (T*)Marshal.ReAllocHGlobal((nint)pv, (nint)(count * sizeof(T)));
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public unsafe void** Alloc(uint width, uint height)
         {
             uint size = width * height;
             byte* result = (byte*)Marshal.AllocHGlobal((nint)size);
@@ -77,39 +91,39 @@
         }
 
         /// <inheritdoc/>
-        public unsafe T* Allocate<T>() where T : unmanaged
+        public unsafe T* Alloc<T>() where T : unmanaged
         {
-            return (T*)Allocate(sizeof(T));
+            return (T*)Alloc(sizeof(T));
         }
 
         /// <inheritdoc/>
         public unsafe T* Allocate<T>(int count) where T : unmanaged
         {
-            return (T*)Allocate((nint)(sizeof(T) * count));
+            return (T*)Alloc((nint)(sizeof(T) * count));
         }
 
         /// <inheritdoc/>
-        public unsafe T* Allocate<T>(uint count) where T : unmanaged
+        public unsafe T* Alloc<T>(uint count) where T : unmanaged
         {
-            return (T*)Allocate((nint)(sizeof(T) * count));
+            return (T*)Alloc((nint)(sizeof(T) * count));
         }
 
         /// <inheritdoc/>
         public unsafe T* Allocate<T>(ulong count) where T : unmanaged
         {
-            return (T*)Allocate((nint)((ulong)sizeof(T) * count));
+            return (T*)Alloc((nint)((ulong)sizeof(T) * count));
         }
 
         /// <inheritdoc/>
         public unsafe T** AllocateArray<T>(int count) where T : unmanaged
         {
-            return (T**)Allocate((nint)(sizeof(nint) * count));
+            return (T**)Alloc((nint)(sizeof(nint) * count));
         }
 
         /// <inheritdoc/>
         public unsafe T** AllocateArray<T>(uint count) where T : unmanaged
         {
-            return (T**)Allocate((nint)(sizeof(nint) * count));
+            return (T**)Alloc((nint)(sizeof(nint) * count));
         }
 
         /// <inheritdoc/>

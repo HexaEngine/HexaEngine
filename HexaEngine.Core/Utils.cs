@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Concurrent;
     using System.Diagnostics;
+    using System.Drawing;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -183,10 +184,10 @@
         /// <returns>The pointer, must be freed after usage.</returns>
         public static char* ToUTF16(this string str)
         {
-            char* dst = Alloc<char>(str.Length + 1);
+            char* dst = AllocT<char>(str.Length + 1);
             fixed (char* src = str)
             {
-                MemoryCopy(src, dst, str.Length, str.Length);
+                MemcpyT(src, dst, str.Length, str.Length);
             }
             dst[str.Length] = '\0';
             return dst;
@@ -205,7 +206,7 @@
             T* result = (T*)Alloc(bytesToCopy);
             fixed (T* src = values)
             {
-                MemoryCopy(src, result, bytesToCopy, bytesToCopy);
+                MemcpyT(src, result, bytesToCopy, bytesToCopy);
             }
             return result;
         }
@@ -218,7 +219,7 @@
         public static byte* ToUTF8(this string str)
         {
             var byteCount = Encoding.UTF8.GetByteCount(str);
-            byte* dst = Alloc<byte>(Encoding.UTF8.GetByteCount(str) + 1);
+            byte* dst = AllocT<byte>(Encoding.UTF8.GetByteCount(str) + 1);
             fixed (char* src = str)
             {
                 Encoding.UTF8.GetBytes(src, str.Length, dst, byteCount);
@@ -276,51 +277,51 @@
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies an pointer to another pointer with the specified lengths.
         /// </summary>
         /// <param name="src">The source.</param>
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, uint dstLength, uint srcLength)
+        public static void Memcpy(void* src, void* dst, uint length)
         {
-            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+            Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies an pointer to another pointer with the specified lengths.
         /// </summary>
         /// <param name="src">The source.</param>
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, int dstLength, int srcLength)
+        public static void Memcpy(void* src, void* dst, int length)
         {
-            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+            Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies an pointer to another pointer with the specified lengths.
         /// </summary>
         /// <param name="src">The source.</param>
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, long dstLength, long srcLength)
+        public static void Memcpy(void* src, void* dst, long length)
         {
-            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+            Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies an pointer to another pointer with the specified lengths.
         /// </summary>
         /// <param name="src">The source.</param>
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, ulong dstLength, ulong srcLength)
+        public static void Memcpy(void* src, void* dst, ulong length)
         {
-            Buffer.MemoryCopy(src, dst, dstLength, srcLength);
+            Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
@@ -332,7 +333,7 @@
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy<T>(T* src, T* dst, uint dstLength, uint srcLength) where T : unmanaged
+        public static void MemcpyT<T>(T* src, T* dst, uint dstLength, uint srcLength) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, dstLength * sizeof(T), srcLength * sizeof(T));
         }
@@ -346,57 +347,9 @@
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy<T>(T* src, T* dst, int dstLength, int srcLength) where T : unmanaged
+        public static void MemcpyT<T>(T* src, T* dst, int dstLength, int srcLength) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, dstLength * sizeof(T), srcLength * sizeof(T));
-        }
-
-        /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
-        /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, uint length)
-        {
-            Buffer.MemoryCopy(src, dst, length, length);
-        }
-
-        /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
-        /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, int length)
-        {
-            Buffer.MemoryCopy(src, dst, length, length);
-        }
-
-        /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
-        /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, long length)
-        {
-            Buffer.MemoryCopy(src, dst, length, length);
-        }
-
-        /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
-        /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy(void* src, void* dst, ulong length)
-        {
-            Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
@@ -408,7 +361,7 @@
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy<T>(T* src, T* dst, uint length) where T : unmanaged
+        public static void MemcpyT<T>(T* src, T* dst, uint length) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, length * sizeof(T), length * sizeof(T));
         }
@@ -422,7 +375,7 @@
         /// <param name="dst">The DST.</param>
         /// <param name="dstLength">Length of the DST.</param>
         /// <param name="srcLength">Length of the source.</param>
-        public static void MemoryCopy<T>(T* src, T* dst, int length) where T : unmanaged
+        public static void MemcpyT<T>(T* src, T* dst, int length) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, length * sizeof(T), length * sizeof(T));
         }
@@ -456,7 +409,7 @@
         /// <param name="length">The length.</param>
         public static void ZeroMemoryT<T>(T* pointer, uint length) where T : unmanaged
         {
-            new Span<byte>(pointer, sizeof(T) * (int)length).Clear();
+            ZeroMemory(pointer, sizeof(T) * (int)length);
         }
 
         /// <summary>
@@ -466,7 +419,11 @@
         /// <param name="size">The size.</param>
         public static void ZeroMemory(void* pointer, uint size)
         {
-            new Span<byte>(pointer, (int)size).Clear();
+            byte* pointerCopy = (byte*)pointer;
+            for (uint i = 0; i < size; i++)
+            {
+                pointerCopy[i] = 0;
+            }
         }
 
         /// <summary>
@@ -477,6 +434,34 @@
         public static void ZeroMemory(void* pointer, int size)
         {
             new Span<byte>(pointer, size).Clear();
+        }
+
+        /// <summary>
+        /// Zeroes the specified pointer.
+        /// </summary>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="size">The size.</param>
+        public static void ZeroMemory(void* pointer, ulong size)
+        {
+            byte* pointerCopy = (byte*)pointer;
+            for (ulong i = 0; i < size; i++)
+            {
+                pointerCopy[i] = 0;
+            }
+        }
+
+        /// <summary>
+        /// Zeroes the specified pointer.
+        /// </summary>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="size">The size.</param>
+        public static void ZeroMemory(void* pointer, long size)
+        {
+            byte* pointerCopy = (byte*)pointer;
+            for (long i = 0; i < size; i++)
+            {
+                pointerCopy[i] = 0;
+            }
         }
 
         /// <summary>
@@ -499,7 +484,7 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="data">The struct.</param>
         /// <returns></returns>
-        public static T* Alloc<T>(T data) where T : unmanaged
+        public static T* AllocT<T>(T data) where T : unmanaged
         {
             T* result = (T*)Marshal.AllocHGlobal(sizeof(T));
             *result = data;
@@ -511,7 +496,7 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T* Alloc<T>() where T : unmanaged
+        public static T* AllocT<T>() where T : unmanaged
         {
             T* result = (T*)Marshal.AllocHGlobal(sizeof(T));
             *result = new T();
@@ -524,7 +509,7 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="count">The count.</param>
         /// <returns></returns>
-        public static T* Alloc<T>(int count) where T : unmanaged
+        public static T* AllocT<T>(int count) where T : unmanaged
         {
             return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
         }
@@ -535,19 +520,50 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="count">The count.</param>
         /// <returns></returns>
-        public static void* Malloc(nint count)
+        public static void* Alloc(nint count)
         {
             return (void*)Marshal.AllocHGlobal(count);
-        }  /// <summary>
+        }
 
-           /// Allocates the specified count of T.
-           /// </summary>
-           /// <typeparam name="T"></typeparam>
-           /// <param name="count">The count.</param>
-           /// <returns></returns>
-        public static void* Malloc(nuint count)
+        /// <summary>
+        /// Allocates the specified count of T.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
+        public static void* Alloc(nuint count)
         {
             return (void*)Marshal.AllocHGlobal((nint)count);
+        }
+
+        public static T* ReAllocT<T>(T* pointer, int count) where T : unmanaged
+        {
+            return (T*)Marshal.ReAllocHGlobal((nint)pointer, count * sizeof(T));
+        }
+
+        public static T* ReAllocT<T>(T* pointer, uint count) where T : unmanaged
+        {
+            return (T*)Marshal.ReAllocHGlobal((nint)pointer, (nint)(count * (uint)sizeof(T)));
+        }
+
+        public static T* ReAllocT<T>(T* pointer, nint count) where T : unmanaged
+        {
+            return (T*)Marshal.ReAllocHGlobal((nint)pointer, count * sizeof(T));
+        }
+
+        public static void* ReAlloc(void* pointer, int count)
+        {
+            return (void*)Marshal.ReAllocHGlobal((nint)pointer, count);
+        }
+
+        public static void* ReAlloc(void* pointer, uint count)
+        {
+            return (void*)Marshal.ReAllocHGlobal((nint)pointer, (nint)(count));
+        }
+
+        public static void* ReAlloc(void* pointer, nint count)
+        {
+            return (void*)Marshal.ReAllocHGlobal((nint)pointer, count);
         }
 
         /// <summary>
@@ -560,10 +576,10 @@
         public static T* AllocCopy<T>(T[] source) where T : unmanaged
         {
             int length = source.Length;
-            T* result = Alloc<T>(length);
+            T* result = AllocT<T>(length);
             fixed (T* pointer = source)
             {
-                MemoryCopy(pointer, result, length, length);
+                MemcpyT(pointer, result, length, length);
             }
 
             return result;
@@ -578,8 +594,8 @@
         /// <returns></returns>
         public static T* AllocCopy<T>(T* pointer, int length) where T : unmanaged
         {
-            T* result = Alloc<T>(length);
-            MemoryCopy(pointer, result, length, length);
+            T* result = AllocT<T>(length);
+            MemcpyT(pointer, result, length, length);
             return result;
         }
 
@@ -592,7 +608,7 @@
         public static void* AllocCopy(void* pointer, int length)
         {
             void* result = Alloc(length);
-            MemoryCopy(pointer, result, length, length);
+            Memcpy(pointer, result, length, length);
             return result;
         }
 
@@ -605,8 +621,8 @@
         /// <returns></returns>
         public static T* AllocCopy<T>(T* pointer, uint length) where T : unmanaged
         {
-            T* result = Alloc<T>(length);
-            MemoryCopy(pointer, result, length, length);
+            T* result = AllocT<T>(length);
+            MemcpyT(pointer, result, length, length);
             return result;
         }
 
@@ -619,7 +635,7 @@
         public static void* AllocCopy(void* pointer, uint length)
         {
             void* result = Alloc(length);
-            MemoryCopy(pointer, result, length, length);
+            Memcpy(pointer, result, length, length);
             return result;
         }
 
@@ -630,7 +646,7 @@
         /// <param name="count">The count.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public static T* Alloc<T>(uint count) where T : unmanaged
+        public static T* AllocT<T>(uint count) where T : unmanaged
         {
             return (T*)Marshal.AllocHGlobal((int)(sizeof(T) * count));
         }
@@ -685,7 +701,7 @@
         public static void ResizeArray<T>(T** array, int oldLength, int newLength) where T : unmanaged
         {
             var oldArray = *array;
-            var newArray = Alloc<T>(newLength);
+            var newArray = AllocT<T>(newLength);
 
             Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
             Free(oldArray);
@@ -703,7 +719,7 @@
         public static void ResizeArray<T>(T** array, uint oldLength, uint newLength) where T : unmanaged
         {
             var oldArray = *array;
-            var newArray = Alloc<T>(newLength);
+            var newArray = AllocT<T>(newLength);
 
             Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
             Free(oldArray);
@@ -721,7 +737,7 @@
         public static void ResizeArray<T>(ref T* array, int oldLength, int newLength) where T : unmanaged
         {
             var oldArray = array;
-            var newArray = Alloc<T>(newLength);
+            var newArray = AllocT<T>(newLength);
 
             Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
             Free(oldArray);
@@ -739,7 +755,7 @@
         public static void ResizeArray<T>(ref T* array, uint oldLength, uint newLength) where T : unmanaged
         {
             var oldArray = array;
-            var newArray = Alloc<T>(newLength);
+            var newArray = AllocT<T>(newLength);
 
             Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
             Free(oldArray);
@@ -925,7 +941,7 @@
             T[] values = new T[length];
             fixed (T* dst = values)
             {
-                MemoryCopy(src, dst, length, length);
+                MemcpyT(src, dst, length, length);
             }
             return values;
         }
@@ -940,7 +956,7 @@
             T[] values = new T[length];
             fixed (T* dst = values)
             {
-                MemoryCopy(src, dst, length, length);
+                MemcpyT(src, dst, length, length);
             }
             return values;
         }

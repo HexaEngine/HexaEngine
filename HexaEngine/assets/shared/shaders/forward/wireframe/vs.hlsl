@@ -10,12 +10,9 @@ PixelInput main(VertexInput input, uint instanceId : SV_InstanceID, uint vertexI
 {
     PixelInput output;
     output.position = float4(input.pos, 1);
-#if VtxNormal
-    output.position += float4(input.normal * 0.0001f, 0);
-#endif
     output.position = mul(output.position, world);
     output.position = mul(output.position, viewProj);
     output.vertexId = vertexId;
-    
+
     return output;
 }

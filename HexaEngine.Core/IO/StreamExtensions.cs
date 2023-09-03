@@ -49,7 +49,7 @@
         {
             if (str == null)
             {
-                stream.WriteInt(0, endianness);
+                stream.WriteInt32(0, endianness);
                 return;
             }
             var count = encoder.GetByteCount(str);
@@ -96,7 +96,65 @@
             return new(chars);
         }
 
-        public static void WriteInt(this Stream stream, int val, Endianness endianness)
+        public static void WriteInt16(this Stream stream, short val, Endianness endianness)
+        {
+            Span<byte> buf = stackalloc byte[2];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteInt16LittleEndian(buf, val);
+            }
+            else
+            {
+                BinaryPrimitives.WriteInt16BigEndian(buf, val);
+            }
+
+            stream.Write(buf);
+        }
+
+        public static short ReadInt16(this Stream stream, Endianness endianness)
+        {
+            Span<byte> buf = stackalloc byte[2];
+            stream.Read(buf);
+            if (endianness == Endianness.LittleEndian)
+            {
+                return BinaryPrimitives.ReadInt16LittleEndian(buf);
+            }
+            else
+            {
+                return BinaryPrimitives.ReadInt16BigEndian(buf);
+            }
+        }
+
+        public static ushort ReadUInt16(this Stream stream, Endianness endianness)
+        {
+            Span<byte> buf = stackalloc byte[2];
+            stream.Read(buf);
+            if (endianness == Endianness.LittleEndian)
+            {
+                return BinaryPrimitives.ReadUInt16LittleEndian(buf);
+            }
+            else
+            {
+                return BinaryPrimitives.ReadUInt16BigEndian(buf);
+            }
+        }
+
+        public static void WriteUInt16(this Stream stream, ushort val, Endianness endianness)
+        {
+            Span<byte> buf = stackalloc byte[2];
+            if (endianness == Endianness.LittleEndian)
+            {
+                BinaryPrimitives.WriteUInt16LittleEndian(buf, val);
+            }
+            else
+            {
+                BinaryPrimitives.WriteUInt16BigEndian(buf, val);
+            }
+
+            stream.Write(buf);
+        }
+
+        public static void WriteInt32(this Stream stream, int val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             if (endianness == Endianness.LittleEndian)
@@ -111,7 +169,7 @@
             stream.Write(buf);
         }
 
-        public static int ReadInt(this Stream stream, Endianness endianness)
+        public static int ReadInt32(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
@@ -125,7 +183,7 @@
             }
         }
 
-        public static uint ReadUInt(this Stream stream, Endianness endianness)
+        public static uint ReadUInt32(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             stream.Read(buf);
@@ -139,7 +197,7 @@
             }
         }
 
-        public static void WriteUInt(this Stream stream, uint val, Endianness endianness)
+        public static void WriteUInt32(this Stream stream, uint val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
             if (endianness == Endianness.LittleEndian)
@@ -236,9 +294,10 @@
 #nullable enable
         }
 
-        public static bool Compare(this Stream stream, ulong value, Endianness endianness)
+        public static bool CompareVersion(this Stream stream, ulong min, ulong latest, Endianness endianness, out ulong version)
         {
-            return stream.ReadUInt64(endianness) == value;
+            version = stream.ReadUInt64(endianness);
+            return version >= min && version <= latest;
         }
 
         public static bool Compare(this ReadOnlySpan<byte> src, ulong value)

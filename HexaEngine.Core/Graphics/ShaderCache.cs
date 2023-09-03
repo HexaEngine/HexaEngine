@@ -94,13 +94,13 @@
         {
             lock (entries)
             {
-                ImGuiConsole.Log(LogSeverity.Information, "Clearing shader cache ...");
+                Logger.Info("Clearing shader cache ...");
                 for (int i = 0; i < entries.Count; i++)
                 {
                     entries[i].Free();
                 }
                 entries.Clear();
-                ImGuiConsole.Log(LogSeverity.Information, "Clearing shader cache ... done");
+                Logger.Info("Clearing shader cache ... done");
             }
         }
 
@@ -309,8 +309,8 @@
 
             int len = BinaryPrimitives.ReadInt32LittleEndian(src[idx..]);
             idx += 4;
-            Shader = Alloc<Shader>();
-            Shader->Bytecode = Alloc<byte>(len);
+            Shader = AllocT<Shader>();
+            Shader->Bytecode = AllocT<byte>(len);
             Shader->Length = (nuint)len;
             fixed (void* ptr = src.Slice(idx, len))
             {

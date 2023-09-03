@@ -1,17 +1,15 @@
 ﻿namespace HexaEngine.Scenes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Mathematics;
-    using HexaEngine.PostFx;
     using System;
     using System.Numerics;
 
     public interface ISceneRenderer : IDisposable
     {
-        CPUProfiler Profiler { get; }
-
-        PostProcessingManager PostProcessing { get; }
+        ICPUFlameProfiler Profiler { get; }
 
         Vector2 Size { get; }
 

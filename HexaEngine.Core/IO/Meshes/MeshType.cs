@@ -4,6 +4,5 @@
     {
         Default,
         Skinned,
-        Terrain,
     }
 }

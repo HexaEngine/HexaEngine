@@ -7,7 +7,7 @@
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    [EditorGameObject<Camera>("Camera")]
+    [EditorGameObject<Camera>("camera")]
     public class Camera : GameObject, IView
     {
         public new CameraTransform Transform;

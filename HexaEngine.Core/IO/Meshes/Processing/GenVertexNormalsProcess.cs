@@ -1,11 +1,9 @@
 ﻿namespace HexaEngine.Core.IO.Meshes.Processing
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
-    using System.Runtime.CompilerServices;
 
     public static class GenVertexNormalsProcess
     {
@@ -110,7 +108,7 @@
 
         public static unsafe bool GenMeshVertexNormals2(MeshData pMesh)
         {
-            Vector3* vertNormals = Alloc<Vector3>(pMesh.VerticesCount);
+            Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertNormals, 0, (int)(pMesh.VerticesCount));
             uint nFaces = pMesh.IndicesCount / 3;
 
@@ -169,7 +167,7 @@
 
         public static unsafe bool GenMeshVertexNormals2(Terrain pMesh)
         {
-            Vector3* vertNormals = Alloc<Vector3>(pMesh.VerticesCount);
+            Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertNormals, 0, (int)(pMesh.VerticesCount));
             uint nFaces = pMesh.IndicesCount / 3;
 

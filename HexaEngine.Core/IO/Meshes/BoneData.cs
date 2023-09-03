@@ -24,7 +24,7 @@ namespace HexaEngine.Core.IO.Meshes
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
             Name = stream.ReadString(encoding, endianness);
-            uint nweights = stream.ReadUInt(endianness);
+            uint nweights = stream.ReadUInt32(endianness);
             Weights = new VertexWeight[nweights];
             for (uint i = 0; i < nweights; i++)
             {
@@ -36,7 +36,7 @@ namespace HexaEngine.Core.IO.Meshes
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(Name, encoding, endianness);
-            stream.WriteUInt((uint)Weights.LongLength, endianness);
+            stream.WriteUInt32((uint)Weights.LongLength, endianness);
             for (uint i = 0; i < Weights.LongLength; i++)
             {
                 Weights[i].Write(stream, endianness);

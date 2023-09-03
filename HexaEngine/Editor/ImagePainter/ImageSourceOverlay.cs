@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
+    using HexaEngine.Mathematics;
 
     public class ImageSourceOverlay
     {
@@ -10,6 +11,7 @@
         private readonly IRenderTargetView[] rtvs;
         private readonly DepthStencil[] depths;
         private readonly IDepthStencilView[] dsvs;
+        private readonly Viewport[] viewports;
         private readonly ImageSource image;
         private bool disposedValue;
 
@@ -21,6 +23,7 @@
             rtvs = new IRenderTargetView[count];
             depths = new DepthStencil[count];
             dsvs = new IDepthStencilView[count];
+            viewports = new Viewport[count];
 
             for (var i = 0; i < count; i++)
             {
@@ -28,7 +31,8 @@
                 textures[i] = new(device, desc);
                 srvs[i] = textures[i].SRV;
                 rtvs[i] = textures[i].RTV;
-                //ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
+                viewports[i] = new(desc.Width, desc.Height);
+                //ImGuiRenderer.Samplers.ObjectAdded(srvs[i].NativePointer, sampler);
                 desc.BindFlags = BindFlags.DepthStencil;
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
@@ -60,6 +64,8 @@
 
         public IDepthStencilView DSV => dsvs[image.Index];
 
+        public Viewport Viewport => viewports[image.Index];
+
         public ITexture2D[] Textures => textures;
 
         public IShaderResourceView[] SRVs => srvs;
@@ -67,6 +73,8 @@
         public IRenderTargetView[] RTVs => rtvs;
 
         public IDepthStencilView[] DSVs => dsvs;
+
+        public Viewport[] Viewports => viewports;
 
         public int ImageCount => textures.Length;
 
@@ -78,7 +86,7 @@
                 {
                     for (int i = 0; i < textures.Length; i++)
                     {
-                        //ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
+                        //ImGuiRenderer.Samplers.ObjectRemoved(srvs[i].NativePointer);
                         textures[i].Dispose();
                         srvs[i].Dispose();
                         rtvs[i].Dispose();

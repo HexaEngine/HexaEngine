@@ -75,10 +75,10 @@
                 Free(last.Data);
                 last.Data = null;
             }
-            last.Data = Malloc(size);
+            last.Data = Alloc(size);
             last.Size = size;
 
-            MemoryCopy(mapped.PData, last.Data, size);
+            Memcpy(mapped.PData, last.Data, size);
 
             context.Unmap(staging, 0);
 
@@ -110,10 +110,10 @@
             }
 
             last.Index = entry.Index;
-            last.Data = Malloc(entry.Size);
+            last.Data = Alloc(entry.Size);
             last.Size = entry.Size;
 
-            MemoryCopy(entry.Data, last.Data, last.Size);
+            Memcpy(entry.Data, last.Data, last.Size);
 
             redoHistory[0] = last;
             redoHistoryCount++;
@@ -151,7 +151,7 @@
 
             var size = mapped.RowPitch * staging.Description.Height;
 
-            MemoryCopy(first.Data, mapped.PData, size);
+            Memcpy(first.Data, mapped.PData, size);
 
             context.Unmap(staging, index);
             context.CopyResource(texture, staging);
@@ -194,7 +194,7 @@
 
             var size = mapped.RowPitch * staging.Description.Height;
 
-            MemoryCopy(first.Data, mapped.PData, size);
+            Memcpy(first.Data, mapped.PData, size);
 
             context.Unmap(staging, index);
             context.CopyResource(texture, staging);

@@ -1,42 +1,70 @@
 ﻿namespace HexaEngine.Core.Unsafes
 {
+    using System.Collections;
     using System.Runtime.CompilerServices;
 
     /// <summary>
     /// Represents an unsafe list of elements of type T.
     /// </summary>
     /// <typeparam name="T">The type of the elements.</typeparam>
-    public unsafe struct UnsafeList<T> : IFreeable where T : unmanaged
+    public unsafe struct UnsafeList<T> : IFreeable, IEnumerable<T>, IList<T> where T : unmanaged
     {
         private const uint DefaultCapacity = 4;
 
-        private Allocator* allocator;
-        private T* data;
+        private T* pointer;
         private uint size;
         private uint capacity;
+
+        public struct Enumerator : IEnumerator<T>
+        {
+            private readonly T* pointer;
+            private readonly uint size;
+            private int currentIndex;
+
+            internal Enumerator(UnsafeList<T> list)
+            {
+                pointer = list.pointer;
+                size = list.size;
+                currentIndex = -1;
+            }
+
+            public T Current => pointer[currentIndex];
+
+            object IEnumerator.Current => Current;
+
+            public readonly void Dispose()
+            {
+                // Enumerator does not own resources, so nothing to dispose.
+            }
+
+            public bool MoveNext()
+            {
+                if (currentIndex < size - 1)
+                {
+                    currentIndex++;
+                    return true;
+                }
+                return false;
+            }
+
+            public void Reset()
+            {
+                currentIndex = 0;
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnsafeList{T}"/> struct.
         /// </summary>
         public UnsafeList()
         {
-            allocator = Allocator.Default;
+            Capacity = DefaultCapacity;
         }
 
         public UnsafeList(T[] values)
         {
-            allocator = Allocator.Default;
-            EnsureCapacity((uint)values.Length);
-            AddRange(values);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UnsafeList{T}"/> struct with a custom allocator.
-        /// </summary>
-        /// <param name="customAllocator">The custom allocator to use.</param>
-        public UnsafeList(Allocator* customAllocator)
-        {
-            allocator = customAllocator;
+            Capacity = (uint)values.Length;
+            AppendRange(values);
         }
 
         /// <summary>
@@ -45,19 +73,28 @@
         /// <param name="capacity">The initial capacity of the list.</param>
         public UnsafeList(uint capacity)
         {
-            allocator = Allocator.Default;
-            EnsureCapacity(capacity);
+            Capacity = capacity;
         }
 
         /// <summary>
         /// Gets the number of elements in the list.
         /// </summary>
-        public uint Size => size;
+        public readonly uint Size => size;
+
+        readonly int ICollection<T>.Count => (int)size;
+
+        readonly bool ICollection<T>.IsReadOnly => false;
 
         /// <summary>
         /// Gets the pointer to the underlying data array.
         /// </summary>
-        public T* Data => data;
+        public readonly T* Data => pointer;
+
+        public readonly bool Empty => size == 0;
+
+        public readonly T* Front => pointer;
+
+        public readonly T* Back => &pointer[size - 1];
 
         /// <summary>
         /// Gets or sets the capacity of the list.
@@ -65,20 +102,24 @@
         public uint Capacity
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => capacity;
+            readonly get => capacity;
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = allocator->Allocate<T>(value);
-                var oldsize = size * sizeof(T);
-                var newsize = value * sizeof(T);
-                Buffer.MemoryCopy(data, tmp, newsize, oldsize > newsize ? newsize : oldsize);
-                allocator->Free(data);
-                data = tmp;
+                if (pointer == null)
+                {
+                    pointer = AllocT<T>(value);
+                    capacity = value;
+                    Erase();
+                    return;
+                }
+                pointer = ReAllocT(pointer, value);
                 capacity = value;
                 size = capacity < size ? capacity : size;
             }
         }
+
+        T IList<T>.this[int index] { get => this[index]; set => this[index] = value; }
 
         /// <summary>
         /// Gets or sets the element at the specified index.
@@ -86,24 +127,46 @@
         public T this[uint index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => data[index];
+            get => pointer[index];
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => data[index] = value;
+            set => pointer[index] = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the element at the specified index.
+        /// </summary>
+        public T this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => pointer[index];
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            set => pointer[index] = value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T At(uint index)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(index);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, size);
+            return this[index];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T At(int index)
+        {
+            ArgumentOutOfRangeException.ThrowIfNegative(index);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual((uint)index, size);
+            return this[index];
         }
 
         public T* GetPointer(uint index)
         {
-            return &data[index];
+            return &pointer[index];
         }
 
-        /// <summary>
-        /// Sets the allocator for the list.
-        /// </summary>
-        /// <param name="allocator">The allocator to set.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void SetAllocator(Allocator* allocator)
+        public T* GetPointer(int index)
         {
-            this.allocator = allocator;
+            return &pointer[index];
         }
 
         /// <summary>
@@ -143,12 +206,27 @@
         /// </summary>
         /// <param name="capacity">The desired capacity.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void EnsureCapacity(uint capacity)
+        public void Reserve(uint capacity)
         {
             if (this.capacity < capacity)
             {
                 Grow(capacity);
             }
+        }
+
+        public void Resize(uint newSize)
+        {
+            if (size == newSize)
+            {
+                return;
+            }
+            Capacity = newSize;
+            size = newSize;
+        }
+
+        public readonly void Erase()
+        {
+            ZeroMemoryT(pointer, capacity);
         }
 
         /// <summary>
@@ -158,9 +236,22 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PushBack(T item)
         {
-            EnsureCapacity(size + 1);
-            data[size] = item;
+            Reserve(size + 1);
+            pointer[size] = item;
             size++;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Add(T item)
+        {
+            PushBack(item);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void PopBack()
+        {
+            pointer[size - 1] = default;
+            size--;
         }
 
         /// <summary>
@@ -168,13 +259,13 @@
         /// </summary>
         /// <param name="values">The array of items to add.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddRange(T[] values)
+        public void AppendRange(T[] values)
         {
-            EnsureCapacity(size + (uint)values.Length);
+            Reserve(size + (uint)values.Length);
 
             fixed (T* src = values)
             {
-                MemoryCopy(src, &data[size], capacity * sizeof(T), values.Length * sizeof(T));
+                Memcpy(src, &pointer[size], capacity * sizeof(T), values.Length * sizeof(T));
             }
             size += (uint)values.Length;
         }
@@ -184,9 +275,13 @@
         /// </summary>
         /// <param name="item">The item to remove.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Remove(T item)
+        public bool Remove(T item)
         {
-            RemoveAt(IndexOf(&item));
+            var index = IndexOf(&item);
+            if (index == -1)
+                return false;
+            RemoveAt(index);
+            return true;
         }
 
         /// <summary>
@@ -198,29 +293,64 @@
         {
             if (index == this.size - 1)
             {
-                data[this.size - 1] = default;
+                pointer[this.size - 1] = default;
                 this.size--;
                 return;
             }
 
             var size = (this.size - index) * sizeof(T);
-            Buffer.MemoryCopy(&data[index + 1], &data[index], size, size);
+            Buffer.MemoryCopy(&pointer[index + 1], &pointer[index], size, size);
+            this.size--;
+        }
+
+        /// <summary>
+        /// Removes the item at the specified index from the list.
+        /// </summary>
+        /// <param name="index">The index of the item to remove.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveAt(uint index)
+        {
+            if (index == this.size - 1)
+            {
+                pointer[this.size - 1] = default;
+                this.size--;
+                return;
+            }
+
+            var size = (this.size - index) * sizeof(T);
+            Buffer.MemoryCopy(&pointer[index + 1], &pointer[index], size, size);
             this.size--;
         }
 
         /// <summary>
         /// Inserts an item at the specified index in the list.
         /// </summary>
-        /// <param name="item">The item to insert.</param>
         /// <param name="index">The index at which to insert the item.</param>
+        /// <param name="item">The item to insert.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Insert(T item, uint index)
+        public void Insert(int index, T item)
         {
-            EnsureCapacity(this.size + 1);
+            Reserve(this.size + 1);
 
             var size = (this.size - index) * sizeof(T);
-            Buffer.MemoryCopy(&data[index], &data[index + 1], size, size);
-            data[index] = item;
+            Buffer.MemoryCopy(&pointer[index], &pointer[index + 1], size, size);
+            pointer[index] = item;
+            this.size++;
+        }
+
+        /// <summary>
+        /// Inserts an item at the specified index in the list.
+        /// </summary>
+        /// <param name="index">The index at which to insert the item.</param>
+        /// <param name="item">The item to insert.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Insert(uint index, T item)
+        {
+            Reserve(this.size + 1);
+
+            var size = (this.size - index) * sizeof(T);
+            Buffer.MemoryCopy(&pointer[index], &pointer[index + 1], size, size);
+            pointer[index] = item;
             this.size++;
         }
 
@@ -231,9 +361,9 @@
         /// <param name="arrayIndex">The starting index in the destination array.</param>
         /// <param name="arraySize">The size of the destination array.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(T* array, uint arrayIndex, uint arraySize)
+        public readonly void CopyTo(T* array, uint arrayIndex, uint arraySize)
         {
-            Buffer.MemoryCopy(data, &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), size * sizeof(T));
+            Buffer.MemoryCopy(pointer, &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), size * sizeof(T));
         }
 
         /// <summary>
@@ -247,7 +377,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void CopyTo(T* array, uint arrayIndex, uint arraySize, uint offset, uint count)
         {
-            Buffer.MemoryCopy(&data[offset], &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), (count - offset) * sizeof(T));
+            Buffer.MemoryCopy(&pointer[offset], &array[arrayIndex], (arraySize - arrayIndex) * sizeof(T), (count - offset) * sizeof(T));
         }
 
         /// <summary>
@@ -269,7 +399,7 @@
         {
             for (int i = 0; i < size; i++)
             {
-                var current = &data[i];
+                var current = &pointer[i];
                 if (current == null)
                 {
                     break;
@@ -284,6 +414,11 @@
             return false;
         }
 
+        bool ICollection<T>.Contains(T item)
+        {
+            return Contains(&item);
+        }
+
         /// <summary>
         /// Searches for the specified item and returns the index of the first occurrence within the entire list.
         /// </summary>
@@ -294,7 +429,7 @@
         {
             for (int i = 0; i < size; i++)
             {
-                var current = &data[i];
+                var current = &pointer[i];
                 if (current == null)
                 {
                     break;
@@ -309,20 +444,41 @@
             return -1;
         }
 
+        int IList<T>.IndexOf(T item)
+        {
+            return IndexOf(&item);
+        }
+
         /// <summary>
         /// Reverses the order of the elements in the list.
         /// </summary>
         public readonly void Reverse()
         {
-            new Span<T>(data, (int)size).Reverse();
+            new Span<T>(pointer, (int)size).Reverse();
         }
 
         public void Move(UnsafeList<T> list)
         {
-            allocator->Free(data);
-            data = list.data;
+            Free(pointer);
+            pointer = list.pointer;
             capacity = list.capacity;
             size = list.size;
+        }
+
+        // Implement IEnumerable<T>
+        public readonly Enumerator GetEnumerator()
+        {
+            return new Enumerator(this);
+        }
+
+        readonly IEnumerator<T> IEnumerable<T>.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        readonly IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <summary>
@@ -331,10 +487,41 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Release()
         {
-            allocator->Free(data);
-            data = null;
-            capacity = 0;
-            size = 0;
+            Free(pointer);
+            this = default;
+        }
+
+        void IList<T>.Insert(int index, T item)
+        {
+            Insert(index, item);
+        }
+
+        void IList<T>.RemoveAt(int index)
+        {
+            RemoveAt(index);
+        }
+
+        void ICollection<T>.Add(T item)
+        {
+            PushBack(item);
+        }
+
+        void ICollection<T>.Clear()
+        {
+            Clear();
+        }
+
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
+        {
+            fixed (T* dst = array)
+            {
+                MemcpyT(&pointer[arrayIndex], dst, array.Length);
+            }
+        }
+
+        bool ICollection<T>.Remove(T item)
+        {
+            return Remove(item);
         }
     }
 }

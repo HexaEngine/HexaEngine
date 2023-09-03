@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using System.Threading.Tasks;
 
     public class RenderPass
     {
@@ -10,17 +10,21 @@
         private readonly List<ResourceTarget> writeBindings = new();
 
         private readonly string name;
+        private readonly RenderPassType type;
         private readonly RenderPassMetadata metadata;
         private int index = 0;
         private RenderGraphNode node;
 
-        public RenderPass(string name)
+        public RenderPass(string name, RenderPassType type = RenderPassType.Default)
         {
             this.name = name;
-            metadata = new(name);
+            this.type = type;
+            metadata = new(name, type);
         }
 
         public string Name => name;
+
+        public RenderPassType Type => type;
 
         public RenderPassMetadata Metadata => metadata;
 
@@ -46,11 +50,11 @@
             }
         }
 
-        public virtual void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public virtual void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
         {
         }
 
-        public virtual void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public virtual void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
         }
 
@@ -169,157 +173,21 @@
         }
     }
 
-    public class ClearRenderTargetPass : RenderPass
-    {
-        public ClearRenderTargetPass(string name) : base(name)
-        {
-        }
-    }
-
-    public class ClearMultiRenderTargetPass : RenderPass
-    {
-        public ClearMultiRenderTargetPass(string name) : base(name)
-        {
-        }
-    }
-
-    public class ClearDepthStencilPass : RenderPass
-    {
-        public ClearDepthStencilPass(string name) : base(name)
-        {
-        }
-    }
-
     public class ComputePass : RenderPass
     {
-        public ComputePass(string name) : base(name)
+        public ComputePass(string name, RenderPassType type = RenderPassType.Default) : base(name, type)
         {
         }
     }
 
     public class DrawPass : RenderPass
     {
-        public DrawPass(string name) : base(name)
+        public DrawPass(string name, RenderPassType type = RenderPassType.Default) : base(name, type)
         {
         }
 
         public IRenderTargetView RenderTargetView { get; set; }
 
         public IDepthStencilView DepthStencilView { get; set; }
-    }
-
-    public class DeferredDrawPass : RenderPass
-    {
-        private readonly IGraphicsContext deferredContext;
-        private ICommandList commandList;
-        private readonly Task task;
-        protected bool invalidate;
-
-        public DeferredDrawPass(string name) : base(name)
-        {
-        }
-
-        public IRenderTargetView RenderTargetView { get; set; }
-
-        public IDepthStencilView DepthStencilView { get; set; }
-
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
-        {
-            //deferredContext = device.CreateDeferredContext();
-            //task = new(() => Update(deferredContext));
-        }
-
-        public override sealed void Execute(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            if (invalidate)
-            {
-                commandList.Dispose();
-                Bind(deferredContext);
-                Record(deferredContext);
-                commandList = deferredContext.FinishCommandList(false);
-            }
-
-            task.Wait();
-            task.Start();
-            context.ExecuteCommandList(commandList, false);
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            context.SetRenderTarget(RenderTargetView, DepthStencilView);
-        }
-
-        public virtual void Update(IGraphicsContext context)
-        {
-        }
-
-        public virtual void Record(IGraphicsContext context)
-        {
-        }
-    }
-
-    public class MultiTargetDrawPass : RenderPass
-    {
-        public MultiTargetDrawPass(string name) : base(name)
-        {
-        }
-
-        public IRenderTargetView[] RenderTargetViews { get; set; }
-
-        public IDepthStencilView DepthStencilView { get; set; }
-
-        public void Bind(IGraphicsContext context)
-        {
-            //context.SetRenderTargets();
-        }
-    }
-
-    public class DeferredMultiTargetDrawPass : RenderPass
-    {
-        private readonly IGraphicsContext deferredContext;
-        private ICommandList commandList;
-        private readonly Task task;
-        protected bool invalidate;
-
-        public DeferredMultiTargetDrawPass(string name) : base(name)
-        {
-        }
-
-        public IRenderTargetView[] RenderTargetViews { get; set; }
-
-        public IDepthStencilView DepthStencilView { get; set; }
-
-        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
-        {
-            //deferredContext = device.CreateDeferredContext();
-            //task = new(() => Update(deferredContext));
-        }
-
-        public override sealed void Execute(IGraphicsContext context, GraphResourceBuilder creator)
-        {
-            if (invalidate)
-            {
-                commandList.Dispose();
-                Record(deferredContext);
-                commandList = deferredContext.FinishCommandList(false);
-            }
-
-            task.Wait();
-            task.Start();
-            context.ExecuteCommandList(commandList, false);
-        }
-
-        public void Bind(IGraphicsContext context)
-        {
-            //context.SetRenderTargets();
-        }
-
-        public virtual void Update(IGraphicsContext context)
-        {
-        }
-
-        public virtual void Record(IGraphicsContext context)
-        {
-        }
     }
 }

@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
@@ -10,10 +11,10 @@
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
-    using System.Threading.Tasks;
 
-    public class LensFlare : IPostFx
+    public class LensFlare : PostFxBase
     {
+        private ResourceRef<DepthStencil> depth;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
         private ConstantBuffer<Vector4> lightBuffer;
@@ -29,36 +30,12 @@
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
-        private bool enabled = true;
-        private int priority = 99;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "LensFlare";
 
-        public event Action<int>? OnPriorityChanged;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
-        public string Name => "LensFlare";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
-
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -73,7 +50,9 @@
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "effects/lensflare/vs.hlsl",
                 GeometryShader = "effects/lensflare/gs.hlsl",
@@ -103,26 +82,26 @@
             Viewport = new(width, height);
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
             {
@@ -135,8 +114,6 @@
             {
                 return;
             }
-
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
 
             for (int i = 0; i < lights.ActiveCount; i++)
             {
@@ -162,7 +139,7 @@
                     srvs[4] = lens4.SRV.NativePointer;
                     srvs[5] = lens5.SRV.NativePointer;
                     srvs[6] = lens6.SRV.NativePointer;
-                    srvs[7] = depth.SRV.NativePointer;
+                    srvs[7] = depth.Value.SRV.NativePointer;
 
                     context.SetRenderTarget(Output, default);
                     context.SetViewport(Viewport);
@@ -178,7 +155,7 @@
             }
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipeline.Dispose();
             sampler.Dispose();

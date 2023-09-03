@@ -22,7 +22,7 @@
             }
 
             byte[] value = token.Value<byte[]>();
-            var ptr = Alloc<T>();
+            var ptr = AllocT<T>();
             MemoryMarshal.Cast<byte, T>(value.AsSpan()).CopyTo(new Span<T>(ptr, 1));
             return new Pointer<T>(ptr);
         }

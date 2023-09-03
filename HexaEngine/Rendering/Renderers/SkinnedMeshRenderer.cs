@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -13,8 +12,6 @@
 
     public class SkinnedMeshRenderer : IDisposable
     {
-        private readonly Core.Resources.ResourceRef<IBuffer> camera;
-
         private bool initialized;
 
         private Matrix4x4[] globals;
@@ -44,8 +41,16 @@
             boneTransformBuffer = new(device, CpuAccessFlags.Write);
             boneTransformOffsetBuffer = new(device, CpuAccessFlags.Write);
             offsetBuffer = new(device, CpuAccessFlags.Write);
+        }
 
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+        public SkinnedMeshRenderer(IGraphicsDevice device, StructuredBuffer<Matrix4x4> transformBuffer, StructuredBuffer<uint> transformOffsetBuffer, StructuredBuffer<Matrix4x4> boneTransformBuffer, StructuredBuffer<uint> boneTransformOffsetBuffer)
+        {
+            this.transformBuffer = transformBuffer;
+            this.transformOffsetBuffer = transformOffsetBuffer;
+            this.boneTransformBuffer = boneTransformBuffer;
+            this.boneTransformOffsetBuffer = boneTransformOffsetBuffer;
+            offsetBuffer = new(device, CpuAccessFlags.Write);
+            sharedBuffers = true;
         }
 
         public void Initialize(SkinnedModel model)
@@ -204,7 +209,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawForward(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawForward(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)
@@ -243,7 +248,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDeferred(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDeferred(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)
@@ -282,7 +287,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDepth(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
 
                 if (mesh.Data.BoneCount > 0)

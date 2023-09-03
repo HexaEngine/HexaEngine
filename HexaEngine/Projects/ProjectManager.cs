@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Projects
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Assets;
@@ -69,6 +70,7 @@
                 assets = Project.CreateFolder("assets");
                 Project.Save();
             }
+            FileSystem.RemoveSource(CurrentProjectAssetsFolder);
             CurrentProjectAssetsFolder = assets.GetAbsolutePath();
             FileSystem.AddSource(CurrentProjectAssetsFolder);
             Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
@@ -113,6 +115,7 @@
             Project = HexaProject.Create(CurrentProjectPath);
             var assets = Project.CreateFolder("assets");
             Project.Save();
+            FileSystem.RemoveSource(CurrentProjectAssetsFolder);
             CurrentProjectAssetsFolder = assets.GetAbsolutePath();
             FileSystem.AddSource(CurrentProjectAssetsFolder);
             Paths.CurrentProjectFolder = CurrentProjectAssetsFolder;
@@ -201,7 +204,7 @@
         {
             string solutionName = Path.GetFileName(CurrentFolder);
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
-            Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, solutionName, "bin"));
+            Logger.Log(Dotnet.Build(projectFilePath, Path.Combine(CurrentFolder, solutionName, "bin")));
             scriptProjectChanged = false;
         }
 
@@ -209,7 +212,7 @@
         {
             string solutionName = Path.GetFileName(CurrentFolder);
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
-            Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentFolder, solutionName, "bin"));
+            Logger.Log(Dotnet.Rebuild(projectFilePath, Path.Combine(CurrentFolder, solutionName, "bin")));
             scriptProjectChanged = false;
         }
 
@@ -217,7 +220,7 @@
         {
             string solutionName = Path.GetFileName(CurrentFolder);
             string projectFilePath = Path.Combine(CurrentFolder, solutionName, $"{solutionName}.csproj");
-            Dotnet.Clean(projectFilePath);
+            Logger.Log(Dotnet.Clean(projectFilePath));
             scriptProjectChanged = true;
         }
 
@@ -263,7 +266,7 @@
                 }
             }
 
-            Debug.WriteLine("Publishing Project");
+            Logger.Info("Publishing Project");
             string buildPath = Path.Combine(CurrentFolder, "build");
             if (Directory.Exists(buildPath))
             {
@@ -350,8 +353,8 @@
                 Directory.Delete(appTempPath, true);
             }
             Directory.CreateDirectory(appTempPath);
-            Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName);
-            Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.D3D11.dll"));
+            Logger.Log(Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName));
+            Logger.Log(Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.D3D11.dll")));
             if (settings.RuntimeIdentifier?.Contains("win") ?? false)
             {
                 Dotnet.ChangeOutputType(appTempProjPath, "WinExe");
@@ -369,7 +372,7 @@
                 DebugSymbols = !settings.StripDebugInfo,
                 DebugType = debugType,
             };
-            Dotnet.Publish(appTempPath, appTempPublishPath, appPublishOptions);
+            Logger.Log(Dotnet.Publish(appTempPath, appTempPublishPath, appPublishOptions));
 
             // copy native runtimes
             string localRuntimesPath = Path.GetFullPath("runtimes");
@@ -386,7 +389,7 @@
                 DeleteFile(buildPath, "*.pdb", true);
             }
 
-            Debug.WriteLine("Published Project");
+            Logger.Info("Published Project");
 
             return Task.CompletedTask;
         }
@@ -498,7 +501,7 @@ namespace App
         /// </summary>
         public static void Main()
         {
-            Platform.Init();
+            Platform.InitializeAsync();
             Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = Platform.StartupScene });
             Platform.Shutdown();
         }

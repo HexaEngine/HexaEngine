@@ -1,24 +1,19 @@
-﻿using HexaEngine.Core.Scenes;
-
-namespace HexaEngine.Scenes.Systems
+﻿namespace HexaEngine.Scenes.Systems
 {
+    using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
-    using System.Collections.Generic;
 
     public class AudioSystem : ISystem
     {
-        private readonly List<IAudioComponent> components = new();
+        private readonly ComponentTypeQuery<IAudioComponent> components = new();
 
         public string Name => "AudioSystem";
 
-        public SystemFlags Flags => SystemFlags.Update;
+        public SystemFlags Flags => SystemFlags.Awake | SystemFlags.Update;
 
-        public void Awake()
+        public void Awake(Scene scene)
         {
-        }
-
-        public void Destroy()
-        {
+            scene.QueryManager.AddQuery(components);
         }
 
         public void Update(float dt)
@@ -27,20 +22,6 @@ namespace HexaEngine.Scenes.Systems
             {
                 components[i].Update();
             }
-        }
-
-        public void FixedUpdate()
-        {
-        }
-
-        public void Register(GameObject gameObject)
-        {
-            components.AddComponentIfIs(gameObject);
-        }
-
-        public void Unregister(GameObject gameObject)
-        {
-            components.RemoveComponentIfIs(gameObject);
         }
     }
 }

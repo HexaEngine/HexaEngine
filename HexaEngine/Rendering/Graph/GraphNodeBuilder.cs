@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Rendering.Graph
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
 
     public class GraphNodeBuilder
@@ -17,9 +18,9 @@
             referenceBuilder = new(node);
         }
 
-        public void Build(RenderPass pass, RenderGraph graph, IGraphicsDevice device)
+        public void Build(RenderPass pass, RenderGraph graph, IGraphicsDevice device, ICPUProfiler? profiler)
         {
-            pass.Init(resourceBuilder, pipelineBuilder, device);
+            pass.Init(resourceBuilder, pipelineBuilder, device, profiler);
             referenceBuilder.Build(graph);
         }
     }

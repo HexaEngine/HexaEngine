@@ -13,7 +13,6 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
     using Silk.NET.Assimp;
-    using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -196,6 +195,7 @@
 
                 List<MaterialProperty> properties = new();
                 List<MaterialTexture> textures = new();
+                List<MaterialShader> shaders = new();
 
                 for (int j = 0; j < mat->MNumProperties; j++)
                 {
@@ -424,27 +424,27 @@
                             break;
 
                         case Assimp.MatkeyShaderVertex:
-                            material.VertexShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            shaders.Add(new(MaterialShaderType.VertexShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                             break;
 
                         case Assimp.MatkeyShaderTesselation:
-                            material.HullShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            shaders.Add(new(MaterialShaderType.HullShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                             break;
 
                         case Assimp.MatkeyShaderPrimitive:
-                            material.DomainShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            shaders.Add(new(MaterialShaderType.DomainShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                             break;
 
                         case Assimp.MatkeyShaderGeo:
-                            material.GeometryShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            shaders.Add(new(MaterialShaderType.GeometryShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                             break;
 
                         case Assimp.MatkeyShaderFragment:
-                            material.PixelShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            shaders.Add(new(MaterialShaderType.PixelShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                             break;
 
                         case Assimp.MatkeyShaderCompute:
-                            material.ComputeShader = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                            shaders.Add(new(MaterialShaderType.ComputeShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
                             break;
                     }
                 }
@@ -461,11 +461,11 @@
                 bool orm = false;
                 for (int j = 0; j < material.Textures.Length; j++)
                 {
-                    if (material.Textures[j].Type == Core.IO.Materials.TextureType.RoughnessMetalness)
+                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetalness)
                     {
                         rm = true;
                     }
-                    if (material.Textures[j].Type == Core.IO.Materials.TextureType.AmbientOcclusionRoughnessMetalness)
+                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetalness)
                     {
                         orm = true;
                     }
@@ -479,12 +479,12 @@
                 {
                     for (int k = 0; k < material.Textures.Length; k++)
                     {
-                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Metalness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metalness)
                         {
                             material.Textures[k].File = string.Empty;
                         }
 
-                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Roughness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
                         {
                             material.Textures[k].File = string.Empty;
                         }
@@ -495,17 +495,17 @@
                 {
                     for (int k = 0; k < material.Textures.Length; k++)
                     {
-                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Metalness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metalness)
                         {
                             material.Textures[k].File = string.Empty;
                         }
 
-                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.Roughness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
                         {
                             material.Textures[k].File = string.Empty;
                         }
 
-                        if (material.Textures[k].Type == Core.IO.Materials.TextureType.RoughnessMetalness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetalness)
                         {
                             material.Textures[k].File = string.Empty;
                         }
@@ -767,35 +767,35 @@
         private static unsafe void Log(byte* a, byte* b)
         {
             string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(a));
-            ImGuiConsole.Log(msg);
+            Logger.Log(msg);
         }
 
-        public static Core.IO.Materials.TextureType Convert(TextureType type)
+        public static Core.IO.Materials.MaterialTextureType Convert(TextureType type)
         {
             return type switch
             {
-                TextureType.None => Core.IO.Materials.TextureType.None,
-                TextureType.Diffuse => Core.IO.Materials.TextureType.Diffuse,
-                TextureType.Specular => Core.IO.Materials.TextureType.Specular,
-                TextureType.Ambient => Core.IO.Materials.TextureType.Ambient,
-                TextureType.Emissive => Core.IO.Materials.TextureType.Emissive,
-                TextureType.Height => Core.IO.Materials.TextureType.Height,
-                TextureType.Normals => Core.IO.Materials.TextureType.Normal,
-                TextureType.Shininess => Core.IO.Materials.TextureType.Shininess,
-                TextureType.Opacity => Core.IO.Materials.TextureType.Opacity,
-                TextureType.Displacement => Core.IO.Materials.TextureType.Displacement,
-                TextureType.Lightmap => Core.IO.Materials.TextureType.AmbientOcclusionRoughnessMetalness,
-                TextureType.Reflection => Core.IO.Materials.TextureType.Reflection,
-                TextureType.BaseColor => Core.IO.Materials.TextureType.BaseColor,
-                TextureType.NormalCamera => Core.IO.Materials.TextureType.NormalCamera,
-                TextureType.EmissionColor => Core.IO.Materials.TextureType.EmissionColor,
-                TextureType.Metalness => Core.IO.Materials.TextureType.Metalness,
-                TextureType.DiffuseRoughness => Core.IO.Materials.TextureType.Roughness,
-                TextureType.AmbientOcclusion => Core.IO.Materials.TextureType.AmbientOcclusion,
-                TextureType.Sheen => Core.IO.Materials.TextureType.Sheen,
-                TextureType.Clearcoat => Core.IO.Materials.TextureType.Clearcoat,
-                TextureType.Transmission => Core.IO.Materials.TextureType.Transmission,
-                TextureType.Unknown => Core.IO.Materials.TextureType.RoughnessMetalness,
+                TextureType.None => Core.IO.Materials.MaterialTextureType.None,
+                TextureType.Diffuse => Core.IO.Materials.MaterialTextureType.Diffuse,
+                TextureType.Specular => Core.IO.Materials.MaterialTextureType.Specular,
+                TextureType.Ambient => Core.IO.Materials.MaterialTextureType.Ambient,
+                TextureType.Emissive => Core.IO.Materials.MaterialTextureType.Emissive,
+                TextureType.Height => Core.IO.Materials.MaterialTextureType.Height,
+                TextureType.Normals => Core.IO.Materials.MaterialTextureType.Normal,
+                TextureType.Shininess => Core.IO.Materials.MaterialTextureType.Shininess,
+                TextureType.Opacity => Core.IO.Materials.MaterialTextureType.Opacity,
+                TextureType.Displacement => Core.IO.Materials.MaterialTextureType.Displacement,
+                TextureType.Lightmap => Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetalness,
+                TextureType.Reflection => Core.IO.Materials.MaterialTextureType.Reflection,
+                TextureType.BaseColor => Core.IO.Materials.MaterialTextureType.BaseColor,
+                TextureType.NormalCamera => Core.IO.Materials.MaterialTextureType.NormalCamera,
+                TextureType.EmissionColor => Core.IO.Materials.MaterialTextureType.EmissionColor,
+                TextureType.Metalness => Core.IO.Materials.MaterialTextureType.Metalness,
+                TextureType.DiffuseRoughness => Core.IO.Materials.MaterialTextureType.Roughness,
+                TextureType.AmbientOcclusion => Core.IO.Materials.MaterialTextureType.AmbientOcclusion,
+                TextureType.Sheen => Core.IO.Materials.MaterialTextureType.Sheen,
+                TextureType.Clearcoat => Core.IO.Materials.MaterialTextureType.Clearcoat,
+                TextureType.Transmission => Core.IO.Materials.MaterialTextureType.Transmission,
+                TextureType.Unknown => Core.IO.Materials.MaterialTextureType.RoughnessMetalness,
                 _ => throw new NotImplementedException(),
             };
         }

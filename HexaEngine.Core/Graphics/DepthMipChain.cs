@@ -1,15 +1,12 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using ImGuiNET;
-    using Silk.NET.SDL;
     using System;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
-    public unsafe class DepthMipChain
+    public unsafe class DepthMipChain : IDisposable
     {
         private readonly string dbgName;
         public int Height;
@@ -39,7 +36,7 @@
             texture.DebugName = dbgName;
             SRV = device.CreateShaderResourceView(texture);
             SRV.DebugName = dbgName + ".SRV";
-            RTV = device.CreateRenderTargetView(texture, new(desc.Width, desc.Height));
+            RTV = device.CreateRenderTargetView(texture);
             RTV.DebugName = dbgName + ".RTV";
 
             srvs = new IShaderResourceView[Mips];
@@ -72,7 +69,7 @@
             texture.DebugName = dbgName;
             SRV = device.CreateShaderResourceView(texture);
             SRV.DebugName = dbgName + ".SRV";
-            RTV = device.CreateRenderTargetView(texture, new(width, height));
+            RTV = device.CreateRenderTargetView(texture);
             RTV.DebugName = dbgName + ".RTV";
 
             srvs = new IShaderResourceView[Mips];
@@ -128,7 +125,7 @@
 
             texture.Resize(device, Format.R32Float, width, height, 1, Mips, CpuAccessFlags.None, GpuAccessFlags.All);
             SRV = device.CreateShaderResourceView(texture);
-            RTV = device.CreateRenderTargetView(texture, new(width, height));
+            RTV = device.CreateRenderTargetView(texture);
 
             srvs = new IShaderResourceView[Mips];
             uavs = new IUnorderedAccessView[Mips];
@@ -163,7 +160,7 @@
             texture.Dispose();
         }
 
-        private static int GetNumMipLevels(int width, int height)
+        public static int GetNumMipLevels(int width, int height)
         {
             int numLevels = 1;
             while (width > 1 && height > 1)

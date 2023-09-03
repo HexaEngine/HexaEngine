@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.Text;
     using HexaEngine.ImGuiNET;
     using System.Numerics;
 
@@ -15,25 +16,14 @@
             var budget = GraphicsAdapter.Current.GetMemoryBudget();
             var usage = GraphicsAdapter.Current.GetMemoryCurrentUsage();
             var fraction = (float)(usage / (double)budget);
-            ImGui.Text($"Memory Budget: {Humanize(budget)}");
-            ImGui.Text($"Memory Usage: {Humanize(usage)}");
+            ImGui.Text($"Memory Budget: {budget.FormatDataSize()}");
+            ImGui.Text($"Memory Usage: {usage.FormatDataSize()}");
             ImGui.ProgressBar(fraction, new Vector2(200, 20));
 
             foreach (var entry in entries)
             {
-                ImGui.Text($"{entry.Name ?? "Unknown"}, Size: {Humanize(entry.Size)}, Type: {entry.Resource.Dimension}");
+                ImGui.Text($"{entry.Name ?? "Unknown"}, Size: {entry.Size.FormatDataSize()}, Type: {entry.Resource.Dimension}");
             }
-        }
-
-        private static string Humanize(ulong value)
-        {
-            if (value > 1000000000)
-                return $"{value / 1000000000f}GB";
-            if (value > 1000000)
-                return $"{value / 1000000}MB";
-            if (value > 1000)
-                return $"{value / 1000f}KB";
-            return $"{value}B";
         }
     }
 }

@@ -3,6 +3,7 @@
 #include "../../camera.hlsl"
 #include "../../shadow.hlsl"
 #include "../../weather.hlsl"
+#include "../../gbuffer.hlsl"
 
 #if CLUSTERED_FORWARD
 #include "../../cluster.hlsl"
@@ -301,7 +302,7 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 
 float ShadowFactorSpotlight(ShadowData data, float3 position, SamplerComparisonState state)
 {
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[0], data.views[0]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[0], data.views[0]);
 
 #if HARD_SHADOWS_SPOTLIGHTS
     return CalcShadowFactor_Basic(state, depthAtlas, uvd);
@@ -348,7 +349,7 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, Samp
     float depthValue = length(light_to_pixelWS) / light.range;
 
     int face = CubeFaceFromDirection(normalize(light_to_pixelWS.xyz));
-    float3 uvd = GetShadowAtlasUVD(position, data.size, data.offsets[face], data.views[face]);
+    float3 uvd = GetShadowAtlasUVD(position, data.size, data.regions[face], data.views[face]);
     uvd.z = depthValue;
 
 #if HARD_SHADOWS_POINTLIGHTS
@@ -706,7 +707,7 @@ Pixel main(PixelInput input)
 
     Pixel output;
     output.Color = float4(ambient + Lo * ao, opacity);
-    output.Normal = float4(N, opacity);
+    output.Normal = float4(PackNormal(N), opacity);
 
 #if BAKE_FORWARD
 	// For baking we render without backface culling, so that we still get occlusions inside meshes that

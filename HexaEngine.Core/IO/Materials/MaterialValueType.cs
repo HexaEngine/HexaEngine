@@ -2,6 +2,7 @@
 {
     public enum MaterialValueType
     {
+        Unknown,
         Float,
         Float2,
         Float3,

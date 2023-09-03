@@ -2,8 +2,8 @@
 {
     using HexaEngine.Collections;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Graph;
     using System.Diagnostics.CodeAnalysis;
@@ -19,6 +19,7 @@
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
+        private readonly GraphResourceBuilder creator;
         private int width;
         private int height;
 
@@ -38,10 +39,11 @@
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, int width, int height, int bufferCount = 4)
+        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
+            this.creator = creator;
             for (int i = 0; i < bufferCount; i++)
             {
                 buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.None, lineNumber: i));
@@ -84,12 +86,12 @@
 
         public bool Enabled { get => enabled; set => enabled = value; }
 
-        public void Initialize(int width, int height)
+        public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
             for (int i = 0; i < effects.Count; i++)
             {
                 effects[i].OnEnabledChanged += OnEnabledChanged;
-                effects[i].OnPriorityChanged += OnPriorityChanged;
+                effects[i].PropertyChanged += PropertyChanged;
             }
 
             this.width = width;
@@ -105,7 +107,10 @@
             {
                 nodes[i].Clear();
                 if (effects[i].Enabled)
-                    effects[i].Initialize(device, nodes[i].Builder, width, height, macros).Wait();
+                {
+                    effects[i].Initialize(device, nodes[i].Builder, creator, width, height, macros);
+                    profiler?.CreateStage(effects[i].Name);
+                }
             }
 
             Sort();
@@ -113,36 +118,12 @@
             isInitialized = true;
         }
 
-        public async Task InitializeAsync(int width, int height)
+        private void PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            for (int i = 0; i < effects.Count; i++)
-            {
-                effects[i].OnEnabledChanged += OnEnabledChanged;
-                effects[i].OnPriorityChanged += OnPriorityChanged;
-            }
-
-            this.width = width;
-            this.height = height;
-            macros = new ShaderMacro[effects.Count];
-            for (int i = 0; i < effects.Count; i++)
-            {
-                var effect = effects[i];
-                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
-            }
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                nodes[i].Clear();
-                if (effects[i].Enabled)
-                    await effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
-            }
-
-            Sort();
-
-            isInitialized = true;
+            Invalidate();
         }
 
-        public void Add(IPostFx effect)
+        public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T effect) where T : class, IPostFx
         {
             lock (effects)
             {
@@ -172,11 +153,6 @@
             list?.Dispose();
             list = null;
             isDirty = true;
-        }
-
-        private void OnPriorityChanged(int obj)
-        {
-            Reload();
         }
 
         private void OnEnabledChanged(bool obj)
@@ -258,66 +234,27 @@
         {
             Volatile.Write(ref isReloading, true);
 
-            for (int i = 0; i < effects.Count; i++)
-            {
-                if (effects[i].Enabled)
-                    effects[i].Dispose();
-                nodes[i].Clear();
-            }
-
             macros = new ShaderMacro[effects.Count];
 
             for (int i = 0; i < effects.Count; i++)
             {
                 var effect = effects[i];
+                if (effect.Initialized)
+                    effect.Dispose();
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
+                nodes[i].Clear();
             }
 
-            Task.Factory.StartNew(async () =>
+            Parallel.For(0, effects.Count, i =>
             {
-                Task[] tasks = new Task[effects.Count];
-                for (int i = 0; i < effects.Count; i++)
+                var effect = effects[i];
+                if (effect.Enabled)
                 {
-                    if (effects[i].Enabled)
-                        tasks[i] = effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
+                    effect.Initialize(device, nodes[i].Builder, creator, width, height, macros);
                 }
-                Task.WaitAll(tasks);
-                Sort();
-                Invalidate();
-            }
-            ).ContinueWith(t =>
-            {
-                Volatile.Write(ref isReloading, false);
             });
-        }
 
-        public async Task ReloadAsync()
-        {
-            Volatile.Write(ref isReloading, true);
             Sort();
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                if (effects[i].Enabled)
-                    effects[i].Dispose();
-                nodes[i].Clear();
-            }
-
-            macros = new ShaderMacro[effects.Count];
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                var effect = effects[i];
-                macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
-            }
-
-            for (int i = 0; i < effects.Count; i++)
-            {
-                if (effects[i].Enabled)
-                    await effects[i].Initialize(device, nodes[i].Builder, width, height, macros);
-            }
-            Sort();
-
             Invalidate();
 
             Volatile.Write(ref isReloading, false);
@@ -352,7 +289,7 @@
             Invalidate();
         }
 
-        public void PrePassDraw(IGraphicsContext context)
+        public void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (!enabled || isReloading)
             {
@@ -380,12 +317,12 @@
                         continue;
                     }
 
-                    effect.PrePassDraw(context);
+                    effect.PrePassDraw(context, creator);
                 }
             }
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public void Draw(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             if (!enabled || isReloading)
             {
@@ -412,12 +349,18 @@
                     {
                         continue;
                     }
-
+                    profiler?.Begin(effect.Name);
                     effect.Update(deferredContext);
+                    profiler?.End(effect.Name);
                 }
 
                 if (isDirty)
                 {
+                    for (int i = 0; i < buffers.Count; i++)
+                    {
+                        var buffer = buffers[i];
+                        context.ClearRenderTargetView(buffer.RTV, default);
+                    }
                     list?.Dispose();
                     deferredContext.ClearState();
                     swapIndex = 0;

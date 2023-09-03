@@ -43,7 +43,7 @@
                 throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
             }
 
-            items = Alloc<T>(DefaultCapacity);
+            items = AllocT<T>(DefaultCapacity);
             ZeroMemoryT(items, (uint)DefaultCapacity);
             buffer = device.CreateBuffer(description);
             buffer.DebugName = dbgName;
@@ -136,7 +136,7 @@
                 throw new InvalidOperationException("If cpu access flags are none initial data must be provided");
             }
 
-            items = Alloc<T>(capacity);
+            items = AllocT<T>(capacity);
             ZeroMemoryT(items, (uint)capacity);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
@@ -167,7 +167,7 @@
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                var tmp = Alloc<T>((int)value);
+                var tmp = AllocT<T>((int)value);
                 var oldsize = count * sizeof(T);
                 var newsize = value * sizeof(T);
                 Buffer.MemoryCopy(items, tmp, newsize, oldsize > newsize ? newsize : oldsize);

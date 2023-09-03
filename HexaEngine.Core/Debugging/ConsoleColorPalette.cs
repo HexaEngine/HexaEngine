@@ -10,14 +10,22 @@
         public ConsoleColorPalette()
         {
             values = new Vector4[Enum.GetValues<ConsoleColor>().Length];
-            this[ConsoleColor.Command] = new(1.0f, 1.0f, 1.0f, 1.0f);
-            this[ConsoleColor.Timestamp] = new(1.0f, 1.0f, 1.0f, 0.5f);
-            this[ConsoleColor.Trace] = new(0.46f, 0.96f, 0.46f, 1.0f);
-            this[ConsoleColor.Debug] = new(0.46f, 0.96f, 0.46f, 1.0f);
-            this[ConsoleColor.Information] = new(1.0f, 1.0f, 1.0f, 1.0f);
-            this[ConsoleColor.Warning] = new(1.0f, 0.87f, 0.37f, 1.0f);
-            this[ConsoleColor.Error] = new(1.0f, 0.365f, 0.365f, 1.0f);
-            this[ConsoleColor.Critical] = new(1.0f, 0.0f, 0.0f, 1.0f);
+            this[ConsoleColor.Black] = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+            this[ConsoleColor.DarkBlue] = new Vector4(0.0f, 0.0f, 0.5f, 1.0f);
+            this[ConsoleColor.DarkGreen] = new Vector4(0.0f, 0.5f, 0.0f, 1.0f);
+            this[ConsoleColor.DarkCyan] = new Vector4(0.0f, 0.5f, 0.5f, 1.0f);
+            this[ConsoleColor.DarkRed] = new Vector4(0.5f, 0.0f, 0.0f, 1.0f);
+            this[ConsoleColor.DarkMagenta] = new Vector4(0.5f, 0.0f, 0.5f, 1.0f);
+            this[ConsoleColor.DarkYellow] = new Vector4(0.5f, 0.5f, 0.0f, 1.0f);
+            this[ConsoleColor.Gray] = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+            this[ConsoleColor.DarkGray] = new Vector4(0.25f, 0.25f, 0.25f, 1.0f);
+            this[ConsoleColor.Blue] = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+            this[ConsoleColor.Green] = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+            this[ConsoleColor.Cyan] = new Vector4(0.0f, 1.0f, 1.0f, 1.0f);
+            this[ConsoleColor.Red] = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
+            this[ConsoleColor.Magenta] = new Vector4(1.0f, 0.0f, 1.0f, 1.0f);
+            this[ConsoleColor.Yellow] = new Vector4(1.0f, 1.0f, 0.0f, 1.0f);
+            this[ConsoleColor.White] = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
         public ref Vector4 this[ConsoleColor index]

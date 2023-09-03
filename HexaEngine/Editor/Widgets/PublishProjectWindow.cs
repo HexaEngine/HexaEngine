@@ -93,7 +93,7 @@
                     ImGui.EndListBox();
                 }
 
-                if (ImGui.Button("Add"))
+                if (ImGui.Button("ObjectAdded"))
                 {
                     filePicker.SetFolder(ProjectManager.CurrentProjectAssetsFolder ?? string.Empty);
                     filePicker.Show();

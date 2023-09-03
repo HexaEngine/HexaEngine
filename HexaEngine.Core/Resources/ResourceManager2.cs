@@ -7,15 +7,14 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
 
+    [Obsolete("Do not use! Will be removed soon!")]
     public class ResourceManager2
     {
         private readonly List<ResourceRef> resources = new();
         private readonly Dictionary<string, ResourceRef> sharedResources = new();
         private readonly IGraphicsDevice device;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public static ResourceManager2 Shared { get; internal set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
         public ResourceManager2(IGraphicsDevice device)
         {
@@ -177,6 +176,16 @@
         public ResourceRef<IBuffer> GetBuffer(string name)
         {
             return GetResource<IBuffer>(name);
+        }
+
+        public ResourceRef<IConstantBuffer> GetConstantBuffer(string name)
+        {
+            return GetResource<IConstantBuffer>(name);
+        }
+
+        public ResourceRef<ConstantBuffer<T>> GetConstantBuffer<T>(string name) where T : unmanaged
+        {
+            return GetResource<ConstantBuffer<T>>(name);
         }
 
         public ResourceRef<IConstantBuffer> AddConstantBuffer(string name, IConstantBuffer buffer)

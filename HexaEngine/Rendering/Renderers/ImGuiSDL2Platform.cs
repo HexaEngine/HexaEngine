@@ -347,7 +347,7 @@
                 if (sdl_backend == global_mouse_whitelist[n])
                     mouse_can_use_global_state = true;
 
-            BackendData* bd = Alloc<BackendData>();
+            BackendData* bd = AllocT<BackendData>();
             ZeroMemoryT(bd);
             io.BackendPlatformUserData = bd;
             io.BackendPlatformName = "ImGui_SDL2_Platform".ToUTF8();
@@ -743,7 +743,7 @@
         private static unsafe void CreateWindow(ImGuiViewport* viewport)
         {
             BackendData* bd = GetBackendData();
-            ViewportData* vd = Alloc<ViewportData>();
+            ViewportData* vd = AllocT<ViewportData>();
             ZeroMemoryT(vd);
             viewport->PlatformUserData = vd;
 
@@ -931,7 +931,7 @@
             platform_io->PlatformCreateVkSurface = (void*)Marshal.GetFunctionPointerForDelegate<PlatformCreateVkSurface>(CreateVkSurface);
 
             ImGuiViewport* main_viewport = ImGui.GetMainViewport().Handle;
-            ViewportData* vd = Alloc<ViewportData>();
+            ViewportData* vd = AllocT<ViewportData>();
             ZeroMemoryT(vd);
             vd->Window = window;
             vd->WindowID = sdl.GetWindowID(window).SdlThrowIf();

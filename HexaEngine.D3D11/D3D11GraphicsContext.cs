@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
+    using Silk.NET.Core;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D11;
     using Silk.NET.Maths;
@@ -506,8 +507,8 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ICommandList FinishCommandList(bool restoreState)
         {
-            ID3D11CommandList* commandList;
-            DeviceContext.FinishCommandList(restoreState, &commandList);
+            ComPtr<ID3D11CommandList> commandList = default;
+            DeviceContext.FinishCommandList((Bool32)restoreState, ref commandList);
             return new D3D11CommandList(commandList);
         }
 

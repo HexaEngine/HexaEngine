@@ -16,7 +16,7 @@
             {
                 uint len;
                 gl.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
-                byte* pName = (byte*)Malloc(len);
+                byte* pName = (byte*)Alloc((nuint)len);
                 gl.GetObjectLabel(Identifier, nativePointer, 0, &len, null);
                 string str = Utils.ToStr(pName, len);
                 Free(pName);

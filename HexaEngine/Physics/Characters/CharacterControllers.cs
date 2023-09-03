@@ -63,12 +63,12 @@ namespace HexaEngine.Physics.Characters
         public float CosMaximumSlope;
 
         /// <summary>
-        /// Depth threshold beyond which a contact is considered a support if it the normal allows it.
+        /// depth threshold beyond which a contact is considered a support if it the normal allows it.
         /// </summary>
         public float MinimumSupportDepth;
 
         /// <summary>
-        /// Depth threshold beyond which a contact is considered a support if the previous frame had support, even if it isn't deep enough to meet the MinimumSupportDepth.
+        /// depth threshold beyond which a contact is considered a support if the previous frame had support, even if it isn't deep enough to meet the MinimumSupportDepth.
         /// </summary>
         public float MinimumSupportContinuationDepth;
 
@@ -254,7 +254,7 @@ namespace HexaEngine.Physics.Characters
                 pool.Take(maximumCharacterCount, out SupportCandidates);
                 for (int i = 0; i < maximumCharacterCount; ++i)
                 {
-                    //Initialize the depths to a value that guarantees replacement.
+                    //InitializeAsync the depths to a value that guarantees replacement.
                     SupportCandidates[i].Depth = float.MinValue;
                 }
             }
@@ -604,7 +604,7 @@ namespace HexaEngine.Physics.Characters
                         //Further, during this analysis loop, we do not create any constraints. We only set up pending additions to be processed after the multithreaded analysis completes.
                     }
 
-                    //The body is active. We may need to remove the associated constraint from the solver. Remove if any of the following hold:
+                    //The body is active. We may need to remove the associated constraint from the solver. ObjectRemoved if any of the following hold:
                     //1) The character was previously supported but is no longer.
                     //2) The character was previously supported by a body, and is now supported by a different body.
                     //3) The character was previously supported by a static, and is now supported by a body.

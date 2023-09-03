@@ -20,7 +20,7 @@
         {
             this.controller = controller;
             this.type = sensorType;
-            buffer = Alloc<float>(3);
+            buffer = AllocT<float>(3);
             sdl.GameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length).SdlThrowIfNeg();
         }
 
@@ -40,7 +40,7 @@
 
         internal void OnSensorUpdate(ControllerSensorEvent even)
         {
-            MemoryCopy(even.Data, buffer, length);
+            MemcpyT(even.Data, buffer, length);
             sensorUpdateEventArgs.Data = buffer;
             sensorUpdateEventArgs.Length = length;
             sensorUpdateEventArgs.Type = type;

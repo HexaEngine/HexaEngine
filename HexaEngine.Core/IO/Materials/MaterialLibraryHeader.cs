@@ -6,7 +6,9 @@
     public struct MaterialLibraryHeader
     {
         public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6E, 0x73, 0x4D, 0x61, 0x74, 0x65, 0x72, 0x69, 0x61, 0x6C, 0x00 };
-        public const ulong Version = 3;
+        public static readonly Version Version = 4;
+        public static readonly Version MinVersion = 4;
+
         public Endianness Endianness;
         public Encoding Encoding;
         public Compression Compression;
@@ -20,14 +22,14 @@
             }
 
             Endianness = (Endianness)stream.ReadByte();
-            if (!stream.Compare(Version, Endianness))
+            if (!stream.CompareVersion(MinVersion, Version, Endianness, out var version))
             {
-                throw new InvalidDataException();
+                throw new InvalidDataException($"Version mismatch, file: {version} min: {MinVersion} max: {Version}");
             }
 
-            Encoding = Encoding.GetEncoding(stream.ReadInt(Endianness));
-            Compression = (Compression)stream.ReadInt(Endianness);
-            MaterialCount = stream.ReadUInt(Endianness);
+            Encoding = Encoding.GetEncoding(stream.ReadInt32(Endianness));
+            Compression = (Compression)stream.ReadInt32(Endianness);
+            MaterialCount = stream.ReadUInt32(Endianness);
         }
 
         public void Write(Stream stream)
@@ -35,9 +37,9 @@
             stream.Write(MagicNumber);
             stream.WriteByte((byte)Endianness);
             stream.WriteUInt64(Version, Endianness);
-            stream.WriteInt(Encoding.CodePage, Endianness);
-            stream.WriteInt((int)Compression, Endianness);
-            stream.WriteUInt(MaterialCount, Endianness);
+            stream.WriteInt32(Encoding.CodePage, Endianness);
+            stream.WriteInt32((int)Compression, Endianness);
+            stream.WriteUInt32(MaterialCount, Endianness);
         }
     }
 }

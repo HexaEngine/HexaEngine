@@ -9,5 +9,6 @@
         Geometry = 4,
         Custom = 8,
         Transparent = 16,
+        Node = 32,
     }
 }

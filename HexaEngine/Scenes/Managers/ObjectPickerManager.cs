@@ -2,8 +2,8 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
     public struct SelectionResult
@@ -13,7 +13,7 @@
         public uint PrimitiveId;
         public uint VertexId;
 
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"Type:{TypeId}, Instance:{InstanceId}, Primitive:{PrimitiveId}, Vertex:{VertexId}";
         }
@@ -29,9 +29,9 @@
 
         private static ConstantBuffer<Vector4> mouseBuffer;
         private static StructuredUavBuffer<SelectionResult> outputBuffer;
-        private static ResourceRef<IBuffer> camera;
+        private static Graph.ResourceRef<ConstantBuffer<CBCamera>> camera;
 
-        public static void Initialize(IGraphicsDevice device, int width, int height)
+        public static void Initialize(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height)
         {
             ObjectPickerManager.device = device;
             pipeline = device.CreateGraphicsPipeline(new()
@@ -55,14 +55,16 @@
             });
             mouseBuffer = new(device, CpuAccessFlags.Write);
             outputBuffer = new(device, 1, CpuAccessFlags.RW);
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
         }
 
         public static void Resize(int width, int height)
         {
+            /*
             texture.Dispose();
             texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
+            */
         }
 
         public static unsafe GameObject? SelectObject(IGraphicsContext context, Vector2 position, Mathematics.Viewport viewport)

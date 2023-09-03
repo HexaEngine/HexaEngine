@@ -62,7 +62,7 @@
                 case TextureDimension.Texture3D:
                     ImGui.InputInt("Width", ref width);
                     ImGui.InputInt("Height", ref height);
-                    ImGui.InputInt("Depth", ref depth);
+                    ImGui.InputInt("depth", ref depth);
                     break;
 
                 case TextureDimension.TextureCube:

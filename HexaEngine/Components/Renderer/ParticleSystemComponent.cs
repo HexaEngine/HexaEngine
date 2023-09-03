@@ -30,6 +30,9 @@
         private ResourceRef<IShaderResourceView> dsv;
 
         [JsonIgnore]
+        public string DebugName { get; private set; } = nameof(ParticleRenderer);
+
+        [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Transparency;
 
         [JsonIgnore]
@@ -101,6 +104,7 @@
 
         public async void Awake(IGraphicsDevice device, GameObject gameObject)
         {
+            DebugName = gameObject.Name + DebugName;
             this.device = device;
             this.gameObject = gameObject;
             renderer = new(device);

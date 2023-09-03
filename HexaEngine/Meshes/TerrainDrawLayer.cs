@@ -236,6 +236,19 @@
             return true;
         }
 
+        public bool BeginDrawDepth(IGraphicsContext context)
+        {
+            if (!Material.Shader.BeginDrawDepth(context))
+            {
+                return false;
+            }
+
+            context.PSSetShaderResource(0, Mask.SRV);
+            context.PSSetSampler(0, MaskSampler);
+
+            return true;
+        }
+
         public void EndDrawDepth(IGraphicsContext context)
         {
             Material.Shader.EndDrawDepth(context);

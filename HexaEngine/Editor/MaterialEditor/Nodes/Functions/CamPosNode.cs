@@ -12,7 +12,7 @@
     {
 #pragma warning disable CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 
-        public CamPosNode(int id, bool removable, bool isStatic) : base(id, "Camera Pos", removable, isStatic)
+        public CamPosNode(int id, bool removable, bool isStatic) : base(id, "camera Pos", removable, isStatic)
 #pragma warning restore CS8618 // Non-nullable property 'Out' must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
         {
         }

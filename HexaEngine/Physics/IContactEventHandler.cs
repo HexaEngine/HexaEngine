@@ -17,8 +17,8 @@
         /// <param dbgName="pair">Collidable pair triggering the event.</param>
         /// <param dbgName="contactManifold">Set of remaining contacts in the collision.</param>
         /// <param dbgName="contactOffset">Offset from the pair's local origin to the new contact.</param>
-        /// <param dbgName="contactNormal">Normal of the new contact.</param>
-        /// <param dbgName="depth">Depth of the new contact.</param>
+        /// <param dbgName="contactNormal">normal of the new contact.</param>
+        /// <param dbgName="depth">depth of the new contact.</param>
         /// <param dbgName="featureId">Feature id of the new contact.</param>
         /// <param dbgName="contactIndex">Index of the new contact in the contact manifold.</param>
         /// <param dbgName="workerIndex">Index of the worker thread that fired this event.</param>

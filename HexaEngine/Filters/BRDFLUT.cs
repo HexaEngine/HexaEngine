@@ -3,13 +3,14 @@
 namespace HexaEngine.Filters
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Primitives;
+    using HexaEngine.Mathematics;
 
     public class BRDFLUT
     {
         private IGraphicsPipeline pipeline;
 
         public IRenderTargetView Target;
+        public Viewport Viewport;
         private bool disposedValue;
 
         public BRDFLUT(IGraphicsDevice device, bool multiscatter, bool cloth)
@@ -28,15 +29,10 @@ namespace HexaEngine.Filters
                 return;
             }
 
-            int width = (int)Target.Viewport.Width;
-            int height = (int)Target.Viewport.Height;
-            int xTileSize = width / 16;
-            int yTileSize = height / 16;
-
             context.ClearRenderTargetView(Target, default);
 
             context.SetRenderTarget(Target, null);
-            context.SetViewport(Target.Viewport);
+            context.SetViewport(Viewport);
 
             context.SetGraphicsPipeline(pipeline);
 

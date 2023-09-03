@@ -20,7 +20,7 @@
 
         public Tool? Current { get => current; private set => current = value; }
 
-        public override void Init(IGraphicsDevice device)
+        protected override void InitWindow(IGraphicsDevice device)
         {
             for (int i = 0; i < tools.Count; i++)
             {
@@ -28,7 +28,7 @@
             }
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
             for (int i = 0; i < tools.Count; i++)
             {

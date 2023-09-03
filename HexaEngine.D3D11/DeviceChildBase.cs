@@ -1,33 +1,9 @@
 ﻿namespace HexaEngine.D3D11
 {
-    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using Silk.NET.Direct3D11;
     using System;
     using System.Text;
-
-    internal static class DebugNameRegistry
-    {
-        private static readonly HashSet<string> names = new();
-
-        public static void CheckAndAdd(string name)
-        {
-#if DEBUG
-            if (names.Contains(name))
-            {
-                throw new Exception("Name is already present");
-            }
-            names.Add(name);
-#endif
-        }
-
-        public static void RemoveName(string name)
-        {
-#if DEBUG
-            names.Remove(name);
-#endif
-        }
-    }
 
     public abstract unsafe class DeviceChildBase : DisposableBase, IDeviceChild
     {
@@ -55,7 +31,7 @@
                 uint len;
                 Guid guid = D3DDebugObjectName;
                 child->GetPrivateData(&guid, &len, null);
-                byte* pName = Alloc<byte>(len);
+                byte* pName = AllocT<byte>(len);
                 child->GetPrivateData(&guid, &len, pName);
                 string str = Utils.ToStr(pName, len);
                 Free(pName);
@@ -77,7 +53,7 @@
                 if (!string.IsNullOrWhiteSpace(value))
                 {
                     var byteCount = Encoding.UTF8.GetByteCount(value);
-                    byte* pName = Alloc<byte>(Encoding.UTF8.GetByteCount(value));
+                    byte* pName = AllocT<byte>(Encoding.UTF8.GetByteCount(value));
                     fixed (char* src = value)
                     {
                         Encoding.UTF8.GetBytes(src, value.Length, pName, byteCount);
@@ -89,11 +65,6 @@
                 else
                 {
                     child->SetPrivateData(&guid, 0, null).ThrowHResult();
-                }
-
-                if (debugName != null)
-                {
-                    DebugNameRegistry.RemoveName(debugName);
                 }
 
                 debugName = value;

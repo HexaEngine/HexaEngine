@@ -26,17 +26,16 @@ void main(uint3 groupId : SV_GroupID,
     uint cluster_size, dummy;
     clusters.GetDimensions(cluster_size, dummy);
 
+    uint tileSizePx = (uint) ceil(screenDim.x / (float) CLUSTERS_X);
     uint tile_index = groupId.x +
                       groupId.y * CLUSTERS_X +
                       groupId.z * (CLUSTERS_X * CLUSTERS_Y);
 
-    float2 tile_size = rcp(float2(CLUSTERS_X, CLUSTERS_Y)); //screen_resolution;
+    float3 max_point_vs = GetPositionVS((groupId.xy + 1) * tileSizePx, 1.0f);
+    float3 min_point_vs = GetPositionVS(groupId.xy * tileSizePx, 1.0f);
 
-    float3 max_point_vs = GetPositionVS((groupId.xy + 1) * tile_size, 1.0f);
-    float3 min_point_vs = GetPositionVS(groupId.xy * tile_size, 1.0f);
-
-    float cluster_near = camNear * pow(camFar / camNear, groupId.z / float(CLUSTERS_Z));
-    float cluster_far = camNear * pow(camFar / camNear, (groupId.z + 1) / float(CLUSTERS_Z));
+    float cluster_near = -camNear * pow(camFar / camNear, groupId.z / float(CLUSTERS_Z));
+    float cluster_far = -camNear * pow(camFar / camNear, (groupId.z + 1) / float(CLUSTERS_Z));
 
     float3 minPointNear = IntersectionZPlane(min_point_vs, cluster_near);
     float3 minPointFar = IntersectionZPlane(min_point_vs, cluster_far);

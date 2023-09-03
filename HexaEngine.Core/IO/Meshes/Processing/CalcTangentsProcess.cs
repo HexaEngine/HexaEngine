@@ -172,8 +172,8 @@
         {
             var nFace = pMesh.IndicesCount / 3;
 
-            Vector3* vertTangents = Alloc<Vector3>(pMesh.VerticesCount);
-            Vector3* vertBitangents = Alloc<Vector3>(pMesh.VerticesCount);
+            Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
+            Vector3* vertBitangents = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertTangents, 0, (int)(pMesh.VerticesCount));
             Memset(vertBitangents, 0, (int)(pMesh.VerticesCount));
 
@@ -234,8 +234,8 @@
         {
             var nFace = pMesh.IndicesCount / 3;
 
-            Vector3* vertTangents = Alloc<Vector3>(pMesh.VerticesCount);
-            Vector3* vertBitangents = Alloc<Vector3>(pMesh.VerticesCount);
+            Vector3* vertTangents = AllocT<Vector3>(pMesh.VerticesCount);
+            Vector3* vertBitangents = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertTangents, 0, (int)(pMesh.VerticesCount));
             Memset(vertBitangents, 0, (int)(pMesh.VerticesCount));
 

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.IO.Metadata
 {
-    using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using System.Text;
 
@@ -8,9 +7,11 @@
     {
         public Dictionary<string, MetadataEntry> Properties;
 
-        public Metadata(Dictionary<string, MetadataEntry> properties)
+        public static readonly Metadata Empty = new(new());
+
+        public Metadata(Dictionary<string, MetadataEntry>? properties = null)
         {
-            Properties = properties;
+            Properties = properties ?? new();
         }
 
         private Metadata()
@@ -26,15 +27,13 @@
 
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
-            var propertiesCount = stream.ReadInt(endianness);
+            var propertiesCount = stream.ReadInt32(endianness);
 
             Properties = new();
             for (int i = 0; i < propertiesCount; i++)
             {
-                // TODO: Implement Properties properly
                 var key = stream.ReadString(encoding, endianness) ?? string.Empty;
-                MetadataEntry entry = new();
-                entry.Read(stream, encoding, endianness);
+                MetadataEntry entry = MetadataEntry.ReadFrom(stream, encoding, endianness);
                 Properties.Add(key, entry);
             }
         }
@@ -42,13 +41,24 @@
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             var props = Properties.ToList();
-            stream.WriteInt(Properties.Count, endianness);
+            stream.WriteInt32(Properties.Count, endianness);
             for (int i = 0; i < Properties.Count; i++)
             {
                 var pair = props[i];
                 stream.WriteString(pair.Key, encoding, endianness);
                 pair.Value.Write(stream, encoding, endianness);
             }
+        }
+
+        public T GetOrAdd<T>(string key) where T : MetadataEntry, new()
+        {
+            if (Properties.TryGetValue(key, out var entry))
+            {
+                return (T)entry;
+            }
+            entry = new T();
+            Properties.Add(key, entry);
+            return (T)entry;
         }
     }
 }

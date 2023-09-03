@@ -31,7 +31,7 @@
     }
 
     /// <summary>
-    /// <see cref="Transform"/> is used for hierachical matrix calculation.
+    /// <see cref="Transform"/> is used for hierarchical matrix calculation.
     /// </summary>
     public class Transform : ITransform
     {

@@ -67,15 +67,15 @@
         {
             Name = stream.ReadString(encoding, endianness) ?? string.Empty;
             Transform = stream.ReadMatrix4x4(endianness);
-            Flags = (NodeFlags)stream.ReadInt(endianness);
-            var meshesCount = stream.ReadInt(endianness);
+            Flags = (NodeFlags)stream.ReadInt32(endianness);
+            var meshesCount = stream.ReadInt32(endianness);
             Meshes = new(meshesCount);
             for (int i = 0; i < meshesCount; i++)
             {
-                Meshes.Add(stream.ReadUInt(endianness));
+                Meshes.Add(stream.ReadUInt32(endianness));
             }
             Metadata = Metadata.ReadFrom(stream, encoding, endianness);
-            var childrenCount = stream.ReadInt(endianness);
+            var childrenCount = stream.ReadInt32(endianness);
             Children = new(childrenCount);
             for (var i = 0; i < childrenCount; i++)
             {
@@ -90,14 +90,14 @@
         {
             stream.WriteString(Name, encoding, endianness);
             stream.WriteMatrix4x4(Transform, endianness);
-            stream.WriteInt((int)Flags, endianness);
-            stream.WriteInt(Meshes.Count, endianness);
+            stream.WriteInt32((int)Flags, endianness);
+            stream.WriteInt32(Meshes.Count, endianness);
             for (int i = 0; i < Meshes.Count; i++)
             {
-                stream.WriteUInt(Meshes[i], endianness);
+                stream.WriteUInt32(Meshes[i], endianness);
             }
             Metadata.Write(stream, encoding, endianness);
-            stream.WriteInt(Children.Count, endianness);
+            stream.WriteInt32(Children.Count, endianness);
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].Write(stream, encoding, endianness);

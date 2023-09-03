@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Editor.PoseEditor;
     using HexaEngine.ImGuiNET;
     using System.Collections.Generic;
 
@@ -31,6 +30,13 @@
             }
 
             var bones = editor.Bones;
+
+            if (bones.Length == 0)
+            {
+                selected = null;
+                return;
+            }
+
             var root = bones[0];
             for (var i = 0; i < bones.Length; i++)
             {

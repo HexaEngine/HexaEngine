@@ -12,7 +12,6 @@ namespace HexaEngine.D3D11
     using Silk.NET.Direct3D.Compilers;
     using Silk.NET.Direct3D11;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
@@ -25,7 +24,7 @@ namespace HexaEngine.D3D11
 
         public unsafe bool Compile(string source, ShaderMacro[] macros, string entryPoint, string sourceName, string profile, out Blob? shaderBlob, out string? error)
         {
-            Debug.WriteLine($"Compiling: {sourceName}");
+            Logger.Info($"Compiling: {sourceName}");
             shaderBlob = null;
             error = null;
             ShaderFlags flags = (ShaderFlags)(1 << 21);
@@ -36,7 +35,7 @@ namespace HexaEngine.D3D11
 #endif
             byte* pSource = source.ToUTF8();
 
-            var pMacros = macros.Length > 0 ? Alloc<D3DShaderMacro>(macros.Length + 1) : null;
+            var pMacros = macros.Length > 0 ? AllocT<D3DShaderMacro>(macros.Length + 1) : null;
 
             for (int i = 0; i < macros.Length; i++)
             {
@@ -67,7 +66,7 @@ namespace HexaEngine.D3D11
             callbacks[0] = pOpen;
             callbacks[1] = pClose;
 
-            ID3DInclude* include = (ID3DInclude*)Malloc(sizeof(ID3DInclude) + sizeof(nint));
+            ID3DInclude* include = (ID3DInclude*)Alloc(sizeof(ID3DInclude) + sizeof(nint));
 
             include->LpVtbl = callbacks;
 
@@ -100,14 +99,14 @@ namespace HexaEngine.D3D11
 
             if (vBlob == null)
             {
-                Debug.WriteLine($"Error: {sourceName}");
+                Logger.Error($"Error: {sourceName}");
                 return false;
             }
 
             shaderBlob = new(vBlob->Buffer.ToArray());
             vBlob->Release();
 
-            Debug.WriteLine($"Done: {sourceName}");
+            Logger.Info($"Done: {sourceName}");
 
             return true;
         }
@@ -168,7 +167,7 @@ namespace HexaEngine.D3D11
             Compile(code, macros, entry, sourceName, profile, out var shaderBlob, out error);
             if (shaderBlob != null)
             {
-                Shader* pShader = Alloc<Shader>();
+                Shader* pShader = AllocT<Shader>();
                 pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
@@ -176,7 +175,7 @@ namespace HexaEngine.D3D11
 
             if (error != null)
             {
-                ImGuiConsole.Log(error);
+                Logger.Log(error);
             }
         }
 
@@ -204,14 +203,14 @@ namespace HexaEngine.D3D11
             Compile(FileSystem.ReadAllText(Paths.CurrentShaderPath + path), macros, entry, path, profile, out var shaderBlob, out error);
             if (shaderBlob != null)
             {
-                Shader* pShader = Alloc<Shader>();
+                Shader* pShader = AllocT<Shader>();
                 pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
             }
             if (error != null)
             {
-                ImGuiConsole.Log(error);
+                Logger.Log(error);
             }
         }
 

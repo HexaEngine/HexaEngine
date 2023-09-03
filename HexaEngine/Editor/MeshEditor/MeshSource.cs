@@ -42,7 +42,7 @@
             {
                 Blend = BlendDescription.Opaque,
                 BlendFactor = Vector4.Zero,
-                DepthStencil = DepthStencilDescription.Default,
+                DepthStencil = DepthStencilDescription.DefaultLess,
                 Rasterizer = RasterizerDescription.CullNone,
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
@@ -59,7 +59,7 @@
                 Blend = BlendDescription.Opaque,
                 BlendFactor = Vector4.Zero,
                 DepthStencil = DepthStencilDescription.Default,
-                Rasterizer = RasterizerDescription.Wireframe,
+                Rasterizer = new RasterizerDescription(CullMode.None, FillMode.Wireframe, false, 0, 0, 0, true, false, false, false),
                 Topology = PrimitiveTopology.TriangleList,
                 SampleMask = uint.MaxValue,
                 StencilRef = 0,

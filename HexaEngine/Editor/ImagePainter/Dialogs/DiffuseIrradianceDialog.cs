@@ -116,7 +116,7 @@
                     }
                     catch (Exception e)
                     {
-                        ImGuiConsole.Log(e);
+                        Logger.Log(e);
                     }
                 }
             }

@@ -1,15 +1,15 @@
 ﻿namespace HexaEngine.Effects.BuildIn
 {
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
-    using HexaEngine.Core.Resources;
-    using HexaEngine.PostFx;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
+    using HexaEngine.Mathematics;
+    using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
 
-    public class TAA : IPostFx, IAntialiasing
+    public class TAA : PostFxBase, IAntialiasing
     {
+        private GraphResourceBuilder creator;
         private IGraphicsPipeline pipeline;
         private ISamplerState sampler;
 
@@ -22,65 +22,31 @@
         public IShaderResourceView Input;
         public ITexture2D OutputTex;
         public Viewport Viewport;
-        private int priority = 400;
-        private bool enabled = true;
 
         private float alpha = 0.1f;
         private float colorBoxSigma = 1f;
         private bool antiFlicker = true;
-        private bool dirty = true;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "TAA";
 
-        public event Action<int>? OnPriorityChanged;
-
-        public string Name => "TAA";
-
-        public PostFxFlags Flags => PostFxFlags.None;
-
-        public bool Enabled
-        {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
+        public override PostFxFlags Flags => PostFxFlags.None;
 
         public float Alpha
         {
-            get => alpha; set
-            {
-                alpha = value;
-                dirty = true;
-            }
+            get => alpha;
+            set => NotifyPropertyChangedAndSet(ref alpha, value);
         }
 
         public float ColorBoxSigma
         {
-            get => colorBoxSigma; set
-            {
-                colorBoxSigma = value;
-                dirty = true;
-            }
+            get => colorBoxSigma;
+            set => NotifyPropertyChangedAndSet(ref colorBoxSigma, value);
         }
 
         public bool AntiFlicker
         {
-            get => antiFlicker; set
-            {
-                antiFlicker = value;
-                dirty = true;
-            }
+            get => antiFlicker;
+            set => NotifyPropertyChangedAndSet(ref antiFlicker, value);
         }
 
         private struct TAAParams
@@ -98,7 +64,7 @@
             }
         }
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddBinding("VelocityBuffer")
@@ -112,8 +78,9 @@
                 .RunBefore("LensFlare")
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
+            this.creator = creator;
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/taa/ps.hlsl"
@@ -122,29 +89,25 @@
             paramsBuffer = new(device, CpuAccessFlags.Write);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
-            Velocity = ResourceManager2.Shared.GetTexture("VelocityBuffer");
-            Previous = ResourceManager2.Shared.AddTexture("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1));
+            Velocity = creator.GetTexture2D("VelocityBuffer");
+            Previous = creator.CreateTexture2D("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1));
 
             Viewport = new(width, height);
         }
 
-        public void Resize(int width, int height)
-        {
-        }
-
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
             OutputTex = resource;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
             if (dirty)
             {
@@ -153,7 +116,7 @@
             }
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
             {
@@ -185,13 +148,12 @@
             context.CopyResource(Previous.Value, OutputTex);
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             pipeline.Dispose();
             sampler.Dispose();
             paramsBuffer.Dispose();
-
-            GC.SuppressFinalize(this);
+            creator.RemoveResource("Previous");
         }
 
         public void Draw(IGraphicsContext context)

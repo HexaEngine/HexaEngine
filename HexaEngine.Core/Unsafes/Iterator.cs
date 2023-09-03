@@ -20,17 +20,17 @@
         }
 
         /// <summary>
-        /// Gets the current value in the iteration.
+        /// Gets the current _value in the iteration.
         /// </summary>
         public readonly T Current => values[index];
 
         /// <summary>
-        /// Gets a value indicating whether the iteration has reached the end.
+        /// Gets a _value indicating whether the iteration has reached the end.
         /// </summary>
         public readonly bool End => index == values.Count;
 
         /// <summary>
-        /// Increments the iterator to the next value in the iteration.
+        /// Increments the iterator to the next _value in the iteration.
         /// </summary>
         /// <param name="iterator">The iterator to increment.</param>
         /// <returns>The incremented iterator.</returns>
@@ -41,7 +41,7 @@
         }
 
         /// <summary>
-        /// Decrements the iterator to the previous value in the iteration.
+        /// Decrements the iterator to the previous _value in the iteration.
         /// </summary>
         /// <param name="iterator">The iterator to decrement.</param>
         /// <returns>The decremented iterator.</returns>
@@ -52,10 +52,10 @@
         }
 
         /// <summary>
-        /// Advances the iterator by the specified value.
+        /// Advances the iterator by the specified _value.
         /// </summary>
         /// <param name="iterator">The iterator to advance.</param>
-        /// <param name="value">The value by which to advance the iterator.</param>
+        /// <param name="value">The _value by which to advance the iterator.</param>
         /// <returns>The advanced iterator.</returns>
         public static Iterator<T> operator +(Iterator<T> iterator, int value)
         {
@@ -64,10 +64,10 @@
         }
 
         /// <summary>
-        /// Moves the iterator back by the specified value.
+        /// Moves the iterator back by the specified _value.
         /// </summary>
         /// <param name="iterator">The iterator to move back.</param>
-        /// <param name="value">The value by which to move the iterator back.</param>
+        /// <param name="value">The _value by which to move the iterator back.</param>
         /// <returns>The moved iterator.</returns>
         public static Iterator<T> operator -(Iterator<T> iterator, int value)
         {
@@ -76,10 +76,10 @@
         }
 
         /// <summary>
-        /// Advances the iterator by the specified value.
+        /// Advances the iterator by the specified _value.
         /// </summary>
         /// <param name="iterator">The iterator to advance.</param>
-        /// <param name="value">The value by which to advance the iterator.</param>
+        /// <param name="value">The _value by which to advance the iterator.</param>
         /// <returns>The advanced iterator.</returns>
         public static Iterator<T> operator +(Iterator<T> iterator, uint value)
         {
@@ -88,10 +88,10 @@
         }
 
         /// <summary>
-        /// Moves the iterator back by the specified value.
+        /// Moves the iterator back by the specified _value.
         /// </summary>
         /// <param name="iterator">The iterator to move back.</param>
-        /// <param name="value">The value by which to move the iterator back.</param>
+        /// <param name="value">The _value by which to move the iterator back.</param>
         /// <returns>The moved iterator.</returns>
         public static Iterator<T> operator -(Iterator<T> iterator, uint value)
         {

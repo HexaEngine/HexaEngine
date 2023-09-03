@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
@@ -11,10 +10,8 @@
     using HexaEngine.Scenes;
     using System.Numerics;
 
-    public class MeshRenderer : IDisposable
+    public class MeshRenderer : IDisposable, IRenderer
     {
-        private readonly Core.Resources.ResourceRef<IBuffer> camera;
-
         private bool initialized;
 
         private Matrix4x4[] globals;
@@ -36,8 +33,14 @@
             transformBuffer = new(device, CpuAccessFlags.Write);
             transformOffsetBuffer = new(device, CpuAccessFlags.Write);
             offsetBuffer = new(device, CpuAccessFlags.Write);
+        }
 
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+        public MeshRenderer(IGraphicsDevice device, StructuredBuffer<Matrix4x4> transformBuffer, StructuredBuffer<uint> transformOffsetBuffer)
+        {
+            this.transformBuffer = transformBuffer;
+            this.transformOffsetBuffer = transformOffsetBuffer;
+            offsetBuffer = new(device, CpuAccessFlags.Write);
+            sharedBuffers = true;
         }
 
         public void Initialize(Model model)
@@ -137,7 +140,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDeferred(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDeferred(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -167,67 +170,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawForward(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
-                mesh.EndDraw(context);
-            }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
-        }
-
-        public void DrawDeferred(IGraphicsContext context, IBuffer camera)
-        {
-            if (!initialized)
-                return;
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-
-            for (uint i = 0; i < drawables.Length; i++)
-            {
-                offsetBuffer.Update(context, new(bufferOffset + i));
-
-                int[] drawable = drawables[i];
-                Mesh mesh = meshes[i];
-                Material material = materials[i];
-
-                if (mesh == null || material == null)
-                    continue;
-
-                mesh.BeginDraw(context);
-                material.DrawDeferred(context, camera, mesh.IndexCount, (uint)drawable.Length);
-                mesh.EndDraw(context);
-            }
-
-            context.VSSetConstantBuffer(0, null);
-            context.VSSetShaderResource(0, null);
-            context.VSSetShaderResource(1, null);
-        }
-
-        public void DrawForward(IGraphicsContext context, IBuffer camera)
-        {
-            if (!initialized)
-                return;
-
-            context.VSSetConstantBuffer(0, offsetBuffer);
-            context.VSSetShaderResource(0, transformBuffer.SRV);
-            context.VSSetShaderResource(1, transformOffsetBuffer.SRV);
-
-            for (uint i = 0; i < drawables.Length; i++)
-            {
-                offsetBuffer.Update(context, new(bufferOffset + i));
-
-                int[] drawable = drawables[i];
-                Mesh mesh = meshes[i];
-                Material material = materials[i];
-
-                if (mesh == null || material == null)
-                    continue;
-
-                mesh.BeginDraw(context);
-                material.DrawForward(context, camera, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawForward(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -257,7 +200,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, camera.Value, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDepth(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 
@@ -287,7 +230,7 @@
                     continue;
 
                 mesh.BeginDraw(context);
-                material.DrawDepth(context, camera, mesh.IndexCount, (uint)drawable.Length);
+                material.DrawDepth(context, mesh.IndexCount, (uint)drawable.Length);
                 mesh.EndDraw(context);
             }
 

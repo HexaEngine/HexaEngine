@@ -16,7 +16,7 @@ namespace HexaEngine.Scenes.Systems
 
         public SystemFlags Flags => SystemFlags.LateUpdate;
 
-        public void Awake()
+        public void Awake(Scene scene)
         {
         }
 

@@ -2,8 +2,10 @@
 
 namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
@@ -12,15 +14,25 @@ namespace HexaEngine.Rendering.Passes
 
     public class LightDeferredPass : DrawPass
     {
-        private ConstantBuffer<ProbeBufferParams> probeParamsBuffer;
-        private ConstantBuffer<DeferredLightParams> lightParamsBuffer;
+        private ResourceRef<DepthStencil> depthStencil;
+        private ResourceRef<GBuffer> gbuffer;
+        private ResourceRef<Texture2D> AOBuffer;
+        private ResourceRef<Texture2D> brdfLUT;
+        private ResourceRef<StructuredUavBuffer<uint>> lightIndexList;
+        private ResourceRef<StructuredUavBuffer<LightGrid>> lightGridBuffer;
+        private ResourceRef<Texture2D> lightBuffer;
+        private ResourceRef<ShadowAtlas> shadowAtlas;
+        private ResourceRef<ConstantBuffer<ProbeBufferParams>> probeParamsBuffer;
+        private ResourceRef<ConstantBuffer<DeferredLightParams>> lightParamsBuffer;
 
-        private ISamplerState linearClampSampler;
-        private ISamplerState linearWrapSampler;
-        private ISamplerState pointClampSampler;
-        private ISamplerState shadowSampler;
+        private ResourceRef<ISamplerState> linearClampSampler;
+        private ResourceRef<ISamplerState> linearWrapSampler;
+        private ResourceRef<ISamplerState> pointClampSampler;
+        private ResourceRef<ISamplerState> shadowSampler;
 
         private unsafe void** cbs;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<ConstantBuffer<CBWeather>> weather;
         private const uint nConstantBuffers = 3;
         private unsafe void** smps;
         private const uint nSamplers = 4;
@@ -50,25 +62,33 @@ namespace HexaEngine.Rendering.Passes
             AddReadDependency(new("BRDFLUT"));
         }
 
-        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device)
+        public override unsafe void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler profiler)
         {
+            depthStencil = creator.GetDepthStencilBuffer("DepthStencil");
+            gbuffer = creator.GetGBuffer("GBuffer");
+            AOBuffer = creator.GetTexture2D("#AOBuffer");
+
+            brdfLUT = creator.GetTexture2D("BRDFLUT");
+
+            lightIndexList = creator.GetStructuredUavBuffer<uint>("LightIndexList");
+            lightGridBuffer = creator.GetStructuredUavBuffer<LightGrid>("LightGridBuffer");
+
+            lightBuffer = creator.GetTexture2D("LightBuffer");
+
+            shadowAtlas = creator.GetShadowAtlas("ShadowAtlas");
+
             probeParamsBuffer = creator.CreateConstantBuffer<ProbeBufferParams>("ProbeBufferParams", CpuAccessFlags.Write);
             lightParamsBuffer = creator.CreateConstantBuffer<DeferredLightParams>("DeferredLightParams", CpuAccessFlags.Write);
 
+            smps = AllocArrayAndZero(nSamplers);
             linearClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.LinearClamp);
             linearWrapSampler = creator.CreateSamplerState("LinearWrap", SamplerStateDescription.LinearWrap);
             pointClampSampler = creator.CreateSamplerState("PointClamp", SamplerStateDescription.PointClamp);
             shadowSampler = creator.CreateSamplerState("LinearComparisonBorder", SamplerStateDescription.ComparisonLinearBorder);
 
-            smps = AllocArrayAndZero(nSamplers);
-            smps[0] = (void*)linearClampSampler.NativePointer;
-            smps[1] = (void*)linearWrapSampler.NativePointer;
-            smps[2] = (void*)pointClampSampler.NativePointer;
-            smps[3] = (void*)shadowSampler.NativePointer;
-
             cbs = AllocArrayAndZero(nConstantBuffers);
-            cbs[1] = (void*)creator.GetConstantBuffer<CBCamera>("CBCamera").NativePointer;
-            cbs[2] = (void*)creator.GetConstantBuffer<CBWeather>("CBWeather").NativePointer;
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            weather = creator.GetConstantBuffer<CBWeather>("CBWeather");
 
             indirectSrvs = AllocArrayAndZero(nIndirectSrvs);
             deferredSrvs = AllocArrayAndZero(nDeferredSrvs);
@@ -117,7 +137,7 @@ namespace HexaEngine.Rendering.Passes
             }, new ShaderMacro[] { new("CLUSTERED_DEFERRED", 1) });
         }
 
-        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler profiler)
         {
             if (forceForward)
                 return;
@@ -131,7 +151,7 @@ namespace HexaEngine.Rendering.Passes
             var lights = current.LightManager;
             var globalProbes = lights.GlobalProbes;
 
-            var gbuffer = creator.GetGBuffer("GBuffer");
+            var gbuffer = this.gbuffer.Value;
             for (int i = 0; i < 4; i++)
             {
                 if (i < gbuffer.Count)
@@ -140,22 +160,31 @@ namespace HexaEngine.Rendering.Passes
                 }
             }
 
-            deferredSrvs[4] = indirectSrvs[4] = deferredClusterdSrvs[4] = (void*)creator.GetDepthStencilBuffer("DepthStencil").SRV.NativePointer;
-            indirectSrvs[5] = deferredSrvs[5] = deferredClusterdSrvs[5] = (void*)creator.GetTexture2D("#AOBuffer").SRV.NativePointer;
-            indirectSrvs[9] = (void*)creator.GetTexture2D("BRDFLUT").SRV.NativePointer;
+            cbs[1] = (void*)camera.Value.NativePointer;
+            cbs[2] = (void*)weather.Value.NativePointer;
+
+            smps[0] = (void*)linearClampSampler.Value.NativePointer;
+            smps[1] = (void*)linearWrapSampler.Value.NativePointer;
+            smps[2] = (void*)pointClampSampler.Value.NativePointer;
+            smps[3] = (void*)shadowSampler.Value.NativePointer;
+
+            deferredSrvs[4] = indirectSrvs[4] = deferredClusterdSrvs[4] = (void*)depthStencil.Value.SRV.NativePointer;
+            indirectSrvs[5] = deferredSrvs[5] = deferredClusterdSrvs[5] = (void*)AOBuffer.Value.SRV.NativePointer;
+            indirectSrvs[9] = (void*)brdfLUT.Value.SRV.NativePointer;
             indirectSrvs[10] = (void*)globalProbes.SRV.NativePointer;
 
             deferredSrvs[6] = deferredClusterdSrvs[6] = (void*)lights.LightBuffer.SRV.NativePointer;
             deferredSrvs[7] = deferredClusterdSrvs[7] = (void*)lights.ShadowDataBuffer.SRV.NativePointer;
 
-            deferredClusterdSrvs[8] = (void*)creator.GetStructuredUavBuffer<uint>("LightIndexList").SRV.NativePointer;
-            deferredClusterdSrvs[9] = (void*)creator.GetStructuredUavBuffer<LightGrid>("LightGridBuffer").SRV.NativePointer;
+            deferredClusterdSrvs[8] = (void*)lightIndexList.Value.SRV.NativePointer;
+            deferredClusterdSrvs[9] = (void*)lightGridBuffer.Value.SRV.NativePointer;
 
-            deferredClusterdSrvs[10] = deferredSrvs[8] = (void*)creator.GetShadowAtlas("ShadowAtlas").SRV.NativePointer;
+            deferredClusterdSrvs[10] = deferredSrvs[8] = (void*)shadowAtlas.Value.SRV.NativePointer;
 
-            context.SetRenderTarget(creator.GetTexture2D("LightBuffer").RTV, null);
+            context.SetRenderTarget(lightBuffer.Value.RTV, null);
 
             // Indirect light pass
+            var probeParamsBuffer = this.probeParamsBuffer.Value;
             var probeParams = probeParamsBuffer.Local;
             probeParams->GlobalProbes = globalProbes.Count;
             probeParamsBuffer.Update(context);
@@ -191,6 +220,7 @@ namespace HexaEngine.Rendering.Passes
         private unsafe void Deferred(IGraphicsContext context, GraphResourceBuilder creator, LightManager lights)
         {
             // Direct light pass
+            var lightParamsBuffer = this.lightParamsBuffer.Value;
             var lightParams = lightParamsBuffer.Local;
             lightParams->LightCount = lights.LightBuffer.Count;
             lightParamsBuffer.Update(context);

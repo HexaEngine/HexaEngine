@@ -174,7 +174,7 @@
             Trace.Assert(sizeof(int) >= sizeof(float), "sizeof(BinFloat) >= sizeof(ai_real)");
 
             // If this assertion fails, Visual C++ has finally moved to ILP64. This means that this
-            //  code has just become legacy code! Find out the current value of _MSC_VER and modify
+            //  code has just become legacy code! Find out the current _value of _MSC_VER and modify
             //  the #if above so it evaluates false on the current and all upcoming VC versions (or
             //  on the current platform, if LP64 or LLP64 are still used on other platforms).
             Trace.Assert(sizeof(int) == sizeof(float), "sizeof(BinFloat) == sizeof(ai_real)");
@@ -210,7 +210,7 @@
             //  if you apply it to 0.001, it is enormous.
 
             // The best way to overcome this is the unit in the last place (ULP). A precision of 2 ULPs
-            //  tells us that a float does not differ more than 2 bits from the "real" value. ULPs are of
+            //  tells us that a float does not differ more than 2 bits from the "real" _value. ULPs are of
             //  logarithmic precision - around 1, they are 1*(2^24) and around 10000, they are 0.00125.
 
             // For standard C math, we can assume a precision of 0.5 ULPs according to IEEE 754. The

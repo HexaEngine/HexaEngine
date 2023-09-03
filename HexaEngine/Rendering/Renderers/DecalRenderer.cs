@@ -26,9 +26,10 @@
         private readonly ISamplerState linearWrapSampler;
         private readonly ISamplerState pointClampSampler;
         private readonly ConstantBuffer<CBWorld> worldBuffer;
+
         private readonly ConstantBuffer<GPUDecal> decalBuffer;
 
-        private readonly ResourceRef<IBuffer> camera;
+
         private readonly ResourceRef<IShaderResourceView> depth;
 
         public DecalRenderer(IGraphicsDevice device)
@@ -56,8 +57,7 @@
             worldBuffer = new(device, CpuAccessFlags.Write);
             decalBuffer = new(device, CpuAccessFlags.Write);
 
-            camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-            depth = ResourceManager2.Shared.GetShaderResourceView("GBuffer.Depth");
+            depth = ResourceManager2.Shared.GetShaderResourceView("GBuffer.depth");
         }
 
         public unsafe void Draw(IGraphicsContext context, Decal decal)
@@ -65,12 +65,12 @@
             worldBuffer.Update(context, new(decal.Transform));
             decalBuffer.Update(context, new(decal));
 
-            nint* cbs = stackalloc nint[] { worldBuffer.NativePointer, camera.Value.NativePointer };
+            nint* cbs = stackalloc nint[] { worldBuffer.NativePointer };
             nint* srvs = stackalloc nint[] { decal.AlbedoDecalTexture?.SRV?.NativePointer ?? 0, decal.NormalDecalTexture?.SRV?.NativePointer ?? 0 };
             nint* sps = stackalloc nint[] { linearWrapSampler.NativePointer, pointClampSampler.NativePointer };
-            context.VSSetConstantBuffers(0, 2, (void**)cbs);
+            context.VSSetConstantBuffers(0, 1, (void**)cbs);
             cbs[0] = decalBuffer.NativePointer;
-            context.PSSetConstantBuffers(0, 2, (void**)cbs);
+            context.PSSetConstantBuffers(0, 1, (void**)cbs);
             context.PSSetShaderResources(0, 2, (void**)srvs);
             context.PSSetSamplers(0, 2, (void**)sps);
 
@@ -84,8 +84,8 @@
 
             context.PSSetSamplers(0, 2, (void**)sps);
             context.PSSetShaderResources(0, 2, (void**)srvs);
-            context.PSSetConstantBuffers(0, 2, (void**)cbs);
-            context.VSSetConstantBuffers(0, 2, (void**)cbs);
+            context.PSSetConstantBuffers(0, 1, (void**)cbs);
+            context.VSSetConstantBuffers(0, 1, (void**)cbs);
         }
 
         public void Dispose()

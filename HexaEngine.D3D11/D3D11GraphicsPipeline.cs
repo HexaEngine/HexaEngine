@@ -262,7 +262,7 @@
                 if (!CanSkipLayout(inputElements))
                 {
                     ComPtr<ID3D11InputLayout> il;
-                    InputElementDesc* descs = Alloc<InputElementDesc>(inputElements.Length);
+                    InputElementDesc* descs = AllocT<InputElementDesc>(inputElements.Length);
                     Helper.Convert(inputElements, descs);
                     device.Device.CreateInputLayout(descs, (uint)inputElements.Length, (void*)signature.BufferPointer, signature.PointerSize, &il.Handle);
                     Helper.Free(descs, inputElements.Length);

@@ -6,10 +6,12 @@
     using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
     public static unsafe class Helper
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.CPFlags Convert(CPFlags flags)
         {
             DirectXTex.CPFlags result = 0;
@@ -66,6 +68,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.WICCodecs Convert(TexFileFormat format)
         {
             return format switch
@@ -84,6 +87,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.TexFilterFlags Convert(TexFilterFlags flags)
         {
             DirectXTex.TexFilterFlags result = 0;
@@ -220,6 +224,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.TexCompressFlags Convert(TexCompressFlags flags)
         {
             DirectXTex.TexCompressFlags result = 0;
@@ -276,6 +281,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Map Convert(Map map)
         {
             return map switch
@@ -289,6 +295,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Viewport Convert(Viewport viewport)
         {
             return new()
@@ -302,6 +309,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Convert(Viewport* srcViewports, Silk.NET.Direct3D11.Viewport* dstViewports, uint count)
         {
             for (uint i = 0; i < count; i++)
@@ -310,6 +318,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float ClampAndRound(float value, float min, float max)
         {
             if (float.IsNaN(value))
@@ -335,12 +344,14 @@
             return MathF.Round(value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PackUNorm(float bitmask, float value)
         {
             value *= bitmask;
             return (uint)ClampAndRound(value, 0.0f, bitmask);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PackRGBA(float x, float y, float z, float w)
         {
             uint red = PackUNorm(255.0f, x);
@@ -350,8 +361,10 @@
             return red | green | blue | alpha;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint PackRGBA(Vector4 color) => PackRGBA(color.X, color.Y, color.Z, color.W);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Core.Native.D3DPrimitiveTopology Convert(PrimitiveTopology topology)
         {
             return topology switch
@@ -402,6 +415,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.MapFlag Convert(MapFlags flags)
         {
             return flags switch
@@ -412,6 +426,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Map Convert(MapMode mode)
         {
             return mode switch
@@ -425,6 +440,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.ClearFlag Convert(DepthStencilClearFlags flags)
         {
             return flags switch
@@ -437,6 +453,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Texture1DDescription ConvertBack(Silk.NET.Direct3D11.Texture1DDesc desc)
         {
             return new()
@@ -452,6 +469,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Texture2DDescription ConvertBack(Silk.NET.Direct3D11.Texture2DDesc desc)
         {
             return new()
@@ -469,6 +487,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Texture3DDescription ConvertBack(Silk.NET.Direct3D11.Texture3DDesc desc)
         {
             return new()
@@ -485,6 +504,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static CpuAccessFlags ConvertBack(Silk.NET.Direct3D11.CpuAccessFlag flags)
         {
             if (flags == Silk.NET.Direct3D11.CpuAccessFlag.Write)
@@ -500,6 +520,7 @@
             return CpuAccessFlags.None;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ResourceMiscFlag ConvertBack(Silk.NET.Direct3D11.ResourceMiscFlag flags)
         {
             ResourceMiscFlag result = 0;
@@ -610,6 +631,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Usage ConvertBack(Silk.NET.Direct3D11.Usage usage)
         {
             return usage switch
@@ -622,6 +644,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static BindFlags ConvertBack(Silk.NET.Direct3D11.BindFlag flags)
         {
             BindFlags result = 0;
@@ -678,6 +701,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.SamplerDesc Convert(SamplerStateDescription description)
         {
             Silk.NET.Direct3D11.SamplerDesc result = new()
@@ -696,6 +720,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Filter Convert(Filter filter)
         {
             return filter switch
@@ -740,6 +765,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.TextureAddressMode Convert(TextureAddressMode address)
         {
             return address switch
@@ -753,6 +779,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.RenderTargetViewDesc Convert(RenderTargetViewDescription description)
         {
             return new()
@@ -763,6 +790,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.RtvDimension Convert(RenderTargetViewDimension viewDimension)
         {
             return viewDimension switch
@@ -779,6 +807,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.RenderTargetViewDescUnion Convert(RenderTargetViewDescription description, RenderTargetViewDimension viewDimension)
         {
             return viewDimension switch
@@ -795,41 +824,49 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex3DRtv Convert(Texture3DRenderTargetView texture3D)
         {
             return new Silk.NET.Direct3D11.Tex3DRtv((uint)texture3D.MipSlice, (uint)texture3D.FirstWSlice, (uint)texture3D.WSize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DmsArrayRtv Convert(Texture2DMultisampledArrayRenderTargetView texture2DMSArray)
         {
             return new Silk.NET.Direct3D11.Tex2DmsArrayRtv((uint)texture2DMSArray.FirstArraySlice, (uint)texture2DMSArray.ArraySize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DmsRtv Convert(Texture2DMultisampledRenderTargetView texture2DMultisampled)
         {
             return new Silk.NET.Direct3D11.Tex2DmsRtv((uint)texture2DMultisampled.UnusedFieldNothingToDefine);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DArrayRtv Convert(Texture2DArrayRenderTargetView texture2DArray)
         {
             return new Silk.NET.Direct3D11.Tex2DArrayRtv((uint)texture2DArray.MipSlice, (uint)texture2DArray.FirstArraySlice, (uint)texture2DArray.ArraySize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DRtv Convert(Texture2DRenderTargetView texture2D)
         {
             return new Silk.NET.Direct3D11.Tex2DRtv((uint)texture2D.MipSlice);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex1DArrayRtv Convert(Texture1DArrayRenderTargetView texture1DArray)
         {
             return new Silk.NET.Direct3D11.Tex1DArrayRtv((uint)texture1DArray.MipSlice, (uint)texture1DArray.FirstArraySlice, (uint)texture1DArray.ArraySize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex1DRtv Convert(Texture1DRenderTargetView texture1D)
         {
             return new Silk.NET.Direct3D11.Tex1DRtv((uint)texture1D.MipSlice);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BufferRtv Convert(BufferRenderTargetView buffer)
         {
             return new()
@@ -847,6 +884,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DepthStencilViewDesc Convert(DepthStencilViewDescription description)
         {
             return new()
@@ -858,6 +896,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DsvDimension Convert(DepthStencilViewDimension viewDimension)
         {
             return viewDimension switch
@@ -872,6 +911,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DsvFlag Convert(DepthStencilViewFlags flags)
         {
             Silk.NET.Direct3D11.DsvFlag result = 0;
@@ -893,6 +933,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DepthStencilViewDescUnion Convert(DepthStencilViewDescription description, DepthStencilViewDimension viewDimension)
         {
             return viewDimension switch
@@ -907,36 +948,43 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DmsArrayDsv Convert(Texture2DMultisampledArrayDepthStencilView texture2DMSArray)
         {
             return new Silk.NET.Direct3D11.Tex2DmsArrayDsv((uint)texture2DMSArray.FirstArraySlice, (uint)texture2DMSArray.ArraySize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DmsDsv Convert(Texture2DMultisampledDepthStencilView texture2DMS)
         {
             return new Silk.NET.Direct3D11.Tex2DmsDsv((uint)texture2DMS.UnusedFieldNothingToDefine);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DArrayDsv Convert(Texture2DArrayDepthStencilView texture2DArray)
         {
             return new Silk.NET.Direct3D11.Tex2DArrayDsv((uint)texture2DArray.MipSlice, (uint)texture2DArray.FirstArraySlice, (uint)texture2DArray.ArraySize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DDsv Convert(Texture2DDepthStencilView texture2D)
         {
             return new Silk.NET.Direct3D11.Tex2DDsv((uint)texture2D.MipSlice);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex1DArrayDsv Convert(Texture1DArrayDepthStencilView texture1DArray)
         {
             return new Silk.NET.Direct3D11.Tex1DArrayDsv((uint)texture1DArray.MipSlice, (uint)texture1DArray.FirstArraySlice, (uint)texture1DArray.ArraySize);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex1DDsv Convert(Texture1DDepthStencilView texture1D)
         {
             return new Silk.NET.Direct3D11.Tex1DDsv((uint)texture1D.MipSlice);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.ShaderResourceViewDesc Convert(ShaderResourceViewDescription description)
         {
             return new()
@@ -947,6 +995,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.ShaderResourceViewDescUnion Convert(ShaderResourceViewDescription description, ShaderResourceViewDimension dimension)
         {
             return dimension switch
@@ -966,11 +1015,13 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BufferexSrv Convert(BufferExtendedShaderResourceView bufferEx)
         {
             return new Silk.NET.Direct3D11.BufferexSrv((uint)bufferEx.FirstElement, (uint)bufferEx.NumElements, (uint)Convert(bufferEx.Flags));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BufferexSrvFlag Convert(BufferExtendedShaderResourceViewFlags flags)
         {
             if ((flags & BufferExtendedShaderResourceViewFlags.Raw) != 0)
@@ -983,21 +1034,25 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.TexcubeArraySrv Convert(TextureCubeArrayShaderResourceView textureCubeArray)
         {
             return new Silk.NET.Direct3D11.TexcubeArraySrv((uint?)textureCubeArray.MostDetailedMip, (uint?)textureCubeArray.MipLevels, (uint?)textureCubeArray.First2DArrayFace, (uint?)textureCubeArray.NumCubes);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.TexcubeSrv Convert(TextureCubeShaderResourceView textureCube)
         {
             return new Silk.NET.Direct3D11.TexcubeSrv((uint)textureCube.MostDetailedMip, (uint)textureCube.MipLevels);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex3DSrv Convert(Texture3DShaderResourceView texture3D)
         {
             return new Silk.NET.Direct3D11.Tex3DSrv((uint)texture3D.MostDetailedMip, (uint)texture3D.MipLevels);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DmsArraySrv Convert(Texture2DMultisampledArrayShaderResourceView texture2DMSArray)
         {
             return new()
@@ -1007,11 +1062,13 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DmsSrv Convert(Texture2DMultisampledShaderResourceView texture2DMS)
         {
             return new() { UnusedFieldNothingToDefine = (uint)texture2DMS.UnusedFieldNothingToDefine };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DArraySrv Convert(Texture2DArrayShaderResourceView texture2DArray)
         {
             return new()
@@ -1023,6 +1080,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex2DSrv Convert(Texture2DShaderResourceView texture2D)
         {
             return new()
@@ -1032,6 +1090,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex1DArraySrv Convert(Texture1DArrayShaderResourceView texture1DArray)
         {
             return new()
@@ -1043,6 +1102,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Tex1DSrv Convert(Texture1DShaderResourceView texture1D)
         {
             return new()
@@ -1052,6 +1112,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BufferSrv Convert(BufferShaderResourceView buffer)
         {
             return new()
@@ -1069,6 +1130,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Core.Native.D3DSrvDimension Convert(ShaderResourceViewDimension viewDimension)
         {
             return viewDimension switch
@@ -1089,6 +1151,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Convert(SubresourceData[] datas, Silk.NET.Direct3D11.SubresourceData* subresourceDatas)
         {
             for (int i = 0; i < datas.Length; i++)
@@ -1097,6 +1160,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.SubresourceData Convert(SubresourceData data)
         {
             return new()
@@ -1107,6 +1171,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Texture3DDesc Convert(Texture3DDescription description)
         {
             return new()
@@ -1123,6 +1188,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Texture2DDesc Convert(Texture2DDescription description)
         {
             return new()
@@ -1140,6 +1206,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.SampleDesc Convert(SampleDescription sampleDescription)
         {
             return new()
@@ -1149,6 +1216,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Texture1DDesc Convert(Texture1DDescription description)
         {
             return new()
@@ -1164,6 +1232,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DepthStencilDesc Convert(DepthStencilDescription description)
         {
             return new()
@@ -1179,6 +1248,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DepthStencilopDesc Convert(DepthStencilOperationDescription description)
         {
             return new()
@@ -1190,6 +1260,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Silk.NET.Direct3D11.Query Convert(Query query)
         {
             return query switch
@@ -1214,6 +1285,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.StencilOp Convert(StencilOperation operation)
         {
             return operation switch
@@ -1230,6 +1302,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.ComparisonFunc Convert(ComparisonFunction function)
         {
             return function switch
@@ -1246,6 +1319,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.DepthWriteMask Convert(DepthWriteMask mask)
         {
             return mask switch
@@ -1256,6 +1330,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.RasterizerDesc Convert(RasterizerDescription description)
         {
             return new()
@@ -1273,6 +1348,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.FillMode Convert(FillMode mode)
         {
             return mode switch
@@ -1283,6 +1359,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.CullMode Convert(CullMode mode)
         {
             return mode switch
@@ -1294,6 +1371,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BlendDesc Convert(BlendDescription description)
         {
             return new()
@@ -1304,6 +1382,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BlendDesc.RenderTargetBuffer Convert(RenderTargetBlendDescription[] descriptions)
         {
             return new()
@@ -1319,6 +1398,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.RenderTargetBlendDesc Convert(RenderTargetBlendDescription description)
         {
             return new()
@@ -1334,6 +1414,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.ColorWriteEnable Convert(ColorWriteEnable flags)
         {
             Silk.NET.Direct3D11.ColorWriteEnable result = 0;
@@ -1365,6 +1446,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Blend Convert(Blend blend)
         {
             return blend switch
@@ -1390,6 +1472,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BlendOp Convert(BlendOperation operation)
         {
             return operation switch
@@ -1403,6 +1486,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BufferDesc Convert(BufferDescription description)
         {
             return new()
@@ -1416,6 +1500,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.CpuAccessFlag Convert(CpuAccessFlags flags)
         {
             Silk.NET.Direct3D11.CpuAccessFlag result = 0;
@@ -1432,6 +1517,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.ResourceMiscFlag Convert(ResourceMiscFlag flags)
         {
             Silk.NET.Direct3D11.ResourceMiscFlag result = 0;
@@ -1538,6 +1624,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.Usage Convert(Usage usage)
         {
             return usage switch
@@ -1550,6 +1637,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.BindFlag Convert(BindFlags flags)
         {
             Silk.NET.Direct3D11.BindFlag result = 0;
@@ -1606,6 +1694,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Convert(InputElementDescription[] inputElements, Silk.NET.Direct3D11.InputElementDesc* descs)
         {
             for (int i = 0; i < inputElements.Length; i++)
@@ -1614,6 +1703,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Free(Silk.NET.Direct3D11.InputElementDesc* descs, int count)
         {
             for (int i = 0; i < count; i++)
@@ -1622,6 +1712,7 @@
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.InputElementDesc Convert(InputElementDescription description)
         {
             return new()
@@ -1636,6 +1727,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Direct3D11.InputClassification Convert(InputClassification classification)
         {
             return classification switch
@@ -1646,6 +1738,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.Format Convert(Format format)
         {
             return format switch
@@ -1776,6 +1869,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Format ConvertBack(Silk.NET.DXGI.Format format)
         {
             return format switch
@@ -1906,6 +2000,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static ShaderInputBindDescription Convert(Silk.NET.Direct3D11.ShaderInputBindDesc shaderInputDesc)
         {
             return new()
@@ -1921,6 +2016,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ShaderInputType Convert(D3DShaderInputType type)
         {
             return type switch
@@ -1943,6 +2039,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static ResourceReturnType Convert(D3DResourceReturnType returnType)
         {
             return returnType switch
@@ -1960,6 +2057,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static SrvDimension Convert(D3DSrvDimension dimension)
         {
             return dimension switch
@@ -1980,6 +2078,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static SignatureParameterDescription Convert(Silk.NET.Direct3D11.SignatureParameterDesc shaderInputDesc)
         {
             return new()
@@ -1996,6 +2095,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Name Convert(D3DName systemValueType)
         {
             return systemValueType switch
@@ -2031,6 +2131,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static MinPrecision Convert(D3DMinPrecision minPrecision)
         {
             return minPrecision switch
@@ -2047,6 +2148,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static RegisterComponentType Convert(D3DRegisterComponentType componentType)
         {
             return componentType switch
@@ -2059,6 +2161,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Silk.NET.Direct3D11.UnorderedAccessViewDesc Convert(UnorderedAccessViewDescription description)
         {
             Silk.NET.Direct3D11.UnorderedAccessViewDesc result = new()
@@ -2100,6 +2203,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.Tex3DUav Convert(Texture3DUnorderedAccessView texture3D)
         {
             return new()
@@ -2110,6 +2214,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.Tex2DArrayUav Convert(Texture2DArrayUnorderedAccessView texture2DArray)
         {
             return new()
@@ -2120,6 +2225,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.Tex2DUav Convert(Texture2DUnorderedAccessView texture2D)
         {
             return new()
@@ -2128,6 +2234,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.Tex1DArrayUav Convert(Texture1DArrayUnorderedAccessView texture1DArray)
         {
             return new()
@@ -2138,6 +2245,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.Tex1DUav Convert(Texture1DUnorderedAccessView texture1D)
         {
             return new()
@@ -2146,6 +2254,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.BufferUav Convert(BufferUnorderedAccessView buffer)
         {
             return new()
@@ -2156,6 +2265,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.BufferUavFlag Convert(BufferUnorderedAccessViewFlags flags)
         {
             return flags switch
@@ -2168,6 +2278,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.Direct3D11.UavDimension Convert(UnorderedAccessViewDimension viewDimension)
         {
             return viewDimension switch
@@ -2183,6 +2294,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.TexMetadata Convert(TexMetadata metadata)
         {
             DirectXTex.TexMetadata texMetadata;
@@ -2199,6 +2311,7 @@
             return texMetadata;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.TexAlphaMode Convert(TexAlphaMode mode)
         {
             return mode switch
@@ -2212,6 +2325,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.TexMiscFlag Convert(TexMiscFlags flags)
         {
             DirectXTex.TexMiscFlag result = 0;
@@ -2224,6 +2338,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static DirectXTex.TexDimension Convert(TexDimension dimension)
         {
             return dimension switch
@@ -2235,6 +2350,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TexMetadata ConvertBack(DirectXTex.TexMetadata metadata)
         {
             TexMetadata texMetadata;
@@ -2250,6 +2366,7 @@
             return texMetadata;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static TexDimension ConvertBack(DirectXTex.TexDimension dimension)
         {
             return dimension switch
@@ -2261,6 +2378,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static TexMiscFlags ConvertBack(DirectXTex.TexMiscFlag flags)
         {
             TexMiscFlags result = 0;
@@ -2273,6 +2391,7 @@
             return result;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static TexAlphaMode ConvertBack(DirectXTex.TexAlphaMode alphaMode)
         {
             return alphaMode switch
@@ -2286,11 +2405,13 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.Maths.Box2D<int> Convert(Rect rect)
         {
             return new((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.SwapChainDesc1 Convert(SwapChainDescription swapChainDescription)
         {
             return new()
@@ -2309,6 +2430,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static Silk.NET.DXGI.SwapChainFlag Convert(SwapChainFlags flags)
         {
             return flags switch
@@ -2331,6 +2453,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.AlphaMode Convert(SwapChainAlphaMode alphaMode)
         {
             return alphaMode switch
@@ -2344,6 +2467,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.SwapEffect Convert(SwapEffect swapEffect)
         {
             return swapEffect switch
@@ -2356,6 +2480,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.Scaling Convert(Scaling scaling)
         {
             return scaling switch
@@ -2367,6 +2492,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.SwapChainFullscreenDesc Convert(SwapChainFullscreenDescription description)
         {
             return new()
@@ -2378,6 +2504,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.Rational Convert(Rational value)
         {
             return new()
@@ -2387,6 +2514,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.ModeScaling Convert(ModeScaling scaling)
         {
             return scaling switch
@@ -2398,6 +2526,7 @@
             };
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Silk.NET.DXGI.ModeScanlineOrder Convert(ModeScanlineOrder order)
         {
             return order switch

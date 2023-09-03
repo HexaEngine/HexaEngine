@@ -1,8 +1,9 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
-    using BepuPhysics;
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.ImGuiNET;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
@@ -10,56 +11,6 @@
     using ImPlotNET;
     using System.Diagnostics;
     using System.Numerics;
-
-    public unsafe struct RingBuffer
-    {
-        private readonly double[] values;
-        private readonly int length;
-        private int tail = 0;
-        private int head;
-
-        public RingBuffer(int length)
-        {
-            values = new double[length];
-            this.length = length;
-        }
-
-        public double[] Values => values;
-
-        public int Length => length;
-
-        public int Tail => tail;
-
-        public int Head => head;
-
-        public void Add(double value)
-        {
-            if (value < 0)
-            {
-                value = 0;
-            }
-
-            values[tail] = value;
-
-            tail++;
-
-            if (tail == length)
-            {
-                tail = 0;
-            }
-            if (tail < 0)
-            {
-                tail = length - 1;
-            }
-
-            head = (tail - length) % length;
-
-            if (head < 0)
-            {
-                head += length;
-            }
-        }
-    }
 
     public class ProfilerWindow : EditorWindow
     {
@@ -70,6 +21,7 @@
         private bool gpu = false;
         private bool scene = false;
         private bool physics = false;
+        private bool flame = false;
 
         public ProfilerWindow()
         {
@@ -78,55 +30,55 @@
 
         protected override string Name => "SceneProfiler";
 
-        public RingBuffer Frame = new(SampleBufferSize);
+        public RingBuffer<double> Frame = new(SampleBufferSize);
 
-        public RingBuffer Systems = new(SampleBufferSize);
-        private readonly Dictionary<object, RingBuffer> systems = new();
+        public RingBuffer<double> Systems = new(SampleBufferSize);
+        private readonly Dictionary<object, RingBuffer<double>> systems = new();
 
-        public RingBuffer Update = new(SampleBufferSize);
-        public RingBuffer Prepass = new(SampleBufferSize);
-        public RingBuffer ObjectCulling = new(SampleBufferSize);
-        public RingBuffer LightCulling = new(SampleBufferSize);
-        public RingBuffer ShadowMaps = new(SampleBufferSize);
-        public RingBuffer Geometry = new(SampleBufferSize);
-        public RingBuffer AO = new(SampleBufferSize);
-        public RingBuffer LightsDeferred = new(SampleBufferSize);
-        public RingBuffer LightsForward = new(SampleBufferSize);
-        public RingBuffer PostProcessing = new(SampleBufferSize);
-        public RingBuffer DebugDraw = new(SampleBufferSize);
-        public RingBuffer ImGuiDraw = new(SampleBufferSize);
+        public RingBuffer<double> Update = new(SampleBufferSize);
+        public RingBuffer<double> Prepass = new(SampleBufferSize);
+        public RingBuffer<double> ObjectCulling = new(SampleBufferSize);
+        public RingBuffer<double> LightCulling = new(SampleBufferSize);
+        public RingBuffer<double> ShadowMaps = new(SampleBufferSize);
+        public RingBuffer<double> Geometry = new(SampleBufferSize);
+        public RingBuffer<double> AO = new(SampleBufferSize);
+        public RingBuffer<double> LightsDeferred = new(SampleBufferSize);
+        public RingBuffer<double> LightsForward = new(SampleBufferSize);
+        public RingBuffer<double> PostProcessing = new(SampleBufferSize);
+        public RingBuffer<double> DebugDraw = new(SampleBufferSize);
+        public RingBuffer<double> ImGuiDraw = new(SampleBufferSize);
 
-        public RingBuffer GpuTotal = new(SampleBufferSize);
-        public RingBuffer GpuUpdate = new(SampleBufferSize);
-        public RingBuffer GpuPrepass = new(SampleBufferSize);
-        public RingBuffer GpuObjectCulling = new(SampleBufferSize);
-        public RingBuffer GpuLightCulling = new(SampleBufferSize);
-        public RingBuffer GpuShadowMaps = new(SampleBufferSize);
-        public RingBuffer GpuGeometry = new(SampleBufferSize);
-        public RingBuffer GpuAO = new(SampleBufferSize);
-        public RingBuffer GpuLightsDeferred = new(SampleBufferSize);
-        public RingBuffer GpuLightsForward = new(SampleBufferSize);
-        public RingBuffer GpuPostProcessing = new(SampleBufferSize);
-        public RingBuffer GpuDebugDraw = new(SampleBufferSize);
-        public RingBuffer GpuImGuiDraw = new(SampleBufferSize);
+        public RingBuffer<double> GpuTotal = new(SampleBufferSize);
+        public RingBuffer<double> GpuUpdate = new(SampleBufferSize);
+        public RingBuffer<double> GpuPrepass = new(SampleBufferSize);
+        public RingBuffer<double> GpuObjectCulling = new(SampleBufferSize);
+        public RingBuffer<double> GpuLightCulling = new(SampleBufferSize);
+        public RingBuffer<double> GpuShadowMaps = new(SampleBufferSize);
+        public RingBuffer<double> GpuGeometry = new(SampleBufferSize);
+        public RingBuffer<double> GpuAO = new(SampleBufferSize);
+        public RingBuffer<double> GpuLightsDeferred = new(SampleBufferSize);
+        public RingBuffer<double> GpuLightsForward = new(SampleBufferSize);
+        public RingBuffer<double> GpuPostProcessing = new(SampleBufferSize);
+        public RingBuffer<double> GpuDebugDraw = new(SampleBufferSize);
+        public RingBuffer<double> GpuImGuiDraw = new(SampleBufferSize);
 
-        public RingBuffer Simulation = new(SampleBufferSize);
-        public RingBuffer PoseIntegrator = new(SampleBufferSize);
-        public RingBuffer Sleeper = new(SampleBufferSize);
-        public RingBuffer BroadPhaseUpdate = new(SampleBufferSize);
-        public RingBuffer CollisionTesting = new(SampleBufferSize);
-        public RingBuffer NarrowPhaseFlush = new(SampleBufferSize);
-        public RingBuffer Solver = new(SampleBufferSize);
-        public RingBuffer BatchCompressor = new(SampleBufferSize);
+        public RingBuffer<double> Simulation = new(SampleBufferSize);
+        public RingBuffer<double> PoseIntegrator = new(SampleBufferSize);
+        public RingBuffer<double> Sleeper = new(SampleBufferSize);
+        public RingBuffer<double> BroadPhaseUpdate = new(SampleBufferSize);
+        public RingBuffer<double> CollisionTesting = new(SampleBufferSize);
+        public RingBuffer<double> NarrowPhaseFlush = new(SampleBufferSize);
+        public RingBuffer<double> Solver = new(SampleBufferSize);
+        public RingBuffer<double> BatchCompressor = new(SampleBufferSize);
 
-        public RingBuffer MemoryUsage = new(SampleBufferSize);
-        public RingBuffer VideoMemoryUsage = new(SampleBufferSize);
+        public RingBuffer<double> MemoryUsage = new(SampleBufferSize);
+        public RingBuffer<double> VideoMemoryUsage = new(SampleBufferSize);
 
         public int SamplesPerSecond { get => samplesPerSecond; set => samplesPerSecond = value; }
 
         public float SampleLatency => 1f / SamplesPerSecond;
 
-        public override void DrawContent(IGraphicsContext context)
+        public override unsafe void DrawContent(IGraphicsContext context)
         {
             if (ImGui.BeginMenuBar())
             {
@@ -138,6 +90,7 @@
                     ImGui.Checkbox("GPU Profile (heavy performance impact)", ref gpu);
                     ImGui.Checkbox("Scene Profile (low~med performance impact)", ref scene);
                     ImGui.Checkbox("Physics Profile (low~med performance impact)", ref physics);
+                    ImGui.Checkbox("Flame Graph", ref flame);
                     ImGui.Separator();
                     if (ImGui.RadioButton("Samples Low (100)", samplesPerSecond == 100))
                     {
@@ -156,6 +109,15 @@
                 ImGui.EndMenuBar();
             }
             SampleInterpolated(context);
+            if (flame)
+            {
+                var renderer = SceneRenderer.Current;
+
+                if (renderer == null)
+                    return;
+                var profiler = renderer.Profiler;
+                ImGuiWidgetFlameGraph.PlotFlame("Flame", profiler.Getter, profiler.Current, profiler.StageCount, ref selected);
+            }
             if (full)
             {
                 DrawFull(context);
@@ -362,6 +324,7 @@
 
         private float accum = 0;
         private int samplesPerSecond = 1000;
+        private int selected;
 
         public void SampleInterpolated(IGraphicsContext context)
         {
@@ -439,7 +402,7 @@
                     var value = scene.Profiler[system];
                     if (!systems.TryGetValue(system, out var buffer))
                     {
-                        buffer = new RingBuffer(SampleBufferSize);
+                        buffer = new(SampleBufferSize);
                         systems.Add(system, buffer);
                     }
                     buffer.Add(value * 1000);

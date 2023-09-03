@@ -1,5 +1,5 @@
 cbuffer WorldBuffer : register(b0)
 {
-	matrix world;
-	matrix worldInv;
+	float4x4 world;
+	float4x4 worldInv;
 };

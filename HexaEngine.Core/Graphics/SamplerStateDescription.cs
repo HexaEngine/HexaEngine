@@ -67,11 +67,11 @@
         /// <param name="addressV">Method to use for resolving a v texture coordinate that is outside the 0 to 1 range.</param>
         /// <param name="addressW">Method to use for resolving a w texture coordinate that is outside the 0 to 1 range.</param>
         /// <param name="mipLODBias">Offset from the calculated mipmap level.</param>
-        /// <param name="maxAnisotropy">Clamping value used if <see cref="Filter.Anisotropic"/> or <see cref="Filter.ComparisonAnisotropic"/> is specified in Filter. Valid values are between 1 and 16.</param>
+        /// <param name="maxAnisotropy">Clamping _value used if <see cref="Filter.Anisotropic"/> or <see cref="Filter.ComparisonAnisotropic"/> is specified in Filter. Valid values are between 1 and 16.</param>
         /// <param name="comparisonFunction">A function that compares sampled data against existing sampled data. </param>
         /// <param name="borderColor">Border color to use if <see cref="TextureAddressMode.Border"/> is specified for AddressU, AddressV, or AddressW.</param>
         /// <param name="minLOD">Lower end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed.</param>
-        /// <param name="maxLOD">Upper end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed. This value must be greater than or equal to MinLOD. </param>
+        /// <param name="maxLOD">Upper end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed. This _value must be greater than or equal to MinLOD. </param>
         public SamplerStateDescription(
             Filter filter,
             TextureAddressMode addressU,
@@ -104,10 +104,10 @@
         /// <param name="addressV">Method to use for resolving a v texture coordinate that is outside the 0 to 1 range.</param>
         /// <param name="addressW">Method to use for resolving a w texture coordinate that is outside the 0 to 1 range.</param>
         /// <param name="mipLODBias">Offset from the calculated mipmap level.</param>
-        /// <param name="maxAnisotropy">Clamping value used if <see cref="Filter.Anisotropic"/> or <see cref="Filter.ComparisonAnisotropic"/> is specified in Filter. Valid values are between 1 and 16.</param>
+        /// <param name="maxAnisotropy">Clamping _value used if <see cref="Filter.Anisotropic"/> or <see cref="Filter.ComparisonAnisotropic"/> is specified in Filter. Valid values are between 1 and 16.</param>
         /// <param name="comparisonFunction">A function that compares sampled data against existing sampled data. </param>
         /// <param name="minLOD">Lower end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed.</param>
-        /// <param name="maxLOD">Upper end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed. This value must be greater than or equal to MinLOD. </param>
+        /// <param name="maxLOD">Upper end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed. This _value must be greater than or equal to MinLOD. </param>
         public SamplerStateDescription(
             Filter filter,
             TextureAddressMode addressU,
@@ -137,10 +137,10 @@
         /// <param name="filter">Filtering method to use when sampling a texture.</param>
         /// <param name="address">Method to use for resolving a u, v e w texture coordinate that is outside the 0 to 1 range.</param>
         /// <param name="mipLODBias">Offset from the calculated mipmap level.</param>
-        /// <param name="maxAnisotropy">Clamping value used if <see cref="Filter.Anisotropic"/> or <see cref="Filter.ComparisonAnisotropic"/> is specified in Filter. Valid values are between 1 and 16.</param>
+        /// <param name="maxAnisotropy">Clamping _value used if <see cref="Filter.Anisotropic"/> or <see cref="Filter.ComparisonAnisotropic"/> is specified in Filter. Valid values are between 1 and 16.</param>
         /// <param name="comparisonFunction">A function that compares sampled data against existing sampled data. </param>
         /// <param name="minLOD">Lower end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed.</param>
-        /// <param name="maxLOD">Upper end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed. This value must be greater than or equal to MinLOD. </param>
+        /// <param name="maxLOD">Upper end of the mipmap range to clamp access to, where 0 is the largest and most detailed mipmap level and any level higher than that is less detailed. This _value must be greater than or equal to MinLOD. </param>
         public SamplerStateDescription(
             Filter filter,
             TextureAddressMode address,

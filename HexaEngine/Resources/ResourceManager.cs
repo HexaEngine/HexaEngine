@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
@@ -24,10 +25,7 @@
             ResourceManager.device = device;
         }
 
-        /// <summary>
-        /// Begins to ignore cleanup
-        /// </summary>
-        public static void BeginPauseCleanup()
+        public static void BeginNoCleanupRegion()
         {
             if (suppressCleanup)
             {
@@ -37,10 +35,7 @@
             suppressCleanup = true;
         }
 
-        /// <summary>
-        /// Ends cleanup free region, this causes an full cleanup
-        /// </summary>
-        public static void EndPauseCleanup()
+        public static void EndNoCleanupRegion()
         {
             if (!suppressCleanup)
             {
@@ -64,12 +59,28 @@
                     material.Value.Dispose();
                 }
             }
+            foreach (var material in terrainMaterials.ToArray())
+            {
+                if (!material.Value.IsUsed)
+                {
+                    terrainMaterials.Remove(material.Key, out _);
+                    material.Value.Dispose();
+                }
+            }
             foreach (var texture in textures.ToArray())
             {
                 if (!texture.Value.IsUsed)
                 {
                     textures.Remove(texture.Key, out _);
                     texture.Value.Dispose();
+                }
+            }
+            foreach (var pipeline in pipelines.ToArray())
+            {
+                if (!pipeline.Value.IsUsed)
+                {
+                    pipelines.Remove(pipeline.Key, out _);
+                    pipeline.Value.Dispose();
                 }
             }
         }
@@ -252,6 +263,26 @@
             modelMaterial.EndUpdate();
         }
 
+        public static void ReloadMaterial(Material modelMaterial)
+        {
+            var desc = modelMaterial.Desc;
+            modelMaterial.Update(desc);
+            modelMaterial.BeginUpdate();
+            UpdateMaterialShader(ref modelMaterial.Shader);
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                UnloadTexture(modelMaterial.TextureList[i]);
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(LoadTexture(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+        }
+
         public static void UpdateTerrainMaterial(MaterialData desc)
         {
             TerrainMaterial? modelMaterial;
@@ -312,6 +343,27 @@
                 }
             }
 
+            modelMaterial.Update(desc);
+            modelMaterial.BeginUpdate();
+
+            modelMaterial.Shader = await UpdateMaterialShaderAsync(modelMaterial.Shader);
+
+            for (int i = 0; i < modelMaterial.TextureList.Count; i++)
+            {
+                UnloadTexture(modelMaterial.TextureList[i]);
+            }
+            modelMaterial.TextureList.Clear();
+            for (int i = 0; i < desc.Textures.Length; i++)
+            {
+                modelMaterial.TextureList.Add(await LoadTextureAsync(desc.Textures[i]));
+            }
+
+            modelMaterial.EndUpdate();
+        }
+
+        public static async Task ReloadMaterialAsync(Material modelMaterial)
+        {
+            var desc = modelMaterial.Desc;
             modelMaterial.Update(desc);
             modelMaterial.BeginUpdate();
 
@@ -561,6 +613,32 @@
             return pipeline;
         }
 
+        public static void RecompileShaders()
+        {
+            Logger.Info("recompiling material shaders ...");
+            Parallel.ForEach(shaders.Values, shader =>
+            {
+                shader.Value?.Recompile();
+            });
+            Logger.Info("recompiling material shaders ...  done!");
+        }
+
+        public static void ReloadMaterials()
+        {
+            foreach (var material in materials.Values)
+            {
+                ReloadMaterial(material);
+            }
+        }
+
+        public static async Task ReloadMaterialsAsync()
+        {
+            foreach (var material in materials.Values)
+            {
+                await ReloadMaterialAsync(material);
+            }
+        }
+
         #region Shader
 
         public static ResourceInstance<MaterialShader>? LoadMaterialShader(MeshData mesh, MaterialData material, bool debone = false)
@@ -634,7 +712,7 @@
                 return;
             }
 
-            shader.Value.Recompile();
+            shader.Value.Reload();
         }
 
         public static async Task<ResourceInstance<MaterialShader>?> UpdateMaterialShaderAsync(ResourceInstance<MaterialShader>? pipeline)
@@ -644,7 +722,7 @@
                 return null;
             }
 
-            await pipeline.Value.RecompileAsync();
+            await pipeline.Value.ReloadAsync();
             return pipeline;
         }
 

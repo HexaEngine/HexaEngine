@@ -125,19 +125,19 @@
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(NodeName, encoding, endianness);
-            stream.WriteInt((int)PreState, endianness);
-            stream.WriteInt((int)PostState, endianness);
-            stream.WriteInt(PositionKeyframes.Count, endianness);
+            stream.WriteInt32((int)PreState, endianness);
+            stream.WriteInt32((int)PostState, endianness);
+            stream.WriteInt32(PositionKeyframes.Count, endianness);
             for (int i = 0; i < PositionKeyframes.Count; i++)
             {
                 PositionKeyframes[i].Write(stream, endianness);
             }
-            stream.WriteInt(RotationKeyframes.Count, endianness);
+            stream.WriteInt32(RotationKeyframes.Count, endianness);
             for (int i = 0; i < RotationKeyframes.Count; i++)
             {
                 RotationKeyframes[i].Write(stream, endianness);
             }
-            stream.WriteInt(ScaleKeyframes.Count, endianness);
+            stream.WriteInt32(ScaleKeyframes.Count, endianness);
             for (int i = 0; i < ScaleKeyframes.Count; i++)
             {
                 ScaleKeyframes[i].Write(stream, endianness);
@@ -147,21 +147,21 @@
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
             NodeName = stream.ReadString(encoding, endianness) ?? string.Empty;
-            PreState = (AnimationBehavior)stream.ReadInt(endianness);
-            PostState = (AnimationBehavior)stream.ReadInt(endianness);
-            var positionKeyframesCount = stream.ReadInt(endianness);
+            PreState = (AnimationBehavior)stream.ReadInt32(endianness);
+            PostState = (AnimationBehavior)stream.ReadInt32(endianness);
+            var positionKeyframesCount = stream.ReadInt32(endianness);
             PositionKeyframes = new(positionKeyframesCount);
             for (int i = 0; i < positionKeyframesCount; i++)
             {
                 PositionKeyframes.Add(VectorKeyframe.ReadFrom(stream, endianness));
             }
-            var rotationKeyframesCount = stream.ReadInt(endianness);
+            var rotationKeyframesCount = stream.ReadInt32(endianness);
             RotationKeyframes = new(rotationKeyframesCount);
             for (int i = 0; i < rotationKeyframesCount; i++)
             {
                 RotationKeyframes.Add(QuatKeyframe.ReadFrom(stream, endianness));
             }
-            var scaleKeyframesCount = stream.ReadInt(endianness);
+            var scaleKeyframesCount = stream.ReadInt32(endianness);
             ScaleKeyframes = new(scaleKeyframesCount);
             for (int i = 0; i < scaleKeyframesCount; i++)
             {

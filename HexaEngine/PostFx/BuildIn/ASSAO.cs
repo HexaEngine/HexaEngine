@@ -1,13 +1,9 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
@@ -25,11 +21,6 @@ namespace HexaEngine.Effects.BuildIn
         private Viewport viewport;
 
         private ISamplerState samplerLinear;
-
-        public ResourceRef<Texture2D> Output;
-        public ResourceRef<IBuffer> Camera;
-        public ResourceRef<IShaderResourceView> Depth;
-        public ResourceRef<IShaderResourceView> Normal;
 
         private bool disposedValue;
         private int enabled;
@@ -101,7 +92,7 @@ namespace HexaEngine.Effects.BuildIn
 
             public float DepthPrecisionOffsetMod;
             public float NegRecEffectRadius;                     // -1.0 / EffectRadius
-            public float LoadCounterAvgDiv;                      // 1.0 / ( halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].sizeX * halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].sizeY )
+            public float LoadCounterAvgDiv;                      // 1.0 / ( halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].SizeX * halfDepthMip[SSAO_DEPTH_MIP_LEVELS-1].sizeY )
             public float AdaptiveSampleCountLimit;
 
             public float InvSharpness;
@@ -139,7 +130,6 @@ namespace HexaEngine.Effects.BuildIn
         public async Task Initialize(IGraphicsDevice device, int width, int height)
         {
             this.device = device;
-            Output = ResourceManager2.Shared.AddTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
 
             pipeline = await device.CreateGraphicsPipelineAsync(new()
             {
@@ -154,7 +144,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = Alloc<float>(NoiseSize * NoiseSize * NoiseStride);
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;
@@ -172,10 +162,6 @@ namespace HexaEngine.Effects.BuildIn
                 noiseTex = new(device, description, initialData);
             }
 
-            Depth = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Depth");
-            Normal = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.Normal");
-            Camera = ResourceManager2.Shared.GetBuffer("CBCamera");
-
             samplerLinear = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
             viewport = new(width, height);
         }
@@ -186,8 +172,6 @@ namespace HexaEngine.Effects.BuildIn
 
         public void Resize(int width, int height)
         {
-            Output = ResourceManager2.Shared.UpdateTexture("AOBuffer", new Texture2DDescription(Format.R32Float, width / 2, height / 2, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget));
-
             intermediateBuffer.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             viewport = new(width, height);
@@ -195,10 +179,6 @@ namespace HexaEngine.Effects.BuildIn
 
         public unsafe void Draw(IGraphicsContext context)
         {
-            if (Output is null)
-            {
-                return;
-            }
         }
 
         protected virtual unsafe void Dispose(bool disposing)

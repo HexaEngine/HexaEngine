@@ -44,7 +44,7 @@ namespace HexaEngine.Physics.Characters
         public Vector2 TargetVelocity;
 
         /// <summary>
-        /// Depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
+        /// depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
         /// </summary>
 		public float Depth;
 
@@ -213,7 +213,7 @@ namespace HexaEngine.Physics.Characters
             //plus some other references. The idea is that we need a way to transform the constraint space velocity (that we get from transforming body velocities
             //by the transpose jacobian) into a corrective impulse for the solver iterations. That corrective impulse is then used to update the velocities on each iteration execution.
             //This transform is the 'effective mass', representing the mass felt by the constraint in its local space.
-            //In concept, this constraint is actually two separate constraints solved iteratively, so we have two separate such effective mass transforms.
+            //In concept, this constraint is actually two separate constraints solved iteratively, so we have two separate such effective mass globals.
             Symmetric3x3Wide.MatrixSandwich(horizontalAngularJacobianA, inertiaA.InverseInertiaTensor, out var inverseHorizontalEffectiveMass);
             //The linear jacobians are unit length vectors, so J * M^-1 * JT is just M^-1.
             inverseHorizontalEffectiveMass.XX += inertiaA.InverseMass;
@@ -315,7 +315,7 @@ namespace HexaEngine.Physics.Characters
         public Vector2 TargetVelocity;
 
         /// <summary>
-        /// Depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
+        /// depth of the supporting contact. The vertical motion constraint permits separating velocity if, after a frame, the objects will still be touching.
         /// </summary>
 		public float Depth;
 
@@ -511,7 +511,7 @@ namespace HexaEngine.Physics.Characters
             //plus some other references. The idea is that we need a way to transform the constraint space velocity (that we get from transforming body velocities
             //by the transpose jacobian) into a corrective impulse for the solver iterations. That corrective impulse is then used to update the velocities on each iteration execution.
             //This transform is the 'effective mass', representing the mass felt by the constraint in its local space.
-            //In concept, this constraint is actually two separate constraints solved iteratively, so we have two separate such effective mass transforms.
+            //In concept, this constraint is actually two separate constraints solved iteratively, so we have two separate such effective mass globals.
             Symmetric3x3Wide.MatrixSandwich(horizontalAngularJacobianA, inertiaA.InverseInertiaTensor, out var horizontalAngularContributionA);
             Symmetric3x3Wide.MatrixSandwich(horizontalAngularJacobianB, inertiaB.InverseInertiaTensor, out var horizontalAngularContributionB);
             Symmetric2x2Wide.Add(horizontalAngularContributionA, horizontalAngularContributionB, out var inverseHorizontalEffectiveMass);

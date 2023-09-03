@@ -1,11 +1,10 @@
-﻿using HexaEngine.Culling;
-
-namespace HexaEngine.Windows
+﻿namespace HexaEngine.Windows
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.UI;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using HexaEngine.Editor;
@@ -16,7 +15,6 @@ namespace HexaEngine.Windows
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
-    using CullingManager = CullingManager;
 
     public class Window : SdlWindow, IRenderWindow
     {
@@ -72,11 +70,7 @@ namespace HexaEngine.Windows
             running = true;
             this.audioDevice = audioDevice;
             this.graphicsDevice = graphicsDevice;
-#if PROFILE
-            graphicsDevice.Profiler.CreateBlock("Total");
-            graphicsDevice.Profiler.CreateBlock("DebugDraw");
-            graphicsDevice.Profiler.CreateBlock("ImGui");
-#endif
+
             graphicsContext = graphicsDevice.Context;
             swapChain = graphicsDevice.CreateSwapChain(this) ?? throw new PlatformNotSupportedException();
             swapChain.Active = true;
@@ -87,7 +81,6 @@ namespace HexaEngine.Windows
                 AudioManager.Initialize(audioDevice);
                 ResourceManager.Initialize(graphicsDevice);
                 PipelineManager.Initialize(graphicsDevice);
-                ObjectPickerManager.Initialize(graphicsDevice, Width, Height);
             }
 
             if (Application.InEditorMode)
@@ -106,7 +99,7 @@ namespace HexaEngine.Windows
 
             if ((Flags & RendererFlags.ImGuiWidgets) != 0)
             {
-                WidgetManager.Init(graphicsDevice);
+                WindowManager.Init(graphicsDevice);
             }
 
             if ((Flags & RendererFlags.DebugDraw) != 0)
@@ -124,12 +117,12 @@ namespace HexaEngine.Windows
             {
                 if (x.IsCompletedSuccessfully)
                 {
-                    ImGuiConsole.Log(LogSeverity.Information, "Renderer: Initialized");
+                    Logger.Info("Renderer: Initialized");
                 }
                 if (x.IsFaulted)
                 {
-                    ImGuiConsole.Log(LogSeverity.Error, "Renderer: Failed Initialize");
-                    ImGuiConsole.Log(x.Exception);
+                    Logger.Error("Renderer: Failed InitializeAsync");
+                    Logger.Log(x.Exception);
                 }
 
                 renderViewport = new(sceneRenderer.Width, sceneRenderer.Height);
@@ -180,7 +173,6 @@ namespace HexaEngine.Windows
             {
                 swapChain.Resize(Width, Height);
                 resize = false;
-                ObjectPickerManager.Resize(Width, Height);
             }
 
             if (firstFrame)
@@ -217,15 +209,18 @@ namespace HexaEngine.Windows
 
             if (drawing)
             {
-                SceneManager.Current.RenderUpdate(context);
+                SceneManager.Current.GraphicsUpdate(context);
                 sceneRenderer.Render(context, this, windowViewport, SceneManager.Current, CameraManager.Current);
             }
 
             Designer.Draw();
-            WidgetManager.Draw(context);
+            WindowManager.Draw(context);
             ImGuiConsole.Draw();
+            MessageBoxes.Draw();
 
             OnRender(context);
+
+            context.SetRenderTarget(swapChain.BackbufferRTV, null);
 
             if (Application.InEditorMode)
             {
@@ -244,7 +239,6 @@ namespace HexaEngine.Windows
             Device.Profiler.Begin(Context, "ImGui");
             sceneRenderer.Profiler.Begin("ImGui");
 #endif
-            context.SetRenderTarget(swapChain.BackbufferRTV, null);
             imGuiRenderer?.EndFrame();
 #if PROFILE
             sceneRenderer.Profiler.End("ImGui");
@@ -277,7 +271,7 @@ namespace HexaEngine.Windows
 
             if (Flags.HasFlag(RendererFlags.ImGuiWidgets))
             {
-                WidgetManager.Dispose();
+                WindowManager.Dispose();
             }
 
             if (imGuiRenderer is not null)
@@ -298,7 +292,6 @@ namespace HexaEngine.Windows
 
             sceneRenderer.Dispose();
             renderDispatcher.Dispose();
-            ObjectPickerManager.Release();
             ResourceManager.Dispose();
             AudioManager.Release();
             swapChain.Dispose();

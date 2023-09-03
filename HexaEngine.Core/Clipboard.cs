@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.ImGuiNET;
     using Silk.NET.SDL;
 
     /// <summary>

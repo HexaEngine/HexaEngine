@@ -4,16 +4,15 @@
     using BepuUtilities;
     using BepuUtilities.Memory;
     using HexaEngine.Core;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Physics;
     using HexaEngine.Physics.Characters;
+    using HexaEngine.Queries.Generic;
     using HexaEngine.Scenes;
-    using System.Collections.Generic;
     using System.Numerics;
 
     public class PhysicsSystem : ISystem
     {
-        private readonly List<IColliderComponent> colliders = new();
+        private readonly ComponentTypeQuery<IColliderComponent> colliders = new();
 
         private readonly ThreadDispatcher dispatcher;
         private readonly BufferPool bufferPool;
@@ -47,20 +46,11 @@
 
         public CollidableProperty<PhysicsMaterial> Materials => materials;
 
-        public SystemFlags Flags { get; } = SystemFlags.PhysicsUpdate | SystemFlags.Destory;
+        public SystemFlags Flags { get; } = SystemFlags.PhysicsUpdate | SystemFlags.Awake | SystemFlags.Destroy;
 
-        public void Register(GameObject gameObject)
+        public void Awake(Scene scene)
         {
-            colliders.AddComponentIfIs(gameObject);
-        }
-
-        public void Unregister(GameObject gameObject)
-        {
-            colliders.RemoveComponentIfIs(gameObject);
-        }
-
-        public void Awake()
-        {
+            scene.QueryManager.AddQuery(colliders);
         }
 
         public void Update(float delta)
@@ -81,10 +71,6 @@
             {
                 colliders[i].EndUpdate();
             }
-        }
-
-        public void FixedUpdate()
-        {
         }
 
         public void Destroy()

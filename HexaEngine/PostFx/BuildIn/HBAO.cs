@@ -4,8 +4,8 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Effects.Blur;
+    using HexaEngine.Graph;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -13,7 +13,7 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    public class HBAO : IPostFx
+    public class HBAO : PostFxBase
     {
         private IGraphicsDevice device;
         private IGraphicsPipeline pipeline;
@@ -22,18 +22,21 @@ namespace HexaEngine.Effects.BuildIn
         private Texture2D intermediateTex;
         private GaussianBlur blur;
 
+        private ResourceRef<Texture2D> ao;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
+        private ResourceRef<GBuffer> gbuffer;
+
         private Viewport viewport;
 
         private ISamplerState samplerLinear;
 
-        private bool disposedValue;
-        private bool enabled = true;
         private float samplingRadius = 0.5f;
         private uint numSamplingDirections = 8;
         private float samplingStep = 0.004f;
         private uint numSamplingSteps = 4;
         private float power = 1;
-        private int priority;
+
         private const int NoiseSize = 4;
         private const int NoiseStride = 4;
 
@@ -65,49 +68,52 @@ namespace HexaEngine.Effects.BuildIn
 
         #region Properties
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "HBAO";
 
-        public event Action<int>? OnPriorityChanged;
+        public override PostFxFlags Flags { get; } = PostFxFlags.NoOutput | PostFxFlags.NoInput;
 
-        public string Name => "HBAO";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.NoOutput | PostFxFlags.NoInput;
-
-        public bool Enabled
+        public float SamplingRadius
         {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
+            get => samplingRadius;
+            set => NotifyPropertyChangedAndSet(ref samplingRadius, value);
         }
 
-        public int Priority
+        public uint NumSamplingDirections
         {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
+            get => numSamplingDirections;
+            set => NotifyPropertyChangedAndSet(ref numSamplingDirections, value);
         }
 
-        public float SamplingRadius { get => samplingRadius; set => samplingRadius = value; }
+        public float SamplingStep
+        {
+            get => samplingStep;
+            set => NotifyPropertyChangedAndSet(ref samplingStep, value);
+        }
 
-        public uint NumSamplingDirections { get => numSamplingDirections; set => numSamplingDirections = value; }
+        public uint NumSamplingSteps
+        {
+            get => numSamplingSteps;
+            set => NotifyPropertyChangedAndSet(ref numSamplingSteps, value);
+        }
 
-        public float SamplingStep { get => samplingStep; set => samplingStep = value; }
-
-        public uint NumSamplingSteps { get => numSamplingSteps; set => numSamplingSteps = value; }
-
-        public float Power { get => power; set => power = value; }
+        public float Power
+        {
+            get => power;
+            set => NotifyPropertyChangedAndSet(ref power, value);
+        }
 
         #endregion Properties
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
+            ao = creator.GetTexture2D("#AOBuffer");
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+            gbuffer = creator.GetGBuffer("GBuffer");
+
             this.device = device;
 
-            pipeline = await device.CreateGraphicsPipelineAsync(new()
+            pipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/hbao/ps.hlsl",
@@ -120,7 +126,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 Texture2DDescription description = new(Format.R32G32B32A32Float, NoiseSize, NoiseSize, 1, 1, BindFlags.ShaderResource, Usage.Immutable);
 
-                float* pixelData = Alloc<float>(NoiseSize * NoiseSize * NoiseStride);
+                float* pixelData = AllocT<float>(NoiseSize * NoiseSize * NoiseStride);
 
                 SubresourceData initialData = default;
                 initialData.DataPointer = (nint)pixelData;
@@ -143,47 +149,38 @@ namespace HexaEngine.Effects.BuildIn
             viewport = new(width, height);
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-        }
-
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-        }
-
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             intermediateTex.Resize(device, Format.R32Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
 
             viewport = new(width, height);
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            var camera = CameraManager.Current;
-            HBAOParams hbaoParams = default;
-            hbaoParams.SamplingRadius = samplingRadius;
-            hbaoParams.SamplingRadiusToScreen = samplingRadius * 0.5f * viewport.Height / (MathF.Tan(camera.Fov.ToRad() * 0.5f) * 2.0f); ;
-            hbaoParams.SamplingStep = samplingStep;
-            hbaoParams.NumSamplingSteps = numSamplingSteps;
-            hbaoParams.NumSamplingDirections = numSamplingDirections;
-            hbaoParams.Power = power;
-            hbaoParams.NoiseScale = viewport.Size / NoiseSize;
+            if (dirty)
+            {
+                var camera = CameraManager.Current;
+                HBAOParams hbaoParams = default;
+                hbaoParams.SamplingRadius = samplingRadius;
+                hbaoParams.SamplingRadiusToScreen = samplingRadius * 0.5f * viewport.Height / (MathF.Tan(camera.Fov.ToRad() * 0.5f) * 2.0f); ;
+                hbaoParams.SamplingStep = samplingStep;
+                hbaoParams.NumSamplingSteps = numSamplingSteps;
+                hbaoParams.NumSamplingDirections = numSamplingDirections;
+                hbaoParams.Power = power;
+                hbaoParams.NoiseScale = viewport.Size / NoiseSize;
 
-            paramsBuffer.Update(context, hbaoParams);
+                paramsBuffer.Update(context, hbaoParams);
+                dirty = false;
+            }
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
-            var ao = creator.GetTexture2D("#AOBuffer");
-            var depth = creator.GetDepthStencilBuffer("#DepthStencil");
-            var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
-            var gbuffer = creator.GetGBuffer("GBuffer");
+            context.ClearRenderTargetView(ao.Value.RTV, Vector4.One);
 
-            context.ClearRenderTargetView(ao.RTV, Vector4.One);
-
-            nint* srvs = stackalloc nint[] { depth.SRV.NativePointer, gbuffer.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
-            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.NativePointer };
+            nint* srvs = stackalloc nint[] { depth.Value.SRV.NativePointer, gbuffer.Value.SRVs[1].NativePointer, noiseTex.SRV.NativePointer };
+            nint* cbs = stackalloc nint[] { paramsBuffer.NativePointer, camera.Value.NativePointer };
             context.SetRenderTarget(intermediateTex.RTV, null);
             context.SetViewport(viewport);
             context.PSSetShaderResources(0, 3, (void**)srvs);
@@ -199,34 +196,17 @@ namespace HexaEngine.Effects.BuildIn
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, null);
 
-            blur.Blur(context, intermediateTex.SRV, ao.RTV, (int)viewport.Width, (int)viewport.Height);
+            blur.Blur(context, intermediateTex.SRV, ao.Value.RTV, (int)viewport.Width, (int)viewport.Height);
         }
 
-        protected virtual unsafe void Dispose(bool disposing)
+        protected override unsafe void DisposeCore()
         {
-            if (!disposedValue)
-            {
-                pipeline.Dispose();
-                paramsBuffer.Dispose();
-                noiseTex.Dispose();
-                intermediateTex.Dispose();
-                blur.Dispose();
-                samplerLinear.Dispose();
-                disposedValue = true;
-            }
-        }
-
-        ~HBAO()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            pipeline.Dispose();
+            paramsBuffer.Dispose();
+            noiseTex.Dispose();
+            intermediateTex.Dispose();
+            blur.Dispose();
+            samplerLinear.Dispose();
         }
     }
 }

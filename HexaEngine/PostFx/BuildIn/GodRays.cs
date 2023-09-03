@@ -3,9 +3,8 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Effects.Noise;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
@@ -14,11 +13,9 @@
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using System;
     using System.Numerics;
-    using System.Threading.Tasks;
 
-    public class GodRays : IPostFx
+    public class GodRays : PostFxBase
     {
         private IGraphicsDevice device;
         private Core.Graphics.Primitives.Plane quad1;
@@ -38,48 +35,43 @@
         public IRenderTargetView Output;
         public IShaderResourceView Input;
         public Viewport Viewport;
-        private bool enabled = true;
-        private int priority = 98;
+
         private float godraysDensity = 0.975f;
         private float godraysWeight = 0.25f;
         private float godraysDecay = 0.825f;
         private float godraysExposure = 2.0f;
 
         private bool sunPresent;
+        private ResourceRef<DepthStencil> depth;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
 
-        public event Action<bool>? OnEnabledChanged;
+        public override string Name => "GodRays";
 
-        public event Action<int>? OnPriorityChanged;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
 
-        public string Name => "GodRays";
-
-        public PostFxFlags Flags { get; } = PostFxFlags.Inline | PostFxFlags.PrePass;
-
-        public bool Enabled
+        public float Density
         {
-            get => enabled; set
-            {
-                enabled = value;
-                OnEnabledChanged?.Invoke(value);
-            }
+            get => godraysDensity;
+            set => NotifyPropertyChangedAndSet(ref godraysDensity, value);
         }
 
-        public int Priority
+        public float Weight
         {
-            get => priority; set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
+            get => godraysWeight;
+            set => NotifyPropertyChangedAndSet(ref godraysWeight, value);
         }
 
-        public float Density { get => godraysDensity; set => godraysDensity = value; }
+        public float Decay
+        {
+            get => godraysDecay;
+            set => NotifyPropertyChangedAndSet(ref godraysDecay, value);
+        }
 
-        public float Weight { get => godraysWeight; set => godraysWeight = value; }
-
-        public float Decay { get => godraysDecay; set => godraysDecay = value; }
-
-        public float Exposure { get => godraysExposure; set => godraysExposure = value; }
+        public float Exposure
+        {
+            get => godraysExposure;
+            set => NotifyPropertyChangedAndSet(ref godraysExposure, value);
+        }
 
         public struct GodRaysParams
         {
@@ -97,7 +89,7 @@
             public float AlbedoFactor;
         }
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .RunBefore("Compose")
@@ -112,10 +104,13 @@
                 .RunBefore("Bloom")
                 .RunBefore("AutoExposure");
 
+            depth = creator.GetDepthStencilBuffer("#DepthStencil");
+            camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
+
             this.device = device;
             quad1 = new(device, 5);
 
-            sun = await device.CreateGraphicsPipelineAsync(new()
+            sun = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "forward/sun/vs.hlsl",
                 PixelShader = "forward/sun/ps.hlsl"
@@ -134,7 +129,7 @@
             paramsSunBuffer = new(device, CpuAccessFlags.Write);
             paramsWorldBuffer = new(device, CpuAccessFlags.Write);
 
-            godrays = await device.CreateGraphicsPipelineAsync(new()
+            godrays = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/godrays/ps.hlsl"
@@ -166,25 +161,25 @@
             Viewport = new(width, height);
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             sunBuffer.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None);
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
             Output = view;
             Viewport = viewport;
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
         private const float MaxLightDist = 1.3f;
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
             var camera = CameraManager.Current;
             var lights = LightManager.Current;
@@ -243,7 +238,7 @@
             }
         }
 
-        public unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (!sunPresent)
                 return;
@@ -252,17 +247,17 @@
             var camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
 
             context.ClearRenderTargetView(sunBuffer.RTV, default);
-            context.SetRenderTarget(sunBuffer.RTV, depth.DSV);
+            context.SetRenderTarget(sunBuffer.RTV, depth.Value.DSV);
             context.SetViewport(Viewport);
             context.VSSetConstantBuffer(0, paramsWorldBuffer);
-            context.VSSetConstantBuffer(1, camera);
+            context.VSSetConstantBuffer(1, camera.Value);
             context.PSSetConstantBuffer(0, paramsSunBuffer);
             context.PSSetShaderResource(0, sunsprite.SRV);
             context.PSSetSampler(0, sunSampler);
             quad1.DrawAuto(context, sun);
         }
 
-        public unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null || !sunPresent)
             {
@@ -279,7 +274,7 @@
             context.ClearState();
         }
 
-        public void Dispose()
+        protected override void DisposeCore()
         {
             quad1.Dispose();
             sun.Dispose();
@@ -294,7 +289,6 @@
             sunsprite.Dispose();
             sunBuffer.Dispose();
             noiseTex.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }

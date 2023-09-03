@@ -1,21 +1,26 @@
-﻿#nullable disable
-
-namespace HexaEngine.Rendering.Passes
+﻿namespace HexaEngine.Rendering.Passes
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Rendering;
+    using HexaEngine.Graph;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using System;
 
     public class DepthPrePass : RenderPass
     {
+        private ResourceRef<DepthStencil> depthStencil;
+
         public DepthPrePass() : base("PrePass")
         {
             AddWriteDependency(new("#DepthStencil"));
         }
 
-        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Init(GraphResourceBuilder creator, GraphPipelineBuilder pipelineCreator, IGraphicsDevice device, ICPUProfiler? profiler)
+        {
+            depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
+        }
+
+        public override void Execute(IGraphicsContext context, GraphResourceBuilder creator, ICPUProfiler? profiler)
         {
             var current = SceneManager.Current;
             if (current == null)
@@ -25,14 +30,33 @@ namespace HexaEngine.Rendering.Passes
 
             var renderers = current.RenderManager;
 
-            var depthStencil = creator.GetDepthStencilBuffer("#DepthStencil");
-            context.ClearDepthStencilView(depthStencil.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
-            context.SetRenderTarget(null, depthStencil.DSV);
-            context.SetViewport(depthStencil.Viewport);
+            var depthStencilBuffer = depthStencil.Value;
+            context.ClearDepthStencilView(depthStencilBuffer.DSV, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1, 0);
+            context.SetRenderTarget(null, depthStencilBuffer.DSV);
+            context.SetViewport(depthStencilBuffer.Viewport);
 
-            var backgroundQueue = renderers.BackgroundQueue;
+            profiler?.Begin("PrePass.Geometry");
+            var geometry = renderers.GeometryQueue;
+            for (int i = 0; i < geometry.Count; i++)
+            {
+                var renderer = geometry[i];
+                profiler?.Begin($"PrePass.{renderer.DebugName}");
+                renderer.DrawDepth(context);
+                profiler?.End($"PrePass.{renderer.DebugName}");
+            }
+            profiler?.End("PrePass.Geometry");
 
-            renderers.DrawDepth(context, RenderQueueIndex.Geometry | RenderQueueIndex.Transparency);
+            profiler?.Begin("PrePass.Transparency");
+            var transparency = renderers.TransparencyQueue;
+            for (int i = 0; i < transparency.Count; i++)
+            {
+                var renderer = transparency[i];
+                profiler?.Begin($"PrePass.{renderer.DebugName}");
+                renderer.DrawDepth(context);
+                profiler?.End($"PrePass.{renderer.DebugName}");
+            }
+            profiler?.End("PrePass.Transparency");
+
             context.ClearState();
         }
     }

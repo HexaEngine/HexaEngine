@@ -7,6 +7,10 @@
     using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO;
+    using HexaEngine.Core.IO.Materials;
+    using HexaEngine.Core.IO.Metadata;
+    using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Nodes;
@@ -19,14 +23,21 @@
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
-    using System.Diagnostics;
     using System.IO;
     using System.Numerics;
     using System.Reflection;
+    using System.Text;
 
     public class MaterialEditorWindow : EditorWindow
     {
-        private NodeEditor editor = new();
+        private readonly OpenFileDialog openFileDialog = new(null, ".matlib");
+        private readonly SaveFileDialog saveFileDialog = new(null, ".matlib");
+
+        private const string MetadataKey = "MatNodes.Data";
+
+        private readonly MaterialLibraryWindow libraryWindow;
+
+        private NodeEditor? editor;
         private InputNode geometryNode;
         private BRDFShadingModelNode outputNode;
 
@@ -66,29 +77,160 @@
         private volatile bool compiling;
         private readonly SemaphoreSlim semaphore = new(1);
 
+        private string? currentFile;
+        private MaterialLibrary? materialLibrary;
+        private MaterialData? material;
+
         public MaterialEditorWindow()
         {
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar;
+            libraryWindow = new(this);
+        }
+
+        public string? CurrentFile => currentFile;
+
+        public MaterialLibrary? MaterialLibrary => materialLibrary;
+
+        public MaterialData? Material
+        {
+            get => material;
+            set
+            {
+                if (device == null || materialLibrary == null)
+                    return;
+
+                if (!materialLibrary.Materials.Contains(value))
+                    return;
+
+                if (editor != null)
+                {
+                    editor.NodePinValueChanged -= NodePinValueChanged;
+                    editor.LinkAdded -= LinkAdded;
+                    editor.LinkRemoved -= LinkRemoved;
+                    editor.Destroy();
+                    editor = null;
+                }
+
+                material = value;
+
+                if (value == null)
+                {
+                    return;
+                }
+
+                var json = value.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value;
+
+                try
+                {
+                    if (string.IsNullOrEmpty(json))
+                    {
+                        editor = new();
+                        geometryNode = new(editor.GetUniqueId(), false, false);
+                        outputNode = new(editor.GetUniqueId(), false, false);
+                        editor.AddNode(geometryNode);
+                        editor.AddNode(outputNode);
+                        editor.Initialize();
+                    }
+                    else
+                    {
+                        editor = NodeEditor.Deserialize(json);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to deserialize node material data: {value.Name}", ex.Message);
+                    Logger.Error($"Failed to deserialize node material data: {value.Name}");
+                    Logger.Log(ex);
+                    return;
+                }
+
+                editor.Minimap = true;
+                editor.Location = ImNodesNET.ImNodesMiniMapLocation.TopRight;
+                editor.NodePinValueChanged += NodePinValueChanged;
+                editor.LinkAdded += LinkAdded;
+                editor.LinkRemoved += LinkRemoved;
+                geometryNode = editor.GetNode<InputNode>();
+                outputNode = editor.GetNode<BRDFShadingModelNode>();
+
+                foreach (var tex in editor.GetNodes<TextureFileNode>())
+                {
+                    tex.Device = device;
+                    tex.Reload();
+                    textureFiles.Add(tex);
+                }
+            }
         }
 
         protected override string Name { get; } = "Material Editor";
 
-        public override void Init(IGraphicsDevice device)
+        public void Load(string filename)
+        {
+            try
+            {
+                materialLibrary = MaterialLibrary.LoadExternal(filename);
+                currentFile = filename;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to load material library: {filename}", ex.Message);
+                Logger.Error($"Failed to load material library: {filename}");
+                Logger.Log(ex);
+            }
+        }
+
+        public void Unload()
+        {
+            Material = null;
+            materialLibrary = null;
+            currentFile = null;
+        }
+
+        public void Save()
+        {
+            if (currentFile == null)
+                return;
+
+            SaveAs(currentFile);
+        }
+
+        public void CreateNew()
+        {
+            materialLibrary = new();
+        }
+
+        public void SaveAs(string filename)
+        {
+            if (materialLibrary == null)
+                return;
+
+            if (material != null && editor != null)
+            {
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
+            }
+
+            try
+            {
+                materialLibrary.Save(filename, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save material library: {filename}", ex.Message);
+                Logger.Error($"Failed to save material library: {filename}");
+                Logger.Log(ex);
+            }
+        }
+
+        protected override void InitWindow(IGraphicsDevice device)
         {
             this.device = device;
+            libraryWindow.Init(device);
             generator.OnPreBuildTable += Generator_OnPreBuildTable;
-            geometryNode = new(editor.GetUniqueId(), false, false);
-            outputNode = new(editor.GetUniqueId(), false, false);
-            editor.AddNode(geometryNode);
-            editor.AddNode(outputNode);
 
-            editor.Initialize();
-            editor.Minimap = true;
-            editor.Location = ImNodesNET.ImNodesMiniMapLocation.TopRight;
-            editor.NodePinValueChanged += NodePinValueChanged;
-            editor.LinkAdded += LinkAdded;
-            editor.LinkRemoved += LinkRemoved;
+            if (material != null)
+            {
+                Material = material;
+            }
 
             sphere = new(device);
             world = new(device, Matrix4x4.Transpose(Matrix4x4.Identity), CpuAccessFlags.None);
@@ -124,7 +266,7 @@
 
             dfg = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/dfg/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/dfg/ps.hlsl"
             }, new ShaderMacro[2] { new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0") });
 
@@ -162,9 +304,16 @@
             table.SetBaseSampler(2);
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
-            editor.Destroy();
+            libraryWindow.Dispose();
+
+            if (editor != null && material != null)
+            {
+                material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
+                editor.Destroy();
+                editor = null;
+            }
 
             sphere.Dispose();
 
@@ -188,11 +337,62 @@
 
         public override void DrawContent(IGraphicsContext context)
         {
+            if (openFileDialog.Draw())
+            {
+                if (openFileDialog.Result == OpenFileResult.Ok)
+                {
+                    Load(openFileDialog.FullPath);
+                }
+            }
+
+            if (saveFileDialog.Draw())
+            {
+                if (saveFileDialog.Result == SaveFileResult.Ok)
+                {
+                    SaveAs(saveFileDialog.FullPath);
+                }
+            }
+
+            libraryWindow.DrawWindow(context);
+
             DrawNodesWindow(context);
             DrawPreviewWindow(context);
 
             if (ImGui.BeginMenuBar())
             {
+                if (ImGui.BeginMenu("File"))
+                {
+                    if (ImGui.MenuItem("New"))
+                    {
+                        CreateNew();
+                    }
+
+                    if (ImGui.MenuItem("Load"))
+                    {
+                        openFileDialog.Show();
+                    }
+
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Save"))
+                    {
+                        Save();
+                    }
+
+                    if (ImGui.MenuItem("Save as"))
+                    {
+                        Save();
+                    }
+
+                    ImGui.Separator();
+
+                    if (ImGui.MenuItem("Close"))
+                    {
+                        Unload();
+                    }
+
+                    ImGui.EndMenu();
+                }
                 if (ImGui.MenuItem("Generate"))
                 {
                     Generate();
@@ -200,43 +400,20 @@
 
                 ImGui.Checkbox("Auto", ref autoGenerate);
 
-                if (ImGui.MenuItem("Save"))
-                {
-                    File.WriteAllText("test.json", editor.Serialize());
-                }
-
-                if (ImGui.MenuItem("Load"))
-                {
-                    editor.NodePinValueChanged -= NodePinValueChanged;
-                    editor.LinkAdded -= LinkAdded;
-                    editor.LinkRemoved -= LinkRemoved;
-                    editor.Destroy();
-                    editor = NodeEditor.Deserialize(File.ReadAllText("test.json"));
-                    editor.Minimap = true;
-                    editor.Location = ImNodesNET.ImNodesMiniMapLocation.TopRight;
-                    editor.NodePinValueChanged += NodePinValueChanged;
-                    editor.LinkAdded += LinkAdded;
-                    editor.LinkRemoved += LinkRemoved;
-                    geometryNode = editor.GetNode<InputNode>();
-                    outputNode = editor.GetNode<BRDFShadingModelNode>();
-
-                    foreach (var tex in editor.GetNodes<TextureFileNode>())
-                    {
-                        tex.Device = context.Device;
-                        tex.Reload();
-                        textureFiles.Add(tex);
-                    }
-                }
-
                 ImGui.EndMenuBar();
             }
 
-            editor.Draw();
+            editor?.Draw();
         }
 
         private void DrawNodesWindow(IGraphicsContext context)
         {
-            if (!ImGui.Begin("Add node"))
+            if (editor == null)
+            {
+                ImGui.Text("No material open");
+                return;
+            }
+            if (!ImGui.Begin("ObjectAdded node"))
             {
                 ImGui.End();
                 return;
@@ -254,7 +431,7 @@
 
             if (ImGui.CollapsingHeader("Methods"))
             {
-                if (ImGui.MenuItem("Normal Map"))
+                if (ImGui.MenuItem("normal Map"))
                 {
                     NormalMapNode node = new(editor.GetUniqueId(), true, false);
                     editor.AddNode(node);
@@ -451,6 +628,9 @@
 
         private void Generate()
         {
+            if (editor == null)
+                return;
+
             semaphore.Wait();
             compiling = true;
             Directory.CreateDirectory("generated/" + "shaders/");

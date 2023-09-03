@@ -4,63 +4,34 @@ namespace HexaEngine.Effects.BuildIn
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using System.Numerics;
 
-    public class Bloom : IPostFx
+    public class Bloom : PostFxBase
     {
         private IGraphicsPipeline downsample;
         private IGraphicsPipeline upsample;
+        private GraphResourceBuilder creator;
         private ConstantBuffer<ParamsDownsample> downsampleCB;
         private ConstantBuffer<ParamsUpsample> upsampleCB;
         private ISamplerState sampler;
 
         private IRenderTargetView[] mipChainRTVs;
         private IShaderResourceView[] mipChainSRVs;
+        private Viewport[] viewports;
 
-        private bool enabled = true;
         private float radius = 0.003f;
-        private bool dirty;
 
         private int width;
         private int height;
 
         private IShaderResourceView Input;
-        private bool disposedValue;
-        private int priority = 200;
 
-        public event Action<bool> OnEnabledChanged;
+        public override string Name => "Bloom";
 
-        public event Action<int> OnPriorityChanged;
-
-        public string Name => "Bloom";
-
-        public PostFxFlags Flags => PostFxFlags.NoOutput;
-
-        public bool Enabled
-        {
-            get => enabled;
-            set
-            {
-                enabled = value;
-                dirty = true;
-                OnEnabledChanged?.Invoke(value);
-            }
-        }
-
-        public int Priority
-        {
-            get => priority;
-            set
-            {
-                priority = value;
-                OnPriorityChanged?.Invoke(value);
-            }
-        }
+        public override PostFxFlags Flags => PostFxFlags.NoOutput;
 
         public float Radius
         {
@@ -99,7 +70,7 @@ namespace HexaEngine.Effects.BuildIn
 
         #endregion Structs
 
-        public async Task Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, int width, int height, ShaderMacro[] macros)
+        public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
                 .AddSource("Bloom")
@@ -115,18 +86,19 @@ namespace HexaEngine.Effects.BuildIn
                 .RunAfter("LensFlare")
                 .RunBefore("AutoExposure");
 
-            disposedValue = false;
+            this.creator = creator;
+
             downsampleCB = new(device, CpuAccessFlags.Write);
             upsampleCB = new(device, CpuAccessFlags.Write);
 
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
 
-            downsample = await device.CreateGraphicsPipelineAsync(new()
+            downsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/downsample/ps.hlsl",
             }, GraphicsPipelineState.DefaultFullscreen, macros);
-            upsample = await device.CreateGraphicsPipelineAsync(new()
+            upsample = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/bloom/upsample/ps.hlsl",
@@ -138,16 +110,17 @@ namespace HexaEngine.Effects.BuildIn
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
+            viewports = new Viewport[levels];
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.AddTexture($"Bloom.{i}", new(Format.R16G16B16A16Float, currentWidth, currentWidth, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), lineNumber: i).Value.RTV;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
+                var tex = creator.CreateTexture2D($"Bloom{(i == 0 ? "" : $".{i}")}", new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
+                mipChainRTVs[i] = tex.RTV;
+                mipChainSRVs[i] = tex.SRV;
+                viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
-
-            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
 
             this.width = width;
             this.height = height;
@@ -155,7 +128,7 @@ namespace HexaEngine.Effects.BuildIn
             dirty = true;
         }
 
-        public void Resize(int width, int height)
+        public override void Resize(int width, int height)
         {
             int currentWidth = width / 2;
             int currentHeight = height / 2;
@@ -163,32 +136,35 @@ namespace HexaEngine.Effects.BuildIn
 
             mipChainRTVs = new IRenderTargetView[levels];
             mipChainSRVs = new IShaderResourceView[levels];
+            viewports = new Viewport[levels];
 
             for (int i = 0; i < levels; i++)
             {
-                mipChainRTVs[i] = ResourceManager2.Shared.UpdateTexture($"Bloom.{i}", new Texture2DDescription(Format.R16G16B16A16Float, currentWidth, currentWidth, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget)).Value.RTV;
-                mipChainSRVs[i] = ResourceManager2.Shared.GetTexture($"Bloom.{i}").Value.SRV;
+                var name = $"Bloom{(i == 0 ? "" : $".{i}")}";
+                creator.RemoveResource(name);
+                var tex = creator.CreateTexture2D(name, new(Format.R16G16B16A16Float, currentWidth, currentHeight, 1, 1, BindFlags.ShaderResource | BindFlags.RenderTarget), false).Value;
+                mipChainRTVs[i] = tex.RTV;
+                mipChainSRVs[i] = tex.SRV;
+                viewports[i] = new(currentWidth, currentHeight);
                 currentWidth /= 2;
                 currentHeight /= 2;
             }
-
-            ResourceManager2.Shared.SetOrAddResource("Bloom", ResourceManager2.Shared.GetTexture("Bloom.0").Value);
 
             this.width = width;
             this.height = height;
             dirty = true;
         }
 
-        public void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
+        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
         }
 
-        public void SetInput(IShaderResourceView view, ITexture2D resource)
+        public override void SetInput(IShaderResourceView view, ITexture2D resource)
         {
             Input = view;
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
             if (dirty)
             {
@@ -199,7 +175,7 @@ namespace HexaEngine.Effects.BuildIn
             }
         }
 
-        public void Draw(IGraphicsContext context, GraphResourceBuilder creator)
+        public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             context.PSSetConstantBuffer(0, downsampleCB);
             context.PSSetSampler(0, sampler);
@@ -216,7 +192,7 @@ namespace HexaEngine.Effects.BuildIn
                 }
 
                 context.SetRenderTarget(mipChainRTVs[i], null);
-                context.SetViewport(mipChainRTVs[i].Viewport);
+                context.SetViewport(viewports[i]);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.PSSetShaderResource(0, null);
                 context.SetRenderTarget(null, null);
@@ -228,7 +204,7 @@ namespace HexaEngine.Effects.BuildIn
             {
                 context.SetRenderTarget(mipChainRTVs[i - 1], null);
                 context.PSSetShaderResource(0, mipChainSRVs[i]);
-                context.SetViewport(mipChainRTVs[i - 1].Viewport);
+                context.SetViewport(viewports[i - 1]);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.PSSetShaderResource(0, null);
                 context.SetRenderTarget(null, null);
@@ -238,30 +214,18 @@ namespace HexaEngine.Effects.BuildIn
             context.SetGraphicsPipeline(null);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void DisposeCore()
         {
-            if (!disposedValue)
+            downsample.Dispose();
+            upsample.Dispose();
+            downsampleCB.Dispose();
+            upsampleCB.Dispose();
+            sampler.Dispose();
+
+            for (int i = 0; i < mipChainRTVs.Length; i++)
             {
-                downsample.Dispose();
-                upsample.Dispose();
-                downsampleCB.Dispose();
-                upsampleCB.Dispose();
-                sampler.Dispose();
-                disposedValue = true;
+                creator.RemoveResource($"Bloom{(i == 0 ? "" : $".{i}")}");
             }
-        }
-
-        ~Bloom()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

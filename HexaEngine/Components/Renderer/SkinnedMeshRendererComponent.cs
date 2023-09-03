@@ -13,7 +13,6 @@
     using HexaEngine.Meshes;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Renderers;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
     using System.Numerics;
@@ -34,7 +33,7 @@
         {
         }
 
-        [EditorProperty("Model", null, "*.mesh")]
+        [EditorProperty("Model", null, ".model")]
         public string Model
         {
             get => modelPath;
@@ -44,6 +43,9 @@
                 UpdateModel();
             }
         }
+
+        [JsonIgnore]
+        public string DebugName { get; private set; } = nameof(SkinnedMeshRenderer);
 
         [JsonIgnore]
         public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
@@ -96,12 +98,13 @@
 
         public void Awake(IGraphicsDevice device, GameObject gameObject)
         {
+            DebugName = gameObject.Name + DebugName;
             this.gameObject = gameObject;
-
-            renderer = new(device);
 
             modelManager = gameObject.GetScene().ModelManager;
             materialManager = gameObject.GetScene().MaterialManager;
+
+            renderer = new(device);
 
             UpdateModel();
         }
@@ -190,7 +193,6 @@
                     component.model = new(source, library);
                     await component.model.LoadAsync();
                     component.renderer.Initialize(component.model);
-
                     component.gameObject.SendUpdateTransformed();
                 }
             }, this);

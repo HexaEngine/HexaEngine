@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.MeshEditor
 {
     using HexaEngine.Core;
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Input;
@@ -19,8 +20,8 @@
 
     public unsafe class MeshEditorWindow : EditorWindow
     {
-        private readonly OpenFileDialog openDialog = new();
-        private readonly SaveFileDialog saveDialog = new();
+        private readonly OpenFileDialog openDialog = new(null, ".model");
+        private readonly SaveFileDialog saveDialog = new(null, ".model");
         private ModelImportDialog importDialog;
         private IGraphicsDevice device;
 
@@ -38,7 +39,10 @@
         private bool drawTangents = false;
         private bool drawBitangents = false;
 
-        private string CurrentFile;
+        private bool drawBoundingBox = false;
+        private bool drawBoundingSphere = false;
+
+        private string? CurrentFile;
 
         private ModelFile? model;
         private MeshSource? selectedMesh;
@@ -47,10 +51,10 @@
         private PlainNode[]? plainNodes;
         private Node[]? bones;
         private PlainNode[]? plainBones;
-        private Matrix4x4[]? transforms;
-        private Matrix4x4[]? boneTransforms;
+        private Matrix4x4[]? globals;
+        private Matrix4x4[]? boneGlobals;
 
-        private Camera camera = new();
+        private readonly Camera camera = new();
         private ConstantBuffer<Matrix4x4> worldBuffer;
         private ConstantBuffer<CBCamera> cameraBuffer;
         private ConstantBuffer<CBNTBView> ntbView;
@@ -61,7 +65,7 @@
         private const float speed = 5;
         private static bool first = true;
 
-        private VertexSelection selection = new();
+        private readonly VertexSelection selection = new();
         private Vector3 selectionNormal;
 
         private bool gimbalGrabbed;
@@ -92,7 +96,7 @@
 
         public Node[]? Bones => bones;
 
-        public override void Init(IGraphicsDevice device)
+        protected override void InitWindow(IGraphicsDevice device)
         {
             importDialog = new(device);
             var sw = Application.MainWindow.SwapChain;
@@ -108,17 +112,40 @@
 
         public void Save()
         {
-            model?.Save(CurrentFile, Encoding.UTF8);
+            SaveAs(CurrentFile);
         }
 
-        public void Save(string dir)
+        public void SaveAs(string? filename)
         {
-            model?.Save(dir + Path.GetFileName(CurrentFile), Encoding.UTF8);
+            if (filename == null || model == null)
+                return;
+            try
+            {
+                model.Save(filename, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save model: {filename}", ex.Message);
+                Logger.Error($"Failed to save model: {filename}");
+                Logger.Log(ex);
+            }
         }
 
         public void Load(string path)
         {
-            model = ModelFile.LoadExternal(path);
+            try
+            {
+                model = ModelFile.LoadExternal(path);
+            }
+            catch (Exception ex)
+            {
+                model = null;
+                MessageBox.Show($"Failed to load model: {path}", ex.Message);
+                Logger.Error($"Failed to load model: {path}");
+                Logger.Log(ex);
+                return;
+            }
+
             sources = new MeshSource[model.Meshes.Length];
             for (int i = 0; i < model.Meshes.Length; i++)
             {
@@ -132,7 +159,7 @@
             plainNodes = new PlainNode[nodeCount];
             index = 0;
             model.Root.TraverseTree(plainNodes, ref index);
-            transforms = new Matrix4x4[nodeCount];
+            globals = new Matrix4x4[nodeCount];
 
             int boneCount = 0;
             model.Root.CountBones(ref boneCount);
@@ -142,7 +169,7 @@
             plainBones = new PlainNode[boneCount];
             index = 0;
             model.Root.TraverseTreeBones(plainBones, ref index);
-            boneTransforms = new Matrix4x4[boneCount];
+            boneGlobals = new Matrix4x4[boneCount];
 
             selection.Clear();
         }
@@ -163,7 +190,7 @@
             }
             sources = null;
             selectedMesh = null;
-            transforms = null;
+            globals = null;
             nodes = null;
         }
 
@@ -174,29 +201,31 @@
 
         public void RecalculateTransforms()
         {
-            if (nodes == null || plainNodes == null || transforms == null)
+            if (nodes == null || plainNodes == null || globals == null)
                 return;
 
-            if (transforms.Length > 0)
+            globals[0] = nodes[0].Transform * Matrix4x4.Identity;
+
+            for (int i = 1; i < plainNodes.Length; i++)
             {
-                transforms[0] = nodes[0].Transform;
-                for (int i = 1; i < plainNodes.Length; i++)
-                {
-                    var node = plainNodes[i];
-                    transforms[node.Id] = nodes[node.Id].Transform * transforms[node.ParentId];
-                }
+                var node = plainNodes[i];
+                globals[i] = nodes[node.Id].Transform * globals[node.ParentId];
             }
 
-            if (bones == null || plainBones == null || boneTransforms == null)
+            if (bones == null || plainBones == null || boneGlobals == null)
                 return;
 
-            if (boneTransforms.Length > 0)
+            for (int i = 0; i < plainBones.Length; i++)
             {
-                boneTransforms[0] = bones[0].Transform;
-                for (int i = 1; i < plainBones.Length; i++)
+                var bone = plainBones[i];
+
+                if (bone.ParentId == -1)
                 {
-                    var bone = plainBones[i];
-                    boneTransforms[i] = bones[bone.Id].Transform * boneTransforms[bone.ParentId];
+                    boneGlobals[i] = bones[bone.Id].Transform;
+                }
+                else
+                {
+                    boneGlobals[i] = bones[bone.Id].Transform * boneGlobals[bone.ParentId];
                 }
             }
         }
@@ -253,6 +282,14 @@
                         sources[i].Update(device.Context, false, true);
                     }
                 }
+                if (ImGui.MenuItem("Regenerate Bounds"))
+                {
+                    for (int i = 0; i < sources.Length; i++)
+                    {
+                        sources[i].Data.GenerateBounds();
+                        sources[i].Update(device.Context, false, true);
+                    }
+                }
                 ImGui.EndMenu();
             }
 
@@ -286,6 +323,12 @@
                 ImGui.Checkbox("Normals", ref drawNormals);
                 ImGui.Checkbox("Tangents", ref drawTangents);
                 ImGui.Checkbox("Bitangents", ref drawBitangents);
+
+                ImGui.Separator();
+
+                ImGui.Checkbox("Bounding Box", ref drawBoundingBox);
+                ImGui.Checkbox("Bounding Sphere", ref drawBoundingSphere);
+
                 ImGui.EndMenu();
             }
 
@@ -306,7 +349,7 @@
             {
                 if (saveDialog.Result == SaveFileResult.Ok)
                 {
-                    Save(saveDialog.CurrentFolder);
+                    SaveAs(saveDialog.FullPath);
                 }
             }
 
@@ -400,7 +443,7 @@
             }
             TooltipHelper.Tooltip("Translate & Rotate & Scale");
 
-            if (sources == null || nodes == null || transforms == null)
+            if (sources == null || nodes == null || globals == null)
             {
                 return;
             }
@@ -423,12 +466,12 @@
             for (int i = 0; i < nodes.Length; i++)
             {
                 var node = nodes[i];
-                var transform = transforms[i];
+                var transform = globals[i];
                 Matrix4x4.Decompose(transform, out _, out var rotation, out _);
                 var parentId = Array.IndexOf(nodes, node.Parent);
                 if (drawNodes && parentId != -1)
                 {
-                    var origin = Vector3.Transform(Vector3.Zero, transforms[parentId]);
+                    var origin = Vector3.Transform(Vector3.Zero, globals[parentId]);
                     var direction = Vector3.Transform(Vector3.Zero, transform);
 
                     DebugDraw.DrawLine(node.Name, origin, direction, new Vector4(0.0f, 0.8f, 0.0f, 1));
@@ -451,6 +494,12 @@
                     ntbView.Local->Size = 0.05f * MathF.Min(meshSource.Data.Box.Extent.Length(), 1);
                     ntbView.Update(context);
 
+                    if (drawWireframe && meshSource.Overlay.IsValid && meshSource.Overlay.IsInitialized)
+                    {
+                        context.SetGraphicsPipeline(meshSource.Overlay);
+                        meshSource.Draw(context);
+                    }
+
                     if (drawObject && meshSource.Solid.IsValid && meshSource.Solid.IsInitialized)
                     {
                         boneBuffer.ResetCounter();
@@ -459,8 +508,8 @@
                         {
                             var bone = meshSource.Data.Bones[k];
                             int index = GetBoneIdByName(bone.Name);
-                            Matrix4x4.Invert(transforms[0], out var inverseScene);
-                            boneBuffer.Add(Matrix4x4.Transpose(meshSource.Data.Bones[k].Offset * boneTransforms[index]));
+                            Matrix4x4.Invert(globals[0], out var inverseScene);
+                            boneBuffer.Add(Matrix4x4.Transpose(meshSource.Data.Bones[k].Offset * boneGlobals[index]));
 
                             if ((bonesWindow.Selected?.Name ?? string.Empty) == bone.Name)
                             {
@@ -472,12 +521,6 @@
                         boneBuffer.Update(context);
                         context.VSSetShaderResource(0, boneBuffer.SRV);
                         context.SetGraphicsPipeline(meshSource.Solid);
-                        meshSource.Draw(context);
-                    }
-
-                    if (drawWireframe && meshSource.Overlay.IsValid && meshSource.Overlay.IsInitialized)
-                    {
-                        context.SetGraphicsPipeline(meshSource.Overlay);
                         meshSource.Draw(context);
                     }
 
@@ -504,10 +547,10 @@
                 Matrix4x4 parentGlobal = Matrix4x4.Identity;
                 if (parentId != -1)
                 {
-                    parentGlobal = transforms[parentId];
+                    parentGlobal = globals[parentId];
                 }
 
-                var transform = transforms[id];
+                var transform = globals[id];
                 var view = camera.Transform.View;
                 var proj = camera.Transform.Projection;
 
@@ -674,7 +717,7 @@
             }
         }
 
-        public override void Dispose()
+        protected override void DisposeCore()
         {
             Unload();
             worldBuffer.Dispose();

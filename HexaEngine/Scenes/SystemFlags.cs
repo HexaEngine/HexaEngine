@@ -7,11 +7,12 @@
     {
         None = 0,
         Awake = 1,
-        Destory = 2,
-        Update = 4,
-        FixedUpdate = 8,
-        PhysicsUpdate = 16,
-        LateUpdate = 32,
-        RenderUpdate = 64,
+        GraphicsAwake = 2,
+        Destroy = 4,
+        Update = 8,
+        FixedUpdate = 16,
+        PhysicsUpdate = 32,
+        LateUpdate = 64,
+        GraphicsUpdate = 128,
     }
 }

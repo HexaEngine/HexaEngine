@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Tools
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Primitives;
     using HexaEngine.Editor.ImagePainter;
     using ImGuiNET;
     using System.Numerics;
