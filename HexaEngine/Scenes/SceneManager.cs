@@ -135,11 +135,11 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     var window = (IRenderWindow)state;
-                    ResourceManager.BeginNoCleanupRegion();
+                    ResourceManager.BeginNoGCRegion();
                     Current?.Uninitialize();
                     Current.Initialize(window.Device);
                     SceneChanged?.Invoke(null, new(Current, Current));
-                    ResourceManager.EndNoCleanupRegion();
+                    ResourceManager.EndNoGCRegion();
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -156,7 +156,7 @@ namespace HexaEngine.Scenes
             {
                 lock (Current)
                 {
-                    ResourceManager.BeginNoCleanupRegion();
+                    ResourceManager.BeginNoGCRegion();
                     Current?.Uninitialize();
                 }
                 GC.WaitForPendingFinalizers();
@@ -175,7 +175,7 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     Current.Initialize(window.Device);
-                    ResourceManager.EndNoCleanupRegion();
+                    ResourceManager.EndNoGCRegion();
                     SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();

@@ -4,6 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
+    using System.Collections.Generic;
     using System.Text;
 
     public struct MaterialTexture
@@ -26,6 +27,8 @@
         public TextureMapMode U;
         public TextureMapMode V;
         public TextureFlags Flags;
+
+        public readonly string Name => Type.ToString();
 
         public MaterialTexture(MaterialTextureType type, string file, BlendMode blend, TextureOp op, int mapping, int uVWSrc, TextureMapMode u, TextureMapMode v, TextureFlags flags)
         {
@@ -99,6 +102,14 @@
         public override readonly string ToString()
         {
             return $"{Type}, {File}, {Blend}, {Op}, {Mapping}, {UVWSrc}, {U}, {V}, {Flags}";
+        }
+
+        public readonly IEnumerable<string> GetNameAlias()
+        {
+            yield return Name;
+
+            if (Type == MaterialTextureType.Diffuse)
+                yield return MaterialTextureType.BaseColor.ToString();
         }
     }
 }

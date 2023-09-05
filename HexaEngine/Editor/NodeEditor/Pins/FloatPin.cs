@@ -72,6 +72,15 @@
 
         public float ValueW { get => valueW; set => valueW = value; }
 
+        [JsonIgnore]
+        public Vector2 Vector2 => new(ValueX, ValueY);
+
+        [JsonIgnore]
+        public Vector3 Vector3 => new(ValueX, ValueY, ValueZ);
+
+        [JsonIgnore]
+        public Vector4 Vector4 => new(ValueX, ValueY, ValueZ, ValueW);
+
         public PinFlags Flags => flags;
 
         public string? DefaultExpression { get => defaultExpression; set => defaultExpression = value; }

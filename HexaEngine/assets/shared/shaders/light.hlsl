@@ -226,7 +226,7 @@ float3 SpotlightBRDF(Light light, float3 position, float3 F0, float3 V, float3 N
 		float epsilon = light.innerCosine - light.outerCosine;
 		float falloff = 1;
 		if (epsilon != 0)
-			falloff = 1 - smoothstep(0.0, 1.0, (theta - light.innerCosine) / epsilon);
+			falloff = smoothstep(0.0, 1.0, (theta - light.innerCosine) / epsilon);
 		float attenuation = Attenuation(distance, light.range);
 		float3 radiance = light.color.rgb * attenuation * falloff;
 		return BRDF(radiance, L, F0, V, N, baseColor, roughness, metallic);

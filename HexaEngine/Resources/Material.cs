@@ -4,28 +4,20 @@
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Lights;
 
-    public unsafe class Material : IDisposable
+    public unsafe class Material : ResourceInstance, IDisposable
     {
-        private readonly string name;
         private MaterialData desc;
 
         public ResourceInstance<MaterialShader>? Shader;
 
         public MaterialTextureList TextureList = new();
 
-        private int instances;
-        private bool disposedValue;
         private bool loaded;
 
-        public Material(MaterialData desc)
+        public Material(MaterialData desc) : base(desc.Name, 0)
         {
             this.desc = desc;
-            name = desc.Name;
         }
-
-        public string Name => name;
-
-        public bool IsUsed => Volatile.Read(ref instances) != 0;
 
         public MaterialData Desc => desc;
 
@@ -186,16 +178,6 @@
             this.desc = desc;
         }
 
-        public void AddRef()
-        {
-            Interlocked.Increment(ref instances);
-        }
-
-        public void RemoveRef()
-        {
-            Interlocked.Decrement(ref instances);
-        }
-
         public void BeginUpdate()
         {
             loaded = false;
@@ -209,31 +191,15 @@
 #nullable enable
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
-            if (!disposedValue)
-            {
-                loaded = false;
-                disposedValue = true;
-            }
-        }
-
-        ~Material()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: false);
-        }
-
-        public void Dispose()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            loaded = false;
+            base.Dispose(disposing);
         }
 
         public override string ToString()
         {
-            return name;
+            return Name;
         }
     }
 }

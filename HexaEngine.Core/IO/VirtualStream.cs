@@ -42,7 +42,7 @@
         /// <summary>
         /// Gets a _value indicating whether the stream supports writing.
         /// </summary>
-        public override bool CanWrite => _baseStream.CanWrite;
+        public override bool CanWrite => false;
 
         /// <summary>
         /// Gets the length of the virtual stream.
@@ -64,6 +64,7 @@
             {
                 _baseStream.Dispose();
             }
+            semaphore.Dispose();
             base.Dispose(disposing);
         }
 
@@ -188,6 +189,48 @@
             semaphore.Wait();
             base.CopyTo(destination, bufferSize);
             semaphore.Release();
+        }
+
+        public bool Lock(int millisecondsTimeout = -1)
+        {
+            return semaphore.Wait(millisecondsTimeout);
+        }
+
+        public void Unlock()
+        {
+            semaphore.Release();
+        }
+
+        public LockBlock BeginLock()
+        {
+            semaphore.Wait();
+            return new LockBlock(semaphore);
+        }
+
+        public bool TryBeginLock(out LockBlock block, int millisecondsTimeout = -1)
+        {
+            if (Lock(millisecondsTimeout))
+            {
+                block = new LockBlock(semaphore);
+                return true;
+            }
+            block = default;
+            return false;
+        }
+
+        public readonly struct LockBlock : IDisposable
+        {
+            private readonly SemaphoreSlim semaphore;
+
+            public LockBlock(SemaphoreSlim semaphore)
+            {
+                this.semaphore = semaphore;
+            }
+
+            public void Dispose()
+            {
+                semaphore.Release();
+            }
         }
     }
 }

@@ -3,16 +3,15 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
+    using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Mathematics;
     using HexaEngine.Particles;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Renderers;
-    using HexaEngine.Scenes;
     using System;
     using System.Numerics;
 
@@ -27,7 +26,7 @@
         private string particleTexturePath = string.Empty;
         private Texture2D? particleTexture;
 
-        private ResourceRef<IShaderResourceView> dsv;
+        private ResourceRef<DepthStencil> dsv;
 
         [JsonIgnore]
         public string DebugName { get; private set; } = nameof(ParticleRenderer);
@@ -109,7 +108,7 @@
             this.gameObject = gameObject;
             renderer = new(device);
 
-            dsv = ResourceManager2.Shared.GetResource<IShaderResourceView>("GBuffer.DepthCopy");
+            dsv = SceneRenderer.Current.ResourceBuilder.GetDepthStencilBuffer("#DepthStencil");
 
             await UpdateTextureAsync();
         }
@@ -126,7 +125,7 @@
                 return;
             if (particleTexture == null)
                 return;
-            renderer.Draw(context, emitter, dsv.Value, emitter.ParticleTexture.SRV);
+            renderer.Draw(context, emitter, dsv.Value.SRV, emitter.ParticleTexture.SRV);
         }
 
         public void Bake(IGraphicsContext context)

@@ -12,18 +12,18 @@
         Shininess = 7,
         Opacity = 8,
         Displacement = 9,
-        AmbientOcclusionRoughnessMetalness = 10,
+        AmbientOcclusionRoughnessMetallic = 10,
         Reflection = 11,
         BaseColor = 12,
         NormalCamera = 13,
         EmissionColor = 14,
-        Metalness = 0xF,
+        Metallic = 0xF,
         Roughness = 0x10,
         AmbientOcclusion = 17,
         Sheen = 19,
         Clearcoat = 20,
         Transmission = 21,
-        RoughnessMetalness = 22,
+        RoughnessMetallic = 22,
         Unknown = 18
     }
 }

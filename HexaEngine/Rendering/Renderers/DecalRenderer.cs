@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Primitives;
-    using HexaEngine.Core.Resources;
+    using HexaEngine.Graph;
     using HexaEngine.Meshes;
     using System.Numerics;
 
@@ -29,8 +29,7 @@
 
         private readonly ConstantBuffer<GPUDecal> decalBuffer;
 
-
-        private readonly ResourceRef<IShaderResourceView> depth;
+        private readonly ResourceRef<DepthStencil> depth;
 
         public DecalRenderer(IGraphicsDevice device)
         {
@@ -57,7 +56,7 @@
             worldBuffer = new(device, CpuAccessFlags.Write);
             decalBuffer = new(device, CpuAccessFlags.Write);
 
-            depth = ResourceManager2.Shared.GetShaderResourceView("GBuffer.depth");
+            depth = SceneRenderer.Current.ResourceBuilder.GetDepthStencilBuffer("#DepthStencil");
         }
 
         public unsafe void Draw(IGraphicsContext context, Decal decal)

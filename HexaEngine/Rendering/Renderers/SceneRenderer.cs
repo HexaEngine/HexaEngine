@@ -6,7 +6,6 @@ namespace HexaEngine.Rendering.Renderers
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Windows;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Widgets;
@@ -74,11 +73,8 @@ namespace HexaEngine.Rendering.Renderers
         {
             Config.Global.Sort();
             this.device = device;
-            this.swapChain = swapChain ?? throw new NotSupportedException("Device needs a swapchain to operate properly");
+            this.swapChain = swapChain ?? throw new NotSupportedException("GraphicsDevice needs a swapchain to operate properly");
             this.window = window;
-
-            ResourceManager2.Shared.SetOrAddResource("SwapChain.RTV", swapChain.BackbufferRTV);
-            ResourceManager2.Shared.SetOrAddResource("SwapChain", swapChain.Backbuffer);
 
             configKey = Config.Global.GetOrCreateKey("Renderer");
             var configKey1 = Config.Global.GenerateSubKeyAuto(settings, "RendererSettings");

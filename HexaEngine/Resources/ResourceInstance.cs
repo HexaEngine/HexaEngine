@@ -46,7 +46,14 @@
         }
     }
 
-    public class ResourceInstance<T> : ResourceInstance where T : class, IDisposable
+    public interface IWaitResource
+    {
+        public void Wait();
+
+        public Task WaitAsync();
+    }
+
+    public class ResourceInstance<T> : ResourceInstance, IWaitResource where T : class, IDisposable
     {
         private readonly Func<bool> waitDelegate;
         private T? value;
@@ -89,6 +96,11 @@
             }
 
             SpinWait.SpinUntil(waitDelegate);
+        }
+
+        public async Task WaitAsync()
+        {
+            await Task.Run(Wait);
         }
 
         protected override void Dispose(bool disposing)

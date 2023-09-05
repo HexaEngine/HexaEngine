@@ -25,7 +25,7 @@
             ResourceManager.device = device;
         }
 
-        public static void BeginNoCleanupRegion()
+        public static void BeginNoGCRegion()
         {
             if (suppressCleanup)
             {
@@ -35,7 +35,7 @@
             suppressCleanup = true;
         }
 
-        public static void EndNoCleanupRegion()
+        public static void EndNoGCRegion()
         {
             if (!suppressCleanup)
             {

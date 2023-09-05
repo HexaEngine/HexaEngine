@@ -4,7 +4,6 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
@@ -183,7 +182,6 @@
             graphicsContext = graphicsDevice.Context;
             audioDevice = AudioAdapter.CreateAudioDevice(AudioBackend.Auto, null);
 
-            ResourceManager2.Shared = new(graphicsDevice);
             for (int i = 0; i < windows.Count; i++)
             {
                 windows[i].Initialize(audioDevice, graphicsDevice);
@@ -533,7 +531,7 @@
                 GraphicsAdapter.Current.PumpDebugMessages();
                 Time.FrameUpdate();
             }
-            ResourceManager2.Shared.Dispose();
+
             for (int i = 0; i < windows.Count; i++)
             {
                 windows[i].Uninitialize();

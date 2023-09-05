@@ -7,12 +7,13 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Terrains;
-    using HexaEngine.Core.Resources;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
+    using HexaEngine.Graph;
     using HexaEngine.ImGuiNET;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
+    using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System;
@@ -52,7 +53,7 @@
         private ConstantBuffer<CBBrush> brushBuffer;
         private ConstantBuffer<CBColorMask> maskBuffer;
         private ConstantBuffer<Matrix4x4> WorldBuffer;
-        private ResourceRef<IBuffer> camera;
+        private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private DepthStencil depthStencil;
 
         private IGraphicsPipeline maskOverlay;
@@ -157,7 +158,8 @@
 
                 brushBuffer = new(device, CpuAccessFlags.Write);
                 WorldBuffer = new(device, CpuAccessFlags.Write);
-                camera = ResourceManager2.Shared.GetBuffer("CBCamera");
+
+                camera = SceneRenderer.Current.ResourceBuilder.GetConstantBuffer<CBCamera>("CBCamera");
                 maskBuffer = new(device, CpuAccessFlags.Write);
 
                 init = true;

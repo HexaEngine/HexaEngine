@@ -4,6 +4,7 @@
     using HexaEngine.ImNodesNET;
     using Newtonsoft.Json;
     using System.Collections.Generic;
+    using System.Numerics;
 
     public class Node
     {
@@ -54,6 +55,12 @@
         [JsonIgnore]
         public List<Pin> Pins => pins;
 
+        [JsonIgnore]
+        public Vector2 Position { get => ImNodes.GetNodeEditorSpacePos(id); set => ImNodes.SetNodeEditorSpacePos(id, value); }
+
+        [JsonIgnore]
+        public Vector2 Size => ImNodes.GetNodeDimensions(id);
+
         public bool IsEditing
         {
             get => isEditing;
@@ -99,7 +106,7 @@
             return pin;
         }
 
-        public Pin GetOuput(int id)
+        public Pin GetOutput(int id)
         {
             Pin? pin = Find(id);
             if (pin == null || pin.Kind != PinKind.Output)

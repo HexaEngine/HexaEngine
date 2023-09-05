@@ -14,7 +14,7 @@
             Properties = properties ?? new();
         }
 
-        private Metadata()
+        internal Metadata()
         {
         }
 

@@ -5,9 +5,8 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes.Managers;
-    using System.Numerics;
 
-    [EditorGameObject<Camera>("camera")]
+    [EditorGameObject<Camera>("Camera")]
     public class Camera : GameObject, IView
     {
         public new CameraTransform Transform;
@@ -70,21 +69,5 @@
         }
 
         public static implicit operator CameraTransform(Camera camera) => camera.Transform;
-    }
-
-    public struct CameraData
-    {
-        public CameraData(Vector3 position, Matrix4x4 view, Matrix4x4 proj)
-        {
-            Position = position;
-            reserved = 0;
-            View = Matrix4x4.Transpose(view);
-            Proj = Matrix4x4.Transpose(proj);
-        }
-
-        public Vector3 Position;
-        public float reserved;
-        public Matrix4x4 View;
-        public Matrix4x4 Proj;
     }
 }

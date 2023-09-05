@@ -1,11 +1,12 @@
 ﻿namespace HexaEngine.Core
 {
+    using System.Runtime.CompilerServices;
+
 #if TRACELEAK
 
     using HexaEngine.Core.Graphics;
     using System.Collections.Concurrent;
     using System.Diagnostics;
-    using System.Runtime.CompilerServices;
 
 #endif
 

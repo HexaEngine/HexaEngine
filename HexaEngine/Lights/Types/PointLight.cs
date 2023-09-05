@@ -29,6 +29,9 @@
         [JsonIgnore]
         public BoundingBox ShadowBox = new();
 
+        private float seamOffset;
+        private float seamSize;
+
         [JsonIgnore]
         public override LightType LightType => LightType.Point;
 
@@ -37,6 +40,12 @@
 
         [JsonIgnore]
         public static IBuffer OSMBuffer => osmBuffer;
+
+        [EditorProperty("SeamOffset")]
+        public float SeamOffset { get => seamOffset; set => seamOffset = value; }
+
+        [EditorProperty("SeamSize")]
+        public float SeamSize { get => seamSize; set => seamSize = value; }
 
         public override IShaderResourceView? GetShadowMap()
         {
@@ -87,7 +96,7 @@
             for (int i = 0; i < 6; i++)
             {
                 var vp = atlasHandle.Allocations[i].GetViewport();
-                coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width - 1, vp.Y + vp.Height - 1) * texel;
+                coords[i] = new Vector4(vp.X + 1, vp.Y + 1, vp.X + vp.Width - 1, vp.Y + vp.Height - 1) * texel;
             }
 
             OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);
@@ -112,7 +121,7 @@
             for (int i = 0; i < 6; i++)
             {
                 var vp = atlasHandle.Allocations[i].GetViewport();
-                coords[i] = new Vector4(vp.X, vp.Y, vp.X + vp.Width - 1, vp.Y + vp.Height - 1) * texel;
+                coords[i] = new Vector4(vp.X + 1, vp.Y + 1, vp.X + vp.Width - 1, vp.Y + vp.Height - 1) * texel;
             }
 
             OSMHelper.GetLightSpaceMatrices(Transform, Range, views, ref ShadowBox);

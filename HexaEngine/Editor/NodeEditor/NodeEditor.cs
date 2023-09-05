@@ -270,7 +270,7 @@
 
         private Link CreateLinkFromId(LinkId id)
         {
-            var output = GetNode(id.IdOutputNode).GetOuput(id.IdOutput);
+            var output = GetNode(id.IdOutputNode).GetOutput(id.IdOutput);
             var input = GetNode(id.IdInputNode).GetInput(id.IdInput);
             Link link = new(id.Id, output.Parent, output, input.Parent, input);
             AddLink(link);
@@ -290,6 +290,16 @@
                 return;
             }
             ImNodes.LoadEditorStateFromIniString(context, state, (uint)state.Length);
+        }
+
+        public void BeginModify()
+        {
+            ImNodes.EditorContextSet(context);
+        }
+
+        public void EndModify()
+        {
+            ImNodes.EditorContextSet(null);
         }
 
         public void Draw()
@@ -316,7 +326,7 @@
             int idpin2 = 0;
             if (ImNodes.IsLinkCreated(ref idNode1, ref idpin1, ref idNode2, ref idpin2))
             {
-                var pino = GetNode(idNode1).GetOuput(idpin1);
+                var pino = GetNode(idNode1).GetOutput(idpin1);
                 var pini = GetNode(idNode2).GetInput(idpin2);
                 if (pini.CanCreateLink(pino) && pino.CanCreateLink(pini))
                     CreateLink(pini, pino);

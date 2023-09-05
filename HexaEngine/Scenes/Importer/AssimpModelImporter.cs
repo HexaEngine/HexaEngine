@@ -461,11 +461,11 @@
                 bool orm = false;
                 for (int j = 0; j < material.Textures.Length; j++)
                 {
-                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetalness)
+                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
                     {
                         rm = true;
                     }
-                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetalness)
+                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetallic)
                     {
                         orm = true;
                     }
@@ -479,7 +479,7 @@
                 {
                     for (int k = 0; k < material.Textures.Length; k++)
                     {
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metalness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
                         {
                             material.Textures[k].File = string.Empty;
                         }
@@ -495,7 +495,7 @@
                 {
                     for (int k = 0; k < material.Textures.Length; k++)
                     {
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metalness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
                         {
                             material.Textures[k].File = string.Empty;
                         }
@@ -505,7 +505,7 @@
                             material.Textures[k].File = string.Empty;
                         }
 
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetalness)
+                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
                         {
                             material.Textures[k].File = string.Empty;
                         }
@@ -784,18 +784,18 @@
                 TextureType.Shininess => Core.IO.Materials.MaterialTextureType.Shininess,
                 TextureType.Opacity => Core.IO.Materials.MaterialTextureType.Opacity,
                 TextureType.Displacement => Core.IO.Materials.MaterialTextureType.Displacement,
-                TextureType.Lightmap => Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetalness,
+                TextureType.Lightmap => Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetallic,
                 TextureType.Reflection => Core.IO.Materials.MaterialTextureType.Reflection,
                 TextureType.BaseColor => Core.IO.Materials.MaterialTextureType.BaseColor,
                 TextureType.NormalCamera => Core.IO.Materials.MaterialTextureType.NormalCamera,
                 TextureType.EmissionColor => Core.IO.Materials.MaterialTextureType.EmissionColor,
-                TextureType.Metalness => Core.IO.Materials.MaterialTextureType.Metalness,
+                TextureType.Metalness => Core.IO.Materials.MaterialTextureType.Metallic,
                 TextureType.DiffuseRoughness => Core.IO.Materials.MaterialTextureType.Roughness,
                 TextureType.AmbientOcclusion => Core.IO.Materials.MaterialTextureType.AmbientOcclusion,
                 TextureType.Sheen => Core.IO.Materials.MaterialTextureType.Sheen,
                 TextureType.Clearcoat => Core.IO.Materials.MaterialTextureType.Clearcoat,
                 TextureType.Transmission => Core.IO.Materials.MaterialTextureType.Transmission,
-                TextureType.Unknown => Core.IO.Materials.MaterialTextureType.RoughnessMetalness,
+                TextureType.Unknown => Core.IO.Materials.MaterialTextureType.RoughnessMetallic,
                 _ => throw new NotImplementedException(),
             };
         }

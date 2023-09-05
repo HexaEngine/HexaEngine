@@ -181,7 +181,7 @@ static const float3 gridSamplingDisk[20] =
 	float3(0, 1, 1), float3(0, -1, 1), float3(0, -1, -1), float3(0, 1, -1)
 };
 
-#define HARD_SHADOWS_POINTLIGHTS 1
+#define HARD_SHADOWS_POINTLIGHTS 0
 float ShadowFactorPointLight(ShadowData data, Light light, float3 position, SamplerComparisonState state)
 {
 	float3 lightDirection = position - light.position.xyz;
@@ -192,7 +192,7 @@ float ShadowFactorPointLight(ShadowData data, Light light, float3 position, Samp
 #if HARD_SHADOWS_POINTLIGHTS
 	return CalcShadowFactor_Basic(state, depthAtlas, uvd);
 #else
-	return CalcShadowFactor_PCF3x3(state, depthAtlas, uvd, data.size, data.softness);
+	return CalcShadowFactor_Poisson(state, depthAtlas, uvd, data.size, data.softness);
 #endif
 }
 

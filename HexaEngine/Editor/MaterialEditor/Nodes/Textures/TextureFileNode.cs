@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Editor.MaterialEditor.Nodes.Textures
 {
+    using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Core.IO;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.NodeEditor;
@@ -82,7 +84,9 @@
             sampler?.Dispose();
             image?.Dispose();
 
-            if (File.Exists(Path) && device != null)
+            var path = Paths.CurrentTexturePath + Path;
+
+            if (FileSystem.Exists(path) && device != null)
             {
                 try
                 {
@@ -91,7 +95,7 @@
                         sampler = device.CreateSamplerState(samplerDescription);
                         return;
                     }
-                    var tmp = device.TextureLoader.LoadTexture2D(Path);
+                    var tmp = device.TextureLoader.LoadTexture2D(path);
                     image = device.CreateShaderResourceView(tmp);
                     tmp.Dispose();
 
@@ -229,6 +233,20 @@
             image?.Dispose();
             sampler?.Dispose();
             base.Destroy();
+        }
+
+        public static TextureFileNode? FindTextureFileNode(NodeEditor editor, string path)
+        {
+            for (int i = 0; i < editor.Nodes.Count; i++)
+            {
+                var node = editor.Nodes[i];
+                if (node is TextureFileNode textureFileNode && textureFileNode.path == path)
+                {
+                    return textureFileNode;
+                }
+            }
+
+            return null;
         }
     }
 }

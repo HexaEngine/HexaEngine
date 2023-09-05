@@ -51,7 +51,7 @@
         private StructuredBuffer<LightData> lights;
         private ConstantBuffer<DeferredLightParams> lightParams;
 
-        private PointLight pointLight = new();
+        private readonly PointLight pointLight = new();
 
         private DepthStencil depthStencil;
         private Texture2D textureTonemap;
@@ -139,12 +139,20 @@
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Failed to deserialize node material data: {value.Name}", ex.Message);
-                    Logger.Error($"Failed to deserialize node material data: {value.Name}");
+                    MessageBox.Show($"Failed to deserialize splitNode material data: {value.Name}", ex.Message);
+                    Logger.Error($"Failed to deserialize splitNode material data: {value.Name}");
                     Logger.Log(ex);
-                    return;
+
+                    editor = new();
+                    geometryNode = new(editor.GetUniqueId(), false, false);
+                    outputNode = new(editor.GetUniqueId(), false, false);
+                    editor.AddNode(geometryNode);
+                    editor.AddNode(outputNode);
+                    editor.Initialize();
                 }
 
+                ExtractProperties(value, editor);
+                ExtractTextures(value, editor);
                 editor.Minimap = true;
                 editor.Location = ImNodesNET.ImNodesMiniMapLocation.TopRight;
                 editor.NodePinValueChanged += NodePinValueChanged;
@@ -163,6 +171,177 @@
         }
 
         protected override string Name { get; } = "Material Editor";
+
+        private static void ExtractProperties(MaterialData material, NodeEditor editor)
+        {
+            for (int i = 0; i < material.Properties.Length; i++)
+            {
+                var property = material.Properties[i];
+
+                foreach (var pin in PropertyPin.FindPropertyPins(editor, property.Name))
+                {
+                    if (property.ValueType == MaterialValueType.Float)
+                    {
+                        var vec = property.AsFloat();
+                        pin.ValueX = vec;
+                    }
+                    if (property.ValueType == MaterialValueType.Float2)
+                    {
+                        var vec = property.AsFloat2();
+                        pin.ValueX = vec.X;
+                        pin.ValueY = vec.Y;
+                    }
+                    if (property.ValueType == MaterialValueType.Float3)
+                    {
+                        var vec = property.AsFloat3();
+                        pin.ValueX = vec.X;
+                        pin.ValueY = vec.Y;
+                        pin.ValueZ = vec.Z;
+                    }
+                    if (property.ValueType == MaterialValueType.Float4)
+                    {
+                        var vec = property.AsFloat4();
+                        pin.ValueX = vec.X;
+                        pin.ValueY = vec.Y;
+                        pin.ValueZ = vec.Z;
+                        pin.ValueW = vec.W;
+                    }
+                }
+            }
+        }
+
+        private static void InsertProperties(MaterialData material, NodeEditor editor)
+        {
+            for (int i = 0; i < material.Properties.Length; i++)
+            {
+                var property = material.Properties[i];
+
+                foreach (var pin in PropertyPin.FindPropertyPins(editor, property.Name))
+                {
+                    if (property.ValueType == MaterialValueType.Float)
+                    {
+                        property.SetFloat(pin.ValueX);
+                    }
+                    if (property.ValueType == MaterialValueType.Float2)
+                    {
+                        property.SetFloat2(pin.Vector2);
+                    }
+                    if (property.ValueType == MaterialValueType.Float3)
+                    {
+                        property.SetFloat3(pin.Vector3);
+                    }
+                    if (property.ValueType == MaterialValueType.Float4)
+                    {
+                        property.SetFloat4(pin.Vector4);
+                    }
+                }
+            }
+        }
+
+        private static void ExtractTextures(MaterialData material, NodeEditor editor)
+        {
+            for (int i = 0; i < material.Textures.Length; i++)
+            {
+                var texture = material.Textures[i];
+
+                if (string.IsNullOrEmpty(texture.File))
+                {
+                    continue;
+                }
+
+                var textureNode = TextureFileNode.FindTextureFileNode(editor, texture.File);
+                if (textureNode != null)
+                {
+                    continue;
+                }
+
+                textureNode = new(editor.GetUniqueId(), true, false, null);
+                editor.AddNode(textureNode);
+                textureNode.Name = texture.Name;
+                textureNode.Path = texture.File;
+                textureNode.SamplerDescription = texture.GetSamplerDesc();
+                var output = textureNode.Pins[0];
+
+                if (texture.Type == MaterialTextureType.Normal)
+                {
+                    NormalMapNode normalMapNode = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(normalMapNode);
+                    editor.CreateLink(normalMapNode.Pins[1], output);
+                    output = normalMapNode.Pins[0];
+                    foreach (var pin in PropertyPin.FindPropertyPins(editor, "Normal"))
+                    {
+                        if (pin.CanCreateLink(output))
+                        {
+                            editor.CreateLink(pin, output);
+                        }
+                    }
+                    continue;
+                }
+
+                if (texture.Type == MaterialTextureType.RoughnessMetallic)
+                {
+                    SplitNode splitNode = new(editor.GetUniqueId(), true, false);
+                    editor.AddNode(splitNode);
+                    editor.CreateLink(splitNode.Pins[0], output);
+                    output = splitNode.Pins[1];
+                    foreach (var pin in PropertyPin.FindPropertyPins(editor, "Roughness"))
+                    {
+                        if (pin.CanCreateLink(output))
+                        {
+                            editor.CreateLink(pin, output);
+                        }
+                    }
+                    output = splitNode.Pins[2];
+                    foreach (var pin in PropertyPin.FindPropertyPins(editor, "Metallic"))
+                    {
+                        if (pin.CanCreateLink(output))
+                        {
+                            editor.CreateLink(pin, output);
+                        }
+                    }
+                    continue;
+                }
+
+                foreach (string aliasName in texture.GetNameAlias())
+                {
+                    foreach (var pin in PropertyPin.FindPropertyPins(editor, aliasName))
+                    {
+                        if (pin.CanCreateLink(output))
+                        {
+                            editor.CreateLink(pin, output);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void Sort()
+        {
+            var groups = NodeEditor.TreeTraversal2(outputNode, true);
+            Array.Reverse(groups);
+            Vector2 padding = new(10);
+            Vector2 pos = padding;
+
+            float maxWidth = 0;
+            editor.BeginModify();
+            for (int i = 0; i < groups.Length; i++)
+            {
+                var group = groups[i];
+                for (int j = 0; j < group.Length; j++)
+                {
+                    var node = group[j];
+                    node.Position = pos;
+                    var size = node.Size;
+                    pos.Y += size.Y + padding.Y;
+                    maxWidth = Math.Max(maxWidth, size.X);
+                }
+
+                pos.Y = padding.Y;
+                pos.X += maxWidth + padding.X;
+                maxWidth = 0;
+            }
+            editor.EndModify();
+        }
 
         public void Load(string filename)
         {
@@ -207,6 +386,7 @@
             if (material != null && editor != null)
             {
                 material.Metadata.GetOrAdd<MetadataStringEntry>(MetadataKey).Value = editor.Serialize();
+                InsertProperties(material, editor);
             }
 
             try
@@ -393,6 +573,10 @@
 
                     ImGui.EndMenu();
                 }
+                if (ImGui.MenuItem("Sort"))
+                {
+                    Sort();
+                }
                 if (ImGui.MenuItem("Generate"))
                 {
                     Generate();
@@ -413,7 +597,7 @@
                 ImGui.Text("No material open");
                 return;
             }
-            if (!ImGui.Begin("ObjectAdded node"))
+            if (!ImGui.Begin("ObjectAdded splitNode"))
             {
                 ImGui.End();
                 return;
