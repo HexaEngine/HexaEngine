@@ -45,7 +45,7 @@ namespace HexaEngine.Resources
         private void Compile()
         {
             flags = 0;
-            var elements = Terrain.InputElements;
+            var elements = TerrainCellData.InputElements;
 
             bool twoSided = false;
 
@@ -150,7 +150,7 @@ namespace HexaEngine.Resources
         private async Task CompileAsync()
         {
             flags = 0;
-            var elements = Terrain.InputElements;
+            var elements = TerrainCellData.InputElements;
 
             bool twoSided = false;
 

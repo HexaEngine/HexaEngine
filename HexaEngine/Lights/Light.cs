@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.ImGuiNET;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
@@ -147,7 +146,7 @@
             var scaledImportance = atlas.LayerCount - 1 - MathUtil.Clamp(distanceImportance * atlas.LayerCount, 0f, atlas.LayerCount - 1);
             var maxResolutionIndex = atlas.SizeToIndex(maxResolution);
             var index = (int)MathF.Floor(MathUtil.Clamp(scaledImportance, maxResolutionIndex, atlas.LayerCount - 1));
-            ImGui.Text($"index: {index}, maxResolutionIndex: {maxResolutionIndex}, scaledImportance: {scaledImportance}, distanceImportance: {distanceImportance}");
+            //ImGui.Text($"index: {index}, maxResolutionIndex: {maxResolutionIndex}, scaledImportance: {scaledImportance}, distanceImportance: {distanceImportance}");
         }
     }
 }

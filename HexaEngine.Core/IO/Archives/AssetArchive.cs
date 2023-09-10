@@ -20,18 +20,27 @@
             header.Read(fs, Encoding.UTF8);
             stream = fs;
 
+            var basePath = Path.GetDirectoryName(path);
+
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            Asset[] assets = new Asset[header.Entries.Length];
+            BundleAsset[] assets = new BundleAsset[header.Entries.Length];
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
             for (int i = 0; i < assets.Length; i++)
             {
                 var entry = header.Entries[i];
-                assets[i] = new Asset(path, header.Compression, entry.Type, entry.Start + header.ContentStart, entry.Length, entry.ActualLength, entry.Path);
+                var archivePath = path;
+
+                if ((header.Flags & AssetArchiveFlags.Partial) != 0)
+                {
+                    archivePath = Path.Combine(basePath, header.Parts[entry.PartIndex]);
+                }
+
+                assets[i] = new BundleAsset(archivePath, header.Compression, entry.PartIndex, entry.Type, entry.Start + header.ContentStart, entry.Length, entry.ActualLength, entry.Path);
             }
             Assets = assets;
         }
 
-        public Asset[] Assets { get; }
+        public BundleAsset[] Assets { get; }
 
         public Stream GetStream() => stream;
 
@@ -88,7 +97,7 @@
         public void Extract(string path)
         {
             var root = new DirectoryInfo(path);
-            foreach (Asset asset in Assets)
+            foreach (BundleAsset asset in Assets)
             {
 #pragma warning disable CS8604 // Possible null reference argument for parameter 'path' in 'DirectoryInfo Directory.CreateDirectory(string path)'.
                 Directory.CreateDirectory(Path.GetDirectoryName(root.FullName + asset.Path));
@@ -108,6 +117,8 @@
 
             AssetArchiveHeader header = default;
             header.Compression = compression;
+            header.Flags = AssetArchiveFlags.Normal;
+            header.Parts = Array.Empty<string>();
             header.Entries = new AssetArchiveHeaderEntry[assets.Length];
 
             for (int i = 0; i < assets.Length; i++)
@@ -201,6 +212,8 @@
 
             AssetArchiveHeader header = default;
             header.Compression = compression;
+            header.Flags = AssetArchiveFlags.Normal;
+            header.Parts = Array.Empty<string>();
             header.Entries = new AssetArchiveHeaderEntry[files.Count];
 
             for (int i = 0; i < files.Count; i++)
@@ -286,6 +299,8 @@
 
                 AssetArchiveHeader header = default;
                 header.Compression = compression;
+                header.Flags = AssetArchiveFlags.Normal;
+                header.Parts = Array.Empty<string>();
                 header.Entries = new AssetArchiveHeaderEntry[files.Count];
 
                 for (int i = 0; i < files.Count; i++)

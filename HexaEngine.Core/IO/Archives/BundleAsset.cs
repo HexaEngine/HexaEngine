@@ -70,16 +70,17 @@
             return descs;
         }
 
-        public static implicit operator AssetDesc(Asset asset)
+        public static implicit operator AssetDesc(BundleAsset asset)
         {
             return new(asset.Path, asset.Type, asset.GetStream());
         }
     }
 
-    public class Asset
+    public class BundleAsset
     {
-        internal Asset(string archivePath, Compression compression, AssetType type, long pointer, long length, long actualLength, string path)
+        internal BundleAsset(string archivePath, Compression compression, int partIndex, AssetType type, long pointer, long length, long actualLength, string path)
         {
+            PartIndex = partIndex;
             ArchivePath = archivePath;
             Compression = compression;
             Type = type;
@@ -89,6 +90,7 @@
             Path = path;
         }
 
+        public readonly int PartIndex;
         public readonly string ArchivePath;
         public readonly Compression Compression;
         public readonly AssetType Type;

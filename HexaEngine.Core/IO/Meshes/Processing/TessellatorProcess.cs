@@ -130,16 +130,16 @@
             data.IndicesCount = newIndexCount;
         }
 
-        public static void Tessellate(Terrain terrain)
+        public static void Tessellate(TerrainCellData terrain)
         {
             uint faces = terrain.IndicesCount / 3;
 
             uint newVertexCount = faces * 6;
 
-            bool hasUVs = (terrain.Flags & TerrainFlags.UVs) != 0;
-            bool hasNormals = (terrain.Flags & TerrainFlags.Normals) != 0;
-            bool hasTangents = (terrain.Flags & TerrainFlags.Tangents) != 0;
-            bool hasBitangents = (terrain.Flags & TerrainFlags.Bitangents) != 0;
+            bool hasUVs = (terrain.Flags & TerrainVertexFlags.UVs) != 0;
+            bool hasNormals = (terrain.Flags & TerrainVertexFlags.Normals) != 0;
+            bool hasTangents = (terrain.Flags & TerrainVertexFlags.Tangents) != 0;
+            bool hasBitangents = (terrain.Flags & TerrainVertexFlags.Bitangents) != 0;
 
             Vector3[] positions = new Vector3[newVertexCount];
             Vector3[] uvs = hasUVs ? new Vector3[newVertexCount] : null;

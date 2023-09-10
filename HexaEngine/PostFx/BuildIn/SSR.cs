@@ -3,51 +3,42 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
 
     public class SSR : PostFxBase
     {
-        private IGraphicsDevice device;
         private IGraphicsPipeline pipelineSSR;
 
         private ISamplerState pointClampSampler;
         private ISamplerState linearClampSampler;
         private ISamplerState linearBorderSampler;
 
-        public IRenderTargetView Output;
-        public Viewport Viewport;
-        public IShaderResourceView Input;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<GBuffer> gbuffer;
 
         public override string Name { get; } = "SSR";
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.None;
+        public override PostFxFlags Flags { get; }
 
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
+                .RunBefore("ColorGrading")
                 .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunAfter("SSGI")
+                .RunBefore("MotionBlur")
+                .RunBefore("AutoExposure")
+                .RunBefore("TAA")
+                .RunBefore("DepthOfField")
+                .RunBefore("ChromaticAberration")
+                .RunBefore("Bloom");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
             gbuffer = creator.GetGBuffer("GBuffer");
-
-            this.device = device;
 
             pointClampSampler = device.CreateSamplerState(SamplerStateDescription.PointClamp);
             linearClampSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
@@ -80,17 +71,6 @@
             context.DrawInstanced(4, 1, 0, 0);
 
             context.ClearState();
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
         }
 
         protected override void DisposeCore()

@@ -5,87 +5,49 @@
     using HexaEngine.Core.IO.Meshes.Processing;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
+    using System.IO;
     using System.Numerics;
+    using System.Text;
 
     /// <summary>
     /// Represents a terrain mesh generated from a height map.
     /// </summary>
-    public unsafe class Terrain
+    public unsafe class TerrainCellData
     {
-        /// <summary>
-        /// The number of vertices in the terrain.
-        /// </summary>
+        public string Name;
+        public string[] Materials;
         public uint VerticesCount;
-
-        /// <summary>
-        /// The number of indices in the terrain.
-        /// </summary>
         public uint IndicesCount;
-
-        /// <summary>
-        /// The width of the terrain.
-        /// </summary>
-        public uint Width;
-
-        /// <summary>
-        /// The height of the terrain.
-        /// </summary>
-        public uint Height;
-
-        /// <summary>
-        /// The array of indices that define the terrain's triangles.
-        /// </summary>
+        public uint LODLevel;
+        public BoundingBox Box;
+        public BoundingSphere Sphere;
+        public TerrainVertexFlags Flags;
+        public HeightMap HeightMap;
         public uint[] Indices;
-
-        /// <summary>
-        /// The array of vertex positions.
-        /// </summary>
         public Vector3[] Positions;
-
-        /// <summary>
-        /// The array of vertex UV coordinates.
-        /// </summary>
         public Vector3[] UVs;
-
-        /// <summary>
-        /// The array of vertex normals.
-        /// </summary>
         public Vector3[] Normals;
-
-        /// <summary>
-        /// The array of vertex tangents.
-        /// </summary>
         public Vector3[] Tangents;
-
-        /// <summary>
-        /// The array of vertex bitangents.
-        /// </summary>
         public Vector3[] Bitangents;
 
-        /// <summary>
-        /// The bounding box of the terrain.
-        /// </summary>
-        public BoundingBox Box;
+        private TerrainCellData()
+        {
+        }
 
         /// <summary>
-        /// The flags indicating which data is present in the terrain.
-        /// </summary>
-        public TerrainFlags Flags;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Terrain"/> class from a height map.
+        /// Initializes a new instance of the <see cref="TerrainCellData"/> class from a height map.
         /// </summary>
         /// <param name="map">The height map.</param>
-        public Terrain(HeightMap map)
+        public TerrainCellData(HeightMap map, uint lodLevel = 0)
         {
-            Width = (uint)map.Width;
-            Height = (uint)map.Height;
-            int cols = map.Width;
-            int rows = map.Height;
+            HeightMap = map;
+            LODLevel = lodLevel;
+            uint cols = map.Width;
+            uint rows = map.Height;
 
             // Create the grid
-            VerticesCount = (uint)(rows * cols);
-            IndicesCount = (uint)((rows - 1) * (cols - 1) * 2) * 3;
+            VerticesCount = rows * cols;
+            IndicesCount = (rows - 1) * (cols - 1) * 2 * 3;
 
             Indices = new uint[IndicesCount];
             Positions = new Vector3[VerticesCount];
@@ -98,44 +60,45 @@
             int texUIndex = 0;
             int texVIndex = 0;
 
-            for (int i = 0; i < rows; ++i)
+            for (uint i = 0; i < rows; ++i)
             {
-                for (int j = 0; j < cols; ++j)
+                for (uint j = 0; j < cols; ++j)
                 {
                     Positions[i * cols + j] = map[i * cols + j];
                 }
             }
 
-            Flags |= TerrainFlags.Positions;
+            Flags |= TerrainVertexFlags.Positions;
 
             Box = BoundingBoxHelper.Compute(Positions);
+            Sphere = BoundingSphere.CreateFromBoundingBox(Box);
 
             for (uint i = 0; i < rows - 1; i++)
             {
                 for (uint j = 0; j < cols - 1; j++)
                 {
                     // Bottom left of quad
-                    Indices[k] = (uint)(i * cols + j);
+                    Indices[k] = i * cols + j;
                     UVs[i * cols + j] = new Vector3(texUIndex + 0.0f, texVIndex + 1.0f, 0);
 
                     // Top left of quad
-                    Indices[k + 1] = (uint)((i + 1) * cols + j);
+                    Indices[k + 1] = (i + 1) * cols + j;
                     UVs[(i + 1) * cols + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
 
                     // Bottom right of quad
-                    Indices[k + 2] = (uint)(i * cols + j + 1);
+                    Indices[k + 2] = i * cols + j + 1;
                     UVs[i * cols + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
 
                     // Top left of quad
-                    Indices[k + 3] = (uint)((i + 1) * cols + j);
+                    Indices[k + 3] = (i + 1) * cols + j;
                     UVs[(i + 1) * cols + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
 
                     // Top right of quad
-                    Indices[k + 4] = (uint)((i + 1) * cols + j + 1);
+                    Indices[k + 4] = (i + 1) * cols + j + 1;
                     UVs[(i + 1) * cols + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 0.0f, 0);
 
                     // Bottom right of quad
-                    Indices[k + 5] = (uint)(i * cols + j + 1);
+                    Indices[k + 5] = i * cols + j + 1;
                     UVs[i * cols + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
 
                     k += 6; // next quad
@@ -146,14 +109,152 @@
                 texVIndex++;
             }
 
-            Flags |= TerrainFlags.UVs;
+            Flags |= TerrainVertexFlags.UVs;
 
             GenVertexNormalsProcess.GenMeshVertexNormals2(this);
 
-            Flags |= TerrainFlags.Normals;
+            Flags |= TerrainVertexFlags.Normals;
             CalcTangentsProcess.ProcessMesh2(this);
 
-            Flags |= TerrainFlags.Tangents | TerrainFlags.Bitangents;
+            Flags |= TerrainVertexFlags.Tangents | TerrainVertexFlags.Bitangents;
+
+            var tesselationLevel = 4 - lodLevel;
+
+            for (int i = 0; i < tesselationLevel; i++)
+            {
+                TessellatorProcess.Tessellate(this);
+            }
+        }
+
+        public uint Width => HeightMap.Width;
+
+        public uint Height => HeightMap.Height;
+
+        public static TerrainCellData Read(Stream src, Encoding encoding, Endianness endianness)
+        {
+            TerrainCellData data = new();
+            data.Name = src.ReadString(encoding, endianness);
+            data.Materials = new string[src.ReadInt32(endianness)];
+            for (int i = 0; i < data.Materials.Length; i++)
+            {
+                data.Materials[i] = src.ReadString(encoding, endianness);
+            }
+            data.VerticesCount = src.ReadUInt32(endianness);
+            data.IndicesCount = src.ReadUInt32(endianness);
+            data.LODLevel = src.ReadUInt32(endianness);
+            data.Box = BoundingBox.Read(src, endianness);
+            data.Sphere = BoundingSphere.Read(src, endianness);
+            data.Flags = (TerrainVertexFlags)src.ReadInt32(endianness);
+
+            data.HeightMap = HeightMap.Read(src, encoding, endianness);
+
+            data.Indices = new uint[data.IndicesCount];
+            for (ulong i = 0; i < data.IndicesCount; i++)
+            {
+                data.Indices[i] = src.ReadUInt32(endianness);
+            }
+
+            if ((data.Flags & TerrainVertexFlags.Positions) != 0)
+            {
+                data.Positions = new Vector3[data.VerticesCount];
+                for (ulong i = 0; i < data.VerticesCount; i++)
+                {
+                    data.Positions[i] = src.ReadVector3(endianness);
+                }
+            }
+            if ((data.Flags & TerrainVertexFlags.UVs) != 0)
+            {
+                data.UVs = new Vector3[data.VerticesCount];
+                for (ulong i = 0; i < data.VerticesCount; i++)
+                {
+                    data.UVs[i] = src.ReadVector3(endianness);
+                }
+            }
+            if ((data.Flags & TerrainVertexFlags.Normals) != 0)
+            {
+                data.Normals = new Vector3[data.VerticesCount];
+                for (ulong i = 0; i < data.VerticesCount; i++)
+                {
+                    data.Normals[i] = src.ReadVector3(endianness);
+                }
+            }
+            if ((data.Flags & TerrainVertexFlags.Tangents) != 0)
+            {
+                data.Tangents = new Vector3[data.VerticesCount];
+                for (ulong i = 0; i < data.VerticesCount; i++)
+                {
+                    data.Tangents[i] = src.ReadVector3(endianness);
+                }
+            }
+            if ((data.Flags & TerrainVertexFlags.Bitangents) != 0)
+            {
+                data.Bitangents = new Vector3[data.VerticesCount];
+                for (ulong i = 0; i < data.VerticesCount; i++)
+                {
+                    data.Bitangents[i] = src.ReadVector3(endianness);
+                }
+            }
+
+            return data;
+        }
+
+        public void Write(Stream dst, Encoding encoding, Endianness endianness)
+        {
+            dst.WriteString(Name, encoding, endianness);
+            dst.WriteInt32(Materials.Length, endianness);
+            for (int i = 0; i < Materials.Length; i++)
+            {
+                dst.WriteString(Materials[i], encoding, endianness);
+            }
+            dst.WriteUInt32(IndicesCount, endianness);
+            dst.WriteUInt32(VerticesCount, endianness);
+            dst.WriteUInt32(LODLevel, endianness);
+            Box.Write(dst, endianness);
+            Sphere.Write(dst, endianness);
+            dst.WriteInt32((int)Flags, endianness);
+
+            HeightMap.Write(dst, encoding, endianness);
+
+            for (ulong i = 0; i < IndicesCount; i++)
+            {
+                dst.WriteUInt32(Indices[i], endianness);
+            }
+
+            if ((Flags & TerrainVertexFlags.Positions) != 0)
+            {
+                for (ulong i = 0; i < VerticesCount; i++)
+                {
+                    dst.WriteVector3(Positions[i], endianness);
+                }
+            }
+            if ((Flags & TerrainVertexFlags.UVs) != 0)
+            {
+                for (ulong i = 0; i < VerticesCount; i++)
+                {
+                    dst.WriteVector3(UVs[i], endianness);
+                }
+            }
+            if ((Flags & TerrainVertexFlags.Normals) != 0)
+            {
+                for (ulong i = 0; i < VerticesCount; i++)
+                {
+                    dst.WriteVector3(Normals[i], endianness);
+                }
+            }
+            if ((Flags & TerrainVertexFlags.Tangents) != 0)
+            {
+                for (ulong i = 0; i < VerticesCount; i++)
+                {
+                    dst.WriteVector3(Tangents[i], endianness);
+                }
+            }
+            if ((Flags & TerrainVertexFlags.Bitangents) != 0)
+            {
+                for (ulong i = 0; i < VerticesCount; i++)
+                {
+                    dst.WriteVector3(Bitangents[i], endianness);
+                }
+            }
         }
 
         /// <summary>
@@ -200,27 +301,27 @@
             {
                 TerrainVertex vertex = default;
 
-                if ((Flags & TerrainFlags.Positions) != 0)
+                if ((Flags & TerrainVertexFlags.Positions) != 0)
                 {
                     vertex.Position = Positions[i];
                 }
 
-                if ((Flags & TerrainFlags.UVs) != 0)
+                if ((Flags & TerrainVertexFlags.UVs) != 0)
                 {
                     vertex.UV = UVs[i];
                 }
 
-                if ((Flags & TerrainFlags.Normals) != 0)
+                if ((Flags & TerrainVertexFlags.Normals) != 0)
                 {
                     vertex.Normal = Normals[i];
                 }
 
-                if ((Flags & TerrainFlags.Tangents) != 0)
+                if ((Flags & TerrainVertexFlags.Tangents) != 0)
                 {
                     vertex.Tangent = Tangents[i];
                 }
 
-                if ((Flags & TerrainFlags.Bitangents) != 0)
+                if ((Flags & TerrainVertexFlags.Bitangents) != 0)
                 {
                     vertex.Bitangent = Bitangents[i];
                 }
@@ -245,27 +346,27 @@
             {
                 TerrainVertex vertex = default;
 
-                if ((Flags & TerrainFlags.Positions) != 0)
+                if ((Flags & TerrainVertexFlags.Positions) != 0)
                 {
                     vertex.Position = Positions[i];
                 }
 
-                if ((Flags & TerrainFlags.UVs) != 0)
+                if ((Flags & TerrainVertexFlags.UVs) != 0)
                 {
                     vertex.UV = UVs[i];
                 }
 
-                if ((Flags & TerrainFlags.Normals) != 0)
+                if ((Flags & TerrainVertexFlags.Normals) != 0)
                 {
                     vertex.Normal = Normals[i];
                 }
 
-                if ((Flags & TerrainFlags.Tangents) != 0)
+                if ((Flags & TerrainVertexFlags.Tangents) != 0)
                 {
                     vertex.Tangent = Tangents[i];
                 }
 
-                if ((Flags & TerrainFlags.Bitangents) != 0)
+                if ((Flags & TerrainVertexFlags.Bitangents) != 0)
                 {
                     vertex.Bitangent = Bitangents[i];
                 }
@@ -385,7 +486,7 @@
         /// </summary>
         /// <param name="edge">The edge to average.</param>
         /// <param name="other">The other terrain.</param>
-        public void AverageEdge(Edge edge, Terrain other)
+        public void AverageEdge(Edge edge, TerrainCellData other)
         {
             if (edge == Edge.ZPos)
             {

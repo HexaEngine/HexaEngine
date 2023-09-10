@@ -7,7 +7,6 @@
     using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
@@ -31,10 +30,6 @@
         private Texture2D sunsprite;
         private Texture2D sunBuffer;
         private Texture2D noiseTex;
-
-        public IRenderTargetView Output;
-        public IShaderResourceView Input;
-        public Viewport Viewport;
 
         private float godraysDensity = 0.975f;
         private float godraysWeight = 0.25f;
@@ -92,17 +87,9 @@
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunBefore("ColorGrading")
+                .RunBefore("Vignette")
+                .RunAfter("Bloom");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -164,17 +151,6 @@
         public override void Resize(int width, int height)
         {
             sunBuffer.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None);
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
         }
 
         private const float MaxLightDist = 1.3f;

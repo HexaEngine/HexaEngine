@@ -16,10 +16,12 @@
         private readonly List<PostFxNode> nodes = new();
         private readonly TopologicalSorter<PostFxNode> topologicalSorter = new();
         private readonly List<Texture2D> buffers = new();
+        private readonly List<Texture2D> debugBuffers = new();
         private readonly IGraphicsContext deferredContext;
         private readonly ConfigKey config;
         private readonly IGraphicsDevice device;
         private readonly GraphResourceBuilder creator;
+        private readonly bool debug;
         private int width;
         private int height;
 
@@ -28,7 +30,6 @@
         private bool isDirty = true;
         private bool isInitialized = false;
         private bool isReloading;
-        private int swapIndex;
 
         private readonly IGraphicsPipeline copy;
 
@@ -39,11 +40,12 @@
         private bool enabled;
         private bool disposedValue;
 
-        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4)
+        public PostProcessingManager(IGraphicsDevice device, GraphResourceBuilder creator, int width, int height, int bufferCount = 4, bool debug = false)
         {
             config = Config.Global.GetOrCreateKey("Post Processing");
             this.device = device;
             this.creator = creator;
+            this.debug = debug;
             for (int i = 0; i < bufferCount; i++)
             {
                 buffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW, ResourceMiscFlag.None, lineNumber: i));
@@ -86,12 +88,20 @@
 
         public bool Enabled { get => enabled; set => enabled = value; }
 
+        public IReadOnlyList<Texture2D> DebugTextures => debugBuffers;
+
         public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
             for (int i = 0; i < effects.Count; i++)
             {
                 effects[i].OnEnabledChanged += OnEnabledChanged;
+                effects[i].OnReload += OnReload;
                 effects[i].PropertyChanged += PropertyChanged;
+
+                if (debug)
+                {
+                    debugBuffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW));
+                }
             }
 
             this.width = width;
@@ -109,13 +119,20 @@
                 if (effects[i].Enabled)
                 {
                     effects[i].Initialize(device, nodes[i].Builder, creator, width, height, macros);
-                    profiler?.CreateStage(effects[i].Name);
                 }
             }
 
             Sort();
 
             isInitialized = true;
+        }
+
+        private void OnReload(IPostFx postFx)
+        {
+            int index = effects.IndexOf(postFx);
+            postFx.Dispose();
+            postFx.Initialize(device, nodes[index].Builder, creator, width, height, macros);
+            Invalidate();
         }
 
         private void PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -130,10 +147,20 @@
                 nodes.Add(new PostFxNode(effect));
                 effects.Add(effect);
             }
+
             config.GenerateSubKeyAuto(effect, effect.Name);
 
             if (isInitialized)
+            {
+                effect.OnEnabledChanged += OnEnabledChanged;
+                effect.OnReload += OnReload;
+                effect.PropertyChanged += PropertyChanged;
+                if (debug)
+                {
+                    debugBuffers.Add(new(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW));
+                }
                 Reload();
+            }
         }
 
         public void Remove(IPostFx effect)
@@ -145,7 +172,19 @@
             }
 
             if (isInitialized)
+            {
+                effect.OnEnabledChanged -= OnEnabledChanged;
+                effect.OnReload -= OnReload;
+                effect.PropertyChanged -= PropertyChanged;
+                if (debug)
+                {
+                    var idx = debugBuffers.Count - 1;
+                    var buffer = debugBuffers[idx];
+                    debugBuffers.RemoveAt(idx);
+                    buffer.Dispose();
+                }
                 Reload();
+            }
         }
 
         public void Invalidate()
@@ -240,7 +279,10 @@
             {
                 var effect = effects[i];
                 if (effect.Initialized)
+                {
                     effect.Dispose();
+                }
+
                 macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
                 nodes[i].Clear();
             }
@@ -350,7 +392,7 @@
                         continue;
                     }
                     profiler?.Begin(effect.Name);
-                    effect.Update(deferredContext);
+                    effect.Update(context);
                     profiler?.End(effect.Name);
                 }
 
@@ -363,8 +405,8 @@
                     }
                     list?.Dispose();
                     deferredContext.ClearState();
-                    swapIndex = 0;
-                    IShaderResourceView previous = input.SRV;
+                    int swapIndex = 0;
+                    Texture2D previous = input;
                     for (int i = 0; i < effectsSorted.Count; i++)
                     {
                         var effect = effectsSorted[i];
@@ -375,7 +417,7 @@
 
                         if ((effect.Flags & PostFxFlags.NoInput) == 0)
                         {
-                            effect.SetInput(previous, input);
+                            effect.SetInput(previous.SRV, input);
                         }
 
                         if ((effect.Flags & PostFxFlags.NoOutput) == 0)
@@ -399,7 +441,7 @@
 
                             if (!skipSwap)
                             {
-                                previous = buffer.SRV;
+                                previous = buffer;
                                 swapIndex++;
                                 if (swapIndex == buffers.Count)
                                 {
@@ -409,6 +451,12 @@
                         }
 
                         effect.Draw(deferredContext, creator);
+
+                        if (debug && (effect.Flags & PostFxFlags.NoOutput) == 0)
+                        {
+                            var debugBuffer = debugBuffers[i];
+                            CopyTo(deferredContext, previous.SRV, debugBuffer.RTV, debugBuffer.Viewport);
+                        }
                     }
                     list = deferredContext.FinishCommandList(true);
 
@@ -420,6 +468,19 @@
                     context.ExecuteCommandList(list, false);
                 }
             }
+        }
+
+        private void CopyTo(IGraphicsContext context, IShaderResourceView from, IRenderTargetView to, Viewport viewport)
+        {
+            context.SetRenderTarget(to, null);
+            context.SetViewport(viewport);
+            context.PSSetShaderResource(0, from);
+            context.SetGraphicsPipeline(copy);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
+            context.PSSetShaderResource(0, null);
+            context.SetViewport(default);
+            context.SetRenderTarget(null, null);
         }
 
         private void Sort()
@@ -454,8 +515,15 @@
             {
                 for (int i = 0; i < effects.Count; i++)
                 {
-                    if (effects[i].Enabled)
-                        effects[i].Dispose();
+                    var effect = effects[i];
+                    if (effect.Initialized)
+                    {
+                        effect.Dispose();
+                    }
+
+                    effect.OnEnabledChanged -= OnEnabledChanged;
+                    effect.OnReload -= OnReload;
+                    effect.PropertyChanged -= PropertyChanged;
                 }
                 effects.Clear();
                 effectsSorted.Clear();
@@ -463,6 +531,13 @@
                 for (int i = 0; i < buffers.Count; i++)
                 {
                     buffers[i].Dispose();
+                }
+                if (debug)
+                {
+                    for (int i = 0; i < debugBuffers.Count; i++)
+                    {
+                        debugBuffers[i].Dispose();
+                    }
                 }
                 buffers.Clear();
                 list?.Dispose();

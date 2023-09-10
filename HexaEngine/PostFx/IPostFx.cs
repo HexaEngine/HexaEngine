@@ -14,6 +14,12 @@
         private bool enabled = true;
         protected bool dirty = true;
 
+        protected IShaderResourceView Input;
+        protected IResource InputResource;
+        protected IRenderTargetView Output;
+        protected IResource OutputResource;
+        protected Viewport Viewport;
+
         public abstract string Name { get; }
 
         public abstract PostFxFlags Flags { get; }
@@ -32,6 +38,8 @@
         }
 
         public event Action<bool>? OnEnabledChanged;
+
+        public event Action<IPostFx>? OnReload;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -59,10 +67,15 @@
 
         public virtual void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
         {
+            Output = view;
+            OutputResource = resource;
+            Viewport = viewport;
         }
 
         public virtual void SetInput(IShaderResourceView view, ITexture2D resource)
         {
+            Input = view;
+            InputResource = resource;
         }
 
         protected abstract void DisposeCore();
@@ -77,6 +90,18 @@
         {
             target = value;
             NotifyPropertyChanged(name);
+        }
+
+        protected void NotifyPropertyChangedAndSetAndReload<T>(ref T target, T value, [CallerMemberName] string name = "")
+        {
+            target = value;
+            NotifyPropertyChanged(name);
+            NotifyReload();
+        }
+
+        protected void NotifyReload()
+        {
+            OnReload?.Invoke(this);
         }
 
         private void DisposeInternal()
@@ -118,6 +143,8 @@
         public bool Enabled { get; set; }
 
         public event Action<bool>? OnEnabledChanged;
+
+        public event Action<IPostFx>? OnReload;
 
         void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
 

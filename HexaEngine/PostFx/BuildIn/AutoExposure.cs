@@ -6,7 +6,6 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using System;
@@ -27,7 +26,8 @@ namespace HexaEngine.Effects.BuildIn
         private ConstantBuffer<LumaAvgParams> lumaAvgParams;
         private ResourceRef<Texture2D> lumaTex;
 
-        public IShaderResourceView Input;
+        private IGraphicsPipeline compose;
+        private ISamplerState linearSampler;
 
         private float minLogLuminance = -8;
         private float maxLogLuminance = 3;
@@ -35,7 +35,7 @@ namespace HexaEngine.Effects.BuildIn
 
         public override string Name => "AutoExposure";
 
-        public override PostFxFlags Flags => PostFxFlags.NoOutput;
+        public override PostFxFlags Flags => PostFxFlags.None;
 
         public unsafe float MinLogLuminance
         {
@@ -112,18 +112,15 @@ namespace HexaEngine.Effects.BuildIn
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .AddSource("AutoExposure")
-                .RunBefore("Compose")
-                .RunAfter("TAA")
+                .RunBefore("ColorGrading")
                 .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
                 .RunAfter("SSGI")
-                .RunAfter("LensFlare")
-                .RunAfter("Bloom");
+                .RunAfter("SSR")
+                .RunAfter("MotionBlur")
+                .RunBefore("TAA")
+                .RunBefore("DepthOfField")
+                .RunBefore("ChromaticAberration")
+                .RunBefore("Bloom");
 
             this.creator = creator;
 
@@ -150,10 +147,17 @@ namespace HexaEngine.Effects.BuildIn
 
             lumaCompute = device.CreateComputePipeline(new("compute/luma/shader.hlsl"));
             lumaAvgCompute = device.CreateComputePipeline(new("compute/lumaAvg/shader.hlsl"));
+            compose = device.CreateGraphicsPipeline(new()
+            {
+                PixelShader = "effects/autoexposure/ps.hlsl",
+                VertexShader = "quad.hlsl"
+            }, GraphicsPipelineState.DefaultFullscreen);
 
             histogram = new(device, 256, CpuAccessFlags.None, Format.R32Typeless, BufferUnorderedAccessViewFlags.Raw);
 
             lumaTex = creator.CreateTexture2D("Luma", new Texture2DDescription(Format.R32Float, 1, 1, 1, 1, BindFlags.ShaderResource | BindFlags.UnorderedAccess), false);
+
+            linearSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
         public override unsafe void Resize(int width, int height)
@@ -161,15 +165,6 @@ namespace HexaEngine.Effects.BuildIn
             this.width = width;
             this.height = height;
             dirty = true;
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
         }
 
         public override unsafe void Update(IGraphicsContext context)
@@ -214,6 +209,19 @@ namespace HexaEngine.Effects.BuildIn
             nint* emptyUAV2s = stackalloc nint[2];
             context.CSSetUnorderedAccessViews(2, (void**)emptyUAV2s, null);
             context.CSSetConstantBuffer(0, null);
+
+            nint* composeSRVs = stackalloc nint[] { Input.NativePointer, lumaTex.Value.SRV.NativePointer };
+            context.SetRenderTarget(Output, null);
+            context.SetViewport(Viewport);
+            context.SetGraphicsPipeline(compose);
+            context.PSSetShaderResources(0, 2, (void**)composeSRVs);
+            context.PSSetSampler(0, linearSampler);
+            context.DrawInstanced(4, 1, 0, 0);
+            context.PSSetSampler(0, null);
+            context.PSSetShaderResources(0, 2, (void**)emptyUAV2s);
+            context.SetGraphicsPipeline(null);
+            context.SetViewport(default);
+            context.SetRenderTarget(null, null);
         }
 
         protected override void DisposeCore()
@@ -224,7 +232,9 @@ namespace HexaEngine.Effects.BuildIn
 
             lumaAvgCompute.Dispose();
             lumaAvgParams.Dispose();
-            creator.RemoveResource("Luma");
+            compose.Dispose();
+            linearSampler.Dispose();
+            creator.ReleaseResource("Luma");
         }
     }
 }

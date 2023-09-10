@@ -49,7 +49,7 @@
             var uavs = chain.UAVs;
             var srvs = chain.SRVs;
 
-            profiler?.Begin($"HizDepthPass.Copy");
+            profiler?.Begin($"HizDepthPass.CopyEffect");
 
             context.SetRenderTarget(chain.RTV, null);
             context.PSSetShaderResource(0, input);
@@ -66,7 +66,7 @@
             context.CSSetConstantBuffer(0, cbDownsample.Value);
             context.CSSetSampler(0, samplerState.Value);
 
-            profiler?.End($"HizDepthPass.Copy");
+            profiler?.End($"HizDepthPass.CopyEffect");
 
             for (uint i = 1; i < chain.Mips; i++)
             {

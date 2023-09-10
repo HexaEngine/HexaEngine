@@ -10,7 +10,7 @@
 
         public string? RuntimeIdentifier { get; set; }
 
-        public string Profile { get; set; } = "Release";
+        public string Profile { get; set; } = "ReleaseResources";
 
         public bool StripDebugInfo { get; set; } = false;
 

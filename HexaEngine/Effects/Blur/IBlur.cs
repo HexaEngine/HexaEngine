@@ -6,6 +6,6 @@
     {
         public BlurType Type { get; }
 
-        void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, int width, int height);
+        void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, float width, float height);
     }
 }

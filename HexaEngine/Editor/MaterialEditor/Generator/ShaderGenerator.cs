@@ -200,7 +200,7 @@
             "RWTexture2DArray",
             "RWTexture3D",
             "sample",
-            "sampler",
+            "linearSampler",
             "SamplerState",
             "SamplerComparisonState",
             "shared",

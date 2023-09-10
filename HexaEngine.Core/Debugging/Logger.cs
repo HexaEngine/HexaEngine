@@ -206,6 +206,30 @@
             }
         }
 
+        public static void LogIfNotNull(LogSeverity severity, string? message)
+        {
+            if (message != null)
+            {
+                Log(severity, message);
+            }
+        }
+
+        public static void LogIfNotNull(string? message)
+        {
+            if (message != null)
+            {
+                Log(message);
+            }
+        }
+
+        public static void LogIfNotNull(object? value)
+        {
+            if (value != null)
+            {
+                Log(value);
+            }
+        }
+
         public static async Task LogAsync(LogSeverity type, string? message)
         {
             await LogAsync(new LogMessage(type, message ?? "null"));

@@ -7,11 +7,13 @@
     public struct AssetArchiveHeader
     {
         public static readonly byte[] MagicNumber = { 0x54, 0x72, 0x61, 0x6e, 0x73, 0x41, 0x72, 0x63, 0x68, 0x69, 0x76, 0x65, 0x00 };
-        public static readonly Version Version = 12;
-        public static readonly Version MinVersion = 12;
+        public static readonly Version Version = 13;
+        public static readonly Version MinVersion = 13;
 
         public Endianness Endianness;
         public Compression Compression;
+        public AssetArchiveFlags Flags;
+        public string[] Parts;
         public AssetArchiveHeaderEntry[] Entries;
         public long ContentStart;
 
@@ -30,10 +32,20 @@
 
             Compression = (Compression)stream.ReadInt32(Endianness);
 
-            int count = stream.ReadInt32(Endianness);
-            Entries = new AssetArchiveHeaderEntry[count];
+            Flags = (AssetArchiveFlags)stream.ReadInt32(Endianness);
 
-            for (int i = 0; i < count; i++)
+            int partCount = stream.ReadInt32(Endianness);
+            Parts = new string[partCount];
+
+            for (int i = 0; i < partCount; i++)
+            {
+                Parts[i] = stream.ReadString(encoding, Endianness);
+            }
+
+            int entryCount = stream.ReadInt32(Endianness);
+            Entries = new AssetArchiveHeaderEntry[entryCount];
+
+            for (int i = 0; i < entryCount; i++)
             {
                 Entries[i].Read(stream, encoding, Endianness);
             }
@@ -46,6 +58,14 @@
             stream.WriteByte((byte)Endianness);
             stream.WriteUInt64(Version, Endianness);
             stream.WriteInt32((int)Compression, Endianness);
+            stream.WriteInt32((int)Flags, Endianness);
+
+            stream.WriteInt32(Parts.Length, Endianness);
+            for (int i = 0; i < Parts.Length; i++)
+            {
+                stream.WriteString(Parts[i], encoding, Endianness);
+            }
+
             stream.WriteInt32(Entries.Length, Endianness);
             for (int i = 0; i < Entries.Length; i++)
             {
@@ -55,7 +75,7 @@
 
         public int Size(Encoding encoding)
         {
-            return MagicNumber.Length + 1 + 8 + 4 + 4 + Entries.Sum(x => x.Size(encoding));
+            return MagicNumber.Length + 1 + 8 + 4 + 4 + 4 + Parts.Sum(x => encoding.GetByteCount(x) + 4) + 4 + Entries.Sum(x => x.Size(encoding));
         }
     }
 }

@@ -50,6 +50,8 @@
         ResourceRef<Texture3D> CreateTexture3D(string name, Texture3DDescription description, bool lazyInit = true);
 
         bool RemoveResource(string name);
+
+        bool ReleaseResource(string name);
     }
 
     public interface IGraphResources

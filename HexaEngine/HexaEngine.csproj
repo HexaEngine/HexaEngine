@@ -40,15 +40,12 @@
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
 		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
-		<Compile Remove="assets\shared\shaders\effects\chromaticaberration\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\blinn\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
-		<EmbeddedResource Remove="assets\shared\shaders\effects\chromaticaberration\**" />
 		<None Remove="assets\shared\shaders\compute\light\**" />
 		<None Remove="assets\shared\shaders\deferred\blinn\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
-		<None Remove="assets\shared\shaders\effects\chromaticaberration\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,6 +59,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="Newtonsoft.Json.Bson" Version="1.0.2" />
 		<PackageReference Include="Silk.NET.Assimp" Version="2.17.1" />
 	</ItemGroup>
@@ -79,13 +77,37 @@
 		<None Update="assets\shared\shaders\compute\terrain\shader.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\effects\autoexposure\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\bloom\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\chromaticaberration\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\colorUtils.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\colorgrading\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\fog\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\grain\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\effects\ssgi\ps.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\effects\ssr\dda.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\ssr\vs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\shared\shaders\effects\tonemap\ps.hlsl">
+		<None Update="assets\shared\shaders\effects\vignette\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\filter\crossToCube\ps.hlsl">
@@ -192,9 +214,6 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\clouds\ps.hlsl">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="assets\shared\shaders\effects\compose\ps.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\effects\godrays\ps.hlsl">

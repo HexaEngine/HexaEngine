@@ -27,9 +27,6 @@
         private Texture2D intermediateTex;
         private GaussianBlur gaussianBlur;
 
-        public IRenderTargetView Output;
-        public IShaderResourceView Input;
-        public Viewport Viewport;
         private ResourceRef<DepthStencil> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<ConstantBuffer<CBWeather>> weather;
@@ -42,17 +39,9 @@
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunBefore("ColorGrading")
+                .RunBefore("Vignette")
+                .RunAfter("Bloom");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -115,17 +104,6 @@
         {
             intermediateTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             gaussianBlur.Resize(Format.R16G16B16A16Float, width, height);
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
         }
 
         protected override void DisposeCore()

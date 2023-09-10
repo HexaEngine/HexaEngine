@@ -4,14 +4,16 @@
 
     public class ResourceInstance : IDisposable
     {
-        public string _name;
-        private bool disposedValue;
+        private readonly IResourceFactory factory;
+        private readonly string _name;
+        private bool releasedValue;
         private volatile int instanceCount;
 
-        public ResourceInstance(string name, int instances)
+        public ResourceInstance(IResourceFactory factory, string name)
         {
+            this.factory = factory;
             _name = name;
-            instanceCount = instances;
+            instanceCount = 0;
         }
 
         public int InstanceCount => instanceCount;
@@ -19,6 +21,8 @@
         public bool IsUsed => instanceCount > 0;
 
         public string Name => _name;
+
+        public IResourceFactory Factory => factory;
 
         public void AddRef()
         {
@@ -37,12 +41,22 @@
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        public void Release()
         {
-            if (!disposedValue)
+            if (!releasedValue)
             {
-                disposedValue = true;
+                releasedValue = true;
+                ReleaseResources();
             }
+        }
+
+        protected virtual void ReleaseResources()
+        {
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            factory.DestroyInstance(this);
         }
     }
 
@@ -58,7 +72,7 @@
         private readonly Func<bool> waitDelegate;
         private T? value;
 
-        public ResourceInstance(string name, int instances) : base(name, instances)
+        public ResourceInstance(IResourceFactory factory, string name) : base(factory, name)
         {
             waitDelegate = WaitCondition;
         }
@@ -103,10 +117,9 @@
             await Task.Run(Wait);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void ReleaseResources()
         {
             value?.Dispose();
-            base.Dispose(disposing);
         }
     }
 }

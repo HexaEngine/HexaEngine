@@ -53,7 +53,7 @@
                             AssetArchive bundle = new(o.Path);
                             Crc32 crc = new();
 
-                            foreach (Asset asset in bundle.Assets)
+                            foreach (BundleAsset asset in bundle.Assets)
                             {
                                 crc.Append(asset.GetData());
                                 Console.WriteLine($"[{asset.Type}] CRC32:{ByteArrayToString(crc.GetHashAndReset())} {asset.Path}");

@@ -6,12 +6,16 @@
 
     public class MaterialResourceFactory : ResourceFactory<Material, (MeshData, MaterialData, bool)>
     {
-        protected override Material CreateInstance(ResourceManager1 manager, string name, (MeshData, MaterialData, bool) instanceData)
+        public MaterialResourceFactory(ResourceManager resourceManager) : base(resourceManager)
         {
-            return new(instanceData.Item2);
         }
 
-        protected override void LoadInstance(ResourceManager1 manager, Material instance, (MeshData, MaterialData, bool) instanceData)
+        protected override Material CreateInstance(ResourceManager manager, string name, (MeshData, MaterialData, bool) instanceData)
+        {
+            return new(this, instanceData.Item2);
+        }
+
+        protected override void LoadInstance(ResourceManager manager, Material instance, (MeshData, MaterialData, bool) instanceData)
         {
             (MeshData mesh, MaterialData desc, bool debone) = instanceData;
             instance.Shader = manager.LoadMaterialShader(mesh, desc, debone);
@@ -23,7 +27,7 @@
             instance.EndUpdate();
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager1 manager, Material instance, (MeshData, MaterialData, bool) instanceData)
+        protected override async Task LoadInstanceAsync(ResourceManager manager, Material instance, (MeshData, MaterialData, bool) instanceData)
         {
             (MeshData mesh, MaterialData desc, bool debone) = instanceData;
             instance.Shader = await manager.LoadMaterialShaderAsync(mesh, desc, debone);
@@ -35,13 +39,13 @@
             instance.EndUpdate();
         }
 
-        protected override void UnloadInstance(ResourceManager1 manager, Material instance)
+        protected override void UnloadInstance(ResourceManager manager, Material instance)
         {
-            manager.UnloadMaterialShader(instance.Shader);
             for (int i = 0; i < instance.TextureList.Count; i++)
             {
-                manager.UnloadTexture(instance.TextureList[i]);
+                instance.TextureList[i]?.Dispose();
             }
+            instance.Shader?.Dispose();
         }
     }
 }

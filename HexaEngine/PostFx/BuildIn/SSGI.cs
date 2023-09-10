@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Effects.Blur;
     using HexaEngine.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
@@ -20,17 +19,34 @@
         private ISamplerState linearWrapSampler;
         private IGraphicsPipeline copy;
 
-        public IRenderTargetView Output;
-        public Viewport Viewport;
-        public IShaderResourceView Input;
-        public ITexture2D InputTex;
         private ResourceRef<DepthMipChain> depth;
         private ResourceRef<ConstantBuffer<CBCamera>> camera;
         private ResourceRef<GBuffer> gbuffer;
+        private float intensity;
+        private float distance;
+        private float noiseAmount;
 
         public override string Name { get; } = "SSGI";
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
+
+        public float Intensity
+        {
+            get => intensity;
+            set => NotifyPropertyChangedAndSet(ref intensity, value);
+        }
+
+        public float Distance
+        {
+            get => distance;
+            set => NotifyPropertyChangedAndSet(ref distance, value);
+        }
+
+        public float NoiseAmount
+        {
+            get => noiseAmount;
+            set => NotifyPropertyChangedAndSet(ref noiseAmount, value);
+        }
 
         #region Structs
 
@@ -55,17 +71,15 @@
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
+                .RunBefore("ColorGrading")
                 .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunBefore("SSR")
+                .RunBefore("MotionBlur")
+                .RunBefore("AutoExposure")
+                .RunBefore("TAA")
+                .RunBefore("DepthOfField")
+                .RunBefore("ChromaticAberration")
+                .RunBefore("Bloom");
 
             depth = creator.GetDepthMipChain("HiZBuffer");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -99,6 +113,19 @@
             blur = new(device, Format.R16G16B16A16Float, width, height);
         }
 
+        public override void Update(IGraphicsContext context)
+        {
+            if (dirty)
+            {
+                SSGIParams ssgiParams = new();
+                ssgiParams.Intensity = intensity;
+                ssgiParams.Distance = distance;
+                ssgiParams.NoiseAmount = noiseAmount;
+                this.ssgiParams.Update(context, ssgiParams);
+                dirty = false;
+            }
+        }
+
         public override void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
             if (Output == null)
@@ -125,18 +152,6 @@
             context.PSSetShaderResource(1, null);
             context.PSSetShaderResource(0, null);
             context.SetRenderTarget(null, null);
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
-            InputTex = resource;
         }
 
         protected override void DisposeCore()

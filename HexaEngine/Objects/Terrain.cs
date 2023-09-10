@@ -4,7 +4,7 @@
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
 
-    [EditorGameObject<Terrain>("Terrain")]
+    [EditorGameObject<Terrain>("TerrainCellData")]
     public class Terrain : GameObject
     {
         public Terrain()

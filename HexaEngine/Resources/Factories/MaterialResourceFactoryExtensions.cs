@@ -5,13 +5,23 @@
 
     public static class MaterialResourceFactoryExtensions
     {
-        public static Material LoadMaterial(this ResourceManager1 manager, MeshData mesh, MaterialData desc, bool debone = true)
+        public static Material LoadMaterial(this ResourceManager manager, MeshData mesh, MaterialData desc, bool debone = true)
         {
             return manager.CreateInstance<Material, (MeshData, MaterialData, bool)>(desc.Name, (mesh, desc, debone)) ?? throw new NotSupportedException();
         }
 
-        public static void UpdateMaterial(this ResourceManager1 manager, MaterialData desc)
+        public static async Task<Material> LoadMaterialAsync(this ResourceManager manager, MeshData mesh, MaterialData desc, bool debone = true)
         {
+            return await manager.CreateInstanceAsync<Material, (MeshData, MaterialData, bool)>(desc.Name, (mesh, desc, debone)) ?? throw new NotSupportedException();
+        }
+
+        public static void UpdateMaterial(this ResourceManager manager, MaterialData? desc)
+        {
+            if (desc == null)
+            {
+                return;
+            }
+
             if (!manager.TryGetInstance(desc.Name, out Material? modelMaterial))
             {
                 return;
@@ -23,7 +33,7 @@
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
-                manager.UnloadTexture(modelMaterial.TextureList[i]);
+                modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
             for (int i = 0; i < desc.Textures.Length; i++)
@@ -34,7 +44,7 @@
             modelMaterial.EndUpdate();
         }
 
-        public static void ReloadMaterial(this ResourceManager1 manager, Material modelMaterial)
+        public static void ReloadMaterial(this ResourceManager manager, Material modelMaterial)
         {
             var desc = modelMaterial.Desc;
             modelMaterial.Update(desc);
@@ -43,7 +53,7 @@
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
-                manager.UnloadTexture(modelMaterial.TextureList[i]);
+                modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
             for (int i = 0; i < desc.Textures.Length; i++)
@@ -54,12 +64,7 @@
             modelMaterial.EndUpdate();
         }
 
-        public static void UnloadMaterial(this ResourceManager1 manager, Material modelMaterial)
-        {
-            manager.DestroyInstance(modelMaterial);
-        }
-
-        public static async Task UpdateMaterialAsync(this ResourceManager1 manager, MaterialData desc)
+        public static async Task UpdateMaterialAsync(this ResourceManager manager, MaterialData desc)
         {
             if (!manager.TryGetInstance(desc.Name, out Material? modelMaterial))
             {
@@ -73,7 +78,7 @@
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
-                manager.UnloadTexture(modelMaterial.TextureList[i]);
+                modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
             for (int i = 0; i < desc.Textures.Length; i++)
@@ -84,7 +89,7 @@
             modelMaterial.EndUpdate();
         }
 
-        public static async Task ReloadMaterialAsync(this ResourceManager1 manager, Material modelMaterial)
+        public static async Task ReloadMaterialAsync(this ResourceManager manager, Material modelMaterial)
         {
             var desc = modelMaterial.Desc;
             modelMaterial.Update(desc);
@@ -94,7 +99,7 @@
 
             for (int i = 0; i < modelMaterial.TextureList.Count; i++)
             {
-                manager.UnloadTexture(modelMaterial.TextureList[i]);
+                modelMaterial.TextureList[i]?.Dispose();
             }
             modelMaterial.TextureList.Clear();
             for (int i = 0; i < desc.Textures.Length; i++)

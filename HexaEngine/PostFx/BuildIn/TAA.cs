@@ -3,7 +3,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
 
@@ -17,11 +16,6 @@
 
         private ResourceRef<Texture2D> Velocity;
         private ResourceRef<Texture2D> Previous;
-
-        public IRenderTargetView Output;
-        public IShaderResourceView Input;
-        public ITexture2D OutputTex;
-        public Viewport Viewport;
 
         private float alpha = 0.1f;
         private float colorBoxSigma = 1f;
@@ -68,16 +62,16 @@
         {
             builder
                 .AddBinding("VelocityBuffer")
-                .RunBefore("Compose")
-                .RunBefore("HBAO")
+                .RunBefore("ColorGrading")
+                .RunAfter("HBAO")
+                .RunAfter("SSGI")
+                .RunAfter("SSR")
+                .RunAfter("MotionBlur")
+                .RunAfter("AutoExposure")
                 .RunBefore("DepthOfField")
-                .RunBefore("GodRays")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunBefore("ChromaticAberration")
+                .RunBefore("Bloom");
+
             this.creator = creator;
 
             pipeline = device.CreateGraphicsPipeline(new()
@@ -90,16 +84,9 @@
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearWrap);
 
             Velocity = creator.GetTexture2D("VelocityBuffer");
-            Previous = creator.CreateTexture2D("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1));
+            Previous = creator.CreateTexture2D("Previous", new Texture2DDescription(Format.R16G16B16A16Float, width, height, 1, 1), false);
 
             Viewport = new(width, height);
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-            OutputTex = resource;
         }
 
         public override void SetInput(IShaderResourceView view, ITexture2D resource)
@@ -145,7 +132,7 @@
             ZeroMemory(srvs, sizeof(nint) * 3);
             context.PSSetShaderResources(0, 3, (void**)srvs);
             context.SetRenderTarget(null, default);
-            context.CopyResource(Previous.Value, OutputTex);
+            context.CopyResource(Previous.Value, OutputResource);
         }
 
         protected override void DisposeCore()
@@ -153,7 +140,7 @@
             pipeline.Dispose();
             sampler.Dispose();
             paramsBuffer.Dispose();
-            creator.RemoveResource("Previous");
+            creator.ReleaseResource("Previous");
         }
 
         public void Draw(IGraphicsContext context)

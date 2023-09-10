@@ -14,7 +14,7 @@
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
 
-    [EditorComponent<TerrainRendererComponent>("Terrain", false, true)]
+    [EditorComponent<TerrainRendererComponent>("TerrainCellData", false, true)]
     public class TerrainRendererComponent : IRendererComponent
     {
         private GameObject gameObject;

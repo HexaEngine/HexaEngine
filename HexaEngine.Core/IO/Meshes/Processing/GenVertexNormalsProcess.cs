@@ -165,7 +165,7 @@
             return true;
         }
 
-        public static unsafe bool GenMeshVertexNormals2(Terrain pMesh)
+        public static unsafe bool GenMeshVertexNormals2(TerrainCellData pMesh)
         {
             Vector3* vertNormals = AllocT<Vector3>(pMesh.VerticesCount);
             Memset(vertNormals, 0, (int)(pMesh.VerticesCount));

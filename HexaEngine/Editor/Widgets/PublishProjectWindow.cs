@@ -10,7 +10,7 @@
     public class PublishProjectWindow : EditorWindow
     {
         private readonly PublishSettings options = new();
-        private static readonly string[] profiles = { "Release", "Debug" };
+        private static readonly string[] profiles = { "ReleaseResources", "Debug" };
         private static readonly string[] rids = { "win-x64" };
 #pragma warning disable CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Task task;

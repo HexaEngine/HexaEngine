@@ -9,6 +9,11 @@
     public struct AssetArchiveHeaderEntry
     {
         /// <summary>
+        /// The part index
+        /// </summary>
+        public int PartIndex;
+
+        /// <summary>
         /// The type of the asset.
         /// </summary>
         public AssetType Type;
@@ -35,6 +40,7 @@
 
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
+            PartIndex = stream.ReadInt32(endianness);
             Type = (AssetType)stream.ReadUInt64(endianness);
             Start = stream.ReadInt64(endianness);
             Length = stream.ReadInt64(endianness);
@@ -44,6 +50,7 @@
 
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
+            stream.WriteInt32(PartIndex, endianness);
             stream.WriteUInt64((ulong)Type, endianness);
             stream.WriteInt64(Start, endianness);
             stream.WriteInt64(Length, endianness);
@@ -53,6 +60,7 @@
 
         public int Read(ReadOnlySpan<byte> src, Encoding encoding)
         {
+            PartIndex = BinaryPrimitives.ReadInt32LittleEndian(src);
             Type = (AssetType)BinaryPrimitives.ReadUInt64LittleEndian(src);
             Start = BinaryPrimitives.ReadInt64LittleEndian(src[8..]);
             Length = BinaryPrimitives.ReadInt64LittleEndian(src[16..]);
@@ -63,16 +71,17 @@
 
         public int Write(Span<byte> dst, Encoding encoding)
         {
-            BinaryPrimitives.WriteUInt64LittleEndian(dst, (ulong)Type);
-            BinaryPrimitives.WriteInt64LittleEndian(dst[8..], Start);
-            BinaryPrimitives.WriteInt64LittleEndian(dst[16..], Length);
-            BinaryPrimitives.WriteInt64LittleEndian(dst[24..], ActualLength);
+            BinaryPrimitives.WriteInt32LittleEndian(dst, PartIndex);
+            BinaryPrimitives.WriteUInt64LittleEndian(dst[4..], (ulong)Type);
+            BinaryPrimitives.WriteInt64LittleEndian(dst[12..], Start);
+            BinaryPrimitives.WriteInt64LittleEndian(dst[20..], Length);
+            BinaryPrimitives.WriteInt64LittleEndian(dst[28..], ActualLength);
             return 32 + dst[32..].WriteString(Path, encoding);
         }
 
         public int Size(Encoding encoding)
         {
-            return 8 + 8 + 8 + 8 + encoding.GetByteCount(Path) + 4;
+            return 8 + 8 + 8 + 8 + encoding.GetByteCount(Path) + 4 + 4;
         }
     }
 }

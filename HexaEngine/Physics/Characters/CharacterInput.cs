@@ -156,8 +156,8 @@ namespace HexaEngine.Physics.Characters
             //Use a simple sorta-neck model so that when the camera looks down, the center of the screen sees past the character.
             //Makes mouselocked ray picking easier.
             camera.Position = characterBody.Pose.Position + new Vector3(0, shape.HalfLength / 2, 0);// +
-                                                                                                    //camera.Transform.Up * (shape.Radius * 1.2f) -
-                                                                                                    //camera.Transform.Forward * (shape.HalfLength + shape.Radius) * cameraBackwardOffsetScale;
+                                                                                                    //camera.Transform.Up * (shape.FilterRadius * 1.2f) -
+                                                                                                    //camera.Transform.Forward * (shape.HalfLength + shape.FilterRadius) * cameraBackwardOffsetScale;
         }
 
         /// <summary>

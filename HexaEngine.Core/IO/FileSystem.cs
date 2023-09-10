@@ -2,9 +2,12 @@
 {
     using HexaEngine.Core.IO.Assets;
     using System;
+    using System.Buffers.Binary;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.IO.Hashing;
     using System.Linq;
 
     /// <summary>
@@ -12,13 +15,29 @@
     /// </summary>
     public class FileSystem
     {
-        private static readonly List<Asset> assetBundles = new();
+        private static readonly List<BundleAsset> bundleAssets = new();
         private static readonly Dictionary<string, string> fileIndices = new();
+        private static readonly HashSet<string> fileIndicesHashes = new();
         private static readonly List<string> sources = new();
 
-        public static event Action? FileSystemInitialized;
+        private static readonly List<FileSystemWatcher> watchers = new();
 
-        public static event Action? FileSystemReload;
+        private static readonly ConcurrentDictionary<string, Asset> pathToAssets = new();
+        private static readonly List<Asset> assets = new();
+
+        public static event Action? Initialized;
+
+        public static event Action? Refreshed;
+
+        public static event Action<FileSystemEventArgs>? Changed;
+
+        public static event Action<FileSystemEventArgs>? FileCreated;
+
+        public static event Action<FileSystemEventArgs>? FileChanged;
+
+        public static event Action<FileSystemEventArgs>? FileDeleted;
+
+        public static event Action<RenamedEventArgs>? FileRenamed;
 
         public static event Action<string>? SourceAdded;
 
@@ -29,12 +48,15 @@
         /// </summary>
         public static void Initialize()
         {
-            // Load asset bundles and populate the assetBundles list
+            AddFileSystemWatcher("assets\\");
+
+            // Load asset bundles and populate the bundleAssets list
             string[] bundles = Directory.GetFiles("assets\\", "*.assets", SearchOption.TopDirectoryOnly);
+
             for (int i = 0; i < bundles.Length; i++)
             {
                 string file = bundles[i];
-                assetBundles.AddRange(new AssetArchive(file).Assets);
+                bundleAssets.AddRange(new AssetArchive(file).Assets);
             }
 
             // Create file indices for the files in the "assets" directory and its subdirectories
@@ -54,10 +76,19 @@
                     {
                         fileIndices[log] = abs;
                     }
+                    else
+                    {
+                        fileIndicesHashes.Add(log);
+                    }
                 }
             }
 
-            FileSystemInitialized?.Invoke();
+            for (int i = 0; i < assets.Count; i++)
+            {
+                assets[i].Refresh();
+            }
+
+            Initialized?.Invoke();
         }
 
         /// <summary>
@@ -67,6 +98,7 @@
         {
             // Clear existing file indices
             fileIndices.Clear();
+            fileIndicesHashes.Clear();
 
             {
                 // Create file indices for the files in the "assets" directory and its subdirectories
@@ -85,6 +117,10 @@
                         if (!fileIndices.TryAdd(log, abs))
                         {
                             fileIndices[log] = abs;
+                        }
+                        else
+                        {
+                            fileIndicesHashes.Add(log);
                         }
                     }
                 }
@@ -110,11 +146,114 @@
                         {
                             fileIndices[log] = abs;
                         }
+                        else
+                        {
+                            fileIndicesHashes.Add(log);
+                        }
                     }
                 }
             }
 
-            FileSystemReload?.Invoke();
+            for (int i = 0; i < assets.Count; i++)
+            {
+                assets[i].Refresh();
+            }
+
+            Refreshed?.Invoke();
+        }
+
+        private static void AddFileSystemWatcher(string path)
+        {
+            FileSystemWatcher watcher = new(path);
+            watcher.EnableRaisingEvents = true;
+            watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.Security;
+            watcher.Changed += FileSystemWatcherChanged;
+            watchers.Add(watcher);
+        }
+
+        private static void RemoveFileSystemWatcher(string path)
+        {
+            var watcher = watchers.Find(x => x.Path == path);
+            if (watcher == null)
+            {
+                return;
+            }
+            watcher.Changed -= FileSystemWatcherChanged;
+            watcher.Dispose();
+            watchers.Remove(watcher);
+        }
+
+        private static void FileSystemWatcherChanged(object sender, System.IO.FileSystemEventArgs e)
+        {
+            // we don't care about directories.
+            if (Path.EndsInDirectorySeparator(e.FullPath))
+            {
+                return;
+            }
+
+            // if the file has no relative path that means the file is not monitored.
+            if (!TryGetRelativePath(e.FullPath, out var relativePath))
+            {
+                return;
+            }
+
+            lock (pathToAssets)
+            {
+                if (pathToAssets.TryGetValue(relativePath, out var asset))
+                {
+                    asset.Refresh();
+                }
+            }
+
+            FileSystemEventArgs? args = null;
+
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                    {
+                        args = new(relativePath, FileSystemChangeTypes.Created);
+                        FileCreated?.Invoke(args);
+                    }
+                    break;
+
+                case WatcherChangeTypes.Deleted:
+                    {
+                        args = new(relativePath, FileSystemChangeTypes.Deleted);
+                        FileDeleted?.Invoke(args);
+                    }
+                    break;
+
+                case WatcherChangeTypes.Changed:
+                    {
+                        args = new(relativePath, FileSystemChangeTypes.Changed);
+                        FileChanged?.Invoke(args);
+                    }
+                    break;
+
+                case WatcherChangeTypes.Renamed:
+                    if (e is System.IO.RenamedEventArgs eventArgs)
+                    {
+                        if (!TryGetRelativePath(eventArgs.OldFullPath, out var relativePathOld))
+                        {
+                            return;
+                        }
+
+                        var renamed = new RenamedEventArgs(relativePathOld, relativePath);
+                        args = renamed;
+                        FileRenamed?.Invoke(renamed);
+                    }
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (args == null)
+            {
+                return;
+            }
+
+            Changed?.Invoke(args);
         }
 
         /// <summary>
@@ -147,8 +286,19 @@
                     {
                         fileIndices[log] = abs;
                     }
+                    else
+                    {
+                        fileIndicesHashes.Add(log);
+                    }
                 }
             }
+
+            for (int i = 0; i < assets.Count; i++)
+            {
+                assets[i].Refresh();
+            }
+
+            AddFileSystemWatcher(source);
 
             SourceAdded?.Invoke(source);
         }
@@ -164,6 +314,8 @@
                 return false;
             }
 
+            RemoveFileSystemWatcher(source);
+
             if (sources.Remove(source))
             {
                 Refresh();
@@ -172,6 +324,35 @@
             }
 
             return false;
+        }
+
+        public static Asset GetAsset(string assetPath)
+        {
+            lock (pathToAssets)
+            {
+                if (pathToAssets.TryGetValue(assetPath, out var asset))
+                {
+                    asset.AddRef();
+                    return asset;
+                }
+                else
+                {
+                    asset = new(assetPath);
+                    asset.AddRef();
+                    pathToAssets.TryAdd(assetPath, asset);
+                    assets.Add(asset);
+                    return asset;
+                }
+            }
+        }
+
+        internal static void DestroyAsset(Asset asset)
+        {
+            lock (pathToAssets)
+            {
+                pathToAssets.Remove(asset.FullPath, out _);
+                assets.Remove(asset);
+            }
         }
 
         /// <summary>
@@ -195,15 +376,27 @@
 
             realPath = realPath.Replace(@"\\", @"\");
 
-            if (fileIndices.ContainsKey(realPath))
+            if (fileIndicesHashes.Contains(realPath))
             {
                 return true;
             }
             else
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                return assetBundles.Find(x => x.Path == rel) != null;
+                return bundleAssets.Find(x => x.Path == rel) != null;
             }
+        }
+
+        public static uint GetCrc32Hash(string path)
+        {
+            var stream = Open(path);
+            Crc32 crc = new();
+            crc.Append(stream);
+            Span<byte> buffer = stackalloc byte[4];
+            crc.GetCurrentHash(buffer);
+            stream.Close();
+
+            return BinaryPrimitives.ReadUInt32LittleEndian(buffer);
         }
 
         /// <summary>
@@ -224,6 +417,22 @@
                 return rel;
             }
             return path;
+        }
+
+        public static bool TryGetRelativePath(string path, [NotNullWhen(true)] out string? relativePath)
+        {
+            for (int i = 0; i < sources.Count; i++)
+            {
+                var rel = Path.GetRelativePath(sources[i], path);
+                if (rel == path)
+                {
+                    continue;
+                }
+                relativePath = rel;
+                return true;
+            }
+            relativePath = null;
+            return false;
         }
 
         /// <summary>
@@ -251,7 +460,7 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = assetBundles.Find(x => x.Path == rel);
+                var asset = bundleAssets.Find(x => x.Path == rel);
 
                 return asset == null ? throw new FileNotFoundException(realPath) : asset.GetStream();
             }
@@ -285,7 +494,7 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = assetBundles.Find(x => x.Path == rel);
+                var asset = bundleAssets.Find(x => x.Path == rel);
 
                 if (asset == null)
                 {
@@ -310,7 +519,7 @@
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
-            var files = assetBundles.Where(x => x.Path.StartsWith(realPath)).Select(x => x.Path);
+            var files = bundleAssets.Where(x => x.Path.StartsWith(realPath)).Select(x => x.Path);
             return fileIndices.Where(x => x.Key.StartsWith(realPath)).Select(x => x.Key).Union(files).ToArray();
         }
 
@@ -445,7 +654,7 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = assetBundles.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                var asset = bundleAssets.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
                 throw new NotSupportedException();
             }
 
@@ -475,7 +684,7 @@
             else if (!string.IsNullOrWhiteSpace(realPath))
             {
                 var rel = Path.GetRelativePath("assets/", realPath);
-                var asset = assetBundles.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
+                var asset = bundleAssets.Find(x => x.Path == rel) ?? throw new FileNotFoundException(realPath);
                 throw new NotSupportedException();
             }
 

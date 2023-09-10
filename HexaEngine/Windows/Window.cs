@@ -11,8 +11,10 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Resources;
+    using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
+    using Microsoft.Extensions.DependencyInjection;
     using System;
     using System.Numerics;
 
@@ -79,7 +81,17 @@
             if (Application.MainWindow == this)
             {
                 AudioManager.Initialize(audioDevice);
-                ResourceManager.Initialize(graphicsDevice);
+
+                ServiceCollection descriptors = new();
+
+                descriptors.AddSingleton<IResourceFactory, GraphicsPipelineResourceFactory>();
+                descriptors.AddSingleton<IResourceFactory, MaterialResourceFactory>();
+                descriptors.AddSingleton<IResourceFactory, MaterialShaderResourceFactory>();
+                descriptors.AddSingleton<IResourceFactory, MaterialTextureResourceFactory>();
+                descriptors.AddSingleton<IResourceFactory, MeshResourceFactory>();
+                descriptors.AddSingleton<IResourceFactory, TerrainMaterialResourceFactory>();
+
+                ResourceManager.Shared = new("Shared", graphicsDevice, audioDevice, descriptors);
                 PipelineManager.Initialize(graphicsDevice);
             }
 
@@ -292,7 +304,7 @@
 
             sceneRenderer.Dispose();
             renderDispatcher.Dispose();
-            ResourceManager.Dispose();
+            ResourceManager.Shared.Dispose();
             AudioManager.Release();
             swapChain.Dispose();
             graphicsContext.Dispose();

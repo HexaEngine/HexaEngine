@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.IO.Meshes.Processing;
     using HexaEngine.Core.IO.Terrains;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
@@ -14,7 +13,7 @@
         private readonly bool writeable;
         private readonly IGraphicsDevice device;
         public HeightMap HeightMap;
-        public Terrain Terrain;
+        public TerrainCellData Terrain;
         public VertexBuffer<TerrainVertex> VertexBuffer;
         public IndexBuffer<uint> IndexBuffer;
         public uint Stride;
@@ -39,8 +38,6 @@
             heightMap = new(32, 32);
             heightMap.GenerateEmpty();
             Terrain = new(heightMap);
-            TessellatorProcess.Tessellate(Terrain);
-            TessellatorProcess.Tessellate(Terrain);
 
             BoundingBox = Terrain.Box;
             VertexBuffer = Terrain.CreateVertexBuffer(device, writeable ? CpuAccessFlags.Write : CpuAccessFlags.None);

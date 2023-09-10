@@ -100,8 +100,8 @@
         /// <summary>
         /// Synthetic NONE value
         /// </summary>
-        /// <unmanaged>None</unmanaged>
-        /// <unmanaged-short>None</unmanaged-short>
+        /// <unmanaged>Normal</unmanaged>
+        /// <unmanaged-short>Normal</unmanaged-short>
         None = unchecked(0)
     }
 }

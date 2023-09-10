@@ -263,6 +263,16 @@
             return false;
         }
 
+        public bool ReleaseResource(string name)
+        {
+            if (TryGetResource(name, out ResourceRef? resource))
+            {
+                resource.Dispose();
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// The static renderer viewport
         /// </summary>

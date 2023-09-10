@@ -32,7 +32,7 @@
                 srvs[i] = textures[i].SRV;
                 rtvs[i] = textures[i].RTV;
                 viewports[i] = new(desc.Width, desc.Height);
-                //ImGuiRenderer.Samplers.ObjectAdded(srvs[i].NativePointer, sampler);
+                //ImGuiRenderer.Samplers.ObjectAdded(srvs[i].NativePointer, linearSampler);
                 desc.BindFlags = BindFlags.DepthStencil;
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;

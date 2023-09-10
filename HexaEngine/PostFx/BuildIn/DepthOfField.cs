@@ -51,10 +51,6 @@ namespace HexaEngine.Effects.BuildIn
         private float bokehColorScale = 1.0f;
         private float bokehFallout = 0.9f;
 
-        public IRenderTargetView Output;
-        public IShaderResourceView Input;
-        public Viewport Viewport;
-
         #region Props
 
         public override string Name => "DepthOfField";
@@ -167,17 +163,15 @@ namespace HexaEngine.Effects.BuildIn
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
+                .RunBefore("ColorGrading")
                 .RunAfter("HBAO")
+                .RunAfter("SSGI")
+                .RunAfter("SSR")
                 .RunAfter("MotionBlur")
-                .RunBefore("GodRays")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunAfter("AutoExposure")
+                .RunAfter("TAA")
+                .RunBefore("ChromaticAberration")
+                .RunBefore("Bloom");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");
@@ -229,17 +223,6 @@ namespace HexaEngine.Effects.BuildIn
             this.height = height;
             bokehBuffer.Capacity = (uint)(width * height);
             blurTex.Resize(device, Format.R16G16B16A16Float, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
         }
 
         public override void Update(IGraphicsContext context)

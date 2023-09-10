@@ -65,7 +65,7 @@
 
         private bool init;
 
-        public string Name => "Terrain";
+        public string Name => "TerrainCellData";
 
         public Type Type => typeof(TerrainRendererComponent);
 
@@ -104,7 +104,7 @@
             if (!init)
             {
                 var device = context.Device;
-                var inputElements = Terrain.InputElements;
+                var inputElements = TerrainCellData.InputElements;
 
                 depthStencil = new(device, 1024, 1024, Format.D32Float);
 
@@ -183,7 +183,7 @@
                 }
             }
 
-            ImGui.Checkbox("Edit Terrain", ref editTerrain);
+            ImGui.Checkbox("Edit TerrainCellData", ref editTerrain);
             ImGui.InputFloat("Size", ref size);
             ImGui.InputFloat("Strength", ref strength);
             ImGui.Checkbox("Raise", ref raise);

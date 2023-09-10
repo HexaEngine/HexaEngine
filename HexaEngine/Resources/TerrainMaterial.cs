@@ -11,7 +11,7 @@
 
         private bool loaded;
 
-        public TerrainMaterial(MaterialData desc) : base(desc.Name, 0)
+        public TerrainMaterial(IResourceFactory factory, MaterialData desc) : base(factory, desc.Name)
         {
             this.desc = desc;
         }
@@ -47,10 +47,9 @@
 #nullable enable
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void ReleaseResources()
         {
             loaded = false;
-            base.Dispose(disposing);
         }
 
         public override string ToString()

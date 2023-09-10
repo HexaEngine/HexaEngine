@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
+    using HexaEngine.Core.IO;
     using HexaEngine.Mathematics;
     using System;
     using System.Numerics;
@@ -28,6 +29,76 @@
         private int rowPitch;
         private int slicePitch;
         private byte* local;
+
+        private IGraphicsDevice device;
+        private Asset? asset;
+
+        public Texture2D(IGraphicsDevice device, Asset asset, bool generateMips = true, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
+        {
+            this.device = device;
+            this.asset = asset;
+            asset.OnExistsChanged += OnExistsChanged;
+            asset.OnContentChanged += OnContentChanged;
+            dbgName = $"Texture2D: {asset.FullPath}, {Path.GetFileNameWithoutExtension(filename)}, Line:{lineNumber}";
+            texture = device.TextureLoader.LoadTexture2D(new TextureFileDescription(asset.FullPath, mipLevels: generateMips ? 0 : 1));
+            texture.DebugName = dbgName;
+            description = texture.Description;
+            format = description.Format;
+            width = description.Width;
+            height = description.Height;
+            mipLevels = description.MipLevels;
+            arraySize = description.ArraySize;
+            cpuAccessFlags = description.CPUAccessFlags;
+            gpuAccessFlags = description.Usage switch
+            {
+                Usage.Default => GpuAccessFlags.RW,
+                Usage.Dynamic => GpuAccessFlags.Read,
+                Usage.Staging => GpuAccessFlags.None,
+                Usage.Immutable => GpuAccessFlags.Read,
+                _ => throw new NotImplementedException(),
+            };
+            miscFlag = description.MiscFlags;
+
+            FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                local = (byte*)Alloc(rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
+            }
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                srv = device.CreateShaderResourceView(texture);
+                srv.DebugName = dbgName + ".SRV";
+            }
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                rtv = device.CreateRenderTargetView(texture);
+                rtv.DebugName = dbgName + ".RTV";
+            }
+            MemoryManager.Register(texture);
+        }
+
+        public static Texture2D LoadFromAssets(IGraphicsDevice device, string path, bool generateMips = true)
+        {
+            return new(device, FileSystem.GetAsset(Paths.CurrentTexturePath + path), generateMips);
+        }
+
+        private void OnContentChanged(Asset asset)
+        {
+            Reload();
+        }
+
+        private void OnExistsChanged(Asset asset, bool exists)
+        {
+            Reload();
+        }
 
         public Texture2D(IGraphicsDevice device, TextureFileDescription description, [CallerFilePath] string filename = "", [CallerLineNumber] int lineNumber = 0)
         {
@@ -408,6 +479,8 @@
 
         public bool IsDisposed => texture.IsDisposed;
 
+        public bool Exists => asset?.Exists ?? false;
+
         public event EventHandler? OnDisposed
         {
             add
@@ -420,6 +493,8 @@
                 texture.OnDisposed -= value;
             }
         }
+
+        public event Action<Texture2D> TextureReloaded;
 
         public byte this[int index]
         {
@@ -594,6 +669,65 @@
             }
         }
 
+        public void Reload()
+        {
+            if (asset == null)
+            {
+                return;
+            }
+
+            texture.Dispose();
+            srv?.Dispose();
+            rtv?.Dispose();
+            uav?.Dispose();
+            MemoryManager.Unregister(texture);
+            texture = device.TextureLoader.LoadTexture2D(asset.FullPath);
+            texture.DebugName = dbgName;
+            description = texture.Description;
+            format = description.Format;
+            width = description.Width;
+            height = description.Height;
+            mipLevels = description.MipLevels;
+            arraySize = description.ArraySize;
+            cpuAccessFlags = description.CPUAccessFlags;
+            gpuAccessFlags = description.Usage switch
+            {
+                Usage.Default => GpuAccessFlags.RW,
+                Usage.Dynamic => GpuAccessFlags.Read,
+                Usage.Staging => GpuAccessFlags.None,
+                Usage.Immutable => GpuAccessFlags.Read,
+                _ => throw new NotImplementedException(),
+            };
+            miscFlag = description.MiscFlags;
+
+            FormatHelper.ComputePitch(format, width, height, ref rowPitch, ref slicePitch, Textures.CPFlags.None);
+
+            if (cpuAccessFlags != CpuAccessFlags.None)
+            {
+                local = (byte*)Alloc(rowPitch * height);
+                ZeroMemory(local, rowPitch * height);
+            }
+            if ((description.BindFlags & BindFlags.UnorderedAccess) != 0)
+            {
+                uav = device.CreateUnorderedAccessView(texture, new(texture, arraySize > 1 ? UnorderedAccessViewDimension.Texture2DArray : UnorderedAccessViewDimension.Texture2D));
+                uav.DebugName = dbgName + ".UAV";
+            }
+            if ((description.BindFlags & BindFlags.ShaderResource) != 0)
+            {
+                srv = device.CreateShaderResourceView(texture);
+                srv.DebugName = dbgName + ".SRV";
+            }
+
+            if ((description.BindFlags & BindFlags.RenderTarget) != 0)
+            {
+                rtv = device.CreateRenderTargetView(texture);
+                rtv.DebugName = dbgName + ".RTV";
+            }
+            MemoryManager.Register(texture);
+
+            TextureReloaded?.Invoke(this);
+        }
+
         public void CopyTo(IGraphicsContext context, ITexture2D texture)
         {
             context.CopyResource(texture, this.texture);
@@ -604,6 +738,12 @@
             if (!disposedValue)
             {
                 MemoryManager.Unregister(texture);
+                if (asset != null)
+                {
+                    asset.OnExistsChanged -= OnExistsChanged;
+                    asset.OnContentChanged -= OnContentChanged;
+                    asset.Dispose();
+                }
                 texture.Dispose();
                 srv?.Dispose();
                 rtv?.Dispose();

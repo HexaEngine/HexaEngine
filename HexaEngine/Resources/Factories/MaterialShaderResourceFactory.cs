@@ -9,17 +9,17 @@
     {
         private readonly IGraphicsDevice device;
 
-        public MaterialShaderResourceFactory(IGraphicsDevice device)
+        public MaterialShaderResourceFactory(ResourceManager resourceManager, IGraphicsDevice device) : base(resourceManager)
         {
             this.device = device;
         }
 
-        protected override ResourceInstance<Resources.MaterialShader> CreateInstance(ResourceManager1 manager, string name, (MeshData, MaterialData, bool) instanceData)
+        protected override ResourceInstance<Resources.MaterialShader> CreateInstance(ResourceManager manager, string name, (MeshData, MaterialData, bool) instanceData)
         {
-            return new ResourceInstance<Resources.MaterialShader>(name, 0);
+            return new ResourceInstance<Resources.MaterialShader>(this, name);
         }
 
-        protected override void LoadInstance(ResourceManager1 manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)
+        protected override void LoadInstance(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)
         {
             (MeshData mesh, MaterialData material, bool debone) = instanceData;
             var shader = new Resources.MaterialShader(device, mesh, material, debone);
@@ -27,7 +27,7 @@
             instance.EndLoad(shader);
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager1 manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)
+        protected override async Task LoadInstanceAsync(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance, (MeshData, MaterialData, bool) instanceData)
         {
             (MeshData mesh, MaterialData material, bool debone) = instanceData;
             var shader = new Resources.MaterialShader(device, mesh, material, debone);
@@ -35,7 +35,7 @@
             instance.EndLoad(shader);
         }
 
-        protected override void UnloadInstance(ResourceManager1 manager, ResourceInstance<Resources.MaterialShader> instance)
+        protected override void UnloadInstance(ResourceManager manager, ResourceInstance<Resources.MaterialShader> instance)
         {
         }
     }

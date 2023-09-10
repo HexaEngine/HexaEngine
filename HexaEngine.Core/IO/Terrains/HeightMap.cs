@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Core.IO.Terrains
 {
+    using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Noise;
     using System;
     using System.Numerics;
+    using System.Text;
 
     /// <summary>
     /// Represents a height map used for terrain generation.
@@ -12,17 +14,21 @@
         /// <summary>
         /// The width of the height map.
         /// </summary>
-        public int Width;
+        public uint Width;
 
         /// <summary>
         /// The height of the height map.
         /// </summary>
-        public int Height;
+        public uint Height;
 
         /// <summary>
         /// The data of the height map, stored as a 1D array of Vector3 values.
         /// </summary>
         public Vector3[] Data;
+
+        private HeightMap()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightMap"/> class with the specified width, height, and data.
@@ -30,7 +36,7 @@
         /// <param name="width">The width of the height map.</param>
         /// <param name="height">The height of the height map.</param>
         /// <param name="data">The data of the height map.</param>
-        public HeightMap(int width, int height, Vector3[] data)
+        public HeightMap(uint width, uint height, Vector3[] data)
         {
             Width = width;
             Height = height;
@@ -42,11 +48,22 @@
         /// </summary>
         /// <param name="width">The width of the height map.</param>
         /// <param name="height">The height of the height map.</param>
-        public HeightMap(int width, int height)
+        public HeightMap(uint width, uint height)
         {
             Width = width;
             Height = height;
             Data = new Vector3[width * height];
+        }
+
+        /// <summary>
+        /// Gets or sets the height map data at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the height map data.</param>
+        /// <returns>The height map data at the specified index.</returns>
+        public Vector3 this[uint index]
+        {
+            get => Data[index];
+            set => Data[index] = value;
         }
 
         /// <summary>
@@ -70,13 +87,13 @@
             float heightFactor = 10.0f;
 
             // Read the image data into our heightMap array
-            for (int j = 0; j < Height; j++)
+            for (uint j = 0; j < Height; j++)
             {
-                for (int i = 0; i < Width; i++)
+                for (uint i = 0; i < Width; i++)
                 {
                     float height = 0;
 
-                    int index = Height * j + i;
+                    uint index = Height * j + i;
 
                     Data[index].X = i;
                     Data[index].Y = (float)height / heightFactor;
@@ -95,13 +112,13 @@
             float heightFactor = 10.0f;
 
             // Read the image data into our heightMap array
-            for (int j = 0; j < Height; j++)
+            for (uint j = 0; j < Height; j++)
             {
-                for (int i = 0; i < Width; i++)
+                for (uint i = 0; i < Width; i++)
                 {
                     float height = Random.Shared.NextSingle();
 
-                    int index = Height * j + i;
+                    uint index = Height * j + i;
 
                     Data[index].X = i;
                     Data[index].Y = (float)height * heightFactor;
@@ -125,17 +142,52 @@
             PerlinNoise noise = new();
 
             // Read the image data into our heightMap array
-            for (int j = 0; j < Height; j++)
+            for (uint j = 0; j < Height; j++)
             {
-                for (int i = 0; i < Width; i++)
+                for (uint i = 0; i < Width; i++)
                 {
                     float height = (float)noise.Function2D(scale * (i + x), scale * (j + z)) * 0.5f + 0.5f;
 
-                    int index = Height * j + i;
+                    uint index = Height * j + i;
 
                     Data[index].X = i;
                     Data[index].Y = (float)height * heightFactor;
                     Data[index].Z = j;
+                }
+            }
+        }
+
+        public static HeightMap Read(Stream src, Encoding encoding, Endianness endianness)
+        {
+            HeightMap heightMap = new();
+            heightMap.Width = src.ReadUInt32(endianness);
+            heightMap.Height = src.ReadUInt32(endianness);
+            heightMap.Data = new Vector3[heightMap.Width * heightMap.Height];
+
+            for (uint i = 0; i < heightMap.Height; i++)
+            {
+                for (uint j = 0; j < heightMap.Width; j++)
+                {
+                    uint index = heightMap.Height * j + i;
+                    heightMap.Data[index].X = i;
+                    heightMap.Data[index].Y = src.ReadFloat(endianness);
+                    heightMap.Data[index].Z = j;
+                }
+            }
+            return heightMap;
+        }
+
+        public void Write(Stream dst, Encoding encoding, Endianness endianness)
+        {
+            dst.WriteUInt32(Width, endianness);
+            dst.WriteUInt32(Height, endianness);
+
+            for (uint i = 0; i < Height; i++)
+            {
+                for (uint j = 0; j < Width; j++)
+                {
+                    uint index = Height * j + i;
+                    dst.WriteFloat(Data[index].Y, endianness);
                 }
             }
         }

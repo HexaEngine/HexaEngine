@@ -234,24 +234,37 @@ namespace HexaEngine.D3D11
 
         public unsafe void GetShaderOrCompileFile(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, bool bypassCache = false)
         {
-            Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, SourceLanguage.HLSL, macros, &pShader, out _))
+            var fullName = Paths.CurrentShaderPath + path;
+            uint crc = FileSystem.GetCrc32Hash(fullName);
+            Shader* pShader = null;
+            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out _))
             {
-                CompileFromFile(path, macros, entry, profile, &pShader);
+                Compile(FileSystem.ReadAllText(fullName), macros, entry, path, profile, out var shaderBlob, out string? error);
+
+                if (shaderBlob != null)
+                {
+                    pShader = AllocT<Shader>();
+                    pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
+                    pShader->Length = shaderBlob.PointerSize;
+                }
+
+                Logger.LogIfNotNull(error);
+
                 if (pShader == null)
                 {
                     return;
                 }
 
-                ShaderCache.CacheShader(path, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
+                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, Array.Empty<InputElementDescription>(), pShader);
             }
             *shader = pShader;
         }
 
         public unsafe void GetShaderOrCompileFileWithInputSignature(string entry, string path, string profile, ShaderMacro[] macros, Shader** shader, out InputElementDescription[]? inputElements, out Blob? signature, bool bypassCache = false)
         {
+            uint crc = FileSystem.GetCrc32Hash(Paths.CurrentShaderPath + path);
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(path, SourceLanguage.HLSL, macros, &pShader, out inputElements))
+            if (bypassCache || !ShaderCache.GetShader(path, crc, SourceLanguage.HLSL, macros, &pShader, out inputElements))
             {
                 CompileFromFile(path, macros, entry, profile, &pShader);
                 signature = null;
@@ -263,7 +276,7 @@ namespace HexaEngine.D3D11
 
                 signature = GetInputSignature(pShader);
                 inputElements = GetInputElementsFromSignature(pShader, signature);
-                ShaderCache.CacheShader(path, SourceLanguage.HLSL, macros, inputElements, pShader);
+                ShaderCache.CacheShader(path, crc, SourceLanguage.HLSL, macros, inputElements, pShader);
             }
             *shader = pShader;
             signature = GetInputSignature(pShader);

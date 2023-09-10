@@ -3,6 +3,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Resources;
+    using HexaEngine.Resources.Factories;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -80,7 +81,7 @@
                         var mat = desc;
                         int index = materials.IndexOf(mat);
                         mat.Name = newName;
-                        ResourceManager.RenameMaterial(oldName, newName);
+                        //ResourceManager.RenameMaterial(oldName, newName);
                         Renamed?.Invoke(mat, oldName, newName);
                         materials[index] = mat;
                         return true;
@@ -101,7 +102,7 @@
                 }
             }
 
-            ResourceManager.UpdateMaterial(desc);
+            ResourceManager.Shared.UpdateMaterial(desc);
         }
 
         public async Task UpdateAsync(MaterialData desc)
@@ -114,7 +115,7 @@
                 }
             }
 
-            await ResourceManager.UpdateMaterialAsync(desc);
+            await ResourceManager.Shared.UpdateMaterialAsync(desc);
         }
 
         public MaterialLibrary Load(string path)

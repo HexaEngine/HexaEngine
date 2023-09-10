@@ -4,6 +4,7 @@
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Mathematics;
     using HexaEngine.Resources;
+    using HexaEngine.Resources.Factories;
     using System.Numerics;
     using System.Threading.Tasks;
 
@@ -113,8 +114,8 @@
             for (uint i = 0; i < modelFile.Header.MeshCount; i++)
             {
                 var data = modelFile.GetMesh(i);
-                Material material = ResourceManager.LoadMaterial(data, materialLibrary.GetMaterial(data.MaterialName));
-                Mesh mesh = ResourceManager.LoadMesh(data, false);
+                Material material = ResourceManager.Shared.LoadMaterial(data, materialLibrary.GetMaterial(data.MaterialName));
+                Mesh mesh = ResourceManager.Shared.LoadMesh(data, false);
 
                 materials[i] = material;
                 meshes[i] = mesh;
@@ -128,8 +129,8 @@
             for (uint i = 0; i < modelFile.Header.MeshCount; i++)
             {
                 var data = modelFile.GetMesh(i);
-                Material material = await ResourceManager.LoadMaterialAsync(data, materialLibrary.GetMaterial(data.MaterialName));
-                Mesh mesh = await ResourceManager.LoadMeshAsync(data);
+                Material material = await ResourceManager.Shared.LoadMaterialAsync(data, materialLibrary.GetMaterial(data.MaterialName));
+                Mesh mesh = await ResourceManager.Shared.LoadMeshAsync(data);
 
                 materials[i] = material;
                 meshes[i] = mesh;
@@ -142,8 +143,8 @@
         {
             for (int i = 0; i < meshes.Length; i++)
             {
-                ResourceManager.UnloadMesh(meshes[i]);
-                ResourceManager.UnloadMaterial(materials[i]);
+                meshes[i].Dispose();
+                materials[i].Dispose();
             }
 
             loaded = false;

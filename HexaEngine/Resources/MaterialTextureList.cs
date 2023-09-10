@@ -190,17 +190,17 @@
 
         public int IndexOf(ResourceInstance<MaterialTexture>? item)
         {
-            return ((IList<ResourceInstance<MaterialTexture>?>)textures).IndexOf(item);
+            return textures.IndexOf(item);
         }
 
         public void Insert(int index, ResourceInstance<MaterialTexture>? item)
         {
-            ((IList<ResourceInstance<MaterialTexture>?>)textures).Insert(index, item);
+            textures.Insert(index, item);
         }
 
         public void RemoveAt(int index)
         {
-            ((IList<MaterialTexture>)textures).RemoveAt(index);
+            textures.RemoveAt(index);
             Update();
         }
 
@@ -208,22 +208,22 @@
         {
             startSlot = 0;
             count = 0;
-            ((ICollection<MaterialTexture>)textures).Clear();
+            textures.Clear();
         }
 
-        public void CopyTo(ResourceInstance<MaterialTexture>[] array, int arrayIndex)
+        public void CopyTo(ResourceInstance<MaterialTexture>?[] array, int arrayIndex)
         {
-            ((ICollection<ResourceInstance<MaterialTexture>?>)textures).CopyTo(array, arrayIndex);
+            textures.CopyTo(array, arrayIndex);
         }
 
         bool ICollection<ResourceInstance<MaterialTexture>?>.Remove(ResourceInstance<MaterialTexture>? item)
         {
-            return ((ICollection<ResourceInstance<MaterialTexture>?>)textures).Remove(item);
+            return textures.Remove(item);
         }
 
         public IEnumerator<ResourceInstance<MaterialTexture>?> GetEnumerator()
         {
-            return ((IEnumerable<ResourceInstance<MaterialTexture>?>)textures).GetEnumerator();
+            return textures.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

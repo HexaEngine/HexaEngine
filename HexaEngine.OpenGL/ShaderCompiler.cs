@@ -1,15 +1,12 @@
 ﻿namespace HexaEngine.OpenGL
 {
     using HexaEngine.Core;
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Shaders;
     using HexaEngine.Core.IO;
     using Silk.NET.OpenGL;
     using System.Buffers.Binary;
     using System.Diagnostics;
-    using System.IO;
-    using static System.Runtime.InteropServices.JavaScript.JSType;
     using Shader = Core.Graphics.Shader;
 
     public unsafe class ShaderCompiler
@@ -105,8 +102,9 @@
 
         public unsafe void GetProgramOrCompile(ComputePipelineDesc desc, ShaderMacro[] macros, out uint program, bool bypassCache = false)
         {
+            uint crc = FileSystem.GetCrc32Hash(Paths.CurrentShaderPath + desc.Path);
             Shader* pShader;
-            if (bypassCache || !ShaderCache.GetShader(desc.Path, SourceLanguage.GLSL, macros, &pShader, out _))
+            if (bypassCache || !ShaderCache.GetShader(desc.Path, crc, SourceLanguage.GLSL, macros, &pShader, out _))
             {
                 CompileProgram(desc, macros, out program, out _);
                 if (program == 0)
@@ -116,7 +114,7 @@
 
                 pShader = GetProgramBinary(program);
 
-                ShaderCache.CacheShader(desc.Path, SourceLanguage.GLSL, macros, Array.Empty<InputElementDescription>(), pShader);
+                ShaderCache.CacheShader(desc.Path, crc, SourceLanguage.GLSL, macros, Array.Empty<InputElementDescription>(), pShader);
             }
 
             program = gl.CreateProgram();

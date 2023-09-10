@@ -107,13 +107,13 @@ namespace HexaEngine.Scenes
                     if (scene == null)
                     {
                         old?.Uninitialize();
-                        ResourceManager.Release();
+                        ResourceManager.Shared.Release();
                         Current = null;
                     }
                     else
                     {
                         old?.Uninitialize();
-                        ResourceManager.Release();
+                        ResourceManager.Shared.Release();
                         scene.Initialize(window.Device);
                         Current = scene;
                     }
@@ -135,11 +135,11 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     var window = (IRenderWindow)state;
-                    ResourceManager.BeginNoGCRegion();
+                    ResourceManager.Shared.BeginNoGCRegion();
                     Current?.Uninitialize();
                     Current.Initialize(window.Device);
                     SceneChanged?.Invoke(null, new(Current, Current));
-                    ResourceManager.EndNoGCRegion();
+                    ResourceManager.Shared.EndNoGCRegion();
                 }
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
@@ -156,7 +156,7 @@ namespace HexaEngine.Scenes
             {
                 lock (Current)
                 {
-                    ResourceManager.BeginNoGCRegion();
+                    ResourceManager.Shared.BeginNoGCRegion();
                     Current?.Uninitialize();
                 }
                 GC.WaitForPendingFinalizers();
@@ -175,7 +175,7 @@ namespace HexaEngine.Scenes
                 lock (Current)
                 {
                     Current.Initialize(window.Device);
-                    ResourceManager.EndNoGCRegion();
+                    ResourceManager.Shared.EndNoGCRegion();
                     SceneChanged?.Invoke(null, new(Current, Current));
                 }
                 GC.WaitForPendingFinalizers();
@@ -230,13 +230,13 @@ namespace HexaEngine.Scenes
                     if (scene == null)
                     {
                         old?.Uninitialize();
-                        ResourceManager.Release();
+                        ResourceManager.Shared.Release();
                         Current = null;
                     }
                     else
                     {
                         old?.Uninitialize();
-                        ResourceManager.Release();
+                        ResourceManager.Shared.Release();
                         scene.Initialize(window.Device);
                         Current = scene;
                     }

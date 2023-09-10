@@ -44,6 +44,8 @@
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public event Action<IPostFx>? OnReload;
+
         public void Save(string path)
         {
             XmlSerializer serializer = new(typeof(PostFx));

@@ -2,7 +2,6 @@
 {
     using Silk.NET.SDL;
     using System;
-    using System.Diagnostics;
 
     /// <summary>
     /// Represents the time management system of the engine.
@@ -10,9 +9,15 @@
     public static class Time
     {
         private static readonly Sdl sdl = Application.sdl;
+        private static long frame;
         private static ulong last;
         private static float fixedTime;
         private static float cumulativeFrameTime;
+
+        /// <summary>
+        /// Gets how many frames have passed since the start.
+        /// </summary>
+        public static long Frame => frame;
 
         /// <summary>
         /// Gets the time elapsed since the last frame in seconds.
@@ -60,6 +65,7 @@
         /// <exception cref="InvalidOperationException">Thrown when the delta time is 0 or less than 0.</exception>
         public static void FrameUpdate()
         {
+            frame++;
             ulong now = sdl.GetPerformanceCounter();
             double deltaTime = (double)(now - last) / sdl.GetPerformanceFrequency();
             last = now;

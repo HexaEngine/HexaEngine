@@ -91,7 +91,7 @@
             _ = Task.Factory.StartNew(BuildScripts);
         }
 
-        private static void Watcher_Changed(object sender, FileSystemEventArgs e)
+        private static void Watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
             scriptProjectChanged = true;
         }

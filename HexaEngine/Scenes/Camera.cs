@@ -47,7 +47,7 @@
             }
         }
 
-        [EditorButton("Copy from View")]
+        [EditorButton("CopyEffect from View")]
         public void CopySettings()
         {
             var current = CameraManager.Current;

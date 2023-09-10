@@ -6,6 +6,7 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using HexaEngine.Resources;
+    using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using System;
@@ -235,7 +236,7 @@
                         {
                             progressOverlay = "Reload Shaders";
                             progress = 0.1f;
-                            ResourceManager.RecompileShaders();
+                            ResourceManager.Shared.RecompileShaders();
                             progress = 1;
                             progressOverlay = "Reload Shaders Done";
                         }).ContinueWith(x => { recompileShadersTask = null; recompileShadersTaskIsComplete = true; });

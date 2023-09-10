@@ -4,12 +4,16 @@
 
     public class TerrainMaterialResourceFactory : ResourceFactory<TerrainMaterial, MaterialData>
     {
-        protected override TerrainMaterial CreateInstance(ResourceManager1 manager, string name, MaterialData instanceData)
+        public TerrainMaterialResourceFactory(ResourceManager resourceManager) : base(resourceManager)
         {
-            return new TerrainMaterial(instanceData);
         }
 
-        protected override void LoadInstance(ResourceManager1 manager, TerrainMaterial instance, MaterialData instanceData)
+        protected override TerrainMaterial CreateInstance(ResourceManager manager, string name, MaterialData instanceData)
+        {
+            return new TerrainMaterial(this, instanceData);
+        }
+
+        protected override void LoadInstance(ResourceManager manager, TerrainMaterial instance, MaterialData instanceData)
         {
             for (int i = 0; i < instanceData.Textures.Length; i++)
             {
@@ -19,7 +23,7 @@
             instance.EndUpdate();
         }
 
-        protected override async Task LoadInstanceAsync(ResourceManager1 manager, TerrainMaterial instance, MaterialData instanceData)
+        protected override async Task LoadInstanceAsync(ResourceManager manager, TerrainMaterial instance, MaterialData instanceData)
         {
             for (int i = 0; i < instanceData.Textures.Length; i++)
             {
@@ -29,13 +33,12 @@
             instance.EndUpdate();
         }
 
-        protected override void UnloadInstance(ResourceManager1 manager, TerrainMaterial instance)
+        protected override void UnloadInstance(ResourceManager manager, TerrainMaterial instance)
         {
             for (int i = 0; i < instance.TextureList.Count; i++)
             {
-                manager.UnloadTexture(instance.TextureList[i]);
+                instance.TextureList[i]?.Dispose();
             }
-            instance.Dispose();
         }
     }
 }

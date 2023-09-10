@@ -22,6 +22,8 @@
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
+    using HexaEngine.Resources;
+    using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
     using System.IO;
     using System.Numerics;
@@ -428,7 +430,7 @@
             tonemap = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/tonemap/ps.hlsl"
+                PixelShader = "effects/colorgrading/ps.hlsl"
             }, GraphicsPipelineState.DefaultFullscreen);
             fxaa = device.CreateGraphicsPipeline(new()
             {
@@ -816,6 +818,7 @@
                 return;
 
             semaphore.Wait();
+            ResourceManager.Shared.UpdateMaterial(material);
             compiling = true;
             Directory.CreateDirectory("generated/" + "shaders/");
 

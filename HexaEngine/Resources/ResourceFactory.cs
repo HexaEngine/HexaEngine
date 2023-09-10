@@ -4,10 +4,24 @@
 
     public abstract class ResourceFactory<T, TData> : IResourceFactory<T, TData>, IResourceFactory where T : ResourceInstance
     {
+        protected readonly ResourceManager resourceManager;
         protected readonly ConcurrentDictionary<string, T> instances = new();
         protected readonly object _lock = new();
         private readonly Type type = typeof(T);
+
         private bool disposedValue;
+        private bool suppressCleanup;
+
+        protected ResourceFactory(ResourceManager resourceManager)
+        {
+            this.resourceManager = resourceManager;
+        }
+
+        public IReadOnlyDictionary<string, T> Instances => instances;
+
+        public ResourceManager ResourceManager => resourceManager;
+
+        public bool SuppressCleanup { get => suppressCleanup; set => suppressCleanup = value; }
 
         public bool IsType(Type type)
         {
@@ -37,41 +51,41 @@
             return null;
         }
 
-        ResourceInstance IResourceFactory.CreateInstance(ResourceManager1 manager, string name, object? instanceData)
+        ResourceInstance IResourceFactory.CreateInstance(string name, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                return ((IResourceFactory<T, TData>)this).CreateInstance(manager, name, data);
+                return ((IResourceFactory<T, TData>)this).CreateInstance(name, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        T IResourceFactory<T, TData>.CreateInstance(ResourceManager1 manager, string name, TData instanceData)
+        T IResourceFactory<T, TData>.CreateInstance(string name, TData instanceData)
         {
             lock (_lock)
             {
-                var instance = CreateInstance(manager, name, instanceData);
+                var instance = CreateInstance(resourceManager, name, instanceData);
                 instances.TryAdd(name, instance);
                 return instance;
             }
         }
 
-        protected abstract T CreateInstance(ResourceManager1 manager, string name, TData instanceData);
+        protected abstract T CreateInstance(ResourceManager manager, string name, TData instanceData);
 
-        protected abstract void LoadInstance(ResourceManager1 manager, T instance, TData instanceData);
+        protected abstract void LoadInstance(ResourceManager manager, T instance, TData instanceData);
 
-        ResourceInstance IResourceFactory.GetOrCreateInstance(ResourceManager1 manager, string name, object? instanceData)
+        ResourceInstance IResourceFactory.GetOrCreateInstance(string name, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                return GetOrCreateInstance(manager, name, data);
+                return GetOrCreateInstance(name, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        public T GetOrCreateInstance(ResourceManager1 manager, string name, TData instanceData)
+        public T GetOrCreateInstance(string name, TData instanceData)
         {
             T? instance;
             lock (_lock)
@@ -88,31 +102,31 @@
                 }
                 else
                 {
-                    instance = CreateInstance(manager, name, instanceData);
+                    instance = CreateInstance(resourceManager, name, instanceData);
                     instances.TryAdd(name, instance);
                 }
             }
 
-            LoadInstance(manager, instance, instanceData);
+            LoadInstance(resourceManager, instance, instanceData);
 
             return instance;
         }
 
-        protected abstract Task LoadInstanceAsync(ResourceManager1 manager, T instance, TData instanceData);
+        protected abstract Task LoadInstanceAsync(ResourceManager manager, T instance, TData instanceData);
 
-        async Task<ResourceInstance> IResourceFactory.CreateInstanceAsync(ResourceManager1 manager, string name, object? instanceData)
+        async Task<ResourceInstance> IResourceFactory.CreateInstanceAsync(string name, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                await ((IResourceFactory<T, TData>)this).CreateInstanceAsync(manager, name, data);
+                await ((IResourceFactory<T, TData>)this).CreateInstanceAsync(name, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(ResourceManager1 manager, string name, TData instanceData)
+        Task<T> IResourceFactory<T, TData>.CreateInstanceAsync(string name, TData instanceData)
         {
-            var instance = CreateInstance(manager, name, instanceData);
+            var instance = CreateInstance(resourceManager, name, instanceData);
             var result = instances.TryAdd(name, instance);
             if (result)
             {
@@ -125,17 +139,17 @@
             }
         }
 
-        async Task<ResourceInstance> IResourceFactory.GetOrCreateInstanceAsync(ResourceManager1 manager, string name, object? instanceData)
+        async Task<ResourceInstance> IResourceFactory.GetOrCreateInstanceAsync(string name, object? instanceData)
         {
             if (instanceData is TData data)
             {
-                await ((IResourceFactory<T, TData>)this).GetOrCreateInstanceAsync(manager, name, data);
+                await ((IResourceFactory<T, TData>)this).GetOrCreateInstanceAsync(name, data);
             }
 
             throw new InvalidOperationException(nameof(instanceData));
         }
 
-        async Task<T> IResourceFactory<T, TData>.GetOrCreateInstanceAsync(ResourceManager1 manager, string name, TData instanceData)
+        async Task<T> IResourceFactory<T, TData>.GetOrCreateInstanceAsync(string name, TData instanceData)
         {
             T? instance;
             bool doWait = false;
@@ -155,7 +169,7 @@
                 }
                 else
                 {
-                    instance = CreateInstance(manager, name, instanceData);
+                    instance = CreateInstance(resourceManager, name, instanceData);
                     var result = instances.TryAdd(name, instance);
                 }
             }
@@ -166,54 +180,79 @@
                 return instance;
             }
 
-            await LoadInstanceAsync(manager, instance, instanceData);
+            await LoadInstanceAsync(resourceManager, instance, instanceData);
 
             return instance;
         }
 
-        public bool DestroyInstance(ResourceManager1 manager, ResourceInstance instance)
+        public bool DestroyInstance(ResourceInstance? instance)
         {
             if (instance is T t)
             {
-                lock (_lock)
-                {
-                    instances.Remove(t.Name, out _);
-                    return DestroyInstance(manager, t);
-                }
+                return DestroyInstance(t);
             }
             return false;
         }
 
-        protected abstract void UnloadInstance(ResourceManager1 manager, T instance);
+        protected abstract void UnloadInstance(ResourceManager manager, T instance);
 
-        public virtual bool DestroyInstance(ResourceManager1 manager, T instance)
+        public virtual bool DestroyInstance(T? instance)
         {
-            instances.Remove(instance.Name, out _);
-            UnloadInstance(manager, instance);
-            instance.Dispose();
+            if (instance == null)
+            {
+                return false;
+            }
+
+            instance.RemoveRef();
+            if (instance.IsUsed)
+            {
+                return false;
+            }
+
+            if (suppressCleanup)
+            {
+                return false;
+            }
+
+            lock (_lock)
+            {
+                instances.Remove(instance.Name, out _);
+                UnloadInstance(resourceManager, instance);
+                instance.Release();
+            }
+
             return true;
         }
 
-        public virtual void Cleanup(ResourceManager1 manager)
+        public virtual void Cleanup()
         {
-            foreach (var instance in instances.ToArray())
+            lock (_lock)
             {
-                if (!instance.Value.IsUsed)
+                foreach (var instance in instances.ToArray())
                 {
-                    DestroyInstance(manager, instance.Value);
+                    if (!instance.Value.IsUsed)
+                    {
+                        DestroyInstance(instance.Value);
+                    }
                 }
             }
+        }
+
+        public void Release()
+        {
+            foreach (var instance in instances.Values.ToArray())
+            {
+                instances.Remove(instance.Name, out _);
+                UnloadInstance(resourceManager, instance);
+                instance.Release();
+            }
+            instances.Clear();
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                foreach (var instance in instances.Values)
-                {
-                    instance.Dispose();
-                }
-                instances.Clear();
                 disposedValue = true;
             }
         }

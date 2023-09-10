@@ -230,7 +230,7 @@
             return true;
         }
 
-        public static unsafe bool ProcessMesh2(Terrain pMesh)
+        public static unsafe bool ProcessMesh2(TerrainCellData pMesh)
         {
             var nFace = pMesh.IndicesCount / 3;
 

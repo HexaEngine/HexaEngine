@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Graph;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
 
@@ -13,10 +12,6 @@
 
         private ResourceRef<Texture2D> Velocity;
 
-        public IRenderTargetView Output;
-        public IShaderResourceView Input;
-        public Viewport Viewport;
-
         public override string Name => "MotionBlur";
 
         public override PostFxFlags Flags { get; }
@@ -25,17 +20,15 @@
         {
             builder
                 .AddBinding("VelocityBuffer")
-                .RunBefore("Compose")
-                .RunAfter("TAA")
+                .RunBefore("ColorGrading")
                 .RunAfter("HBAO")
+                .RunAfter("SSGI")
+                .RunAfter("SSR")
+                .RunBefore("AutoExposure")
+                .RunBefore("TAA")
                 .RunBefore("DepthOfField")
-                .RunBefore("GodRays")
-                .RunBefore("VolumetricClouds")
-                .RunBefore("SSR")
-                .RunBefore("SSGI")
-                .RunBefore("LensFlare")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunBefore("ChromaticAberration")
+                .RunBefore("Bloom");
 
             pipeline = device.CreateGraphicsPipeline(new()
             {
@@ -49,24 +42,8 @@
             Viewport = new(width, height);
         }
 
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
-        }
-
         public override unsafe void Draw(IGraphicsContext context, GraphResourceBuilder creator)
         {
-            if (Output == null)
-            {
-                return;
-            }
-
             nint* srvs = stackalloc nint[2];
             srvs[0] = Input.NativePointer;
             srvs[1] = Velocity.Value.SRV.NativePointer;

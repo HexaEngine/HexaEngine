@@ -2,7 +2,6 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Core.Graphics.Primitives;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
@@ -36,7 +35,7 @@
 
         public BlurType Type => BlurType.Box;
 
-        public void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, int width, int height)
+        public void Blur(IGraphicsContext context, IShaderResourceView src, IRenderTargetView dst, float width, float height)
         {
             BoxBlurParams boxBlurParams = default;
             boxBlurParams.TextureDimentions = new(width, height);

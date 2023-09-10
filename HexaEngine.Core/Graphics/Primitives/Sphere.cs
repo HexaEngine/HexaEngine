@@ -78,7 +78,7 @@
                  }
              }
 
-             vertexBuffer = new(device, vertices, CpuAccessFlags.None);
+             vertexBuffer = new(device, vertices, CpuAccessFlags.Normal);
 
              uint k1, k2;
              int ii = 0;
@@ -109,7 +109,7 @@
                  }
              }
 
-             indexBuffer = new(device, indices, CpuAccessFlags.None);
+             indexBuffer = new(device, indices, CpuAccessFlags.Normal);
          }*/
 
         public static void CreateSphere(IGraphicsDevice device, out VertexBuffer<MeshVertex> vertexBuffer, out IndexBuffer<uint> indexBuffer, float diameter = 1, uint tessellation = 16, bool invertn = false)

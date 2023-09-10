@@ -6,7 +6,6 @@
     using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes.Managers;
@@ -27,10 +26,6 @@
         private Texture2D lens5;
         private Texture2D lens6;
 
-        public IRenderTargetView Output;
-        public IShaderResourceView Input;
-        public Viewport Viewport;
-
         public override string Name => "LensFlare";
 
         public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
@@ -38,17 +33,9 @@
         public override void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros)
         {
             builder
-                .RunBefore("Compose")
-                .RunAfter("TAA")
-                .RunAfter("HBAO")
-                .RunAfter("MotionBlur")
-                .RunAfter("DepthOfField")
-                .RunAfter("GodRays")
-                .RunAfter("VolumetricClouds")
-                .RunAfter("SSR")
-                .RunAfter("SSGI")
-                .RunBefore("Bloom")
-                .RunBefore("AutoExposure");
+                .RunBefore("ColorGrading")
+                .RunBefore("Vignette")
+                .RunAfter("Bloom");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
 
@@ -84,17 +71,6 @@
 
         public override void Resize(int width, int height)
         {
-        }
-
-        public override void SetOutput(IRenderTargetView view, ITexture2D resource, Viewport viewport)
-        {
-            Output = view;
-            Viewport = viewport;
-        }
-
-        public override void SetInput(IShaderResourceView view, ITexture2D resource)
-        {
-            Input = view;
         }
 
         public override void Update(IGraphicsContext context)

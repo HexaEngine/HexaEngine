@@ -2,7 +2,8 @@
 {
     public enum AssetArchiveFlags
     {
-        None,
+        Normal,
         Partial,
+        PartialPart,
     }
 }

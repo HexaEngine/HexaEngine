@@ -10,7 +10,7 @@
         private float radius = 1;
         private float length = 1;
 
-        [EditorProperty("Radius")]
+        [EditorProperty("FilterRadius")]
         public float Radius
         { get => radius; set { radius = value; update = true; } }
 

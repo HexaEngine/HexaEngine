@@ -6,6 +6,7 @@
     using HexaEngine.Graph;
     using HexaEngine.ImGuiNET;
     using HexaEngine.PostFx;
+    using HexaEngine.PostFx.BuildIn;
     using HexaEngine.Rendering.Graph;
 
     public class PostProcessPass : DrawPass
@@ -24,7 +25,7 @@
         {
             lightBuffer = creator.GetTexture2D("LightBuffer");
             var viewport = creator.Viewport;
-            postProcessingManager = new(device, creator, (int)viewport.Width, (int)viewport.Height);
+            postProcessingManager = new(device, creator, (int)viewport.Width, (int)viewport.Height, 4, true);
             postProcessingManager.Add(new VelocityBuffer());
             postProcessingManager.Add(new HBAO());
             postProcessingManager.Add(new VolumetricClouds());
@@ -36,9 +37,13 @@
             postProcessingManager.Add(new Bloom());
             postProcessingManager.Add(new LensFlare());
             postProcessingManager.Add(new GodRays());
-            postProcessingManager.Add(new Compose());
+            postProcessingManager.Add(new ColorGrading());
             postProcessingManager.Add(new TAA());
             postProcessingManager.Add(new FXAA());
+            postProcessingManager.Add(new ChromaticAberration());
+            postProcessingManager.Add(new UserLUT());
+            postProcessingManager.Add(new Grain());
+            postProcessingManager.Add(new Vignette());
             postProcessingManager.Initialize((int)viewport.Width, (int)viewport.Height, profiler);
             postProcessingManager.Enabled = true;
         }
@@ -52,6 +57,7 @@
             postProcessingManager.Draw(context, creator, profiler);
 
             var effects = postProcessingManager.Effects;
+            var tex = postProcessingManager.DebugTextures;
 
             if (ImGui.Begin("PostFx"))
             {
@@ -65,6 +71,29 @@
                     ImGui.Text($"{effect.Name},{i}");
                 }
                 ImGui.EndListBox();
+            }
+            for (int i = 0; i < effects.Count; i++)
+            {
+                var size = ImGui.GetWindowContentRegionMax();
+
+                var texture = tex[i];
+
+                if (texture.SRV != null)
+                {
+                    float aspect = texture.Viewport.Height / texture.Viewport.Width;
+                    size.X = MathF.Min(texture.Viewport.Width, size.X);
+                    size.Y = texture.Viewport.Height;
+                    var dx = texture.Viewport.Width - size.X;
+                    if (dx > 0)
+                    {
+                        size.Y = size.X * aspect;
+                    }
+
+                    if (ImGui.CollapsingHeader(effects[i].Name))
+                    {
+                        ImGui.Image(texture.SRV.NativePointer, size);
+                    }
+                }
             }
             ImGui.End();
         }

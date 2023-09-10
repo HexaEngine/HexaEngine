@@ -88,7 +88,7 @@ namespace HexaEngine.Effects.BuildIn
             public float EffectFadeOutMul;                       // effect fade out from distance (ex. 25)
             public float EffectFadeOutAdd;                       // effect fade out to distance   (ex. 100)
             public float EffectHorizonAngleThreshold;            // limit errors on slopes and caused by insufficient geometry tessellation (0.05 to 0.5)
-            public float EffectSamplingRadiusNearLimitRec;       // if viewspace pixel closer than this, don't enlarge shadow sampling radius anymore (makes no sense to grow beyond some distance, not enough samples to cover everything, so just limit the shadow growth; could be SSAOSettingsFadeOutFrom * 0.1 or less)
+            public float EffectSamplingRadiusNearLimitRec;       // if viewspace pixel closer than this, don't enlarge shadow sampling filterRadius anymore (makes no sense to grow beyond some distance, not enough samples to cover everything, so just limit the shadow growth; could be SSAOSettingsFadeOutFrom * 0.1 or less)
 
             public float DepthPrecisionOffsetMod;
             public float NegRecEffectRadius;                     // -1.0 / EffectRadius

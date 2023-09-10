@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Resources
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.Meshes;
     using HexaEngine.Mathematics;
@@ -19,7 +18,7 @@
         public BoundingSphere BoundingSphere;
         public uint Stride;
 
-        public unsafe Mesh(IGraphicsDevice device, MeshData data, bool debone = true) : base(data.Name, 1)
+        public unsafe Mesh(IResourceFactory factory, IGraphicsDevice device, MeshData data, bool debone = true) : base(factory, data.Name)
         {
             name = data.Name;
             Data = data;
@@ -54,15 +53,10 @@
             context.SetVertexBuffer(null, 0);
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void ReleaseResources()
         {
-            if (!disposedValue)
-            {
-                VertexBuffer?.Dispose();
-                IndexBuffer?.Dispose();
-
-                disposedValue = true;
-            }
+            VertexBuffer?.Dispose();
+            IndexBuffer?.Dispose();
         }
 
         public override string ToString()

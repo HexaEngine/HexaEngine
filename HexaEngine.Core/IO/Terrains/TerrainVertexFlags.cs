@@ -3,7 +3,7 @@
     using System;
 
     [Flags]
-    public enum TerrainFlags
+    public enum TerrainVertexFlags
     {
         None = 0,
         Positions = 2,

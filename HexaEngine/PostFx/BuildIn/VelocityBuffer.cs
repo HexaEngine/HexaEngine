@@ -107,7 +107,7 @@
             pipeline.Dispose();
             paramsBuffer.Dispose();
             sampler.Dispose();
-            creator.RemoveResource("VelocityBuffer");
+            creator.ReleaseResource("VelocityBuffer");
             GC.SuppressFinalize(this);
         }
     }
