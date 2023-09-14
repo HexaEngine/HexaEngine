@@ -291,7 +291,7 @@
 
         public static async Task AssertAsync(bool condition) => await AssertAsync(condition, string.Empty, string.Empty);
 
-        public static async void LogIfAsync(bool condition, LogSeverity severity, string? message)
+        public static async Task LogIfAsync(bool condition, LogSeverity severity, string? message)
         {
             if (condition)
             {
@@ -299,7 +299,7 @@
             }
         }
 
-        public static async void LogIfAsync(bool condition, string? message)
+        public static async Task LogIfAsync(bool condition, string? message)
         {
             if (condition)
             {
@@ -307,9 +307,33 @@
             }
         }
 
-        public static async void LogIfAsync(bool condition, object? value)
+        public static async Task LogIfAsync(bool condition, object? value)
         {
             if (condition)
+            {
+                await LogAsync(value);
+            }
+        }
+
+        public static async Task LogIfNotNullAsync(LogSeverity severity, string? message)
+        {
+            if (message != null)
+            {
+                await LogAsync(severity, message);
+            }
+        }
+
+        public static async Task LogIfNotNullAsync(string? message)
+        {
+            if (message != null)
+            {
+                await LogAsync(message);
+            }
+        }
+
+        public static async Task LogIfNotNullAsync(object? value)
+        {
+            if (value != null)
             {
                 await LogAsync(value);
             }
@@ -531,6 +555,86 @@
             }
         }
 
+        public static void TraceIfNotNull(object? value)
+        {
+            if (value != null)
+            {
+                Trace(value);
+            }
+        }
+
+        public static void TraceIfNotNull(string? message)
+        {
+            if (message != null)
+            {
+                Trace(message);
+            }
+        }
+
+        public static void InfoIfNotNull(object? value)
+        {
+            if (value != null)
+            {
+                Info(value);
+            }
+        }
+
+        public static void InfoIfNotNull(string? message)
+        {
+            if (message != null)
+            {
+                Info(message);
+            }
+        }
+
+        public static void WarnIfNotNull(object? value)
+        {
+            if (value != null)
+            {
+                Warn(value);
+            }
+        }
+
+        public static void WarnIfNotNull(string? message)
+        {
+            if (message != null)
+            {
+                Warn(message);
+            }
+        }
+
+        public static void ErrorIfNotNull(object? value, bool throwException = false)
+        {
+            if (value != null)
+            {
+                Error(value, throwException);
+            }
+        }
+
+        public static void ErrorIfNotNull(string? message, bool throwException = false)
+        {
+            if (message != null)
+            {
+                Error(message, throwException);
+            }
+        }
+
+        public static void CriticalIfNotNull(object? value, bool throwException = false)
+        {
+            if (value != null)
+            {
+                Critical(value, throwException);
+            }
+        }
+
+        public static void CriticalIfNotNull(string? message, bool throwException = false)
+        {
+            if (message != null)
+            {
+                Critical(message, throwException);
+            }
+        }
+
         public static async Task TraceIfAsync(bool condition, object? value)
         {
             if (condition)
@@ -611,6 +715,86 @@
             }
         }
 
+        public static async Task TraceIfNotNullAsync(object? value)
+        {
+            if (value != null)
+            {
+                await TraceAsync(value);
+            }
+        }
+
+        public static async Task TraceIfNotNullAsync(string? message)
+        {
+            if (message != null)
+            {
+                await TraceAsync(message);
+            }
+        }
+
+        public static async Task InfoIfNotNullAsync(object? value)
+        {
+            if (value != null)
+            {
+                await InfoAsync(value);
+            }
+        }
+
+        public static async Task InfoIfNotNullAsync(string? message)
+        {
+            if (message != null)
+            {
+                await InfoAsync(message);
+            }
+        }
+
+        public static async Task WarnIfNotNullAsync(object? value)
+        {
+            if (value != null)
+            {
+                await WarnAsync(value);
+            }
+        }
+
+        public static async Task WarnIfNotNullAsync(string? message)
+        {
+            if (message != null)
+            {
+                await WarnAsync(message);
+            }
+        }
+
+        public static async Task ErrorIfNotNullAsync(object? value, bool throwException = false)
+        {
+            if (value != null)
+            {
+                await ErrorAsync(value, throwException);
+            }
+        }
+
+        public static async Task ErrorIfNotNullAsync(string? message, bool throwException = false)
+        {
+            if (message != null)
+            {
+                await ErrorAsync(message, throwException);
+            }
+        }
+
+        public static async Task CriticalIfNotNullAsync(object? value, bool throwException = false)
+        {
+            if (value != null)
+            {
+                await CriticalAsync(value, throwException);
+            }
+        }
+
+        public static async Task CriticalIfNotNullAsync(string? message, bool throwException = false)
+        {
+            if (message != null)
+            {
+                await CriticalAsync(message, throwException);
+            }
+        }
+
         public static void Throw(Exception exception)
         {
             Log(exception);
@@ -653,6 +837,30 @@
             }
         }
 
+        public static void ThrowIfNotNull(Exception? exception)
+        {
+            if (exception != null)
+            {
+                Throw(exception);
+            }
+        }
+
+        public static void ThrowIfNotNull(string? message)
+        {
+            if (message != null)
+            {
+                Throw(message);
+            }
+        }
+
+        public static void ThrowIfNotNull(string? message, Exception? innerException)
+        {
+            if (message != null && innerException != null)
+            {
+                Throw(message, innerException);
+            }
+        }
+
         public static async Task ThrowAsync(Exception exception)
         {
             await LogAsync(exception);
@@ -690,6 +898,30 @@
         public static async Task ThrowIfAsync(bool condition, string? message, Exception innerException)
         {
             if (condition)
+            {
+                await ThrowAsync(message, innerException);
+            }
+        }
+
+        public static async Task ThrowIfNotNullAsync(Exception? exception)
+        {
+            if (exception != null)
+            {
+                await ThrowAsync(exception);
+            }
+        }
+
+        public static async Task ThrowIfNotNullAsync(string? message)
+        {
+            if (message != null)
+            {
+                await ThrowAsync(message);
+            }
+        }
+
+        public static async Task ThrowIfNotNullAsync(string? message, Exception? innerException)
+        {
+            if (message != null && innerException != null)
             {
                 await ThrowAsync(message, innerException);
             }

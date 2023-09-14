@@ -36,6 +36,8 @@
 
         public event EventHandler<ResizedEventArgs>? Resized;
 
+        public event EventHandler<DeviceRemovedEventArgs>? DeviceRemoved;
+
         public void Dispose()
         {
             throw new NotImplementedException();

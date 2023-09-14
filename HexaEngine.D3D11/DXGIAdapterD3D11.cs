@@ -133,6 +133,8 @@
                     }
                 }
             }
+
+            IDXGIInfoQueue.ClearStoredMessages(DXGI_DEBUG_ALL);
         }
 
         public ulong GetMemoryBudget()

@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Core.Scenes
 {
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using Newtonsoft.Json;
@@ -12,9 +11,6 @@
     {
         private static readonly GameObjectSelection selected = new();
 
-#nullable disable
-        protected IGraphicsDevice Device;
-#nullable enable
         private readonly List<GameObject> children = new();
         private readonly List<IComponent> components = new();
         private Scene? scene;
@@ -301,7 +297,7 @@
             children.Add(node);
             if (initialized)
             {
-                node.Initialize(Device);
+                node.Initialize();
             }
         }
 
@@ -320,7 +316,8 @@
             components.Add(component);
             if (initialized)
             {
-                component.Awake(Device, this);
+                component.GameObject = this;
+                component.Awake();
             }
             OnComponentAdded?.Invoke(this, component);
         }
@@ -336,27 +333,27 @@
             OnComponentRemoved?.Invoke(this, component);
         }
 
-        public virtual void Initialize(IGraphicsDevice device)
+        public virtual void Initialize()
         {
             Transform.Parent = parent?.Transform;
             scene = GetScene();
             scene.RegisterChild(this);
 
-            Device = device;
             initialized = true;
             for (int i = 0; i < components.Count; i++)
             {
-                components[i].Awake(device, this);
+                var component = components[i];
+                component.GameObject = this;
+                component.Awake();
             }
             for (int i = 0; i < children.Count; i++)
             {
-                children[i].Initialize(device);
+                children[i].Initialize();
             }
         }
 
         public virtual void Uninitialize()
         {
-            Device = null;
             for (int i = 0; i < components.Count; i++)
             {
                 components[i].Destroy();

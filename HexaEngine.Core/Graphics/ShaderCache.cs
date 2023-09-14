@@ -59,11 +59,11 @@
         /// <summary>
         /// Returns true if succesfully found a matching shader
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="language"></param>
-        /// <param name="macros"></param>
-        /// <param name="shader"></param>
-        /// <param name="inputElements"></param>
+        /// <param filename="path"></param>
+        /// <param filename="language"></param>
+        /// <param filename="macros"></param>
+        /// <param filename="shader"></param>
+        /// <param filename="inputElements"></param>
         /// <returns></returns>
         public static unsafe bool GetShader(string path, uint crc32Hash, SourceLanguage language, ShaderMacro[] macros, Shader** shader, [MaybeNullWhen(false)] out InputElementDescription[]? inputElements)
         {

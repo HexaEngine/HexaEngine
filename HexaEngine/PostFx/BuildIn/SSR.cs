@@ -3,9 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Graph;
+    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
-    using HexaEngine.Scenes;
 
     public class SSR : PostFxBase
     {

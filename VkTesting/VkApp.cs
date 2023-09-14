@@ -1,8 +1,8 @@
 ﻿namespace VkTesting
 {
-    using HexaEngine.Core;
-    using HexaEngine.Vulkan;
     using System;
+    using VkTesting.Events;
+    using VkTesting.Graphics;
 
     public class VkApp : IDisposable
     {
@@ -14,7 +14,7 @@
             device = new(Application.MainWindow, true);
         }
 
-        private void MainWindow_Resized(object? sender, HexaEngine.Core.Windows.Events.ResizedEventArgs e)
+        private void MainWindow_Resized(object? sender, ResizedEventArgs e)
         {
             device.SwapChain.Resize();
         }

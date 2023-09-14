@@ -1,7 +1,8 @@
-﻿namespace HexaEngine.Vulkan
+﻿namespace VkTesting.Graphics
 {
+    using HexaEngine.Shaderc;
     using Silk.NET.Vulkan;
-    using VkTesting.Graphics;
+    using VkTesting;
     using static VulkanGraphicsDevice;
 
     public unsafe class VulkanGraphicsPipeline : IDisposable
@@ -40,7 +41,7 @@
             {
                 layout = CreateLayout();
 
-                var bytecode = ShaderCompiler.CompileHLSLFile(desc.VertexShader, desc.VertexShaderEntrypoint, Shaderc.ShadercShaderKind.VertexShader);
+                var bytecode = ShaderCompiler.CompileHLSLFile(desc.VertexShader, desc.VertexShaderEntrypoint, ShadercShaderKind.VertexShader);
                 vertexShader = CreateShaderModule(bytecode);
                 bytecode.Release();
 
@@ -54,7 +55,7 @@
             }
             if (desc.TessControlShader != null)
             {
-                var bytecode = ShaderCompiler.CompileHLSLFile(desc.TessControlShader, desc.TessControlShaderEntrypoint, Shaderc.ShadercShaderKind.TessControlShader);
+                var bytecode = ShaderCompiler.CompileHLSLFile(desc.TessControlShader, desc.TessControlShaderEntrypoint, ShadercShaderKind.TessControlShader);
                 tessControlShader = CreateShaderModule(bytecode);
                 bytecode.Release();
                 PipelineShaderStageCreateInfo shaderStageInfo = default;
@@ -67,7 +68,7 @@
             }
             if (desc.TessEvaluationShader != null)
             {
-                var bytecode = ShaderCompiler.CompileHLSLFile(desc.TessEvaluationShader, desc.TessEvaluationShaderEntrypoint, Shaderc.ShadercShaderKind.TessEvaluationShader);
+                var bytecode = ShaderCompiler.CompileHLSLFile(desc.TessEvaluationShader, desc.TessEvaluationShaderEntrypoint, ShadercShaderKind.TessEvaluationShader);
                 tessEvaluationShader = CreateShaderModule(bytecode);
                 bytecode.Release();
                 PipelineShaderStageCreateInfo shaderStageInfo = default;
@@ -80,7 +81,7 @@
             }
             if (desc.GeometryShader != null)
             {
-                var bytecode = ShaderCompiler.CompileHLSLFile(desc.GeometryShader, desc.GeometryShaderEntrypoint, Shaderc.ShadercShaderKind.GeometryShader);
+                var bytecode = ShaderCompiler.CompileHLSLFile(desc.GeometryShader, desc.GeometryShaderEntrypoint, ShadercShaderKind.GeometryShader);
                 geometryShader = CreateShaderModule(bytecode);
                 bytecode.Release();
                 PipelineShaderStageCreateInfo shaderStageInfo = default;
@@ -93,7 +94,7 @@
             }
             if (desc.FragmentShader != null)
             {
-                var bytecode = ShaderCompiler.CompileHLSLFile(desc.FragmentShader, desc.FragmentShaderEntrypoint, Shaderc.ShadercShaderKind.FragmentShader);
+                var bytecode = ShaderCompiler.CompileHLSLFile(desc.FragmentShader, desc.FragmentShaderEntrypoint, ShadercShaderKind.FragmentShader);
                 fragmentShader = CreateShaderModule(bytecode);
                 bytecode.Release();
                 PipelineShaderStageCreateInfo shaderStageInfo = default;

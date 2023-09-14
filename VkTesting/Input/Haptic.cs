@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
     using Silk.NET.SDL;
+    using VkTesting;
 
     public unsafe class Haptic
     {

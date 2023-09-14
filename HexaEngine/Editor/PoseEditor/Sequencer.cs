@@ -1,6 +1,5 @@
 ﻿namespace HexaEngine.Editor.PoseEditor
 {
-    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Animations;
     using HexaEngine.ImGuiNET;
@@ -20,7 +19,7 @@
 
         public Sequencer()
         {
-            Animation = new("Test", 10, 10);
+            Animation = new("test", 10, 10);
         }
 
         public float TimeToFrame(float time)

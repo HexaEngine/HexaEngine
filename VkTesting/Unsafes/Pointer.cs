@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Core.Unsafes
+﻿namespace VkTesting.Unsafes
 {
     using System;
+    using VkTesting;
 
     public unsafe struct Pointer : IEquatable<Pointer>
     {
@@ -56,13 +57,13 @@
 
         public static implicit operator Pointer(void* pointer) => new(pointer);
 
-        public static implicit operator IntPtr(Pointer pointer) => (IntPtr)pointer.Data;
+        public static implicit operator nint(Pointer pointer) => (nint)pointer.Data;
 
-        public static implicit operator Pointer(IntPtr pointer) => new((void*)pointer);
+        public static implicit operator Pointer(nint pointer) => new((void*)pointer);
 
         public override int GetHashCode()
         {
-            return ((IntPtr)Data).GetHashCode();
+            return ((nint)Data).GetHashCode();
         }
     }
 
@@ -122,9 +123,9 @@
 
         public static implicit operator Pointer<T>(T* pointer) => new(pointer);
 
-        public static implicit operator IntPtr(Pointer<T> pointer) => (IntPtr)pointer.Data;
+        public static implicit operator nint(Pointer<T> pointer) => (nint)pointer.Data;
 
-        public static implicit operator Pointer<T>(IntPtr pointer) => new((T*)pointer);
+        public static implicit operator Pointer<T>(nint pointer) => new((T*)pointer);
 
         public static implicit operator Pointer<T>(Pointer pointer) => new((T*)pointer.Data);
 
@@ -132,7 +133,7 @@
 
         public override int GetHashCode()
         {
-            return ((IntPtr)Data).GetHashCode();
+            return ((nint)Data).GetHashCode();
         }
     }
 
@@ -149,8 +150,8 @@
 
         public static implicit operator PointerPointer<T>(T** pointer) => new(pointer);
 
-        public static implicit operator IntPtr(PointerPointer<T> pointer) => (IntPtr)pointer.Data;
+        public static implicit operator nint(PointerPointer<T> pointer) => (nint)pointer.Data;
 
-        public static implicit operator PointerPointer<T>(IntPtr pointer) => new((T**)pointer);
+        public static implicit operator PointerPointer<T>(nint pointer) => new((T**)pointer);
     }
 }

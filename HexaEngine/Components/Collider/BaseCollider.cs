@@ -4,7 +4,6 @@
     using BepuPhysics.Collidables;
     using BepuUtilities.Memory;
     using HexaEngine.Core;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Physics;
@@ -26,7 +25,6 @@
         protected BodyInertia inertia;
         protected PhysicsMaterial material;
 
-        protected GameObject? parent;
         protected Scene? scene;
         protected PhysicsSystem? system;
         protected Simulation? simulation;
@@ -56,7 +54,7 @@
         public float SleepThreshold
         { get => sleepThreshold; set { sleepThreshold = value; update = true; } }
 
-        [EditorProperty("Lock Rotation")]
+        [EditorProperty("_lock Rotation")]
         public bool LockRotation
         { get => lockRotation; set { lockRotation = value; update = true; } }
 
@@ -103,10 +101,12 @@
         [JsonIgnore]
         public bool InCompound => inCompound;
 
-        public virtual void Awake(IGraphicsDevice device, GameObject gameObject)
+        [JsonIgnore]
+        public GameObject GameObject { get; set; }
+
+        public virtual void Awake()
         {
-            parent = gameObject;
-            scene = gameObject.GetScene();
+            scene = GameObject.GetScene();
             system = scene.GetRequiredSystem<PhysicsSystem>();
             simulation = system.Simulation;
             bufferPool = system.BufferPool;
@@ -125,9 +125,9 @@
                 CreateBody();
             }
 
-            if (type != ColliderType.Static && parent != null)
+            if (type != ColliderType.Static && GameObject != null)
             {
-                (bodyReference.Pose.Position, bodyReference.Pose.Orientation) = parent.Transform.PositionRotation;
+                (bodyReference.Pose.Position, bodyReference.Pose.Orientation) = GameObject.Transform.PositionRotation;
             }
         }
 
@@ -138,9 +138,9 @@
                 CreateBody();
             }
 
-            if (type != ColliderType.Static && parent != null)
+            if (type != ColliderType.Static && GameObject != null)
             {
-                parent.Transform.PositionRotation = (bodyReference.Pose.Position, bodyReference.Pose.Orientation);
+                GameObject.Transform.PositionRotation = (bodyReference.Pose.Position, bodyReference.Pose.Orientation);
             }
         }
 
@@ -148,7 +148,7 @@
 
         public virtual void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || !hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || !hasShape)
             {
                 return;
             }
@@ -159,7 +159,7 @@
 
         public virtual void CreateBody()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || inCompound || hasBody)
+            if (Application.InDesignMode || GameObject == null || simulation == null || inCompound || hasBody)
             {
                 return;
             }
@@ -196,7 +196,7 @@
 
         public virtual void DestroyBody()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || !hasBody)
+            if (Application.InDesignMode || GameObject == null || simulation == null || !hasBody)
             {
                 return;
             }
@@ -216,7 +216,7 @@
 
         public virtual void BuildCompound(ref CompoundBuilder builder)
         {
-            if (Application.InDesignMode || parent == null || inCompound)
+            if (Application.InDesignMode || GameObject == null || inCompound)
             {
                 return;
             }

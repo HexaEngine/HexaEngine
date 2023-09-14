@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core
+﻿namespace VkTesting
 {
     using System;
     using System.Runtime.CompilerServices;
@@ -16,9 +16,9 @@
         public static uint Bitcount(this uint value)
         {
             uint v = value;
-            v -= ((v >> 1) & 0x55555555); // reuse input as temporary
-            v = (v & 0x33333333) + ((v >> 2) & 0x33333333); // temp
-            uint c = ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
+            v -= v >> 1 & 0x55555555; // reuse input as temporary
+            v = (v & 0x33333333) + (v >> 2 & 0x33333333); // temp
+            uint c = (v + (v >> 4) & 0xF0F0F0F) * 0x1010101 >> 24; // count
             return c;
         }
 

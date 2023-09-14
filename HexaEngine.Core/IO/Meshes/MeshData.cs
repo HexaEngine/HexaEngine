@@ -569,7 +569,7 @@
             new InputElementDescription("NORMAL", 0, Format.R32G32B32Float, 24, 0),
             new InputElementDescription("TANGENT", 0, Format.R32G32B32Float, 36, 0),
             new InputElementDescription("BINORMAL", 0, Format.R32G32B32Float, 48, 0),
-            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32SInt, 60, 0),
+            new InputElementDescription("BLENDINDICES", 0, Format.R32G32B32A32UInt, 60, 0),
             new InputElementDescription("BLENDWEIGHT", 0, Format.R32G32B32A32Float, 76, 0),
         };
 

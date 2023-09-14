@@ -1,9 +1,9 @@
 ﻿namespace HexaEngine.Core.IO.Terrains
 {
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Mathematics;
     using HexaEngine.Mathematics.Noise;
     using System;
-    using System.Numerics;
     using System.Text;
 
     /// <summary>
@@ -14,17 +14,17 @@
         /// <summary>
         /// The width of the height map.
         /// </summary>
-        public uint Width;
+        private uint width;
 
         /// <summary>
         /// The height of the height map.
         /// </summary>
-        public uint Height;
+        private uint height;
 
         /// <summary>
-        /// The data of the height map, stored as a 1D array of Vector3 values.
+        /// The data of the height map, stored as a 1D array of floats values.
         /// </summary>
-        public Vector3[] Data;
+        private float[] data;
 
         private HeightMap()
         {
@@ -33,71 +33,73 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightMap"/> class with the specified width, height, and data.
         /// </summary>
-        /// <param name="width">The width of the height map.</param>
-        /// <param name="height">The height of the height map.</param>
-        /// <param name="data">The data of the height map.</param>
-        public HeightMap(uint width, uint height, Vector3[] data)
+        /// <param filename="width">The width of the height map.</param>
+        /// <param filename="height">The height of the height map.</param>
+        /// <param filename="data">The data of the height map.</param>
+        public HeightMap(uint width, uint height, float[] data)
         {
-            Width = width;
-            Height = height;
-            Data = data;
+            this.width = width;
+            this.height = height;
+            this.data = data;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HeightMap"/> class with the specified width and height.
         /// </summary>
-        /// <param name="width">The width of the height map.</param>
-        /// <param name="height">The height of the height map.</param>
-        public HeightMap(uint width, uint height)
+        /// <param filename="width">The width of the height map.</param>
+        /// <param filename="height">The height of the height map.</param>
+        public HeightMap(uint width = 32, uint height = 32)
         {
-            Width = width;
-            Height = height;
-            Data = new Vector3[width * height];
+            this.width = width;
+            this.height = height;
+            data = new float[width * height];
         }
 
         /// <summary>
         /// Gets or sets the height map data at the specified index.
         /// </summary>
-        /// <param name="index">The index of the height map data.</param>
+        /// <param filename="index">The index of the height map data.</param>
         /// <returns>The height map data at the specified index.</returns>
-        public Vector3 this[uint index]
+        public float this[uint index]
         {
-            get => Data[index];
-            set => Data[index] = value;
+            get => data[index];
+            set => data[index] = value;
         }
 
         /// <summary>
         /// Gets or sets the height map data at the specified index.
         /// </summary>
-        /// <param name="index">The index of the height map data.</param>
+        /// <param filename="index">The index of the height map data.</param>
         /// <returns>The height map data at the specified index.</returns>
-        public Vector3 this[int index]
+        public float this[int index]
         {
-            get => Data[index];
-            set => Data[index] = value;
+            get => data[index];
+            set => data[index] = value;
         }
+
+        public float this[uint x, uint y]
+        {
+            get => data[GetIndexFor(x, y)];
+            set => data[GetIndexFor(x, y)] = value;
+        }
+
+        public uint Width => width;
+
+        public uint Height => height;
 
         /// <summary>
         /// Generates an empty height map.
         /// </summary>
         public void GenerateEmpty()
         {
-            // We divide the height by this number to "water down" the terrains height, otherwise the terrain will
-            // appear to be "spikey" and not so smooth.
-            float heightFactor = 10.0f;
-
             // Read the image data into our heightMap array
-            for (uint j = 0; j < Height; j++)
+            for (uint j = 0; j < height; j++)
             {
-                for (uint i = 0; i < Width; i++)
+                for (uint i = 0; i < width; i++)
                 {
-                    float height = 0;
+                    uint index = height * j + i;
 
-                    uint index = Height * j + i;
-
-                    Data[index].X = i;
-                    Data[index].Y = (float)height / heightFactor;
-                    Data[index].Z = j;
+                    data[index] = 0;
                 }
             }
         }
@@ -112,17 +114,15 @@
             float heightFactor = 10.0f;
 
             // Read the image data into our heightMap array
-            for (uint j = 0; j < Height; j++)
+            for (uint j = 0; j < height; j++)
             {
-                for (uint i = 0; i < Width; i++)
+                for (uint i = 0; i < width; i++)
                 {
-                    float height = Random.Shared.NextSingle();
+                    float heightValue = Random.Shared.NextSingle();
 
-                    uint index = Height * j + i;
+                    uint index = height * j + i;
 
-                    Data[index].X = i;
-                    Data[index].Y = (float)height * heightFactor;
-                    Data[index].Z = j;
+                    data[index] = heightValue * heightFactor;
                 }
             }
         }
@@ -130,9 +130,9 @@
         /// <summary>
         /// Generates a perlin noise height map.
         /// </summary>
-        /// <param name="x">The x offset of the perlin noise.</param>
-        /// <param name="z">The z offset of the perlin noise.</param>
-        /// <param name="scale">The scale of the perlin noise.</param>
+        /// <param filename="x">The x offset of the perlin noise.</param>
+        /// <param filename="z">The z offset of the perlin noise.</param>
+        /// <param filename="scale">The scale of the perlin noise.</param>
         public void GeneratePerlin(float x, float z, float scale = 0.02f)
         {
             // We divide the height by this number to "water down" the terrains height, otherwise the terrain will
@@ -142,53 +142,198 @@
             PerlinNoise noise = new();
 
             // Read the image data into our heightMap array
-            for (uint j = 0; j < Height; j++)
+            for (uint j = 0; j < height; j++)
             {
-                for (uint i = 0; i < Width; i++)
+                for (uint i = 0; i < width; i++)
                 {
-                    float height = (float)noise.Function2D(scale * (i + x), scale * (j + z)) * 0.5f + 0.5f;
+                    float heightValue = (float)noise.Function2D(scale * (i + x), scale * (j + z)) * 0.5f + 0.5f;
 
-                    uint index = Height * j + i;
+                    uint index = height * j + i;
 
-                    Data[index].X = i;
-                    Data[index].Y = (float)height * heightFactor;
-                    Data[index].Z = j;
+                    data[index] = (float)heightValue * heightFactor;
                 }
             }
         }
 
-        public static HeightMap Read(Stream src, Encoding encoding, Endianness endianness)
+        private bool InBounds(uint row, uint col)
         {
-            HeightMap heightMap = new();
-            heightMap.Width = src.ReadUInt32(endianness);
-            heightMap.Height = src.ReadUInt32(endianness);
-            heightMap.Data = new Vector3[heightMap.Width * heightMap.Height];
+            return row >= 0 && row < height && col >= 0 && col < width;
+        }
 
-            for (uint i = 0; i < heightMap.Height; i++)
+        public void Smooth()
+        {
+            float[] dest = new float[width * height];
+            uint k = 0;
+            for (uint j = 0; j < width; j++)
             {
-                for (uint j = 0; j < heightMap.Width; j++)
+                for (uint i = 0; i < height; i++)
                 {
-                    uint index = heightMap.Height * j + i;
-                    heightMap.Data[index].X = i;
-                    heightMap.Data[index].Y = src.ReadFloat(endianness);
-                    heightMap.Data[index].Z = j;
+                    dest[k++] = Average(i, j);
                 }
             }
+            data = dest;
+        }
+
+        private float Average(uint row, uint col)
+        {
+            var avg = 0.0f;
+            var num = 0.0f;
+            for (uint n = col - 1; n <= col + 1; n++)
+            {
+                for (uint m = row - 1; m <= row + 1; m++)
+                {
+                    if (!InBounds(m, n)) continue;
+
+                    avg += data[n * width + m];
+                    num++;
+                }
+            }
+            return avg / num;
+        }
+
+        /// <summary>
+        /// Gets the index for the specified coordinates in the terrain.
+        /// </summary>
+        /// <param filename="x">The x-coordinate.</param>
+        /// <param filename="y">The y-coordinate.</param>
+        /// <returns>The index.</returns>
+        public uint GetIndexFor(uint x, uint y)
+        {
+            return y * width + x;
+        }
+
+        public static HeightMap ReadFrom(Stream src, Encoding encoding, Endianness endianness)
+        {
+            HeightMap heightMap = new();
+            heightMap.Read(src, encoding, endianness);
             return heightMap;
+        }
+
+        public void Read(Stream src, Encoding encoding, Endianness endianness)
+        {
+            width = src.ReadUInt32(endianness);
+            height = src.ReadUInt32(endianness);
+            data = new float[width * height];
+
+            for (uint i = 0; i < height; i++)
+            {
+                for (uint j = 0; j < width; j++)
+                {
+                    uint index = height * j + i;
+
+                    data[index] = src.ReadFloat(endianness);
+                }
+            }
         }
 
         public void Write(Stream dst, Encoding encoding, Endianness endianness)
         {
-            dst.WriteUInt32(Width, endianness);
-            dst.WriteUInt32(Height, endianness);
+            dst.WriteUInt32(width, endianness);
+            dst.WriteUInt32(height, endianness);
 
-            for (uint i = 0; i < Height; i++)
+            for (uint i = 0; i < height; i++)
             {
-                for (uint j = 0; j < Width; j++)
+                for (uint j = 0; j < width; j++)
                 {
-                    uint index = Height * j + i;
-                    dst.WriteFloat(Data[index].Y, endianness);
+                    uint index = height * j + i;
+                    dst.WriteFloat(data[index], endianness);
                 }
+            }
+        }
+
+        public unsafe Texture2D CreateHeightMap(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None, bool uav = false, bool immutable = true)
+        {
+            Half* pixel = AllocT<Half>(data.Length);
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                pixel[i] = (Half)data[i];
+            }
+
+            Texture2DDescription desc = new(Format.R16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, immutable ? Usage.Immutable : Usage.Default, accessFlags);
+            if ((accessFlags & CpuAccessFlags.Write) != 0)
+            {
+                desc.Usage = Usage.Dynamic;
+            }
+            if ((accessFlags & CpuAccessFlags.Read) != 0)
+            {
+                desc.Usage = Usage.Staging;
+            }
+            if (accessFlags != CpuAccessFlags.None && uav)
+            {
+                throw new ArgumentException("Cannot access from cpu and uav at the same time");
+            }
+            if (uav)
+            {
+                desc.Usage = Usage.Default;
+                desc.BindFlags |= BindFlags.UnorderedAccess;
+            }
+
+            Texture2D heightMap = new(device, desc, new SubresourceData(pixel, (int)(width * sizeof(Half))));
+            Free(pixel);
+            return heightMap;
+        }
+
+        public unsafe Texture2D CreateStagingHeightMap(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
+        {
+            Half* pixel = AllocT<Half>(data.Length);
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                pixel[i] = (Half)data[i];
+            }
+
+            Texture2DDescription desc = new(Format.R16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, accessFlags);
+
+            Texture2D heightMap = new(device, desc, new SubresourceData(pixel, (int)(width * sizeof(Half))));
+            Free(pixel);
+            return heightMap;
+        }
+
+        public unsafe void WriteHeightMap(IGraphicsContext context, Texture2D texture)
+        {
+            if ((texture.CpuAccessFlags & CpuAccessFlags.Write) != 0)
+            {
+                var pixel = (Half*)texture.Local;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    pixel[i] = (Half)data[i];
+                }
+                texture.Write(context);
+            }
+            else
+            {
+                var staging = CreateStagingHeightMap(context.Device, CpuAccessFlags.None);
+                staging.CopyTo(context, texture);
+                staging.Dispose();
+            }
+        }
+
+        public unsafe void ReadHeightMap(IGraphicsContext context, Texture2D texture)
+        {
+            if ((texture.CpuAccessFlags & CpuAccessFlags.Read) != 0)
+            {
+                texture.Read(context);
+                var pixel = (Half*)texture.Local;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    data[i] = (float)pixel[i];
+                }
+            }
+            else
+            {
+                Texture2DDescription desc = new(Format.R16Float, (int)width, (int)height, 1, 1, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read);
+                Texture2D staging = new(context.Device, desc);
+
+                texture.CopyTo(context, staging);
+
+                staging.Read(context);
+                var pixel = (Half*)texture.Local;
+                for (int i = 0; i < data.Length; i++)
+                {
+                    data[i] = (float)pixel[i];
+                }
+                staging.Dispose();
             }
         }
     }

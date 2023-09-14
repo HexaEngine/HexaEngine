@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Unsafes
+﻿namespace VkTesting.Unsafes
 {
     using System.Runtime.CompilerServices;
 

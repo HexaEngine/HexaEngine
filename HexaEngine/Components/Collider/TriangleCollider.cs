@@ -26,13 +26,13 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || hasShape)
             {
                 return;
             }
 
             Triangle triangle = new(pos1, pos2, pos3);
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             inertia = triangle.ComputeInertia(Mass);
             index = simulation.Shapes.Add(triangle);
             hasShape = true;

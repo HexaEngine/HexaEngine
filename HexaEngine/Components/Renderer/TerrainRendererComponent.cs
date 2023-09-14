@@ -12,19 +12,15 @@
     using HexaEngine.Meshes;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Renderers;
-    using HexaEngine.Scenes;
 
     [EditorComponent<TerrainRendererComponent>("TerrainCellData", false, true)]
-    public class TerrainRendererComponent : IRendererComponent
+    public class TerrainRendererComponent : BaseRendererComponent
     {
-        private GameObject gameObject;
-        private TerrainRenderer renderer;
-        private readonly TerrainGrid grid = new();
+        private StaticTerrainRenderer renderer;
+        private readonly StaticTerrainGrid grid = new();
         private HeightMap heightMap;
 
         private BoundingBox boundingBox;
-
-        private bool drawable;
 
         static TerrainRendererComponent()
         {
@@ -32,24 +28,22 @@
         }
 
         [JsonIgnore]
-        public string DebugName { get; private set; } = nameof(TerrainRenderer);
+        public override string DebugName { get; protected set; } = nameof(StaticTerrainRenderer);
 
         [JsonIgnore]
-        public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
+        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
+        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Forward | RendererFlags.Deferred | RendererFlags.Clustered;
 
         [JsonIgnore]
-        public BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, gameObject.Transform); }
+        public override BoundingBox BoundingBox { get => BoundingBox.Transform(boundingBox, GameObject.Transform); }
 
         [JsonIgnore]
-        public TerrainGrid Grid => grid;
+        public StaticTerrainGrid Grid => grid;
 
-        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        public override void Load(IGraphicsDevice device)
         {
-            DebugName = gameObject.Name + DebugName;
-            this.gameObject = gameObject;
             heightMap = new(32, 32);
             heightMap.GenerateEmpty();
             grid.Add(new(device, heightMap, true));
@@ -57,9 +51,8 @@
             renderer.Initialize(grid);
         }
 
-        public void Destroy()
+        public override void Unload()
         {
-            Volatile.Write(ref drawable, false);
             for (int i = 0; i < grid.Count; i++)
             {
                 grid[i].Dispose();
@@ -68,17 +61,17 @@
             renderer.Dispose();
         }
 
-        public unsafe void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            renderer.Update(gameObject.Transform.Global);
+            renderer.Update(GameObject.Transform.Global);
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public override void DrawDepth(IGraphicsContext context)
         {
             renderer.DrawDepth(context);
         }
 
-        public void Draw(IGraphicsContext context, RenderPath path)
+        public override void Draw(IGraphicsContext context, RenderPath path)
         {
             if (path == RenderPath.Deferred)
             {
@@ -90,17 +83,17 @@
             }
         }
 
-        public void Bake(IGraphicsContext context)
+        public override void Bake(IGraphicsContext context)
         {
             throw new NotImplementedException();
         }
 
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             renderer.DrawShadowMap(context, light, type);
         }
 
-        public void VisibilityTest(CullingContext context)
+        public override void VisibilityTest(CullingContext context)
         {
         }
     }

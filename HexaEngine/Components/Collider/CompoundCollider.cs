@@ -25,19 +25,19 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || hasShape)
             {
                 return;
             }
 
-            colliderChildren = parent.GetComponentsFromChilds<IColliderComponent>().ToList();
+            colliderChildren = GameObject.GetComponentsFromChilds<IColliderComponent>().ToList();
             CompoundBuilder builder = new(bufferPool, simulation.Shapes, colliderChildren.Count);
             for (int i = 0; i < colliderChildren.Count; i++)
             {
                 colliderChildren[i].BuildCompound(ref builder);
             }
 
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
 
             if (Type == ColliderType.Dynamic)
             {
@@ -59,7 +59,7 @@
             compound = new(compoundChildren);
             index = simulation.Shapes.Add(compound);
 
-            center -= parent.Transform.GlobalPosition;
+            center -= GameObject.Transform.GlobalPosition;
             for (int i = 0; i < compoundChildren.Length; i++)
             {
                 colliderChildren[i].SetCompoundData(this, compoundChildren[i]);
@@ -70,7 +70,7 @@
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || colliderChildren == null || !hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || colliderChildren == null || !hasShape)
             {
                 return;
             }

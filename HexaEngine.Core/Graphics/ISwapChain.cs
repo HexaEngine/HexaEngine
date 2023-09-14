@@ -12,11 +12,14 @@
         void Wait();
 
         void Resize(int width, int height);
+
         void WaitForPresent();
 
         event EventHandler? Resizing;
 
         event EventHandler<ResizedEventArgs>? Resized;
+
+        event EventHandler<DeviceRemovedEventArgs>? DeviceRemoved;
 
         ITexture2D Backbuffer { get; }
 

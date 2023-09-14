@@ -122,6 +122,12 @@
 		<None Update="assets\shared\shaders\filter\prefilter\cs.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="assets\shared\shaders\forward\terrain\ds.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\shaders\forward\terrain\hs.hlsl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="assets\shared\shaders\math.hlsl">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -790,6 +796,7 @@
 	<ItemGroup>
 	  <Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 	  <Folder Include="assets\shared\shaders\tools\mesh\textured\" />
+	  <Folder Include="Editor\Attributes\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
 	</ItemGroup>
 </Project>

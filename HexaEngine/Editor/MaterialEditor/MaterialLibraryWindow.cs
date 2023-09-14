@@ -30,13 +30,13 @@
 
             if (ImGui.Button("New material"))
             {
-                MaterialData data = new($"material {lib.Materials.Length}");
-                ArrayUtils.Add(ref lib.Materials, data);
+                MaterialData data = new($"material {lib.Materials.Count}");
+                lib.Materials.Add(data);
             }
 
             ImGui.BeginListBox("Materials");
 
-            for (int i = 0; i < lib.Materials.Length; i++)
+            for (int i = 0; i < lib.Materials.Count; i++)
             {
                 var mat = lib.Materials[i];
                 if (ImGui.MenuItem(mat.Name, mat == materialEditor.Material))

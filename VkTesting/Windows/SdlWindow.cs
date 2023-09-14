@@ -1,9 +1,7 @@
-﻿namespace VkTesting.Windows
+﻿using VkTesting.Input;
+
+namespace VkTesting.Windows
 {
-    using HexaEngine.Core;
-    using HexaEngine.Core.Input;
-    using HexaEngine.Core.Input.Events;
-    using HexaEngine.Core.Windows.Events;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
@@ -12,7 +10,11 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Key = HexaEngine.Core.Input.Key;
+    using VkTesting;
+    using VkTesting.Events;
+    using VkTesting.Input;
+    using VkTesting.Input.Events;
+    using Key = Key;
 
     public enum FullscreenMode
     {
@@ -699,7 +701,7 @@
         internal void ProcessInputMouse(MouseWheelEvent evnt)
         {
             mouseWheelEventArgs.Wheel = new(evnt.X, evnt.Y);
-            mouseWheelEventArgs.Direction = (HexaEngine.Core.Input.MouseWheelDirection)evnt.Direction;
+            mouseWheelEventArgs.Direction = (Input.MouseWheelDirection)evnt.Direction;
             OnMouseWheelInput(mouseWheelEventArgs);
         }
 

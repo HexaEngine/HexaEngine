@@ -3,7 +3,6 @@
 namespace HexaEngine.Components.Audio
 {
     using HexaEngine.Core.Audio;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
@@ -11,19 +10,20 @@ namespace HexaEngine.Components.Audio
     [EditorComponent<EmitterComponent>("Emitter")]
     public class EmitterComponent : IAudioComponent
     {
-        private GameObject gameObject;
         private IEmitter emitter;
 
-        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        [JsonIgnore]
+        public GameObject GameObject { get; set; }
+
+        public void Awake()
         {
             emitter = AudioManager.CreateEmitter();
-            this.gameObject = gameObject;
         }
 
         public void Update()
         {
-            emitter.Position = gameObject.Transform.Position;
-            emitter.Direction = gameObject.Transform.Forward;
+            emitter.Position = GameObject.Transform.Position;
+            emitter.Direction = GameObject.Transform.Forward;
         }
 
         public void Destroy()

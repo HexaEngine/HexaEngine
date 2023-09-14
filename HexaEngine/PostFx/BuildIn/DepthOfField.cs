@@ -6,12 +6,12 @@ namespace HexaEngine.Effects.BuildIn
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Graphics.Structs;
-    using HexaEngine.Effects.Blur;
     using HexaEngine.Graph;
+    using HexaEngine.Graphics.Effects.Blur;
     using HexaEngine.Mathematics;
+    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
-    using HexaEngine.Scenes;
     using System.Numerics;
 
     public class DepthOfField : PostFxBase

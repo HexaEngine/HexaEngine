@@ -18,7 +18,6 @@
     using HexaEngine.Scenes.Managers;
     using System;
     using System.Numerics;
-    using System.Text;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
 
     public struct CBColorMask
@@ -90,7 +89,7 @@
         private bool isActive;
         private bool hasFileSaved;
         private int current;
-        private readonly Queue<TerrainCell> updateQueue = new();
+        private readonly Queue<StaticTerrainCell> updateQueue = new();
 
         public void Draw(IGraphicsContext context)
         {
@@ -286,7 +285,7 @@
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
-                            TerrainCell terrainCell = new(context.Device, heightMap, true);
+                            StaticTerrainCell terrainCell = new(context.Device, heightMap, true);
                             terrainCell.ID = cell.ID + new Point2(1, 0);
                             terrainCell.Offset = cell.Offset + new Vector3(cell.HeightMap.Width - 1, 0, 0);
 
@@ -303,7 +302,7 @@
                         {
                             HeightMap heightMap = new(32, 32);
                             heightMap.GenerateEmpty();
-                            TerrainCell terrainCell = new(context.Device, heightMap, true);
+                            StaticTerrainCell terrainCell = new(context.Device, heightMap, true);
                             terrainCell.ID = cell.ID + new Point2(0, 1);
                             terrainCell.Offset = cell.Offset + new Vector3(0, 0, cell.HeightMap.Height - 1);
 
@@ -656,9 +655,9 @@
             ImGui.BeginDisabled(hasFileSaved);
             if (ImGui.Button("Save"))
             {
-                var lib = manager.GetMaterialLibraryForm(material);
-                var path = Paths.CurrentProjectFolder + lib.Name.Replace("assets/", "/").Replace("/", "\\");
-                lib.Save(path, Encoding.UTF8);
+                //var lib = manager.GetMaterialLibraryForm(material);
+                //var path = Paths.CurrentProjectFolder + lib.Name.Replace("assets/", "/").Replace("/", "\\");
+                //lib.Save(path, Encoding.UTF8);
             }
             ImGui.EndDisabled();
 

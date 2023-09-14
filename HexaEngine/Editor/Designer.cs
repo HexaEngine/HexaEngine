@@ -5,7 +5,6 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Widgets;
     using HexaEngine.Scenes;
-    using HexaEngine.Scenes.Serialization;
     using System.Threading.Tasks;
 
     public static class Designer
@@ -37,7 +36,7 @@
 
                 if (extension == ".hexlvl")
                 {
-                    task = SceneManager.AsyncLoad(SceneSerializer.Deserialize(path)).ContinueWith(Logger.HandleError);
+                    task = SceneManager.AsyncLoad(path).ContinueWith(Logger.HandleError);
                 }
             }
         }

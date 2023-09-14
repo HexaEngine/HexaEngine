@@ -15,13 +15,13 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || hasShape)
             {
                 return;
             }
 
             Sphere sphere = new(radius);
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             inertia = sphere.ComputeInertia(Mass);
             index = simulation.Shapes.Add(sphere);
             hasShape = true;

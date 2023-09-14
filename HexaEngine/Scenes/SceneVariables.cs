@@ -10,9 +10,11 @@
     /// <seealso cref="IDictionary&lt;string, string&gt;" />
     public class SceneVariables : ObservableDictionary<string, string>
     {
+        private readonly object _lock = new();
+
         public override void Add(string key, string value)
         {
-            lock (this)
+            lock (_lock)
             {
                 base.Add(key, value);
             }
@@ -20,7 +22,7 @@
 
         public bool TryAdd(string key, string value)
         {
-            lock (this)
+            lock (_lock)
             {
                 if (base.ContainsKey(key))
                 {
@@ -34,7 +36,7 @@
 
         public string Get(string key)
         {
-            lock (this)
+            lock (_lock)
             {
                 return this[key];
             }
@@ -42,7 +44,7 @@
 
         public void AddOrUpdate(string key, string value)
         {
-            lock (this)
+            lock (_lock)
             {
                 if (base.ContainsKey(key))
                 {
@@ -57,7 +59,7 @@
 
         public override bool ContainsKey(string key)
         {
-            lock (this)
+            lock (_lock)
             {
                 return base.ContainsKey(key);
             }
@@ -65,7 +67,7 @@
 
         public override bool Remove(string key)
         {
-            lock (this)
+            lock (_lock)
             {
                 return base.Remove(key);
             }
@@ -76,7 +78,7 @@
         public override bool TryGetValue(string key, [MaybeNullWhen(false)] out string value)
 #pragma warning restore CS8765 // Nullability of type of parameter 'value' doesn't match overridden member (possibly because of nullability attributes).
         {
-            lock (this)
+            lock (_lock)
             {
                 return base.TryGetValue(key, out value);
             }
@@ -84,7 +86,7 @@
 
         public override void Add(KeyValuePair<string, string> item)
         {
-            lock (this)
+            lock (_lock)
             {
                 base.Add(item);
             }
@@ -92,7 +94,7 @@
 
         public override void Clear()
         {
-            lock (this)
+            lock (_lock)
             {
                 base.Clear();
             }
@@ -100,7 +102,7 @@
 
         public override bool Contains(KeyValuePair<string, string> item)
         {
-            lock (this)
+            lock (_lock)
             {
                 return base.Contains(item);
             }
@@ -108,7 +110,7 @@
 
         public override void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex)
         {
-            lock (this)
+            lock (_lock)
             {
                 ((ICollection<KeyValuePair<string, string>>)this).CopyTo(array, arrayIndex);
             }
@@ -116,7 +118,7 @@
 
         public override bool Remove(KeyValuePair<string, string> item)
         {
-            lock (this)
+            lock (_lock)
             {
                 return ((ICollection<KeyValuePair<string, string>>)this).Remove(item);
             }
@@ -124,7 +126,7 @@
 
         public override IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
-            lock (this)
+            lock (_lock)
             {
                 return base.GetEnumerator();
             }

@@ -5,7 +5,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
-    using HexaEngine.Filters;
+    using HexaEngine.Graphics.Filters;
     using ImGuiNET;
 
     public class ConvertCubeDialog : Modal

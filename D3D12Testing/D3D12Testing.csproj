@@ -1,10 +1,37 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
+		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
+		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.17.1" />
+		<PackageReference Include="Silk.NET.Direct3D12" Version="2.17.1" />
+		<PackageReference Include="Silk.NET.DirectStorage" Version="2.17.1" />
+		<PackageReference Include="Silk.NET.DXGI" Version="2.17.1" />
+		<PackageReference Include="Silk.NET.SDL" Version="2.17.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="assets\shaders\ps.glsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shaders\ps.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shaders\vs.glsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shaders\vs.hlsl">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

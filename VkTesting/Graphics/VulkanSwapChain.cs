@@ -1,11 +1,10 @@
 ﻿namespace VkTesting.Graphics
 {
-    using HexaEngine.Core.Unsafes;
-    using HexaEngine.Vulkan;
     using Silk.NET.Vulkan;
     using System;
+    using VkTesting.Unsafes;
     using VkTesting.Windows;
-    using static HexaEngine.Vulkan.VulkanGraphicsDevice;
+    using static VkTesting.Graphics.VulkanGraphicsDevice;
 
     public struct SwapChainSupportDetails
     {

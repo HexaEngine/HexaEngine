@@ -2,14 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using HexaEngine.Mathematics;
     using Silk.NET.Core.Native;
     using Silk.NET.Direct3D12;
     using Silk.NET.SDL;
     using System;
     using System.Runtime.CompilerServices;
     using SubresourceData = Core.Graphics.SubresourceData;
-    using Viewport = Mathematics.Viewport;
 
     public unsafe class D3D12GraphicsDevice : IGraphicsDevice
     {
@@ -407,6 +405,26 @@
         }
 
         public ISwapChain CreateSwapChain(Window* window, SwapChainDescription swapChainDescription, SwapChainFullscreenDescription fullscreenDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineState state, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicsPipeline CreateGraphicsPipelineFromBytecode(GraphicsPipelineBytecodeDesc desc, GraphicsPipelineState state, InputElementDescription[] inputElements, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IComputePipeline CreateComputePipelineFromBytecode(ComputePipelineBytecodeDesc desc, [CallerFilePath] string filename = "", [CallerLineNumber] int line = 0)
         {
             throw new NotImplementedException();
         }

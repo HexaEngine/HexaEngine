@@ -4,13 +4,14 @@
 
     public class SceneChangedEventArgs : EventArgs
     {
-        public SceneChangedEventArgs(Scene? old, Scene @new)
+        public SceneChangedEventArgs(Scene? oldScene, Scene? scene)
         {
-            Old = old;
-            New = @new;
+            OldScene = oldScene;
+            Scene = scene;
         }
 
-        public Scene? Old { get; }
-        public Scene New { get; }
+        public Scene? OldScene { get; }
+
+        public Scene? Scene { get; }
     }
 }

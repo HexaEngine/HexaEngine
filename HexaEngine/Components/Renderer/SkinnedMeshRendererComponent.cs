@@ -19,11 +19,10 @@
     using System.Threading.Tasks;
 
     [EditorComponent(typeof(SkinnedMeshRendererComponent), "Skinned Mesh Renderer")]
-    public class SkinnedMeshRendererComponent : IRendererComponent
+    public class SkinnedMeshRendererComponent : BaseRendererComponent
     {
         private string modelPath = string.Empty;
 
-        private GameObject? gameObject;
         private ModelManager modelManager;
         private MaterialManager materialManager;
         private SkinnedMeshRenderer renderer;
@@ -45,21 +44,21 @@
         }
 
         [JsonIgnore]
-        public string DebugName { get; private set; } = nameof(SkinnedMeshRenderer);
+        public override string DebugName { get; protected set; } = nameof(SkinnedMeshRenderer);
 
         [JsonIgnore]
-        public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
+        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
+        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
 
         [JsonIgnore]
-        public BoundingBox BoundingBox { get => BoundingBox.Transform(model?.BoundingBox ?? BoundingBox.Empty, gameObject.Transform); }
+        public override BoundingBox BoundingBox { get => BoundingBox.Transform(model?.BoundingBox ?? BoundingBox.Empty, GameObject.Transform); }
 
         public void SetLocal(Matrix4x4 local, uint nodeId)
         {
             model?.SetLocal(local, nodeId);
-            gameObject.SendUpdateTransformed();
+            GameObject.SendUpdateTransformed();
         }
 
         public Matrix4x4 GetLocal(uint nodeId)
@@ -72,7 +71,7 @@
         public void SetBoneLocal(Matrix4x4 local, uint boneId)
         {
             model?.SetBoneLocal(local, boneId);
-            gameObject.SendUpdateTransformed();
+            GameObject.SendUpdateTransformed();
         }
 
         public Matrix4x4 GetBoneLocal(uint boneId)
@@ -96,55 +95,43 @@
             return model.GetBoneIdByName(name);
         }
 
-        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        public override void Load(IGraphicsDevice device)
         {
-            DebugName = gameObject.Name + DebugName;
-            this.gameObject = gameObject;
-
-            modelManager = gameObject.GetScene().ModelManager;
-            materialManager = gameObject.GetScene().MaterialManager;
+            modelManager = GameObject.GetScene().ModelManager;
+            materialManager = GameObject.GetScene().MaterialManager;
 
             renderer = new(device);
 
-            UpdateModel();
+            UpdateModel().Wait();
         }
 
-        public void Destroy()
+        public override void Unload()
         {
             renderer.Dispose();
             model?.Dispose();
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            if (!gameObject.IsEnabled)
-                return;
-            renderer.Update(context, gameObject.Transform.Global);
+            renderer.Update(context, GameObject.Transform.Global);
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public override void DrawDepth(IGraphicsContext context)
         {
-            if (!gameObject.IsEnabled)
-                return;
             renderer.DrawDepth(context);
         }
 
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            if (!gameObject.IsEnabled)
-                return;
             renderer.DrawShadowMap(context, light, type);
         }
 
-        public void VisibilityTest(CullingContext context)
+        public override void VisibilityTest(CullingContext context)
         {
         }
 
-        public void Draw(IGraphicsContext context, RenderPath path)
+        public override void Draw(IGraphicsContext context, RenderPath path)
         {
-            if (!gameObject.IsEnabled)
-                return;
-
             if (path == RenderPath.Deferred)
             {
                 renderer.DrawDeferred(context);
@@ -155,26 +142,27 @@
             }
         }
 
-        public void Bake(IGraphicsContext context)
+        public override void Bake(IGraphicsContext context)
         {
             throw new NotImplementedException();
         }
 
-        private void UpdateModel()
+        private Task UpdateModel()
         {
+            loaded = false;
             renderer?.Uninitialize();
             var tmpModel = model;
             model = null;
             tmpModel?.Dispose();
 
-            Task.Factory.StartNew(async state =>
+            return Task.Factory.StartNew(async state =>
             {
                 if (state is not SkinnedMeshRendererComponent component)
                 {
                     return;
                 }
 
-                if (component.gameObject == null)
+                if (component.GameObject == null)
                 {
                     return;
                 }
@@ -193,7 +181,8 @@
                     component.model = new(source, library);
                     await component.model.LoadAsync();
                     component.renderer.Initialize(component.model);
-                    component.gameObject.SendUpdateTransformed();
+                    component.loaded = true;
+                    component.GameObject.SendUpdateTransformed();
                 }
             }, this);
         }

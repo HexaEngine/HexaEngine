@@ -1,56 +1,22 @@
 ﻿namespace HexaEngine.Core
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Unsafes;
     using System;
     using System.Collections.Concurrent;
-    using System.Diagnostics;
-    using System.Drawing;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
 
     public static unsafe class Utils
     {
-        public static void Assert(bool condition)
-        {
-#if DEBUG
-            Trace.Assert(condition);
-#endif
-        }
-
-        public static void Assert(bool condition, string message)
-        {
-#if DEBUG
-            Trace.Assert(condition, message);
-#endif
-        }
-
-        public static void ThrowIf(bool condition, string message)
-        {
-            if (condition)
-            {
-                throw new(message);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ThrowIf(this Exception? exception)
-        {
-#if DEBUG
-            if (exception != null)
-            {
-                throw exception;
-            }
-#endif
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int SdlThrowIf(this int result)
         {
 #if DEBUG
             if (result == 0)
             {
-                Application.sdl.GetErrorAsException().ThrowIf();
+                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
             }
             return result;
 #else
@@ -64,7 +30,7 @@
 #if DEBUG
             if (result < 0)
             {
-                Application.sdl.GetErrorAsException().ThrowIf();
+                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
             }
             return result;
 #else
@@ -75,37 +41,27 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint SdlThrowIf(this uint result)
         {
-#if DEBUG
             if (result == 0)
             {
-                Application.sdl.GetErrorAsException().ThrowIf();
+                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
             }
             return result;
-#else
-            return result;
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void SdlCheckError()
         {
-#if DEBUG
-            Application.sdl.GetErrorAsException().ThrowIf();
-#endif
+            Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* SdlCheckError(void* ptr)
         {
-#if DEBUG
             if (ptr == null)
             {
-                Application.sdl.GetErrorAsException().ThrowIf();
+                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
             }
             return ptr;
-#else
-            return ptr;
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -114,7 +70,7 @@
 #if DEBUG
             if (ptr == null)
             {
-                Application.sdl.GetErrorAsException().ThrowIf();
+                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
             }
             return ptr;
 #else

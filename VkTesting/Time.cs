@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core
+﻿namespace VkTesting
 {
     using System;
     using System.Diagnostics;

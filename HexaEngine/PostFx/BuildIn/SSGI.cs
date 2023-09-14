@@ -2,11 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Effects.Blur;
     using HexaEngine.Graph;
+    using HexaEngine.Graphics.Effects.Blur;
+    using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
-    using HexaEngine.Scenes;
 
     public class SSGI : PostFxBase
     {

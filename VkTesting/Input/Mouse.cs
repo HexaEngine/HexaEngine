@@ -1,12 +1,13 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
-    using HexaEngine.Core.Input.Events;
     using HexaEngine.Mathematics;
     using Silk.NET.SDL;
     using Silk.NET.Vulkan;
     using System.Collections.Generic;
     using System.Numerics;
     using System.Runtime.CompilerServices;
+    using VkTesting;
+    using VkTesting.Input.Events;
     using Viewport = Silk.NET.Vulkan.Viewport;
 
     public static unsafe class Mouse
@@ -34,11 +35,11 @@
             sdl.GetMouseState(ref pos.X, ref pos.Y);
 
             uint state = sdl.GetMouseState(null, null);
-            uint maskLeft = unchecked(1 << ((int)MouseButton.Left - 1));
-            uint maskMiddle = unchecked(1 << ((int)MouseButton.Middle - 1));
-            uint maskRight = unchecked(1 << ((int)MouseButton.Right - 1));
-            uint maskX1 = unchecked(1 << ((int)MouseButton.X1 - 1));
-            uint maskX2 = unchecked(1 << ((int)MouseButton.X2 - 1));
+            uint maskLeft = unchecked(1 << (int)MouseButton.Left - 1);
+            uint maskMiddle = unchecked(1 << (int)MouseButton.Middle - 1);
+            uint maskRight = unchecked(1 << (int)MouseButton.Right - 1);
+            uint maskX1 = unchecked(1 << (int)MouseButton.X1 - 1);
+            uint maskX2 = unchecked(1 << (int)MouseButton.X2 - 1);
             states.Add(MouseButton.Left, (MouseButtonState)(state & maskLeft));
             states.Add(MouseButton.Middle, (MouseButtonState)(state & maskMiddle));
             states.Add(MouseButton.Right, (MouseButtonState)(state & maskRight));

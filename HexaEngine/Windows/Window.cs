@@ -20,7 +20,7 @@
 
     public class Window : SdlWindow, IRenderWindow
     {
-        private RenderDispatcher renderDispatcher;
+        private ThreadDispatcher renderDispatcher;
         private bool running;
         private bool firstFrame;
         private IAudioDevice audioDevice;
@@ -43,7 +43,7 @@
 
         public RendererFlags Flags;
 
-        public RenderDispatcher Dispatcher => renderDispatcher;
+        public ThreadDispatcher Dispatcher => renderDispatcher;
 
         public IGraphicsDevice Device => graphicsDevice;
 

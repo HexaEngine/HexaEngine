@@ -1,30 +1,24 @@
 ﻿namespace HexaEngine.Core.Graphics
 {
-    using BepuPhysics.Trees;
-    using BepuUtilities.Memory;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public static class MemoryManager
     {
         private static IGraphicsDevice device;
-        private static readonly List<TextureEntry> entries = new();
+        private static readonly List<MemoryEntry> entries = new();
         private static ulong usedMemory;
         private static ulong freeMemory;
         private static ulong maxMemory;
 
-        public static IReadOnlyList<TextureEntry> Entries => entries;
+        public static IReadOnlyList<MemoryEntry> Entries => entries;
 
-        public struct TextureEntry
+        public struct MemoryEntry
         {
             public IResource Resource;
             public string? Name;
             public ulong Size;
 
-            public TextureEntry(IResource resource, string? name, ulong size)
+            public MemoryEntry(IResource resource, string? name, ulong size)
             {
                 Resource = resource;
                 Name = name;

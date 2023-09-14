@@ -1,10 +1,10 @@
-﻿namespace HexaEngine.Core.Unsafes
+﻿namespace VkTesting.Unsafes
 {
     using System;
     using System.Runtime.CompilerServices;
 
     public interface INative : IDisposable
     {
-        public IntPtr NativePointer { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
+        public nint NativePointer { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; }
     }
 }

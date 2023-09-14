@@ -15,16 +15,14 @@
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes.Managers;
     using Newtonsoft.Json;
-    using System;
     using System.Numerics;
     using System.Threading.Tasks;
 
     [EditorComponent(typeof(MeshRendererComponent), "Mesh Renderer")]
-    public class MeshRendererComponent : IRendererComponent
+    public class MeshRendererComponent : BaseRendererComponent
     {
         private string modelPath = string.Empty;
 
-        private GameObject? gameObject;
         private ModelManager modelManager;
         private MaterialManager materialManager;
         private MeshRenderer renderer;
@@ -46,90 +44,62 @@
         }
 
         [JsonIgnore]
-        public string DebugName { get; private set; } = nameof(MeshRenderer);
+        public override string DebugName { get; protected set; } = nameof(MeshRenderer);
 
         [JsonIgnore]
-        public uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
+        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Geometry;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
+        public override RendererFlags Flags { get; } = RendererFlags.All | RendererFlags.Clustered | RendererFlags.Deferred | RendererFlags.Forward;
 
         [JsonIgnore]
-        public BoundingBox BoundingBox { get => BoundingBox.Transform(model?.BoundingBox ?? BoundingBox.Empty, gameObject?.Transform ?? Matrix4x4.Identity); }
+        public override BoundingBox BoundingBox { get => BoundingBox.Transform(model?.BoundingBox ?? BoundingBox.Empty, GameObject?.Transform ?? Matrix4x4.Identity); }
 
         [JsonIgnore]
-        public Matrix4x4 Transform => gameObject?.Transform ?? Matrix4x4.Identity;
+        public Matrix4x4 Transform => GameObject?.Transform ?? Matrix4x4.Identity;
 
-        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        public override void Load(IGraphicsDevice device)
         {
-            DebugName = gameObject.Name + DebugName;
-            this.gameObject = gameObject;
-
-            modelManager = gameObject.GetScene().ModelManager;
-            materialManager = gameObject.GetScene().MaterialManager;
+            modelManager = GameObject.GetScene().ModelManager;
+            materialManager = GameObject.GetScene().MaterialManager;
 
             renderer = new(device);
 
-            UpdateModel();
+            UpdateModel().Wait();
         }
 
-        public void Destroy()
+        public override void Unload()
         {
             renderer.Dispose();
             model?.Dispose();
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            if (!gameObject.IsEnabled)
-            {
-                return;
-            }
-
-            renderer.Update(context, gameObject.Transform.Global);
+            renderer.Update(context, GameObject.Transform.Global);
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public void DrawDepth(IGraphicsContext context, IBuffer cam)
         {
-            if (!gameObject.IsEnabled)
-            {
-                return;
-            }
+            renderer.DrawDepth(context, cam);
+        }
 
+        public override void DrawDepth(IGraphicsContext context)
+        {
             renderer.DrawDepth(context);
         }
 
-        public void DrawDepth(IGraphicsContext context, IBuffer camera)
+        public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
-            if (!gameObject.IsEnabled)
-            {
-                return;
-            }
-
-            renderer.DrawDepth(context, camera);
-        }
-
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
-        {
-            if (!gameObject.IsEnabled)
-            {
-                return;
-            }
-
             renderer.DrawShadowMap(context, light, type);
         }
 
-        public void VisibilityTest(CullingContext context)
+        public override void VisibilityTest(CullingContext context)
         {
         }
 
-        public void Draw(IGraphicsContext context, RenderPath path)
+        public override void Draw(IGraphicsContext context, RenderPath path)
         {
-            if (!gameObject.IsEnabled)
-            {
-                return;
-            }
-
             if (path == RenderPath.Deferred)
             {
                 renderer.DrawDeferred(context);
@@ -140,26 +110,26 @@
             }
         }
 
-        public void Bake(IGraphicsContext context)
+        public override void Bake(IGraphicsContext context)
         {
-            throw new NotImplementedException();
         }
 
-        private void UpdateModel()
+        private Task UpdateModel()
         {
+            loaded = false;
             renderer?.Uninitialize();
             var tmpModel = model;
             model = null;
             tmpModel?.Dispose();
 
-            Task.Factory.StartNew(async state =>
+            return Task.Factory.StartNew(async state =>
             {
                 if (state is not MeshRendererComponent component)
                 {
                     return;
                 }
 
-                if (component.gameObject == null)
+                if (component.GameObject == null)
                 {
                     return;
                 }
@@ -178,7 +148,8 @@
                     component.model = new(source, library);
                     await component.model.LoadAsync();
                     component.renderer.Initialize(component.model);
-                    component.gameObject.SendUpdateTransformed();
+                    component.loaded = true;
+                    component.GameObject.SendUpdateTransformed();
                 }
             }, this);
         }

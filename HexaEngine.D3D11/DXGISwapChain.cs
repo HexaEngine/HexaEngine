@@ -1,5 +1,6 @@
 ﻿namespace HexaEngine.D3D11
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows.Events;
     using Silk.NET.Core.Native;
@@ -12,6 +13,7 @@
 
     public unsafe partial class DXGISwapChain : DeviceChildBase, ISwapChain
     {
+        private D3D11GraphicsDevice device;
         private ComPtr<IDXGISwapChain2> swapChain;
         private readonly SwapChainFlag flags;
         private ComPtr<ID3D11Texture2D> backbuffer;
@@ -26,7 +28,7 @@
 
         internal DXGISwapChain(D3D11GraphicsDevice device, ComPtr<IDXGISwapChain2> swapChain, SwapChainFlag flags)
         {
-            Device = device;
+            this.device = device;
             this.swapChain = swapChain;
             this.flags = flags;
 
@@ -51,7 +53,7 @@
 
         public IDepthStencilView BackbufferDSV { get; private set; }
 
-        public IGraphicsDevice Device { get; }
+        public IGraphicsDevice Device => device;
 
         public int Width { get; private set; }
 
@@ -63,6 +65,8 @@
 
         public event EventHandler<ResizedEventArgs>? Resized;
 
+        public event EventHandler<DeviceRemovedEventArgs>? DeviceRemoved;
+
         public bool VSync { get => vSync; set => vSync = value; }
 
         public bool LimitFPS { get => limitFPS; set => limitFPS = value; }
@@ -73,30 +77,34 @@
 
         public void Present(bool sync)
         {
+            ResultCode hr;
             if (sync)
             {
-                swapChain.Present(1, 0);
+                hr = (ResultCode)swapChain.Present(1, 0);
             }
             else
             {
-                swapChain.Present(0, DXGI.PresentAllowTearing);
+                hr = (ResultCode)swapChain.Present(0, DXGI.PresentAllowTearing);
             }
+            CheckError(hr);
         }
 
         public void Present()
         {
+            ResultCode hr;
             if (!active)
             {
-                swapChain.Present(4, 0);
+                hr = (ResultCode)swapChain.Present(4, 0);
             }
             else if (vSync)
             {
-                swapChain.Present(1, 0);
+                hr = (ResultCode)swapChain.Present(1, 0);
             }
             else
             {
-                swapChain.Present(0, DXGI.PresentAllowTearing);
+                hr = (ResultCode)swapChain.Present(0, DXGI.PresentAllowTearing);
             }
+            CheckError(hr);
         }
 
         public void Wait()
@@ -152,7 +160,13 @@
             BackbufferDSV.Dispose();
             depthStencil.Dispose();
 
-            swapChain.ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
+            ResultCode code = (ResultCode)swapChain.ResizeBuffers(2, (uint)width, (uint)height, Silk.NET.DXGI.Format.FormatB8G8R8A8Unorm, (uint)flags);
+
+            if (CheckError(code))
+            {
+                return;
+            }
+
             Width = width;
             Height = height;
             Viewport = new(0, 0, Width, Height);
@@ -168,6 +182,19 @@
             BackbufferDSV = Device.CreateDepthStencilView(depthStencil);
 
             Resized?.Invoke(this, new(oldWidth, oldHeight, width, height));
+        }
+
+        private bool CheckError(ResultCode hr)
+        {
+            if (hr == ResultCode.DXGI_ERROR_DEVICE_REMOVED || hr == ResultCode.DXGI_ERROR_DEVICE_RESET)
+            {
+                var reason = device.Device.GetDeviceRemovedReason();
+                DeviceRemovedEventArgs e = new($"Device removed! DXGI_ERROR code: {(ResultCode)reason}", reason);
+                Logger.Error(e);
+                DeviceRemoved?.Invoke(this, e);
+                return true;
+            }
+            return false;
         }
 
         protected override void DisposeCore()

@@ -5,7 +5,7 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Effects;
+    using HexaEngine.Graphics.Effects;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Serialization;
     using ImGuiNET;
@@ -287,12 +287,12 @@
                 {
                     if (ImGui.MenuItem("Scene"))
                     {
-                        SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
+                        SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "Scene Scene.hexlvl")));
                         Refresh();
                     }
                     if (ImGui.MenuItem("Effect"))
                     {
-                        EffectDescriptionFile.Create(GetNewFilename(Path.Combine(currentDir.FullName, "New Effect.hexef")));
+                        EffectDescriptionFile.Create(GetNewFilename(Path.Combine(currentDir.FullName, "Scene Effect.hexef")));
                         Refresh();
                     }
                     ImGui.EndMenu();

@@ -8,7 +8,6 @@ namespace HexaEngine.Editor.Widgets
     using HexaEngine.ImNodesNET;
     using HexaEngine.Rendering.Renderers;
     using System.Collections.Generic;
-    using System.Numerics;
 
     public class RenderGraphWidget : EditorWindow
     {

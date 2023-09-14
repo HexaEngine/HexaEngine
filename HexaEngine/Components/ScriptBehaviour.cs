@@ -3,7 +3,6 @@
     using HexaEngine.Collections;
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
@@ -105,18 +104,31 @@
         [JsonIgnore]
         public ScriptFlags Flags => flags;
 
+        [JsonIgnore]
+        public GameObject GameObject
+        {
+            get => instance?.GameObject;
+            set
+            {
+                if (instance != null)
+                {
+                    instance.GameObject = value;
+                }
+            }
+        }
+
         public event Action<IHasFlags<ScriptFlags>, ScriptFlags>? FlagsChanged;
 
-        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        public void Awake()
         {
             CreateInstance();
             if (Application.InDesignMode)
                 return;
             if (instance != null)
             {
-                instance.GameObject = gameObject;
                 try
                 {
+                    instance.GameObject = GameObject;
                     instance.Awake();
                 }
                 catch (Exception e)

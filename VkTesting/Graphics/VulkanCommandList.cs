@@ -1,9 +1,8 @@
 ﻿namespace VkTesting.Graphics
 {
-    using HexaEngine.Vulkan;
     using Silk.NET.Core.Native;
     using Silk.NET.Vulkan;
-    using static HexaEngine.Vulkan.VulkanGraphicsDevice;
+    using static VkTesting.Graphics.VulkanGraphicsDevice;
 
     public unsafe class VulkanCommandList : IDisposable
     {

@@ -58,11 +58,6 @@
 
         CameraTransform IView.Transform => Transform;
 
-        public override void Initialize(IGraphicsDevice device)
-        {
-            base.Initialize(device);
-        }
-
         public override void Uninitialize()
         {
             base.Uninitialize();

@@ -1,11 +1,11 @@
 ﻿namespace VkTesting.Windows
 {
-    using HexaEngine.Core.Input.Events;
-    using HexaEngine.Core.Windows.Events;
     using Silk.NET.Core.Contexts;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using Silk.NET.Vulkan;
+    using VkTesting.Events;
+    using VkTesting.Input.Events;
 
     public interface IWindow : INativeWindow, INativeWindowSource
     {

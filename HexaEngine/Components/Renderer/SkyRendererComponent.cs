@@ -3,7 +3,6 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
-    using HexaEngine.Core.Scenes;
     using HexaEngine.Culling;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Lights;
@@ -11,14 +10,12 @@
     using HexaEngine.Meshes;
     using HexaEngine.Rendering;
     using HexaEngine.Rendering.Renderers;
-    using HexaEngine.Scenes;
     using System;
     using System.Threading.Tasks;
 
     [EditorComponent<SkyRendererComponent>("Sky", false, true)]
-    public class SkyRendererComponent : IRendererComponent
+    public class SkyRendererComponent : BaseRendererComponent
     {
-        private GameObject gameObject;
         private SkyRenderer renderer;
         private Skybox skybox;
 
@@ -27,16 +24,16 @@
         private SkyType skyType;
 
         [JsonIgnore]
-        public string DebugName { get; private set; } = nameof(SkyRenderer);
+        public override string DebugName { get; protected set; } = nameof(SkyRenderer);
 
         [JsonIgnore]
-        public uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
+        public override uint QueueIndex { get; } = (uint)RenderQueueIndex.Background;
 
         [JsonIgnore]
-        public RendererFlags Flags { get; } = RendererFlags.Update | RendererFlags.Depth | RendererFlags.Draw;
+        public override RendererFlags Flags { get; } = RendererFlags.Update | RendererFlags.Depth | RendererFlags.Draw;
 
         [JsonIgnore]
-        public BoundingBox BoundingBox { get; }
+        public override BoundingBox BoundingBox { get; }
 
         [EditorProperty<SkyType>("Type")]
         public SkyType SkyType { get => skyType; set => skyType = value; }
@@ -57,63 +54,52 @@
             }
         }
 
-        public async void Awake(IGraphicsDevice device, GameObject gameObject)
+        public override void Load(IGraphicsDevice device)
         {
-            DebugName = gameObject.Name + DebugName;
-            this.gameObject = gameObject;
-            this.device = device;
             renderer = new(device);
 
-            await UpdateEnvAsync(device);
+            UpdateEnvAsync(device).Wait();
         }
 
-        public unsafe void Destroy()
+        public override void Unload()
         {
             renderer.Dispose();
             skybox?.Dispose();
         }
 
-        public void Update(IGraphicsContext context)
+        public override void Update(IGraphicsContext context)
         {
-            if (!gameObject.IsEnabled)
-                return;
             renderer.Update(context);
         }
 
-        public void DrawDepth(IGraphicsContext context)
+        public override void DrawDepth(IGraphicsContext context)
         {
             throw new NotSupportedException();
         }
 
-        public void VisibilityTest(CullingContext context)
+        public override void VisibilityTest(CullingContext context)
         {
             throw new NotSupportedException();
         }
 
-        public void Draw(IGraphicsContext context, RenderPath path)
+        public override void Draw(IGraphicsContext context, RenderPath path)
         {
-            if (!gameObject.IsEnabled)
-                return;
             renderer.Draw(context, skyType);
         }
 
-        public void Bake(IGraphicsContext context)
+        public override void Bake(IGraphicsContext context)
         {
             throw new NotImplementedException();
         }
 
-        public void DrawIndirect(IGraphicsContext context, IBuffer argsBuffer, int offset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
+        public override void DrawShadowMap(IGraphicsContext context, IBuffer light, ShadowType type)
         {
             throw new NotSupportedException();
         }
 
         private Task UpdateEnvAsync(IGraphicsDevice device)
         {
+            loaded = false;
             renderer?.Uninitialize();
             var tmpSkybox = skybox;
             skybox = null;
@@ -132,6 +118,7 @@
                     component.skybox = new(device);
                     await component.skybox.LoadAsync(environmentPath);
                     component.renderer.Initialize(component.skybox);
+                    component.loaded = true;
                 }
             }, state);
         }

@@ -129,7 +129,7 @@
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
 
-            root.Initialize(device);
+            root.Initialize();
             Validate();
             semaphore.Release();
 
@@ -160,7 +160,7 @@
             Time.FixedUpdate += FixedUpdate;
             Time.Initialize();
 
-            root.Initialize(device);
+            root.Initialize();
             Validate();
             semaphore.Release();
 
@@ -168,6 +168,24 @@
             for (int i = 0; i < awake.Count; i++)
             {
                 awake[i].Awake(this);
+            }
+        }
+
+        public void Load(IGraphicsDevice device)
+        {
+            var load = systems[SystemFlags.Load];
+            for (int i = 0; i < load.Count; i++)
+            {
+                load[i].Load(device);
+            }
+        }
+
+        public void Unload()
+        {
+            var unload = systems[SystemFlags.Unload];
+            for (int i = 0; i < unload.Count; i++)
+            {
+                unload[i].Unload();
             }
         }
 

@@ -3,14 +3,13 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
-    using HexaEngine.Effects.Noise;
     using HexaEngine.Graph;
+    using HexaEngine.Graphics.Effects.Noise;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
     using HexaEngine.Meshes;
     using HexaEngine.PostFx;
     using HexaEngine.Rendering.Graph;
-    using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 

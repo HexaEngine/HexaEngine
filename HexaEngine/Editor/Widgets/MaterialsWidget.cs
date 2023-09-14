@@ -2,13 +2,11 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.UI;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
     using ImGuiNET;
-    using System.Text;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
 
     public unsafe class MaterialsWidget : EditorWindow
@@ -329,9 +327,9 @@
             ImGui.BeginDisabled(hasFileSaved);
             if (ImGui.Button("Save"))
             {
-                var lib = manager.GetMaterialLibraryForm(material);
-                var path = Paths.CurrentProjectFolder + lib.Name.Replace("assets/", "/").Replace("/", "\\");
-                lib.Save(path, Encoding.UTF8);
+                //var lib = manager.GetMaterialLibraryForm(material);
+                //var path = Paths.CurrentProjectFolder + manager.GetPathToMaterialLibrary(lib);
+                //lib.Save(path, Encoding.UTF8);
             }
             ImGui.EndDisabled();
 

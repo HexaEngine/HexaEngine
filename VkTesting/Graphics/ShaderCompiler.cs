@@ -3,6 +3,7 @@
     using HexaEngine.Shaderc;
     using System;
     using System.Text;
+    using VkTesting;
 
     public unsafe struct ShaderBlob
     {

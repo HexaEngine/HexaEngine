@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Core.Scenes;
+    using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
     using System.Numerics;
 

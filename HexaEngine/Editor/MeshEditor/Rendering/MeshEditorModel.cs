@@ -110,7 +110,7 @@
 
         public void Load(IGraphicsDevice device)
         {
-            for (uint i = 0; i < modelFile.Header.MeshCount; i++)
+            for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
                 var data = modelFile.GetMesh(i);
                 MeshEditorMaterial material = new(device, data, materialLibrary.GetMaterial(data.MaterialName));

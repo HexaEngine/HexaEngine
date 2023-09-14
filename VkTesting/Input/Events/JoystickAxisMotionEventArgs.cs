@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Input.Events
+﻿namespace VkTesting.Input.Events
 {
     public class JoystickAxisMotionEventArgs : EventArgs
     {

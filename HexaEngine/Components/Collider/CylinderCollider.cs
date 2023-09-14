@@ -20,13 +20,13 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || hasShape)
             {
                 return;
             }
 
             Cylinder cylinder = new(radius, length * 2);
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             index = simulation.Shapes.Add(cylinder);
             inertia = cylinder.ComputeInertia(Mass);
             hasShape = true;

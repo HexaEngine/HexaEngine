@@ -290,7 +290,7 @@
             string scriptPublishPath = Path.Combine(scriptProjPath, "bin", "Publish");
             PublishOptions scriptPublishOptions = new()
             {
-                Framework = "net7.0",
+                Framework = "net8.0",
                 Profile = settings.Profile,
                 RuntimeIdentifer = settings.RuntimeIdentifier,
                 PublishReadyToRun = false,

@@ -22,14 +22,14 @@
 
         public override void CreateShape()
         {
-            if (parent == null || scene == null || bufferPool == null || simulation == null || hasShape)
+            if (GameObject == null || scene == null || bufferPool == null || simulation == null || hasShape)
             {
                 return;
             }
 
             var data = scene.ModelManager.Load(Paths.CurrentAssetsPath + meshPath);
             ulong vertexCount = 0;
-            for (ulong i = 0; i < data.Header.MeshCount; i++)
+            for (int i = 0; i < data.Meshes.Count; i++)
             {
                 var meh = data.GetMesh(i);
                 vertexCount += meh.IndicesCount;
@@ -37,7 +37,7 @@
 
             bufferPool.Take((int)vertexCount / 3, out Buffer<Triangle> buffer);
             int m = 0;
-            for (ulong i = 0; i < data.Header.MeshCount; i++)
+            for (int i = 0; i < data.Meshes.Count; i++)
             {
                 var meh = data.GetMesh(i);
                 for (int j = 0; j < meh.Indices.Length; j += 3)
@@ -51,14 +51,14 @@
             }
             mesh = new(buffer, scale, bufferPool);
             inertia = mesh.ComputeClosedInertia(Mass);
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             index = simulation.Shapes.Add(mesh);
             hasShape = true;
         }
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || !hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || !hasShape)
             {
                 return;
             }

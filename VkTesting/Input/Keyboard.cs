@@ -1,10 +1,11 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
-    using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
+    using VkTesting;
+    using VkTesting.Input.Events;
 
     public static class Keyboard
     {

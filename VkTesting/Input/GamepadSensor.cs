@@ -1,8 +1,9 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
-    using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System.Numerics;
+    using VkTesting;
+    using VkTesting.Input.Events;
 
     public unsafe class GamepadSensor : IDisposable
     {
@@ -19,7 +20,7 @@
         public GamepadSensor(GameController* controller, GamepadSensorType sensorType)
         {
             this.controller = controller;
-            this.type = sensorType;
+            type = sensorType;
             buffer = Alloc<float>(3);
             sdl.GameControllerGetSensorData(controller, Helper.ConvertBack(sensorType), buffer, length);
         }

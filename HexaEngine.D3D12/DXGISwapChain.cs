@@ -82,6 +82,8 @@
 
         public event EventHandler<ResizedEventArgs>? Resized;
 
+        public event EventHandler<DeviceRemovedEventArgs>? DeviceRemoved;
+
         public bool VSync { get => vSync; set => vSync = value; }
 
         public bool LimitFPS { get => limitFPS; set => limitFPS = value; }

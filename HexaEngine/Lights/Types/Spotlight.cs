@@ -52,11 +52,6 @@
         [JsonIgnore]
         internal static IBuffer PSMBuffer => psmBuffer;
 
-        public override void Initialize(IGraphicsDevice device)
-        {
-            base.Initialize(device);
-        }
-
         public override IShaderResourceView? GetShadowMap()
         {
             return null;

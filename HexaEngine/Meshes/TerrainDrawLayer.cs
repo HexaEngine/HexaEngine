@@ -25,7 +25,7 @@
             Shader.Initialize();
         }
 
-        public void Update(IGraphicsDevice device, TerrainLayer?[] terrainLayers)
+        public void Update(IGraphicsDevice device, StaticTerrainLayer?[] terrainLayers)
         {
             List<ShaderMacro> layerMacros = new();
             for (int i = 0; i < terrainLayers.Length; i++)
@@ -62,7 +62,7 @@
         public UavTexture2D Mask;
         public TerrainMaterialBundle Material;
         public ChannelMask UsedChannels;
-        public TerrainLayer?[] TerrainLayers = new TerrainLayer[4];
+        public StaticTerrainLayer?[] TerrainLayers = new StaticTerrainLayer[4];
         public ISamplerState MaskSampler;
 
         public TerrainDrawLayer(IGraphicsDevice device)
@@ -72,7 +72,7 @@
             MaskSampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }
 
-        public ChannelMask GetChannelMask(TerrainLayer layer)
+        public ChannelMask GetChannelMask(StaticTerrainLayer layer)
         {
             return GetChannelMask(Array.IndexOf(TerrainLayers, layer));
         }
@@ -91,7 +91,7 @@
             };
         }
 
-        public bool AddLayer(TerrainLayer layer)
+        public bool AddLayer(StaticTerrainLayer layer)
         {
             if (UsedChannels == ChannelMask.All)
                 return false;
@@ -124,7 +124,7 @@
             return false;
         }
 
-        public bool RemoveLayer(TerrainLayer layer)
+        public bool RemoveLayer(StaticTerrainLayer layer)
         {
             int index = Array.IndexOf(TerrainLayers, layer);
             if (index == -1)
@@ -135,7 +135,7 @@
             return true;
         }
 
-        public bool ContainsLayer(TerrainLayer layer)
+        public bool ContainsLayer(StaticTerrainLayer layer)
         {
             return Array.IndexOf(TerrainLayers, layer) != -1;
         }
@@ -272,9 +272,9 @@
         }
     }
 
-    public class TerrainLayer
+    public class StaticTerrainLayer
     {
-        public TerrainLayer(string name)
+        public StaticTerrainLayer(string name)
         {
             Name = name;
         }

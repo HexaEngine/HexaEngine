@@ -18,6 +18,16 @@ namespace HexaEngine.Scenes
     public static class SceneManager
     {
         /// <summary>
+        /// Read lock
+        /// </summary>
+        private static readonly object _lock = new();
+
+        /// <summary>
+        /// Write lock
+        /// </summary>
+        private static readonly SemaphoreSlim semaphore = new(1);
+
+        /// <summary>
         /// Gets the current scene.
         /// </summary>
         /// <value>
@@ -25,10 +35,22 @@ namespace HexaEngine.Scenes
         /// </value>
         public static Scene? Current { [MethodImpl(MethodImplOptions.AggressiveInlining)] get; [MethodImpl(MethodImplOptions.AggressiveInlining)] private set; }
 
+        public static object SyncObject => _lock;
+
         /// <summary>
         /// Occurs when [scene changed].
         /// </summary>
         public static event EventHandler<SceneChangedEventArgs>? SceneChanged;
+
+        public static void Lock()
+        {
+            semaphore.Wait();
+        }
+
+        public static void Unlock()
+        {
+            semaphore.Release();
+        }
 
         public static void Save()
         {
@@ -42,35 +64,41 @@ namespace HexaEngine.Scenes
                 return;
             }
 
-            if (SceneSerializer.TrySerialize(Current, Current.Path, out var ex))
+            lock (_lock)
             {
-                return;
-            }
-            else if (Application.InEditorMode)
-            {
-                MessageBox.Show("Failed to save scene", ex.Message);
-                Logger.Log(ex);
-            }
-            else
-            {
-                Logger.Throw(ex);
+                if (SceneSerializer.TrySerialize(Current, Current.Path, out var ex))
+                {
+                    return;
+                }
+                else if (Application.InEditorMode)
+                {
+                    MessageBox.Show("Failed to save scene", ex.Message);
+                    Logger.Log(ex);
+                }
+                else
+                {
+                    Logger.Throw(ex);
+                }
             }
         }
 
         public static void Load(string path)
         {
-            if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
+            lock (_lock)
             {
-                Load(scene);
-            }
-            else if (Application.InEditorMode)
-            {
-                MessageBox.Show("Failed to load scene", ex.Message);
-                Logger.Log(ex);
-            }
-            else
-            {
-                Logger.Throw(ex);
+                if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
+                {
+                    Load(scene);
+                }
+                else if (Application.InEditorMode)
+                {
+                    MessageBox.Show("Failed to load scene", ex.Message);
+                    Logger.Log(ex);
+                }
+                else
+                {
+                    Logger.Throw(ex);
+                }
             }
         }
 
@@ -93,33 +121,60 @@ namespace HexaEngine.Scenes
                 var values = (Tuple<IRenderWindow, Scene>)state;
                 var window = values.Item1;
                 var scene = values.Item2;
+
+                semaphore.Wait();
+
                 if (Current == null)
                 {
                     scene.Initialize(window.Device);
-                    Current = scene;
-                    SceneChanged?.Invoke(null, new(null, scene));
-                    return;
-                }
-                lock (Current)
-                {
-                    var old = Current;
-                    Current = null;
-                    if (scene == null)
+                    scene.Load(window.Device);
+                    lock (_lock)
                     {
-                        old?.Uninitialize();
-                        ResourceManager.Shared.Release();
-                        Current = null;
-                    }
-                    else
-                    {
-                        old?.Uninitialize();
-                        ResourceManager.Shared.Release();
-                        scene.Initialize(window.Device);
                         Current = scene;
                     }
-
-                    SceneChanged?.Invoke(null, new(old, scene));
+                    SceneChanged?.Invoke(null, new(null, scene));
+                    semaphore.Release();
+                    return;
                 }
+
+                var old = Current;
+
+                lock (_lock)
+                {
+                    Current = null;
+                }
+
+                if (scene == null)
+                {
+                    old?.Unload();
+                    old?.Uninitialize();
+
+                    ResourceManager.Shared.Release();
+
+                    lock (_lock)
+                    {
+                        Current = null;
+                    }
+                }
+                else
+                {
+                    old?.Unload();
+                    old?.Uninitialize();
+
+                    ResourceManager.Shared.Release();
+
+                    scene.Initialize(window.Device);
+
+                    lock (_lock)
+                    {
+                        Current = scene;
+                    }
+                }
+
+                semaphore.Release();
+
+                SceneChanged?.Invoke(null, new(old, scene));
+
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             }, new Tuple<IRenderWindow, Scene>(window, scene));
@@ -132,15 +187,31 @@ namespace HexaEngine.Scenes
             var window = Application.MainWindow;
             window.Dispatcher.InvokeBlocking(state =>
             {
-                lock (Current)
+                lock (_lock)
                 {
-                    var window = (IRenderWindow)state;
-                    ResourceManager.Shared.BeginNoGCRegion();
-                    Current?.Uninitialize();
-                    Current.Initialize(window.Device);
-                    SceneChanged?.Invoke(null, new(Current, Current));
-                    ResourceManager.Shared.EndNoGCRegion();
+                    if (Current == null)
+                    {
+                        return;
+                    }
                 }
+
+                semaphore.Wait();
+
+                var window = (IRenderWindow)state;
+                ResourceManager.Shared.BeginNoGCRegion();
+
+                Current.Unload();
+                Current.Uninitialize();
+
+                Current.Initialize(window.Device);
+                Current.Load(window.Device);
+
+                SceneChanged?.Invoke(null, new(Current, Current));
+
+                semaphore.Release();
+
+                ResourceManager.Shared.EndNoGCRegion();
+
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             }, window);
@@ -154,13 +225,24 @@ namespace HexaEngine.Scenes
 
             window.Dispatcher.InvokeBlocking(() =>
             {
-                lock (Current)
+                lock (_lock)
                 {
-                    ResourceManager.Shared.BeginNoGCRegion();
-                    Current?.Uninitialize();
+                    if (Current == null)
+                    {
+                        return;
+                    }
                 }
+
+                semaphore.Wait();
+
+                ResourceManager.Shared.BeginNoGCRegion();
+
+                Current.Unload();
+                Current.Uninitialize();
+
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                semaphore.Release();
             });
         }
 
@@ -171,23 +253,34 @@ namespace HexaEngine.Scenes
 
             window.Dispatcher.InvokeBlocking(state =>
             {
-                var window = (IRenderWindow)state;
-                lock (Current)
+                lock (_lock)
                 {
-                    Current.Initialize(window.Device);
-                    ResourceManager.Shared.EndNoGCRegion();
-                    SceneChanged?.Invoke(null, new(Current, Current));
+                    if (Current == null)
+                    {
+                        return;
+                    }
                 }
+
+                var window = (IRenderWindow)state;
+                semaphore.Wait();
+
+                Current.Initialize(window.Device);
+                Current.Load(window.Device);
+
+                ResourceManager.Shared.EndNoGCRegion();
+                SceneChanged?.Invoke(null, new(Current, Current));
+
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                semaphore.Release();
             }, window);
         }
 
-        public static async Task AsyncLoad(string path)
+        public static Task AsyncLoad(string path)
         {
             if (SceneSerializer.TryDeserialize(path, out var scene, out var ex))
             {
-                await AsyncLoad(scene);
+                return AsyncLoad(scene);
             }
             else if (Application.InEditorMode)
             {
@@ -198,51 +291,82 @@ namespace HexaEngine.Scenes
             {
                 Logger.Throw(ex);
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
-        /// Asynchronouses loads the scene over <see cref="Load(Scene)"/>
+        /// Asynchronous loads the scene over <see cref="Load(Scene)"/>
         /// </summary>
         /// <param dbgName="scene">The scene.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async Task AsyncLoad(Scene scene)
+        public static Task AsyncLoad(Scene scene)
         {
             GameObject.Selected.ClearSelection();
             var window = Application.MainWindow;
 
-            await window.Dispatcher.InvokeAsync(async state =>
+            return window.Dispatcher.InvokeAsync(async state =>
             {
                 var values = (Tuple<IRenderWindow, Scene>)state;
                 var window = values.Item1;
                 var scene = values.Item2;
+
+                await semaphore.WaitAsync();
+
                 if (Current == null)
                 {
                     await scene.InitializeAsync(window.Device);
-                    Current = scene;
-                    SceneChanged?.Invoke(null, new(null, scene));
-                    return;
-                }
-                lock (Current)
-                {
-                    var old = Current;
-                    Current = null;
-                    if (scene == null)
+                    scene.Load(window.Device);
+
+                    lock (_lock)
                     {
-                        old?.Uninitialize();
-                        ResourceManager.Shared.Release();
-                        Current = null;
-                    }
-                    else
-                    {
-                        old?.Uninitialize();
-                        ResourceManager.Shared.Release();
-                        scene.Initialize(window.Device);
                         Current = scene;
                     }
 
-                    SceneChanged?.Invoke(null, new(old, scene));
+                    SceneChanged?.Invoke(null, new(null, scene));
+                    semaphore.Release();
+                    return;
                 }
+
+                var old = Current;
+
+                lock (_lock)
+                {
+                    Current = null;
+                }
+
+                if (scene == null)
+                {
+                    old?.Unload();
+                    old?.Uninitialize();
+
+                    ResourceManager.Shared.Release();
+                    lock (_lock)
+                    {
+                        Current = null;
+                    }
+                }
+                else
+                {
+                    old?.Unload();
+                    old?.Uninitialize();
+
+                    ResourceManager.Shared.Release();
+
+                    await scene.InitializeAsync(window.Device);
+                    scene.Load(window.Device);
+
+                    lock (_lock)
+                    {
+                        Current = scene;
+                    }
+                }
+
+                semaphore.Release();
+
+                SceneChanged?.Invoke(null, new(old, scene));
+
                 GC.WaitForPendingFinalizers();
                 GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
             }, new Tuple<IRenderWindow, Scene>(window, scene));
@@ -255,8 +379,17 @@ namespace HexaEngine.Scenes
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Unload()
         {
+            semaphore.Wait();
+
+            Current?.Unload();
             Current?.Uninitialize();
-            Current = null;
+
+            lock (_lock)
+            {
+                Current = null;
+            }
+
+            semaphore.Release();
         }
     }
 }

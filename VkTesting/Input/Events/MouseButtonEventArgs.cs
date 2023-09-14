@@ -1,6 +1,6 @@
-﻿namespace HexaEngine.Core.Input.Events
+﻿namespace VkTesting.Input.Events
 {
-    using HexaEngine.Core.Input;
+    using VkTesting.Input;
 
     public class MouseButtonEventArgs : EventArgs
     {

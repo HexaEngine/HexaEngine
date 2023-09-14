@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
     using Silk.NET.SDL;
     using System.Runtime.CompilerServices;

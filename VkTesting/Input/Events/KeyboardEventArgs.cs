@@ -1,7 +1,7 @@
-﻿namespace HexaEngine.Core.Input.Events
+﻿namespace VkTesting.Input.Events
 {
-    using HexaEngine.Core.Input;
     using Silk.NET.SDL;
+    using VkTesting.Input;
 
     public class KeyboardEventArgs : EventArgs
     {

@@ -4,7 +4,6 @@ namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Scenes;
-    using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Mathematics;

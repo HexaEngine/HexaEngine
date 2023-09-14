@@ -1,6 +1,7 @@
-﻿namespace HexaEngine.Core.Input.Events
+﻿namespace VkTesting.Input.Events
 {
     using System.Numerics;
+    using VkTesting.Input;
 
     public class GamepadSensorUpdateEventArgs : EventArgs
     {

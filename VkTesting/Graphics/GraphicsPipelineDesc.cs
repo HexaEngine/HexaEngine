@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Vulkan
+﻿namespace VkTesting.Graphics
 {
     using System.ComponentModel;
     using System.Xml.Serialization;

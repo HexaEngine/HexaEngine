@@ -20,13 +20,13 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || hasShape)
             {
                 return;
             }
 
             Capsule capsule = new(radius, length);
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             inertia = capsule.ComputeInertia(Mass);
             index = simulation.Shapes.Add(capsule);
             hasShape = true;

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Windows.Events
+﻿namespace VkTesting.Events
 {
     public class EnterEventArgs : RoutedEventArgs
     { }

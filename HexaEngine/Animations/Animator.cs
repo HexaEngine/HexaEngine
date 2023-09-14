@@ -1,7 +1,6 @@
 ﻿namespace HexaEngine.Animations
 {
     using HexaEngine.Components.Renderer;
-    using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Animations;
     using HexaEngine.Core.Scenes;
     using HexaEngine.Editor.Attributes;
@@ -18,6 +17,9 @@
         private bool invalid = false;
         private SkinnedMeshRendererComponent? renderer;
 
+        [JsonIgnore]
+        public GameObject GameObject { get; set; }
+
         private struct NodeId
         {
             public uint Id;
@@ -25,10 +27,10 @@
             public bool IsBone;
         }
 
-        public void Awake(IGraphicsDevice device, GameObject gameObject)
+        public void Awake()
         {
             invalid = false;
-            renderer = gameObject.GetComponent<SkinnedMeshRendererComponent>();
+            renderer = GameObject.GetComponent<SkinnedMeshRendererComponent>();
         }
 
         public void Destroy()

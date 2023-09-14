@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Vulkan
+﻿namespace VkTesting.Graphics
 {
     public struct QueueFamilyIndices
     {

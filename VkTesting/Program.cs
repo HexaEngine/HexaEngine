@@ -1,6 +1,5 @@
 ﻿namespace VkTesting
 {
-    using HexaEngine.Core;
     using VkTesting.Windows;
 
     public class Program

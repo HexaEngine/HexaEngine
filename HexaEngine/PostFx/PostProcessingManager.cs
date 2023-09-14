@@ -88,6 +88,8 @@
 
         public bool Enabled { get => enabled; set => enabled = value; }
 
+        public bool Debug => debug;
+
         public IReadOnlyList<Texture2D> DebugTextures => debugBuffers;
 
         public void Initialize(int width, int height, ICPUProfiler? profiler)

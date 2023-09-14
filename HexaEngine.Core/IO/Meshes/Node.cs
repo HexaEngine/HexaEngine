@@ -26,7 +26,7 @@
         public Matrix4x4 Transform;
         public NodeFlags Flags;
         public List<uint> Meshes;
-        public Node Parent;
+        public Node? Parent;
         public List<Node> Children;
         public Metadata Metadata;
 
@@ -34,7 +34,7 @@
         {
         }
 
-        public Node(string name, Matrix4x4 transform, NodeFlags flags, List<uint> meshes, Node parent, List<Node> children, Metadata metadata)
+        public Node(string name, Matrix4x4 transform, NodeFlags flags, List<uint> meshes, Node? parent, List<Node> children, Metadata metadata)
         {
             Name = name;
             Transform = transform;
@@ -45,7 +45,7 @@
             Metadata = metadata;
         }
 
-        public Node(string name, Matrix4x4 transform, NodeFlags flags, Node parent, Metadata metadata)
+        public Node(string name, Matrix4x4 transform, NodeFlags flags, Node? parent, Metadata metadata)
         {
             Name = name;
             Transform = transform;
@@ -54,6 +54,17 @@
             Parent = parent;
             Children = new();
             Metadata = metadata;
+        }
+
+        public Node(string name, Matrix4x4 transform, NodeFlags flags, Node? parent)
+        {
+            Name = name;
+            Transform = transform;
+            Flags = flags;
+            Meshes = new();
+            Parent = parent;
+            Children = new();
+            Metadata = new();
         }
 
         public static Node ReadFrom(Stream stream, Encoding encoding, Endianness endianness)

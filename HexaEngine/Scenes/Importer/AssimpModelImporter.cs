@@ -16,7 +16,7 @@
     using System.Numerics;
     using System.Runtime.InteropServices;
     using System.Text;
-    using Animation = Core.IO.Animations.Animation;
+    using AnimationData = Core.IO.Animations.Animation;
     using AssimpMaterialProperty = Silk.NET.Assimp.MaterialProperty;
     using AssimpNode = Silk.NET.Assimp.Node;
     using AssimpScene = Silk.NET.Assimp.Scene;
@@ -37,7 +37,7 @@
         private readonly Dictionary<string, Node> nodesN = new();
         private readonly Dictionary<Pointer<Mesh>, MeshData> meshesT = new();
 
-        private readonly Dictionary<string, Animation> animationsT = new();
+        private readonly Dictionary<string, AnimationData> animationsT = new();
 
         private string name;
         private string dir;
@@ -45,8 +45,9 @@
         private List<string> textures;
         private MeshData[] meshes;
         private MaterialData[] materials;
-        private Animation[] animations;
+        private AnimationData[] animations;
         private Node root;
+        private AnimationLibrary animationLibrary;
         private MaterialLibrary materialLibrary;
         private ModelFile modelFile;
         private unsafe AssimpScene* scene;
@@ -123,7 +124,7 @@
             string oldName = material.Name;
 
             ModelFile source = modelFile;
-            for (ulong j = 0; j < source.Header.MeshCount; j++)
+            for (int j = 0; j < source.Meshes.Count; j++)
             {
                 MeshData data = source.GetMesh(j);
                 if (data.MaterialName == oldName)
@@ -516,11 +517,11 @@
 
         private unsafe void LoadAnimations(AssimpScene* scene)
         {
-            animations = new Animation[scene->MNumAnimations];
+            animations = new AnimationData[scene->MNumAnimations];
             for (int i = 0; i < scene->MNumAnimations; i++)
             {
                 var anim = scene->MAnimations[i];
-                Animation animation = new(anim->MName, anim->MDuration, anim->MTicksPerSecond);
+                AnimationData animation = new(anim->MName, anim->MDuration, anim->MTicksPerSecond);
                 for (int j = 0; j < anim->MNumChannels; j++)
                 {
                     var chan = anim->MChannels[j];
@@ -581,7 +582,7 @@
                 }
 
                 animations[i] = animation;
-                animationsT.Add(animation.Name, animation);
+                animationsT.Add(anim->MName, animation);
             }
         }
 
@@ -749,17 +750,12 @@
                 }
             }
 
-            for (int i = 0; i < animations.Length; i++)
-            {
-                if (animations[i].Name == string.Empty)
-                    animations[i].Name = name;
-                animations[i].Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "animations", animations[i].Name + ".anim"), Encoding.UTF8);
-            }
-
-            materialLibrary = new(name, materials);
-            materialLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", materialLibrary.Name + ".matlib"), Encoding.UTF8);
-            modelFile = new(name, name, meshes, root);
-            modelFile.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes", modelFile.Name + ".model"), Encoding.UTF8);
+            animationLibrary = new(animations);
+            animationLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", name + ".anim"), Encoding.UTF8);
+            materialLibrary = new(materials);
+            materialLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", name + ".matlib"), Encoding.UTF8);
+            modelFile = new(name, meshes, root);
+            modelFile.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes", name + ".model"), Encoding.UTF8);
 
             FileSystem.Refresh();
         }

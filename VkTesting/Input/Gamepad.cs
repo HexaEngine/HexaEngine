@@ -1,10 +1,11 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
-    using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using VkTesting;
+    using VkTesting.Input.Events;
 
     public unsafe class Gamepad : IDisposable
     {

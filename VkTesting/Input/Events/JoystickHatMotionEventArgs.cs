@@ -1,5 +1,7 @@
-﻿namespace HexaEngine.Core.Input.Events
+﻿namespace VkTesting.Input.Events
 {
+    using VkTesting.Input;
+
     public class JoystickHatMotionEventArgs : EventArgs
     {
         public JoystickHatMotionEventArgs()

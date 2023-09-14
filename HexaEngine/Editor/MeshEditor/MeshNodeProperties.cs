@@ -6,7 +6,6 @@
     using HexaEngine.ImGuiNET;
     using HexaEngine.Mathematics;
     using System.Numerics;
-    using System.Reflection.Emit;
 
     public class MeshNodeProperties : EditorWindow
     {
@@ -46,7 +45,7 @@
                     for (int i = 0; i < selected.Meshes.Count; i++)
                     {
                         var id = selected.Meshes[i];
-                        var data = editor.Current.Meshes[id];
+                        var data = editor.Current.Meshes[(int)id];
                         if (ImGui.TreeNodeEx($"Mesh data: {id}"))
                         {
                             Models($"Mesh data: {id}", data);

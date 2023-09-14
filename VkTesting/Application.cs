@@ -1,11 +1,10 @@
-﻿namespace HexaEngine.Core
+﻿namespace VkTesting
 {
-    using HexaEngine.Core.Input;
-    using HexaEngine.Core.Windows.Events;
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using VkTesting;
+    using VkTesting.Events;
+    using VkTesting.Input;
     using VkTesting.Windows;
 
     public static unsafe class Application

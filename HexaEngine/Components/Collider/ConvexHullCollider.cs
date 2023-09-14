@@ -49,21 +49,21 @@
 
         public override void CreateShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || convexHull == null || hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || convexHull == null || hasShape)
             {
                 return;
             }
 
             var ull = convexHull.Value;
             inertia = ull.ComputeInertia(Mass);
-            pose = new(parent.Transform.GlobalPosition, parent.Transform.GlobalOrientation);
+            pose = new(GameObject.Transform.GlobalPosition, GameObject.Transform.GlobalOrientation);
             index = simulation.Shapes.Add(ull);
             hasShape = true;
         }
 
         public override void DestroyShape()
         {
-            if (Application.InDesignMode || parent == null || simulation == null || bufferPool == null || !hasShape)
+            if (Application.InDesignMode || GameObject == null || simulation == null || bufferPool == null || !hasShape)
             {
                 return;
             }

@@ -1,8 +1,7 @@
-﻿namespace HexaEngine.Vulkan
+﻿namespace VkTesting.Graphics
 {
-    using HexaEngine.Core.Unsafes;
     using Silk.NET.Vulkan;
-    using VkTesting.Graphics;
+    using VkTesting.Unsafes;
     using static VulkanGraphicsDevice;
 
     public unsafe class VulkanRenderPass : IDisposable

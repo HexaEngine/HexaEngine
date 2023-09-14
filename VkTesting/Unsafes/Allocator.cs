@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Unsafes
+﻿namespace VkTesting.Unsafes
 {
     using System.Runtime.InteropServices;
 
@@ -36,7 +36,7 @@
 
         public unsafe T* Allocate<T>(int count) where T : unmanaged
         {
-            return (T*)Allocate((nint)(sizeof(T) * count));
+            return (T*)Allocate(sizeof(T) * count);
         }
 
         public unsafe T* Allocate<T>(uint count) where T : unmanaged
@@ -51,7 +51,7 @@
 
         public unsafe T** AllocateArray<T>(int count) where T : unmanaged
         {
-            return (T**)Allocate((nint)(sizeof(nint) * count));
+            return (T**)Allocate(sizeof(nint) * count);
         }
 
         public unsafe T** AllocateArray<T>(uint count) where T : unmanaged

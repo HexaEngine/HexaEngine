@@ -1,7 +1,5 @@
-﻿namespace HexaEngine.Vulkan
+﻿namespace VkTesting.Graphics
 {
-    using HexaEngine.Core;
-    using HexaEngine.Core.Unsafes;
     using Silk.NET.Core.Native;
     using Silk.NET.SDL;
     using Silk.NET.Vulkan;
@@ -10,7 +8,8 @@
     using System.Diagnostics;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
-    using VkTesting.Graphics;
+    using VkTesting;
+    using VkTesting.Unsafes;
     using VkTesting.Windows;
     using Semaphore = Silk.NET.Vulkan.Semaphore;
     using Viewport = Silk.NET.Vulkan.Viewport;
@@ -160,7 +159,7 @@
 
                     for (int j = 0; j < count; j++)
                     {
-                        string? str = Marshal.PtrToStringUTF8(new IntPtr(p[j].LayerName));
+                        string? str = Marshal.PtrToStringUTF8(new nint(p[j].LayerName));
                         if (str?.Equals(ValidationLayers[i]) ?? false)
                         {
                             found = true;
@@ -345,7 +344,7 @@
                 throw new VulkanException(result);
             }
 
-            this.Instance = instance;
+            Instance = instance;
 
             uint extensionCount = 0;
             vk.EnumerateInstanceExtensionProperties((byte*)null, &extensionCount, (ExtensionProperties*)null);
@@ -358,7 +357,7 @@
             {
                 fixed (ExtensionProperties* extensionProperties_ptr = extensionProperties)
                 {
-                    Trace.WriteLine(Marshal.PtrToStringUTF8(new IntPtr(extensionProperties_ptr[i].ExtensionName)));
+                    Trace.WriteLine(Marshal.PtrToStringUTF8(new nint(extensionProperties_ptr[i].ExtensionName)));
                 }
             }
         }

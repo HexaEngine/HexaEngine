@@ -1,20 +1,25 @@
 ﻿namespace HexaEngine.Scenes.Managers
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
 
     public class MaterialManager
     {
+        private readonly List<MaterialLibrary> libraries = new();
+        private readonly Dictionary<string, MaterialLibrary> pathToLib = new();
+
         private readonly List<MaterialData> materials = new();
         private readonly Dictionary<MaterialData, MaterialLibrary> matToLib = new();
-        private readonly Dictionary<string, MaterialLibrary> cache = new();
-        private readonly object lockObject = new();
+
+        private readonly object _lock = new();
+
+        public IReadOnlyList<MaterialLibrary> Libraries => libraries;
 
         public IReadOnlyList<MaterialData> Materials => materials;
 
@@ -24,37 +29,63 @@
 
         public MaterialLibrary GetMaterialLibraryForm(MaterialData materialData)
         {
-            lock (lockObject)
+            lock (_lock)
             {
                 return matToLib[materialData];
             }
         }
 
+        public string? GetPathToMaterialLibrary(MaterialLibrary library)
+        {
+            lock (_lock)
+            {
+                var result = pathToLib.FirstOrDefault(x => x.Value == library);
+                return result.Key;
+            }
+        }
+
+        public void Clear()
+        {
+            lock (_lock)
+            {
+                libraries.Clear();
+                pathToLib.Clear();
+                materials.Clear();
+                matToLib.Clear();
+            }
+        }
+
         public string GetFreeName(string name)
         {
-            if (!Exists(name))
+            lock (_lock)
             {
-                return name;
-            }
-
-            int i = 1;
-            while (true)
-            {
-                string newName = $"{name} {i++}";
-                if (!Exists(newName))
+                if (!Exists(name))
                 {
-                    return newName;
+                    return name;
+                }
+
+                int i = 1;
+                while (true)
+                {
+                    string newName = $"{name} {i++}";
+                    if (!Exists(newName))
+                    {
+                        return newName;
+                    }
                 }
             }
         }
 
         public bool Exists(string name)
         {
-            for (int i = 0; i < materials.Count; i++)
+            lock (_lock)
             {
-                if (materials[i].Name == name)
+                for (int i = 0; i < materials.Count; i++)
                 {
-                    return true;
+                    if (materials[i].Name == name)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -62,7 +93,7 @@
 
         public bool TryGetMaterial(string name, [NotNullWhen(true)] out MaterialData? material)
         {
-            lock (lockObject)
+            lock (_lock)
             {
                 material = materials.FirstOrDefault(x => x.Name == name);
             }
@@ -72,7 +103,7 @@
 
         public bool Rename(string oldName, string newName)
         {
-            lock (lockObject)
+            lock (_lock)
             {
                 if (TryGetMaterial(oldName, out MaterialData? desc))
                 {
@@ -94,7 +125,7 @@
 
         public void Update(MaterialData desc)
         {
-            lock (lockObject)
+            lock (_lock)
             {
                 if (!materials.Contains(desc))
                 {
@@ -107,7 +138,7 @@
 
         public async Task UpdateAsync(MaterialData desc)
         {
-            lock (lockObject)
+            lock (_lock)
             {
                 if (!materials.Contains(desc))
                 {
@@ -120,27 +151,32 @@
 
         public MaterialLibrary Load(string path)
         {
-            if (cache.TryGetValue(path, out var library))
+            MaterialLibrary? library;
+            lock (_lock)
             {
-                return library;
-            }
+                if (pathToLib.TryGetValue(path, out library))
+                {
+                    return library;
+                }
 
-            if (FileSystem.Exists(path))
-            {
-                library = MaterialLibrary.Load(path);
-            }
-            else
-            {
-                library = MaterialLibrary.Empty;
-                Trace.WriteLine($"Warning couldn't find material library {path}");
-            }
+                if (FileSystem.Exists(path))
+                {
+                    library = MaterialLibrary.Load(path);
+                }
+                else
+                {
+                    library = MaterialLibrary.Empty;
+                    Logger.Warn($"Warning couldn't find material library {path}");
+                }
 
-            cache.Add(path, library);
+                libraries.Add(library);
+                pathToLib.Add(path, library);
 
-            for (int i = 0; i < library.Materials.Length; i++)
-            {
-                materials.Add(library.Materials[i]);
-                matToLib.Add(library.Materials[i], library);
+                for (int i = 0; i < library.Materials.Count; i++)
+                {
+                    materials.Add(library.Materials[i]);
+                    matToLib.Add(library.Materials[i], library);
+                }
             }
 
             return library;

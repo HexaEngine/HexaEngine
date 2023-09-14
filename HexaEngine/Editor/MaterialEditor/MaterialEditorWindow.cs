@@ -22,9 +22,9 @@
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
     using HexaEngine.Mathematics;
+    using HexaEngine.Meshes;
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
-    using HexaEngine.Scenes;
     using System.IO;
     using System.Numerics;
     using System.Reflection;
@@ -450,7 +450,7 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/dfg/ps.hlsl"
-            }, new ShaderMacro[2] { new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0") });
+            }, GraphicsPipelineState.Default, new ShaderMacro[2] { new("MULTISCATTER", false ? "1" : "0"), new("CLOTH", true ? "1" : "0") });
 
             iblDFG = new(device, Format.R16G16B16A16Float, 128, 128, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             var context = device.Context;

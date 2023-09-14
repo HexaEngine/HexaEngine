@@ -2,7 +2,6 @@
 
 namespace HexaEngine.Scenes
 {
-    using Silk.NET.Core.Native;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
 
@@ -86,10 +85,9 @@ namespace HexaEngine.Scenes
                 {
                     if (awake)
                     {
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-                        t.Awake(null, obj);
+                        t.GameObject = obj;
+                        t.Awake();
                     }
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                     list.Add(t);
                 }
             }

@@ -10,7 +10,7 @@
     using System.Text;
 
     /// <summary>
-    /// Represents a terrain mesh generated from a height map.
+    /// Represents a terrain mesh generated from a height heightMap.
     /// </summary>
     public unsafe class TerrainCellData
     {
@@ -18,11 +18,12 @@
         public string[] Materials;
         public uint VerticesCount;
         public uint IndicesCount;
-        public uint LODLevel;
+        private uint width;
+        private uint height;
+        private uint lodLevel;
         public BoundingBox Box;
         public BoundingSphere Sphere;
         public TerrainVertexFlags Flags;
-        public HeightMap HeightMap;
         public uint[] Indices;
         public Vector3[] Positions;
         public Vector3[] UVs;
@@ -35,19 +36,21 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TerrainCellData"/> class from a height map.
+        /// Initializes a new instance of the <see cref="TerrainCellData"/> class from a height heightMap.
         /// </summary>
-        /// <param name="map">The height map.</param>
-        public TerrainCellData(HeightMap map, uint lodLevel = 0)
+        /// <param filename="heightMap">The height heightMap.</param>
+        public TerrainCellData(HeightMap heightMap, uint width, uint height, float tessellationFactor = 1, uint lodLevel = 0)
         {
-            HeightMap = map;
-            LODLevel = lodLevel;
-            uint cols = map.Width;
-            uint rows = map.Height;
+            this.lodLevel = lodLevel;
+            this.width = width;
+            this.height = height;
+
+            uint actualWidth = (uint)(width * tessellationFactor);
+            uint actualHeight = (uint)(height * tessellationFactor);
 
             // Create the grid
-            VerticesCount = rows * cols;
-            IndicesCount = (rows - 1) * (cols - 1) * 2 * 3;
+            VerticesCount = actualHeight * actualWidth;
+            IndicesCount = (actualHeight - 1) * (actualWidth - 1) * 2 * 3;
 
             Indices = new uint[IndicesCount];
             Positions = new Vector3[VerticesCount];
@@ -60,11 +63,29 @@
             int texUIndex = 0;
             int texVIndex = 0;
 
-            for (uint i = 0; i < rows; ++i)
+            float scaleFactorW = width / heightMap.Width;
+            float scaleFactorH = height / heightMap.Height;
+            float targetScaleFactor = 1 / tessellationFactor;
+
+            for (uint targetX = 0; targetX < actualHeight; ++targetX)
             {
-                for (uint j = 0; j < cols; ++j)
+                for (uint targetY = 0; targetY < actualWidth; ++targetY)
                 {
-                    Positions[i * cols + j] = map[i * cols + j];
+                    float sum = 0;
+
+                    for (int subX = 0; subX < scaleFactorW; ++subX)
+                    {
+                        for (int subY = 0; subY < scaleFactorH; ++subY)
+                        {
+                            uint sourceX = (uint)(targetX * scaleFactorW + subX);
+                            uint sourceY = (uint)(targetY * scaleFactorH + subY);
+                            sum += heightMap[sourceX, sourceY];
+                        }
+                    }
+
+                    float averageHeight = sum / (scaleFactorW * scaleFactorH);
+
+                    Positions[targetX * actualWidth + targetY] = new(targetY * targetScaleFactor, averageHeight, targetX * targetScaleFactor);
                 }
             }
 
@@ -73,33 +94,33 @@
             Box = BoundingBoxHelper.Compute(Positions);
             Sphere = BoundingSphere.CreateFromBoundingBox(Box);
 
-            for (uint i = 0; i < rows - 1; i++)
+            for (uint i = 0; i < actualHeight - 1; i++)
             {
-                for (uint j = 0; j < cols - 1; j++)
+                for (uint j = 0; j < actualWidth - 1; j++)
                 {
                     // Bottom left of quad
-                    Indices[k] = i * cols + j;
-                    UVs[i * cols + j] = new Vector3(texUIndex + 0.0f, texVIndex + 1.0f, 0);
+                    Indices[k] = i * actualWidth + j;
+                    UVs[i * actualWidth + j] = new Vector3(texUIndex + 0.0f, texVIndex + 1.0f, 0);
 
                     // Top left of quad
-                    Indices[k + 1] = (i + 1) * cols + j;
-                    UVs[(i + 1) * cols + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
+                    Indices[k + 1] = (i + 1) * actualWidth + j;
+                    UVs[(i + 1) * actualWidth + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
 
                     // Bottom right of quad
-                    Indices[k + 2] = i * cols + j + 1;
-                    UVs[i * cols + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
+                    Indices[k + 2] = i * actualWidth + j + 1;
+                    UVs[i * actualWidth + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
 
                     // Top left of quad
-                    Indices[k + 3] = (i + 1) * cols + j;
-                    UVs[(i + 1) * cols + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
+                    Indices[k + 3] = (i + 1) * actualWidth + j;
+                    UVs[(i + 1) * actualWidth + j] = new Vector3(texUIndex + 0.0f, texVIndex + 0.0f, 0);
 
                     // Top right of quad
-                    Indices[k + 4] = (i + 1) * cols + j + 1;
-                    UVs[(i + 1) * cols + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 0.0f, 0);
+                    Indices[k + 4] = (i + 1) * actualWidth + j + 1;
+                    UVs[(i + 1) * actualWidth + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 0.0f, 0);
 
                     // Bottom right of quad
-                    Indices[k + 5] = i * cols + j + 1;
-                    UVs[i * cols + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
+                    Indices[k + 5] = i * actualWidth + j + 1;
+                    UVs[i * actualWidth + j + 1] = new Vector3(texUIndex + 1.0f, texVIndex + 1.0f, 0);
 
                     k += 6; // next quad
 
@@ -117,18 +138,7 @@
             CalcTangentsProcess.ProcessMesh2(this);
 
             Flags |= TerrainVertexFlags.Tangents | TerrainVertexFlags.Bitangents;
-
-            var tesselationLevel = 4 - lodLevel;
-
-            for (int i = 0; i < tesselationLevel; i++)
-            {
-                TessellatorProcess.Tessellate(this);
-            }
         }
-
-        public uint Width => HeightMap.Width;
-
-        public uint Height => HeightMap.Height;
 
         public static TerrainCellData Read(Stream src, Encoding encoding, Endianness endianness)
         {
@@ -141,12 +151,12 @@
             }
             data.VerticesCount = src.ReadUInt32(endianness);
             data.IndicesCount = src.ReadUInt32(endianness);
-            data.LODLevel = src.ReadUInt32(endianness);
+            data.width = src.ReadUInt32(endianness);
+            data.height = src.ReadUInt32(endianness);
+            data.lodLevel = src.ReadUInt32(endianness);
             data.Box = BoundingBox.Read(src, endianness);
             data.Sphere = BoundingSphere.Read(src, endianness);
             data.Flags = (TerrainVertexFlags)src.ReadInt32(endianness);
-
-            data.HeightMap = HeightMap.Read(src, encoding, endianness);
 
             data.Indices = new uint[data.IndicesCount];
             for (ulong i = 0; i < data.IndicesCount; i++)
@@ -208,12 +218,10 @@
             }
             dst.WriteUInt32(IndicesCount, endianness);
             dst.WriteUInt32(VerticesCount, endianness);
-            dst.WriteUInt32(LODLevel, endianness);
+            dst.WriteUInt32(lodLevel, endianness);
             Box.Write(dst, endianness);
             Sphere.Write(dst, endianness);
             dst.WriteInt32((int)Flags, endianness);
-
-            HeightMap.Write(dst, encoding, endianness);
 
             for (ulong i = 0; i < IndicesCount; i++)
             {
@@ -260,8 +268,8 @@
         /// <summary>
         /// Creates an index buffer for the terrain.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
-        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <param filename="device">The graphics device.</param>
+        /// <param filename="accessFlags">The CPU access flags.</param>
         /// <returns>The index buffer.</returns>
         public IndexBuffer<uint> CreateIndexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
@@ -271,8 +279,8 @@
         /// <summary>
         /// Writes the terrain indices to an existing index buffer.
         /// </summary>
-        /// <param name="context">The graphics context.</param>
-        /// <param name="ib">The index buffer to write to.</param>
+        /// <param filename="context">The graphics context.</param>
+        /// <param filename="ib">The index buffer to write to.</param>
         /// <returns>True if the operation was successful; otherwise, false.</returns>
         public bool WriteIndexBuffer(IGraphicsContext context, IndexBuffer<uint> ib)
         {
@@ -287,8 +295,8 @@
         /// <summary>
         /// Creates a vertex buffer for the terrain.
         /// </summary>
-        /// <param name="device">The graphics device.</param>
-        /// <param name="accessFlags">The CPU access flags.</param>
+        /// <param filename="device">The graphics device.</param>
+        /// <param filename="accessFlags">The CPU access flags.</param>
         /// <returns>The vertex buffer.</returns>
         public VertexBuffer<TerrainVertex> CreateVertexBuffer(IGraphicsDevice device, CpuAccessFlags accessFlags = CpuAccessFlags.None)
         {
@@ -337,8 +345,8 @@
         /// <summary>
         /// Writes the terrain vertices to an existing vertex buffer.
         /// </summary>
-        /// <param name="context">The graphics context.</param>
-        /// <param name="vb">The vertex buffer to write to.</param>
+        /// <param filename="context">The graphics context.</param>
+        /// <param filename="vb">The vertex buffer to write to.</param>
         /// <returns>True if the operation was successful; otherwise, false.</returns>
         public bool WriteVertexBuffer(IGraphicsContext context, VertexBuffer<TerrainVertex> vb)
         {
@@ -402,8 +410,8 @@
         /// <summary>
         /// Performs a ray intersection test with the terrain.
         /// </summary>
-        /// <param name="ray">The ray to test.</param>
-        /// <param name="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
+        /// <param filename="ray">The ray to test.</param>
+        /// <param filename="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
         /// <returns>True if the ray intersects the terrain; otherwise, false.</returns>
         public bool IntersectRay(Ray ray, out Vector3 pointInTerrain)
         {
@@ -431,9 +439,9 @@
         /// <summary>
         /// Performs a ray intersection test with the transformed terrain.
         /// </summary>
-        /// <param name="ray">The ray to test.</param>
-        /// <param name="transform">The transformation matrix to apply to the terrain.</param>
-        /// <param name="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
+        /// <param filename="ray">The ray to test.</param>
+        /// <param filename="transform">The transformation matrix to apply to the terrain.</param>
+        /// <param filename="pointInTerrain">The point of intersection in terrain coordinates, if the ray intersects.</param>
         /// <returns>True if the ray intersects the transformed terrain; otherwise, false.</returns>
         public bool IntersectRay(Ray ray, Matrix4x4 transform, out Vector3 pointInTerrain)
         {
@@ -462,37 +470,37 @@
         /// <summary>
         /// Gets the index for the specified coordinates in the terrain.
         /// </summary>
-        /// <param name="x">The x-coordinate.</param>
-        /// <param name="y">The y-coordinate.</param>
+        /// <param filename="x">The x-coordinate.</param>
+        /// <param filename="y">The y-coordinate.</param>
         /// <returns>The index.</returns>
         public uint GetIndexFor(uint x, uint y)
         {
-            return y * Width + x;
+            return y * width + x;
         }
 
         /// <summary>
         /// Gets the index for the specified coordinates in the terrain.
         /// </summary>
-        /// <param name="x">The x-coordinate.</param>
-        /// <param name="y">The y-coordinate.</param>
+        /// <param filename="x">The x-coordinate.</param>
+        /// <param filename="y">The y-coordinate.</param>
         /// <returns>The index.</returns>
         public int GetIndexFor(int x, int y)
         {
-            return (int)(x * Width + y);
+            return (int)(x * width + y);
         }
 
         /// <summary>
         /// Averages the edge of the terrain with the corresponding edge of another terrain.
         /// </summary>
-        /// <param name="edge">The edge to average.</param>
-        /// <param name="other">The other terrain.</param>
+        /// <param filename="edge">The edge to average.</param>
+        /// <param filename="other">The other terrain.</param>
         public void AverageEdge(Edge edge, TerrainCellData other)
         {
             if (edge == Edge.ZPos)
             {
-                for (uint i = 0; i < Width; i++)
+                for (uint i = 0; i < width; i++)
                 {
-                    var indexA = GetIndexFor(i, Height - 1);
+                    var indexA = GetIndexFor(i, height - 1);
                     var indexB = GetIndexFor(i, 0);
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
@@ -502,10 +510,10 @@
             }
             if (edge == Edge.ZNeg)
             {
-                for (uint i = 0; i < Width; i++)
+                for (uint i = 0; i < width; i++)
                 {
                     var indexA = GetIndexFor(i, 0);
-                    var indexB = GetIndexFor(i, Height - 1);
+                    var indexB = GetIndexFor(i, height - 1);
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
                     Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);
@@ -514,9 +522,9 @@
             }
             if (edge == Edge.XPos)
             {
-                for (uint i = 0; i < Height; i++)
+                for (uint i = 0; i < height; i++)
                 {
-                    var indexA = GetIndexFor(Width - 1, i);
+                    var indexA = GetIndexFor(width - 1, i);
                     var indexB = GetIndexFor(0, i);
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
@@ -526,10 +534,10 @@
             }
             if (edge == Edge.XNeg)
             {
-                for (uint i = 0; i < Height; i++)
+                for (uint i = 0; i < height; i++)
                 {
                     var indexA = GetIndexFor(0, i);
-                    var indexB = GetIndexFor(Width - 1, i);
+                    var indexB = GetIndexFor(width - 1, i);
 
                     Normals[indexA] = other.Normals[indexB] = Vector3.Normalize(Normals[indexA] + other.Normals[indexB]);
                     Tangents[indexA] = other.Tangents[indexB] = Vector3.Normalize(Tangents[indexA] + other.Tangents[indexB]);

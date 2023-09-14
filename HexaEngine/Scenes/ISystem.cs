@@ -41,5 +41,13 @@ namespace HexaEngine.Scenes
         public void Destroy()
         {
         }
+
+        public void Load(IGraphicsDevice device)
+        {
+        }
+
+        public void Unload()
+        {
+        }
     }
 }

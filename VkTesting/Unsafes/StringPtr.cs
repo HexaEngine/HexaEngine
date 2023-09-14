@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Unsafes
+﻿namespace VkTesting.Unsafes
 {
     using HexaEngine.Mathematics;
     using System;
@@ -320,7 +320,7 @@
 
         public void Release()
         {
-            Utils.Free(Ptr);
+            Free(Ptr);
         }
 
         public static implicit operator string(U16String ptr)
@@ -399,7 +399,7 @@
 
         public void Release()
         {
-            Utils.Free(Ptr);
+            Free(Ptr);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -1,62 +1,32 @@
 ﻿namespace HexaEngine.Core.IO.Materials
 {
+    using HexaEngine.Core.Debugging;
     using HexaEngine.Mathematics;
-    using System.Diagnostics;
     using System.IO;
     using System.Text;
 
     public class MaterialLibrary
     {
-        public static readonly MaterialLibrary Empty = new(string.Empty) { Header = default, Materials = Array.Empty<MaterialData>() };
+        public static readonly MaterialLibrary Empty = new();
 
-        public string Name;
-
-        public MaterialLibraryHeader Header;
-        public MaterialData[] Materials;
+        private MaterialLibraryHeader header;
+        private readonly List<MaterialData> materials;
 
         public MaterialLibrary()
         {
-            Name = string.Empty;
-            Header = default;
-            Materials = Array.Empty<MaterialData>();
+            header = default;
+            materials = new();
         }
 
-        public MaterialLibrary(string path)
+        public MaterialLibrary(IList<MaterialData> materials)
         {
-            Name = path;
-            var fs = FileSystem.Open(path);
-            Header.Read(fs);
-
-            var stream = fs;
-
-            Materials = new MaterialData[Header.MaterialCount];
-            for (int i = 0; i < Header.MaterialCount; i++)
-            {
-                Materials[i] = MaterialData.Read(stream, Header.Encoding, Header.Endianness);
-            }
-            fs.Close();
+            header.MaterialCount = (uint)materials.Count;
+            this.materials = new(materials);
         }
 
-        public MaterialLibrary(string path, Stream fs)
-        {
-            Name = path;
-            Header.Read(fs);
+        public MaterialLibraryHeader Header => header;
 
-            var stream = fs;
-
-            Materials = new MaterialData[Header.MaterialCount];
-            for (int i = 0; i < Header.MaterialCount; i++)
-            {
-                Materials[i] = MaterialData.Read(stream, Header.Encoding, Header.Endianness);
-            }
-        }
-
-        public MaterialLibrary(string name, MaterialData[] materials)
-        {
-            Name = name;
-            Header.MaterialCount = (uint)materials.LongLength;
-            Materials = materials;
-        }
+        public List<MaterialData> Materials => materials;
 
         public void Save(string path, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.None)
         {
@@ -64,15 +34,15 @@
 
             var stream = fs;
 
-            Header.Encoding = encoding;
-            Header.Endianness = endianness;
-            Header.Compression = compression;
-            Header.MaterialCount = (uint)Materials.LongLength;
-            Header.Write(stream);
+            header.Encoding = encoding;
+            header.Endianness = endianness;
+            header.Compression = compression;
+            header.MaterialCount = (uint)materials.Count;
+            header.Write(stream);
 
-            for (int i = 0; i < Materials.Length; i++)
+            for (int i = 0; i < materials.Count; i++)
             {
-                Materials[i].Write(stream, Header.Encoding, Header.Endianness);
+                materials[i].Write(stream, header.Encoding, header.Endianness);
             }
 
             fs.Close();
@@ -80,25 +50,47 @@
 
         public static MaterialLibrary Load(string path)
         {
-            return new MaterialLibrary(path);
+            return Load(FileSystem.Open(path));
         }
 
         public static MaterialLibrary LoadExternal(string path)
         {
-            return new MaterialLibrary(path, File.OpenRead(path));
+            return Load(File.OpenRead(path));
+        }
+
+        public static MaterialLibrary Load(Stream fs)
+        {
+            MaterialLibrary library = new();
+
+            library.header.Read(fs);
+
+            var stream = fs;
+
+            library.materials.Clear();
+            library.materials.Capacity = (int)library.header.MaterialCount;
+
+            for (int i = 0; i < library.header.MaterialCount; i++)
+            {
+                library.materials.Add(MaterialData.Read(stream, library.header.Encoding, library.header.Endianness));
+            }
+
+            stream.Close();
+            fs.Close();
+
+            return library;
         }
 
         public MaterialData GetMaterial(string name)
         {
-            for (int i = 0; i < Materials.Length; i++)
+            for (int i = 0; i < materials.Count; i++)
             {
-                if (Materials[i].Name == name)
+                if (materials[i].Name == name)
                 {
-                    return Materials[i];
+                    return materials[i];
                 }
             }
 
-            Trace.WriteLine($"Warning couldn't find material {name} in library {Name}");
+            Logger.Warn($"Warning couldn't find material {name} in library");
 
             return MaterialData.Empty;
         }

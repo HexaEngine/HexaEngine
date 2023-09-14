@@ -7,6 +7,7 @@
 
     public class ResourceManager : IDisposable
     {
+        private readonly object _lock = new();
         private readonly string name;
         private readonly IGraphicsDevice graphicsDevice;
         private readonly IAudioDevice audioDevice;
@@ -30,6 +31,8 @@
             factories.AddRange(services);
         }
 
+        public object SyncObject => _lock;
+
         public string Name => name;
 
         public IGraphicsDevice GraphicsDevice => graphicsDevice;
@@ -42,44 +45,56 @@
 
         public void BeginNoGCRegion()
         {
-            if (suppressCleanup)
+            lock (_lock)
             {
-                return;
-            }
+                if (suppressCleanup)
+                {
+                    return;
+                }
 
-            suppressCleanup = true;
+                suppressCleanup = true;
 
-            for (int i = 0; i < factories.Count; i++)
-            {
-                factories[i].SuppressCleanup = true;
+                for (int i = 0; i < factories.Count; i++)
+                {
+                    factories[i].SuppressCleanup = true;
+                }
             }
         }
 
         public void EndNoGCRegion()
         {
-            if (!suppressCleanup)
+            lock (_lock)
             {
-                return;
-            }
+                if (!suppressCleanup)
+                {
+                    return;
+                }
 
-            suppressCleanup = false;
+                suppressCleanup = false;
 
-            for (int i = 0; i < factories.Count; i++)
-            {
-                var factory = factories[i];
-                factory.SuppressCleanup = false;
-                factory.Cleanup();
+                for (int i = 0; i < factories.Count; i++)
+                {
+                    var factory = factories[i];
+                    factory.SuppressCleanup = false;
+                    factory.Cleanup();
+                }
             }
         }
 
         public void AddFactory(IResourceFactory factory)
         {
-            factories.Add(factory);
+            lock (_lock)
+            {
+                factories.Add(factory);
+            }
         }
 
         public void RemoveFactory(IResourceFactory factory)
         {
-            factories.Remove(factory);
+            lock (_lock)
+            {
+                factories.Remove(factory);
+            }
         }
 
         public IResourceFactory? GetFactoryByResourceType(Type type)

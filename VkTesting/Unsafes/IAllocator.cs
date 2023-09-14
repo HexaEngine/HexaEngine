@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Unsafes
+﻿namespace VkTesting.Unsafes
 {
     public unsafe interface IAllocator
     {

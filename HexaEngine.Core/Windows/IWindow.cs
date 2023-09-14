@@ -17,7 +17,7 @@
         /// <summary>
         /// Gets the render dispatcher associated with the render window.
         /// </summary>
-        RenderDispatcher Dispatcher { get; }
+        ThreadDispatcher Dispatcher { get; }
 
         /// <summary>
         /// Gets the graphics device associated with the render window.

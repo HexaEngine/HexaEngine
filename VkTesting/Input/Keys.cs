@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.Core.Input
+﻿namespace VkTesting.Input
 {
     /// <summary>
     /// Enumeration for virtual keys.

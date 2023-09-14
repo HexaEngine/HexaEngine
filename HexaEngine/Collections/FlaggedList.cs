@@ -134,7 +134,8 @@
                 {
                     if (awake)
                     {
-                        t.Awake(null, obj);
+                        t.GameObject = obj;
+                        t.Awake();
                     }
                     Add(t);
                 }

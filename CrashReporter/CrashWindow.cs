@@ -40,7 +40,7 @@
             }
         }
 
-        public RenderDispatcher Dispatcher => throw new NotSupportedException();
+        public ThreadDispatcher Dispatcher => throw new NotSupportedException();
 
         public IGraphicsDevice Device => graphicsDevice;
 

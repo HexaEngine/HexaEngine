@@ -111,7 +111,7 @@
 
         public void Load()
         {
-            for (uint i = 0; i < modelFile.Header.MeshCount; i++)
+            for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
                 var data = modelFile.GetMesh(i);
                 Material material = ResourceManager.Shared.LoadMaterial(data, materialLibrary.GetMaterial(data.MaterialName));
@@ -126,7 +126,7 @@
 
         public async Task LoadAsync()
         {
-            for (uint i = 0; i < modelFile.Header.MeshCount; i++)
+            for (int i = 0; i < modelFile.Meshes.Count; i++)
             {
                 var data = modelFile.GetMesh(i);
                 Material material = await ResourceManager.Shared.LoadMaterialAsync(data, materialLibrary.GetMaterial(data.MaterialName));

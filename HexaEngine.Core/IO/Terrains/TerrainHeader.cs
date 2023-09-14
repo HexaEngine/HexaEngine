@@ -13,8 +13,8 @@
         public Encoding Encoding;
         public Compression Compression;
         public string MaterialLibrary;
-        public uint X;
-        public uint Y;
+        public int X;
+        public int Y;
         public uint LODLevels;
         public ulong ContentStart;
 
@@ -34,6 +34,8 @@
             Encoding = Encoding.GetEncoding(stream.ReadInt32(Endianness));
             Compression = (Compression)stream.ReadInt32(Endianness);
             MaterialLibrary = stream.ReadString(Encoding, Endianness) ?? string.Empty;
+            X = stream.ReadInt32(Endianness);
+            Y = stream.ReadInt32(Endianness);
             LODLevels = stream.ReadUInt32(Endianness);
             ContentStart = (ulong)stream.Position;
         }
@@ -46,6 +48,8 @@
             stream.WriteInt32(Encoding.CodePage, Endianness);
             stream.WriteInt32((int)Compression, Endianness);
             stream.WriteString(MaterialLibrary, Encoding, Endianness);
+            stream.WriteInt32(X, Endianness);
+            stream.WriteInt32(Y, Endianness);
             stream.WriteUInt32(LODLevels, Endianness);
         }
     }

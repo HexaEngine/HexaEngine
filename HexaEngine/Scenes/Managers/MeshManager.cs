@@ -42,7 +42,11 @@
                 if (meshes.Contains(source))
                 {
                     meshes.Remove(source);
-                    pathToMeshes.Remove(source.Name);
+                    var key = pathToMeshes.FirstOrDefault(x => x.Value == source);
+                    if (key.Key != null)
+                    {
+                        pathToMeshes.Remove(key.Key);
+                    }
                 }
             }
         }

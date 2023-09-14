@@ -11,6 +11,7 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MeshEditor.Dialogs;
     using HexaEngine.Mathematics;
+    using HexaEngine.Meshes;
     using HexaEngine.Scenes;
     using ImGuiNET;
     using ImGuizmoNET;
@@ -135,7 +136,7 @@
         {
             try
             {
-                model = ModelFile.LoadExternal(path);
+                model = ModelFile.Load(path);
             }
             catch (Exception ex)
             {
@@ -146,8 +147,8 @@
                 return;
             }
 
-            sources = new MeshSource[model.Meshes.Length];
-            for (int i = 0; i < model.Meshes.Length; i++)
+            sources = new MeshSource[model.Meshes.Count];
+            for (int i = 0; i < model.Meshes.Count; i++)
             {
                 sources[i] = new(device, model.Meshes[i]);
             }
