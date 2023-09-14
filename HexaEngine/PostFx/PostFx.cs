@@ -32,15 +32,11 @@
         [XmlIgnore]
         public bool Enabled { get; set; }
 
-        [XmlIgnore]
-        public int Priority { get; set; }
-
         public PostFxPassCollection Passes { get; set; } = new();
+
         public bool Initialized { get; }
 
-        public event Action<bool> OnEnabledChanged;
-
-        public event Action<int> OnPriorityChanged;
+        public event Action<IPostFx, bool>? OnEnabledChanged;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

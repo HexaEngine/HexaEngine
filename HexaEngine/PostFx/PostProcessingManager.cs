@@ -10,6 +10,9 @@
 
     public class PostProcessingManager : IDisposable
     {
+        private readonly object _lock = new();
+        private readonly SemaphoreSlim semaphore = new(1);
+
         private ShaderMacro[] macros;
         private readonly List<IPostFx> effectsSorted = new();
         private readonly List<IPostFx> effects = new();
@@ -29,7 +32,7 @@
 
         private bool isDirty = true;
         private bool isInitialized = false;
-        private bool isReloading;
+        private volatile bool isReloading;
 
         private readonly IGraphicsPipeline copy;
 
@@ -94,6 +97,8 @@
 
         public void Initialize(int width, int height, ICPUProfiler? profiler)
         {
+            semaphore.Wait();
+
             for (int i = 0; i < effects.Count; i++)
             {
                 effects[i].OnEnabledChanged += OnEnabledChanged;
@@ -127,19 +132,30 @@
             Sort();
 
             isInitialized = true;
+
+            semaphore.Release();
+        }
+
+        private void OnEnabledChanged(IPostFx postFx, bool enabled)
+        {
+            ReloadAsync();
         }
 
         private void OnReload(IPostFx postFx)
         {
+            semaphore.Wait();
             int index = effects.IndexOf(postFx);
             postFx.Dispose();
             postFx.Initialize(device, nodes[index].Builder, creator, width, height, macros);
             Invalidate();
+            semaphore.Release();
         }
 
         private void PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            semaphore.Wait();
             Invalidate();
+            semaphore.Release();
         }
 
         public void Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T effect) where T : class, IPostFx
@@ -194,11 +210,6 @@
             list?.Dispose();
             list = null;
             isDirty = true;
-        }
-
-        private void OnEnabledChanged(bool obj)
-        {
-            Reload();
         }
 
         #region Getter
@@ -273,7 +284,9 @@
 
         public void Reload()
         {
-            Volatile.Write(ref isReloading, true);
+            semaphore.Wait();
+
+            isReloading = true;
 
             macros = new ShaderMacro[effects.Count];
 
@@ -301,11 +314,54 @@
             Sort();
             Invalidate();
 
-            Volatile.Write(ref isReloading, false);
+            isReloading = false;
+
+            semaphore.Release();
+        }
+
+        public Task ReloadAsync()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                semaphore.Wait();
+
+                isReloading = true;
+
+                macros = new ShaderMacro[effects.Count];
+
+                for (int i = 0; i < effects.Count; i++)
+                {
+                    var effect = effects[i];
+                    if (effect.Initialized)
+                    {
+                        effect.Dispose();
+                    }
+
+                    macros[i] = new ShaderMacro(effect.Name, effect.Enabled ? "1" : "0");
+                    nodes[i].Clear();
+                }
+
+                Parallel.For(0, effects.Count, i =>
+                {
+                    var effect = effects[i];
+                    if (effect.Enabled)
+                    {
+                        effect.Initialize(device, nodes[i].Builder, creator, width, height, macros);
+                    }
+                });
+
+                Sort();
+                Invalidate();
+
+                isReloading = false;
+
+                semaphore.Release();
+            });
         }
 
         public void BeginResize()
         {
+            semaphore.Wait();
             Invalidate();
         }
 
@@ -331,6 +387,7 @@
             }
 
             Invalidate();
+            semaphore.Release();
         }
 
         public void PrePassDraw(IGraphicsContext context, GraphResourceBuilder creator)
@@ -340,7 +397,7 @@
                 return;
             }
 
-            lock (effectsSorted)
+            lock (_lock)
             {
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
@@ -384,7 +441,7 @@
                 return;
             }
 
-            lock (effectsSorted)
+            lock (_lock)
             {
                 for (int i = 0; i < effectsSorted.Count; i++)
                 {
@@ -487,7 +544,7 @@
 
         private void Sort()
         {
-            lock (effectsSorted)
+            lock (_lock)
             {
                 for (int i = 0; i < nodes.Count; i++)
                 {

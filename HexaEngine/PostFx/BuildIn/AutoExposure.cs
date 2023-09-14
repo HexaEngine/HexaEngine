@@ -13,11 +13,10 @@ namespace HexaEngine.Effects.BuildIn
 
     public class AutoExposure : PostFxBase
     {
-        private bool initialized = false;
         private GraphResourceBuilder creator;
         private int width;
         private int height;
-        private bool dirty;
+
         private IComputePipeline lumaCompute;
         private ConstantBuffer<LumaParams> lumaParams;
         private UavBuffer<uint> histogram;

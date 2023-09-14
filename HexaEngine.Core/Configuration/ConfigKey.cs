@@ -574,16 +574,27 @@
 
         #endregion EventHandlers
 
-        public void InitAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t)
+        public void InitAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, bool allowReadOnly = false)
         {
 #nullable disable
 
             List<ConfigValue> usedValues = new();
             Type type = typeof(T);
             PropertyInfo[] properties = type.GetProperties();
-            for (int i = 0; i < properties.Length; i++)
+            for (int i = properties.Length - 1; i >= 0; i--)
             {
                 PropertyInfo property = properties[i];
+
+                if (!property.CanRead)
+                {
+                    continue;
+                }
+
+                if (!allowReadOnly && !property.CanWrite)
+                {
+                    continue;
+                }
+
                 TryGetKeyValue(property.Name, out ConfigValue val);
 
                 bool isNew = val == null;

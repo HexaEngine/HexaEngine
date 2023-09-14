@@ -33,11 +33,11 @@
             {
                 enabled = value;
                 dirty = true;
-                OnEnabledChanged?.Invoke(value);
+                OnEnabledChanged?.Invoke(this, value);
             }
         }
 
-        public event Action<bool>? OnEnabledChanged;
+        public event Action<IPostFx, bool>? OnEnabledChanged;
 
         public event Action<IPostFx>? OnReload;
 
@@ -47,6 +47,7 @@
         {
             Initialize(device, builder, creator, width, height, macros);
             initialized = true;
+            dirty = true;
         }
 
         public abstract void Initialize(IGraphicsDevice device, PostFxDependencyBuilder builder, GraphResourceBuilder creator, int width, int height, ShaderMacro[] macros);
@@ -142,7 +143,7 @@
 
         public bool Enabled { get; set; }
 
-        public event Action<bool>? OnEnabledChanged;
+        public event Action<IPostFx, bool>? OnEnabledChanged;
 
         public event Action<IPostFx>? OnReload;
 
