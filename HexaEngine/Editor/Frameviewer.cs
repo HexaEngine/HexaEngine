@@ -208,8 +208,15 @@
 
                 ImGui.EndMenuBar();
             }
+
             position = ImGui.GetWindowPos();
             size = ImGui.GetWindowSize();
+
+            var windowViewport = ImGui.GetWindowViewport();
+
+            var workPos = windowViewport.WorkPos;
+
+            position -= workPos;
 
             if (Fullframe)
             {

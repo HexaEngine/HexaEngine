@@ -49,6 +49,10 @@ namespace HexaEngine.Rendering.Renderers
 
         public RenderGraph RenderGraph => renderGraph;
 
+        public RenderGraphExecuter RenderGraphExecuter => graphExecuter;
+
+        public IReadOnlyList<RenderPass> Passes => renderGraph.Passes;
+
         public GraphResourceBuilder ResourceBuilder => graphExecuter.ResourceBuilder;
 
         public int Width => width;

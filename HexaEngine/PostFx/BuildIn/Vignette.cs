@@ -47,7 +47,7 @@
 
         public override string Name { get; } = "Vignette";
 
-        public override PostFxFlags Flags { get; } = PostFxFlags.None;
+        public override PostFxFlags Flags { get; } = PostFxFlags.Inline;
 
         public float Intensity
         {
@@ -104,7 +104,15 @@
             {
                 VertexShader = "quad.hlsl",
                 PixelShader = "effects/vignette/ps.hlsl"
-            }, GraphicsPipelineState.DefaultFullscreen, macros);
+            }, new GraphicsPipelineState()
+            {
+                DepthStencil = DepthStencilDescription.None,
+                Rasterizer = RasterizerDescription.CullBack,
+                Blend = new(Blend.SourceAlpha, Blend.InverseSourceAlpha, Blend.One, Blend.DestinationAlpha, BlendOperation.Add, BlendOperation.Add),
+                Topology = PrimitiveTopology.TriangleStrip,
+                BlendFactor = default,
+                SampleMask = int.MaxValue
+            }, macros);
 
             samplerState = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
         }

@@ -57,7 +57,4 @@
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Scenes\" />
-	</ItemGroup>
 </Project>

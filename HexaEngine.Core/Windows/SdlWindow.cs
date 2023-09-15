@@ -340,6 +340,19 @@
         }
 
         /// <summary>
+        /// Gets the windows border size
+        /// </summary>
+        public Rect32 BorderSize
+        {
+            get
+            {
+                Rect32 result;
+                sdl.GetWindowBordersSize(window, &result.Top, &result.Left, &result.Bottom, &result.Right);
+                return result;
+            }
+        }
+
+        /// <summary>
         /// Gets a _value indicating whether the mouse is hovering over the window.
         /// </summary>
         public bool Hovering => hovering;

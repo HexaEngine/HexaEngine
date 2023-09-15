@@ -48,6 +48,19 @@
             return false;
         }
 
+        public RenderGraphNode? GetGraphNodeByName(string name)
+        {
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                if (node.Name == name)
+                {
+                    return node;
+                }
+            }
+            return null;
+        }
+
         public void Build()
         {
             ResolveDependencies();

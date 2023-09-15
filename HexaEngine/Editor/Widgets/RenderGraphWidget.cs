@@ -8,13 +8,14 @@ namespace HexaEngine.Editor.Widgets
     using HexaEngine.ImNodesNET;
     using HexaEngine.Rendering.Renderers;
     using System.Collections.Generic;
+    using System.Numerics;
 
     public class RenderGraphWidget : EditorWindow
     {
         private ImNodesEditorContextPtr nodeContext;
         private int currId;
-        private readonly Dictionary<RenderPass, ImNode> nodes = new();
-        private readonly Dictionary<(RenderPass, RenderPass), ImLink> links = new();
+        private readonly Dictionary<RenderGraphNode, ImNode> nodes = new();
+        private readonly Dictionary<(RenderGraphNode, RenderGraphNode), ImLink> links = new();
         private readonly Dictionary<string, ImAttribute> attributes = new();
         private readonly Dictionary<ResourceBinding, ImAttribute> resourceBindings = new();
         private ViewMode viewMode = ViewMode.NodeTree;
@@ -72,7 +73,7 @@ namespace HexaEngine.Editor.Widgets
 
         protected override string Name { get; } = "Render Graph";
 
-        private ImNode GetOrAddNode(RenderPass graphNode)
+        private ImNode GetOrAddNode(RenderGraphNode graphNode)
         {
             if (nodes.TryGetValue(graphNode, out ImNode node))
             {
@@ -84,7 +85,7 @@ namespace HexaEngine.Editor.Widgets
             return node;
         }
 
-        private ImLink GetOrAddLink(RenderPass a, RenderPass b)
+        private ImLink GetOrAddLink(RenderGraphNode a, RenderGraphNode b)
         {
             if (links.TryGetValue((a, b), out ImLink link))
             {
@@ -174,21 +175,23 @@ namespace HexaEngine.Editor.Widgets
             }
 
             var renderGraph = renderer.RenderGraph;
+            var passes = renderer.Passes;
+
             ImNodes.EditorContextSet(nodeContext);
             ImNodes.BeginNodeEditor();
 
             if (viewMode == ViewMode.NodeTree)
             {
-                /*
-                for (int i = 0; i < renderGraph.Sorted.Count; i++)
+                for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
                 {
-                    var node = renderGraph.Sorted[i];
+                    var node = renderGraph.SortedNodes[i];
                     ImGui.BulletText(node.Name);
                 }
 
-                for (int i = 0; i < renderGraph.GameObjects.Count; i++)
+                for (int i = 0; i < passes.Count; i++)
                 {
-                    var node = renderGraph.GameObjects[i];
+                    var pass = passes[i];
+                    var node = renderGraph.GetGraphNodeByName(pass.Name);
                     var imNode = GetOrAddNode(node);
 
                     ImNodes.BeginNode(imNode.Id);
@@ -200,7 +203,7 @@ namespace HexaEngine.Editor.Widgets
                     ImNodes.BeginInputAttribute(imNode.Input, ImNodesPinShape.CircleFilled);
                     ImNodes.EndInputAttribute();
                     ImGui.SameLine();
-                    ImNodes.BeginOutputAttribute(imNode.ao, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginOutputAttribute(imNode.Output, ImNodesPinShape.CircleFilled);
                     ImNodes.EndOutputAttribute();
 
                     for (int j = 0; j < node.Dependencies.Count; j++)
@@ -208,21 +211,21 @@ namespace HexaEngine.Editor.Widgets
                         var dep = node.Dependencies[j];
                         var depNode = GetOrAddNode(dep);
                         var link = GetOrAddLink(node, dep);
-                        ImNodes.Link(link.Id, imNode.Input, depNode.ao);
+                        ImNodes.Link(link.Id, imNode.Input, depNode.Output);
                     }
 
-                    for (int j = 0; j < node.WriteDependencies.Count; j++)
+                    for (int j = 0; j < pass.WriteDependencies.Count; j++)
                     {
-                        var dep = node.WriteDependencies[j];
+                        var dep = pass.WriteDependencies[j];
                         var atrri = GetOrAddAttribute(ref imNode, dep);
                         ImNodes.BeginOutputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
                         ImGui.Text(dep.Name);
                         ImNodes.EndOutputAttribute();
                     }
 
-                    for (int j = 0; j < node.ReadDependencies.Count; j++)
+                    for (int j = 0; j < pass.ReadDependencies.Count; j++)
                     {
-                        var dep = node.ReadDependencies[j];
+                        var dep = pass.ReadDependencies[j];
                         var atrri = GetOrAddAttribute(ref imNode, dep);
                         ImNodes.BeginInputAttribute(atrri.Id, ImNodesPinShape.CircleFilled);
                         ImGui.Text(dep.Name);
@@ -232,6 +235,7 @@ namespace HexaEngine.Editor.Widgets
                     ImNodes.EndNode();
                 }
 
+                /*
                 int idNode1 = 0;
                 int idNode2 = 0;
                 int idpin1 = 0;
@@ -270,7 +274,7 @@ namespace HexaEngine.Editor.Widgets
                             }
                         }
                     }
-                }
+                }*/
             }
 
             if (viewMode == ViewMode.Waterfall)
@@ -278,9 +282,9 @@ namespace HexaEngine.Editor.Widgets
                 int linkId = currId;
                 var pos = Vector2.Zero;
                 var prevId = -1;
-                for (int i = 0; i < renderGraph.Sorted.Count; i++)
+                for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
                 {
-                    var node = renderGraph.Sorted[i];
+                    var node = renderGraph.SortedNodes[i];
                     var imNode = GetOrAddNode(node);
 
                     ImNodes.BeginNode(imNode.Id);
@@ -292,31 +296,32 @@ namespace HexaEngine.Editor.Widgets
                     ImNodes.BeginInputAttribute(imNode.Input, ImNodesPinShape.CircleFilled);
                     ImNodes.EndInputAttribute();
                     ImGui.SameLine();
-                    ImNodes.BeginOutputAttribute(imNode.ao, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginOutputAttribute(imNode.Output, ImNodesPinShape.CircleFilled);
                     ImNodes.EndOutputAttribute();
 
                     if (prevId != -1)
                     {
                         ImNodes.Link(linkId++, imNode.Input, prevId);
                     }
-                    prevId = imNode.ao;
+                    prevId = imNode.Output;
 
                     ImNodes.EndNode();
                     pos += new Vector2(ImNodes.GetNodeDimensions(imNode.Id).X, 0) + new Vector2(20, 0);
                 }
             }
 
-            if (viewMode == ViewMode.DependencyTree)
+            /*if (viewMode == ViewMode.DependencyTree)
             {
                 var pos = Vector2.Zero;
                 var posPrev = Vector2.Zero;
                 var sizePrev = Vector2.Zero;
-                RenderPass prev = null;
+                RenderGraphNode prev = null;
                 int stackHeight = 0;
-                for (int i = 0; i < renderGraph.Sorted.Count; i++)
+                for (int i = 0; i < renderGraph.SortedNodes.Count; i++)
                 {
                     bool isDepended = true;
-                    var node = renderGraph.Sorted[i];
+                    var node = renderGraph.SortedNodes[i];
+                    //var pass = passes.
                     var imNode = GetOrAddNode(node);
 
                     ImNodes.BeginNode(imNode.Id);
@@ -344,7 +349,7 @@ namespace HexaEngine.Editor.Widgets
                     ImNodes.BeginInputAttribute(imNode.Input, ImNodesPinShape.CircleFilled);
                     ImNodes.EndInputAttribute();
                     ImGui.SameLine();
-                    ImNodes.BeginOutputAttribute(imNode.ao, ImNodesPinShape.CircleFilled);
+                    ImNodes.BeginOutputAttribute(imNode.Output, ImNodesPinShape.CircleFilled);
                     ImNodes.EndOutputAttribute();
 
                     for (int j = 0; j < node.Dependencies.Count; j++)
@@ -352,7 +357,7 @@ namespace HexaEngine.Editor.Widgets
                         var dep = node.Dependencies[j];
                         var depNode = GetOrAddNode(dep);
                         var link = GetOrAddLink(node, dep);
-                        ImNodes.Link(link.Id, imNode.Input, depNode.ao);
+                        ImNodes.Link(link.Id, imNode.Input, depNode.Output);
                     }
 
                     for (int j = 0; j < node.WriteDependencies.Count; j++)
@@ -387,8 +392,8 @@ namespace HexaEngine.Editor.Widgets
                     }
 
                     prev = node;
-                }*/
-            }
+                }
+            }*/
 
             ImNodes.MiniMap(ImNodesMiniMapLocation.TopRight);
             ImNodes.EndNodeEditor();
@@ -407,7 +412,7 @@ namespace HexaEngine.Editor.Widgets
             return default;
         }
 
-        private RenderPass GetRenderPassById(int id)
+        private RenderGraphNode GetRenderPassById(int id)
         {
             foreach (var node in nodes)
             {

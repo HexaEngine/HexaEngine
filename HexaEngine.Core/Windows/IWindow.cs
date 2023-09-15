@@ -134,6 +134,11 @@
         int Y { get; set; }
 
         /// <summary>
+        /// Gets the windows border size.
+        /// </summary>
+        Rect32 BorderSize { get; }
+
+        /// <summary>
         /// Event triggered when the window is closing.
         /// </summary>
         event EventHandler<CloseEventArgs>? Closing;

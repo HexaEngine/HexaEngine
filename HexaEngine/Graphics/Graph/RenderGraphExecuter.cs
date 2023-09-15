@@ -10,6 +10,7 @@
         private readonly GraphPipelineBuilder pipelineCreator;
         private readonly RenderGraph renderGraph;
         private readonly RenderPass[] renderPasses;
+        private readonly RenderPass[] renderPassesSorted;
         private HashSet<RenderPass> triggeredPasses;
         private bool oneHitPassed;
 
@@ -18,17 +19,24 @@
             this.device = device;
             this.renderGraph = renderGraph;
             this.renderPasses = renderPasses;
+            renderPassesSorted = new RenderPass[renderPasses.Length];
             resourceCreator = new GraphResourceBuilder(device);
             pipelineCreator = new GraphPipelineBuilder(device);
         }
 
         public GraphResourceBuilder ResourceBuilder => resourceCreator;
 
+        public IReadOnlyList<RenderPass> RenderPasses => renderPasses;
+
+        public IReadOnlyList<RenderPass> RenderPassesSorted => renderPassesSorted;
+
         public void Init(ICPUProfiler? profiler)
         {
             for (int i = 0; i < renderGraph.SortedNodeIndices.Count; i++)
             {
-                var pass = renderPasses[renderGraph.SortedNodeIndices[i]];
+                var idx = renderGraph.SortedNodeIndices[i];
+                var pass = renderPasses[idx];
+                renderPassesSorted[idx] = pass;
                 pass.Init(resourceCreator, pipelineCreator, device, profiler);
             }
             resourceCreator.CreateResources();

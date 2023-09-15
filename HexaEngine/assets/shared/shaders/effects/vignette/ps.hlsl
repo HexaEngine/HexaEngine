@@ -27,13 +27,12 @@ float4 main(VSOut vs) : SV_Target
 
 	float2 texCoord = vs.Tex - VignetteCenter;
 
-	texCoord *= float2((1.0 / VignetteRadius), VignetteRatio);
+	texCoord.x /= VignetteRadius * VignetteRatio;
+	texCoord.y /= VignetteRadius;
 
-	float vignette = dot(texCoord, texCoord);
+	float vignette = 1.0 - dot(texCoord, texCoord);
 
-	float vignetteFactor = VignetteIntensity * (1.0 + pow(vignette, VignetteSlope * 0.5));
+	float vignetteFactor = 1.0f - saturate(pow(vignette, VignetteSlope * 0.5)) * VignetteIntensity;
 
-	color.rgb *= (1.0 - vignetteFactor * VignetteColor);
-
-	return float4(color, 1);
+	return float4(VignetteColor, vignetteFactor);
 }
