@@ -74,11 +74,23 @@ namespace HexaEngine.Editor.MeshEditor.Dialogs
 
                 if (ImGui.Button("Load"))
                 {
-                    Task.Factory.StartNew(() => importer.LoadAsync(path).ContinueWith(x => { loaded = true; }));
+                    Task.Factory.StartNew(() =>
+                    {
+                        return importer.LoadAsync(path).ContinueWith(x =>
+                        {
+                            if (!x.Result)
+                            {
+                                importer.Clear();
+                                loaded = false;
+                            }
+                            loaded = true;
+                        });
+                    });
                 }
                 if (ImGui.Button("Cancel"))
                 {
                     Close();
+                    Reset();
                 }
             }
             else
@@ -97,7 +109,7 @@ namespace HexaEngine.Editor.MeshEditor.Dialogs
                 {
                     if (ImGui.BeginTabItem("Materials"))
                     {
-                        for (int i = 0; i < importer.Materials.Length; i++)
+                        for (int i = 0; i < importer.Materials.Count; i++)
                         {
                             var material = importer.Materials[i];
                             var value = material.Name;

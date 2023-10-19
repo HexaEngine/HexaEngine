@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Mathematics;
+    using HexaEngine.Rendering.Renderers;
 
     public class ImageSourceOverlay
     {
@@ -32,12 +33,12 @@
                 srvs[i] = textures[i].SRV;
                 rtvs[i] = textures[i].RTV;
                 viewports[i] = new(desc.Width, desc.Height);
-                //ImGuiRenderer.Samplers.ObjectAdded(srvs[i].NativePointer, linearSampler);
+                ImGuiRenderer.Samplers.Add(srvs[i].NativePointer, sampler);
                 desc.BindFlags = BindFlags.DepthStencil;
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
                 desc.Format = Format.D16UNorm;
-                depths[i] = new(device, new(desc.Width, desc.Height, desc.ArraySize, Format.D16UNorm, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
+                depths[i] = new(device, new(desc.Width, desc.Height, desc.ArraySize, Format.D32Float, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
                 dsvs[i] = depths[i].DSV;
             }
 
@@ -86,7 +87,7 @@
                 {
                     for (int i = 0; i < textures.Length; i++)
                     {
-                        //ImGuiRenderer.Samplers.ObjectRemoved(srvs[i].NativePointer);
+                        ImGuiRenderer.Samplers.Remove(srvs[i].NativePointer);
                         textures[i].Dispose();
                         srvs[i].Dispose();
                         rtvs[i].Dispose();

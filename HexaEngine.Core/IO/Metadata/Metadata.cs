@@ -9,13 +9,14 @@
 
         public static readonly Metadata Empty = new(new());
 
-        public Metadata(Dictionary<string, MetadataEntry>? properties = null)
+        public Metadata(Dictionary<string, MetadataEntry> properties)
         {
-            Properties = properties ?? new();
+            Properties = properties;
         }
 
-        internal Metadata()
+        public Metadata()
         {
+            Properties = new();
         }
 
         public static Metadata ReadFrom(Stream stream, Encoding encoding, Endianness endianness)
@@ -29,7 +30,9 @@
         {
             var propertiesCount = stream.ReadInt32(endianness);
 
-            Properties = new();
+            Properties.Clear();
+            Properties.EnsureCapacity(propertiesCount);
+
             for (int i = 0; i < propertiesCount; i++)
             {
                 var key = stream.ReadString(encoding, endianness) ?? string.Empty;

@@ -3,6 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Mathematics;
+    using System.Numerics;
 
     public class ImageSource : IDisposable
     {
@@ -14,10 +15,12 @@
         private int mipLevel;
         private int index;
         private TexMetadata metadata;
+        private TexMetadata originalMetadata;
         private bool disposedValue;
 
-        public ImageSource(IGraphicsDevice device, IScratchImage image)
+        public ImageSource(IGraphicsDevice device, IScratchImage image, TexMetadata originalMetadata)
         {
+            this.originalMetadata = originalMetadata;
             metadata = image.Metadata;
             var count = image.ImageCount;
             textures = new ITexture2D[count];
@@ -36,6 +39,8 @@
         }
 
         public TexMetadata Metadata => metadata;
+
+        public TexMetadata OriginalMetadata { get => originalMetadata; set => originalMetadata = value; }
 
         public int Index => index;
 
@@ -100,11 +105,30 @@
                 var capture = device.TextureLoader.CaptureTexture(device.Context, textures[i]);
                 var imageSrc = capture.GetImages()[0];
                 var imageDst = images[i];
-                Memcpy((void*)imageSrc.Pixels, imageDst.Pixels, imageSrc.RowPitch * imageSrc.Height);
+                Memcpy(imageSrc.Pixels, imageDst.Pixels, imageSrc.RowPitch * imageSrc.Height);
                 capture.Dispose();
             }
 
             return scratchImage;
+        }
+
+        public unsafe Vector4 GetPixel(IGraphicsDevice device, Point2 position)
+        {
+            IScratchImage scratchImage = device.TextureLoader.CaptureTexture(device.Context, textures[index]);
+            IScratchImage newScratchImage = scratchImage.Convert(Format.R32G32B32A32Float, TexFilterFlags.Default);
+            scratchImage.Dispose();
+
+            TexMetadata metadata = newScratchImage.Metadata;
+
+            IImage image = newScratchImage.GetImages()[0];
+            Vector4* pixels = (Vector4*)image.Pixels;
+
+            int idx = position.Y * metadata.Width + position.X;
+
+            Vector4 pixel = pixels[idx];
+
+            newScratchImage.Dispose();
+            return pixel;
         }
 
         protected virtual void Dispose(bool disposing)

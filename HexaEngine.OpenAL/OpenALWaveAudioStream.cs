@@ -162,5 +162,12 @@
                 al.SourceQueueBuffers(source, 1, &bufferId);
             }
         }
+
+        protected override void DisposeCore()
+        {
+            stream.Dispose();
+            al.DeleteBuffers(bufferCount, buffers);
+            Free(buffers);
+        }
     }
 }

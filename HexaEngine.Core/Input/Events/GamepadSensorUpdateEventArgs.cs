@@ -2,7 +2,7 @@
 {
     using System.Numerics;
 
-    public class GamepadSensorUpdateEventArgs : EventArgs
+    public class GamepadSensorUpdateEventArgs : GamepadEventArgs
     {
         public GamepadSensorUpdateEventArgs()
         {
@@ -16,6 +16,8 @@
         }
 
         public GamepadSensorType Type { get; internal set; }
+
+        public GamepadSensor GamepadSensor => Gamepad.Sensors[Type];
 
         public unsafe float* Data { get; internal set; }
 

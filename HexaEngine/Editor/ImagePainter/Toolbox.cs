@@ -14,6 +14,7 @@
         {
             Register<Pencil>();
             Register<Eraser>();
+            Register<ColorGrabber>();
         }
 
         protected override string Name => "Toolbox";

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    public class GamepadTouchpadMotionEventArgs : EventArgs
+    public class GamepadTouchpadMotionEventArgs : GamepadEventArgs
     {
         public GamepadTouchpadMotionEventArgs()
         {
@@ -13,6 +13,10 @@
             Y = y;
             Pressure = pressure;
         }
+
+        public int TouchpadId { get; internal set; }
+
+        public GamepadTouchpad Touchpad => Gamepad.Touchpads[TouchpadId];
 
         public int Finger { get; internal set; }
 

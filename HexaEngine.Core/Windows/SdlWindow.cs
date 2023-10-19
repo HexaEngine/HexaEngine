@@ -42,6 +42,8 @@
         private readonly MouseButtonEventArgs mouseButtonEventArgs = new();
         private readonly MouseMotionEventArgs mouseMotionEventArgs = new();
         private readonly MouseWheelEventArgs mouseWheelEventArgs = new();
+        private readonly TouchEventArgs touchEventArgs = new();
+        private readonly TouchMotionEventArgs touchMotionEventArgs = new();
 
         private Window* window;
         private bool created;
@@ -643,14 +645,16 @@
         /// </summary>
         public event EventHandler<MouseWheelEventArgs>? MouseWheelInput;
 
-        #endregion Events
-
-        #region EventCallMethods
+        /// <summary>
+        /// Event triggered when a touch input is received.
+        /// </summary>
+        public event EventHandler<TouchEventArgs>? TouchInput;
 
         /// <summary>
-        /// Raises the <see cref="Shown"/> event.
+        /// Event triggered when a touch motion input is received.
         /// </summary>
-        /// <param name="args">The event arguments.</param>
+        public event EventHandler<TouchMotionEventArgs>? TouchMotionInput;
+
         protected virtual void OnShown(ShownEventArgs args)
         {
             Shown?.Invoke(this, args);
@@ -854,7 +858,25 @@
             MouseWheelInput?.Invoke(this, args);
         }
 
-        #endregion EventCallMethods
+        /// <summary>
+        /// Raises the <see cref="TouchInput"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnTouchInput(TouchEventArgs args)
+        {
+            TouchInput?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="TouchMotionInput"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
+        protected virtual void OnTouchMotionInput(TouchMotionEventArgs args)
+        {
+            TouchMotionInput?.Invoke(this, args);
+        }
+
+        #endregion Events
 
         /// <summary>
         /// Processes a window event received from the message loop.
@@ -871,6 +893,7 @@
 
                 case WindowEventID.Shown:
                     {
+                        shownEventArgs.Timestamp = evnt.Timestamp;
                         shownEventArgs.Handled = false;
                         OnShown(shownEventArgs);
                         if (shownEventArgs.Handled)
@@ -884,6 +907,7 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Hidden;
+                        hiddenEventArgs.Timestamp = evnt.Timestamp;
                         hiddenEventArgs.OldState = oldState;
                         hiddenEventArgs.NewState = WindowState.Hidden;
                         hiddenEventArgs.Handled = false;
@@ -897,6 +921,8 @@
 
                 case WindowEventID.Exposed:
                     {
+                        exposedEventArgs.Timestamp = evnt.Timestamp;
+                        exposedEventArgs.Handled = false;
                         OnExposed(exposedEventArgs);
                     }
                     break;
@@ -907,6 +933,7 @@
                         int yold = y;
                         x = evnt.Data1;
                         y = evnt.Data2;
+                        movedEventArgs.Timestamp = evnt.Timestamp;
                         movedEventArgs.OldX = xold;
                         movedEventArgs.OldY = yold;
                         movedEventArgs.NewX = x;
@@ -927,6 +954,7 @@
                         width = evnt.Data1;
                         height = evnt.Data2;
                         Viewport = new(width, height);
+                        resizedEventArgs.Timestamp = evnt.Timestamp;
                         resizedEventArgs.OldWidth = widthOld;
                         resizedEventArgs.OldWidth = heightOld;
                         resizedEventArgs.NewWidth = width;
@@ -947,6 +975,7 @@
                         width = evnt.Data1;
                         height = evnt.Data2;
                         Viewport = new(width, height);
+                        sizeChangedEventArgs.Timestamp = evnt.Timestamp;
                         sizeChangedEventArgs.OldWidth = widthOld;
                         sizeChangedEventArgs.OldHeight = heightOld;
                         sizeChangedEventArgs.Width = evnt.Data1;
@@ -960,6 +989,7 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Minimized;
+                        minimizedEventArgs.Timestamp = evnt.Timestamp;
                         minimizedEventArgs.OldState = oldState;
                         minimizedEventArgs.NewState = WindowState.Minimized;
                         minimizedEventArgs.Handled = false;
@@ -975,6 +1005,7 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Maximized;
+                        maximizedEventArgs.Timestamp = evnt.Timestamp;
                         maximizedEventArgs.OldState = oldState;
                         maximizedEventArgs.NewState = WindowState.Maximized;
                         maximizedEventArgs.Handled = false;
@@ -990,6 +1021,7 @@
                     {
                         WindowState oldState = state;
                         state = WindowState.Normal;
+                        restoredEventArgs.Timestamp = evnt.Timestamp;
                         restoredEventArgs.OldState = oldState;
                         restoredEventArgs.NewState = WindowState.Normal;
                         restoredEventArgs.Handled = false;
@@ -1004,6 +1036,8 @@
                 case WindowEventID.Enter:
                     {
                         hovering = true;
+                        enterEventArgs.Timestamp = evnt.Timestamp;
+                        enterEventArgs.Handled = false;
                         OnEnter(enterEventArgs);
                     }
                     break;
@@ -1011,6 +1045,8 @@
                 case WindowEventID.Leave:
                     {
                         hovering = false;
+                        leaveEventArgs.Timestamp = evnt.Timestamp;
+                        leaveEventArgs.Handled = false;
                         OnLeave(leaveEventArgs);
                     }
                     break;
@@ -1018,6 +1054,8 @@
                 case WindowEventID.FocusGained:
                     {
                         focused = true;
+                        focusGainedEventArgs.Timestamp = evnt.Timestamp;
+                        focusGainedEventArgs.Handled = false;
                         OnFocusGained(focusGainedEventArgs);
                     }
                     break;
@@ -1025,12 +1063,15 @@
                 case WindowEventID.FocusLost:
                     {
                         focused = false;
+                        focusLostEventArgs.Timestamp = evnt.Timestamp;
+                        focusLostEventArgs.Handled = false;
                         OnFocusLost(focusLostEventArgs);
                     }
                     break;
 
                 case WindowEventID.Close:
                     {
+                        closeEventArgs.Timestamp = evnt.Timestamp;
                         closeEventArgs.Handled = false;
                         OnClose(closeEventArgs);
                         if (!closeEventArgs.Handled)
@@ -1042,6 +1083,7 @@
 
                 case WindowEventID.TakeFocus:
                     {
+                        takeFocusEventArgs.Timestamp = evnt.Timestamp;
                         takeFocusEventArgs.Handled = false;
                         OnTakeFocus(takeFocusEventArgs);
                         if (!takeFocusEventArgs.Handled)
@@ -1053,6 +1095,8 @@
 
                 case WindowEventID.HitTest:
                     {
+                        hitTestEventArgs.Timestamp = evnt.Timestamp;
+                        hitTestEventArgs.Handled = false;
                         OnHitTest(hitTestEventArgs);
                     }
                     break;
@@ -1068,9 +1112,11 @@
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             KeyState state = (KeyState)evnt.State;
             Key keyCode = (Key)sdl.GetKeyFromScancode(evnt.Keysym.Scancode);
-            keyboardEventArgs.KeyState = state;
+            keyboardEventArgs.Timestamp = evnt.Timestamp;
+            keyboardEventArgs.Handled = false;
+            keyboardEventArgs.State = state;
             keyboardEventArgs.KeyCode = keyCode;
-            keyboardEventArgs.Scancode = evnt.Keysym.Scancode;
+            keyboardEventArgs.ScanCode = evnt.Keysym.Scancode;
             OnKeyboardInput(keyboardEventArgs);
         }
 
@@ -1081,6 +1127,8 @@
         internal void ProcessInputText(TextInputEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
+            keyboardCharEventArgs.Timestamp = evnt.Timestamp;
+            keyboardCharEventArgs.Handled = false;
             keyboardCharEventArgs.Char = (char)evnt.Text[0];
             OnKeyboardCharInput(keyboardCharEventArgs);
         }
@@ -1094,6 +1142,9 @@
             Logger.ThrowIf(destroyed, "The window is already destroyed");
             MouseButtonState state = (MouseButtonState)evnt.State;
             MouseButton button = (MouseButton)evnt.Button;
+            mouseButtonEventArgs.Timestamp = evnt.Timestamp;
+            mouseButtonEventArgs.Handled = false;
+            mouseButtonEventArgs.MouseId = evnt.Which;
             mouseButtonEventArgs.Button = button;
             mouseButtonEventArgs.State = state;
             mouseButtonEventArgs.Clicks = evnt.Clicks;
@@ -1112,6 +1163,9 @@
                 sdl.WarpMouseInWindow(window, 0, 0);
             }
 
+            mouseMotionEventArgs.Timestamp = evnt.Timestamp;
+            mouseMotionEventArgs.Handled = false;
+            mouseMotionEventArgs.MouseId = evnt.Which;
             mouseMotionEventArgs.X = evnt.X;
             mouseMotionEventArgs.Y = evnt.Y;
             mouseMotionEventArgs.RelX = evnt.Xrel;
@@ -1126,9 +1180,52 @@
         internal void ProcessInputMouse(MouseWheelEvent evnt)
         {
             Logger.ThrowIf(destroyed, "The window is already destroyed");
+            mouseWheelEventArgs.Timestamp = evnt.Timestamp;
+            mouseWheelEventArgs.Handled = false;
+            mouseWheelEventArgs.MouseId = evnt.Which;
             mouseWheelEventArgs.Wheel = new(evnt.X, evnt.Y);
             mouseWheelEventArgs.Direction = (Input.MouseWheelDirection)evnt.Direction;
             OnMouseWheelInput(mouseWheelEventArgs);
+        }
+
+        internal void ProcessInputTouchMotion(TouchFingerEvent evnt)
+        {
+            Logger.ThrowIf(destroyed, "The window is already destroyed");
+            touchMotionEventArgs.Timestamp = evnt.Timestamp;
+            touchMotionEventArgs.TouchDeviceId = evnt.TouchId;
+            touchMotionEventArgs.FingerId = evnt.FingerId;
+            touchMotionEventArgs.Pressure = evnt.Pressure;
+            touchMotionEventArgs.X = evnt.X;
+            touchMotionEventArgs.Y = evnt.Y;
+            touchMotionEventArgs.Dx = evnt.Dx;
+            touchMotionEventArgs.Dy = evnt.Dy;
+            OnTouchMotionInput(touchMotionEventArgs);
+        }
+
+        internal void ProcessInputTouchUp(TouchFingerEvent evnt)
+        {
+            Logger.ThrowIf(destroyed, "The window is already destroyed");
+            touchEventArgs.Timestamp = evnt.Timestamp;
+            touchEventArgs.TouchDeviceId = evnt.TouchId;
+            touchEventArgs.FingerId = evnt.FingerId;
+            touchEventArgs.Pressure = evnt.Pressure;
+            touchEventArgs.X = evnt.X;
+            touchEventArgs.Y = evnt.Y;
+            touchEventArgs.State = FingerState.Up;
+            OnTouchInput(touchEventArgs);
+        }
+
+        internal void ProcessInputTouchDown(TouchFingerEvent evnt)
+        {
+            Logger.ThrowIf(destroyed, "The window is already destroyed");
+            touchEventArgs.Timestamp = evnt.Timestamp;
+            touchEventArgs.TouchDeviceId = evnt.TouchId;
+            touchEventArgs.FingerId = evnt.FingerId;
+            touchEventArgs.Pressure = evnt.Pressure;
+            touchEventArgs.X = evnt.X;
+            touchEventArgs.Y = evnt.Y;
+            touchEventArgs.State = FingerState.Down;
+            OnTouchInput(touchEventArgs);
         }
 
         /// <summary>

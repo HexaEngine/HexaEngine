@@ -9,51 +9,6 @@
     using HexaEngine.Scenes.Managers;
     using System.Numerics;
 
-    public struct TypeData
-    {
-        public uint IndexCountPerInstance;
-        public uint StartIndexLocation;
-        public int BaseVertexLocation;
-        public uint StartInstanceLocation;
-    }
-
-    public class CullingContext
-    {
-        private readonly StructuredBuffer<TypeData> typeDataBuffer;
-        private readonly StructuredBuffer<InstanceData> instanceDataBuffer;
-        private uint currentType;
-
-        public CullingContext(StructuredBuffer<TypeData> typeDataBuffer, StructuredBuffer<InstanceData> instanceDataBuffer)
-        {
-            this.typeDataBuffer = typeDataBuffer;
-            this.instanceDataBuffer = instanceDataBuffer;
-        }
-
-        public void Reset()
-        {
-            typeDataBuffer.ResetCounter();
-            instanceDataBuffer.ResetCounter();
-            currentType = 0;
-        }
-
-        public void AppendType(TypeData type)
-        {
-            currentType = typeDataBuffer.Count;
-            typeDataBuffer.Add(type);
-        }
-
-        public unsafe uint GetDrawArgsOffset()
-        {
-            return currentType * (uint)sizeof(DrawIndexedInstancedIndirectArgs);
-        }
-
-        public void AppendInstance(InstanceData instance)
-        {
-            instance.Type = currentType;
-            instanceDataBuffer.Add(instance);
-        }
-    }
-
     public class CullingManager
     {
 #nullable disable
@@ -78,7 +33,7 @@
         private unsafe void** occlusionSrvs;
         private unsafe void** occlusionUavs;
         private unsafe void** occlusionCbs;
-        private CullingContext context;
+        private readonly CullingContext context;
 #nullable enable
 
         public unsafe CullingManager(IGraphicsDevice device)
@@ -113,7 +68,7 @@
             context = new(typeDataBuffer, instanceDataBuffer);
         }
 
-        public CullingContext Context { get => context; }
+        public CullingContext Context => context;
 
         public CullingFlags CullingFlags { get => cullingFlags; set => cullingFlags = value; }
 

@@ -82,9 +82,9 @@
     {
         public BRDFShadingModelNode(int id, bool removable, bool isStatic) : base(id, "BRDF", removable, isStatic)
         {
-            TitleColor = MathUtil.Pack(0xff, 0x0f, 0x9e, 0x00);
-            TitleHoveredColor = MathUtil.Pack(0xff, 0x13, 0xc4, 0x00);
-            TitleSelectedColor = MathUtil.Pack(0xff, 0x16, 0xe4, 0x00);
+            TitleColor = MathUtil.PackARGB(0xff, 0x0f, 0x9e, 0x00);
+            TitleHoveredColor = MathUtil.PackARGB(0xff, 0x13, 0xc4, 0x00);
+            TitleSelectedColor = MathUtil.PackARGB(0xff, 0x16, 0xe4, 0x00);
         }
 
         [JsonIgnore]

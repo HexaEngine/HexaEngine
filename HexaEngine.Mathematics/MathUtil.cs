@@ -18,7 +18,9 @@
         public const float PIDIV2 = MathF.PI / 2;
 
         public const float SQRT2 = 1.41421356237309504880f;
+
         public const float SQRT3 = 1.73205080756887729352f;
+
         public const float SQRT6 = 2.44948974278317809820f;
 
         public static readonly Vector4 SplatEpsilon = new(BitConverter.UInt32BitsToSingle(0x34000000));
@@ -307,13 +309,13 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Pack(this Vector4 color)
+        public static uint PackARGB(this Vector4 color)
         {
-            return Pack((uint)(color.W * 255), (uint)(color.X * 255), (uint)(color.Y * 255), (uint)(color.Z * 255));
+            return PackARGB((uint)(color.W * 255), (uint)(color.X * 255), (uint)(color.Y * 255), (uint)(color.Z * 255));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint Pack(uint a, uint r, uint g, uint b)
+        public static uint PackARGB(uint a, uint r, uint g, uint b)
         {
             return (a << 24) + (r << 16) + (g << 8) + b;
         }

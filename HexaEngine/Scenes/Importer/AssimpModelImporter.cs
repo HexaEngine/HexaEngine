@@ -4,11 +4,10 @@
     using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
-    using HexaEngine.Core.IO;
     using HexaEngine.Core.IO.Animations;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Meshes;
-    using HexaEngine.Core.Meshes;
+    using HexaEngine.Core.UI;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Mathematics;
     using HexaEngine.Projects;
@@ -52,9 +51,9 @@
         private ModelFile modelFile;
         private unsafe AssimpScene* scene;
 
-        public MeshData[] Meshes => meshes;
+        public IReadOnlyList<MeshData> Meshes => meshes;
 
-        public MaterialData[] Materials => materials;
+        public IReadOnlyList<MaterialData> Materials => materials;
 
         public IReadOnlyList<string> Textures => textures;
 
@@ -70,17 +69,17 @@
 
         public TexCompressFlags TexCompressFlags = TexCompressFlags.Parallel;
 
-        public Task LoadAsync(string path)
+        public Task<bool> LoadAsync(string path)
         {
             return Task.Run(() => Load(path));
         }
 
-        public Task ImportAsync(IGraphicsDevice device)
+        public Task<bool> ImportAsync(IGraphicsDevice device)
         {
             return Task.Run(() => Import(device));
         }
 
-        public unsafe void Load(string path)
+        public unsafe bool Load(string path)
         {
             name = Path.GetFileNameWithoutExtension(path);
             dir = Path.GetDirectoryName(path);
@@ -90,15 +89,44 @@
             assimp.EnableVerboseLogging(Assimp.True);
 
             scene = assimp.ImportFile(path, (uint)(ImporterFlags.SupportBinaryFlavour | ImporterFlags.SupportCompressedFlavour));
-            assimp.ApplyPostProcessing(scene, (uint)PostProcessSteps);
 
-            LoadSceneGraph(scene);
+            if (scene == null)
+            {
+                Logger.Error($"Failed to load {path}");
+                MessageBox.Show($"Failed to load scene", $"Failed to load {path}");
+                return false;
+            }
 
-            LoadMaterials(scene);
+            scene = assimp.ApplyPostProcessing(scene, (uint)PostProcessSteps);
 
-            LoadMeshes(scene);
+            if (scene == null)
+            {
+                Logger.Error($"Failed to apply post processing {path}");
+                MessageBox.Show($"Failed to apply post processing", $"Failed to apply post processing {path}");
+                return false;
+            }
 
-            LoadAnimations(scene);
+            if (!LoadSceneGraph(scene))
+            {
+                return false;
+            }
+
+            if (!LoadMaterials(scene))
+            {
+                return false;
+            }
+
+            if (!LoadMeshes(scene))
+            {
+                return false;
+            }
+
+            if (!LoadAnimations(scene))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public bool CheckForProblems()
@@ -166,9 +194,9 @@
             return true;
         }
 
-        public unsafe void Import(IGraphicsDevice device)
+        public unsafe bool Import(IGraphicsDevice device)
         {
-            InjectResources(device, device.TextureLoader);
+            return InjectResources(device, device.TextureLoader);
         }
 
         public unsafe void Clear()
@@ -184,489 +212,515 @@
             }
         }
 
-        private unsafe void LoadMaterials(AssimpScene* scene)
+        private unsafe bool LoadMaterials(AssimpScene* scene)
         {
-            textures = new();
-            materials = new MaterialData[scene->MNumMaterials];
-            for (int i = 0; i < scene->MNumMaterials; i++)
+            try
             {
-                Material* mat = scene->MMaterials[i];
-
-                var material = materials[i] = new MaterialData();
-
-                List<MaterialProperty> properties = new();
-                List<MaterialTexture> textures = new();
-                List<MaterialShader> shaders = new();
-
-                for (int j = 0; j < mat->MNumProperties; j++)
+                textures = new();
+                materials = new MaterialData[scene->MNumMaterials];
+                for (int i = 0; i < scene->MNumMaterials; i++)
                 {
-                    AssimpMaterialProperty* prop = mat->MProperties[j];
-                    if (prop == null)
+                    Material* mat = scene->MMaterials[i];
+
+                    var material = materials[i] = new MaterialData();
+
+                    List<MaterialProperty> properties = new();
+                    List<MaterialTexture> textures = new();
+                    List<MaterialShader> shaders = new();
+
+                    for (int j = 0; j < mat->MNumProperties; j++)
                     {
-                        continue;
+                        AssimpMaterialProperty* prop = mat->MProperties[j];
+                        if (prop == null)
+                        {
+                            continue;
+                        }
+
+                        Span<byte> buffer = new(prop->MData, (int)prop->MDataLength);
+                        string key = prop->MKey;
+                        int semantic = (int)prop->MSemantic;
+
+                        static ref MaterialTexture FindOrCreate(List<MaterialTexture> textures, TextureType type)
+                        {
+                            var t = Convert(type);
+                            for (int i = 0; i < textures.Count; i++)
+                            {
+                                var tex = textures[i];
+                                if (tex.Type == t)
+                                {
+                                    return ref textures.GetInternalArray()[i];
+                                }
+                            }
+                            var index = textures.Count;
+                            textures.Add(new MaterialTexture() { Type = t });
+                            return ref textures.GetInternalArray()[index];
+                        }
+
+                        switch (key)
+                        {
+                            case Assimp.MatkeyName:
+                                material.Name = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                                break;
+
+                            case Assimp.MatkeyTwosided:
+                                properties.Add(new("TwoSided", MaterialPropertyType.TwoSided, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyShadingModel:
+                                properties.Add(new("ShadingMode", MaterialPropertyType.ShadingMode, MaterialValueType.Int32, default, sizeof(int), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyEnableWireframe:
+                                properties.Add(new("EnableWireframe", MaterialPropertyType.EnableWireframe, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyBlendFunc:
+                                properties.Add(new("BlendFunc", MaterialPropertyType.BlendFunc, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyOpacity:
+                                properties.Add(new("Opacity", MaterialPropertyType.Opacity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyTransparencyfactor:
+                                properties.Add(new("Transparency", MaterialPropertyType.Transparency, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyBumpscaling:
+                                properties.Add(new("BumpScaling", MaterialPropertyType.BumpScaling, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyShininess:
+                                properties.Add(new("Shininess", MaterialPropertyType.Shininess, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyReflectivity:
+                                properties.Add(new("Reflectivity", MaterialPropertyType.Reflectivity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyShininessStrength:
+                                properties.Add(new("ShininessStrength", MaterialPropertyType.ShininessStrength, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyRefracti:
+                                properties.Add(new("IOR", MaterialPropertyType.IOR, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyColorDiffuse:
+                                properties.Add(new("ColorDiffuse", MaterialPropertyType.ColorDiffuse, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyColorAmbient:
+                                properties.Add(new("ColorAmbient", MaterialPropertyType.ColorAmbient, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyColorSpecular:
+                                properties.Add(new("ColorSpecular", MaterialPropertyType.ColorSpecular, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyColorEmissive:
+                                properties.Add(new("Emissive", MaterialPropertyType.Emissive, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyColorTransparent:
+                                properties.Add(new("ColorTransparent", MaterialPropertyType.ColorTransparent, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyColorReflective:
+                                properties.Add(new("ColorReflective", MaterialPropertyType.ColorReflective, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyBaseColor:
+                                properties.Add(new("BaseColor", MaterialPropertyType.BaseColor, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyMetallicFactor:
+                                properties.Add(new("Metallic", MaterialPropertyType.Metallic, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyRoughnessFactor:
+                                properties.Add(new("Roughness", MaterialPropertyType.Roughness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyAnisotropyFactor:
+                                properties.Add(new("Anisotropy", MaterialPropertyType.Anisotropy, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeySpecularFactor:
+                                properties.Add(new("Specular", MaterialPropertyType.Specular, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyGlossinessFactor:
+                                properties.Add(new("Glossiness", MaterialPropertyType.Glossiness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeySheenColorFactor:
+                                properties.Add(new("SheenTint", MaterialPropertyType.SheenTint, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeySheenRoughnessFactor:
+                                properties.Add(new("Sheen", MaterialPropertyType.Sheen, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyClearcoatFactor:
+                                properties.Add(new("Cleancoat", MaterialPropertyType.Cleancoat, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyClearcoatRoughnessFactor:
+                                properties.Add(new("CleancoatGloss", MaterialPropertyType.CleancoatGloss, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyTransmissionFactor:
+                                properties.Add(new("Transmission", MaterialPropertyType.Transmission, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyVolumeThicknessFactor:
+                                properties.Add(new("VolumeThickness", MaterialPropertyType.VolumeThickness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyVolumeAttenuationDistance:
+                                properties.Add(new("VolumeAttenuationDistance", MaterialPropertyType.VolumeAttenuationDistance, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyVolumeAttenuationColor:
+                                properties.Add(new("VolumeAttenuationColor", MaterialPropertyType.VolumeAttenuationColor, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
+
+                                break;
+
+                            case Assimp.MatkeyEmissiveIntensity:
+                                properties.Add(new("EmissiveIntensity", MaterialPropertyType.EmissiveIntensity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
+                                break;
+
+                            case Assimp.MatkeyUseColorMap:
+                                //material.UseColorMap = buffer[0] == 1;
+                                break;
+
+                            case Assimp.MatkeyUseMetallicMap:
+                                //material.UseMetallicMap = buffer[0] == 1;
+                                break;
+
+                            case Assimp.MatkeyUseRoughnessMap:
+                                //material.UseRoughnessMap = buffer[0] == 1;
+                                break;
+
+                            case Assimp.MatkeyUseEmissiveMap:
+                                //material.UseEmissiveMap = buffer[0] == 1;
+                                break;
+
+                            case Assimp.MatkeyUseAOMap:
+                                //material.UseAOMap = buffer[0] == 1;
+                                break;
+
+                            case Assimp.MatkeyTextureBase:
+                                var file = FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
+                                if (!this.textures.Contains(file))
+                                {
+                                    this.textures.Add(file);
+                                }
+
+                                break;
+
+                            case Assimp.MatkeyUvwsrcBase:
+                                FindOrCreate(textures, (TextureType)semantic).UVWSrc = MemoryMarshal.Cast<byte, int>(buffer)[0];
+                                break;
+
+                            case Assimp.MatkeyTexopBase:
+                                FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                break;
+
+                            case Assimp.MatkeyMappingBase:
+                                FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
+                                break;
+
+                            case Assimp.MatkeyTexblendBase:
+                                FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                break;
+
+                            case Assimp.MatkeyMappingmodeUBase:
+                                FindOrCreate(textures, (TextureType)semantic).U = Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                break;
+
+                            case Assimp.MatkeyMappingmodeVBase:
+                                FindOrCreate(textures, (TextureType)semantic).V = Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                break;
+
+                            case Assimp.MatkeyTexmapAxisBase:
+                                break;
+
+                            case Assimp.MatkeyUvtransformBase:
+                                break;
+
+                            case Assimp.MatkeyTexflagsBase:
+                                FindOrCreate(textures, (TextureType)semantic).Flags = Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
+                                break;
+
+                            case Assimp.MatkeyShaderVertex:
+                                shaders.Add(new(MaterialShaderType.VertexShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
+                                break;
+
+                            case Assimp.MatkeyShaderTesselation:
+                                shaders.Add(new(MaterialShaderType.HullShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
+                                break;
+
+                            case Assimp.MatkeyShaderPrimitive:
+                                shaders.Add(new(MaterialShaderType.DomainShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
+                                break;
+
+                            case Assimp.MatkeyShaderGeo:
+                                shaders.Add(new(MaterialShaderType.GeometryShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
+                                break;
+
+                            case Assimp.MatkeyShaderFragment:
+                                shaders.Add(new(MaterialShaderType.PixelShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
+                                break;
+
+                            case Assimp.MatkeyShaderCompute:
+                                shaders.Add(new(MaterialShaderType.ComputeShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
+                                break;
+                        }
                     }
 
-                    Span<byte> buffer = new(prop->MData, (int)prop->MDataLength);
-                    string key = prop->MKey;
-                    int semantic = (int)prop->MSemantic;
-
-                    static ref MaterialTexture FindOrCreate(List<MaterialTexture> textures, TextureType type)
+                    if (material.Name == string.Empty)
                     {
-                        var t = Convert(type);
-                        for (int i = 0; i < textures.Count; i++)
+                        material.Name = i.ToString();
+                    }
+
+                    material.Properties = properties.ToArray();
+                    material.Textures = textures.ToArray();
+
+                    bool rm = false;
+                    bool orm = false;
+                    for (int j = 0; j < material.Textures.Length; j++)
+                    {
+                        if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
                         {
-                            var tex = textures[i];
-                            if (tex.Type == t)
+                            rm = true;
+                        }
+                        if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetallic)
+                        {
+                            orm = true;
+                        }
+                        if (material.Textures[j].File == null)
+                        {
+                            material.Textures[j].File = string.Empty;
+                        }
+                    }
+
+                    if (rm)
+                    {
+                        for (int k = 0; k < material.Textures.Length; k++)
+                        {
+                            if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
                             {
-                                return ref textures.GetInternalArray()[i];
+                                material.Textures[k].File = string.Empty;
+                            }
+
+                            if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
+                            {
+                                material.Textures[k].File = string.Empty;
                             }
                         }
-                        var index = textures.Count;
-                        textures.Add(new MaterialTexture() { Type = t });
-                        return ref textures.GetInternalArray()[index];
                     }
 
-                    switch (key)
+                    if (orm)
                     {
-                        case Assimp.MatkeyName:
-                            material.Name = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
-                            break;
-
-                        case Assimp.MatkeyTwosided:
-                            properties.Add(new("TwoSided", MaterialPropertyType.TwoSided, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyShadingModel:
-                            properties.Add(new("ShadingMode", MaterialPropertyType.ShadingMode, MaterialValueType.Int32, default, sizeof(int), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyEnableWireframe:
-                            properties.Add(new("EnableWireframe", MaterialPropertyType.EnableWireframe, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyBlendFunc:
-                            properties.Add(new("BlendFunc", MaterialPropertyType.BlendFunc, MaterialValueType.Bool, default, sizeof(bool), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyOpacity:
-                            properties.Add(new("Opacity", MaterialPropertyType.Opacity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyTransparencyfactor:
-                            properties.Add(new("Transparency", MaterialPropertyType.Transparency, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyBumpscaling:
-                            properties.Add(new("BumpScaling", MaterialPropertyType.BumpScaling, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyShininess:
-                            properties.Add(new("Shininess", MaterialPropertyType.Shininess, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyReflectivity:
-                            properties.Add(new("Reflectivity", MaterialPropertyType.Reflectivity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyShininessStrength:
-                            properties.Add(new("ShininessStrength", MaterialPropertyType.ShininessStrength, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyRefracti:
-                            properties.Add(new("IOR", MaterialPropertyType.IOR, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyColorDiffuse:
-                            properties.Add(new("ColorDiffuse", MaterialPropertyType.ColorDiffuse, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyColorAmbient:
-                            properties.Add(new("ColorAmbient", MaterialPropertyType.ColorAmbient, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyColorSpecular:
-                            properties.Add(new("ColorSpecular", MaterialPropertyType.ColorSpecular, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyColorEmissive:
-                            properties.Add(new("Emissive", MaterialPropertyType.Emissive, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyColorTransparent:
-                            properties.Add(new("ColorTransparent", MaterialPropertyType.ColorTransparent, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyColorReflective:
-                            properties.Add(new("ColorReflective", MaterialPropertyType.ColorReflective, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyBaseColor:
-                            properties.Add(new("BaseColor", MaterialPropertyType.BaseColor, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyMetallicFactor:
-                            properties.Add(new("Metallic", MaterialPropertyType.Metallic, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyRoughnessFactor:
-                            properties.Add(new("Roughness", MaterialPropertyType.Roughness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyAnisotropyFactor:
-                            properties.Add(new("Anisotropy", MaterialPropertyType.Anisotropy, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeySpecularFactor:
-                            properties.Add(new("Specular", MaterialPropertyType.Specular, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyGlossinessFactor:
-                            properties.Add(new("Glossiness", MaterialPropertyType.Glossiness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeySheenColorFactor:
-                            properties.Add(new("SheenTint", MaterialPropertyType.SheenTint, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeySheenRoughnessFactor:
-                            properties.Add(new("Sheen", MaterialPropertyType.Sheen, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyClearcoatFactor:
-                            properties.Add(new("Cleancoat", MaterialPropertyType.Cleancoat, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyClearcoatRoughnessFactor:
-                            properties.Add(new("CleancoatGloss", MaterialPropertyType.CleancoatGloss, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyTransmissionFactor:
-                            properties.Add(new("Transmission", MaterialPropertyType.Transmission, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyVolumeThicknessFactor:
-                            properties.Add(new("VolumeThickness", MaterialPropertyType.VolumeThickness, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyVolumeAttenuationDistance:
-                            properties.Add(new("VolumeAttenuationDistance", MaterialPropertyType.VolumeAttenuationDistance, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyVolumeAttenuationColor:
-                            properties.Add(new("VolumeAttenuationColor", MaterialPropertyType.VolumeAttenuationColor, MaterialValueType.Float4, default, sizeof(Vector4), buffer.ToArray()));
-
-                            break;
-
-                        case Assimp.MatkeyEmissiveIntensity:
-                            properties.Add(new("EmissiveIntensity", MaterialPropertyType.EmissiveIntensity, MaterialValueType.Float, default, sizeof(float), buffer.ToArray()));
-                            break;
-
-                        case Assimp.MatkeyUseColorMap:
-                            //material.UseColorMap = buffer[0] == 1;
-                            break;
-
-                        case Assimp.MatkeyUseMetallicMap:
-                            //material.UseMetallicMap = buffer[0] == 1;
-                            break;
-
-                        case Assimp.MatkeyUseRoughnessMap:
-                            //material.UseRoughnessMap = buffer[0] == 1;
-                            break;
-
-                        case Assimp.MatkeyUseEmissiveMap:
-                            //material.UseEmissiveMap = buffer[0] == 1;
-                            break;
-
-                        case Assimp.MatkeyUseAOMap:
-                            //material.UseAOMap = buffer[0] == 1;
-                            break;
-
-                        case Assimp.MatkeyTextureBase:
-                            var file = FindOrCreate(textures, (TextureType)semantic).File = Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1));
-                            if (!this.textures.Contains(file))
+                        for (int k = 0; k < material.Textures.Length; k++)
+                        {
+                            if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
                             {
-                                this.textures.Add(file);
+                                material.Textures[k].File = string.Empty;
                             }
 
-                            break;
+                            if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
+                            {
+                                material.Textures[k].File = string.Empty;
+                            }
 
-                        case Assimp.MatkeyUvwsrcBase:
-                            FindOrCreate(textures, (TextureType)semantic).UVWSrc = MemoryMarshal.Cast<byte, int>(buffer)[0];
-                            break;
-
-                        case Assimp.MatkeyTexopBase:
-                            FindOrCreate(textures, (TextureType)semantic).Op = Convert((TextureOp)MemoryMarshal.Cast<byte, int>(buffer)[0]);
-                            break;
-
-                        case Assimp.MatkeyMappingBase:
-                            FindOrCreate(textures, (TextureType)semantic).Mapping = MemoryMarshal.Cast<byte, int>(buffer)[0];
-                            break;
-
-                        case Assimp.MatkeyTexblendBase:
-                            FindOrCreate(textures, (TextureType)semantic).Blend = Convert((BlendMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
-                            break;
-
-                        case Assimp.MatkeyMappingmodeUBase:
-                            FindOrCreate(textures, (TextureType)semantic).U = Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
-                            break;
-
-                        case Assimp.MatkeyMappingmodeVBase:
-                            FindOrCreate(textures, (TextureType)semantic).V = Convert((TextureMapMode)MemoryMarshal.Cast<byte, int>(buffer)[0]);
-                            break;
-
-                        case Assimp.MatkeyTexmapAxisBase:
-                            break;
-
-                        case Assimp.MatkeyUvtransformBase:
-                            break;
-
-                        case Assimp.MatkeyTexflagsBase:
-                            FindOrCreate(textures, (TextureType)semantic).Flags = Convert((TextureFlags)MemoryMarshal.Cast<byte, int>(buffer)[0]);
-                            break;
-
-                        case Assimp.MatkeyShaderVertex:
-                            shaders.Add(new(MaterialShaderType.VertexShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
-                            break;
-
-                        case Assimp.MatkeyShaderTesselation:
-                            shaders.Add(new(MaterialShaderType.HullShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
-                            break;
-
-                        case Assimp.MatkeyShaderPrimitive:
-                            shaders.Add(new(MaterialShaderType.DomainShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
-                            break;
-
-                        case Assimp.MatkeyShaderGeo:
-                            shaders.Add(new(MaterialShaderType.GeometryShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
-                            break;
-
-                        case Assimp.MatkeyShaderFragment:
-                            shaders.Add(new(MaterialShaderType.PixelShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
-                            break;
-
-                        case Assimp.MatkeyShaderCompute:
-                            shaders.Add(new(MaterialShaderType.ComputeShaderFile, Encoding.UTF8.GetString(buffer.Slice(4, buffer.Length - 4 - 1))));
-                            break;
-                    }
-                }
-
-                if (material.Name == string.Empty)
-                {
-                    material.Name = i.ToString();
-                }
-
-                material.Properties = properties.ToArray();
-                material.Textures = textures.ToArray();
-
-                bool rm = false;
-                bool orm = false;
-                for (int j = 0; j < material.Textures.Length; j++)
-                {
-                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
-                    {
-                        rm = true;
-                    }
-                    if (material.Textures[j].Type == Core.IO.Materials.MaterialTextureType.AmbientOcclusionRoughnessMetallic)
-                    {
-                        orm = true;
-                    }
-                    if (material.Textures[j].File == null)
-                    {
-                        material.Textures[j].File = string.Empty;
-                    }
-                }
-
-                if (rm)
-                {
-                    for (int k = 0; k < material.Textures.Length; k++)
-                    {
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
-                        {
-                            material.Textures[k].File = string.Empty;
-                        }
-
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
-                        {
-                            material.Textures[k].File = string.Empty;
-                        }
-                    }
-                }
-
-                if (orm)
-                {
-                    for (int k = 0; k < material.Textures.Length; k++)
-                    {
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Metallic)
-                        {
-                            material.Textures[k].File = string.Empty;
-                        }
-
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.Roughness)
-                        {
-                            material.Textures[k].File = string.Empty;
-                        }
-
-                        if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
-                        {
-                            material.Textures[k].File = string.Empty;
+                            if (material.Textures[k].Type == Core.IO.Materials.MaterialTextureType.RoughnessMetallic)
+                            {
+                                material.Textures[k].File = string.Empty;
+                            }
                         }
                     }
                 }
             }
-        }
-
-        private unsafe void LoadAnimations(AssimpScene* scene)
-        {
-            animations = new AnimationData[scene->MNumAnimations];
-            for (int i = 0; i < scene->MNumAnimations; i++)
+            catch (Exception ex)
             {
-                var anim = scene->MAnimations[i];
-                AnimationData animation = new(anim->MName, anim->MDuration, anim->MTicksPerSecond);
-                for (int j = 0; j < anim->MNumChannels; j++)
-                {
-                    var chan = anim->MChannels[j];
-                    NodeChannel channel = new(chan->MNodeName);
-                    channel.PreState = (AnimationBehavior)chan->MPreState;
-                    channel.PostState = (AnimationBehavior)chan->MPostState;
-                    for (int x = 0; x < chan->MNumPositionKeys; x++)
-                    {
-                        var key = chan->MPositionKeys[x];
-                        channel.PositionKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
-                    }
-                    for (int x = 0; x < chan->MNumRotationKeys; x++)
-                    {
-                        var key = chan->MRotationKeys[x];
-                        channel.RotationKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
-                    }
-                    for (int x = 0; x < chan->MNumScalingKeys; x++)
-                    {
-                        var key = chan->MScalingKeys[x];
-                        channel.ScaleKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
-                    }
-                    animation.NodeChannels.Add(channel);
-                }
+                Logger.Log(ex);
+                MessageBox.Show("Failed to load materials", ex.Message);
+                return false;
+            }
 
-                for (int j = 0; j < anim->MNumMeshChannels; j++)
-                {
-                    var chan = anim->MMeshChannels[j];
-                    MeshChannel channel = new(chan->MName);
-                    for (int x = 0; x < chan->MNumKeys; x++)
-                    {
-                        var key = chan->MKeys[x];
-                        channel.Keyframes.Add(new() { Time = key.MTime, MeshName = meshesT[scene->MMeshes[key.MValue]].Name });
-                    }
+            return true;
+        }
 
-                    animation.MeshChannels.Add(channel);
-                }
-
-                for (int j = 0; j < anim->MNumMorphMeshChannels; j++)
+        private unsafe bool LoadAnimations(AssimpScene* scene)
+        {
+            try
+            {
+                animations = new AnimationData[scene->MNumAnimations];
+                for (int i = 0; i < scene->MNumAnimations; i++)
                 {
-                    var chan = anim->MMorphMeshChannels[j];
-                    MorphMeshChannel channel = new(chan->MName);
-                    for (int x = 0; x < chan->MNumKeys; x++)
+                    var anim = scene->MAnimations[i];
+                    AnimationData animation = new(anim->MName, anim->MDuration, anim->MTicksPerSecond);
+                    for (int j = 0; j < anim->MNumChannels; j++)
                     {
-                        var key = chan->MKeys[x];
-                        MeshMorphKeyframe keyframe = new();
-                        keyframe.Values = new uint[key.MNumValuesAndWeights];
-                        keyframe.Weights = new double[key.MNumValuesAndWeights];
-                        for (int y = 0; y < key.MNumValuesAndWeights; y++)
+                        var chan = anim->MChannels[j];
+                        NodeChannel channel = new(chan->MNodeName);
+                        channel.PreState = (AnimationBehavior)chan->MPreState;
+                        channel.PostState = (AnimationBehavior)chan->MPostState;
+                        for (int x = 0; x < chan->MNumPositionKeys; x++)
                         {
-                            keyframe.Values[y] = key.MValues[y];
-                            keyframe.Weights[y] = key.MWeights[y];
+                            var key = chan->MPositionKeys[x];
+                            channel.PositionKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
+                        }
+                        for (int x = 0; x < chan->MNumRotationKeys; x++)
+                        {
+                            var key = chan->MRotationKeys[x];
+                            channel.RotationKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
+                        }
+                        for (int x = 0; x < chan->MNumScalingKeys; x++)
+                        {
+                            var key = chan->MScalingKeys[x];
+                            channel.ScaleKeyframes.Add(new() { Time = key.MTime, Value = key.MValue });
+                        }
+                        animation.NodeChannels.Add(channel);
+                    }
+
+                    for (int j = 0; j < anim->MNumMeshChannels; j++)
+                    {
+                        var chan = anim->MMeshChannels[j];
+                        MeshChannel channel = new(chan->MName);
+                        for (int x = 0; x < chan->MNumKeys; x++)
+                        {
+                            var key = chan->MKeys[x];
+                            channel.Keyframes.Add(new() { Time = key.MTime, MeshName = meshesT[scene->MMeshes[key.MValue]].Name });
                         }
 
-                        channel.Keyframes.Add(keyframe);
+                        animation.MeshChannels.Add(channel);
                     }
 
-                    animation.MorphMeshChannels.Add(channel);
-                }
-
-                animations[i] = animation;
-                animationsT.Add(anim->MName, animation);
-            }
-        }
-
-        private unsafe void SetVertexBoneData(SkinnedMeshVertex* vertex, int boneID, float weight)
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                if (vertex->BoneIds[i] < 0)
-                {
-                    vertex->Weights[i] = weight;
-                    vertex->BoneIds[i] = boneID;
-                    break;
-                }
-            }
-        }
-
-        private unsafe void LoadMeshes(AssimpScene* scene)
-        {
-            meshes = new MeshData[scene->MNumMeshes];
-            for (int i = 0; i < scene->MNumMeshes; i++)
-            {
-                Mesh* msh = scene->MMeshes[i];
-
-                uint[] indices = new uint[msh->MNumFaces * 3];
-                for (int j = 0; j < msh->MNumFaces; j++)
-                {
-                    var face = msh->MFaces[j];
-                    for (int k = 0; k < 3; k++)
+                    for (int j = 0; j < anim->MNumMorphMeshChannels; j++)
                     {
-                        indices[j * 3 + k] = face.MIndices[k];
-                    }
-                }
-
-                Vector4[]? colors = ToManaged(msh->MColors.Element0, msh->MNumVertices);
-                Vector3[]? positions = ToManaged(msh->MVertices, msh->MNumVertices);
-                Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
-                Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
-                Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
-                Vector3[]? bitangents = ToManaged(msh->MBitangents, msh->MNumVertices);
-
-                BoundingBox box = default;
-                BoundingSphere sphere = default;
-                if (positions != null)
-                {
-                    box = BoundingBoxHelper.Compute(positions);
-                    sphere = BoundingSphere.CreateFromBoundingBox(box);
-                }
-
-                BoneData[] bones = new BoneData[msh->MNumBones];
-                if (msh->MNumBones > 0)
-                {
-                    for (int j = 0; j < bones.Length; j++)
-                    {
-                        var bn = msh->MBones[j];
-                        nodesN[bn->MName].Flags |= NodeFlags.Bone;
-
-                        Core.Meshes.VertexWeight[] weights = new Core.Meshes.VertexWeight[bn->MNumWeights];
-                        for (int x = 0; x < weights.Length; x++)
+                        var chan = anim->MMorphMeshChannels[j];
+                        MorphMeshChannel channel = new(chan->MName);
+                        for (int x = 0; x < chan->MNumKeys; x++)
                         {
-                            weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
+                            var key = chan->MKeys[x];
+                            MeshMorphKeyframe keyframe = new();
+                            keyframe.Values = new uint[key.MNumValuesAndWeights];
+                            keyframe.Weights = new double[key.MNumValuesAndWeights];
+                            for (int y = 0; y < key.MNumValuesAndWeights; y++)
+                            {
+                                keyframe.Values[y] = key.MValues[y];
+                                keyframe.Weights[y] = key.MWeights[y];
+                            }
+
+                            channel.Keyframes.Add(keyframe);
                         }
 
-                        bones[j] = new BoneData(bn->MName, weights, Matrix4x4.Transpose(bn->MOffsetMatrix));
+                        animation.MorphMeshChannels.Add(channel);
                     }
-                }
-                if (bones.Length > 0)
-                {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
-                }
-                else
-                {
-                    meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
-                }
 
-                meshesT.Add(msh, meshes[i]);
+                    animations[i] = animation;
+                    animationsT.Add(anim->MName, animation);
+                }
             }
-
-            FileSystem.Refresh();
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                MessageBox.Show("Failed to load animations", ex.Message);
+                return false;
+            }
+            return true;
         }
 
-        private unsafe void LoadSceneGraph(AssimpScene* scene)
+        private unsafe bool LoadMeshes(AssimpScene* scene)
         {
-            nodes = new();
-            root = WalkNode(scene->MRootNode, null);
+            try
+            {
+                meshes = new MeshData[scene->MNumMeshes];
+                for (int i = 0; i < scene->MNumMeshes; i++)
+                {
+                    Mesh* msh = scene->MMeshes[i];
+
+                    uint[] indices = new uint[msh->MNumFaces * 3];
+                    for (int j = 0; j < msh->MNumFaces; j++)
+                    {
+                        var face = msh->MFaces[j];
+                        for (int k = 0; k < 3; k++)
+                        {
+                            indices[j * 3 + k] = face.MIndices[k];
+                        }
+                    }
+
+                    Vector4[]? colors = ToManaged(msh->MColors.Element0, msh->MNumVertices);
+                    Vector3[]? positions = ToManaged(msh->MVertices, msh->MNumVertices);
+                    Vector3[]? uvs = ToManaged(msh->MTextureCoords[0], msh->MNumVertices);
+                    Vector3[]? normals = ToManaged(msh->MNormals, msh->MNumVertices);
+                    Vector3[]? tangents = ToManaged(msh->MTangents, msh->MNumVertices);
+                    Vector3[]? bitangents = ToManaged(msh->MBitangents, msh->MNumVertices);
+
+                    BoundingBox box = default;
+                    BoundingSphere sphere = default;
+                    if (positions != null)
+                    {
+                        box = BoundingBoxHelper.Compute(positions);
+                        sphere = BoundingSphere.CreateFromBoundingBox(box);
+                    }
+
+                    BoneData[] bones = new BoneData[msh->MNumBones];
+                    if (msh->MNumBones > 0)
+                    {
+                        for (int j = 0; j < bones.Length; j++)
+                        {
+                            var bn = msh->MBones[j];
+                            nodesN[bn->MName].Flags |= NodeFlags.Bone;
+
+                            Core.Meshes.VertexWeight[] weights = new Core.Meshes.VertexWeight[bn->MNumWeights];
+                            for (int x = 0; x < weights.Length; x++)
+                            {
+                                weights[x] = new(bn->MWeights[x].MVertexId, bn->MWeights[x].MWeight);
+                            }
+
+                            bones[j] = new BoneData(bn->MName, weights, Matrix4x4.Transpose(bn->MOffsetMatrix));
+                        }
+                    }
+                    if (bones.Length > 0)
+                    {
+                        meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, (uint)bones.Length, indices, colors, positions, uvs, normals, tangents, bitangents, bones.ToArray());
+                    }
+                    else
+                    {
+                        meshes[i] = new MeshData(msh->MName, materials[(int)msh->MMaterialIndex].Name, box, sphere, msh->MNumVertices, (uint)indices.Length, 0u, indices, colors, positions, uvs, normals, tangents, bitangents, null);
+                    }
+
+                    meshesT.Add(msh, meshes[i]);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                MessageBox.Show("Failed to load meshes", ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        private unsafe bool LoadSceneGraph(AssimpScene* scene)
+        {
+            try
+            {
+                nodes = new();
+                root = WalkNode(scene->MRootNode, null);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex);
+                MessageBox.Show("Failed to load scene graph", ex.Message);
+                return false;
+            }
+            return true;
         }
 
         private unsafe Node WalkNode(AssimpNode* node, Node parent)
@@ -700,7 +754,7 @@
             before = after;
         }
 
-        private unsafe void InjectResources(IGraphicsDevice device, ITextureLoader textureLoader)
+        private unsafe bool InjectResources(IGraphicsDevice device, ITextureLoader textureLoader)
         {
             for (int i = 0; i < textures.Count; i++)
             {
@@ -711,58 +765,150 @@
 
                 if (TexPostProcessSteps == TexPostProcessSteps.None)
                 {
-                    var destFile = Path.Combine(dest, textures[i]);
-                    Directory.CreateDirectory(Path.GetDirectoryName(destFile));
-                    System.IO.File.Copy(srcFile, destFile, true);
+                    try
+                    {
+                        var destFile = Path.Combine(dest, textures[i]);
+                        Directory.CreateDirectory(Path.GetDirectoryName(destFile));
+                        System.IO.File.Copy(srcFile, destFile, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                        MessageBox.Show("Failed to copy file", ex.Message);
+                        return false;
+                    }
                 }
                 else
                 {
-                    IScratchImage image = textureLoader.LoadFormFile(srcFile);
+                    IScratchImage image;
+
+                    try
+                    {
+                        image = textureLoader.LoadFormFile(srcFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                        MessageBox.Show("Failed to load texture", ex.Message);
+                        return false;
+                    }
 
                     if ((TexPostProcessSteps & TexPostProcessSteps.Scale) != 0)
                     {
-                        SwapImage(ref image, image.Resize(TexScaleFactor, TexFilterFlags.Default));
+                        try
+                        {
+                            SwapImage(ref image, image.Resize(TexScaleFactor, TexFilterFlags.Default));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Log(ex);
+                            MessageBox.Show("Failed to scale texture", ex.Message);
+                            return false;
+                        }
                     }
 
                     if ((TexPostProcessSteps & TexPostProcessSteps.GenerateMips) != 0)
                     {
-                        SwapImage(ref image, image.GenerateMipMaps(TexFilterFlags.Default));
+                        try
+                        {
+                            SwapImage(ref image, image.GenerateMipMaps(TexFilterFlags.Default));
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Log(ex);
+                            MessageBox.Show("Failed to generate mips texture", ex.Message);
+                            return false;
+                        }
                     }
 
                     if ((TexPostProcessSteps & TexPostProcessSteps.Convert) != 0)
                     {
-                        if (FormatHelper.IsCompressed(TexFormat))
+                        try
                         {
-                            SwapImage(ref image, image.Compress(device, TexFormat, TexCompressFlags));
+                            if (FormatHelper.IsCompressed(TexFormat))
+                            {
+                                SwapImage(ref image, image.Compress(device, TexFormat, TexCompressFlags));
+                            }
+                            else
+                            {
+                                SwapImage(ref image, image.Convert(TexFormat, TexFilterFlags.Default));
+                            }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            SwapImage(ref image, image.Convert(TexFormat, TexFilterFlags.Default));
+                            Logger.Log(ex);
+                            MessageBox.Show("Failed to convert texture", ex.Message);
+                            return false;
                         }
                     }
 
-                    var newName = Path.GetFileNameWithoutExtension(textures[i]) + $".{TexFileFormat.ToString().ToLowerInvariant()}";
-                    ChangeNameOfTexture(textures[i], newName);
-                    var destFile = Path.Combine(dest, newName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(destFile));
-                    image.SaveToFile(destFile, TexFileFormat, 0);
-                    image.Dispose();
+                    try
+                    {
+                        var newName = Path.GetFileNameWithoutExtension(textures[i]) + $".{TexFileFormat.ToString().ToLowerInvariant()}";
+                        ChangeNameOfTexture(textures[i], newName);
+                        var destFile = Path.Combine(dest, newName);
+                        Directory.CreateDirectory(Path.GetDirectoryName(destFile));
+                        image.SaveToFile(destFile, TexFileFormat, 0);
+                        image.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log(ex);
+                        MessageBox.Show("Failed to save texture", ex.Message);
+                        return false;
+                    }
                 }
             }
 
-            animationLibrary = new(animations);
-            animationLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", name + ".anim"), Encoding.UTF8);
-            materialLibrary = new(materials);
-            materialLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", name + ".matlib"), Encoding.UTF8);
-            modelFile = new(name, meshes, root);
-            modelFile.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes", name + ".model"), Encoding.UTF8);
+            if (animations.Length > 0)
+            {
+                try
+                {
+                    animationLibrary = new(animations);
+                    animationLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "animations", name + ".anim"), Encoding.UTF8);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to save animation library", ex.Message);
+                    return false;
+                }
+            }
+            if (materials.Length > 0)
+            {
+                try
+                {
+                    materialLibrary = new(materials);
+                    materialLibrary.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "materials", name + ".matlib"), Encoding.UTF8);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to save material library", ex.Message);
+                    return false;
+                }
+            }
+            if (meshes.Length > 0 || root.Children.Count > 0)
+            {
+                try
+                {
+                    modelFile = new(name + ".matlib", meshes, root);
+                    modelFile.Save(Path.Combine(ProjectManager.CurrentProjectAssetsFolder ?? throw new(), "meshes", name + ".model"), Encoding.UTF8);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to save model file", ex.Message);
+                    return false;
+                }
+            }
 
-            FileSystem.Refresh();
+            return true;
         }
 
-        private static unsafe void Log(byte* a, byte* b)
+        private static unsafe void Log(byte* message, byte* userdata)
         {
-            string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(a));
+            string msg = Encoding.UTF8.GetString(MemoryMarshal.CreateReadOnlySpanFromNullTerminated(message));
             Logger.Log(msg);
         }
 

@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Graphics.Filters
 {
     using HexaEngine.Core.Graphics;
@@ -35,8 +33,8 @@ namespace HexaEngine.Graphics.Filters
             cube = new(device);
             pipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "filter/equitocube/vs.hlsl",
-                PixelShader = "filter/equitocube/ps.hlsl"
+                VertexShader = "filter/equirectangularToCube/vs.hlsl",
+                PixelShader = "filter/equirectangularToCube/ps.hlsl"
             },
             new GraphicsPipelineState()
             {

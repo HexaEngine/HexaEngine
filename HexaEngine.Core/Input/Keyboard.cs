@@ -44,9 +44,11 @@
         {
             Key keyCode = (Key)sdl.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
             states[keyCode] = KeyState.Down;
-            keyboardEventArgs.KeyState = KeyState.Down;
+            keyboardEventArgs.Timestamp = keyboardEvent.Timestamp;
+            keyboardEventArgs.Handled = false;
+            keyboardEventArgs.State = KeyState.Down;
             keyboardEventArgs.KeyCode = keyCode;
-            keyboardEventArgs.Scancode = keyboardEvent.Keysym.Scancode;
+            keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Keysym.Scancode;
             KeyDown?.Invoke(null, keyboardEventArgs);
         }
 
@@ -55,18 +57,22 @@
         {
             Key keyCode = (Key)sdl.GetKeyFromScancode(keyboardEvent.Keysym.Scancode);
             states[keyCode] = KeyState.Up;
-            keyboardEventArgs.KeyState = KeyState.Up;
+            keyboardEventArgs.Timestamp = keyboardEvent.Timestamp;
+            keyboardEventArgs.Handled = false;
+            keyboardEventArgs.State = KeyState.Up;
             keyboardEventArgs.KeyCode = keyCode;
-            keyboardEventArgs.Scancode = keyboardEvent.Keysym.Scancode;
+            keyboardEventArgs.ScanCode = (ScanCode)keyboardEvent.Keysym.Scancode;
             KeyUp?.Invoke(null, keyboardEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void OnTextInput(TextInputEvent textInputEvent)
         {
+            keyboardCharEventArgs.Timestamp = textInputEvent.Timestamp;
+            keyboardCharEventArgs.Handled = false;
             unsafe
             {
-                keyboardCharEventArgs.Char = (char)*textInputEvent.Text;
+                keyboardCharEventArgs.Char = *(char*)textInputEvent.Text;
             }
             TextInput?.Invoke(null, keyboardCharEventArgs);
         }

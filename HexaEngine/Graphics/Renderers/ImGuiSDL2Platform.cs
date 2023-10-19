@@ -328,6 +328,11 @@
 
                         return true;
                     }
+                case EventType.Fingerup:
+                case EventType.Fingerdown:
+                case EventType.Fingermotion:
+                    io.PenPressure = env.Tfinger.Pressure;
+                    break;
             }
 
             return false;

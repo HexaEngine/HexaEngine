@@ -2,7 +2,7 @@
 {
     using System.Numerics;
 
-    public class MouseWheelEventArgs : EventArgs
+    public class MouseWheelEventArgs : MouseEventArgs
     {
         public MouseWheelEventArgs()
         {

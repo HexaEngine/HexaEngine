@@ -1,11 +1,6 @@
 ﻿namespace HexaEngine.Core.Windows.Events
 {
-    using System;
-
-    /// <summary>
-    /// Provides event arguments for routed events.
-    /// </summary>
-    public class RoutedEventArgs : EventArgs
+    public class RoutedEventArgs : TimestampEventArgs
     {
         /// <summary>
         /// Gets or sets a _value indicating whether the event is handled.

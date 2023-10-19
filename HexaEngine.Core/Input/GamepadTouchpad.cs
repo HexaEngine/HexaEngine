@@ -5,21 +5,20 @@
 
     public unsafe class GamepadTouchpad
     {
-        private readonly Sdl sdl;
+        private static readonly Sdl sdl = Application.sdl;
         private readonly int id;
         private readonly GameController* controller;
-        private readonly Finger[] fingerStates;
+        private readonly GamepadTouchpadFinger[] fingerStates;
 
         private readonly GamepadTouchpadEventArgs touchpadEventArgs = new();
         private readonly GamepadTouchpadMotionEventArgs motionEventArgs = new();
 
         public GamepadTouchpad(int id, GameController* controller)
         {
-            sdl = Application.sdl;
             this.id = id;
             this.controller = controller;
             var fingerCount = sdl.GameControllerGetNumTouchpadFingers(controller, id);
-            fingerStates = new Finger[fingerCount];
+            fingerStates = new GamepadTouchpadFinger[fingerCount];
             for (int i = 0; i < fingerCount; i++)
             {
                 byte state;
@@ -41,7 +40,7 @@
 
         public event EventHandler<GamepadTouchpadEventArgs>? TouchPadUp;
 
-        internal void OnTouchPadDown(ControllerTouchpadEvent even)
+        internal (GamepadTouchpad Touchpad, GamepadTouchpadEventArgs EventArgs) OnTouchPadDown(ControllerTouchpadEvent even)
         {
             var state = fingerStates[even.Finger];
             state.State = FingerState.Down;
@@ -49,29 +48,41 @@
             state.Y = even.Y;
             state.Pressure = even.Pressure;
             fingerStates[even.Finger] = state;
+
+            touchpadEventArgs.Timestamp = even.Timestamp;
+            touchpadEventArgs.Handled = false;
+            touchpadEventArgs.GamepadId = even.Which;
+            touchpadEventArgs.TouchpadId = even.Touchpad;
             touchpadEventArgs.State = FingerState.Down;
             touchpadEventArgs.Finger = even.Finger;
             touchpadEventArgs.X = even.X;
             touchpadEventArgs.Y = even.Y;
             touchpadEventArgs.Pressure = even.Pressure;
             TouchPadDown?.Invoke(this, touchpadEventArgs);
+            return (this, touchpadEventArgs);
         }
 
-        internal void OnTouchPadMotion(ControllerTouchpadEvent even)
+        internal (GamepadTouchpad Touchpad, GamepadTouchpadMotionEventArgs EventArgs) OnTouchPadMotion(ControllerTouchpadEvent even)
         {
             var state = fingerStates[even.Finger];
             state.X = even.X;
             state.Y = even.Y;
             state.Pressure = even.Pressure;
             fingerStates[even.Finger] = state;
+
+            motionEventArgs.Timestamp = even.Timestamp;
+            motionEventArgs.Handled = false;
+            motionEventArgs.GamepadId = even.Which;
+            motionEventArgs.TouchpadId = even.Touchpad;
             motionEventArgs.Finger = even.Finger;
             motionEventArgs.X = even.X;
             motionEventArgs.Y = even.Y;
             motionEventArgs.Pressure = even.Pressure;
             TouchPadMotion?.Invoke(this, motionEventArgs);
+            return (this, motionEventArgs);
         }
 
-        internal void OnTouchPadUp(ControllerTouchpadEvent even)
+        internal (GamepadTouchpad Touchpad, GamepadTouchpadEventArgs EventArgs) OnTouchPadUp(ControllerTouchpadEvent even)
         {
             var state = fingerStates[even.Finger];
             state.State = FingerState.Up;
@@ -80,12 +91,17 @@
             state.Pressure = even.Pressure;
             fingerStates[even.Finger] = state;
 
+            touchpadEventArgs.Timestamp = even.Timestamp;
+            touchpadEventArgs.Handled = false;
+            touchpadEventArgs.GamepadId = even.Which;
+            touchpadEventArgs.TouchpadId = even.Touchpad;
             touchpadEventArgs.State = FingerState.Up;
             touchpadEventArgs.Finger = even.Finger;
             touchpadEventArgs.X = even.X;
             touchpadEventArgs.Y = even.Y;
             touchpadEventArgs.Pressure = even.Pressure;
             TouchPadUp?.Invoke(this, touchpadEventArgs);
+            return (this, touchpadEventArgs);
         }
 
         public bool IsDown(int finger)
@@ -98,7 +114,7 @@
             return fingerStates[finger].State == FingerState.Up;
         }
 
-        public Finger GetFinger(int index)
+        public GamepadTouchpadFinger GetFinger(int index)
         {
             return fingerStates[index];
         }

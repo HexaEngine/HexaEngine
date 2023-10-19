@@ -1,7 +1,12 @@
 ﻿namespace HexaEngine.Editor.ImagePainter
 {
     using HexaEngine.Core.Graphics;
-    using System.Numerics;
+
+    public enum ToolFlags
+    {
+        Default,
+        NoEdit
+    }
 
     public abstract class Tool : IDisposable
     {
@@ -9,13 +14,15 @@
 
         public abstract string Name { get; }
 
+        public virtual ToolFlags Flags { get; } = ToolFlags.Default;
+
         public abstract void Init(IGraphicsDevice device);
 
         public abstract void DrawSettings();
 
-        public abstract void DrawPreview(Vector2 position, Vector2 ratio, IGraphicsContext context);
+        public abstract void DrawPreview(IGraphicsContext context, ToolContext toolContext);
 
-        public abstract void Draw(Vector2 position, Vector2 ratio, IGraphicsContext context);
+        public abstract void Draw(IGraphicsContext context, ToolContext toolContext);
 
         public abstract void Dispose();
     }

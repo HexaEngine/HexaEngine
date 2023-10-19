@@ -12,6 +12,7 @@
         TIFF,
         GIF,
         WMP,
-        ICO
+        ICO,
+        RAW
     }
 }

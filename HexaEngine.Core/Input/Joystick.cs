@@ -148,7 +148,7 @@
             sdl.JoystickSetLED(joystick, red, green, blue);
         }
 
-        internal void OnAxisMotion(JoyAxisEvent even)
+        internal (Joystick Joystick, JoystickAxisMotionEventArgs AxisMotionEventArgs)? OnAxisMotion(JoyAxisEvent even)
         {
             if (Math.Abs((int)even.Value) < deadzone)
             {
@@ -157,46 +157,66 @@
 
             if (even.Value == axes[even.Axis])
             {
-                return;
+                return null;
             }
 
             axes[even.Axis] = even.Value;
+            axisMotionEventArgs.Timestamp = even.Timestamp;
+            axisMotionEventArgs.Handled = false;
+            axisMotionEventArgs.JoystickId = even.Which;
             axisMotionEventArgs.Axis = even.Axis;
             axisMotionEventArgs.Value = even.Value;
             AxisMotion?.Invoke(this, axisMotionEventArgs);
+            return (this, axisMotionEventArgs);
         }
 
-        internal void OnBallMotion(JoyBallEvent even)
+        internal (Joystick Joystick, JoystickBallMotionEventArgs BallMotionEventArgs) OnBallMotion(JoyBallEvent even)
         {
             balls[even.Ball] = (even.Xrel, even.Yrel);
+            ballMotionEventArgs.Timestamp = even.Timestamp;
+            ballMotionEventArgs.Handled = false;
+            ballMotionEventArgs.JoystickId = even.Which;
             ballMotionEventArgs.Ball = even.Ball;
             ballMotionEventArgs.RelX = even.Xrel;
             ballMotionEventArgs.RelY = even.Yrel;
             BallMotion?.Invoke(this, ballMotionEventArgs);
+            return (this, ballMotionEventArgs);
         }
 
-        internal void OnButtonDown(JoyButtonEvent even)
+        internal (Joystick Joystick, JoystickButtonEventArgs ButtonEventArgs) OnButtonDown(JoyButtonEvent even)
         {
             buttons[even.Button] = JoystickButtonState.Down;
+            buttonEventArgs.Timestamp = even.Timestamp;
+            buttonEventArgs.Handled = false;
+            buttonEventArgs.JoystickId = even.Which;
             buttonEventArgs.Button = even.Button;
             buttonEventArgs.State = JoystickButtonState.Down;
             ButtonDown?.Invoke(this, buttonEventArgs);
+            return (this, buttonEventArgs);
         }
 
-        internal void OnButtonUp(JoyButtonEvent even)
+        internal (Joystick Joystick, JoystickButtonEventArgs ButtonEventArgs) OnButtonUp(JoyButtonEvent even)
         {
             buttons[even.Button] = JoystickButtonState.Up;
+            buttonEventArgs.Timestamp = even.Timestamp;
+            buttonEventArgs.Handled = false;
+            buttonEventArgs.JoystickId = even.Which;
             buttonEventArgs.Button = even.Button;
             buttonEventArgs.State = JoystickButtonState.Up;
             ButtonUp?.Invoke(this, buttonEventArgs);
+            return (this, buttonEventArgs);
         }
 
-        internal void OnHatMotion(JoyHatEvent even)
+        internal (Joystick Joystick, JoystickHatMotionEventArgs HatMotionEventArgs) OnHatMotion(JoyHatEvent even)
         {
             hats[even.Hat] = (JoystickHatState)even.Value;
+            hatMotionEventArgs.Timestamp = even.Timestamp;
+            hatMotionEventArgs.Handled = false;
+            hatMotionEventArgs.JoystickId = even.Which;
             hatMotionEventArgs.Hat = even.Hat;
             hatMotionEventArgs.State = (JoystickHatState)even.Value;
             HatMotion?.Invoke(this, hatMotionEventArgs);
+            return (this, hatMotionEventArgs);
         }
 
         protected virtual void Dispose(bool disposing)

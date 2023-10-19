@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core;
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.UI;
     using System;
     using System.Collections.Generic;
 
@@ -28,7 +29,7 @@
 
             loader.Load();
 
-            List<IPlugin> instances = new();
+            List<IPlugin> instances = [];
 
             foreach (var type in loader.GetAssignableTypes<IPlugin>())
             {
@@ -45,11 +46,13 @@
                 catch (Exception ex)
                 {
                     Logger.Log(ex);
+                    MessageBox.Show("Failed to create plugin instance", ex.Message);
                 }
             }
 
-            foreach (var instance in instances)
+            for (int i = 0; i < instances.Count; i++)
             {
+                IPlugin? instance = instances[i];
                 try
                 {
                     Plugin plugin = new(instance);
@@ -59,6 +62,7 @@
                 catch (Exception ex)
                 {
                     Logger.Log(ex);
+                    MessageBox.Show("Failed to create plugin config", ex.Message);
                 }
             }
         }
@@ -71,8 +75,9 @@
 
         public static void Unload()
         {
-            foreach (var plugin in plugins)
+            for (int i = 0; i < plugins.Count; i++)
             {
+                Plugin? plugin = plugins[i];
                 try
                 {
                     plugin.IsInitialized = false;
@@ -81,6 +86,7 @@
                 catch (Exception ex)
                 {
                     Logger.Log(ex);
+                    MessageBox.Show("Failed to unload plugin", ex.Message);
                 }
             }
             plugins.Clear();

@@ -239,14 +239,17 @@
             mappings.Add(mapping);
         }
 
-        internal void OnRemapped()
+        internal (Gamepad Gamepad, GamepadRemappedEventArgs EventArgs) OnRemapped()
         {
+            remappedEventArgs.Handled = false;
+            remappedEventArgs.GamepadId = id;
             remappedEventArgs.Mapping = Mapping;
             Remapped?.Invoke(this, remappedEventArgs);
+            return (this, remappedEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnAxisMotion(ControllerAxisEvent even)
+        internal (Gamepad Gamepad, GamepadAxisMotionEventArgs EventArgs)? OnAxisMotion(ControllerAxisEvent even)
         {
             var axis = Helper.Convert((GameControllerAxis)even.Axis);
             if (Math.Abs((int)even.Value) < deadzone)
@@ -256,57 +259,69 @@
 
             if (even.Value == axisStates[axis])
             {
-                return;
+                return null;
             }
 
             axisStates[axis] = even.Value;
+            axisMotionEventArgs.Timestamp = even.Timestamp;
+            axisMotionEventArgs.Handled = false;
+            axisMotionEventArgs.GamepadId = even.Which;
             axisMotionEventArgs.Axis = axis;
             axisMotionEventArgs.Value = even.Value;
             AxisMotion?.Invoke(this, axisMotionEventArgs);
+            return (this, axisMotionEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnButtonDown(ControllerButtonEvent even)
+        internal (Gamepad Gamepad, GamepadButtonEventArgs EventArgs) OnButtonDown(ControllerButtonEvent even)
         {
             var button = Helper.Convert((GameControllerButton)even.Button);
             buttonStates[button] = GamepadButtonState.Down;
+            buttonEventArgs.Timestamp = even.Timestamp;
+            buttonEventArgs.Handled = false;
+            buttonEventArgs.GamepadId = even.Which;
             buttonEventArgs.Button = button;
             buttonEventArgs.State = GamepadButtonState.Down;
             ButtonDown?.Invoke(this, buttonEventArgs);
+            return (this, buttonEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnButtonUp(ControllerButtonEvent even)
+        internal (Gamepad Gamepad, GamepadButtonEventArgs EventArgs) OnButtonUp(ControllerButtonEvent even)
         {
             var button = Helper.Convert((GameControllerButton)even.Button);
             buttonStates[button] = GamepadButtonState.Up;
+            buttonEventArgs.Timestamp = even.Timestamp;
+            buttonEventArgs.Handled = false;
+            buttonEventArgs.GamepadId = even.Which;
             buttonEventArgs.Button = button;
             buttonEventArgs.State = GamepadButtonState.Up;
             ButtonUp?.Invoke(this, buttonEventArgs);
+            return (this, buttonEventArgs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnTouchPadDown(ControllerTouchpadEvent even)
+        internal (GamepadTouchpad Touchpad, GamepadTouchpadEventArgs EventArgs) OnTouchPadDown(ControllerTouchpadEvent even)
         {
-            touchpads[even.Touchpad].OnTouchPadDown(even);
+            return touchpads[even.Touchpad].OnTouchPadDown(even);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnTouchPadMotion(ControllerTouchpadEvent even)
+        internal (GamepadTouchpad Touchpad, GamepadTouchpadMotionEventArgs EventArgs) OnTouchPadMotion(ControllerTouchpadEvent even)
         {
-            touchpads[even.Touchpad].OnTouchPadMotion(even);
+            return touchpads[even.Touchpad].OnTouchPadMotion(even);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnTouchPadUp(ControllerTouchpadEvent even)
+        internal (GamepadTouchpad Touchpad, GamepadTouchpadEventArgs EventArgs) OnTouchPadUp(ControllerTouchpadEvent even)
         {
-            touchpads[even.Touchpad].OnTouchPadUp(even);
+            return touchpads[even.Touchpad].OnTouchPadUp(even);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void OnSensorUpdate(ControllerSensorEvent even)
+        internal (GamepadSensor Sensor, GamepadSensorUpdateEventArgs EventArgs) OnSensorUpdate(ControllerSensorEvent even)
         {
-            sensors[Helper.Convert((SensorType)even.Sensor)].OnSensorUpdate(even);
+            return sensors[Helper.Convert((SensorType)even.Sensor)].OnSensorUpdate(even);
         }
 
         public void Dispose()

@@ -9,7 +9,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Silk.NET.XAudio" Version="2.17.1" />
+		<PackageReference Include="Hexa.NET.X3DAudio" Version="1.0.3" />
+		<PackageReference Include="Hexa.NET.XAudio2" Version="1.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -229,6 +229,7 @@
                     {
                         hooks[i](evnt);
                     }
+
                     EventType type = (EventType)evnt.Type;
                     switch (type)
                     {
@@ -403,21 +404,21 @@
                         case EventType.Controlleraxismotion:
                             {
                                 var even = evnt.Caxis;
-                                Gamepads.AxisMotion(even);
+                                Gamepads.OnAxisMotion(even);
                             }
                             break;
 
                         case EventType.Controllerbuttondown:
                             {
                                 var even = evnt.Cbutton;
-                                Gamepads.ButtonDown(even);
+                                Gamepads.OnButtonDown(even);
                             }
                             break;
 
                         case EventType.Controllerbuttonup:
                             {
                                 var even = evnt.Cbutton;
-                                Gamepads.ButtonUp(even);
+                                Gamepads.OnButtonUp(even);
                             }
                             break;
 
@@ -438,45 +439,63 @@
                         case EventType.Controllerdeviceremapped:
                             {
                                 var even = evnt.Cdevice;
-                                Gamepads.Remapped(even);
+                                Gamepads.OnRemapped(even);
                             }
                             break;
 
                         case EventType.Controllertouchpaddown:
                             {
                                 var even = evnt.Ctouchpad;
-                                Gamepads.TouchPadDown(even);
+                                Gamepads.OnTouchPadDown(even);
                             }
                             break;
 
                         case EventType.Controllertouchpadmotion:
                             {
                                 var even = evnt.Ctouchpad;
-                                Gamepads.TouchPadMotion(even);
+                                Gamepads.OnTouchPadMotion(even);
                             }
                             break;
 
                         case EventType.Controllertouchpadup:
                             {
                                 var even = evnt.Ctouchpad;
-                                Gamepads.TouchPadUp(even);
+                                Gamepads.OnTouchPadUp(even);
                             }
                             break;
 
                         case EventType.Controllersensorupdate:
                             {
                                 var even = evnt.Csensor;
-                                Gamepads.SensorUpdate(even);
+                                Gamepads.OnSensorUpdate(even);
                             }
                             break;
 
                         case EventType.Fingerdown:
+                            {
+                                var even = evnt.Tfinger;
+                                TouchDevices.FingerDown(even);
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputTouchDown(even);
+                            }
                             break;
 
                         case EventType.Fingerup:
+                            {
+                                var even = evnt.Tfinger;
+                                TouchDevices.FingerUp(even);
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputTouchUp(even);
+                            }
                             break;
 
                         case EventType.Fingermotion:
+                            {
+                                var even = evnt.Tfinger;
+                                TouchDevices.FingerMotion(even);
+                                if (even.WindowID == mainWindow.WindowID)
+                                    ((SdlWindow)mainWindow).ProcessInputTouchMotion(even);
+                            }
                             break;
 
                         case EventType.Dollargesture:

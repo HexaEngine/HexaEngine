@@ -38,13 +38,17 @@
 
         public event EventHandler<GamepadSensorUpdateEventArgs>? SensorUpdate;
 
-        internal void OnSensorUpdate(ControllerSensorEvent even)
+        internal (GamepadSensor Sensor, GamepadSensorUpdateEventArgs EventArgs) OnSensorUpdate(ControllerSensorEvent even)
         {
             MemcpyT(even.Data, buffer, length);
+            sensorUpdateEventArgs.Timestamp = even.Timestamp;
+            sensorUpdateEventArgs.Handled = false;
+            sensorUpdateEventArgs.GamepadId = even.Which;
             sensorUpdateEventArgs.Data = buffer;
             sensorUpdateEventArgs.Length = length;
             sensorUpdateEventArgs.Type = type;
             SensorUpdate?.Invoke(this, sensorUpdateEventArgs);
+            return (this, sensorUpdateEventArgs);
         }
 
         public void Flush()

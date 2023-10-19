@@ -143,7 +143,7 @@
                 if (FileSystem.Exists(path))
                 {
                     ModelFile source = component.modelManager.Load(path);
-                    MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary + ".matlib");
+                    MaterialLibrary library = component.materialManager.Load(Paths.CurrentMaterialsPath + source.MaterialLibrary);
 
                     component.model = new(source, library);
                     await component.model.LoadAsync();

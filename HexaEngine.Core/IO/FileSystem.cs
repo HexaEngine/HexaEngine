@@ -92,7 +92,7 @@
         }
 
         /// <summary>
-        /// Refreshes the file system by recreating the file indices.
+        /// Refreshes the file system by recreating the file indices. Note: normally you don't need to manually refresh.
         /// </summary>
         public static void Refresh()
         {

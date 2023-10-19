@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    public class GamepadAxisMotionEventArgs
+    public class GamepadAxisMotionEventArgs : GamepadEventArgs
     {
         public GamepadAxisMotionEventArgs()
         {

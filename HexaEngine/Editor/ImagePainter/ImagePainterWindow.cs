@@ -3,6 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
+    using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Dialogs;
@@ -23,6 +24,7 @@
 
         private Vector2 last;
         private bool focused;
+        private bool gotFocus;
 
         private float zoom = 1;
 
@@ -31,6 +33,7 @@
         private readonly ImageProperties imageProperties;
         private readonly ToolProperties toolProperties;
         private readonly Brushes brushes = new();
+        private readonly ToolContext toolContext;
 
         private bool isDown;
 
@@ -48,6 +51,7 @@
 
         public ImagePainterWindow()
         {
+            toolContext = new(this);
             imageProperties = new(this);
             toolProperties = new(toolbox);
             colorPicker.Show();
@@ -57,11 +61,45 @@
             brushes.Show();
             IsShown = true;
             Flags = ImGuiWindowFlags.MenuBar | ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.AlwaysHorizontalScrollbar | ImGuiWindowFlags.AlwaysVerticalScrollbar;
+
+            TouchDevices.TouchDown += TouchDown;
+            TouchDevices.TouchUp += TouchUp;
+            TouchDevices.TouchMotion += TouchMotion;
+
+            Mouse.ButtonDown += MouseButtonDown;
+            Mouse.ButtonUp += MouseButtonUp;
+            Mouse.Moved += MouseMoved;
+        }
+
+        private void MouseButtonUp(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        {
+        }
+
+        private void MouseButtonDown(object? sender, Core.Input.Events.MouseButtonEventArgs e)
+        {
+        }
+
+        private void MouseMoved(object? sender, Core.Input.Events.MouseMotionEventArgs e)
+        {
+        }
+
+        private void TouchMotion(object? sender, Core.Input.Events.TouchMotionEventArgs e)
+        {
+        }
+
+        private void TouchUp(object? sender, Core.Input.Events.TouchEventArgs e)
+        {
+        }
+
+        private void TouchDown(object? sender, Core.Input.Events.TouchEventArgs e)
+        {
         }
 
         protected override string Name => "Image Painter";
 
         public ImageSource? Source => source;
+
+        public Vector4 BrushColor { get => colorPicker.Color; set => colorPicker.Color = value; }
 
         protected override unsafe void InitWindow(IGraphicsDevice device)
         {
@@ -103,11 +141,7 @@
 
                     if (ImGui.MenuItem("Save"))
                     {
-                        if (source != null && CurrentFile != null)
-                        {
-                            var image = source.ToScratchImage(device);
-                            image.SaveToFile(CurrentFile, Core.Graphics.Textures.TexFileFormat.Auto, 0);
-                        }
+                        Save();
                     }
                     if (ImGui.MenuItem("Export"))
                     {
@@ -198,6 +232,11 @@
                     if (ImGui.MenuItem("IBL Roughness Prefilter"))
                     {
                         modals.GetOrCreate<RoughnessPrefilterDialog>(() => new(this, device)).Show();
+                    }
+
+                    if (ImGui.MenuItem("IBL LUT Generator"))
+                    {
+                        modals.GetOrCreate<IBLBRDFLUTDialog>(() => new(this, device)).Show();
                     }
 
                     ImGui.EndMenu();
@@ -313,13 +352,15 @@
                 context.SetRenderTarget(overlay.RTV, default);
                 context.SetViewport(overlay.Viewport);
                 context.PSSetShaderResource(0, source.SRV);
+                context.SetGraphicsPipeline(copyPipeline);
                 context.DrawInstanced(4, 1, 0, 0);
                 context.ClearState();
 
                 var curPosGlob = ImGui.GetCursorScreenPos();
 
-                if (ImGui.IsMouseHoveringRect(curPosGlob, curPosGlob + size * zoom) && focused && brushes.Current != null)
+                if (ImGui.IsMouseHoveringRect(curPosGlob, curPosGlob + size * zoom) && brushes.Current != null && toolbox.Current != null)
                 {
+                    var toolFlags = toolbox.Current.Flags;
                     var curPos = ImGui.GetMousePos() / zoom - curPosGlob / zoom;
                     var curPosD = curPos - lastpos;
                     lastpos = curPos;
@@ -329,8 +370,12 @@
 
                     if (changed && !isDown)
                     {
-                        context.ClearDepthStencilView(overlay.DSV, DepthStencilClearFlags.All, 1, 0);
-                        history?.UndoPush(context);
+                        if (!toolFlags.HasFlag(ToolFlags.NoEdit))
+                        {
+                            context.ClearDepthStencilView(overlay.DSV, DepthStencilClearFlags.All, 1, 0);
+                            history?.UndoPush(context);
+                        }
+
                         first = true;
                     }
                     isDown = changed;
@@ -339,25 +384,66 @@
 
                     brushes.Current.Apply(context);
 
-                    Vector2 ratio = new Vector2(source.Viewport.Width, source.Viewport.Height) / size;
+                    toolContext.Position = curPos;
+                    toolContext.Ratio = new Vector2(source.Viewport.Width, source.Viewport.Height) / size;
 
                     if (moved || first)
                     {
                         context.SetRenderTarget(source.RTV, overlay.DSV);
                         context.SetViewport(source.Viewport);
-                        toolbox.Current?.Draw(curPos, ratio, context);
+                        toolbox.Current.Draw(context, toolContext);
                     }
                     else
                     {
                         context.SetRenderTarget(overlay.RTV, default);
-                        toolbox.Current?.DrawPreview(curPos, ratio, context);
+                        toolbox.Current.DrawPreview(context, toolContext);
                     }
 
                     context.ClearState();
                 }
 
                 ImGui.Image(overlay.SRV.NativePointer, size * zoom);
+                var focusedTmp = focused;
                 focused = ImGui.IsWindowFocused();
+                gotFocus = focused && !focusedTmp;
+            }
+        }
+
+        private void Save()
+        {
+            if (source != null && CurrentFile != null)
+            {
+                try
+                {
+                    var image = source.ToScratchImage(device);
+                    var originalMetadata = source.OriginalMetadata;
+                    var metadata = image.Metadata;
+
+                    if (originalMetadata.Format != metadata.Format)
+                    {
+                        var format = originalMetadata.Format;
+                        if (FormatHelper.IsCompressed(format))
+                        {
+                            var tmp = image.Compress(device, originalMetadata.Format, Core.Graphics.Textures.TexCompressFlags.Parallel);
+                            IScratchImage.SwapImage(ref image, tmp);
+                        }
+                        else
+                        {
+                            var tmp = image.Convert(originalMetadata.Format, Core.Graphics.Textures.TexFilterFlags.Default);
+                            IScratchImage.SwapImage(ref image, tmp);
+                        }
+                    }
+
+                    image.SaveToFile(CurrentFile, Core.Graphics.Textures.TexFileFormat.Auto, 0);
+                    image.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to save image: {CurrentFile}", ex.Message);
+                    Logger.Error($"Failed to save image: {CurrentFile}");
+                    Logger.Log(ex);
+                    UnloadImage();
+                }
             }
         }
 
@@ -409,16 +495,51 @@
 
         private void LoadImage(IScratchImage image)
         {
-            var format = image.Metadata.Format;
+            var originalMetadata = image.Metadata;
+            var format = originalMetadata.Format;
 
             if (FormatHelper.IsCompressed(format))
             {
-                var image1 = image.Decompress(Format.R8G8B8A8UNorm);
-                image.Dispose();
-                image = image1;
+                var tmp = image.Decompress(Format.R8G8B8A8UNorm);
+                IScratchImage.SwapImage(ref image, tmp);
+                MessageBox.Show("Alert!", $"Image was decompressed from\n " +
+                                $"{format} to {Format.R8G8B8A8UNorm}\n " +
+                                $"note: on save the image will be compressed back to {format},\n" +
+                                $"if no format conversation/overwrite was done.");
             }
 
-            source = new(device, image);
+            if (FormatHelper.IsPalettized(format))
+            {
+                var tmp = image.Convert(Format.R8G8B8A8UNorm, Core.Graphics.Textures.TexFilterFlags.Default);
+                IScratchImage.SwapImage(ref image, tmp);
+                MessageBox.Show("Alert!", $"Image was converted from\n " +
+                                $"{format} to {Format.R8G8B8A8UNorm}\n " +
+                                $"note: on save the image will be converted back to {format},\n" +
+                                $"if no format conversation/overwrite was done.");
+            }
+
+            if (FormatHelper.IsVideo(format))
+            {
+                MessageBox.Show("Alert!", $"Cannot load video formats {format},\n" +
+                                          $"only image formats are supported.");
+                return;
+            }
+
+            if (FormatHelper.IsDepthStencil(format))
+            {
+                MessageBox.Show("Alert!", $"Cannot load depth stencil formats {format},\n" +
+                                          $"only image formats are supported.");
+                return;
+            }
+
+            if (FormatHelper.IsTypeless(format, true))
+            {
+                MessageBox.Show("Alert!", $"Cannot load typeless formats {format},\n" +
+                                          $"only image formats are supported.");
+                return;
+            }
+
+            source = new(device, image, originalMetadata);
             imageProperties.Image = source;
             size = new(source.Metadata.Width, source.Metadata.Height);
 
@@ -441,6 +562,14 @@
             imageProperties.Dispose();
             toolProperties.Dispose();
             brushes.Dispose();
+
+            Mouse.ButtonDown -= MouseButtonDown;
+            Mouse.ButtonUp -= MouseButtonUp;
+            Mouse.Moved -= MouseMoved;
+
+            TouchDevices.TouchDown -= TouchDown;
+            TouchDevices.TouchUp -= TouchUp;
+            TouchDevices.TouchMotion -= TouchMotion;
         }
     }
 }

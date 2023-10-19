@@ -9,9 +9,9 @@
     {
         public InputNode(int id, bool removable, bool isStatic) : base(id, "Geometry", removable, isStatic)
         {
-            TitleColor = MathUtil.Pack(0xff, 0x23, 0x00, 0xc8);
-            TitleHoveredColor = MathUtil.Pack(0xff, 0x28, 0x00, 0xe4);
-            TitleSelectedColor = MathUtil.Pack(0xff, 0x2d, 0x00, 0xff);
+            TitleColor = MathUtil.PackARGB(0xff, 0x23, 0x00, 0xc8);
+            TitleHoveredColor = MathUtil.PackARGB(0xff, 0x28, 0x00, 0xe4);
+            TitleSelectedColor = MathUtil.PackARGB(0xff, 0x2d, 0x00, 0xff);
         }
 
         public override void Initialize(NodeEditor editor)

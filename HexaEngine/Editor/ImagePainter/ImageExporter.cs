@@ -270,6 +270,11 @@
                     isExporterOpen = true;
                     break;
 
+                case TexFileFormat.RAW:
+                    exporter = new RAWExporter();
+                    isExporterOpen = true;
+                    break;
+
                 default:
                     image?.SaveToFile(FullPath, format, 0);
                     Close();

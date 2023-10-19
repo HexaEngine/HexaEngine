@@ -20,6 +20,7 @@ namespace HexaEngine.Rendering.Renderers
             LightCullPass lightCullPass = new();
             ShadowMapPass shadowMapPass = new();
             GBufferPass gBufferPass = new();
+            //LightDeferredPass lightDeferredPass = new();
             LightForwardPass lightForwardPass = new();
             PostProcessPass postProcessPass = new();
 
@@ -31,11 +32,12 @@ namespace HexaEngine.Rendering.Renderers
             lightCullPass.Build(this);
             shadowMapPass.Build(this);
             gBufferPass.Build(this);
+            //lightDeferredPass.Build(this);
             lightForwardPass.Build(this);
             postProcessPass.Build(this);
 
-            Passes = new RenderPass[]
-            {
+            Passes =
+            [
                 brdfLutPass,
                 depthPrePass,
                 postProcessPrePass,
@@ -44,9 +46,10 @@ namespace HexaEngine.Rendering.Renderers
                 lightCullPass,
                 shadowMapPass,
                 gBufferPass,
+                //lightDeferredPass,
                 lightForwardPass,
                 postProcessPass
-            };
+            ];
         }
     }
 }

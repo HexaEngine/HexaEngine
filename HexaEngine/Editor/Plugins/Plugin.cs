@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Editor.Plugins
 {
+    using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.UI;
+
     public class Plugin
     {
         private readonly IPlugin plugin;
@@ -29,13 +32,21 @@
 
                 isEnabled = value;
 
-                if (value)
+                try
                 {
-                    plugin.OnEnable();
+                    if (value)
+                    {
+                        plugin.OnEnable();
+                    }
+                    else
+                    {
+                        plugin.OnDisable();
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    plugin.OnDisable();
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to enable plugin", ex.Message);
                 }
             }
         }
@@ -57,13 +68,21 @@
                     return;
                 }
 
-                if (value)
+                try
                 {
-                    plugin.OnInitialize();
+                    if (value)
+                    {
+                        plugin.OnInitialize();
+                    }
+                    else
+                    {
+                        plugin.OnUninitialize();
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    plugin.OnUninitialize();
+                    Logger.Log(ex);
+                    MessageBox.Show("Failed to initialize plugin", ex.Message);
                 }
             }
         }

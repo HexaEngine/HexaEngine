@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    public class JoystickBallMotionEventArgs : EventArgs
+    public class JoystickBallMotionEventArgs : JoystickEventArgs
     {
         public JoystickBallMotionEventArgs()
         {

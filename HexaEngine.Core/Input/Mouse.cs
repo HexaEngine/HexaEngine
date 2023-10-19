@@ -10,8 +10,8 @@
 
     public static unsafe class Mouse
     {
-        private static MouseButton[] buttons = Enum.GetValues<MouseButton>();
-        private static string[] buttonNames = Enum.GetNames<MouseButton>();
+        private static readonly MouseButton[] buttons = Enum.GetValues<MouseButton>();
+        private static readonly string[] buttonNames = Enum.GetNames<MouseButton>();
 
 #nullable disable
         private static Sdl sdl;
@@ -92,6 +92,9 @@
         {
             MouseButton button = (MouseButton)mouseButtonEvent.Button;
             states[button] = MouseButtonState.Down;
+            buttonEventArgs.Timestamp = mouseButtonEvent.Timestamp;
+            buttonEventArgs.Handled = false;
+            buttonEventArgs.MouseId = mouseButtonEvent.Which;
             buttonEventArgs.Button = button;
             buttonEventArgs.State = MouseButtonState.Down;
             buttonEventArgs.Clicks = mouseButtonEvent.Clicks;
@@ -103,6 +106,9 @@
         {
             MouseButton button = (MouseButton)mouseButtonEvent.Button;
             states[button] = MouseButtonState.Up;
+            buttonEventArgs.Timestamp = mouseButtonEvent.Timestamp;
+            buttonEventArgs.Handled = false;
+            buttonEventArgs.MouseId = mouseButtonEvent.Which;
             buttonEventArgs.Button = button;
             buttonEventArgs.State = MouseButtonState.Up;
             buttonEventArgs.Clicks = mouseButtonEvent.Clicks;
@@ -110,14 +116,17 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void OnMotion(MouseMotionEvent mouseButtonEvent)
+        internal static void OnMotion(MouseMotionEvent mouseMotionEvent)
         {
-            if (mouseButtonEvent.Xrel == 0 && mouseButtonEvent.Yrel == 0)
+            if (mouseMotionEvent.Xrel == 0 && mouseMotionEvent.Yrel == 0)
             {
                 return;
             }
 
-            delta += new Vector2(mouseButtonEvent.Xrel, mouseButtonEvent.Yrel);
+            delta += new Vector2(mouseMotionEvent.Xrel, mouseMotionEvent.Yrel);
+            motionEventArgs.Timestamp = mouseMotionEvent.Timestamp;
+            motionEventArgs.Handled = false;
+            motionEventArgs.MouseId = mouseMotionEvent.Which;
             motionEventArgs.RelX = delta.X;
             motionEventArgs.RelY = delta.Y;
             motionEventArgs.X = pos.X;
@@ -129,6 +138,9 @@
         internal static void OnWheel(MouseWheelEvent mouseWheelEvent)
         {
             deltaWheel += new Vector2(mouseWheelEvent.X, mouseWheelEvent.Y);
+            wheelEventArgs.Timestamp = mouseWheelEvent.Timestamp;
+            wheelEventArgs.Handled = false;
+            wheelEventArgs.MouseId = mouseWheelEvent.Which;
             wheelEventArgs.Wheel = new Vector2(mouseWheelEvent.X, mouseWheelEvent.Y);
             wheelEventArgs.Direction = (MouseWheelDirection)mouseWheelEvent.Direction;
             Wheel?.Invoke(null, wheelEventArgs);

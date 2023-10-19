@@ -4,7 +4,6 @@
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
     using ImGuiNET;
-    using System;
 
     public class GenerateMipMapsDialog : Modal
     {
@@ -23,7 +22,6 @@
 
         public override void Reset()
         {
-            throw new NotImplementedException();
         }
 
         protected override void DrawContent()

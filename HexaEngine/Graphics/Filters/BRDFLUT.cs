@@ -1,30 +1,26 @@
 ﻿#nullable disable
 
-using HexaEngine;
-
 namespace HexaEngine.Graphics.Filters
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Mathematics;
 
     public class BRDFLUT
     {
         private IGraphicsPipeline pipeline;
 
         public IRenderTargetView Target;
-        public Viewport Viewport;
         private bool disposedValue;
 
         public BRDFLUT(IGraphicsDevice device, bool multiscatter, bool cloth)
         {
             pipeline = device.CreateGraphicsPipeline(new()
             {
-                VertexShader = "effects/dfg/vs.hlsl",
+                VertexShader = "quad.hlsl",
                 PixelShader = "effects/dfg/ps.hlsl"
             }, GraphicsPipelineState.DefaultFullscreen, new ShaderMacro[2] { new("MULTISCATTER", multiscatter ? "1" : "0"), new("CLOTH", cloth ? "1" : "0") });
         }
 
-        public void Draw(IGraphicsContext context)
+        public void Draw(IGraphicsContext context, uint width, uint height)
         {
             if (Target == null)
             {
@@ -34,7 +30,7 @@ namespace HexaEngine.Graphics.Filters
             context.ClearRenderTargetView(Target, default);
 
             context.SetRenderTarget(Target, null);
-            context.SetViewport(Viewport);
+            context.SetViewport(new(width, height));
 
             context.SetGraphicsPipeline(pipeline);
 

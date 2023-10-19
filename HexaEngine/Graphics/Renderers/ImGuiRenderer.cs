@@ -55,6 +55,8 @@ namespace HexaEngine.Rendering.Renderers
             ctx.PSSetSampler(0, fontSampler);
         }
 
+        public static readonly Dictionary<ImTextureID, ISamplerState> Samplers = new();
+
         /// <summary>
         /// Render function
         /// </summary>
@@ -183,6 +185,14 @@ namespace HexaEngine.Rendering.Renderers
                         // Bind texture, Draw
                         var srv = (void*)cmd.TextureId.Handle;
                         ctx.PSSetShaderResources(0, 1, &srv);
+                        if (Samplers.TryGetValue(cmd.TextureId, out ISamplerState sampler))
+                        {
+                            ctx.PSSetSampler(0, sampler);
+                        }
+                        else
+                        {
+                            ctx.PSSetSampler(0, fontSampler);
+                        }
                         ctx.DrawIndexedInstanced(cmd.ElemCount, 1, (uint)(cmd.IdxOffset + global_idx_offset), (int)(cmd.VtxOffset + global_vtx_offset), 0);
                     }
                 }

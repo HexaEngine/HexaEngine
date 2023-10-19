@@ -2,6 +2,7 @@
 {
     using HexaEngine.Core.Graphics.Textures;
     using System;
+    using System.Runtime.CompilerServices;
 
     [Flags]
     public enum TextureLoaderFlags
@@ -66,6 +67,13 @@
 
     public interface IScratchImage : IDisposable
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void SwapImage(ref IScratchImage oldImage, IScratchImage newImage)
+        {
+            oldImage.Dispose();
+            oldImage = newImage;
+        }
+
         public TexMetadata Metadata { get; }
 
         public int ImageCount { get; }

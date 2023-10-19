@@ -9,8 +9,8 @@
     {
         private Vector2 brushSize = Vector2.One;
         private IGraphicsPipeline brushPipeline;
-        private Vector2 oldPos;
-        public override string Icon => "\xED63##PencilTool";
+
+        public override string Icon => "\xEC87##PencilTool";
 
         public override string Name => "Pencil";
 
@@ -30,7 +30,7 @@
             brushPipeline = device.CreateGraphicsPipeline(new()
             {
                 VertexShader = "quad.hlsl",
-                PixelShader = "effects/brush/ps.hlsl",
+                PixelShader = "tools/image/brush/ps.hlsl",
             }, new GraphicsPipelineState()
             {
                 Blend = BlendDescription.AlphaBlend,
@@ -38,8 +38,6 @@
                 DepthStencil = depthStencil,
                 Rasterizer = RasterizerDescription.CullBack,
                 Topology = PrimitiveTopology.TriangleStrip,
-                SampleMask = int.MaxValue,
-                StencilRef = 1,
             });
         }
 
@@ -48,28 +46,20 @@
             ImGui.InputFloat2("Size", ref brushSize);
         }
 
-        public override void Draw(Vector2 position, Vector2 ratio, IGraphicsContext context)
+        public override void Draw(IGraphicsContext context, ToolContext toolContext)
         {
-            if (position - oldPos == Vector2.Zero)
-            {
-                return;
-            }
-
-            var size = brushSize;
-            var pos = position * ratio - size / 2f;
-
-            context.SetViewport(new(pos, size));
+            context.SetViewport(toolContext.ComputeViewport(brushSize));
+            context.SetGraphicsPipeline(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
-            oldPos = position;
+            context.SetGraphicsPipeline(null);
         }
 
-        public override void DrawPreview(Vector2 position, Vector2 ratio, IGraphicsContext context)
+        public override void DrawPreview(IGraphicsContext context, ToolContext toolContext)
         {
-            var size = brushSize;
-            var pos = position * ratio - size / 2f;
-
-            context.SetViewport(new(pos, size));
+            context.SetViewport(toolContext.ComputeViewport(brushSize));
+            context.SetGraphicsPipeline(brushPipeline);
             context.DrawInstanced(4, 1, 0, 0);
+            context.SetGraphicsPipeline(null);
         }
 
         public override void Dispose()

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Editor.Plugins
 {
     using HexaEngine.Core.Debugging;
+    using HexaEngine.Core.UI;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -66,6 +67,7 @@
             catch (Exception ex)
             {
                 Logger.Log(ex);
+                MessageBox.Show("Failed to load plugin", ex.Message);
             }
 
             return null;

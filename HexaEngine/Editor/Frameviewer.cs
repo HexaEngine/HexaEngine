@@ -45,6 +45,7 @@
         internal void Update()
         {
             ImGuizmo.SetRect(Viewport.X, Viewport.Y, Viewport.Width, Viewport.Height);
+            ImGuizmo.SetOrthographic(CameraManager.Dimension == CameraEditorDimension.Dim2D);
             DebugDraw.SetViewport(Viewport);
         }
 

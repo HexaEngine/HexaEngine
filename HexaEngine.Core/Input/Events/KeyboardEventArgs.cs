@@ -1,25 +1,25 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
     using HexaEngine.Core.Input;
-    using Silk.NET.SDL;
+    using HexaEngine.Core.Windows.Events;
 
-    public class KeyboardEventArgs : EventArgs
+    public class KeyboardEventArgs : RoutedEventArgs
     {
         public KeyboardEventArgs()
         {
         }
 
-        public KeyboardEventArgs(Key keyCode, KeyState keyState, Scancode scancode)
+        public KeyboardEventArgs(Key keyCode, KeyState keyState, ScanCode scancode)
         {
             KeyCode = keyCode;
-            KeyState = keyState;
-            Scancode = scancode;
+            State = keyState;
+            ScanCode = scancode;
         }
 
         public Key KeyCode { get; internal set; }
 
-        public KeyState KeyState { get; internal set; }
+        public KeyState State { get; internal set; }
 
-        public Scancode Scancode { get; internal set; }
+        public ScanCode ScanCode { get; internal set; }
     }
 }

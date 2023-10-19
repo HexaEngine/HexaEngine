@@ -1,6 +1,8 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    public class KeyboardCharEventArgs : EventArgs
+    using HexaEngine.Core.Windows.Events;
+
+    public class KeyboardCharEventArgs : RoutedEventArgs
     {
         public KeyboardCharEventArgs()
         {

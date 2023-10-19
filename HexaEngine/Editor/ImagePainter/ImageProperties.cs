@@ -30,10 +30,19 @@
                 return;
             }
 
+            var originalMetadata = image.OriginalMetadata;
             var metadata = image.Metadata;
             ImGui.InputInt2("Size", ref metadata.Width, ImGuiInputTextFlags.ReadOnly);
 
-            ComboEnumHelper<Format>.Text(metadata.Format);
+            if (metadata.Format != originalMetadata.Format)
+            {
+                ComboEnumHelper<Format>.Text(originalMetadata.Format);
+                ImGui.Text($"({metadata.Format})");
+            }
+            else
+            {
+                ComboEnumHelper<Format>.Text(metadata.Format);
+            }
 
             ImGui.InputInt("ArraySize", ref metadata.ArraySize, 0, 0, ImGuiInputTextFlags.ReadOnly);
 

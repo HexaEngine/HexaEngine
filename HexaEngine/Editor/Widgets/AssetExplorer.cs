@@ -281,7 +281,7 @@
                 {
                     if (ImGui.MenuItem("Scene"))
                     {
-                        SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "Scene Scene.hexlvl")));
+                        SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
                         Refresh();
                     }
                     if (ImGui.MenuItem("Effect"))

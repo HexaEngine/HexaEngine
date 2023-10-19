@@ -1,18 +1,51 @@
 ﻿namespace HexaEngine.Core.Input
 {
-    public struct Finger
-    {
-        public FingerState State;
-        public float X;
-        public float Y;
-        public float Pressure;
+    using HexaEngine.Core.Input.Events;
 
-        public Finger(FingerState state, float x, float y, float pressure)
+    public unsafe class Finger
+    {
+        private readonly Silk.NET.SDL.Finger* finger;
+        private readonly long id;
+        private FingerState state;
+
+        public Finger(Silk.NET.SDL.Finger* finger)
         {
-            State = state;
-            X = x;
-            Y = y;
-            Pressure = pressure;
+            this.finger = finger;
+            id = finger->Id;
+            state = Pressure > 0 ? FingerState.Down : FingerState.Up;
+        }
+
+        public long Id => id;
+
+        public FingerState State => state;
+
+        public float X => finger->X;
+
+        public float Y => finger->Y;
+
+        public float Pressure => finger->Pressure;
+
+        public event EventHandler<TouchEventArgs>? TouchUp;
+
+        public event EventHandler<TouchEventArgs>? TouchDown;
+
+        public event EventHandler<TouchMotionEventArgs>? TouchMotion;
+
+        internal void OnFingerUp(TouchEventArgs touchEventArgs)
+        {
+            state = FingerState.Up;
+            TouchUp?.Invoke(this, touchEventArgs);
+        }
+
+        internal void OnFingerDown(TouchEventArgs touchEventArgs)
+        {
+            state = FingerState.Down;
+            TouchDown?.Invoke(this, touchEventArgs);
+        }
+
+        internal void OnFingerMotion(TouchMotionEventArgs touchMotionEventArgs)
+        {
+            TouchMotion?.Invoke(this, touchMotionEventArgs);
         }
     }
 }

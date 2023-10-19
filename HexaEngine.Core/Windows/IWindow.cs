@@ -214,6 +214,16 @@
         event EventHandler<MouseWheelEventArgs>? MouseWheelInput;
 
         /// <summary>
+        /// Event triggered when a touch input is received.
+        /// </summary>
+        event EventHandler<TouchEventArgs>? TouchInput;
+
+        /// <summary>
+        /// Event triggered when a touch motion input is received.
+        /// </summary>
+        event EventHandler<TouchMotionEventArgs>? TouchMotionInput;
+
+        /// <summary>
         /// Event triggered when the window is moved.
         /// </summary>
         event EventHandler<MovedEventArgs>? Moved;

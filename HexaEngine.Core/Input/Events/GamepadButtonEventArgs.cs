@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Input.Events
 {
-    public class GamepadButtonEventArgs : EventArgs
+    public class GamepadButtonEventArgs : GamepadEventArgs
     {
         public GamepadButtonEventArgs()
         {

@@ -351,7 +351,7 @@
 
             // Ensures that no additional memory is used when not needed,
             // because the internal buffer is only required if reads or writes can happen.
-            if (canRead || canWrite)
+            if (!canRead && !canWrite)
             {
                 Free(items);
                 items = null;
@@ -372,7 +372,7 @@
             }
             else if (canRead)
             {
-                copyDescription = new(sizeof(T) * initialCapacity, BindFlags.ShaderResource, Usage.Staging, CpuAccessFlags.Read, ResourceMiscFlag.None, 0);
+                copyDescription = new(sizeof(T) * initialCapacity, BindFlags.None, Usage.Staging, CpuAccessFlags.Read, ResourceMiscFlag.None, 0);
                 copyBuffer = device.CreateBuffer(copyDescription);
                 copyBuffer.DebugName = dbgName + ".CopyBuffer";
                 MemoryManager.Register(copyBuffer);
