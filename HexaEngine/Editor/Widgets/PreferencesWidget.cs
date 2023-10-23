@@ -3,6 +3,7 @@
     using HexaEngine.Core;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Core.UI;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
@@ -12,6 +13,7 @@
     {
         private ConfigKey? displayedKey;
         private List<Key> keyCodes = new();
+
         private string? recodingId;
         private string? filter = string.Empty;
 
@@ -347,6 +349,24 @@
 
                                 ImGui.SameLine();
                                 ImGui.InputText($"##{value.Name}", ref val, 256, ImGuiInputTextFlags.ReadOnly);
+                            }
+                            break;
+
+                        case DataType.Enum:
+                            {
+                                var type = value.EnumType;
+                                if (type == null)
+                                {
+                                    continue;
+                                }
+
+                                var v = value.GetEnum(type);
+                                changed = ComboEnumHelper.Combo(value.Name, type, ref v);
+
+                                if (changed)
+                                {
+                                    val = v.ToString();
+                                }
                             }
                             break;
                     }

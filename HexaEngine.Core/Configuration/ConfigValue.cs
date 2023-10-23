@@ -12,6 +12,7 @@
 
         private object? instance;
         private PropertyInfo? property;
+        private Type? enumType;
 
         private string? value;
         private string? defaultValue;
@@ -40,6 +41,9 @@
 
         [JsonIgnore]
         public PropertyInfo? Property { get => property; internal set => property = value; }
+
+        [JsonIgnore]
+        public Type? EnumType { get => enumType; internal set => enumType = value; }
 
         public DataType DataType { get; set; }
 
@@ -239,6 +243,18 @@
             }
 
             return Enum.Parse<T>(Value);
+        }
+
+        public object GetEnum(Type type)
+        {
+            if (Value == null)
+            {
+#nullable disable
+                return Activator.CreateInstance(type);
+#nullable enable
+            }
+
+            return Enum.Parse(type, Value);
         }
 
         public IEnumerable<Key> GetKeys()

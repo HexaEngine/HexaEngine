@@ -81,7 +81,6 @@ namespace HexaEngine.Rendering.Renderers
             this.window = window;
 
             configKey = Config.Global.GetOrCreateKey("Renderer");
-            var configKey1 = Config.Global.GenerateSubKeyAuto(settings, "RendererSettings");
             configKey.RemoveValue("renderResolution");
             configKey.Sort();
             RenderResolution = configKey.GetOrAddValue(nameof(RenderResolution), 1f);

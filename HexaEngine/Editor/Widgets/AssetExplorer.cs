@@ -14,6 +14,7 @@
     /// <summary>
     /// The old asset explorer
     /// </summary>
+    [Obsolete($"Use {nameof(AssetExplorer2)}")]
     public class AssetExplorer : EditorWindow
     {
         private DirectoryInfo? currentDir;

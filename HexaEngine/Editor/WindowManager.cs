@@ -106,8 +106,8 @@
             Register<PreferencesWidget>();
             Register<ProjectExplorer>();
             Register<PipelineWidget>();
-            Register<AssetExplorer>();
             Register<AssetExplorer2>();
+            Register<GitWidget>();
             Register<LayoutWidget>();
             Register<PropertiesWidget>();
 

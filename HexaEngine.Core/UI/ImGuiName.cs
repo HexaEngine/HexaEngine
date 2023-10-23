@@ -16,5 +16,10 @@
             UniqueName = $"{Name}##{RawId}";
             Id = $"##{RawId}";
         }
+
+        public static implicit operator string(ImGuiName name)
+        {
+            return name.UniqueName;
+        }
     }
 }

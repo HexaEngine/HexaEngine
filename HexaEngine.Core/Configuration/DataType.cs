@@ -21,5 +21,6 @@
         ColorRGB,
         Button,
         Keys,
+        Enum,
     }
 }

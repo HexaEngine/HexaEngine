@@ -172,6 +172,17 @@
             }
         }
 
+        public void AddValue(string key, DataType type, string? value, bool isReadOnly, Type? enumType)
+        {
+            lock (_lock)
+            {
+                ConfigValue configValue = new(key, type, value, isReadOnly);
+                configValue.DefaultValue = value;
+                configValue.EnumType = enumType;
+                Values.Add(configValue);
+            }
+        }
+
         public bool RemoveValue(string key)
         {
             lock (_lock)
@@ -266,18 +277,22 @@
         {
             lock (_lock)
             {
-                if (!TryGetValue(key, out string? value))
+                if (!TryGetKeyValue(key, out var value))
                 {
-                    AddValue(key, DataType.String, defaultValue.ToString(), false);
+                    AddValue(key, DataType.Enum, defaultValue.ToString(), false, typeof(T));
                     return defaultValue;
                 }
 
-                if (value == null)
+                value.EnumType ??= typeof(T);
+
+                var val = value.Value;
+
+                if (val == null)
                 {
                     return defaultValue;
                 }
 
-                return Enum.Parse<T>(value);
+                return Enum.Parse<T>(val);
             }
         }
 
@@ -313,6 +328,18 @@
                 if (TryGetKeyValue(key, out var kvalue))
                 {
                     kvalue.Value = value?.ToString();
+                }
+            }
+        }
+
+        public void SetValue<T>(string key, T? value) where T : struct, Enum
+        {
+            lock (_lock)
+            {
+                if (TryGetKeyValue(key, out var kvalue))
+                {
+                    kvalue.Value = value?.ToString();
+                    kvalue.EnumType ??= typeof(T);
                 }
             }
         }
@@ -668,6 +695,27 @@
 #nullable enable
         }
 
+        private static void EnumValueChanged(object? sender, string? e)
+        {
+            if (sender is not ConfigValue configValue)
+            {
+                return;
+            }
+            var property = configValue.Property;
+            var type = property.PropertyType;
+            var t = configValue.Instance;
+#nullable disable
+            if (e != null)
+            {
+                property.SetValue(t, configValue.GetEnum(type));
+            }
+            else
+            {
+                property.SetValue(t, Activator.CreateInstance(type));
+            }
+#nullable enable
+        }
+
         #endregion EventHandlers
 
         public void InitAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, bool allowReadOnly = false)
@@ -828,6 +876,16 @@
                         if (property.CanWrite)
                         {
                             val.ValueChanged += Vector4ValueChanged;
+                        }
+                    }
+
+                    if (property.PropertyType.IsEnum)
+                    {
+                        val ??= new(t, property, DataType.Enum, property.GetValue(t)?.ToString(), !property.CanWrite);
+                        val.EnumType = property.PropertyType;
+                        if (property.CanWrite)
+                        {
+                            val.ValueChanged += EnumValueChanged;
                         }
                     }
 

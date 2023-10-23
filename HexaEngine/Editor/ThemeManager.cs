@@ -14,10 +14,10 @@
 
     public static class ThemeManager
     {
-        private static readonly ConfigKey config = Config.Global.GetOrCreateKey("ThemeManager");
+        private static readonly ConfigKey config = Config.Global.GetOrCreateKey("Editor");
         private static Theme theme;
         private static string themeName;
-        private static ThemeDescription description = new();
+        private static readonly ThemeDescription description = new();
 
         static ThemeManager()
         {

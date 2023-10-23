@@ -127,6 +127,10 @@
                         };
                     }
 
+                    if (ImGui.MenuItem("Init Git"))
+                    {
+                    }
+
                     if (ImGui.BeginMenu("Open Recent"))
                     {
                         var entries = ProjectHistory.Entries;
