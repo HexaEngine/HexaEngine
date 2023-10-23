@@ -10,11 +10,11 @@
 	<ItemGroup>
 		<PackageReference Include="HexaEngine.Shaderc" Version="1.2.0" />
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
-		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.17.1" />
-		<PackageReference Include="Silk.NET.Direct3D12" Version="2.17.1" />
-		<PackageReference Include="Silk.NET.DirectStorage" Version="2.17.1" />
-		<PackageReference Include="Silk.NET.DXGI" Version="2.17.1" />
-		<PackageReference Include="Silk.NET.SDL" Version="2.17.1" />
+		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.18.0" />
+		<PackageReference Include="Silk.NET.Direct3D12" Version="2.18.0" />
+		<PackageReference Include="Silk.NET.DirectStorage" Version="2.18.0" />
+		<PackageReference Include="Silk.NET.DXGI" Version="2.18.0" />
+		<PackageReference Include="Silk.NET.SDL" Version="2.18.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\HexaEngine.Mathematics\HexaEngine.Mathematics.csproj" />
