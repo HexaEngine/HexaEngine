@@ -31,7 +31,7 @@
             var path = Repository.Discover(ProjectManager.CurrentProjectFolder);
 
             using HttpClient client = new();
-            var gitIgnore = client.GetStringAsync("https://raw.githubusercontent.com/github/gitignore/main/VisualStudio.gitignore").Result;
+            var gitIgnore = client.GetStringAsync("https://raw.githubusercontent.com/JunaMeinhold/HexaEngine/main/Templates/HexaEngine.gitignore").Result;
             File.WriteAllText(Path.Combine(ProjectManager.CurrentProjectFolder, ".gitignore"), gitIgnore);
 
             path ??= Repository.Init(ProjectManager.CurrentProjectFolder);
@@ -103,11 +103,19 @@
                 return;
             }
 
-            var remoteUrl = "origin";
+            var remoteName = "origin";
+            var remoteUrl = Repository.Network.Remotes[remoteName].Url;
             List<string> refspecs = ["+refs/heads/*:refs/remotes/origin/*"];
             FetchOptions options = new();
 
-            Repository.Network.Fetch(remoteUrl, refspecs, options);
+            options.CredentialsProvider = Method;
+
+            Repository.Network.Fetch(remoteName, refspecs, options);
+        }
+
+        private static Credentials Method(string url, string usernameFromUrl, SupportedCredentialTypes types)
+        {
+            return new DefaultCredentials();
         }
 
         public static void Unload()

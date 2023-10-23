@@ -19,6 +19,22 @@
 
         private static readonly JsonSerializer serializer = JsonSerializer.Create(settings);
 
+        public static byte[] Serialize(Scene scene)
+        {
+            MemoryStream ms = new();
+
+            BsonDataWriter writer = new(ms);
+
+            serializer.Serialize(writer, scene);
+
+            var bytes = ms.ToArray();
+
+            writer.Close();
+            ms.Close();
+
+            return bytes;
+        }
+
         public static void Serialize(Scene scene, string path)
         {
             BsonDataWriter writer = new(File.Create(path));

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
-    public enum RenameFileResult
+    public enum RenameResult
     {
         Ok,
         Cancel,

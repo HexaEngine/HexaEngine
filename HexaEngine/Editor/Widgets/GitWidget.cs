@@ -28,7 +28,7 @@
 
             if (ImGui.Button("Fetch"))
             {
-                //ProjectVersionControl.Fetch();
+                ProjectVersionControl.Fetch();
             }
 
             ImGui.InputTextMultiline("Commit Message:", ref commitMessage, 1024);

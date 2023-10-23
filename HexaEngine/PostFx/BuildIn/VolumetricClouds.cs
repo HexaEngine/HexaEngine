@@ -40,7 +40,7 @@
             builder
                 .RunBefore("ColorGrading")
                 .RunBefore("Vignette")
-                .RunAfter("Bloom");
+                .RunAfter("SSR");
 
             depth = creator.GetDepthStencilBuffer("#DepthStencil");
             camera = creator.GetConstantBuffer<CBCamera>("CBCamera");

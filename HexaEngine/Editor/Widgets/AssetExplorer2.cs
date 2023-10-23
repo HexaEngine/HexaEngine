@@ -50,7 +50,8 @@
         private static readonly ConfigKey config = Config.Global.GetOrCreateKey("Editor").GetOrCreateKey("Asset Explorer");
         private DirectoryInfo? currentDir;
         private DirectoryInfo? parentDir;
-        private readonly RenameFileDialog dialog = new(true);
+        private readonly RenameFileDialog renameFileDialog = new(false);
+        private readonly RenameDirectoryDialog renameDirectoryDialog = new(false);
         private readonly List<Item> files = new();
         private readonly List<Item> dirs = new();
         private readonly Stack<string> backHistory = new();
@@ -362,8 +363,8 @@
 
                 if (ImGui.MenuItem("\xE8AC Rename"))
                 {
-                    dialog.File = dir.Path;
-                    dialog.Show();
+                    renameDirectoryDialog.Directory = dir.Path;
+                    renameDirectoryDialog.Show();
                 }
 
                 ImGui.Separator();
@@ -510,8 +511,8 @@
 
                 if (ImGui.MenuItem("\xE8AC Rename"))
                 {
-                    dialog.File = file.Path;
-                    dialog.Show();
+                    renameFileDialog.File = file.Path;
+                    renameFileDialog.Show();
                 }
 
                 ImGui.Separator();
@@ -566,7 +567,8 @@
 
                     if (ImGui.MenuItem("Scene"))
                     {
-                        SceneSerializer.Serialize(new(), GetNewFileName(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
+                        var path = GetNewFileName(Path.Combine(currentDir.FullName, "New Scene.hexlvl"));
+                        SceneSerializer.Serialize(new(), path);
                         Refresh();
                     }
 
@@ -682,7 +684,11 @@
                 return;
             }
 
-            if (dialog.Draw())
+            if (renameFileDialog.Draw())
+            {
+                Refresh();
+            }
+            if (renameDirectoryDialog.Draw())
             {
                 Refresh();
             }
