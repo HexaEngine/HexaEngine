@@ -26,42 +26,58 @@
 
     public class Config
     {
+        private readonly object _lock = new();
         private static Config? global;
 
         public List<ConfigKey> Keys { get; set; } = new();
 
+        [JsonIgnore]
+        public object SyncObject => _lock;
+
         public void Sort()
         {
-            Keys.Sort(AZConfigKeyComparer.Default);
+            lock (_lock)
+            {
+                Keys.Sort(AZConfigKeyComparer.Default);
+            }
         }
 
         public ConfigKey? GetKey(string path)
         {
-            return ConfigKey.Find(Keys, path);
+            lock (_lock)
+            {
+                return ConfigKey.Find(Keys, path);
+            }
         }
 
         public ConfigKey GetOrCreateKey(string path)
         {
-            ConfigKey? key = ConfigKey.Find(Keys, path);
-            if (key is null)
+            lock (_lock)
             {
-                key = new ConfigKey(path);
-                Keys.Add(key);
+                ConfigKey? key = ConfigKey.Find(Keys, path);
+                if (key is null)
+                {
+                    key = new ConfigKey(path);
+                    Keys.Add(key);
+                }
+                return key;
             }
-            return key;
         }
 
         public ConfigKey GenerateSubKeyAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, string name)
         {
-            ConfigKey? key = ConfigKey.Find(Keys, name);
-            bool isNew = key == null;
-            key ??= new(name);
-            key.InitAuto(t);
-            if (isNew)
+            lock (_lock)
             {
-                Keys.Add(key);
+                ConfigKey? key = ConfigKey.Find(Keys, name);
+                bool isNew = key == null;
+                key ??= new(name);
+                key.InitAuto(t);
+                if (isNew)
+                {
+                    Keys.Add(key);
+                }
+                return key;
             }
-            return key;
         }
 
         public static Config Global
@@ -87,7 +103,10 @@
 
         public void Save()
         {
-            File.WriteAllText("config.json", JsonSerializer.Serialize(this, typeof(Config), SourceGenerationContext.Default));
+            lock (_lock)
+            {
+                File.WriteAllText("config.json", JsonSerializer.Serialize(this, typeof(Config), SourceGenerationContext.Default));
+            }
         }
     }
 

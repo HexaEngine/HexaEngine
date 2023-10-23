@@ -140,7 +140,7 @@
 
             if (drawSkeletons)
             {
-                //TODO: Implement skeleton debug view.
+                // TODO: Implement skeleton debug view.
                 /*
                 for (int i = 0; i < scene.MeshManager.Count; i++)
                 {
@@ -165,10 +165,12 @@
 
             if (drawBoundingBoxes)
             {
+                // TODO: Implement bounding box debug view.
             }
 
             if (drawBoundingSpheres)
             {
+                // TODO: Implement bounding spheres debug view.
             }
 
             if (drawColliders)

@@ -8,6 +8,7 @@
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.IO.Meshes.Processing;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MeshEditor.Dialogs;
     using HexaEngine.Mathematics;
@@ -19,6 +20,7 @@
     using System.Runtime.CompilerServices;
     using System.Text;
 
+    [EditorWindowCategory("Tools")]
     public unsafe class MeshEditorWindow : EditorWindow
     {
         private readonly OpenFileDialog openDialog = new(null, ".model");
@@ -132,7 +134,7 @@
             }
         }
 
-        public void Load(string path)
+        public void Open(string path)
         {
             try
             {
@@ -342,7 +344,7 @@
             {
                 if (openDialog.Result == OpenFileResult.Ok)
                 {
-                    Load(openDialog.FullPath);
+                    Open(openDialog.FullPath);
                 }
             }
 

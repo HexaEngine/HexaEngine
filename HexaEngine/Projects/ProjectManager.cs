@@ -29,8 +29,8 @@
 
         static ProjectManager()
         {
-            ReferencedAssemblyNames.Add("HexaEngine.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+            ReferencedAssemblyNames.Add("HexaEngine.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             ReferencedAssemblyNames.Add("HexaEngine.Mathematics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             foreach (string name in ReferencedAssemblyNames)
             {
@@ -354,7 +354,17 @@
             }
             Directory.CreateDirectory(appTempPath);
             Logger.Log(Dotnet.New(DotnetTemplate.Console, appTempPath, solutionName));
-            Logger.Log(Dotnet.AddDlls(appTempProjPath, Path.GetFullPath("HexaEngine.dll"), Path.GetFullPath("HexaEngine.Core.dll"), Path.GetFullPath("HexaEngine.D3D11.dll")));
+            Logger.Log(Dotnet.AddDlls(appTempProjPath,
+                Path.GetFullPath("HexaEngine.dll"),
+                Path.GetFullPath("HexaEngine.Core.dll"),
+                Path.GetFullPath("HexaEngine.Mathematics.dll"),
+                Path.GetFullPath("HexaEngine.D3D11.dll"),
+                Path.GetFullPath("HexaEngine.D3D12.dll"),
+                Path.GetFullPath("HexaEngine.Vulkan.dll"),
+                Path.GetFullPath("HexaEngine.OpenGL.dll"),
+                Path.GetFullPath("HexaEngine.OpenAL.dll"),
+                Path.GetFullPath("HexaEngine.XAudio.dll"),
+                Path.GetFullPath("Silk.NET.Core.dll")));
             if (settings.RuntimeIdentifier?.Contains("win") ?? false)
             {
                 Dotnet.ChangeOutputType(appTempProjPath, "WinExe");
@@ -363,7 +373,7 @@
             File.WriteAllText(appTempProgramPath, PublishProgram);
             PublishOptions appPublishOptions = new()
             {
-                Framework = "net7.0",
+                Framework = "net8.0",
                 Profile = settings.Profile,
                 RuntimeIdentifer = settings.RuntimeIdentifier,
                 PublishReadyToRun = settings.ReadyToRun,
@@ -376,9 +386,8 @@
 
             // copy native runtimes
             string localRuntimesPath = Path.GetFullPath("runtimes");
-#pragma warning disable CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
             string targetRuntimePath = Path.Combine(localRuntimesPath, settings.RuntimeIdentifier, "native");
-#pragma warning restore CS8604 // Possible null reference argument for parameter 'path2' in 'string Path.Combine(string path1, string path2, string path3)'.
+
             CopyDirectory(targetRuntimePath, appTempPublishPath, true);
 
             // copy binaries to build folder
@@ -492,6 +501,7 @@ namespace App
 {
     using HexaEngine;
     using HexaEngine.Core;
+    using HexaEngine.Core.Graphics;
     using HexaEngine.Windows;
 
     public static class Program
@@ -501,8 +511,9 @@ namespace App
         /// </summary>
         public static void Main()
         {
-            Platform.InitializeAsync();
-            Application.Run(new Window() { Flags = RendererFlags.SceneGraph, StartupScene = Platform.StartupScene });
+            Window window = new() { Flags = RendererFlags.None };
+            Platform.Init(window, GraphicsBackend.D3D11);
+            Application.Run(window);
             Platform.Shutdown();
         }
     }

@@ -6,11 +6,13 @@
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
     using ImGuiNET;
     using System.Numerics;
 
+    [EditorWindowCategory("Tools")]
     public class ImagePainterWindow : EditorWindow
     {
         private IGraphicsDevice device;

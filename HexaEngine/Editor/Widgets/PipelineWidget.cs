@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using ImGuiNET;
     using System.Threading.Tasks;
 
+    [EditorWindowCategory("Debug")]
     public class PipelineWidget : EditorWindow
     {
         private Task task;

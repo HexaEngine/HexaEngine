@@ -1,9 +1,11 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.ImGuiNET;
     using HexaEngine.Weather;
 
+    [EditorWindowCategory("Debug")]
     public class WeatherWidget : EditorWindow
     {
         protected override string Name => "Weather";

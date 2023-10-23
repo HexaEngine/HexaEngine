@@ -4,6 +4,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.ImGuiNET;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
@@ -12,6 +13,7 @@
     using System.Diagnostics;
     using System.Numerics;
 
+    [EditorWindowCategory("Debug")]
     public class ProfilerWindow : EditorWindow
     {
         private const int SampleBufferSize = 1000;

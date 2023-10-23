@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Scenes;
 
+    [EditorWindowCategory("Debug")]
     public class RendererWidget : EditorWindow
     {
         private readonly ISceneRenderer renderer;

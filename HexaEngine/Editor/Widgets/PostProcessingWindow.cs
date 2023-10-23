@@ -1,8 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Rendering.Renderers;
 
+    [EditorWindowCategory("Debug")]
     public class PostProcessWindow : EditorWindow
     {
         protected override string Name => "Post Process";

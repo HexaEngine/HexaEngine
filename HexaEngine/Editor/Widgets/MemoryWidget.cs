@@ -2,9 +2,11 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Text;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.ImGuiNET;
     using System.Numerics;
 
+    [EditorWindowCategory("Debug")]
     public class MemoryWidget : EditorWindow
     {
         protected override string Name => "Memory usage";

@@ -1116,7 +1116,7 @@
             keyboardEventArgs.Handled = false;
             keyboardEventArgs.State = state;
             keyboardEventArgs.KeyCode = keyCode;
-            keyboardEventArgs.ScanCode = evnt.Keysym.Scancode;
+            keyboardEventArgs.ScanCode = (ScanCode)evnt.Keysym.Scancode;
             OnKeyboardInput(keyboardEventArgs);
         }
 

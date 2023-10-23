@@ -15,7 +15,7 @@
 #pragma warning disable CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
         private Task task;
 #pragma warning restore CS8618 // Non-nullable field 'task' must contain a non-null value when exiting constructor. Consider declaring the field as nullable.
-        private readonly OpenFileDialog filePicker = new("", "*.hexlvl");
+        private readonly OpenFileDialog filePicker = new("", ".hexlvl");
 
         protected override string Name => "Publish";
 
@@ -93,7 +93,7 @@
                     ImGui.EndListBox();
                 }
 
-                if (ImGui.Button("ObjectAdded"))
+                if (ImGui.Button("Add Scene"))
                 {
                     filePicker.SetFolder(ProjectManager.CurrentProjectAssetsFolder ?? string.Empty);
                     filePicker.Show();

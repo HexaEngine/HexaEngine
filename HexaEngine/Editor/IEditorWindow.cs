@@ -7,6 +7,7 @@
     {
         bool Initialized { get; }
         bool IsShown { get; }
+        string Name { get; }
 
         event Action<IEditorWindow>? Shown;
 
@@ -21,5 +22,7 @@
         void DrawWindow(IGraphicsContext context);
 
         void Init(IGraphicsDevice device);
+
+        void Focus();
     }
 }

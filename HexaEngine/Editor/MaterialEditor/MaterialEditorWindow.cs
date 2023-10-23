@@ -10,6 +10,7 @@
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.IO.Metadata;
     using HexaEngine.Core.UI;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Generator.Enums;
@@ -30,6 +31,7 @@
     using System.Reflection;
     using System.Text;
 
+    [EditorWindowCategory("Tools")]
     public class MaterialEditorWindow : EditorWindow
     {
         private readonly OpenFileDialog openFileDialog = new(null, ".matlib");
@@ -345,7 +347,7 @@
             editor.EndModify();
         }
 
-        public void Load(string filename)
+        public void Open(string filename)
         {
             try
             {
@@ -523,7 +525,7 @@
             {
                 if (openFileDialog.Result == OpenFileResult.Ok)
                 {
-                    Load(openFileDialog.FullPath);
+                    Open(openFileDialog.FullPath);
                 }
             }
 

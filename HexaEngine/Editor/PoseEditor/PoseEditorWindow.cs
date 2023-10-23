@@ -1,9 +1,10 @@
 ﻿namespace HexaEngine.Editor.PoseEditor
 {
     using HexaEngine.Core.Graphics;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.ImGuiNET;
-    using System.Data.SqlTypes;
 
+    [EditorWindowCategory("Tools")]
     public class PoseEditorWindow : EditorWindow
     {
         private readonly Sequencer sequencer = new();

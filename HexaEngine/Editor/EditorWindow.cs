@@ -14,6 +14,8 @@
 
         protected abstract string Name { get; }
 
+        string IEditorWindow.Name => Name;
+
         public bool IsShown { get => isShown; protected set => isShown = value; }
 
         public bool Initialized => initialized;
@@ -105,6 +107,12 @@
 
         protected virtual void DisposeCore()
         {
+        }
+
+        public void Focus()
+        {
+            var window = ImGui.FindWindowByName(Name);
+            ImGui.FocusWindow(window, ImGuiFocusRequestFlags.UnlessBelowModal);
         }
     }
 }

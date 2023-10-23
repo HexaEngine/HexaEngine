@@ -65,7 +65,55 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="assets\shared\icons\model.png">
+		<None Update="assets\shared\icons\dark\animation.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\audio.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\file.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\folder.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\image.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\material.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\model.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\dark\scene.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\animation.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\audio.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\file.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\icons.xml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\folder.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\image.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\material.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\model.png">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="assets\shared\icons\light\scene.png">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="assets\shared\shaders\brdf.hlsl">
@@ -802,6 +850,7 @@
 		<ProjectReference Include="..\HexaEngine.OpenAL\HexaEngine.OpenAL.csproj" />
 		<ProjectReference Include="..\HexaEngine.OpenGL\HexaEngine.OpenGL.csproj" />
 		<ProjectReference Include="..\HexaEngine.Vulkan\HexaEngine.Vulkan.csproj" />
+		<ProjectReference Include="..\HexaEngine.XAudio\HexaEngine.XAudio.csproj" />
 	</ItemGroup>
 
 
@@ -817,7 +866,7 @@
 	<ItemGroup>
 	  <Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 	  <Folder Include="assets\shared\shaders\tools\mesh\textured\" />
-	  <Folder Include="Editor\Attributes\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
+	  <Folder Include="UI\Editor\" />
 	</ItemGroup>
 </Project>

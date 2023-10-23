@@ -5,13 +5,15 @@
     using HexaEngine.Core.IO;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.Graphics.Effects;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Serialization;
     using ImGuiNET;
     using System.Collections.Generic;
     using System.Numerics;
 
+    /// <summary>
+    /// The old asset explorer
+    /// </summary>
     public class AssetExplorer : EditorWindow
     {
         private DirectoryInfo? currentDir;
@@ -41,7 +43,7 @@
 
         public AssetExplorer()
         {
-            IsShown = true;
+            IsShown = false;
             Refresh();
             currentDir = null;
             parentDir = currentDir?.Parent;
@@ -57,7 +59,7 @@
 
         public string? SelectedFile { get; private set; }
 
-        protected override string Name => "Assets";
+        protected override string Name => "Assets (Old)";
 
         public void Refresh()
         {
@@ -213,6 +215,7 @@
         private void DisplayFile(Item file)
         {
             bool isSelected = SelectedFile == file.Path;
+
             if (ImGui.Selectable(file.Name, isSelected, ImGuiSelectableFlags.DontClosePopups))
             {
                 SelectedFile = file.Path;
@@ -226,16 +229,17 @@
                     SelectedFile = file.Path;
                     Designer.OpenFile(SelectedFile);
                 }
-                if (ImGui.MenuItem("Rename"))
-                {
-                    dialog.File = file.Path;
-                    dialog.Show();
-                }
 
                 if (ImGui.MenuItem("Delete"))
                 {
                     File.Delete(file.Path);
                     Refresh();
+                }
+
+                if (ImGui.MenuItem("Rename"))
+                {
+                    dialog.File = file.Path;
+                    dialog.Show();
                 }
 
                 ImGui.EndPopup();
@@ -284,11 +288,7 @@
                         SceneSerializer.Serialize(new(), GetNewFilename(Path.Combine(currentDir.FullName, "New Scene.hexlvl")));
                         Refresh();
                     }
-                    if (ImGui.MenuItem("Effect"))
-                    {
-                        EffectDescriptionFile.Create(GetNewFilename(Path.Combine(currentDir.FullName, "Scene Effect.hexef")));
-                        Refresh();
-                    }
+
                     ImGui.EndMenu();
                 }
 

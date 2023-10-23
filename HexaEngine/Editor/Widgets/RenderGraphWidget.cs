@@ -4,12 +4,14 @@ namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
+    using HexaEngine.Editor.Attributes;
     using HexaEngine.ImGuiNET;
     using HexaEngine.ImNodesNET;
     using HexaEngine.Rendering.Renderers;
     using System.Collections.Generic;
     using System.Numerics;
 
+    [EditorWindowCategory("Debug")]
     public class RenderGraphWidget : EditorWindow
     {
         private ImNodesEditorContextPtr nodeContext;

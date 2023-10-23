@@ -2,6 +2,7 @@
 {
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
+    using System.Diagnostics.CodeAnalysis;
     using System.Xml.Serialization;
 
     public abstract class HexaItem : INotifyCollectionChanged
@@ -76,6 +77,23 @@
         public abstract void Delete();
 
         public abstract void Rename(string newName);
+
+        public T? GetProperty<T>() where T : class
+        {
+            for (int i = 0; i < Properties.Count; i++)
+            {
+                var p = Properties[i];
+                if (p is T t)
+                    return t;
+            }
+            return default;
+        }
+
+        public bool TryGetProperty<T>([NotNullWhen(true)] out T? property) where T : class
+        {
+            property = GetProperty<T>();
+            return property != null;
+        }
     }
 
     [Serializable]

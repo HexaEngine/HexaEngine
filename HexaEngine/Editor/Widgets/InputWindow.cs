@@ -2,10 +2,12 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
+    using HexaEngine.Editor.Attributes;
     using ImGuiNET;
     using ImPlotNET;
     using System.Numerics;
 
+    [EditorWindowCategory("Debug")]
     public class InputWindow : EditorWindow
     {
         protected override string Name => "Input Window";

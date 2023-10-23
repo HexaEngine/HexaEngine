@@ -8,6 +8,8 @@
 
     public class ConfigValue
     {
+        private readonly object _lock = new();
+
         private object? instance;
         private PropertyInfo? property;
 
@@ -45,11 +47,21 @@
 
         public string? Value
         {
-            get => value;
+            get
+            {
+                lock (_lock)
+                {
+                    return value;
+                }
+            }
+
             set
             {
-                this.value = value;
-                ValueChanged?.Invoke(this, value);
+                lock (_lock)
+                {
+                    this.value = value;
+                    ValueChanged?.Invoke(this, value);
+                }
             }
         }
 
@@ -57,6 +69,9 @@
 
         [JsonIgnore]
         public string? DefaultValue { get => defaultValue; set => defaultValue = value; }
+
+        [JsonIgnore]
+        public object SyncObject => _lock;
 
         public event Action<ConfigValue, string?>? ValueChanged;
 
@@ -214,6 +229,16 @@
             string trimed = Value.Trim('<', '>');
             string[] components = trimed.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
             return new(float.Parse(components[0]), float.Parse(components[1]), float.Parse(components[2]), float.Parse(components[3]));
+        }
+
+        public T GetEnum<T>() where T : struct, Enum
+        {
+            if (Value == null)
+            {
+                return default;
+            }
+
+            return Enum.Parse<T>(Value);
         }
 
         public IEnumerable<Key> GetKeys()
