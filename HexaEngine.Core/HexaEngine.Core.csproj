@@ -8,6 +8,7 @@
 		<DebugType>embedded</DebugType>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

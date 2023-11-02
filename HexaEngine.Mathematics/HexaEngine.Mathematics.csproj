@@ -8,5 +8,6 @@
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 </Project>
