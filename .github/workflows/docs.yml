@@ -3,25 +3,28 @@ name: GitHub Pages
 on:
   push:
     branches:
-      - main  # Set a branch name to trigger deployment
+      - main # Set a branch name to trigger deployment
   pull_request:
-  
+    branches:
+      - main # Set a branch name to trigger deployment
+
 jobs:
   publish-docs:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Dotnet Setup
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 8.x
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Dotnet Setup
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.x
 
-    - run: dotnet tool update -g docfx
-    - run: docfx docfx_project/docfx.json
+      - run: dotnet tool update -g docfx
+      - run: docfx docfx_project/docfx.json
 
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_site
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docfx_project/_site
+          force_orphan: true
