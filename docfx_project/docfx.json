@@ -5,7 +5,9 @@
         {
           "src": "../",
           "files": [
-            "*/**.csproj"
+            "HexaEngine/HexaEngine.csproj",
+            "HexaEngine.Core/HexaEngine.Core.csproj",
+            "HexaEngine.Mathematics/HexaEngine.Mathematics.csproj"
           ],
           "exclude": [
             "**/bin/**",
