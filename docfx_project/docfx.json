@@ -1,14 +1,17 @@
 {
   "metadata": [
     {
-      "src": [
+       "src": [
         {
+          "src": "../",
           "files": [
-            "HexaEngine/bin/Debug/**/HexaEngine.dll",
-            "HexaEngine.Core/bin/Debug/**/HexaEngine.Core.dll",
-            "HexaEngine.Mathematics/bin/Debug/**/HexaEngine.Mathematics.dll"
+            "src/**.csproj"
           ],
-          "src": "../"
+          "exclude": [
+            "**/bin/**",
+            "**/obj/**",
+            "_site/**"
+          ]
         }
       ],
       "dest": "api",
