@@ -2,7 +2,7 @@
 {
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.NodeEditor;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using Newtonsoft.Json;
 
     public abstract class TypedNodeBase : Node, ITypedNode

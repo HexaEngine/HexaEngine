@@ -3,7 +3,7 @@
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using HexaEngine.Editor.MaterialEditor.Nodes;
-    using ImNodesNET;
+    using Hexa.NET.ImNodes;
 
     public class NegateNode : FuncCallNodeBase
     {

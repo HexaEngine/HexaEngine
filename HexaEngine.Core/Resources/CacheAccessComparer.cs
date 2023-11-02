@@ -8,7 +8,6 @@
 
         public int Compare(CacheHandle? x, CacheHandle? y)
         {
-            // Sortiere in aufsteigender Reihenfolge nach LastAccess.
             if (x.LastAccess < y.LastAccess)
             {
                 return -1;

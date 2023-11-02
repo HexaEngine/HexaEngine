@@ -2,8 +2,8 @@
 {
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.MaterialEditor.Generator;
-    using ImGuiNET;
-    using ImNodesNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public class ComponentMaskNode : Node

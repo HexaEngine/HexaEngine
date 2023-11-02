@@ -2,7 +2,7 @@
 {
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
 

@@ -10,7 +10,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Graph;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Renderers;

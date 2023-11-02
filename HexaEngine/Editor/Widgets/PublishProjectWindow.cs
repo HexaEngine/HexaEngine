@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Threading.Tasks;
 

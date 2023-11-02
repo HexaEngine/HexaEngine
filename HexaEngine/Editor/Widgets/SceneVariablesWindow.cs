@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Scenes;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class SceneVariablesWindow : EditorWindow
     {

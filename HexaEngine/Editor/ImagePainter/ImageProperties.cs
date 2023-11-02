@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
 
     public class ImageProperties : EditorWindow

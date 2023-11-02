@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class ColorPicker : EditorWindow

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Weather;
 
     [EditorWindowCategory("Debug")]

@@ -467,6 +467,12 @@
 		<None Update="FileName.txt">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="Sample_BeeMoved_96kHz24bit.flac">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="speech.wav">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="spirv-cross-c-shared.dll">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
@@ -476,6 +482,10 @@
 		<PackageReference Include="HexaEngine.SPIRVCross" Version="1.1.0" />
 		<PackageReference Include="Silk.NET.Direct3D.Compilers" Version="2.18.0" />
 		<PackageReference Include="Silk.NET.Vulkan" Version="2.18.0" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj" />
+	  <ProjectReference Include="..\HexaEngine.Core\HexaEngine.Core.csproj" />
 	</ItemGroup>
 
 

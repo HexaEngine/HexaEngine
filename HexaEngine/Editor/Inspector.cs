@@ -8,7 +8,7 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using ImGuizmoNET;
+    using Hexa.NET.ImGuizmo;
     using System.Numerics;
 
     public partial class Frameviewer

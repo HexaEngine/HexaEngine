@@ -8,7 +8,7 @@
     using HexaEngine.Resources;
     using HexaEngine.Resources.Factories;
     using HexaEngine.Scenes;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Diagnostics;
 

@@ -8,7 +8,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.Properties;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Reflection;
 
     public class StringPropertyEditor : IPropertyEditor

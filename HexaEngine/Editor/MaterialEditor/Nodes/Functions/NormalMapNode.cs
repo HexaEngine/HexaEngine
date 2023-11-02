@@ -5,7 +5,7 @@
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using ImNodesNET;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public class NormalMapNode : FuncCallDeclarationBaseNode

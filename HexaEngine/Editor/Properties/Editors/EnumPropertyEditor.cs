@@ -4,7 +4,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Scripts;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Reflection;
 
     public class EnumPropertyEditor : IPropertyEditor

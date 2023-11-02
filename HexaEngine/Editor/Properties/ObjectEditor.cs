@@ -4,7 +4,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties.Editors;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Collections.Generic;
     using System.Reflection;

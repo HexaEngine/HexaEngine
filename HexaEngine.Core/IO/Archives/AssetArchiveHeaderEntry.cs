@@ -65,7 +65,7 @@
             Start = BinaryPrimitives.ReadInt64LittleEndian(src[8..]);
             Length = BinaryPrimitives.ReadInt64LittleEndian(src[16..]);
             ActualLength = BinaryPrimitives.ReadInt64LittleEndian(src[24..]);
-            Path = src[32..].ReadString(encoding, out int read);
+            int read = src[32..].ReadString(encoding, out Path);
             return 32 + read;
         }
 

@@ -7,8 +7,9 @@
     using HexaEngine.Editor.MaterialEditor;
     using HexaEngine.Editor.MeshEditor;
     using HexaEngine.Editor.PoseEditor;
+    using HexaEngine.Editor.TextEditor;
     using HexaEngine.Editor.Widgets;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Reflection;
@@ -121,6 +122,7 @@
             Register<MaterialEditorWindow>();
             Register<PostProcessWindow>();
             Register<InputWindow>();
+            Register<TextEditorWindow>();
             Register<ImagePainterWindow>();
             Register<WeatherWidget>();
             Register<RenderGraphWidget>();

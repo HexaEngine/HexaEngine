@@ -7,8 +7,8 @@
     using HexaEngine.Editor.MaterialEditor.Nodes;
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using HexaEngine.ImGuiNET;
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Numerics;
 

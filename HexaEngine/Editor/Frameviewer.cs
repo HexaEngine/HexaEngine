@@ -11,8 +11,8 @@
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using ImGuiNET;
-    using ImGuizmoNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImGuizmo;
     using System;
     using System.Numerics;
 

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class RenameFileDialog
     {

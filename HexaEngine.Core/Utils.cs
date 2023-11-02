@@ -548,6 +548,44 @@
         /// <param name="pointer">The pointer.</param>
         /// <param name="length">The length.</param>
         /// <returns></returns>
+        public static T* AllocCopy<T>(Span<T> source) where T : unmanaged
+        {
+            int length = source.Length;
+            T* result = AllocT<T>(length);
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = source[i];
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Allocates an new pointer and copies the data from the source
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
+        public static T* AllocCopy<T>(ReadOnlySpan<T> source) where T : unmanaged
+        {
+            int length = source.Length;
+            T* result = AllocT<T>(length);
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = source[i];
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Allocates an new pointer and copies the data from the source
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="pointer">The pointer.</param>
+        /// <param name="length">The length.</param>
+        /// <returns></returns>
         public static T* AllocCopy<T>(T* pointer, int length) where T : unmanaged
         {
             T* result = AllocT<T>(length);

@@ -30,7 +30,7 @@ namespace HexaEngine.Core.IO.Meshes
             {
                 Weights[i].Read(stream, endianness);
             }
-            Offset = stream.ReadStruct<Matrix4x4>();
+            Offset = stream.ReadMatrix4x4(endianness);
         }
 
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
@@ -41,7 +41,7 @@ namespace HexaEngine.Core.IO.Meshes
             {
                 Weights[i].Write(stream, endianness);
             }
-            stream.WriteStruct(Offset);
+            stream.WriteMatrix4x4(Offset, endianness);
         }
     }
 }

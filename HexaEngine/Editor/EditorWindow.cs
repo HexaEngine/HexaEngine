@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public abstract class EditorWindow : IEditorWindow
     {

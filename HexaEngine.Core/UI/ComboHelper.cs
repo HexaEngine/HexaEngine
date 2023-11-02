@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.UI
 {
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
 
     public static class ComboEnumHelper<T> where T : struct, Enum

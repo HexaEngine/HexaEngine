@@ -870,6 +870,7 @@
 	  <Folder Include="assets\shared\shaders\tools\mesh\textured\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
 	  <Folder Include="Editor\Templates\" />
+	  <Folder Include="Network\Protocol\" />
 	  <Folder Include="UI\Editor\" />
 	</ItemGroup>
 </Project>

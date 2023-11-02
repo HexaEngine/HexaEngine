@@ -50,7 +50,7 @@
             return $"{Major}.{Minor}.{Patch}.{Build}";
         }
 
-        public override bool Equals(object? obj)
+        public override readonly bool Equals(object? obj)
         {
             return obj is Version version && Equals(version);
         }

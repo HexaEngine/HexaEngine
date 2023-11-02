@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Meshes;
     using HexaEngine.Core.UI;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
     using System.Numerics;
 

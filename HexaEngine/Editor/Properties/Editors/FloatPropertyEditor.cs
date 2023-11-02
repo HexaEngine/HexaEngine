@@ -4,7 +4,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Reflection;
 
     public class FloatPropertyEditor : IPropertyEditor

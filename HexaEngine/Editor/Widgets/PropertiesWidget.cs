@@ -9,7 +9,7 @@ namespace HexaEngine.Editor.Widgets
     using HexaEngine.Mathematics;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;

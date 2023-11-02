@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Exporters;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Numerics;
 

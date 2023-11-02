@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.ImagePainter.Exporters
 {
     using HexaEngine.Core.Graphics;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public abstract class BaseExporter
     {

@@ -3,7 +3,7 @@
     using HexaEngine.Core.Debugging;
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class TerminalWindow : EditorWindow
     {

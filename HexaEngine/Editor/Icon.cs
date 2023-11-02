@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
     using System.Text.RegularExpressions;
 

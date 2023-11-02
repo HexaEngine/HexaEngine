@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Core.UI;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
     using System.Text;

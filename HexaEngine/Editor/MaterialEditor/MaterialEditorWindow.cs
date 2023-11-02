@@ -18,7 +18,7 @@
     using HexaEngine.Editor.MaterialEditor.Nodes.Functions;
     using HexaEngine.Editor.MaterialEditor.Nodes.Textures;
     using HexaEngine.Editor.NodeEditor;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Structs;
     using HexaEngine.Lights.Types;
@@ -158,7 +158,7 @@
                 ExtractProperties(value, editor);
                 ExtractTextures(value, editor);
                 editor.Minimap = true;
-                editor.Location = ImNodesNET.ImNodesMiniMapLocation.TopRight;
+                editor.Location = Hexa.NET.ImNodes.ImNodesMiniMapLocation.TopRight;
                 editor.NodePinValueChanged += NodePinValueChanged;
                 editor.LinkAdded += LinkAdded;
                 editor.LinkRemoved += LinkRemoved;

@@ -5,7 +5,7 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
     using HexaEngine.Graphics.Filters;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class DiffuseIrradianceDialog : Modal
     {

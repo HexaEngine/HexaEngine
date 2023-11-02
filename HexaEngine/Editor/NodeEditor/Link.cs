@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public class Link

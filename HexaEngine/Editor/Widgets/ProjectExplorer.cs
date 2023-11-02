@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
     using HexaEngine.Projects;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class ProjectExplorer : EditorWindow
     {

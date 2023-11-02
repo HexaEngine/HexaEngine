@@ -6,7 +6,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Managers;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using MaterialTexture = Core.IO.Materials.MaterialTexture;
 
     public unsafe class MaterialsWidget : EditorWindow

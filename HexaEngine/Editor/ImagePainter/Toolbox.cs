@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.ImagePainter.Tools;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class Toolbox : EditorWindow
     {

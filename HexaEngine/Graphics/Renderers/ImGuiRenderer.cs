@@ -5,7 +5,7 @@ namespace HexaEngine.Rendering.Renderers
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Unsafes;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
     using System.Collections.Generic;
     using System.Diagnostics;

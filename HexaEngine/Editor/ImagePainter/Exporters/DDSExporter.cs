@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Core.UI;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class DDSExporter : BaseExporter
     {

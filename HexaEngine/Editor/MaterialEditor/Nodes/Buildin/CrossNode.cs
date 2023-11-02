@@ -1,11 +1,11 @@
-﻿using HexaEngine.ImNodesNET;
+﻿using Hexa.NET.ImNodes;
 
 namespace HexaEngine.Editor.MaterialEditor.Nodes.Buildin
 {
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using HexaEngine.Editor.MaterialEditor.Nodes;
-    using ImNodesNET;
+    using Hexa.NET.ImNodes;
 
     public class CrossNode : FuncCallNodeBase
     {

@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.PostFx
 {
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
 
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]

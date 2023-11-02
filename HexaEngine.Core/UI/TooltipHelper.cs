@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.UI
 {
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public static class TooltipHelper
     {

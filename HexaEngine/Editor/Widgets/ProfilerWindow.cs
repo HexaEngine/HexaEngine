@@ -5,11 +5,11 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;
     using HexaEngine.Scenes.Systems;
-    using ImPlotNET;
+    using Hexa.NET.ImPlot;
     using System.Diagnostics;
     using System.Numerics;
 

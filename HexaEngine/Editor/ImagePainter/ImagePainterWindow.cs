@@ -9,7 +9,7 @@
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter.Dialogs;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
 
     [EditorWindowCategory("Tools")]

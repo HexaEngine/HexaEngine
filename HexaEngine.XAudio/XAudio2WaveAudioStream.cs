@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.XAudio
 {
-    using HexaEngine.Audio.Common;
+    using HexaEngine.Audio.Common.Wave;
     using System;
 
     public unsafe class XAudio2WaveAudioStream : IDisposable

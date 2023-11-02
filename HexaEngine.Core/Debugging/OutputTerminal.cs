@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Diagnostics;
     using System.Numerics;

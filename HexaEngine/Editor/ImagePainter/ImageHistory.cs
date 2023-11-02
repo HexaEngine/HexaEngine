@@ -2,13 +2,16 @@
 {
     using HexaEngine.Core.Graphics;
 
+    /// <summary>
+    /// TODO: FIX MEMORY LEAKS
+    /// </summary>
     public unsafe class ImageHistory : IDisposable
     {
         private readonly ImageHistoryEntry[] undoHistory;
         private readonly ImageHistoryEntry[] redoHistory;
         private readonly ImageSource source;
         private readonly ITexture2D[] stagingTextures;
-        private int maxCount;
+        private readonly int maxCount;
         private int undoHistoryCount;
         private int redoHistoryCount;
         private bool disposedValue;
@@ -36,6 +39,20 @@
         public int UndoCount => undoHistoryCount;
 
         public int RedoCount => redoHistoryCount;
+
+        public void Clear()
+        {
+            for (int i = 0; i < undoHistory.Length; i++)
+            {
+                undoHistory[i].Release();
+            }
+            undoHistoryCount = 0;
+            for (int i = 0; i < redoHistory.Length; i++)
+            {
+                redoHistory[i].Release();
+            }
+            redoHistoryCount = 0;
+        }
 
         public void UndoPush(IGraphicsContext context)
         {
@@ -206,6 +223,17 @@
         {
             if (!disposedValue)
             {
+                for (int i = 0; i < undoHistory.Length; i++)
+                {
+                    undoHistory[i].Release();
+                }
+                undoHistoryCount = 0;
+                for (int i = 0; i < redoHistory.Length; i++)
+                {
+                    redoHistory[i].Release();
+                }
+                redoHistoryCount = 0;
+
                 for (int i = 0; i < stagingTextures.Length; i++)
                 {
                     stagingTextures[i].Dispose();

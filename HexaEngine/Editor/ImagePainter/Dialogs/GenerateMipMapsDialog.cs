@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class GenerateMipMapsDialog : Modal
     {

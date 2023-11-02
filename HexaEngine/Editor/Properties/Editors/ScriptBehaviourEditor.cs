@@ -5,7 +5,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
     using HexaEngine.Scripts;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class ScriptBehaviourEditor : IObjectEditor
     {

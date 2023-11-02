@@ -14,8 +14,8 @@
     using HexaEngine.Mathematics;
     using HexaEngine.Meshes;
     using HexaEngine.Scenes;
-    using ImGuiNET;
-    using ImGuizmoNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImGuizmo;
     using System.Numerics;
     using System.Runtime.CompilerServices;
     using System.Text;

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Attributes;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Threading.Tasks;
 
     [EditorWindowCategory("Debug")]

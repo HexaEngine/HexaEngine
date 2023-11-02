@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO;
     using HexaEngine.Editor;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class Brushes : EditorWindow

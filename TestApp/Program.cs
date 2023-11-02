@@ -1,5 +1,7 @@
 ﻿namespace TestApp
 {
+    using HexaEngine.Audio.Common.Flac;
+    using HexaEngine.Core.Unsafes;
     using System;
 
     public unsafe struct BufferHandle
@@ -145,7 +147,36 @@
     {
         public static void Main()
         {
+            var fs = File.OpenRead("Sample_BeeMoved_96kHz24bit.flac");
+            FlacHeader header = default;
+            header.Read(fs);
+
+            BitReader reader = new(fs);
+
+            while (!reader.EndOfStream)
+            {
+                reader.BytePosition = header.DataBegin;
+                Frame frame = default;
+                frame.Read(reader, default);
+            }
+
+            StdString str0 = "Test 123 123!";
+            StdString str1 = "Test 123 123!";
+            StdString str2 = "Test 123 123!";
+
+            // same
+            str0.Replace("123", "312");
+            // smoller
+            str1.Replace("123", "0");
+            // lorger
+            str2.Replace("123", "Hello World");
+
             NativeBuffer buffer = new(8192 * 16);
+
+            int idx = 0;
+            while ((idx = str0.Find("312", idx + 1)) != -1)
+            {
+            }
 
             RandomizedTest(buffer, 1837819);
             RandomizedTest(buffer, 46463);

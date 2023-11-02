@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics.Textures;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class ResizeDialog : Modal
     {

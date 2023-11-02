@@ -5,7 +5,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
     using HexaEngine.Core.Windows.Events;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.Mathematics;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;

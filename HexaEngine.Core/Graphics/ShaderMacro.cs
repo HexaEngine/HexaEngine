@@ -74,7 +74,7 @@
             return $"{Name}: {Definition}";
         }
 
-        public static int Write(Span<byte> dst, ShaderMacro macro, Encoder encoder)
+        public static int Write(Span<byte> dst, ShaderMacro macro, Encoding encoder)
         {
             int idx = 0;
             idx += dst[0..].WriteString(macro.Name, encoder);
@@ -82,11 +82,11 @@
             return idx;
         }
 
-        public static int Read(ReadOnlySpan<byte> src, Decoder decoder, out ShaderMacro macro)
+        public static int Read(ReadOnlySpan<byte> src, Encoding decoder, out ShaderMacro macro)
         {
             int idx = 0;
-            idx += src[0..].ReadString(out string name, decoder);
-            idx += src[idx..].ReadString(out string definition, decoder);
+            idx += src[0..].ReadString(decoder, out string name);
+            idx += src[idx..].ReadString(decoder, out string definition);
             macro = new ShaderMacro(name, definition);
             return idx;
         }

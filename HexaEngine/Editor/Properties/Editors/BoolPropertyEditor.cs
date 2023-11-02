@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Properties;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Reflection;
 
     public class BoolPropertyEditor : IPropertyEditor

@@ -157,8 +157,12 @@
         protected override void DisposeCore()
         {
             pipelineSSGI.Dispose();
+            copy.Dispose();
             linearWrapSampler.Dispose();
             ssgiParams.Dispose();
+            inputChain.Dispose();
+            outputBuffer.Dispose();
+            blur.Dispose();
         }
     }
 }

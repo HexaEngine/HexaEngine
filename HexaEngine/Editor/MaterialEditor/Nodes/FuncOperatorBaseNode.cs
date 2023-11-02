@@ -2,7 +2,7 @@
 {
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
-    using ImNodesNET;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public abstract class FuncOperatorBaseNode : TypedNodeBase, IFuncOperatorNode

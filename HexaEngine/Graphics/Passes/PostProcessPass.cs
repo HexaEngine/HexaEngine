@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Effects.BuildIn;
     using HexaEngine.Graph;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using HexaEngine.PostFx;
     using HexaEngine.PostFx.BuildIn;
     using HexaEngine.Rendering.Graph;

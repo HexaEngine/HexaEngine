@@ -13,7 +13,7 @@ namespace HexaEngine.Rendering.Renderers
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Graph;
     using HexaEngine.Scenes;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Numerics;
 

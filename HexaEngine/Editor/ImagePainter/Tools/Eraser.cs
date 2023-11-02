@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Buffers;
     using HexaEngine.Editor.ImagePainter;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class Eraser : Tool

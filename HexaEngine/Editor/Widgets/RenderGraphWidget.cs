@@ -5,8 +5,8 @@ namespace HexaEngine.Editor.Widgets
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.ImGuiNET;
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using HexaEngine.Rendering.Renderers;
     using System.Collections.Generic;
     using System.Numerics;

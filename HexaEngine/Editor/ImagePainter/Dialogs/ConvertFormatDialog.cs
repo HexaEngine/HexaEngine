@@ -5,7 +5,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Editor.ImagePainter;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class ConvertFormatDialog : Modal
     {

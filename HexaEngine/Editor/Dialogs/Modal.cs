@@ -1,6 +1,6 @@
 ﻿namespace HexaEngine.Editor.Dialogs
 {
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
     using System.Runtime.CompilerServices;
 

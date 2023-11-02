@@ -4,7 +4,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.IO.Materials;
     using HexaEngine.Core.UI;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
 
     public class MaterialLibraryWindow : EditorWindow
     {

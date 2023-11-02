@@ -7,7 +7,7 @@
     using HexaEngine.Editor.Dialogs;
     using HexaEngine.Projects;
     using HexaEngine.Scenes.Serialization;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Collections.Generic;
     using System.Numerics;
 

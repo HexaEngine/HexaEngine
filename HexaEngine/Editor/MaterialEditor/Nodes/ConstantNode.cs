@@ -4,8 +4,8 @@
     using HexaEngine.Editor.NodeEditor.Pins;
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Generator.Enums;
-    using HexaEngine.ImGuiNET;
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public class ConstantNode : Node

@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Reflection;
 
     public class ObjectEditorButton

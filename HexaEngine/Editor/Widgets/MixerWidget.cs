@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Audio;
     using HexaEngine.Core.Graphics;
-    using ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
 
     public class MixerWidget : EditorWindow

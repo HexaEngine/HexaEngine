@@ -5,7 +5,7 @@
     using HexaEngine.Editor.MaterialEditor.Generator;
     using HexaEngine.Editor.MaterialEditor.Generator.Enums;
     using HexaEngine.Editor.MaterialEditor.Nodes;
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
 
     public class CamPosNode : FuncCallDeclarationBaseNode

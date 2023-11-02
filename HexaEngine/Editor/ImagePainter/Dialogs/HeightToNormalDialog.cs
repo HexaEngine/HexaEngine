@@ -2,7 +2,7 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Editor.Dialogs;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
 
     internal class HeightToNormalDialog : Modal
     {

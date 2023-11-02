@@ -3,8 +3,8 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Input;
     using HexaEngine.Editor.Attributes;
-    using ImGuiNET;
-    using ImPlotNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImPlot;
     using System.Numerics;
 
     [EditorWindowCategory("Debug")]

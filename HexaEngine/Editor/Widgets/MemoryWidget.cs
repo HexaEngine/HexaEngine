@@ -3,7 +3,7 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Text;
     using HexaEngine.Editor.Attributes;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using System.Numerics;
 
     [EditorWindowCategory("Debug")]

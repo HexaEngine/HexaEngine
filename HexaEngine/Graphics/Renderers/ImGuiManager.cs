@@ -2,10 +2,10 @@
 {
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Windows;
-    using HexaEngine.ImGuiNET;
-    using HexaEngine.ImGuizmoNET;
-    using HexaEngine.ImNodesNET;
-    using HexaEngine.ImPlotNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImGuizmo;
+    using Hexa.NET.ImNodes;
+    using Hexa.NET.ImPlot;
     using System.Numerics;
 
     public class ImGuiManager

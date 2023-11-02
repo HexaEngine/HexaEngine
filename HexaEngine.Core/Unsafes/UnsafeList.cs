@@ -81,7 +81,7 @@
         /// </summary>
         public readonly uint Size => size;
 
-        readonly int ICollection<T>.Count => (int)size;
+        public readonly int Count => (int)size;
 
         readonly bool ICollection<T>.IsReadOnly => false;
 
@@ -208,7 +208,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reserve(uint capacity)
         {
-            if (this.capacity < capacity)
+            if (this.capacity < capacity || pointer == null)
             {
                 Grow(capacity);
             }

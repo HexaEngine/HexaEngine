@@ -4,7 +4,7 @@
     using HexaEngine.Core.UI;
     using HexaEngine.Editor.Attributes;
     using HexaEngine.Editor.Properties;
-    using HexaEngine.ImGuiNET;
+    using Hexa.NET.ImGui;
     using System;
     using System.Reflection;
     using YamlDotNet.Core.Tokens;

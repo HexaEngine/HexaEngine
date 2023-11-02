@@ -4,7 +4,7 @@
     using HexaEngine.Editor.NodeEditor;
     using HexaEngine.Editor.NodeEditor.Pins;
     using HexaEngine.Mathematics;
-    using ImNodesNET;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Numerics;
 

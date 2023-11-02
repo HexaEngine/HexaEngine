@@ -1,7 +1,7 @@
 ﻿namespace HexaEngine.Editor.NodeEditor
 {
-    using HexaEngine.ImGuiNET;
-    using HexaEngine.ImNodesNET;
+    using Hexa.NET.ImGui;
+    using Hexa.NET.ImNodes;
     using Newtonsoft.Json;
     using System.Collections.Generic;
 
