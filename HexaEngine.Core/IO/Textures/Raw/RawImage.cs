@@ -3,6 +3,9 @@
     using HexaEngine.Core.Graphics;
     using HexaEngine.Core.Graphics.Textures;
 
+    /// <summary>
+    /// Represents a raw image with a header including width, height, and format information.
+    /// </summary>
     public unsafe class RawImage : IDisposable
     {
         private RawHeader header;
@@ -12,6 +15,9 @@
         private int pixelCount;
         private bool disposedValue;
 
+        /// <summary>
+        /// Gets or sets the width of the raw image in pixels.
+        /// </summary>
         public int Width
         {
             get => header.Width;
@@ -22,6 +28,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the height of the raw image in pixels.
+        /// </summary>
         public int Height
         {
             get => header.Height;
@@ -32,6 +41,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the format of the raw image data.
+        /// </summary>
         public Format Format
         {
             get => header.Format;
@@ -42,16 +54,34 @@
             }
         }
 
+        /// <summary>
+        /// Gets a pointer to the raw image data.
+        /// </summary>
         public byte* Data => data;
 
+        /// <summary>
+        /// Gets a <see cref="Span{byte}"/> representing the raw image data.
+        /// </summary>
         public Span<byte> Span => new(data, byteCount);
 
+        /// <summary>
+        /// Gets the row pitch of the raw image.
+        /// </summary>
         public int RowPitch => rowPitch;
 
+        /// <summary>
+        /// Gets the byte count of the raw image.
+        /// </summary>
         public int ByteCount => byteCount;
 
+        /// <summary>
+        /// Gets the pixel count of the raw image.
+        /// </summary>
         public int PixelCount => pixelCount;
 
+        /// <summary>
+        /// Recalculates the row pitch, byte count, and pixel count based on the current header and format.
+        /// </summary>
         private void Recalculate()
         {
             rowPitch = 0;
@@ -61,6 +91,10 @@
             pixelCount = header.Width * header.Height;
         }
 
+        /// <summary>
+        /// Writes the raw image to the specified <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="dst">The destination <see cref="Stream"/> to write to.</param>
         public void Write(Stream dst)
         {
             header.Write(dst);
@@ -68,6 +102,10 @@
             dst.Write(span);
         }
 
+        /// <summary>
+        /// Saves the raw image to a file with the specified filename.
+        /// </summary>
+        /// <param name="filename">The filename to save the raw image to.</param>
         public void SaveToFile(string filename)
         {
             var fs = File.Create(filename);
@@ -75,16 +113,31 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// Reads a raw image from the specified path using an external file.
+        /// </summary>
+        /// <param name="path">The path to the raw image file.</param>
+        /// <returns>A <see cref="RawImage"/> object containing the raw image data.</returns>
         public static RawImage ReadFromExternal(string path)
         {
             return Read(File.OpenRead(path));
         }
 
+        /// <summary>
+        /// Reads a raw image from the specified path using the file system.
+        /// </summary>
+        /// <param name="path">The path to the raw image file.</param>
+        /// <returns>A <see cref="RawImage"/> object containing the raw image data.</returns>
         public static RawImage ReadFrom(string path)
         {
-            return Read(FileSystem.Open(path));
+            return Read(FileSystem.OpenRead(path));
         }
 
+        /// <summary>
+        /// Reads a raw image from the specified <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="src">The source <see cref="Stream"/> to read from.</param>
+        /// <returns>A <see cref="RawImage"/> object containing the raw image data.</returns>
         public static RawImage Read(Stream src)
         {
             RawImage image = new();
@@ -98,6 +151,11 @@
             return image;
         }
 
+        /// <summary>
+        /// Captures the raw image from a graphics device and a 2D texture.
+        /// </summary>
+        /// <param name="device">The graphics device to use for capturing.</param>
+        /// <param name="texture">The 2D texture to capture from.</param>
         public void Capture(IGraphicsDevice device, ITexture2D texture)
         {
             var context = device.Context;
@@ -129,6 +187,11 @@
             staging.Dispose();
         }
 
+        /// <summary>
+        /// Copies the raw image to a graphics device's 2D texture.
+        /// </summary>
+        /// <param name="device">The graphics device to use for copying.</param>
+        /// <param name="texture">The target 2D texture to copy to.</param>
         public void CopyTo(IGraphicsDevice device, ITexture2D texture)
         {
             var context = device.Context;
@@ -159,6 +222,17 @@
             staging.Dispose();
         }
 
+        /// <summary>
+        /// Creates a 2D texture from the raw image data with the specified parameters.
+        /// </summary>
+        /// <param name="device">The graphics device to create the texture with.</param>
+        /// <param name="bindFlags">The bind flags for the new texture.</param>
+        /// <param name="usage">The usage for the new texture.</param>
+        /// <param name="cpuAccessFlags">The CPU access flags for the new texture.</param>
+        /// <param name="sampleCount">The sample count for the new texture.</param>
+        /// <param name="sampleQuality">The sample quality for the new texture.</param>
+        /// <param name="miscFlag">The miscellaneous flags for the new texture.</param>
+        /// <returns>A 2D texture created from the raw image data.</returns>
         public ITexture2D CreateTexture(IGraphicsDevice device, BindFlags bindFlags, Usage usage, CpuAccessFlags cpuAccessFlags, int sampleCount = 1, int sampleQuality = 0, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
         {
             Texture2DDescription description = new(header.Format, header.Width, header.Height, 1, 1, bindFlags, usage, cpuAccessFlags, sampleCount, sampleQuality, miscFlag);
@@ -170,6 +244,10 @@
             return texture;
         }
 
+        /// <summary>
+        /// Copies the raw image data from an <see cref="IScratchImage"/>.
+        /// </summary>
+        /// <param name="image">The source <see cref="IScratchImage"/> containing the raw image data.</param>
         public void CopyFrom(IScratchImage image)
         {
             var metadata = image.Metadata;

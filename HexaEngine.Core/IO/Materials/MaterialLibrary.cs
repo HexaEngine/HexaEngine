@@ -50,7 +50,7 @@
 
         public static MaterialLibrary Load(string path)
         {
-            return Load(FileSystem.Open(path));
+            return Load(FileSystem.OpenRead(path));
         }
 
         public static MaterialLibrary LoadExternal(string path)

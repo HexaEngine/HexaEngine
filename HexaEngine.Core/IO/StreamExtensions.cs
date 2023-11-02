@@ -6,10 +6,19 @@
     using System.Buffers.Binary;
     using System.IO;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
     using System.Text;
 
     public static class StreamExtensions
     {
+        /// <summary>
+        /// Writes a string to the stream using the specified encoder and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="str">The string to write to the stream.</param>
+        /// <param name="encoder">The encoding to use for the string.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteString(this Stream stream, string? str, Encoding encoder, Endianness endianness)
         {
             if (str == null)
@@ -33,6 +42,14 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a string from the stream using the specified decoder and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="decoder">The encoding to use for reading the string.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The string read from the stream, or null if the string length is 0.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static string? ReadString(this Stream stream, Encoding decoder, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
@@ -61,6 +78,13 @@
             return new(chars);
         }
 
+        /// <summary>
+        /// Writes a 16-bit signed integer to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="val">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteInt16(this Stream stream, short val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[2];
@@ -76,6 +100,13 @@
             stream.Write(buf);
         }
 
+        /// <summary>
+        /// Reads a 16-bit signed integer from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 16-bit signed integer read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static short ReadInt16(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[2];
@@ -90,6 +121,13 @@
             }
         }
 
+        /// <summary>
+        /// Reads a 16-bit unsigned integer from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 16-bit unsigned integer read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static ushort ReadUInt16(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[2];
@@ -104,6 +142,13 @@
             }
         }
 
+        /// <summary>
+        /// Writes a 16-bit unsigned integer to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="val">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteUInt16(this Stream stream, ushort val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[2];
@@ -119,6 +164,13 @@
             stream.Write(buf);
         }
 
+        /// <summary>
+        /// Writes a 32-bit signed integer to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="val">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteInt32(this Stream stream, int val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
@@ -134,6 +186,13 @@
             stream.Write(buf);
         }
 
+        /// <summary>
+        /// Reads a 32-bit signed integer from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 32-bit signed integer read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt32(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
@@ -148,6 +207,13 @@
             }
         }
 
+        /// <summary>
+        /// Reads a 32-bit unsigned integer from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 32-bit unsigned integer read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static uint ReadUInt32(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
@@ -162,6 +228,13 @@
             }
         }
 
+        /// <summary>
+        /// Writes a 32-bit unsigned integer to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="val">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteUInt32(this Stream stream, uint val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[4];
@@ -177,6 +250,13 @@
             stream.Write(buf);
         }
 
+        /// <summary>
+        /// Writes a 64-bit unsigned integer to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="val">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteUInt64(this Stream stream, ulong val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
@@ -192,6 +272,13 @@
             stream.Write(buf);
         }
 
+        /// <summary>
+        /// Writes a 64-bit signed integer to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="val">The value to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteInt64(this Stream stream, long val, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
@@ -207,6 +294,13 @@
             stream.Write(buf);
         }
 
+        /// <summary>
+        /// Reads a 64-bit signed integer from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 64-bit signed integer read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static long ReadInt64(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
@@ -221,6 +315,13 @@
             }
         }
 
+        /// <summary>
+        /// Reads a 64-bit unsigned integer from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 64-bit unsigned integer read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static ulong ReadUInt64(this Stream stream, Endianness endianness)
         {
             Span<byte> buf = stackalloc byte[8];
@@ -235,6 +336,13 @@
             }
         }
 
+        /// <summary>
+        /// Reads a byte array of the specified length from the stream.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="length">The length of the byte array to read.</param>
+        /// <returns>The byte array read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static byte[] Read(this Stream stream, long length)
         {
             var buffer = new byte[length];
@@ -242,6 +350,13 @@
             return buffer;
         }
 
+        /// <summary>
+        /// Compares the data in the stream with the provided byte array.
+        /// </summary>
+        /// <param name="stream">The stream to compare with.</param>
+        /// <param name="compare">The byte array to compare with the stream data.</param>
+        /// <returns>True if the stream data matches the provided byte array; otherwise, false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static bool Compare(this Stream stream, byte[] compare)
         {
 #nullable disable
@@ -259,12 +374,29 @@
 #nullable enable
         }
 
+        /// <summary>
+        /// Compares the version read from the stream with the specified minimum and latest versions.
+        /// </summary>
+        /// <param name="stream">The stream to read the version from.</param>
+        /// <param name="min">The minimum version to compare against.</param>
+        /// <param name="latest">The latest version to compare against.</param>
+        /// <param name="endianness">The endianness to use for reading the version.</param>
+        /// <param name="version">The version read from the stream.</param>
+        /// <returns>True if the version is within the specified range; otherwise, false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static bool CompareVersion(this Stream stream, ulong min, ulong latest, Endianness endianness, out ulong version)
         {
             version = stream.ReadUInt64(endianness);
             return version >= min && version <= latest;
         }
 
+        /// <summary>
+        /// Reads a byte array of the specified length from the stream.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="length">The length of the byte array to read.</param>
+        /// <returns>The byte array read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static byte[] ReadBytes(this Stream stream, int length)
         {
             byte[] bytes = new byte[length];
@@ -272,6 +404,13 @@
             return bytes;
         }
 
+        /// <summary>
+        /// Reads a byte array of the specified length from the stream.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="length">The length of the byte array to read.</param>
+        /// <returns>The byte array read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static byte[] ReadBytes(this Stream stream, uint length)
         {
             byte[] bytes = new byte[length];
@@ -279,6 +418,13 @@
             return bytes;
         }
 
+        /// <summary>
+        /// Writes a Vector4 to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="vector">The Vector4 to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteVector4(this Stream stream, Vector4 vector, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[16];
@@ -300,6 +446,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a Vector4 from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The Vector4 read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static Vector4 ReadVector4(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[16];
@@ -323,6 +476,13 @@
             return vector;
         }
 
+        /// <summary>
+        /// Writes a Vector3 to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="vector">The Vector3 to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteVector3(this Stream stream, Vector3 vector, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[12];
@@ -342,6 +502,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a Vector3 from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The Vector3 read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static Vector3 ReadVector3(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[12];
@@ -363,6 +530,13 @@
             return vector;
         }
 
+        /// <summary>
+        /// Writes a Vector2 to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="vector">The Vector2 to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteVector2(this Stream stream, Vector2 vector, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[8];
@@ -380,6 +554,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a Vector2 from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The Vector2 read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static Vector2 ReadVector2(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[8];
@@ -399,6 +580,13 @@
             return vector;
         }
 
+        /// <summary>
+        /// Writes a single-precision floating-point value to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="value">The single-precision floating-point value to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteFloat(this Stream stream, float value, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[4];
@@ -414,6 +602,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a single-precision floating-point value from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The single-precision floating-point value read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static float ReadFloat(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[4];
@@ -428,6 +623,13 @@
             }
         }
 
+        /// <summary>
+        /// Writes a double-precision floating-point value to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="value">The double-precision floating-point value to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteDouble(this Stream stream, double value, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[8];
@@ -443,6 +645,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a double-precision floating-point value from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The double-precision floating-point value read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static double ReadDouble(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[8];
@@ -457,6 +666,13 @@
             }
         }
 
+        /// <summary>
+        /// Writes a 4x4 matrix to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="matrix">The 4x4 matrix to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteMatrix4x4(this Stream stream, Matrix4x4 matrix, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[64];
@@ -502,6 +718,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a 4x4 matrix from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The 4x4 matrix read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static Matrix4x4 ReadMatrix4x4(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[64];
@@ -549,6 +772,13 @@
             return matrix;
         }
 
+        /// <summary>
+        /// Writes a Quaternion to the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="quaternion">The Quaternion to write to the stream.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static void WriteQuaternion(this Stream stream, Quaternion quaternion, Endianness endianness)
         {
             Span<byte> dst = stackalloc byte[16];
@@ -570,6 +800,13 @@
             stream.Write(dst);
         }
 
+        /// <summary>
+        /// Reads a Quaternion from the stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading.</param>
+        /// <returns>The Quaternion read from the stream.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static Quaternion ReadQuaternion(this Stream stream, Endianness endianness)
         {
             Span<byte> src = stackalloc byte[16];

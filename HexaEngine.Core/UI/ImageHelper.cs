@@ -3,8 +3,16 @@
     using Hexa.NET.ImGui;
     using System.Numerics;
 
+    /// <summary>
+    /// A helper class for working with ImGui images
+    /// </summary>
     public static class ImageHelper
     {
+        /// <summary>
+        /// Displays an image centered vertically in the window with the specified size.
+        /// </summary>
+        /// <param name="image">The identifier of the image to display.</param>
+        /// <param name="size">The size of the image.</param>
         public static void ImageCenteredV(ImTextureID image, Vector2 size)
         {
             var windowHeight = ImGui.GetWindowSize().Y;
@@ -14,6 +22,11 @@
             ImGui.Image(image, size);
         }
 
+        /// <summary>
+        /// Displays an image centered horizontally in the window with the specified size.
+        /// </summary>
+        /// <param name="image">The identifier of the image to display.</param>
+        /// <param name="size">The size of the image.</param>
         public static void ImageCenteredH(ImTextureID image, Vector2 size)
         {
             var windowWidth = ImGui.GetWindowSize().X;
@@ -23,6 +36,11 @@
             ImGui.Image(image, size);
         }
 
+        /// <summary>
+        /// Displays an image centered both vertically and horizontally in the window with the specified size.
+        /// </summary>
+        /// <param name="image">The identifier of the image to display.</param>
+        /// <param name="size">The size of the image.</param>
         public static void ImageCenteredVH(ImTextureID image, Vector2 size)
         {
             var windowSize = ImGui.GetWindowSize();

@@ -6,7 +6,7 @@
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// A memory cache with the LRU strategy.
+    /// A memory cache with the LRU (Least Recently Used) strategy.
     /// </summary>
     public unsafe class Cache
     {
@@ -16,13 +16,26 @@
         private long size;
         private long free;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Cache"/> class with the specified cache size.
+        /// </summary>
+        /// <param name="size">The maximum size of the cache in bytes.</param>
         public Cache(long size = 65536)
         {
             this.size = free = size;
         }
 
+        /// <summary>
+        /// Gets or sets the maximum size of the cache.
+        /// </summary>
         public long Size { get => size; set => size = value; }
 
+        /// <summary>
+        /// Allocates a buffer from the cache for the specified length.
+        /// </summary>
+        /// <param name="length">The requested buffer size in bytes.</param>
+        /// <returns>A memory handle to the allocated buffer.</returns>
+        /// <exception cref="ArgumentException">Thrown when the requested buffer size exceeds the cache size.</exception>
         public MemoryHandle AllocBuffer(long length)
         {
             if (length > size)
@@ -50,12 +63,19 @@
             return AllocBuffer(length);
         }
 
+        /// <summary>
+        /// Frees a previously allocated buffer, making its memory available for reuse in the cache.
+        /// </summary>
+        /// <param name="memory">The memory handle to the buffer being freed.</param>
         public void FreeBuffer(MemoryHandle memory)
         {
             free += memory.Size;
             Marshal.FreeHGlobal((nint)memory.Data);
         }
 
+        /// <summary>
+        /// Represents a memory handle to an allocated buffer within the cache.
+        /// </summary>
         public readonly unsafe struct MemoryHandle
         {
             public readonly byte* Data;
@@ -74,6 +94,11 @@
             public readonly bool IsNull => Data == null;
         }
 
+        /// <summary>
+        /// Gets a cache handle associated with the specified resource name.
+        /// </summary>
+        /// <param name="name">The name of the resource.</param>
+        /// <returns>A cache handle associated with the resource.</returns>
         public CacheHandle GetCacheHandle(string name)
         {
             lock (handles)
@@ -87,6 +112,9 @@
             }
         }
 
+        /// <summary>
+        /// Flushes the entire cache, disposing of all cached resources.
+        /// </summary>
         public void Flush()
         {
             lock (handles)
@@ -101,6 +129,10 @@
             }
         }
 
+        /// <summary>
+        /// Flushes a specific resource from the cache by its name.
+        /// </summary>
+        /// <param name="name">The name of the resource to flush.</param>
         public void Flush(string name)
         {
             lock (handles)
@@ -112,7 +144,7 @@
 
         private CacheHandle CreateCacheHandle(string name)
         {
-            CacheHandle handle = new(this, name, FileSystem.Open(name), mode);
+            CacheHandle handle = new(this, name, FileSystem.OpenRead(name), mode);
             nameToHandle.Add(name, handle);
             handles.Add(handle);
             return handle;

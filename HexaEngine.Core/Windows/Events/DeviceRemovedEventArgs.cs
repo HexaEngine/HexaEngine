@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.Windows.Events
 {
+    /// <summary>
+    /// Event arguments for the device removed event.
+    /// </summary>
     public class DeviceRemovedEventArgs : EventArgs
     {
         public DeviceRemovedEventArgs(string message, int code)
@@ -8,9 +11,15 @@
             Code = code;
         }
 
-        public string Message { get; set; }
+        /// <summary>
+        /// Gets the message of the reason device removed event.
+        /// </summary>
+        public string Message { get; internal set; }
 
-        public int Code { get; set; }
+        /// <summary>
+        /// Gets the event code of the device removed event.
+        /// </summary>
+        public int Code { get; internal set; }
 
         public override string ToString()
         {

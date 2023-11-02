@@ -22,7 +22,7 @@
 
         public static EffectDescriptionFile Load(string path)
         {
-            var fs = FileSystem.Open(path);
+            var fs = FileSystem.OpenRead(path);
             var result = (EffectDescriptionFile)(xmlSerializer.Deserialize(fs) ?? throw new());
             fs.Close();
             return result;

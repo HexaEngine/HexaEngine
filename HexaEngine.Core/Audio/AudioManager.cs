@@ -31,7 +31,7 @@
 
         public static IAudioStream CreateStream(string path)
         {
-            return audioDevice.CreateWaveAudioStream(FileSystem.Open(Paths.CurrentSoundPath + path));
+            return audioDevice.CreateWaveAudioStream(FileSystem.OpenRead(Paths.CurrentSoundPath + path));
         }
 
         public static ISourceVoice CreateSourceVoice(IAudioStream stream)

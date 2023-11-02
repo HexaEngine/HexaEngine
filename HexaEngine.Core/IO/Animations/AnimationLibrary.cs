@@ -64,7 +64,7 @@
 
         public static AnimationLibrary Load(string path)
         {
-            return Load(FileSystem.Open(path));
+            return Load(FileSystem.OpenRead(path));
         }
 
         public static AnimationLibrary LoadExternal(string path)

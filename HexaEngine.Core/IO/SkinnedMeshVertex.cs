@@ -87,7 +87,7 @@
         }
 
         /// <inheritdoc/>
-        public bool Equals(SkinnedMeshVertex other)
+        public readonly bool Equals(SkinnedMeshVertex other)
         {
             return Position.Equals(other.Position) &&
                    UV.Equals(other.UV) &&
@@ -97,15 +97,15 @@
         }
 
         /// <inheritdoc/>
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
-            return base.GetHashCode();
+            return HashCode.Combine(Position, UV, Normal, Tangent, Bitangent);
         }
 
         /// <inheritdoc/>
-        public override string? ToString()
+        public override readonly string? ToString()
         {
-            return base.ToString();
+            return $"<Pos: {Position},UV: {UV},N: {Normal},T: {Tangent},B: {Bitangent}, BoneIds: {BoneIds}, Weights: {Weights}>";
         }
 
         /// <summary>

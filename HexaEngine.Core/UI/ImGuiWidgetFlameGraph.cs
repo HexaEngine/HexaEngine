@@ -19,18 +19,43 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// Modified and ported by me.
+// Modified and ported by Juna Meinhold :3.
 
 namespace HexaEngine.Core.UI
 {
-    using HexaEngine.Core.Debugging;
     using Hexa.NET.ImGui;
     using System.Numerics;
 
+    /// <summary>
+    /// A utility class for rendering flame graph-style visualizations using ImGui.
+    /// </summary>
     public static unsafe class ImGuiWidgetFlameGraph
     {
+        /// <summary>
+        /// A delegate that provides values for the flame graph rendering.
+        /// </summary>
+        /// <param name="start">Pointer to the start value.</param>
+        /// <param name="end">Pointer to the end value.</param>
+        /// <param name="level">Pointer to the level value.</param>
+        /// <param name="caption">Pointer to the caption.</param>
+        /// <param name="data">The data source.</param>
+        /// <param name="idx">The index of the data.</param>
         public delegate void ValuesGetter(float* start, float* end, byte* level, byte** caption, void* data, int idx);
 
+        /// <summary>
+        /// Renders a flame graph using ImGui.
+        /// </summary>
+        /// <param name="label">The label for the flame graph.</param>
+        /// <param name="valuesGetter">A delegate to retrieve values for rendering.</param>
+        /// <param name="data">The data source.</param>
+        /// <param name="valuesCount">The count of values to render.</param>
+        /// <param name="selected">The index of the selected value (optional).</param>
+        /// <param name="flip">Whether to flip the graph (optional).</param>
+        /// <param name="valuesOffset">The offset for values (optional).</param>
+        /// <param name="overlayText">Text overlay for the graph (optional).</param>
+        /// <param name="scaleMin">Minimum scale for the graph (optional).</param>
+        /// <param name="scaleMax">Maximum scale for the graph (optional).</param>
+        /// <param name="graphSize">Size of the graph (optional).</param>
         public static void PlotFlame(string label, ValuesGetter valuesGetter, void* data, int valuesCount, ref int selected, bool flip = false, int valuesOffset = 0, string? overlayText = null, float scaleMin = float.MaxValue, float scaleMax = float.MaxValue, Vector2 graphSize = default)
         {
             ImGuiWindow* window = ImGui.GetCurrentWindow();

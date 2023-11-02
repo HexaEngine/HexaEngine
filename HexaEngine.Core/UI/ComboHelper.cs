@@ -3,11 +3,21 @@
     using Hexa.NET.ImGui;
     using System;
 
+    /// <summary>
+    /// A helper class for working with ImGui combo boxes to select enum values of a specified enum type.
+    /// </summary>
+    /// <typeparam name="T">The enum type.</typeparam>
     public static class ComboEnumHelper<T> where T : struct, Enum
     {
         private static readonly T[] values = Enum.GetValues<T>();
         private static readonly string[] names = Enum.GetNames<T>();
 
+        /// <summary>
+        /// Displays a combo box to select an enum value.
+        /// </summary>
+        /// <param name="label">The label for the combo box.</param>
+        /// <param name="value">The currently selected enum value (modified by user interaction).</param>
+        /// <returns><c>true</c> if the user selects a new value, <c>false</c> otherwise.</returns>
         public static bool Combo(string label, ref T value)
         {
             int index = Array.IndexOf(values, value);
@@ -19,6 +29,10 @@
             return false;
         }
 
+        /// <summary>
+        /// Displays the text representation of an enum value.
+        /// </summary>
+        /// <param name="value">The enum value to display.</param>
         public static void Text(T value)
         {
             int index = Array.IndexOf(values, value);
@@ -26,6 +40,9 @@
         }
     }
 
+    /// <summary>
+    /// A helper class for working with ImGui combo boxes to select enum values of various enum types.
+    /// </summary>
     public static class ComboEnumHelper
     {
         private static readonly Dictionary<Type, object[]> values = new();
@@ -46,6 +63,13 @@
             ComboEnumHelper.names.Add(type, names);
         }
 
+        /// <summary>
+        /// Displays a combo box to select an enum value of a specified enum type.
+        /// </summary>
+        /// <param name="label">The label for the combo box.</param>
+        /// <param name="type">The enum type to select values from.</param>
+        /// <param name="value">The currently selected enum value (modified by user interaction).</param>
+        /// <returns><c>true</c> if the user selects a new value, <c>false</c> otherwise.</returns>
         public static bool Combo(string label, Type type, ref object value)
         {
             Get(type, out var values, out var names);
@@ -58,6 +82,11 @@
             return false;
         }
 
+        /// <summary>
+        /// Displays the text representation of an enum value of a specified enum type.
+        /// </summary>
+        /// <param name="type">The enum type to select values from.</param>
+        /// <param name="value">The enum value to display.</param>
         public static void Text(Type type, object value)
         {
             Get(type, out var values, out var names);

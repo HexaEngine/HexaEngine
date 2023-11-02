@@ -84,7 +84,7 @@
 
         public static TerrainFile Load(string path)
         {
-            return Load(FileSystem.Open(path));
+            return Load(FileSystem.OpenRead(path));
         }
 
         public static TerrainFile LoadExternal(string path)

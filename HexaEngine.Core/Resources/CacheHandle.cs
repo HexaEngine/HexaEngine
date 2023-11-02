@@ -5,6 +5,9 @@
     using System.Diagnostics;
     using System.IO;
 
+    /// <summary>
+    /// Represents a cache handle for managing cached data from a source stream.
+    /// </summary>
     public unsafe class CacheHandle : Stream
     {
         private readonly SemaphoreSlim semaphore = new(1);
@@ -18,6 +21,13 @@
 
         private long position;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CacheHandle"/> class.
+        /// </summary>
+        /// <param name="cache">The cache associated with this handle.</param>
+        /// <param name="name">The name of the cache handle.</param>
+        /// <param name="stream">The source stream from which data is cached.</param>
+        /// <param name="mode">The caching mode to use.</param>
         public CacheHandle(Cache cache, string name, VirtualStream stream, CacheMode mode)
         {
             Name = name;
@@ -39,39 +49,63 @@
             this.mode = mode;
         }
 
+        /// <summary>
+        /// Gets the name of the cache handle.
+        /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Gets the timestamp of the last access to this cache handle.
+        /// </summary>
         public long LastAccess => lastAccess;
 
+        /// <summary>
+        /// Gets the size of the cached data.
+        /// </summary>
         public long Size => size;
 
+        /// <inheritdoc/>
         public override bool CanRead => true;
 
+        /// <inheritdoc/>
         public override bool CanSeek => true;
 
+        /// <inheritdoc/>
         public override bool CanWrite => false;
 
+        /// <inheritdoc/>
         public override long Length => stream.Length;
 
+        /// <inheritdoc/>
         public override long Position { get => position; set => position = value; }
 
+        /// <summary>
+        /// Locks access to the cache handle.
+        /// </summary>
         public void Lock()
         {
             semaphore.Wait();
         }
 
+        /// <summary>
+        /// Unlocks access to the cache handle.
+        /// </summary>
         public void Unlock()
         {
             semaphore.Release();
         }
 
-        public LockBlock BeginLock()
+        /// <summary>
+        /// Begins a lock block to access the cache handle.
+        /// </summary>
+        /// <returns>A <see cref="LockBlock"/> that must be disposed to release the lock.</returns>
+        public IDisposable BeginLock()
         {
             semaphore.Wait();
-            return new(semaphore);
+            return new LockBlock(semaphore);
         }
 
-        public readonly struct LockBlock : IDisposable
+        private readonly struct LockBlock : IDisposable
         {
             private readonly SemaphoreSlim semaphore;
 
@@ -86,6 +120,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override void Flush()
         {
             if (mode == CacheMode.ReadThough)
@@ -107,6 +142,7 @@
             stream.Read(buffer.Span);
         }
 
+        /// <inheritdoc/>
         public override int Read(byte[] buffer, int offset, int count)
         {
             lastAccess = Stopwatch.GetTimestamp();
@@ -133,11 +169,13 @@
             return count;
         }
 
+        /// <inheritdoc/>
         public override void Write(byte[] buffer, int offset, int count)
         {
             throw new NotSupportedException();
         }
 
+        /// <inheritdoc/>
         public override long Seek(long offset, SeekOrigin origin)
         {
             switch (origin)
@@ -158,11 +196,13 @@
             return position;
         }
 
+        /// <inheritdoc/>
         public override void SetLength(long value)
         {
             throw new NotSupportedException();
         }
 
+        /// <inheritdoc/>
         protected override void Dispose(bool disposing)
         {
             cache.FreeBuffer(buffer);

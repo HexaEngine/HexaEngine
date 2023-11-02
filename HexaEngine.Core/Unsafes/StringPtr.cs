@@ -6,6 +6,7 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
+    [Obsolete("Use StdString or StdWString instead, will be removed next version")]
     public unsafe struct UnsafeOldString : IFreeable, IEquatable<UnsafeOldString>
     {
         public UnsafeOldString(string str)

@@ -4,6 +4,9 @@
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
+    /// <summary>
+    /// Represents an asset in the file system.
+    /// </summary>
     public class Asset : IDisposable
     {
         private readonly string fullPath;
@@ -12,6 +15,10 @@
 
         private int refCount;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Asset"/> class with the specified full path.
+        /// </summary>
+        /// <param name="fullPath">The full path of the asset.</param>
         public Asset(string fullPath)
         {
             this.fullPath = fullPath;
@@ -19,14 +26,29 @@
             crc32Hash = exists ? FileSystem.GetCrc32Hash(fullPath) : unchecked((uint)-1);
         }
 
+        /// <summary>
+        /// Gets the name of the asset.
+        /// </summary>
         public string Name => Path.GetFileName(fullPath);
 
+        /// <summary>
+        /// Gets the file extension of the asset.
+        /// </summary>
         public string Extension => Path.GetExtension(fullPath);
 
+        /// <summary>
+        /// Gets the directory containing the asset.
+        /// </summary>
         public string? Directory => Path.GetDirectoryName(fullPath);
 
+        /// <summary>
+        /// Gets the full path of the asset.
+        /// </summary>
         public string FullPath => fullPath;
 
+        /// <summary>
+        /// Gets a value indicating whether the asset exists in the file system.
+        /// </summary>
         public bool Exists
         {
             get => exists;
@@ -41,6 +63,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the CRC32 hash of the asset's content.
+        /// </summary>
         public uint Crc32Hash
         {
             get => crc32Hash;
@@ -55,8 +80,14 @@
             }
         }
 
+        /// <summary>
+        /// Occurs when the existence of the asset changes.
+        /// </summary>
         public event Action<Asset, bool>? OnExistsChanged;
 
+        /// <summary>
+        /// Occurs when the content of the asset changes.
+        /// </summary>
         public event Action<Asset>? OnContentChanged;
 
         internal void Refresh()
@@ -77,7 +108,7 @@
                 throw new FileNotFoundException(fullPath);
             }
 
-            return FileSystem.Open(fullPath);
+            return FileSystem.OpenRead(fullPath);
         }
 
         /// <summary>
@@ -92,7 +123,7 @@
                 throw new FileNotFoundException(fullPath);
             }
 
-            return FileSystem.OpenRead(fullPath);
+            return FileSystem.OpenText(fullPath);
         }
 
         /// <summary>
@@ -109,7 +140,7 @@
                 return false;
             }
 
-            stream = FileSystem.Open(fullPath);
+            stream = FileSystem.OpenRead(fullPath);
             return true;
         }
 
@@ -120,7 +151,7 @@
         /// <returns>An bundles of lines read from the file.</returns>
         public string[] ReadAllLines()
         {
-            var fs = FileSystem.Open(fullPath);
+            var fs = FileSystem.OpenRead(fullPath);
             var reader = new StreamReader(fs);
             var result = reader.ReadToEnd().Split(Environment.NewLine);
             reader.Close();
@@ -135,7 +166,7 @@
         /// <returns>An bundles of bytes read from the file.</returns>
         public byte[] ReadAllBytes()
         {
-            var fs = FileSystem.Open(fullPath);
+            var fs = FileSystem.OpenRead(fullPath);
             var buffer = new byte[fs.Length];
             fs.Read(buffer, 0, buffer.Length);
             fs.Close();
@@ -149,7 +180,7 @@
         /// <returns>A <see cref="FileBlob"/> containing the file data.</returns>
         public unsafe FileBlob ReadBlob()
         {
-            var fs = FileSystem.Open(fullPath);
+            var fs = FileSystem.OpenRead(fullPath);
             var blob = new FileBlob((nint)fs.Length);
             fs.Read(blob.AsSpan());
             fs.Close();
@@ -164,7 +195,7 @@
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public bool TryReadAllLines([NotNullWhen(true)] out string[]? lines)
         {
-            if (FileSystem.TryOpen(fullPath, out var fs))
+            if (FileSystem.TryOpenRead(fullPath, out var fs))
             {
                 var reader = new StreamReader(fs);
                 lines = reader.ReadToEnd().Split(Environment.NewLine);
@@ -183,7 +214,7 @@
         /// <returns>The content of the file as a string.</returns>
         public string ReadAllText()
         {
-            var fs = FileSystem.Open(fullPath);
+            var fs = FileSystem.OpenRead(fullPath);
             var reader = new StreamReader(fs);
             var result = reader.ReadToEnd();
             reader.Close();
@@ -199,7 +230,7 @@
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public bool TryReadAllText([NotNullWhen(true)] out string? text)
         {
-            if (FileSystem.TryOpen(fullPath, out var fs))
+            if (FileSystem.TryOpenRead(fullPath, out var fs))
             {
                 var reader = new StreamReader(fs);
                 text = reader.ReadToEnd();
@@ -209,11 +240,17 @@
             return false;
         }
 
+        /// <summary>
+        /// Increments the reference count of the asset, indicating it is being used by another entity.
+        /// </summary>
         public void AddRef()
         {
             Interlocked.Increment(ref refCount);
         }
 
+        /// <summary>
+        /// Decrements the reference count of the asset, indicating it is no longer in use by an entity.
+        /// </summary>
         public void RemoveRef()
         {
             Interlocked.Decrement(ref refCount);
@@ -241,12 +278,18 @@
             }
         }
 
+        /// <summary>
+        /// Releases all resources used by the <see cref="Asset"/>.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="Asset"/> class.
+        /// </summary>
         ~Asset()
         {
             Dispose(false);

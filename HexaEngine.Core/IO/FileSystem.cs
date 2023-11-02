@@ -389,7 +389,7 @@
 
         public static uint GetCrc32Hash(string path)
         {
-            var stream = Open(path);
+            var stream = OpenRead(path);
             Crc32 crc = new();
             crc.Append(stream);
             Span<byte> buffer = stackalloc byte[4];
@@ -440,7 +440,7 @@
         /// </summary>
         /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="VirtualStream"/> for reading the file.</returns>
-        public static VirtualStream Open(string path)
+        public static VirtualStream OpenRead(string path)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
@@ -474,7 +474,7 @@
         /// <param name="path">The path of the file to open.</param>
         /// <param name="stream">When this method returns, contains the <see cref="VirtualStream"/> for reading the file, if the file exists; otherwise, the default _value.</param>
         /// <returns><see langword="true"/> if the file was successfully opened; otherwise, <see langword="false"/>.</returns>
-        public static bool TryOpen(string path, [NotNullWhen(true)] out VirtualStream? stream)
+        public static bool TryOpenRead(string path, [NotNullWhen(true)] out VirtualStream? stream)
         {
             var realPath = Path.GetRelativePath("./", Path.GetFullPath(path));
             realPath = realPath.Replace(@"\\", @"\");
@@ -530,7 +530,7 @@
         /// <returns>An bundles of lines read from the file.</returns>
         public static string[] ReadAllLines(string path)
         {
-            var fs = Open(path);
+            var fs = OpenRead(path);
             var reader = new StreamReader(fs);
             var result = reader.ReadToEnd().Split(Environment.NewLine);
             reader.Close();
@@ -545,7 +545,7 @@
         /// <returns>An bundles of bytes read from the file.</returns>
         public static byte[] ReadAllBytes(string path)
         {
-            var fs = Open(path);
+            var fs = OpenRead(path);
             var buffer = new byte[fs.Length];
             fs.Read(buffer, 0, buffer.Length);
             fs.Close();
@@ -559,7 +559,7 @@
         /// <returns>A <see cref="FileBlob"/> containing the file data.</returns>
         public static unsafe FileBlob ReadBlob(string path)
         {
-            var fs = Open(path);
+            var fs = OpenRead(path);
             var blob = new FileBlob((nint)fs.Length);
             fs.Read(blob.AsSpan());
             fs.Close();
@@ -574,7 +574,7 @@
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public static bool TryReadAllLines(string path, [NotNullWhen(true)] out string[]? lines)
         {
-            if (TryOpen(path, out var fs))
+            if (TryOpenRead(path, out var fs))
             {
                 var reader = new StreamReader(fs);
                 lines = reader.ReadToEnd().Split(Environment.NewLine);
@@ -593,7 +593,7 @@
         /// <returns>The content of the file as a string.</returns>
         public static string ReadAllText(string path)
         {
-            var fs = Open(path);
+            var fs = OpenRead(path);
             var reader = new StreamReader(fs);
             var result = reader.ReadToEnd();
             reader.Close();
@@ -609,7 +609,7 @@
         /// <returns><see langword="true"/> if the file was successfully read; otherwise, <see langword="false"/>.</returns>
         public static bool TryReadAllText(string path, [NotNullWhen(true)] out string? text)
         {
-            if (TryOpen(path, out var fs))
+            if (TryOpenRead(path, out var fs))
             {
                 var reader = new StreamReader(fs);
                 text = reader.ReadToEnd();
@@ -624,9 +624,9 @@
         /// </summary>
         /// <param name="path">The path of the file to open.</param>
         /// <returns>A <see cref="StreamReader"/> for reading the file.</returns>
-        public static StreamReader OpenRead(string path)
+        public static StreamReader OpenText(string path)
         {
-            var fs = Open(path);
+            var fs = OpenRead(path);
             var reader = new StreamReader(fs);
             return reader;
         }

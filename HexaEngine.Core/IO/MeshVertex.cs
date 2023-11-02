@@ -114,5 +114,11 @@
         {
             return HashCode.Combine(Position, UV, Normal, Tangent, Bitangent);
         }
+
+        /// <inheritdoc/>
+        public override readonly string? ToString()
+        {
+            return $"<Pos: {Position},UV: {UV},N: {Normal},T: {Tangent},B: {Bitangent}>";
+        }
     }
 }

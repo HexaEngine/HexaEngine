@@ -4,10 +4,20 @@
     using System;
     using System.Buffers.Binary;
     using System.Numerics;
+    using System.Runtime.CompilerServices;
     using System.Text;
 
     public static class SpanExtensions
     {
+        /// <summary>
+        /// Reads a string from the specified <see cref="ReadOnlySpan{byte}"/> using the given encoding and endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="encoding">The encoding to use for string decoding.</param>
+        /// <param name="str">The output string containing the decoded value.</param>
+        /// <param name="endianness">The endianness to use for reading the string length.</param>
+        /// <returns>The total number of bytes read, including the string length.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadString(this ReadOnlySpan<byte> src, Encoding encoding, out string str, Endianness endianness = Endianness.LittleEndian)
         {
             int len;
@@ -23,6 +33,15 @@
             return 4 + len;
         }
 
+        /// <summary>
+        /// Reads a string from the specified <see cref="Span{byte}"/> using the given encoding and endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="encoding">The encoding to use for string decoding.</param>
+        /// <param name="str">The output string containing the decoded value.</param>
+        /// <param name="endianness">The endianness to use for reading the string length.</param>
+        /// <returns>The total number of bytes read, including the string length.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadString(this Span<byte> src, Encoding encoding, out string str, Endianness endianness = Endianness.LittleEndian)
         {
             int len;
@@ -38,6 +57,15 @@
             return 4 + len;
         }
 
+        /// <summary>
+        /// Writes a string to the specified <see cref="Span{byte}"/> using the given encoding and endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="src">The source <see cref="ReadOnlySpan{char}"/> containing the string to write.</param>
+        /// <param name="encoding">The encoding to use for string encoding.</param>
+        /// <param name="endianness">The endianness to use for writing the string length.</param>
+        /// <returns>The total number of bytes written, including the string length.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteString(this Span<byte> dest, ReadOnlySpan<char> src, Encoding encoding, Endianness endianness = Endianness.LittleEndian)
         {
             var len = encoding.GetByteCount(src);
@@ -53,11 +81,26 @@
             return 4 + len;
         }
 
+        /// <summary>
+        /// Gets the size, in bytes, of a string when encoded with the specified encoder.
+        /// </summary>
+        /// <param name="str">The string to calculate the size of.</param>
+        /// <param name="encoder">The encoder to use for size calculation.</param>
+        /// <returns>The size of the string when encoded with the given encoder.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int SizeOf(this string str, Encoder encoder)
         {
             return 4 + encoder.GetByteCount(str, true);
         }
 
+        /// <summary>
+        /// Writes a 16-bit signed integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 16-bit signed integer to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 2).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteInt16(this Span<byte> dest, short value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -71,6 +114,14 @@
             return 2;
         }
 
+        /// <summary>
+        /// Writes a 16-bit unsigned integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 16-bit unsigned integer to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 2).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteUInt16(this Span<byte> dest, ushort value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -84,6 +135,14 @@
             return 2;
         }
 
+        /// <summary>
+        /// Writes a 32-bit signed integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 32-bit signed integer to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteInt32(this Span<byte> dest, int value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -97,6 +156,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Writes a 32-bit unsigned integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 32-bit unsigned integer to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteUInt32(this Span<byte> dest, uint value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -110,6 +177,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Writes a 64-bit signed integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 64-bit signed integer to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteInt64(this Span<byte> dest, long value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -123,6 +198,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Writes a 64-bit unsigned integer to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 64-bit unsigned integer to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteUInt64(this Span<byte> dest, ulong value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -136,6 +219,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Writes a single-precision floating-point value to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The single-precision floating-point value to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteSingle(this Span<byte> dest, float value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -149,6 +240,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Writes a double-precision floating-point value to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The double-precision floating-point value to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteDouble(this Span<byte> dest, double value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -162,6 +261,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Writes a 2D vector to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 2D vector to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteVector2(this Span<byte> dest, Vector2 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -177,6 +284,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Writes a 3D vector to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 3D vector to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 12).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteVector3(this Span<byte> dest, Vector3 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -194,6 +309,14 @@
             return 12;
         }
 
+        /// <summary>
+        /// Writes a 4D vector to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="value">The 4D vector to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 16).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteVector4(this Span<byte> dest, Vector4 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -213,6 +336,14 @@
             return 16;
         }
 
+        /// <summary>
+        /// Writes a 4x4 matrix to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="matrix">The 4x4 matrix to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 64).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteMatrix4x4(this Span<byte> dest, Matrix4x4 matrix, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -257,6 +388,14 @@
             return 64;
         }
 
+        /// <summary>
+        /// Writes a quaternion to the specified <see cref="Span{byte}"/> using the specified endianness.
+        /// </summary>
+        /// <param name="dest">The destination <see cref="Span{byte}"/> to write to.</param>
+        /// <param name="quaternion">The quaternion to write.</param>
+        /// <param name="endianness">The endianness to use for writing.</param>
+        /// <returns>The size of the data written in bytes (always 16).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int WriteQuaternion(this Span<byte> dest, Quaternion quaternion, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -277,6 +416,14 @@
             return 16;
         }
 
+        /// <summary>
+        /// Reads a 16-bit signed integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 16-bit signed integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 2).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt16(this ReadOnlySpan<byte> src, out short value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -290,6 +437,14 @@
             return 2;
         }
 
+        /// <summary>
+        /// Reads a 16-bit unsigned integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 16-bit unsigned integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 2).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadUInt16(this ReadOnlySpan<byte> src, out ushort value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -303,6 +458,14 @@
             return 2;
         }
 
+        /// <summary>
+        /// Reads a 32-bit signed integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 32-bit signed integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt32(this ReadOnlySpan<byte> src, out int value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -316,6 +479,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Reads a 32-bit unsigned integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 32-bit unsigned integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadUInt32(this ReadOnlySpan<byte> src, out uint value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -329,6 +500,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Reads a 64-bit signed integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 64-bit signed integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt64(this ReadOnlySpan<byte> src, out long value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -342,6 +521,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a 64-bit unsigned integer from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 64-bit unsigned integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadUInt64(this ReadOnlySpan<byte> src, out ulong value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -355,6 +542,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a single-precision floating-point value from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output single-precision floating-point value.</param>
+        /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
+        /// <returns>The total number of bytes read (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadSingle(this ReadOnlySpan<byte> src, out float value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -368,6 +563,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Reads a double-precision floating-point value from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output double-precision floating-point value.</param>
+        /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadDouble(this ReadOnlySpan<byte> src, out double value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -381,6 +584,13 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a 2D vector from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 2D vector value.</param>
+        /// <param name="endianness">The endianness to use for reading the vector.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
         public static int ReadVector2(this ReadOnlySpan<byte> src, out Vector2 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -396,6 +606,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a 3D vector from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 3D vector value.</param>
+        /// <param name="endianness">The endianness to use for reading the vector.</param>
+        /// <returns>The total number of bytes read (always 12).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadVector3(this ReadOnlySpan<byte> src, out Vector3 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -413,6 +631,14 @@
             return 12;
         }
 
+        /// <summary>
+        /// Reads a 4D vector from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="value">The output 4D vector value.</param>
+        /// <param name="endianness">The endianness to use for reading the vector.</param>
+        /// <returns>The total number of bytes read (always 16).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadVector4(this ReadOnlySpan<byte> src, out Vector4 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -432,6 +658,14 @@
             return 16;
         }
 
+        /// <summary>
+        /// Reads a 4x4 matrix from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="matrix">The output 4x4 matrix value.</param>
+        /// <param name="endianness">The endianness to use for reading the matrix.</param>
+        /// <returns>The total number of bytes read (always 64).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadMatrix4x4(this ReadOnlySpan<byte> src, out Matrix4x4 matrix, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -476,6 +710,14 @@
             return 64;
         }
 
+        /// <summary>
+        /// Reads a quaternion from the specified <see cref="ReadOnlySpan{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="ReadOnlySpan{byte}"/> to read from.</param>
+        /// <param name="quaternion">The output quaternion value.</param>
+        /// <param name="endianness">The endianness to use for reading the quaternion.</param>
+        /// <returns>The total number of bytes read (always 16).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadQuaternion(this ReadOnlySpan<byte> src, out Quaternion quaternion, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -496,6 +738,14 @@
             return 16;
         }
 
+        /// <summary>
+        /// Reads a 16-bit signed integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 16-bit signed integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 2).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt16(this Span<byte> src, out short value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -509,6 +759,14 @@
             return 2;
         }
 
+        /// <summary>
+        /// Reads a 16-bit unsigned integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 16-bit unsigned integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 2).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadUInt16(this Span<byte> src, out ushort value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -522,6 +780,14 @@
             return 2;
         }
 
+        /// <summary>
+        /// Reads a 32-bit signed integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 32-bit signed integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt32(this Span<byte> src, out int value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -535,6 +801,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Reads a 32-bit unsigned integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 32-bit unsigned integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadUInt32(this Span<byte> src, out uint value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -548,6 +822,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Reads a 64-bit signed integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 64-bit signed integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadInt64(this Span<byte> src, out long value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -561,6 +843,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a 64-bit unsigned integer from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 64-bit unsigned integer value.</param>
+        /// <param name="endianness">The endianness to use for reading the integer.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadUInt64(this Span<byte> src, out ulong value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -574,6 +864,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a single-precision floating-point value from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output single-precision floating-point value.</param>
+        /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
+        /// <returns>The total number of bytes read (always 4).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadSingle(this Span<byte> src, out float value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -587,6 +885,14 @@
             return 4;
         }
 
+        /// <summary>
+        /// Reads a double-precision floating-point value from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output double-precision floating-point value.</param>
+        /// <param name="endianness">The endianness to use for reading the floating-point value.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadDouble(this Span<byte> src, out double value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -600,6 +906,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a 2D vector from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 2D vector value.</param>
+        /// <param name="endianness">The endianness to use for reading the vector.</param>
+        /// <returns>The total number of bytes read (always 8).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadVector2(this Span<byte> src, out Vector2 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -615,6 +929,14 @@
             return 8;
         }
 
+        /// <summary>
+        /// Reads a 3D vector from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 3D vector value.</param>
+        /// <param name="endianness">The endianness to use for reading the vector.</param>
+        /// <returns>The total number of bytes read (always 12).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadVector3(this Span<byte> src, out Vector3 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -632,6 +954,14 @@
             return 12;
         }
 
+        /// <summary>
+        /// Reads a 4D vector from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="value">The output 4D vector value.</param>
+        /// <param name="endianness">The endianness to use for reading the vector.</param>
+        /// <returns>The total number of bytes read (always 16).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadVector4(this Span<byte> src, out Vector4 value, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -651,6 +981,14 @@
             return 16;
         }
 
+        /// <summary>
+        /// Reads a 4x4 matrix from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="matrix">The output 4x4 matrix value.</param>
+        /// <param name="endianness">The endianness to use for reading the matrix.</param>
+        /// <returns>The total number of bytes read (always 64).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadMatrix4x4(this Span<byte> src, out Matrix4x4 matrix, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)
@@ -695,6 +1033,14 @@
             return 64;
         }
 
+        /// <summary>
+        /// Reads a quaternion from the specified <see cref="Span{byte}"/> using the given endianness.
+        /// </summary>
+        /// <param name="src">The source <see cref="Span{byte}"/> to read from.</param>
+        /// <param name="quaternion">The output quaternion value.</param>
+        /// <param name="endianness">The endianness to use for reading the quaternion.</param>
+        /// <returns>The total number of bytes read (always 16).</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static int ReadQuaternion(this Span<byte> src, out Quaternion quaternion, Endianness endianness = Endianness.LittleEndian)
         {
             if (endianness == Endianness.LittleEndian)

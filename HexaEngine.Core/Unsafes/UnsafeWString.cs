@@ -3,6 +3,7 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
+    [Obsolete("Use StdString or StdWString instead, will be removed next version")]
     public unsafe struct UnsafeWString : IFreeable
     {
         public char* Ptr;

@@ -2,8 +2,15 @@
 {
     using Hexa.NET.ImGui;
 
+    /// <summary>
+    /// A text helper for ImGui.
+    /// </summary>
     public static class TextHelper
     {
+        /// <summary>
+        /// Centers a text vertically.
+        /// </summary>
+        /// <param name="text">The text.</param>
         public static void TextCenteredV(string text)
         {
             var windowHeight = ImGui.GetWindowSize().Y;
@@ -13,6 +20,10 @@
             ImGui.Text(text);
         }
 
+        /// <summary>
+        /// Centers a text horizontally.
+        /// </summary>
+        /// <param name="text">The text.</param>
         public static void TextCenteredH(string text)
         {
             var windowWidth = ImGui.GetWindowSize().X;
@@ -22,6 +33,10 @@
             ImGui.Text(text);
         }
 
+        /// <summary>
+        /// Centers a text vertically and horizontally.
+        /// </summary>
+        /// <param name="text">The text.</param>
         public static void TextCenteredVH(string text)
         {
             var windowSize = ImGui.GetWindowSize();

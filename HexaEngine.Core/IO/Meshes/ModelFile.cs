@@ -72,7 +72,7 @@
 
         public static ModelFile Load(string path)
         {
-            return Load(FileSystem.Open(path));
+            return Load(FileSystem.OpenRead(path));
         }
 
         public static ModelFile LoadExternal(string path)

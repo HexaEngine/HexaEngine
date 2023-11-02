@@ -7,5 +7,6 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<Configurations>Debug;Release;TraceLeak</Configurations>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 </Project>

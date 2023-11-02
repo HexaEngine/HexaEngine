@@ -101,7 +101,7 @@
             c = MiddlePoint(Point3, Point1);
         }
 
-        public override string ToString()
+        public override readonly string ToString()
         {
             return $"<{Point1}, {Point2}, {Point3}>";
         }

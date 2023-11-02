@@ -43,7 +43,7 @@
 
         public IScratchImage LoadFormAssets(string path)
         {
-            if (!FileSystem.TryOpen(path, out VirtualStream? fs))
+            if (!FileSystem.TryOpenRead(path, out VirtualStream? fs))
             {
                 Trace.WriteLine($"Warning couldn't find texture {path}");
                 return default;
@@ -76,7 +76,7 @@
 
         public IScratchImage LoadFormAssets(string path, TextureDimension dimension)
         {
-            if (!FileSystem.TryOpen(path, out VirtualStream? fs))
+            if (!FileSystem.TryOpenRead(path, out VirtualStream? fs))
             {
                 Trace.WriteLine($"Warning couldn't find texture {path}");
                 return InitFallback(dimension);

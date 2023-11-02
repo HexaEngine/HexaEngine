@@ -4,7 +4,10 @@
     using System.Collections.Concurrent;
     using System.Runtime.CompilerServices;
 
-    public class ThreadDispatcher : IDisposable, IThreadDispatcher
+    /// <summary>
+    /// A class that provides a thread dispatcher to execute actions on a specific thread or execution context.
+    /// </summary>
+    public class ThreadDispatcher : IThreadDispatcher
     {
         protected ConcurrentQueue<ValueTuple<Action, EventWaitHandle?>> waitingQueue = new();
         protected ConcurrentQueue<ValueTuple<Action<object>, object, EventWaitHandle?>> waitingStateQueue = new();
@@ -12,11 +15,18 @@
 
         private bool disposedValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThreadDispatcher"/> class with the specified thread.
+        /// </summary>
+        /// <param name="thread">The thread on which to execute actions.</param>
         public ThreadDispatcher(Thread thread)
         {
             DispatcherThread = thread;
         }
 
+        /// <summary>
+        /// Executes the actions in the waiting queue.
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ExecuteQueue()
         {
@@ -32,6 +42,10 @@
             }
         }
 
+        /// <summary>
+        /// Invokes the specified action on the associated thread or execution context.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Invoke(Action action)
         {
@@ -45,6 +59,10 @@
             }
         }
 
+        /// <summary>
+        /// Invokes the specified action on the associated thread or execution context, blocking the calling thread until the action completes.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void InvokeBlocking(Action action)
         {
@@ -61,6 +79,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously invokes the specified action on the associated thread or execution context.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task InvokeAsync(Action action)
         {
@@ -77,6 +100,11 @@
             }
         }
 
+        /// <summary>
+        /// Invokes the specified action on the associated thread or execution context with additional state information.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="state">An object that contains data to be used by the action.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Invoke(Action<object> action, object state)
         {
@@ -90,6 +118,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously invokes the specified action on the associated thread or execution context with additional state information.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="state">An object that contains data to be used by the action.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public async Task InvokeAsync(Action<object> action, object state)
         {
@@ -106,6 +140,11 @@
             }
         }
 
+        /// <summary>
+        /// Invokes the specified action on the associated thread or execution context with additional state information, blocking the calling thread until the action completes.
+        /// </summary>
+        /// <param name="action">The action to invoke.</param>
+        /// <param name="state">An object that contains data to be used by the action.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void InvokeBlocking(Action<object> action, object state)
         {
@@ -122,6 +161,10 @@
             }
         }
 
+        /// <summary>
+        /// Disposes of the resources used by the <see cref="ThreadDispatcher"/> instance.
+        /// </summary>
+        /// <param name="disposing">True if called from the <see cref="Dispose"/> method; false if called from the finalizer.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -132,12 +175,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="ThreadDispatcher"/> class.
+        /// </summary>
         ~ThreadDispatcher()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Disposes of the resources used by the <see cref="ThreadDispatcher"/> instance.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
