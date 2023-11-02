@@ -1,5 +1,11 @@
-# Your GitHub workflow file under .github/workflows/
+name: GitHub Pages
 
+on:
+  push:
+    branches:
+      - main  # Set a branch name to trigger deployment
+  pull_request:
+  
 jobs:
   publish-docs:
     runs-on: ubuntu-latest
