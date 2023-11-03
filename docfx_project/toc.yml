@@ -1,5 +1,11 @@
+- name: Getting started
+  items:
+    - name: Installation
+      href: install.md
 - name: Articles
   href: articles/
+- name: Examples
+  href: examples/
 - name: Api Documentation
   href: api/
   homepage: api/index.md

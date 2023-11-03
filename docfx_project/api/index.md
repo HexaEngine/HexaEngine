@@ -1,2 +1,3 @@
-# PLACEHOLDER
-TODO: Add .NET projects to the *src* folder and run `docfx` to generate **REAL** *API Documentation*!
+# HexaEngine API Documentation
+
+Welcome to the HexaEngine API documentation, your gateway to understanding the intricacies of the engine's application programming interface. This resource provides a detailed reference for developers seeking to harness the full power of HexaEngine. Explore the comprehensive API documentation to gain insights into the classes, methods, and data structures at your disposal. Whether you're building games, plugins, or extensions, this documentation is your essential companion in navigating the HexaEngine ecosystem. Let's dive into the API and unlock the potential of HexaEngine for your projects.

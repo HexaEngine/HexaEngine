@@ -46,12 +46,22 @@
           "toc.yml",
           "*.md"
         ]
+      },
+      {
+        "files": [
+          "examples/**.md",
+          "examples/**/toc.yml",
+          "toc.yml",
+          "*.md"
+        ]
       }
     ],
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "logo.svg",
+          "favicon.ico"
         ]
       }
     ],
