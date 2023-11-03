@@ -228,7 +228,7 @@
             }
             if (caption != null)
             {
-                *caption = stage.Name;
+                *caption = stage.Name.Data;
             }
         }
     }

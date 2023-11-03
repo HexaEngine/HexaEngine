@@ -10,6 +10,7 @@
     using System.Diagnostics;
     using System.Numerics;
     using System.Runtime.InteropServices;
+    using static HexaEngine.Core.Extensions.SdlErrorHandlingExtensions;
 
     public static class ImGuiSDL2Platform
     {
