@@ -20,7 +20,7 @@
             br.Read(buffer);
             if (!buffer.SequenceEqual(EmptyMCNs))
             {
-                MediaCatalogNumbers = (UInt128*)AllocCopy(buffer);
+                MediaCatalogNumbers = (UInt128*)AllocCopyT(buffer);
             }
 
             NumberOfLeadInSamples = br.ReadUInt16BigEndian();

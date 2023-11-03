@@ -146,7 +146,7 @@
             {
                 for (uint i = 0; i < width; i++)
                 {
-                    float heightValue = (float)noise.Function2D(scale * (i + x), scale * (j + z)) * 0.5f + 0.5f;
+                    float heightValue = (float)noise.Noise(scale * (i + x), scale * (j + z)) * 0.5f + 0.5f;
 
                     uint index = height * j + i;
 

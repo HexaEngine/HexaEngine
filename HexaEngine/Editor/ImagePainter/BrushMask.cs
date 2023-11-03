@@ -20,7 +20,7 @@
 
         public unsafe BrushMask(IGraphicsDevice device, Vector4[] pixels, int width, int height)
         {
-            Vector4* pData = AllocCopy(pixels);
+            Vector4* pData = AllocCopyT(pixels);
             *pData = Vector4.One;
             SubresourceData data = new(pData, width * sizeof(Vector4));
 

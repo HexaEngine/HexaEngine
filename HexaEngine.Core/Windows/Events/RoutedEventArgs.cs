@@ -1,5 +1,8 @@
 ﻿namespace HexaEngine.Core.Windows.Events
 {
+    /// <summary>
+    /// Represents event arguments for routed events.
+    /// </summary>
     public class RoutedEventArgs : TimestampEventArgs
     {
         /// <summary>

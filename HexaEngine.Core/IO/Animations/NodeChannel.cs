@@ -6,28 +6,70 @@
     using System.Runtime.CompilerServices;
     using System.Text;
 
+    /// <summary>
+    /// Represents a channel for animating a node's transformation.
+    /// </summary>
     public struct NodeChannel
     {
+        /// <summary>
+        /// Gets or sets the name of the node associated with this channel.
+        /// </summary>
         public string NodeName;
+
+        /// <summary>
+        /// Gets a list of keyframes for node position.
+        /// </summary>
         public List<VectorKeyframe> PositionKeyframes = new();
+
+        /// <summary>
+        /// Gets a list of keyframes for node rotation.
+        /// </summary>
         public List<QuatKeyframe> RotationKeyframes = new();
+
+        /// <summary>
+        /// Gets a list of keyframes for node scale.
+        /// </summary>
         public List<VectorKeyframe> ScaleKeyframes = new();
+
+        /// <summary>
+        /// Gets or sets the animation behavior before the first keyframe.
+        /// </summary>
         public AnimationBehavior PreState;
+
+        /// <summary>
+        /// Gets or sets the animation behavior after the last keyframe.
+        /// </summary>
         public AnimationBehavior PostState;
 
+        /// <summary>
+        /// Gets or sets the local transformation matrix of the node.
+        /// </summary>
         public Matrix4x4 Local;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NodeChannel"/> struct with the specified node name.
+        /// </summary>
+        /// <param name="nodeName">The name of the node associated with this channel.</param>
         public NodeChannel(string nodeName) : this()
         {
             NodeName = nodeName;
         }
 
+        /// <summary>
+        /// Updates the local transformation matrix based on the current time.
+        /// </summary>
+        /// <param name="deltaTime">The time elapsed since the last update.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Update(float deltaTime)
         {
             Local = InterpolateScaling(deltaTime) * InterpolateRotation(deltaTime) * InterpolatePosition(deltaTime);
         }
 
+        /// <summary>
+        /// Gets the index of the position keyframe to use for interpolation at the given animation time.
+        /// </summary>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The index of the position keyframe to use for interpolation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetPositionIndex(float animationTime)
         {
@@ -41,6 +83,11 @@
             return 0;
         }
 
+        /// <summary>
+        /// Gets the index of the rotation keyframe to use for interpolation at the given animation time.
+        /// </summary>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The index of the rotation keyframe to use for interpolation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetRotationIndex(float animationTime)
         {
@@ -54,6 +101,11 @@
             return 0;
         }
 
+        /// <summary>
+        /// Gets the index of the scale keyframe to use for interpolation at the given animation time.
+        /// </summary>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The index of the scale keyframe to use for interpolation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetScaleIndex(float animationTime)
         {
@@ -67,6 +119,13 @@
             return 0;
         }
 
+        /// <summary>
+        /// Calculates the interpolation factor for the given animation time within the specified keyframe time range.
+        /// </summary>
+        /// <param name="lastTimeStamp">The timestamp of the previous keyframe.</param>
+        /// <param name="nextTimeStamp">The timestamp of the next keyframe.</param>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The interpolation factor.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
         {
@@ -76,6 +135,11 @@
             return scaleFactor;
         }
 
+        /// <summary>
+        /// Interpolates the position for the given animation time.
+        /// </summary>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The interpolated position matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Matrix4x4 InterpolatePosition(float animationTime)
         {
@@ -91,6 +155,11 @@
             return Matrix4x4.CreateTranslation(finalPosition);
         }
 
+        /// <summary>
+        /// Interpolates the rotation for the given animation time.
+        /// </summary>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The interpolated rotation matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Matrix4x4 InterpolateRotation(float animationTime)
         {
@@ -107,6 +176,11 @@
             return Matrix4x4.CreateFromQuaternion(finalRotation);
         }
 
+        /// <summary>
+        /// Interpolates the scaling for the given animation time.
+        /// </summary>
+        /// <param name="animationTime">The current animation time.</param>
+        /// <returns>The interpolated scaling matrix.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Matrix4x4 InterpolateScaling(float animationTime)
         {
@@ -122,6 +196,12 @@
             return Matrix4x4.CreateScale(finalScale);
         }
 
+        /// <summary>
+        /// Writes the NodeChannel data to a binary stream.
+        /// </summary>
+        /// <param name="stream">The binary stream to write to.</param>
+        /// <param name="encoding">The encoding used for writing strings.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(NodeName, encoding, endianness);
@@ -144,6 +224,12 @@
             }
         }
 
+        /// <summary>
+        /// Reads a NodeChannel from a binary stream with the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to read the channel from.</param>
+        /// <param name="encoding">The encoding used for reading strings.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
             NodeName = stream.ReadString(encoding, endianness) ?? string.Empty;
@@ -169,6 +255,13 @@
             }
         }
 
+        /// <summary>
+        /// Reads a NodeChannel from a binary stream with the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to read the channel from.</param>
+        /// <param name="encoding">The encoding used for reading strings.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
+        /// <returns>The NodeChannel read from the stream.</returns>
         public static NodeChannel ReadFrom(Stream stream, Encoding encoding, Endianness endianness)
         {
             NodeChannel channel = default;

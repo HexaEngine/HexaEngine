@@ -196,7 +196,7 @@
         public void Resize(uint length)
         {
             var result = items;
-            ResizeArray(&result, count, length);
+            items = ReAllocT(items, length);
             items = result;
             count = length;
             MemoryManager.Unregister(buffer);

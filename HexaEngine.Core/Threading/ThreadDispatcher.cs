@@ -162,9 +162,9 @@
         }
 
         /// <summary>
-        /// Disposes of the resources used by the <see cref="ThreadDispatcher"/> instance.
+        /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
-        /// <param name="disposing">True if called from the <see cref="Dispose"/> method; false if called from the finalizer.</param>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

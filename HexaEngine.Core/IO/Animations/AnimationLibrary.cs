@@ -9,29 +9,55 @@
     using System.IO.Compression;
     using System.Text;
 
+    /// <summary>
+    /// Represents a library of animations.
+    /// </summary>
     public class AnimationLibrary
     {
+        /// <summary>
+        /// Gets an empty animation library.
+        /// </summary>
         public static AnimationLibrary Empty => new();
 
         private AnimationLibraryHeader header;
         private readonly List<Animation> animations;
 
+        /// <summary>
+        /// Initializes an empty animation library.
+        /// </summary>
         public AnimationLibrary()
         {
             header = default;
             animations = new();
         }
 
+        /// <summary>
+        /// Initializes an animation library with a collection of animations.
+        /// </summary>
+        /// <param name="animations">A list of animations to include in the library.</param>
         public AnimationLibrary(IList<Animation> animations)
         {
             header.AnimationCount = animations.Count;
             this.animations = new(animations);
         }
 
+        /// <summary>
+        /// Gets the header information of the animation library.
+        /// </summary>
         public AnimationLibraryHeader Header => header;
 
+        /// <summary>
+        /// Gets a list of animations in the library.
+        /// </summary>
         public List<Animation> Animations => animations;
 
+        /// <summary>
+        /// Saves the animation library to a file with the specified encoding, endianness, and compression.
+        /// </summary>
+        /// <param name="path">The path to the file where the library will be saved.</param>
+        /// <param name="encoding">The encoding to use for writing strings.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
+        /// <param name="compression">The compression method to use.</param>
         public void Save(string path, Encoding encoding, Endianness endianness = Endianness.LittleEndian, Compression compression = Compression.LZ4)
         {
             Stream fs = File.Create(path);
@@ -62,16 +88,31 @@
             fs.Close();
         }
 
+        /// <summary>
+        /// Loads an animation library from a file.
+        /// </summary>
+        /// <param name="path">The path to the file to load the library from.</param>
+        /// <returns>An instance of the <see cref="AnimationLibrary"/> class loaded from the file.</returns>
         public static AnimationLibrary Load(string path)
         {
             return Load(FileSystem.OpenRead(path));
         }
 
+        /// <summary>
+        /// Loads an animation library from an external file.
+        /// </summary>
+        /// <param name="path">The path to the external file to load the library from.</param>
+        /// <returns>An instance of the <see cref="AnimationLibrary"/> class loaded from the external file.</returns>
         public static AnimationLibrary LoadExternal(string path)
         {
             return Load(File.OpenRead(path));
         }
 
+        /// <summary>
+        /// Loads an animation library from a stream.
+        /// </summary>
+        /// <param name="fs">A stream containing the animation library data.</param>
+        /// <returns>An instance of the <see cref="AnimationLibrary"/> class loaded from the stream.</returns>
         public static AnimationLibrary Load(Stream fs)
         {
             AnimationLibrary library = new();

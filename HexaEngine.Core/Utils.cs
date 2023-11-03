@@ -8,82 +8,27 @@
     using System.Runtime.InteropServices;
     using System.Text;
 
+    /// <summary>
+    /// Utilities for allocation, freeing, reallocating, moving, copying native memory and conversation from managed to unmanaged.
+    /// </summary>
     public static unsafe class Utils
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int SdlThrowIf(this int result)
-        {
-#if DEBUG
-            if (result == 0)
-            {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
-            }
-            return result;
-#else
-            return result;
-#endif
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int SdlThrowIfNeg(this int result)
-        {
-#if DEBUG
-            if (result < 0)
-            {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
-            }
-            return result;
-#else
-            return result;
-#endif
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static uint SdlThrowIf(this uint result)
-        {
-            if (result == 0)
-            {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
-            }
-            return result;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SdlCheckError()
-        {
-            Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void* SdlCheckError(void* ptr)
-        {
-            if (ptr == null)
-            {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
-            }
-            return ptr;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T* SdlCheckError<T>(T* ptr) where T : unmanaged
-        {
-#if DEBUG
-            if (ptr == null)
-            {
-                Logger.ThrowIfNotNull(Application.sdl.GetErrorAsException());
-            }
-            return ptr;
-#else
-            return ptr;
-#endif
-        }
-
+        /// <summary>
+        /// Converts a UTF-8 encoded null-terminated byte pointer to a managed string.
+        /// </summary>
+        /// <param name="ptr">The pointer to the UTF-8 encoded string.</param>
+        /// <returns>A managed string representing the UTF-8 data.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string? ToStringFromUTF8(byte* ptr)
         {
             return Marshal.PtrToStringUTF8((nint)ptr);
         }
 
+        /// <summary>
+        /// Counts the number of set bits (1s) in the binary representation of an unsigned integer.
+        /// </summary>
+        /// <param name="value">The unsigned integer to count bits in.</param>
+        /// <returns>The count of set bits in the binary representation of the integer.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint Bitcount(this uint value)
         {
@@ -94,11 +39,37 @@
             return c;
         }
 
+        /// <summary>
+        /// Swaps the values of two pointers to unmanaged types.
+        /// </summary>
+        /// <typeparam name="T">The type of the pointers.</typeparam>
+        /// <param name="a">The first pointer.</param>
+        /// <param name="b">The second pointer.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Swap<T>(T* a, T* b) where T : unmanaged
         {
             (*b, *a) = (*a, *b);
         }
 
+        /// <summary>
+        /// Swaps the values of two variables.
+        /// </summary>
+        /// <typeparam name="T">The type of the variables.</typeparam>
+        /// <param name="a">The first variable.</param>
+        /// <param name="b">The second variable.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Swap<T>(ref T a, ref T b)
+        {
+            (b, a) = (a, b);
+        }
+
+        /// <summary>
+        /// Copies the bytes of a value of an unmanaged type to a destination byte pointer.
+        /// </summary>
+        /// <typeparam name="T">The type of the value to copy.</typeparam>
+        /// <param name="t">The value to copy.</param>
+        /// <param name="offset">The offset in the destination byte array.</param>
+        /// <param name="dst">The destination byte pointer.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyTo<T>(this T t, int* offset, byte* dst) where T : unmanaged
         {
@@ -112,6 +83,15 @@
             *offset += size;
         }
 
+        /// <summary>
+        /// Copies the bytes of an array of values of an unmanaged type to a destination byte pointer.
+        /// </summary>
+        /// <typeparam name="T">The type of the values in the array.</typeparam>
+        /// <param name="t">The array of values to copy.</param>
+        /// <param name="dst">The destination byte pointer.</param>
+        /// <param name="stride">The stride between copied elements in bytes.</param>
+        /// <param name="offset">The offset in the destination byte array.</param>
+        /// <param name="count">The number of elements to copy.</param>
         public static void CopyTo<T>(this T[] t, byte* dst, int stride, int* offset, int count) where T : unmanaged
         {
             var size = sizeof(T);
@@ -185,194 +165,197 @@
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies memory from the source to the destination with specified lengths.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="dstLength">Length of the destination memory to copy to.</param>
+        /// <param name="srcLength">Length of the source memory to copy from.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, uint dstLength, uint srcLength)
         {
             Buffer.MemoryCopy(src, dst, dstLength, srcLength);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies memory from the source to the destination with specified lengths.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="dstLength">Length of the destination memory to copy to.</param>
+        /// <param name="srcLength">Length of the source memory to copy from.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, int dstLength, int srcLength)
         {
             Buffer.MemoryCopy(src, dst, dstLength, srcLength);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies memory from the source to the destination with specified lengths.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="dstLength">Length of the destination memory to copy to.</param>
+        /// <param name="srcLength">Length of the source memory to copy from.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, long dstLength, long srcLength)
         {
             Buffer.MemoryCopy(src, dst, dstLength, srcLength);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
+        /// Copies memory from the source to the destination with specified lengths.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="dstLength">Length of the destination memory to copy to.</param>
+        /// <param name="srcLength">Length of the source memory to copy from.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, ulong dstLength, ulong srcLength)
         {
             Buffer.MemoryCopy(src, dst, dstLength, srcLength);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="length">Length of the source and destination memory to copy.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, uint length)
         {
             Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="length">Length of the source and destination memory to copy.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, int length)
         {
             Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="length">Length of the source and destination memory to copy.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memcpy(void* src, void* dst, long length)
         {
             Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="length">Length of the source and destination memory to copy.</param>
         public static void Memcpy(void* src, void* dst, ulong length)
         {
             Buffer.MemoryCopy(src, dst, length, length);
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
-        /// Automatically calculates byte widths with sizeof(T) * length.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="dstLength">Length of the destination memory to copy to.</param>
+        /// <param name="srcLength">Length of the source memory to copy from.</param>
+        /// <typeparam name="T">Type of elements to copy.</typeparam>
         public static void MemcpyT<T>(T* src, T* dst, uint dstLength, uint srcLength) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, dstLength * sizeof(T), srcLength * sizeof(T));
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
-        /// Automatically calculates byte widths with sizeof(T) * length.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="dstLength">Length of the destination memory to copy to.</param>
+        /// <param name="srcLength">Length of the source memory to copy from.</param>
+        /// <typeparam name="T">Type of elements to copy.</typeparam>
         public static void MemcpyT<T>(T* src, T* dst, int dstLength, int srcLength) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, dstLength * sizeof(T), srcLength * sizeof(T));
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengths.
-        /// Automatically calculates byte widths with sizeof(T) * length.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="length">Length of the source and destination memory to copy.</param>
+        /// <typeparam name="T">Type of elements to copy.</typeparam>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MemcpyT<T>(T* src, T* dst, uint length) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, length * sizeof(T), length * sizeof(T));
         }
 
         /// <summary>
-        /// Copies an pointer to another pointer with the specified lengthes.
-        /// Automatically calculates byte widths with sizeof(T) * length.
+        /// Copies memory from the source to the destination with the same length for both source and destination.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="src">The source.</param>
-        /// <param name="dst">The DST.</param>
-        /// <param name="dstLength">Length of the DST.</param>
-        /// <param name="srcLength">Length of the source.</param>
+        /// <param name="src">Pointer to the source memory.</param>
+        /// <param name="dst">Pointer to the destination memory.</param>
+        /// <param name="length">Length of the source and destination memory to copy.</param>
+        /// <typeparam name="T">Type of elements to copy.</typeparam>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void MemcpyT<T>(T* src, T* dst, int length) where T : unmanaged
         {
             Buffer.MemoryCopy(src, dst, length * sizeof(T), length * sizeof(T));
         }
 
         /// <summary>
-        /// Zeroes the specified pointer.
+        /// Sets all bytes in memory to zero for a span of type T.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
+        /// <typeparam name="T">The type of elements in the span.</typeparam>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemoryT<T>(T* pointer) where T : unmanaged
         {
             new Span<byte>(pointer, sizeof(T)).Clear();
         }
 
         /// <summary>
-        /// Zeroes the specified pointer range.
+        /// Sets all bytes in memory to zero for a span of type T.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
+        /// <typeparam name="T">The type of elements in the span.</typeparam>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="length">Number of elements of type T to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemoryT<T>(T* pointer, int length) where T : unmanaged
         {
             new Span<byte>(pointer, sizeof(T) * length).Clear();
         }
 
         /// <summary>
-        /// Zeroes the specified pointer range.
+        /// Sets all bytes in memory to zero for a span of type T.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
+        /// <typeparam name="T">The type of elements in the span.</typeparam>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="length">Number of elements of type T to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemoryT<T>(T* pointer, uint length) where T : unmanaged
         {
             ZeroMemory(pointer, sizeof(T) * (int)length);
         }
 
         /// <summary>
-        /// Zeroes the specified pointer.
+        /// Sets all bytes in memory to zero for a specified number of bytes.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="size">The size.</param>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="size">Number of bytes to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemory(void* pointer, uint size)
         {
             byte* pointerCopy = (byte*)pointer;
@@ -383,20 +366,22 @@
         }
 
         /// <summary>
-        /// Zeroes the specified pointer.
+        /// Sets all bytes in memory to zero for a specified number of bytes.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="size">The size.</param>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="size">Number of bytes to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemory(void* pointer, int size)
         {
             new Span<byte>(pointer, size).Clear();
         }
 
         /// <summary>
-        /// Zeroes the specified pointer.
+        /// Sets all bytes in memory to zero for a specified number of bytes.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="size">The size.</param>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="size">Number of bytes to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemory(void* pointer, ulong size)
         {
             byte* pointerCopy = (byte*)pointer;
@@ -407,10 +392,11 @@
         }
 
         /// <summary>
-        /// Zeroes the specified pointer.
+        /// Sets all bytes in memory to zero for a specified number of bytes.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="size">The size.</param>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="size">Number of bytes to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemory(void* pointer, long size)
         {
             byte* pointerCopy = (byte*)pointer;
@@ -421,10 +407,11 @@
         }
 
         /// <summary>
-        /// Zeroes the specified pointer.
+        /// Sets all bytes in memory to zero for a specified number of bytes.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="size">The size.</param>
+        /// <param name="pointer">Pointer to the memory to clear.</param>
+        /// <param name="size">Number of bytes to clear.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ZeroMemory(void* pointer, nint size)
         {
             byte* pointerCopy = (byte*)pointer;
@@ -435,11 +422,12 @@
         }
 
         /// <summary>
-        /// Allocates the specified struct.
+        /// Allocates and returns a pointer to memory for a single element of type T, initializing it with the provided data.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="data">The struct.</param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of the element to allocate.</typeparam>
+        /// <param name="data">The data to initialize the allocated memory with.</param>
+        /// <returns>A pointer to the allocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* AllocT<T>(T data) where T : unmanaged
         {
             T* result = (T*)Marshal.AllocHGlobal(sizeof(T));
@@ -448,10 +436,11 @@
         }
 
         /// <summary>
-        /// Allocates a new instance and calls the default constructor.
+        /// Allocates and returns a pointer to memory for a single element of type T, initializing it with the default value.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of the element to allocate.</typeparam>
+        /// <returns>A pointer to the allocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* AllocT<T>() where T : unmanaged
         {
             T* result = (T*)Marshal.AllocHGlobal(sizeof(T));
@@ -460,76 +449,186 @@
         }
 
         /// <summary>
-        /// Allocates the specified count of T.
+        /// Allocates and returns a pointer to memory for an array of elements of type T.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="count">The count.</param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of the elements to allocate.</typeparam>
+        /// <param name="count">The number of elements to allocate.</param>
+        /// <returns>A pointer to the allocated memory for the array.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* AllocT<T>(int count) where T : unmanaged
         {
             return (T*)Marshal.AllocHGlobal(sizeof(T) * count);
         }
 
         /// <summary>
-        /// Allocates the specified count of T.
+        /// Allocates and returns a pointer to memory for an array of elements of type T.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="count">The count.</param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of the elements to allocate.</typeparam>
+        /// <param name="count">The number of elements to allocate.</param>
+        /// <returns>A pointer to the allocated memory for the array.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocT<T>(uint count) where T : unmanaged
+        {
+            return (T*)Marshal.AllocHGlobal((int)(sizeof(T) * count));
+        }
+
+        /// <summary>
+        /// Allocates and returns a pointer to unmanaged memory.
+        /// </summary>
+        /// <param name="count">The number of bytes to allocate.</param>
+        /// <returns>A pointer to the allocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* Alloc(nint count)
         {
             return (void*)Marshal.AllocHGlobal(count);
         }
 
         /// <summary>
-        /// Allocates the specified count of T.
+        /// Allocates and returns a pointer to unmanaged memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="count">The count.</param>
-        /// <returns></returns>
+        /// <param name="count">The number of bytes to allocate.</param>
+        /// <returns>A pointer to the allocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* Alloc(nuint count)
         {
             return (void*)Marshal.AllocHGlobal((nint)count);
         }
 
+        /// <summary>
+        /// Allocates and returns a pointer to unmanaged memory.
+        /// </summary>
+        /// <param name="size">The size, in bytes, to allocate.</param>
+        /// <returns>A pointer to the allocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* Alloc(int size)
+        {
+            return (void*)Marshal.AllocHGlobal(size);
+        }
+
+        /// <summary>
+        /// Allocates and returns a pointer to unmanaged memory.
+        /// </summary>
+        /// <param name="size">The size, in bytes, to allocate.</param>
+        /// <returns>A pointer to the allocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* Alloc(uint size)
+        {
+            return (void*)Marshal.AllocHGlobal((int)size);
+        }
+
+        /// <summary>
+        /// Reallocates and returns a pointer to unmanaged memory for an array of elements of type T, preserving the existing data.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="pointer">A pointer to the existing memory.</param>
+        /// <param name="count">The new number of elements to allocate.</param>
+        /// <returns>A pointer to the reallocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* ReAllocT<T>(T* pointer, int count) where T : unmanaged
         {
             return (T*)Marshal.ReAllocHGlobal((nint)pointer, count * sizeof(T));
         }
 
+        /// <summary>
+        /// Reallocates and returns a pointer to unmanaged memory for an array of elements of type T, preserving the existing data.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="pointer">A pointer to the existing memory.</param>
+        /// <param name="count">The new number of elements to allocate.</param>
+        /// <returns>A pointer to the reallocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* ReAllocT<T>(T* pointer, uint count) where T : unmanaged
         {
             return (T*)Marshal.ReAllocHGlobal((nint)pointer, (nint)(count * (uint)sizeof(T)));
         }
 
+        /// <summary>
+        /// Reallocates and returns a pointer to unmanaged memory for an array of elements of type T, preserving the existing data.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="pointer">A pointer to the existing memory.</param>
+        /// <param name="count">The new number of elements to allocate.</param>
+        /// <returns>A pointer to the reallocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T* ReAllocT<T>(T* pointer, nint count) where T : unmanaged
         {
             return (T*)Marshal.ReAllocHGlobal((nint)pointer, count * sizeof(T));
         }
 
+        /// <summary>
+        /// Reallocates and returns a pointer to unmanaged memory, preserving the existing data.
+        /// </summary>
+        /// <param name="pointer">A pointer to the existing memory.</param>
+        /// <param name="count">The new number of bytes to allocate.</param>
+        /// <returns>A pointer to the reallocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* ReAlloc(void* pointer, int count)
         {
             return (void*)Marshal.ReAllocHGlobal((nint)pointer, count);
         }
 
+        /// <summary>
+        /// Reallocates and returns a pointer to unmanaged memory, preserving the existing data.
+        /// </summary>
+        /// <param name="pointer">A pointer to the existing memory.</param>
+        /// <param name="count">The new number of bytes to allocate.</param>
+        /// <returns>A pointer to the reallocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* ReAlloc(void* pointer, uint count)
         {
-            return (void*)Marshal.ReAllocHGlobal((nint)pointer, (nint)(count));
+            return (void*)Marshal.ReAllocHGlobal((nint)pointer, (nint)count);
         }
 
+        /// <summary>
+        /// Reallocates and returns a pointer to unmanaged memory, preserving the existing data.
+        /// </summary>
+        /// <param name="pointer">A pointer to the existing memory.</param>
+        /// <param name="count">The new number of bytes to allocate.</param>
+        /// <returns>A pointer to the reallocated memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* ReAlloc(void* pointer, nint count)
         {
             return (void*)Marshal.ReAllocHGlobal((nint)pointer, count);
         }
 
         /// <summary>
-        /// Allocates an new pointer and copies the data from the source
+        /// Allocates memory for an array of elements of type T, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
-        public static T* AllocCopy<T>(T[] source) where T : unmanaged
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of elements in the array.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocCopyT<T>(T* pointer, int length) where T : unmanaged
+        {
+            T* result = AllocT<T>(length);
+            MemcpyT(pointer, result, length, length);
+            return result;
+        }
+
+        /// <summary>
+        /// Allocates memory for an array of elements of type T, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of elements in the array.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocCopyT<T>(T* pointer, uint length) where T : unmanaged
+        {
+            T* result = AllocT<T>(length);
+            MemcpyT(pointer, result, length, length);
+            return result;
+        }
+
+        /// <summary>
+        /// Allocates memory for an array of elements of type T, copies data from the source span to the new memory, and returns a pointer to the new memory.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="source">The source span to copy from.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocCopyT<T>(T[] source) where T : unmanaged
         {
             int length = source.Length;
             T* result = AllocT<T>(length);
@@ -542,13 +641,13 @@
         }
 
         /// <summary>
-        /// Allocates an new pointer and copies the data from the source
+        /// Allocates memory for an array of elements of type T, copies data from the source span to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
-        public static T* AllocCopy<T>(Span<T> source) where T : unmanaged
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="source">The source span to copy from.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocCopyT<T>(Span<T> source) where T : unmanaged
         {
             int length = source.Length;
             T* result = AllocT<T>(length);
@@ -561,13 +660,13 @@
         }
 
         /// <summary>
-        /// Allocates an new pointer and copies the data from the source
+        /// Allocates memory for an array of elements of type T, copies data from the source span to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
-        public static T* AllocCopy<T>(ReadOnlySpan<T> source) where T : unmanaged
+        /// <typeparam name="T">The type of the elements in the array.</typeparam>
+        /// <param name="source">The source span to copy from.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T* AllocCopyT<T>(ReadOnlySpan<T> source) where T : unmanaged
         {
             int length = source.Length;
             T* result = AllocT<T>(length);
@@ -580,25 +679,12 @@
         }
 
         /// <summary>
-        /// Allocates an new pointer and copies the data from the source
+        /// Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
-        public static T* AllocCopy<T>(T* pointer, int length) where T : unmanaged
-        {
-            T* result = AllocT<T>(length);
-            MemcpyT(pointer, result, length, length);
-            return result;
-        }
-
-        /// <summary>
-        /// Allocates an new pointer and copies the data from the source
-        /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of bytes to allocate and copy.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* AllocCopy(void* pointer, int length)
         {
             void* result = Alloc(length);
@@ -607,25 +693,12 @@
         }
 
         /// <summary>
-        /// Allocates an new pointer and copies the data from the source
+        /// Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
-        public static T* AllocCopy<T>(T* pointer, uint length) where T : unmanaged
-        {
-            T* result = AllocT<T>(length);
-            MemcpyT(pointer, result, length, length);
-            return result;
-        }
-
-        /// <summary>
-        /// Allocates an new pointer and copies the data from the source
-        /// </summary>
-        /// <param name="pointer">The pointer.</param>
-        /// <param name="length">The length.</param>
-        /// <returns></returns>
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of bytes to allocate and copy.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void* AllocCopy(void* pointer, uint length)
         {
             void* result = Alloc(length);
@@ -634,142 +707,50 @@
         }
 
         /// <summary>
-        /// Allocates the specified count of T.
+        /// Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="count">The count.</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public static T* AllocT<T>(uint count) where T : unmanaged
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of bytes to allocate and copy.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* AllocCopy(void* pointer, nint length)
         {
-            return (T*)Marshal.AllocHGlobal((int)(sizeof(T) * count));
+            void* result = Alloc(length);
+            Memcpy(pointer, result, length, length);
+            return result;
         }
 
         /// <summary>
-        /// Allocates the specified size.
+        /// Allocates memory for an array of bytes, copies data from the source pointer to the new memory, and returns a pointer to the new memory.
         /// </summary>
-        /// <param name="size">The size.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public static void* Alloc(int size)
+        /// <param name="pointer">A pointer to the source data to be copied.</param>
+        /// <param name="length">The number of bytes to allocate and copy.</param>
+        /// <returns>A pointer to the newly allocated memory with the copied data.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void* AllocCopy(void* pointer, nuint length)
         {
-            return (void*)Marshal.AllocHGlobal(size);
+            void* result = Alloc(length);
+            Memcpy(pointer, result, length, length);
+            return result;
         }
 
         /// <summary>
-        /// Allocates the specified size.
+        /// Allocates memory for an array of pointers and returns a pointer to the newly allocated memory.
         /// </summary>
-        /// <param name="size">The size.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-        public static void* Alloc(uint size)
-        {
-            return (void*)Marshal.AllocHGlobal((int)size);
-        }
-
-        /// <summary>
-        /// Allocs the specified stride multiplied by length.
-        /// </summary>
-        /// <param name="stride">The stride.</param>
-        /// <param name="length">The length.</param>
-        public static void** Alloc(int stride, int length)
-        {
-            return (void**)Marshal.AllocHGlobal(stride * length);
-        }
-
-        /// <summary>
-        /// Allocs the specified stride multiplied by length.
-        /// </summary>
-        /// <param name="stride">The stride.</param>
-        /// <param name="length">The length.</param>
-        public static void** Alloc(uint size, uint length)
-        {
-            return (void**)Marshal.AllocHGlobal((int)(size * length));
-        }
-
-        /// <summary>
-        /// Resizes the array.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array">The array.</param>
-        /// <param name="oldLength">The old length.</param>
-        /// <param name="newLength">The new length.</param>
-        public static void ResizeArray<T>(T** array, int oldLength, int newLength) where T : unmanaged
-        {
-            var oldArray = *array;
-            var newArray = AllocT<T>(newLength);
-
-            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
-            Free(oldArray);
-
-            *array = newArray;
-        }
-
-        /// <summary>
-        /// Resizes the array.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array">The array.</param>
-        /// <param name="oldLength">The old length.</param>
-        /// <param name="newLength">The new length.</param>
-        public static void ResizeArray<T>(T** array, uint oldLength, uint newLength) where T : unmanaged
-        {
-            var oldArray = *array;
-            var newArray = AllocT<T>(newLength);
-
-            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
-            Free(oldArray);
-
-            *array = newArray;
-        }
-
-        /// <summary>
-        /// Resizes the array.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array">The array.</param>
-        /// <param name="oldLength">The old length.</param>
-        /// <param name="newLength">The new length.</param>
-        public static void ResizeArray<T>(ref T* array, int oldLength, int newLength) where T : unmanaged
-        {
-            var oldArray = array;
-            var newArray = AllocT<T>(newLength);
-
-            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
-            Free(oldArray);
-
-            array = newArray;
-        }
-
-        /// <summary>
-        /// Resizes the array.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array">The array.</param>
-        /// <param name="oldLength">The old length.</param>
-        /// <param name="newLength">The new length.</param>
-        public static void ResizeArray<T>(ref T* array, uint oldLength, uint newLength) where T : unmanaged
-        {
-            var oldArray = array;
-            var newArray = AllocT<T>(newLength);
-
-            Buffer.MemoryCopy(oldArray, newArray, newLength * sizeof(T), oldLength * sizeof(T));
-            Free(oldArray);
-
-            array = newArray;
-        }
-
-        /// <summary>
-        /// Allocates an pointer array.
-        /// </summary>
-        /// <param name="length">The length.</param>
+        /// <param name="length">The number of pointers to allocate.</param>
+        /// <returns>A pointer to the newly allocated memory for an array of pointers.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void** AllocArray(uint length)
         {
             return (void**)Marshal.AllocHGlobal((int)(sizeof(nint) * length));
         }
 
         /// <summary>
-        /// Allocates an pointer array and zeros it.
+        /// Allocates memory for an array of pointers, sets the memory to zero, and returns a pointer to the newly allocated memory.
         /// </summary>
-        /// <param name="length">The length.</param>
+        /// <param name="length">The number of pointers to allocate and set to zero.</param>
+        /// <returns>A pointer to the newly allocated memory for an array of pointers with zeroed memory.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void** AllocArrayAndZero(uint length)
         {
             var result = AllocArray(length);
@@ -778,10 +759,11 @@
         }
 
         /// <summary>
-        /// Frees the specified pointer. And automatically calls <see cref="IFreeable.Release"/>
+        /// Frees memory allocated for an unmanaged resource associated with a pointer to a type that implements <see cref="IFreeable"/>.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="pointer">The pointer.</param>
+        /// <typeparam name="T">The unmanaged type that implements <see cref="IFreeable"/>.</typeparam>
+        /// <param name="pointer">A pointer to the unmanaged resource to be released.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Free<T>(T* pointer) where T : unmanaged, IFreeable
         {
             pointer->Release();
@@ -789,18 +771,20 @@
         }
 
         /// <summary>
-        /// Frees the specified pointer.
+        /// Frees memory allocated for an unmanaged resource associated with a pointer.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
+        /// <param name="pointer">A pointer to the unmanaged resource to be released.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Free(void* pointer)
         {
             Marshal.FreeHGlobal((nint)pointer);
         }
 
         /// <summary>
-        /// Frees the specified pointer.
+        /// Frees memory allocated for an array of pointers.
         /// </summary>
-        /// <param name="pointer">The pointer.</param>
+        /// <param name="pointer">A pointer to the array of pointers to be released.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Free(void** pointer)
         {
             Marshal.FreeHGlobal((nint)pointer);
@@ -813,6 +797,7 @@
         /// <param name="b">The b.</param>
         /// <param name="length">The length.</param>
         /// <returns>true if the data matches the other, otherwise false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool Compare(byte* a, byte* b, uint length)
         {
             Span<byte> aSpan = new(a, (int)length);
@@ -827,6 +812,7 @@
         /// <param name="b">The b.</param>
         /// <param name="length">The length.</param>
         /// <returns>true if the data matches the other, otherwise false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool Compare(char* a, char* b, uint length)
         {
             Span<char> spanA = new(a, (int)length);
@@ -840,6 +826,7 @@
         /// <param name="a">a.</param>
         /// <param name="b">b.</param>
         /// <returns>true if the data matches the other, otherwise false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool StringCompare(char* a, char* b)
         {
             int n1 = StringSizeNullTerminated(a);
@@ -860,6 +847,7 @@
         /// <param name="a">a.</param>
         /// <param name="b">b.</param>
         /// <returns>true if the data matches the other, otherwise false.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool StringCompare(char* a, string b)
         {
             int n1 = StringSizeNullTerminated(a);
@@ -882,6 +870,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int StringSizeNullTerminated(char* str)
         {
             int ret = 0;
@@ -898,6 +887,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int StringSizeNullTerminated(ReadOnlySpan<char> str)
         {
             int ret = 0;
@@ -914,6 +904,7 @@
         /// </summary>
         /// <param name="str">The string.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int StringSizeNullTerminated(byte* str)
         {
             int ret = 0;
@@ -925,6 +916,14 @@
             return ret + 1;
         }
 
+        /// <summary>
+        /// Copies unmanaged memory to a new managed array.
+        /// </summary>
+        /// <typeparam name="T">The unmanaged type of elements.</typeparam>
+        /// <param name="src">A pointer to the source unmanaged memory.</param>
+        /// <param name="length">The number of elements to copy.</param>
+        /// <returns>A new managed array containing the copied elements or null if <paramref name="src"/> is null.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[]? ToManaged<T>(T* src, int length) where T : unmanaged
         {
             if (src == null)
@@ -940,6 +939,14 @@
             return values;
         }
 
+        /// <summary>
+        /// Copies unmanaged memory to a new managed array.
+        /// </summary>
+        /// <typeparam name="T">The unmanaged type of elements.</typeparam>
+        /// <param name="src">A pointer to the source unmanaged memory.</param>
+        /// <param name="length">The number of elements to copy.</param>
+        /// <returns>A new managed array containing the copied elements or null if <paramref name="src"/> is null.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[]? ToManaged<T>(T* src, uint length) where T : unmanaged
         {
             if (src == null)
@@ -955,25 +962,80 @@
             return values;
         }
 
+        /// <summary>
+        /// Sets the memory at the specified pointer to the specified value for a given number of elements.
+        /// </summary>
+        /// <typeparam name="T">The unmanaged type of elements.</typeparam>
+        /// <param name="ptr">A pointer to the memory to set.</param>
+        /// <param name="value">The byte value to set the memory to.</param>
+        /// <param name="count">The number of elements to set.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Memset<T>(T* ptr, byte value, int count) where T : unmanaged
+        {
+            new Span<byte>(ptr, count * sizeof(T)).Fill(value);
+        }
+
+        /// <summary>
+        /// Sets the memory at the specified pointer to the specified value for a given number of elements.
+        /// </summary>
+        /// <typeparam name="T">The unmanaged type of elements.</typeparam>
+        /// <param name="ptr">A pointer to the memory to set.</param>
+        /// <param name="value">The byte value to set the memory to.</param>
+        /// <param name="count">The number of elements to set.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Memset<T>(T* ptr, byte value, uint count) where T : unmanaged
+        {
+            new Span<byte>(ptr, (int)(count * sizeof(T))).Fill(value);
+        }
+
+        /// <summary>
+        /// Sets the memory at the specified pointer to the specified value for a given number of bytes.
+        /// </summary>
+        /// <param name="ptr">A pointer to the memory to set.</param>
+        /// <param name="value">The byte value to set the memory to.</param>
+        /// <param name="length">The number of bytes to set.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Memset(void* ptr, byte value, int length)
         {
             new Span<byte>(ptr, length).Fill(value);
         }
 
-        public static void Memset<T>(T* ptr, byte value, int count) where T : unmanaged
+        /// <summary>
+        /// Sets the memory at the specified pointer to the specified value for a given number of bytes.
+        /// </summary>
+        /// <param name="ptr">A pointer to the memory to set.</param>
+        /// <param name="value">The byte value to set the memory to.</param>
+        /// <param name="length">The number of bytes to set.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Memset(void* ptr, byte value, uint length)
         {
-            new Span<byte>(ptr, count * sizeof(T)).Fill(value);
+            new Span<byte>(ptr, (int)length).Fill(value);
         }
     }
 
+    /// <summary>
+    /// Utilities for managed and unmanaged arrays.
+    /// </summary>
     public static unsafe class ArrayUtils
     {
+        /// <summary>
+        /// Adds a value to an array and resizes it to accommodate the new value.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <param name="array">Reference to the array to which the value will be added.</param>
+        /// <param name="value">The value to add to the array.</param>
         public static void Add<T>(ref T[] array, T value)
         {
             Array.Resize(ref array, array.Length + 1);
             array[^1] = value;
         }
 
+        /// <summary>
+        /// Removes the first occurrence of a value from an array and resizes it accordingly.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <param name="array">Reference to the array from which the value will be removed.</param>
+        /// <param name="value">The value to remove from the array.</param>
         public static void Remove<T>(ref T[] array, T value)
         {
             int index = Array.IndexOf(array, value);
@@ -982,6 +1044,13 @@
             Array.Resize(ref array, array.Length - 1);
         }
 
+        /// <summary>
+        /// Adds a value to a list if it doesn't already exist and returns a boolean indicating success.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the list.</typeparam>
+        /// <param name="list">The list to which the value will be added.</param>
+        /// <param name="t">The value to add to the list.</param>
+        /// <returns>Returns true if the value was added (not already in the list), otherwise false.</returns>
         public static bool AddUnique<T>(this IList<T> list, T t)
         {
             if (list.Contains(t))
@@ -994,6 +1063,14 @@
             return true;
         }
 
+        /// <summary>
+        /// Finds the index of a specified item within an unmanaged array.
+        /// </summary>
+        /// <typeparam name="T">The type of elements in the array.</typeparam>
+        /// <param name="ptr">Pointer to the beginning of the array.</param>
+        /// <param name="item">Pointer to the item to search for.</param>
+        /// <param name="count">The number of items in the array.</param>
+        /// <returns>The index of the item if found; otherwise, -1.</returns>
         public static int IndexOf<T>(T* ptr, T* item, int count) where T : unmanaged
         {
             for (int i = 0; i < count; i++)
@@ -1007,12 +1084,23 @@
         }
     }
 
+    /// <summary>
+    /// A thread-safe object pool for <see cref="List{T}"/> instances.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the lists.</typeparam>
     public class ListPool<T>
     {
         private readonly ConcurrentStack<List<T>> pool = new();
 
+        /// <summary>
+        /// Gets a shared instance of the <see cref="ListPool{T}"/> for convenient use.
+        /// </summary>
         public static ListPool<T> Shared { get; } = new();
 
+        /// <summary>
+        /// Rents a <see cref="List{T}"/> instance from the pool. If the pool is empty, a new instance is created.
+        /// </summary>
+        /// <returns>A <see cref="List{T}"/> instance from the pool or a new instance if the pool is empty.</returns>
         public List<T> Rent()
         {
             if (pool.IsEmpty)
@@ -1029,12 +1117,19 @@
             }
         }
 
+        /// <summary>
+        /// Returns a rented <see cref="List{T}"/> instance to the pool after clearing its contents.
+        /// </summary>
+        /// <param name="list">The <see cref="List{T}"/> instance to return to the pool.</param>
         public void Return(List<T> list)
         {
             list.Clear();
             pool.Push(list);
         }
 
+        /// <summary>
+        /// Clears the pool, removing all <see cref="List{T}"/> instances from it.
+        /// </summary>
         public void Clear()
         {
             pool.Clear();

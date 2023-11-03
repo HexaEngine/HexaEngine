@@ -14,13 +14,18 @@
     using System.Runtime.InteropServices;
     using System.Text;
     using Key = Input.Key;
+    using static Extensions.SdlErrorHandlingExtensions;
 
     /// <summary>
     /// The main class responsible for managing SDL windows.
     /// </summary>
     public unsafe class SdlWindow : IWindow, INativeWindow
     {
-        protected readonly Sdl sdl = Silk.NET.SDL.Sdl.GetApi();
+        /// <summary>
+        /// The SDL instance
+        /// </summary>
+        protected static readonly Sdl sdl = Application.sdl;
+
         private readonly ShownEventArgs shownEventArgs = new();
         private readonly HiddenEventArgs hiddenEventArgs = new();
         private readonly ExposedEventArgs exposedEventArgs = new();
@@ -213,9 +218,9 @@
         }
 
         ///<summary>
-        /// Sets the window to fullscreen mode.
+        /// Sets the window to Fullscreen mode.
         ///</summary>
-        ///<param name="mode">The fullscreen mode to set.</param>
+        ///<param name="mode">The Fullscreen mode to set.</param>
         ///<exception cref="InvalidOperationException">Thrown when the window is already destroyed.</exception>
         public void Fullscreen(FullscreenMode mode)
         {
@@ -655,6 +660,10 @@
         /// </summary>
         public event EventHandler<TouchMotionEventArgs>? TouchMotionInput;
 
+        /// <summary>
+        /// Raises the <see cref="Shown"/> event.
+        /// </summary>
+        /// <param name="args">The event arguments.</param>
         protected virtual void OnShown(ShownEventArgs args)
         {
             Shown?.Invoke(this, args);

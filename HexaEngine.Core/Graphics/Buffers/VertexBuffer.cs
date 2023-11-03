@@ -78,7 +78,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            items = AllocCopy(vertices);
+            items = AllocCopyT(vertices);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
@@ -109,7 +109,7 @@
                 description.Usage = Usage.Staging;
             }
 
-            items = AllocCopy(vertices, count);
+            items = AllocCopyT(vertices, count);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);

@@ -24,7 +24,7 @@
             br.Read(buffer);
             if (!buffer.SequenceEqual(EmptyISRC))
             {
-                ISRC = AllocCopy(buffer);
+                ISRC = AllocCopyT(buffer);
             }
             TrackType = br.ReadBool();
             PreEmphasisFlag = br.ReadBool();

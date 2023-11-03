@@ -89,7 +89,7 @@
 
             format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
 
-            items = AllocCopy(indices);
+            items = AllocCopyT(indices);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);
@@ -125,7 +125,7 @@
 
             format = typeof(T) == typeof(uint) ? Format.R32UInt : Format.R16UInt;
 
-            items = AllocCopy(indices, count);
+            items = AllocCopyT(indices, count);
             buffer = device.CreateBuffer(items, capacity, description);
             buffer.DebugName = dbgName;
             MemoryManager.Register(buffer);

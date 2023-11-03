@@ -6,8 +6,14 @@
     using System.IO;
     using System.Text;
 
+    /// <summary>
+    /// Represents an animation with channels for node, mesh, and morph mesh animations.
+    /// </summary>
     public class Animation
     {
+        /// <summary>
+        /// Gets an empty animation instance.
+        /// </summary>
         public static Animation Empty => new();
 
         private string name;
@@ -17,6 +23,9 @@
         private readonly List<MeshChannel> meshChannels = new();
         private readonly List<MorphMeshChannel> morphMeshChannels = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Animation"/> class with default values.
+        /// </summary>
         public Animation()
         {
             name = string.Empty;
@@ -27,6 +36,12 @@
             morphMeshChannels = new();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Animation"/> class with specified parameters.
+        /// </summary>
+        /// <param name="name">The name of the animation.</param>
+        /// <param name="duration">The duration of the animation.</param>
+        /// <param name="ticksPerSecond">The number of ticks per second for the animation.</param>
         public Animation(string name, double duration, double ticksPerSecond)
         {
             this.name = name;
@@ -37,6 +52,15 @@
             morphMeshChannels = new();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Animation"/> class with specified parameters.
+        /// </summary>
+        /// <param name="name">The name of the animation.</param>
+        /// <param name="duration">The duration of the animation.</param>
+        /// <param name="ticksPerSecond">The number of ticks per second for the animation.</param>
+        /// <param name="nodeChannels">The list of node channels for the animation.</param>
+        /// <param name="meshChannels">The list of mesh channels for the animation.</param>
+        /// <param name="morphMeshChannels">The list of morph mesh channels for the animation.</param>
         public Animation(string name, double duration, double ticksPerSecond, IList<NodeChannel> nodeChannels, IList<MeshChannel> meshChannels, IList<MorphMeshChannel> morphMeshChannels)
         {
             this.name = name;
@@ -47,18 +71,42 @@
             this.morphMeshChannels = new(morphMeshChannels);
         }
 
+        /// <summary>
+        /// Gets or sets the name of the animation.
+        /// </summary>
         public string Name { get => name; set => name = value; }
 
+        /// <summary>
+        /// Gets or sets the duration of the animation.
+        /// </summary>
         public double Duration { get => duration; set => duration = value; }
 
+        /// <summary>
+        /// Gets or sets the number of ticks per second for the animation.
+        /// </summary>
         public double TicksPerSecond { get => ticksPerSecond; set => ticksPerSecond = value; }
 
+        /// <summary>
+        /// Gets the list of node channels for the animation.
+        /// </summary>
         public List<NodeChannel> NodeChannels => nodeChannels;
 
+        /// <summary>
+        /// Gets the list of mesh channels for the animation.
+        /// </summary>
         public List<MeshChannel> MeshChannels => meshChannels;
 
+        /// <summary>
+        /// Gets the list of morph mesh channels for the animation.
+        /// </summary>
         public List<MorphMeshChannel> MorphMeshChannels => morphMeshChannels;
 
+        /// <summary>
+        /// Writes the animation data to a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write to.</param>
+        /// <param name="encoding">The encoding to use for string writing.</param>
+        /// <param name="endianness">The endianness to use for binary writing.</param>
         public void Write(Stream stream, Encoding encoding, Endianness endianness)
         {
             stream.WriteString(name, encoding, endianness);
@@ -81,6 +129,12 @@
             }
         }
 
+        /// <summary>
+        /// Reads the animation data from a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="encoding">The encoding to use for string reading.</param>
+        /// <param name="endianness">The endianness to use for binary reading.</param>
         public static Animation ReadFrom(Stream stream, Encoding encoding, Endianness endianness)
         {
             Animation animation = new();
@@ -88,6 +142,12 @@
             return animation;
         }
 
+        /// <summary>
+        /// Reads the animation data from a stream using the specified encoding and endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read from.</param>
+        /// <param name="encoding">The encoding to use for string reading.</param>
+        /// <param name="endianness">The endianness to use for binary reading.</param>
         public void Read(Stream stream, Encoding encoding, Endianness endianness)
         {
             name = stream.ReadString(encoding, endianness) ?? string.Empty;

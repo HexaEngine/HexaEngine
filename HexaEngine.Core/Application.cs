@@ -9,7 +9,11 @@
     using Silk.NET.SDL;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using static Extensions.SdlErrorHandlingExtensions;
 
+    /// <summary>
+    /// Provides functionality for managing and running the application.
+    /// </summary>
     public static unsafe class Application
     {
         internal static readonly Sdl sdl = Sdl.GetApi();
@@ -19,14 +23,16 @@
         private static readonly Dictionary<uint, IRenderWindow> windowIdToWindow = new();
         private static readonly List<IRenderWindow> windows = new();
         private static readonly List<Func<Event, bool>> hooks = new();
-        private static IRenderWindow? mainWindow;
+
         private static bool inDesignMode;
         private static bool inEditorMode;
 
+#nullable disable
+        private static IRenderWindow mainWindow;
         private static IGraphicsDevice graphicsDevice;
         private static IGraphicsContext graphicsContext;
-
         private static IAudioDevice audioDevice;
+#nullable restore
 
         /// <summary>
         /// Gets the main window of the application.
@@ -43,18 +49,47 @@
         /// </summary>
         public static IGraphicsContext GraphicsContext => graphicsContext;
 
+        /// <summary>
+        /// Gets or sets the graphics backend used by the application.
+        /// </summary>
         public static GraphicsBackend GraphicsBackend
         {
             get; set;
         }
 
+        /// <summary>
+        /// Represents special folders used by the application.
+        /// </summary>
         public enum SpecialFolder
         {
+            /// <summary>
+            /// The assets folder <see cref="Paths.CurrentAssetsPath"/>
+            /// </summary>
             Assets,
+
+            /// <summary>
+            /// The shaders folder <see cref="Paths.CurrentShaderPath"/>
+            /// </summary>
             Shaders,
+
+            /// <summary>
+            /// The sounds folder <see cref="Paths.CurrentSoundPath"/>
+            /// </summary>
             Sounds,
+
+            /// <summary>
+            /// The models folder <see cref="Paths.CurrentMeshesPath"/>
+            /// </summary>
             Models,
+
+            /// <summary>
+            /// The textures folder <see cref="Paths.CurrentTexturePath"/>
+            /// </summary>
             Textures,
+
+            /// <summary>
+            /// The scenes folder <see cref="Paths.CurrentAssetsPath"/>
+            /// </summary>
             Scenes,
         }
 

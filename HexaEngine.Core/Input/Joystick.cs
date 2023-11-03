@@ -4,6 +4,7 @@
     using Silk.NET.SDL;
     using System.Numerics;
     using System.Text;
+    using static Extensions.SdlErrorHandlingExtensions;
 
     public unsafe class Joystick : IDisposable
     {

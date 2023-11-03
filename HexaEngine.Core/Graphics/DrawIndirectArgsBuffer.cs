@@ -119,7 +119,7 @@
             if (cpuAccessFlags != CpuAccessFlags.None)
             {
                 capacity = count;
-                items = AllocCopy(initialData, count);
+                items = AllocCopyT(initialData, count);
                 buffer = device.CreateBuffer(items, capacity, description);
             }
             else

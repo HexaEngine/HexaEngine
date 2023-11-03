@@ -118,7 +118,7 @@ namespace HexaEngine.D3D11
             string path = Path.Combine(basePath, fileName);
             var data = FileSystem.ReadAllBytes(path);
 
-            *ppData = AllocCopy(data);
+            *ppData = AllocCopyT(data);
             *pBytes = (uint)data.Length;
             return 0;
         }
@@ -168,7 +168,7 @@ namespace HexaEngine.D3D11
             if (shaderBlob != null)
             {
                 Shader* pShader = AllocT<Shader>();
-                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
+                pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
             }
@@ -204,7 +204,7 @@ namespace HexaEngine.D3D11
             if (shaderBlob != null)
             {
                 Shader* pShader = AllocT<Shader>();
-                pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
+                pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                 pShader->Length = shaderBlob.PointerSize;
                 *shader = pShader;
             }
@@ -244,7 +244,7 @@ namespace HexaEngine.D3D11
                 if (shaderBlob != null)
                 {
                     pShader = AllocT<Shader>();
-                    pShader->Bytecode = AllocCopy((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
+                    pShader->Bytecode = AllocCopyT((byte*)shaderBlob.BufferPointer, shaderBlob.PointerSize);
                     pShader->Length = shaderBlob.PointerSize;
                 }
 

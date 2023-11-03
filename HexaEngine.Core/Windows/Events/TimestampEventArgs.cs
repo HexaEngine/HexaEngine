@@ -1,5 +1,9 @@
 ﻿namespace HexaEngine.Core.Windows.Events
 {
+    /// <summary>
+    /// An event with a Timestamp.
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
     public class TimestampEventArgs : EventArgs
     {
         /// <summary>

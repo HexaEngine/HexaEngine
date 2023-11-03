@@ -17,7 +17,7 @@
         /// <param name="array">The existing array to create an unsafe array from.</param>
         public UnsafeArray(T[] array)
         {
-            pointer = AllocCopy(array);
+            pointer = AllocCopyT(array);
             length = (uint)array.Length;
         }
 

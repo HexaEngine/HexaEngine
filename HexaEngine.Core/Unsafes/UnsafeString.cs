@@ -6,7 +6,7 @@
     /// <summary>
     /// Represents an unsafe UTF-8 string.
     /// </summary>
-    [Obsolete("Use StdString or StdWString instead, will be removed next version")]
+    [Obsolete("Use StdString instead, will be removed next version")]
     public unsafe struct UnsafeString : IFreeable
     {
         private const int NullTerminatorSize = 1;

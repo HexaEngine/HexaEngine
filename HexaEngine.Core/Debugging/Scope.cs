@@ -10,7 +10,7 @@
         public ulong End;
         public bool Finalized = false;
         public bool Used;
-        public UnsafeString Name;
+        public StdString Name;
         public UnsafeRingBuffer<float> StartSamples;
         public UnsafeRingBuffer<float> EndSamples;
         public double Duration;

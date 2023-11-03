@@ -2,13 +2,32 @@
 {
     using HexaEngine.Mathematics;
 
+    /// <summary>
+    /// Represents a keyframe for mesh morphing animations.
+    /// </summary>
     public struct MeshMorphKeyframe
     {
+        /// <summary>
+        /// Gets or sets the time associated with the keyframe.
+        /// </summary>
         public double Time;
+
+        /// <summary>
+        /// Gets or sets an array of values related to mesh morphing.
+        /// </summary>
         public uint[] Values;
+
+        /// <summary>
+        /// Gets or sets an array of weights associated with mesh morphing.
+        /// </summary>
         public double[] Weights;
 
-        public void Write(Stream stream, Endianness endianness)
+        /// <summary>
+        /// Writes the MeshMorphKeyframe to a binary stream with the specified endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to write the keyframe to.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
+        public readonly void Write(Stream stream, Endianness endianness)
         {
             stream.WriteDouble(Time, endianness);
             stream.WriteInt32(Values.Length, endianness);
@@ -23,6 +42,11 @@
             }
         }
 
+        /// <summary>
+        /// Reads a MeshMorphKeyframe from a binary stream with the specified endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to read the keyframe from.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
         public void Read(Stream stream, Endianness endianness)
         {
             Time = stream.ReadDouble(endianness);
@@ -40,6 +64,12 @@
             }
         }
 
+        /// <summary>
+        /// Reads a MeshMorphKeyframe from a binary stream with the specified endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to read the keyframe from.</param>
+        /// <param name="endianness">The endianness of binary data.</param>
+        /// <returns>The MeshMorphKeyframe read from the stream.</returns>
         public static MeshMorphKeyframe ReadFrom(Stream stream, Endianness endianness)
         {
             MeshMorphKeyframe keyframe = default;

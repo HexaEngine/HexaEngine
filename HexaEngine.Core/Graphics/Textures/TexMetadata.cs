@@ -73,12 +73,14 @@
             }
         }
 
-        public override bool Equals(object? obj)
+        /// <inheritdoc/>
+        public override readonly bool Equals(object? obj)
         {
             return obj is TexMetadata metadata && Equals(metadata);
         }
 
-        public bool Equals(TexMetadata other)
+        /// <inheritdoc/>
+        public readonly bool Equals(TexMetadata other)
         {
             return Width == other.Width &&
                    Height == other.Height &&
@@ -89,6 +91,22 @@
                    AlphaMode == other.AlphaMode &&
                    Format == other.Format &&
                    Dimension == other.Dimension;
+        }
+
+        /// <inheritdoc/>
+        public override readonly int GetHashCode()
+        {
+            HashCode hash = new();
+            hash.Add(Width);
+            hash.Add(Height);
+            hash.Add(Depth);
+            hash.Add(ArraySize);
+            hash.Add(MipLevels);
+            hash.Add(MiscFlags);
+            hash.Add(AlphaMode);
+            hash.Add(Format);
+            hash.Add(Dimension);
+            return hash.ToHashCode();
         }
 
         public bool IsCubemap()

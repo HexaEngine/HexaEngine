@@ -3,6 +3,7 @@
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
     using System.Numerics;
+    using static Extensions.SdlErrorHandlingExtensions;
 
     public unsafe class GamepadSensor : IDisposable
     {

@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.Core.Input
 {
     using Silk.NET.SDL;
+    using static Extensions.SdlErrorHandlingExtensions;
 
     public unsafe class Haptic
     {

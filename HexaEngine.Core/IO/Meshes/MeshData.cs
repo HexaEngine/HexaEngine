@@ -28,7 +28,7 @@
         public Vector3[] Normals;
         public Vector3[] Tangents;
         public Vector3[] Bitangents;
-        public BoneData[] Bones;
+        public BoneData[]? Bones;
 
         private MeshData()
         {
