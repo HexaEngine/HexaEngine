@@ -29,7 +29,7 @@
             get => dimension; set
             {
                 dimension = value;
-                camera.ProjectionType = value == CameraEditorDimension.Dim3D ? ProjectionType.Perspective : ProjectionType.Othro;
+                camera.ProjectionType = value == CameraEditorDimension.Dim3D ? ProjectionType.Perspective : ProjectionType.Orthographic;
                 camera.Transform.Position = Vector3.Zero;
                 camera.Transform.Rotation = Vector3.Zero;
                 first = true;

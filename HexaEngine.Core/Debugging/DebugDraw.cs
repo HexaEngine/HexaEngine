@@ -112,7 +112,7 @@ namespace HexaEngine.Editor
                 });
             }
 
-            var corners = frustum.GetCorners();
+            var corners = frustum.Corners;
             for (int i = 0; i < BoundingFrustum.CornerCount; i++)
             {
                 cmd.Vertices[i].Color = color;

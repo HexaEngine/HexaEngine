@@ -2,13 +2,28 @@
 {
     using System.Numerics;
 
+    /// <summary>
+    /// Helper methods for working with rendering in the OSM system.
+    /// </summary>
     public static class OSMHelper
     {
+        /// <summary>
+        /// Gets the projection matrix for rendering with the specified far clipping distance.
+        /// </summary>
+        /// <param name="far">The far clipping distance.</param>
+        /// <returns>The projection matrix.</returns>
         public static Matrix4x4 GetProjectionMatrix(float far)
         {
             return MathUtil.PerspectiveFovLH(90f.ToRad(), 1, 0.001f, far);
         }
 
+        /// <summary>
+        /// Gets the light space matrices and bounding box for shadow mapping.
+        /// </summary>
+        /// <param name="light">The light source transform.</param>
+        /// <param name="far">The far clipping distance for the shadow map.</param>
+        /// <param name="matrices">An array to store the light space matrices.</param>
+        /// <param name="box">The bounding box for the shadow map.</param>
         public static unsafe void GetLightSpaceMatrices(Transform light, float far, Matrix4x4* matrices, ref BoundingBox box)
         {
             Vector3 pos = light.GlobalPosition;
@@ -22,6 +37,14 @@
             box = new(new Vector3(pos.X - far, pos.Y - far, pos.Z - far), new Vector3(pos.X + far, pos.Y + far, pos.Z + far));
         }
 
+        /// <summary>
+        /// Gets a single light space matrix for a specific rendering pass and updates the bounding box.
+        /// </summary>
+        /// <param name="light">The light source transform.</param>
+        /// <param name="far">The far clipping distance for the shadow map.</param>
+        /// <param name="matrix">The light space matrix to update.</param>
+        /// <param name="pass">The rendering pass.</param>
+        /// <param name="box">The bounding box for the shadow map.</param>
         public static unsafe void GetLightSpaceMatrix(Transform light, float far, Matrix4x4* matrix, int pass, ref BoundingBox box)
         {
             Vector3 pos = light.GlobalPosition;

@@ -10,17 +10,17 @@
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct BoundingBox : IEquatable<BoundingBox>, IFormattable
     {
-        private static readonly Vector3[] g_BoxOffset = new Vector3[8]
-{
-    new Vector3(-1.0f, -1.0f,  1.0f),
-    new Vector3( 1.0f, -1.0f,  1.0f),
-    new Vector3( 1.0f,  1.0f,  1.0f),
-    new Vector3(-1.0f,  1.0f,  1.0f),
+        private static readonly Vector3[] g_BoxOffset =
+[
+    new Vector3(-1.0f, -1.0f, 1.0f),
+    new Vector3(1.0f, -1.0f, 1.0f),
+    new Vector3(1.0f, 1.0f, 1.0f),
+    new Vector3(-1.0f, 1.0f, 1.0f),
     new Vector3(-1.0f, -1.0f, -1.0f),
-    new Vector3( 1.0f, -1.0f, -1.0f),
-    new Vector3( 1.0f,  1.0f, -1.0f),
-    new Vector3(-1.0f,  1.0f, -1.0f),
-};
+    new Vector3(1.0f, -1.0f, -1.0f),
+    new Vector3(1.0f, 1.0f, -1.0f),
+    new Vector3(-1.0f, 1.0f, -1.0f),
+];
 
         /// <summary>
         /// Specifies the total number of corners (8) in the BoundingBox.
@@ -56,6 +56,11 @@
             _max = new Vector3(sphere.Center.X + sphere.Radius, sphere.Center.Y + sphere.Radius, sphere.Center.Z + sphere.Radius);
         }
 
+        /// <summary>
+        /// Initializes the bounding box with specified minimum and maximum points.
+        /// </summary>
+        /// <param name="min">The minimum corner of the bounding box.</param>
+        /// <param name="max">The maximum corner of the bounding box.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Initialize(Vector3 min, Vector3 max)
         {
@@ -63,6 +68,10 @@
             _max = max;
         }
 
+        /// <summary>
+        /// Initializes the bounding box with the same dimensions as the provided bounding box.
+        /// </summary>
+        /// <param name="box">The bounding box to copy dimensions from.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Initialize(BoundingBox box)
         {
@@ -76,7 +85,7 @@
         public Vector3 Min
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
+            readonly get
             {
                 return _min;
             }
@@ -93,7 +102,7 @@
         public Vector3 Max
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
+            readonly get
             {
                 return _max;
             }
@@ -105,19 +114,19 @@
         }
 
         /// <summary>
-        /// Gets the center of this bouding box.
+        /// Gets the center of this bounding box.
         /// </summary>
-        public Vector3 Center => (_min + _max) / 2;
+        public readonly Vector3 Center => (_min + _max) / 2;
 
         /// <summary>
-        /// Gets the extent of this bouding box.
+        /// Gets the extent of this bounding box.
         /// </summary>
-        public Vector3 Extent => (_max - _min) / 2;
+        public readonly Vector3 Extent => (_max - _min) / 2;
 
         /// <summary>
-        /// Gets size  of this bouding box.
+        /// Gets size of this bounding box.
         /// </summary>
-        public Vector3 Size => _max - _min;
+        public readonly Vector3 Size => _max - _min;
 
         /// <summary>
         /// Gets or sets the width of the bounding box.
@@ -155,11 +164,21 @@
             }
         }
 
+        /// <summary>
+        /// Creates a new bounding box from an array of points.
+        /// </summary>
+        /// <param name="points">An array of Vector3 points.</param>
+        /// <returns>A new BoundingBox that encapsulates the provided points.</returns>
         public static BoundingBox CreateFromPoints(Vector3[] points)
         {
             return CreateFromPoints(points.AsSpan());
         }
 
+        /// <summary>
+        /// Creates a new bounding box from a span of points.
+        /// </summary>
+        /// <param name="points">A span of Vector3 points.</param>
+        /// <returns>A new BoundingBox that encapsulates the provided points.</returns>
         public static BoundingBox CreateFromPoints(Span<Vector3> points)
         {
             Vector3 min = new(float.MaxValue);
@@ -174,6 +193,12 @@
             return new BoundingBox(min, max);
         }
 
+        /// <summary>
+        /// Creates a new bounding box by merging two existing bounding boxes.
+        /// </summary>
+        /// <param name="original">The original bounding box.</param>
+        /// <param name="additional">The additional bounding box to merge with the original.</param>
+        /// <returns>A new BoundingBox that encompasses both the original and additional bounding boxes.</returns>
         public static BoundingBox CreateMerged(in BoundingBox original, in BoundingBox additional)
         {
             return new BoundingBox(
@@ -228,7 +253,7 @@
         /// Retrieves the eight corners of the bounding box.
         /// </summary>
         /// <returns>An array of points representing the eight corners of the bounding box.</returns>
-        public Vector3[] GetCorners()
+        public readonly Vector3[] GetCorners()
         {
             Vector3[] results = new Vector3[CornerCount];
             GetCorners(results);
@@ -239,12 +264,9 @@
         /// Retrieves the eight corners of the bounding box.
         /// </summary>
         /// <returns>An array of points representing the eight corners of the bounding box.</returns>
-        public void GetCorners(Vector3[] corners)
+        public readonly void GetCorners(Vector3[] corners)
         {
-            if (corners == null)
-            {
-                throw new ArgumentNullException(nameof(corners));
-            }
+            ArgumentNullException.ThrowIfNull(corners);
 
             if (corners.Length < CornerCount)
             {
@@ -261,7 +283,12 @@
             corners[7] = new Vector3(Min.X, Min.Y, Min.Z);
         }
 
-        public ContainmentType Contains(in Vector3 point)
+        /// <summary>
+        /// Determines whether the bounding box contains the specified point.
+        /// </summary>
+        /// <param name="point">The point to check for containment.</param>
+        /// <returns>A value indicating whether the point is contained within the bounding box.</returns>
+        public readonly ContainmentType Contains(in Vector3 point)
         {
             if (Min.X <= point.X && Max.X >= point.X &&
                 Min.Y <= point.Y && Max.Y >= point.Y &&
@@ -273,7 +300,12 @@
             return ContainmentType.Disjoint;
         }
 
-        public ContainmentType Contains(in BoundingBox box)
+        /// <summary>
+        /// Determines whether the bounding box contains the specified bounding box.
+        /// </summary>
+        /// <param name="box">The bounding box to check for containment.</param>
+        /// <returns>A value indicating whether the specified bounding box is contained within, intersects, or is disjoint from this bounding box.</returns>
+        public readonly ContainmentType Contains(in BoundingBox box)
         {
             if (Max.X < box.Min.X || Min.X > box.Max.X)
             {
@@ -300,7 +332,12 @@
             return ContainmentType.Intersects;
         }
 
-        public ContainmentType Contains(in BoundingSphere sphere)
+        /// <summary>
+        /// Determines whether the bounding box contains the specified bounding sphere.
+        /// </summary>
+        /// <param name="sphere">The bounding sphere to check for containment.</param>
+        /// <returns>A value indicating whether the specified bounding sphere is contained within, intersects, or is disjoint from this bounding box.</returns>
+        public readonly ContainmentType Contains(in BoundingSphere sphere)
         {
             Vector3 vector = Vector3.Clamp(sphere.Center, Min, Max);
             float distance = Vector3.DistanceSquared(sphere.Center, vector);
@@ -325,7 +362,7 @@
         /// </summary>
         /// <param name="box">The other <see cref="BoundingBox"/> to check.</param>
         /// <returns>True if intersects, false otherwise.</returns>
-        public bool Intersects(in BoundingBox box)
+        public readonly bool Intersects(in BoundingBox box)
         {
             if (Max.X < box.Min.X || Min.X > box.Max.X)
             {
@@ -350,7 +387,7 @@
         /// </summary>
         /// <param name="sphere">The <see cref="BoundingSphere"/> to check for intersection with the current <see cref="BoundingBox"/>.</param>
         /// <returns>True if intersects, false otherwise.</returns>
-        public bool Intersects(in BoundingSphere sphere)
+        public readonly bool Intersects(in BoundingSphere sphere)
         {
             Vector3 clampedVector = Vector3.Clamp(sphere.Center, Min, Max);
             float distance = Vector3.DistanceSquared(sphere.Center, clampedVector);
@@ -362,7 +399,7 @@
         /// </summary>
         /// <param name="ray">The <see cref="Ray"/> to check for intersection with the current <see cref="BoundingBox"/>.</param>
         /// <returns>Distance value if intersects, null otherwise.</returns>
-        public float? Intersects(in Ray ray)
+        public readonly float? Intersects(in Ray ray)
         {
             //Source: Real-Time Collision Detection by Christer Ericson
             //Reference: Page 179
@@ -454,7 +491,12 @@
             return distance;
         }
 
-        public PlaneIntersectionType Intersects(in Plane plane)
+        /// <summary>
+        /// Determines the intersection type between the bounding box and a plane.
+        /// </summary>
+        /// <param name="plane">The plane to check for intersection with the bounding box.</param>
+        /// <returns>The type of intersection between the bounding box and the plane.</returns>
+        public readonly PlaneIntersectionType Intersects(in Plane plane)
         {
             //Source: Real-Time Collision Detection by Christer Ericson
             //Reference: Page 161
@@ -487,14 +529,14 @@
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is BoundingBox value && Equals(value);
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is BoundingBox value && Equals(value);
+        }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="BoundingBox"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Int4"/> to compare with this instance.</param>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(BoundingBox other)
+        public readonly bool Equals(BoundingBox other)
         {
             return Min.Equals(other.Min)
                 && Max.Equals(other.Max);
@@ -509,7 +551,10 @@
         /// True if the current left is equal to the <paramref name="right"/> parameter; otherwise, false.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(BoundingBox left, BoundingBox right) => left.Equals(right);
+        public static bool operator ==(BoundingBox left, BoundingBox right)
+        {
+            return left.Equals(right);
+        }
 
         /// <summary>
         /// Compares two <see cref="BoundingBox"/> objects for inequality.
@@ -520,18 +565,35 @@
         /// True if the current left is unequal to the <paramref name="right"/> parameter; otherwise, false.
         /// </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(BoundingBox left, BoundingBox right) => !left.Equals(right);
+        public static bool operator !=(BoundingBox left, BoundingBox right)
+        {
+            return !left.Equals(right);
+        }
 
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(_min, _max);
+        public override readonly int GetHashCode()
+        {
+            return HashCode.Combine(_min, _max);
+        }
 
         /// <inheritdoc />
-        public override string ToString() => ToString(format: null, formatProvider: null);
+        public override readonly string ToString()
+        {
+            return ToString(format: null, formatProvider: null);
+        }
 
         /// <inheritdoc />
-        public string ToString(string? format, IFormatProvider? formatProvider)
-        => $"{nameof(BoundingBox)} {{ {nameof(Min)} = {_min.ToString(format, formatProvider)}, {nameof(Max)} = {_max.ToString(format, formatProvider)} }}";
+        public readonly string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return $"{nameof(BoundingBox)} {{ {nameof(Min)} = {_min.ToString(format, formatProvider)}, {nameof(Max)} = {_max.ToString(format, formatProvider)} }}";
+        }
 
+        /// <summary>
+        /// Reads a BoundingBox from a stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to read the BoundingBox from.</param>
+        /// <param name="endianness">The endianness to use for reading data from the stream.</param>
+        /// <returns>The BoundingBox read from the stream.</returns>
         public static BoundingBox Read(Stream stream, Endianness endianness)
         {
             Vector3 min = stream.ReadVector3(endianness);
@@ -539,27 +601,15 @@
             return new BoundingBox(min, max);
         }
 
-        public void Write(Stream stream, Endianness endianness)
+        /// <summary>
+        /// Writes the BoundingBox to a stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The stream to write the BoundingBox to.</param>
+        /// <param name="endianness">The endianness to use for writing data to the stream.</param>
+        public readonly void Write(Stream stream, Endianness endianness)
         {
             stream.WriteVector3(Min, endianness);
             stream.WriteVector3(Max, endianness);
-        }
-    }
-
-    public static class BoundingBoxHelper
-    {
-        public static BoundingBox Compute(Vector3[] positions)
-        {
-            Vector3 min = default;
-            Vector3 max = default;
-
-            for (int i = 0; i < positions.Length; i++)
-            {
-                min = Vector3.Min(min, positions[i]);
-                max = Vector3.Max(max, positions[i]);
-            }
-
-            return new BoundingBox(min, max);
         }
     }
 }

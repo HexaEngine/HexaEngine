@@ -6,7 +6,8 @@
     using HexaEngine.Graph;
     using HexaEngine.Lights;
     using HexaEngine.Lights.Types;
-    using HexaEngine.Mathematics.HosekWilkie;
+    using HexaEngine.Mathematics.Sky;
+    using HexaEngine.Mathematics.Sky.HosekWilkie;
     using HexaEngine.Meshes;
     using HexaEngine.Rendering.Renderers;
     using HexaEngine.Scenes;

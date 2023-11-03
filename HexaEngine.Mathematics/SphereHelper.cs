@@ -4,8 +4,16 @@
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// A helper class for converting between spherical and cartesian coordinates.
+    /// </summary>
     public static class SphereHelper
     {
+        /// <summary>
+        /// Converts cartesian coordinates to spherical coordinates.
+        /// </summary>
+        /// <param name="cartesian">The input vector in cartesian coordinates.</param>
+        /// <returns>A vector in spherical coordinates (radius, azimuthal angle, polar angle).</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 GetSphericalCoordinates(Vector3 cartesian)
         {
@@ -22,6 +30,11 @@
             return new Vector3(r, phi, theta);
         }
 
+        /// <summary>
+        /// Converts spherical coordinates to cartesian coordinates.
+        /// </summary>
+        /// <param name="spherical">The input vector in spherical coordinates (radius, azimuthal angle, polar angle).</param>
+        /// <returns>A vector in cartesian coordinates (X, Y, Z).</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 GetCartesianCoordinates(Vector3 spherical)
         {

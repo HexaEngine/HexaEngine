@@ -427,7 +427,7 @@
                 Vector3 pos1 = Positions[Indices[i * 3 + 1]];
                 Vector3 pos2 = Positions[Indices[i * 3 + 2]];
 
-                if (ray.Intersects2(pos0, pos1, pos2, out pointInTerrain))
+                if (ray.Intersects(pos0, pos1, pos2, out pointInTerrain))
                 {
                     return true;
                 }
@@ -458,7 +458,7 @@
                 Vector3 pos1 = Positions[Indices[i * 3 + 1]];
                 Vector3 pos2 = Positions[Indices[i * 3 + 2]];
 
-                if (ray.Intersects2(Vector3.Transform(pos0, transform), Vector3.Transform(pos1, transform), Vector3.Transform(pos2, transform), out pointInTerrain))
+                if (ray.Intersects(Vector3.Transform(pos0, transform), Vector3.Transform(pos1, transform), Vector3.Transform(pos2, transform), out pointInTerrain))
                 {
                     return true;
                 }

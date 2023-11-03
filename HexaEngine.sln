@@ -49,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "D3D12Testing", "D3D12Testin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A79AFE0B-A817-4C84-BC76-2109D7955DF9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HexaEngine.Audio.Common", "HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj", "{ED695908-8EEB-42BF-8CEB-DBEE9A6E4607}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HexaEngine.Audio.Common", "HexaEngine.Audio.Common\HexaEngine.Audio.Common.csproj", "{ED695908-8EEB-42BF-8CEB-DBEE9A6E4607}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

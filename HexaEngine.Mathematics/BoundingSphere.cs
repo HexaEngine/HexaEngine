@@ -123,6 +123,11 @@
             result = new BoundingSphere(center, radius);
         }
 
+        /// <summary>
+        /// Determines whether the bounding sphere contains a specified point.
+        /// </summary>
+        /// <param name="point">The point to check for containment.</param>
+        /// <returns>A value indicating whether the point is contained within, disjoint from, or intersects the bounding sphere.</returns>
         public ContainmentType Contains(in Vector3 point)
         {
             if (Vector3.DistanceSquared(point, Center) <= Radius * Radius)
@@ -133,11 +138,21 @@
             return ContainmentType.Disjoint;
         }
 
-        public ContainmentType Contains(in BoundingBox box)
+        /// <summary>
+        /// Determines whether the bounding sphere contains a specified bounding box.
+        /// </summary>
+        /// <param name="box">The bounding box to check for containment.</param>
+        /// <returns>A value indicating whether the bounding box is contained within, disjoint from, or intersects the bounding sphere.</returns>
+        public readonly ContainmentType Contains(in BoundingBox box)
         {
             return box.Contains(this);
         }
 
+        /// <summary>
+        /// Determines whether the bounding sphere contains a specified bounding sphere.
+        /// </summary>
+        /// <param name="sphere">The bounding sphere to check for containment.</param>
+        /// <returns>A value indicating whether the other bounding sphere is contained within, disjoint from, or intersects the bounding sphere.</returns>
         public ContainmentType Contains(in BoundingSphere sphere)
         {
             float distance = Vector3.Distance(Center, sphere.Center);
@@ -155,6 +170,13 @@
             return ContainmentType.Contains;
         }
 
+        /// <summary>
+        /// Determines whether the bounding sphere intersects with a specified ray.
+        /// </summary>
+        /// <param name="ray">The ray to check for intersection.</param>
+        /// <returns>
+        /// The distance along the ray where the intersection occurs, or null if there's no intersection.
+        /// </returns>
         public float? Intersects(in Ray ray)
         {
             //Source: Real-Time Collision Detection by Christer Ericson
@@ -239,10 +261,7 @@
         /// <inheritdoc/>
         public override bool Equals(object? obj) => obj is BoundingSphere value && Equals(value);
 
-        /// <summary>
-        /// Determines whether the specified <see cref="BoundingSphere"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Int4"/> to compare with this instance.</param>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(BoundingSphere other)
         {
@@ -292,6 +311,12 @@
             return $"Center:{Center.ToString(format, formatProvider)} Radius:{Radius.ToString(format, formatProvider)}";
         }
 
+        /// <summary>
+        /// Reads a <see cref="BoundingSphere"/> from a binary stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to read from.</param>
+        /// <param name="endianness">The endianness to use for reading the data.</param>
+        /// <returns>The <see cref="BoundingSphere"/> read from the stream.</returns>
         public static BoundingSphere Read(Stream stream, Endianness endianness)
         {
             Vector3 center = stream.ReadVector3(endianness);
@@ -299,6 +324,11 @@
             return new(center, radius);
         }
 
+        /// <summary>
+        /// Writes the <see cref="BoundingSphere"/> to a binary stream using the specified endianness.
+        /// </summary>
+        /// <param name="stream">The binary stream to write to.</param>
+        /// <param name="endianness">The endianness to use for writing the data.</param>
         public void Write(Stream stream, Endianness endianness)
         {
             stream.WriteVector3(_center, endianness);

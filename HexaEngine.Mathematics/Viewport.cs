@@ -77,9 +77,10 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Viewport"/> struct.
+        /// Initializes a new instance of the <see cref="Viewport"/> struct with the specified position and size.
         /// </summary>
-        /// <param name="bounds">A <see cref="Vector4"/> that defines the location and size of the viewport in a render target.</param>
+        /// <param name="pos">The position of the top-left corner of the viewport.</param>
+        /// <param name="size">The size of the viewport.</param>
         public Viewport(Vector2 pos, Vector2 size)
         {
             X = pos.X;
@@ -151,10 +152,19 @@
             }
         }
 
+        /// <summary>
+        /// Gets a <see cref="Vector2"/> representing the offset of the viewport.
+        /// </summary>
         public Vector2 Offset => new(X, Y);
 
+        /// <summary>
+        /// Gets a <see cref="Vector2"/> representing the size of the viewport.
+        /// </summary>
         public Vector2 Size => new(Width, Height);
 
+        /// <summary>
+        /// Gets a <see cref="Rect"/> representing the bounding rectangle of the viewport.
+        /// </summary>
         public Rect Rect => new((long)X, (long)Y, (long)(X + Width), (long)(Y + Height));
 
         /// <summary>
@@ -233,6 +243,9 @@
             return source;
         }
 
+        /// <summary>
+        /// Gets a <see cref="Vector4"/> representing the offset and size of the viewport.
+        /// </summary>
         public Vector4 GetOffsetVector()
         {
             return new(X, Y, Width, Height);

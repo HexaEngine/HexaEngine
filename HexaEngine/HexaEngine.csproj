@@ -42,12 +42,15 @@
 		<Compile Remove="assets\shared\shaders\compute\light\**" />
 		<Compile Remove="assets\shared\shaders\deferred\blinn\**" />
 		<Compile Remove="assets\shared\shaders\deferred\phong\**" />
+		<Compile Remove="Editor\Templates\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\compute\light\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\blinn\**" />
 		<EmbeddedResource Remove="assets\shared\shaders\deferred\phong\**" />
+		<EmbeddedResource Remove="Editor\Templates\**" />
 		<None Remove="assets\shared\shaders\compute\light\**" />
 		<None Remove="assets\shared\shaders\deferred\blinn\**" />
 		<None Remove="assets\shared\shaders\deferred\phong\**" />
+		<None Remove="Editor\Templates\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -871,7 +874,6 @@
 	  <Folder Include="assets\shared\shaders\tools\mesh\shaded\" />
 	  <Folder Include="assets\shared\shaders\tools\mesh\textured\" />
 	  <Folder Include="Editor\MeshEditor\Exporters\" />
-	  <Folder Include="Editor\Templates\" />
 	  <Folder Include="Network\Protocol\" />
 	  <Folder Include="UI\Editor\" />
 	</ItemGroup>

@@ -4,68 +4,146 @@
     using System.Numerics;
     using System.Text.Json.Serialization;
 
-    public struct TransformSnapshot
-    {
-        public Transform? Parent;
-        public Vector3 Position;
-        public Vector3 Rotation;
-        public Vector3 Scale;
-        public Quaternion Orientation;
-        public Vector3 GlobalPosition;
-        public Quaternion GlobalOrientation;
-        public Vector3 GlobalScale;
-        public Vector3 Forward;
-        public Vector3 Backward;
-        public Vector3 Left;
-        public Vector3 Right;
-        public Vector3 Up;
-        public Vector3 Down;
-        public Matrix4x4 Global;
-        public Matrix4x4 GlobalInverse;
-        public Matrix4x4 Local;
-        public Matrix4x4 LocalInverse;
-        public Matrix4x4 View;
-        public Matrix4x4 ViewInv;
-        public Vector3 Velocity;
-        public Vector3 OldPos;
-    }
-
     /// <summary>
     /// <see cref="Transform"/> is used for hierarchical matrix calculation.
     /// </summary>
     public class Transform : ITransform
     {
+        /// <summary>
+        /// The initial state of the <see cref="Transform"/>.
+        /// </summary>
         protected TransformSnapshot initial;
+
+        /// <summary>
+        /// The parent of the <see cref="Transform"/>.
+        /// </summary>
         protected Transform? parent;
+
+        /// <summary>
+        /// The local position of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 position;
+
+        /// <summary>
+        /// The local rotation of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 rotation;
+
+        /// <summary>
+        /// The local scale of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 scale = Vector3.One;
+
+        /// <summary>
+        /// The local orientation of the <see cref="Transform"/>
+        /// </summary>
         protected Quaternion orientation;
+
+        /// <summary>
+        /// The global position of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 globalPosition;
+
+        /// <summary>
+        /// The global orientation of the <see cref="Transform"/>
+        /// </summary>
         protected Quaternion globalOrientation;
+
+        /// <summary>
+        /// The global scale of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 globalScale;
+
+        /// <summary>
+        /// The global forward direction of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 forward;
+
+        /// <summary>
+        /// The global backward direction of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 backward;
+
+        /// <summary>
+        /// The global left direction of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 left;
+
+        /// <summary>
+        /// The global right direction of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 right;
+
+        /// <summary>
+        /// The global up direction of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 up;
+
+        /// <summary>
+        /// The global down direction of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 down;
+
+        /// <summary>
+        /// The global transformation matrix of the <see cref="Transform"/>
+        /// </summary>
         protected Matrix4x4 global;
+
+        /// <summary>
+        /// The global inverse transformation matrix of the <see cref="Transform"/>
+        /// </summary>
         protected Matrix4x4 globalInverse;
+
+        /// <summary>
+        /// The local transformation matrix of the <see cref="Transform"/>
+        /// </summary>
         protected Matrix4x4 local;
+
+        /// <summary>
+        /// The local inverse transformation matrix of the <see cref="Transform"/>
+        /// </summary>
         protected Matrix4x4 localInverse;
+
+        /// <summary>
+        /// The view matrix of the <see cref="Transform"/>
+        /// </summary>
         protected Matrix4x4 view;
+
+        /// <summary>
+        /// The inverse view matrix of the <see cref="Transform"/>
+        /// </summary>
         protected Matrix4x4 viewInv;
+
+        /// <summary>
+        /// The velocity of the <see cref="Transform"/>
+        /// </summary>
         protected Vector3 velocity;
+
+        /// <summary>
+        /// The last position of the <see cref="Transform"/>, to determine the velocity.
+        /// </summary>
         protected Vector3 oldpos;
+
+        /// <summary>
+        /// The dirty flag of the <see cref="Transform"/>
+        /// </summary>
         protected bool dirty = true;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Transform"/> class.
+        /// </summary>
         public Transform()
         {
             Recalculate();
             SaveState();
         }
 
+        /// <summary>
+        /// Gets or sets the parent of this <see cref="Transform"/>.
+        /// </summary>
+        /// <value>
+        /// The parent of this <see cref="Transform"/>.
+        /// </value>
         [JsonIgnore]
         public Transform? Parent
         {
@@ -111,7 +189,7 @@
         /// <summary>
         /// Gets or sets the local rotation.
         /// </summary>
-        /// <remarks>The rotation is in space euler from 0° to 360°(359°)</remarks>
+        /// <remarks>The rotation is in space Euler from 0° to 360°(359°)</remarks>
         public Vector3 Rotation
         {
             get => rotation;
@@ -147,7 +225,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the local orienataion.
+        /// Gets or sets the local orientation.
         /// </summary>
         [JsonIgnore]
         public Quaternion Orientation
@@ -377,6 +455,9 @@
         /// </summary>
         public event EventHandler? Updated;
 
+        /// <summary>
+        /// Notifies that any property has changed.
+        /// </summary>
         public event EventHandler? Changed;
 
         /// <summary>
@@ -387,6 +468,9 @@
             Updated?.Invoke(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Invokes the <see cref="Changed"/> event.
+        /// </summary>
         protected void OnChanged()
         {
             dirty = true;
@@ -480,6 +564,10 @@
             viewInv = initial.ViewInv;
         }
 
+        /// <summary>
+        /// Creates a snapshot of the transformation data and returns it as a new instance of the <see cref="TransformSnapshot"/> struct.
+        /// </summary>
+        /// <returns>A snapshot of the transformation data as a <see cref="TransformSnapshot"/> instance.</returns>
         public TransformSnapshot CreateSnapshot()
         {
             return new TransformSnapshot()
@@ -532,6 +620,10 @@
             };
         }
 
+        /// <summary>
+        /// Copies the transformation data from this <see cref="Transform"/> to another <see cref="Transform"/> instance.
+        /// </summary>
+        /// <param name="other">The <see cref="Transform"/> instance to which the data will be copied.</param>
         public virtual void CopyTo(Transform other)
         {
             other.backward = backward;
@@ -553,6 +645,11 @@
             other.viewInv = viewInv;
         }
 
+        /// <summary>
+        /// Implicitly converts a <see cref="Transform"/> to a <see cref="Matrix4x4"/>, returning the global transformation matrix.
+        /// </summary>
+        /// <param name="transform">The <see cref="Transform"/> instance to convert.</param>
+        /// <returns>The global transformation matrix.</returns>
         public static implicit operator Matrix4x4(Transform transform) => transform.global;
     }
 }

@@ -141,17 +141,15 @@
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is Ray value && Equals(value);
+        public override bool Equals(object? obj)
+        {
+            return obj is Ray value && Equals(value);
+        }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="Ray"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Int4"/> to compare with this instance.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <inheritdoc/>
         public bool Equals(Ray other)
         {
-            return Position.Equals(other.Position)
-                && Direction.Equals(other.Direction);
+            return Position.Equals(other.Position) && Direction.Equals(other.Direction);
         }
 
         /// <summary>
@@ -176,119 +174,19 @@
         /// <returns></returns>
         public bool Intersects(in Vector3 v0, in Vector3 v1, in Vector3 v2, out Vector3 pointInTriangle)
         {
-            // Code origin can no longer be determined.
-            // was adapted from C++ code.
-
-            pointInTriangle = Vector3.Zero;
-
-            // compute normal
-            Vector3 edgeA = v1 - v0;
-            Vector3 edgeB = v2 - v0;
-
-            Vector3 normal = Vector3.Cross(Direction, edgeB);
-
-            // find determinant
-            float det = Vector3.Dot(edgeA, normal);
-
-            // if perpendicular, exit
-            if (det < float.Epsilon)
-            {
-                return false;
-            }
-            det = 1.0f / det;
-
-            // calculate distance from vertex0 to ray origin
-            Vector3 s = Position - v0;
-            float u = det * Vector3.Dot(s, normal);
-
-            if (u < -float.Epsilon || u > 1.0f + float.Epsilon)
-            {
-                return false;
-            }
-
-            Vector3 r = Vector3.Cross(s, edgeA);
-            float v = det * Vector3.Dot(Direction, r);
-            if (v < -float.Epsilon || u + v > 1.0f + float.Epsilon)
-            {
-                return false;
-            }
-
-            // distance from ray to triangle
-            det *= Vector3.Dot(edgeB, r);
-
-            // Vector3 endPosition;
-            // we dont want the point that is behind the ray cast.
-            if (det < 0.0f)
-            {
-                return false;
-            }
-
-            pointInTriangle.X = Position.X + Direction.X * det;
-            pointInTriangle.Y = Position.Y + Direction.Y * det;
-            pointInTriangle.Z = Position.Z + Direction.Z * det;
-
-            return true;
+            return Intersects(this, new(v0, v1, v2), out pointInTriangle);
         }
 
         /// <summary>
-        /// This does a ray cast on a triangle to see if there is an intersection.
+        /// Checks for the intersection between a ray and a triangle in 3D space.
         /// This ONLY works on CW wound triangles.
         /// </summary>
-        /// <param name="v0">Triangle Corner 1</param>
-        /// <param name="v1">Triangle Corner 2</param>
-        /// <param name="v2">Triangle Corner 3</param>
-        /// <param name="pointInTriangle">Intersection point if boolean returns true</param>
-        /// <returns></returns>
+        /// <param name="ray">The ray to test for intersection.</param>
+        /// <param name="inTriangle">The triangle to test against.</param>
+        /// <param name="outIntersectionPoint">If an intersection occurs, this will contain the intersection point.</param>
+        /// <returns><c>true</c> if the ray intersects the triangle; <c>false</c> otherwise.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Intersects2(in Vector3 v0, in Vector3 v1, in Vector3 v2, out Vector3 pointInTriangle)
-        {
-            pointInTriangle = default;
-            const float EPSILON = 0.0000001f;
-
-            Vector3 edge1, edge2, h, s, q;
-            float a, f, u, v;
-            edge1 = v1 - v0;
-            edge2 = v2 - v0;
-            h = Vector3.Cross(Direction, edge2);
-            a = Vector3.Dot(edge1, h);
-
-            if (a > -EPSILON && a < EPSILON)
-            {
-                return false;    // This ray is parallel to this triangle.
-            }
-
-            f = 1.0f / a;
-            s = Position - v0;
-            u = f * Vector3.Dot(s, h);
-
-            if (u < 0.0 || u > 1.0)
-            {
-                return false;
-            }
-
-            q = Vector3.Cross(s, edge1);
-            v = f * Vector3.Dot(Direction, q);
-
-            if (v < 0.0 || u + v > 1.0)
-            {
-                return false;
-            }
-
-            // At this stage we can compute t to find out where the intersection point is on the line.
-            float t = f * Vector3.Dot(edge2, q);
-
-            if (t > EPSILON) // ray intersection
-            {
-                pointInTriangle = Position + Direction * t;
-                return true;
-            }
-            else // This means that there is a line intersection but not a ray intersection.
-            {
-                return false;
-            }
-        }
-
-        public static bool RayIntersectsTriangle(Ray ray, Triangle inTriangle, out Vector3 outIntersectionPoint)
+        public static bool Intersects(Ray ray, Triangle inTriangle, out Vector3 outIntersectionPoint)
         {
             outIntersectionPoint = default;
             const float EPSILON = 0.0000001f;
@@ -307,20 +205,26 @@
             a = Vector3.Dot(edge1, h);
 
             if (a > -EPSILON && a < EPSILON)
+            {
                 return false;    // This ray is parallel to this triangle.
+            }
 
             f = 1.0f / a;
             s = rayOrigin - vertex0;
             u = f * Vector3.Dot(s, h);
 
             if (u < 0.0 || u > 1.0)
+            {
                 return false;
+            }
 
             q = Vector3.Cross(s, edge1);
             v = f * Vector3.Dot(rayVector, q);
 
             if (v < 0.0 || u + v > 1.0)
+            {
                 return false;
+            }
 
             // At this stage we can compute t to find out where the intersection point is on the line.
             float t = f * Vector3.Dot(edge2, q);
@@ -331,7 +235,9 @@
                 return true;
             }
             else // This means that there is a line intersection but not a ray intersection.
+            {
                 return false;
+            }
         }
 
         /// <summary>
@@ -365,6 +271,12 @@
             return $"Position:{Position.ToString(format, formatProvider)} Direction:{Direction.ToString(format, formatProvider)}";
         }
 
+        /// <summary>
+        /// Transforms a <see cref="Ray"/> using a specified transformation <see cref="Matrix4x4"/>.
+        /// </summary>
+        /// <param name="ray">The input <see cref="Ray"/> to be transformed.</param>
+        /// <param name="transform">The transformation <see cref="Matrix4x4"/> to apply to the <see cref="Ray"/>.</param>
+        /// <returns>A new <see cref="Ray"/> resulting from applying the transformation to the input <see cref="Ray"/>.</returns>
         public static Ray Transform(Ray ray, Matrix4x4 transform)
         {
             Ray result = new(Vector3.Transform(ray.Position, transform), Vector3.TransformNormal(ray.Direction, transform));

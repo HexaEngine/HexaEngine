@@ -2,48 +2,37 @@
 {
     using System.Numerics;
 
+    /// <summary>
+    /// A helper class for handling perspective shadow mapping (PSM) related operations.
+    /// </summary>
     public static class PSMHelper
     {
-        public static Matrix4x4 GetProjectionMatrix(float fov)
+        /// <summary>
+        /// Gets a projection matrix for shadow mapping with the specified field of view and far clipping plane distance.
+        /// </summary>
+        /// <param name="fov">The field of view angle in radians.</param>
+        /// <param name="far">The far clipping plane distance.</param>
+        /// <returns>The projection matrix for shadow mapping.</returns>
+        public static Matrix4x4 GetProjectionMatrix(float fov, float far)
         {
-            return MathUtil.PerspectiveFovLH(fov, 1, 0.01f, 100);
+            return MathUtil.PerspectiveFovLH(fov, 1, 0.01f, far);
         }
 
-        public static Matrix4x4[] GetLightSpaceMatrices(Transform light, float fov)
-        {
-            Vector3 pos = light.GlobalPosition;
-            Matrix4x4 proj = GetProjectionMatrix(fov);
-            Matrix4x4[] matrices = new Matrix4x4[1];
-            matrices[0] = Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj);
-            return matrices;
-        }
-
-        public static void GetLightSpaceMatrices(Transform light, float fov, ref Matrix4x4 view)
-        {
-            Vector3 pos = light.GlobalPosition;
-            Matrix4x4 proj = GetProjectionMatrix(fov);
-            view = Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj);
-        }
-
-        public static Matrix4x4 GetLightSpaceMatrix(Transform light, float fov)
-        {
-            Vector3 pos = light.GlobalPosition;
-            Matrix4x4 proj = GetProjectionMatrix(fov);
-            return Matrix4x4.Transpose(MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj);
-        }
-
+        /// <summary>
+        /// Gets a light space matrix for shadow mapping with custom far plane and frustum.
+        /// </summary>
+        /// <param name="light">The light source's <see cref="Transform"/>.</param>
+        /// <param name="fov">The field of view angle in radians.</param>
+        /// <param name="far">The far clipping plane distance.</param>
+        /// <param name="frustum">The bounding frustum that determines the shadow mapping region.</param>
+        /// <returns>The light space matrix for shadow mapping.</returns>
         public static unsafe Matrix4x4 GetLightSpaceMatrix(Transform light, float fov, float far, BoundingFrustum frustum)
         {
             Vector3 pos = light.GlobalPosition;
-            Matrix4x4 proj = MathUtil.PerspectiveFovLH(fov, 1, 0.01f, far);
+            Matrix4x4 proj = GetProjectionMatrix(fov, far);
             Matrix4x4 viewproj = MathUtil.LookAtLH(pos, pos + light.Forward, light.Up) * proj;
             frustum.Initialize(viewproj);
             return Matrix4x4.Transpose(viewproj);
-        }
-
-        public static unsafe void TransformInvView(CameraTransform camera, ref Matrix4x4 view)
-        {
-            view = Matrix4x4.Transpose(camera.ViewInv * Matrix4x4.Transpose(view));
         }
     }
 }

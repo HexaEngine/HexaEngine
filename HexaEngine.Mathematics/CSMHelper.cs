@@ -3,8 +3,16 @@
     using System;
     using System.Numerics;
 
+    /// <summary>
+    /// Helper class for working with Cascaded Shadow Mapping (CSM).
+    /// </summary>
     public static class CSMHelper
     {
+        /// <summary>
+        /// Gets the world space coordinates of the frustum corners using the given projection-view matrix.
+        /// </summary>
+        /// <param name="projview">The projection-view matrix.</param>
+        /// <returns>An array of world space coordinates for the frustum corners.</returns>
         public static Vector4[] GetFrustumCornersWorldSpace(Matrix4x4 projview)
         {
             Matrix4x4.Invert(projview, out var inv);
@@ -27,6 +35,13 @@
             return frustumCorners;
         }
 
+        /// <summary>
+        /// Calculates the light space matrix for shadow mapping using cascades.
+        /// </summary>
+        /// <param name="viewProj">The combined view-projection matrix.</param>
+        /// <param name="transform">The transformation of the camera.</param>
+        /// <param name="frustum">The bounding frustum for this cascade.</param>
+        /// <returns>The light space matrix for the cascade.</returns>
         public static Matrix4x4 GetLightSpaceMatrix(Matrix4x4 viewProj, Transform transform, ref BoundingFrustum frustum)
         {
             Vector4[] corners = GetFrustumCornersWorldSpace(viewProj);
@@ -83,6 +98,12 @@
             return Matrix4x4.Transpose(viewProjOut);
         }
 
+        /// <summary>
+        /// Calculates cascade split distances based on the camera's near and far planes.
+        /// </summary>
+        /// <param name="camera">The camera's transform information.</param>
+        /// <param name="result">An array to store the cascade split distances.</param>
+        /// <param name="count">The number of cascades to calculate.</param>
         public static unsafe void GetCascades(CameraTransform camera, float* result, int count)
         {
             float farClip = camera.Far;
@@ -108,47 +129,16 @@
             }
         }
 
-        public static Matrix4x4 GetCameraView(CameraTransform camera)
-        {
-            Quaternion r = camera.GlobalOrientation;
-
-            float halfYaw = MathF.Atan2(2.0f * (r.Y * r.W + r.X * r.Z), 1.0f - 2.0f * (r.X * r.X + r.Y * r.Y)) * 0.5f;
-            float sy = MathF.Sin(halfYaw);
-
-            float y2 = sy + sy;
-
-            float wy2 = MathF.Cos(halfYaw) * y2;
-
-            float zaxisZ = 1 - sy * y2;
-
-            Vector3 pos = camera.GlobalPosition;
-
-            float yaxisY = zaxisZ * zaxisZ - wy2 * -wy2;
-
-            Matrix4x4 result = Matrix4x4.Identity;
-
-            result.M11 = zaxisZ;
-            result.M21 = 0;
-            result.M31 = -wy2;
-
-            result.M12 = 0;
-            result.M22 = yaxisY;
-            result.M32 = 0;
-
-            result.M13 = wy2;
-            result.M23 = 0;
-            result.M33 = zaxisZ;
-
-            result.M41 = zaxisZ * pos.X - wy2 * pos.Z;
-            result.M42 = yaxisY * pos.Y;
-            result.M43 = wy2 * pos.X + zaxisZ * pos.Z;
-
-            result.M41 = -result.M41;
-            result.M42 = -result.M42;
-            result.M43 = -result.M43;
-            return result;
-        }
-
+        /// <summary>
+        /// Calculates light space matrices for shadow mapping using cascades.
+        /// </summary>
+        /// <param name="camera">The camera's transform information.</param>
+        /// <param name="light">The light's transform information.</param>
+        /// <param name="ret">An array to store the light space matrices.</param>
+        /// <param name="cascades">An array of cascade split distances.</param>
+        /// <param name="frustra">An array of bounding frustums for cascades.</param>
+        /// <param name="cascadesCount">The number of cascades to calculate.</param>
+        /// <returns>An array of light space matrices for each cascade.</returns>
         public static unsafe Matrix4x4* GetLightSpaceMatrices(CameraTransform camera, Transform light, Matrix4x4* ret, float* cascades, BoundingFrustum[] frustra, int cascadesCount = 4)
         {
             float fov = camera.Fov.ToRad();
@@ -175,14 +165,6 @@
             }
 
             return ret;
-        }
-
-        public static unsafe void TransformInvView(CameraTransform camera, Matrix4x4* ret, int cascadesCount = 4)
-        {
-            for (int i = 0; i < cascadesCount; i++)
-            {
-                ret[i] = Matrix4x4.Transpose(camera.ViewInv * Matrix4x4.Transpose(ret[i]));
-            }
         }
     }
 }

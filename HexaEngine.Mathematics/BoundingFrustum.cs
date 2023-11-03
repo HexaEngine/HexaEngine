@@ -4,49 +4,72 @@
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
+    /// <summary>
+    /// Represents a bounding frustum in 3D space defined by planes and corners.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public readonly struct BoundingFrustum : IEquatable<BoundingFrustum>
     {
+        /// <summary>
+        /// The number of corners in the bounding frustum.
+        /// </summary>
         public const int CornerCount = 8;
 
         private readonly Plane[] _planes;
         private readonly Vector3[] _corners;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundingFrustum"/> struct.
+        /// </summary>
         public BoundingFrustum()
         {
             _planes = new Plane[6];
             _corners = new Vector3[CornerCount];
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundingFrustum"/> struct from a view-projection matrix.
+        /// </summary>
+        /// <param name="viewProjection">The view-projection matrix to create the frustum from.</param>
         public BoundingFrustum(Matrix4x4 viewProjection)
         {
-            _planes = new Plane[]
-            {
-            Plane.Normalize(new Plane(-viewProjection.M13, -viewProjection.M23, -viewProjection.M33, -viewProjection.M43)),
-            Plane.Normalize(new Plane(viewProjection.M13 - viewProjection.M14, viewProjection.M23 - viewProjection.M24, viewProjection.M33 - viewProjection.M34, viewProjection.M43 - viewProjection.M44)),
-            Plane.Normalize(new Plane(-viewProjection.M14 - viewProjection.M11, -viewProjection.M24 - viewProjection.M21, -viewProjection.M34 - viewProjection.M31, -viewProjection.M44 - viewProjection.M41)),
-            Plane.Normalize(new Plane(viewProjection.M11 - viewProjection.M14, viewProjection.M21 - viewProjection.M24, viewProjection.M31 - viewProjection.M34, viewProjection.M41 - viewProjection.M44)),
-            Plane.Normalize(new Plane(viewProjection.M12 - viewProjection.M14, viewProjection.M22 - viewProjection.M24, viewProjection.M32 - viewProjection.M34, viewProjection.M42 - viewProjection.M44)),
-            Plane.Normalize(new Plane(-viewProjection.M14 - viewProjection.M12, -viewProjection.M24 - viewProjection.M22, -viewProjection.M34 - viewProjection.M32, -viewProjection.M44 - viewProjection.M42)),
-            };
+            _planes =
+            [
+                Plane.Normalize(new Plane(-viewProjection.M13, -viewProjection.M23, -viewProjection.M33, -viewProjection.M43)),
+                Plane.Normalize(new Plane(viewProjection.M13 - viewProjection.M14, viewProjection.M23 - viewProjection.M24, viewProjection.M33 - viewProjection.M34, viewProjection.M43 - viewProjection.M44)),
+                Plane.Normalize(new Plane(-viewProjection.M14 - viewProjection.M11, -viewProjection.M24 - viewProjection.M21, -viewProjection.M34 - viewProjection.M31, -viewProjection.M44 - viewProjection.M41)),
+                Plane.Normalize(new Plane(viewProjection.M11 - viewProjection.M14, viewProjection.M21 - viewProjection.M24, viewProjection.M31 - viewProjection.M34, viewProjection.M41 - viewProjection.M44)),
+                Plane.Normalize(new Plane(viewProjection.M12 - viewProjection.M14, viewProjection.M22 - viewProjection.M24, viewProjection.M32 - viewProjection.M34, viewProjection.M42 - viewProjection.M44)),
+                Plane.Normalize(new Plane(-viewProjection.M14 - viewProjection.M12, -viewProjection.M24 - viewProjection.M22, -viewProjection.M34 - viewProjection.M32, -viewProjection.M44 - viewProjection.M42)),
+            ];
 
-            _corners = new Vector3[]
-            {
-            IntersectionPoint(_planes[0], _planes[2], _planes[4]),
-            IntersectionPoint(_planes[0], _planes[3], _planes[4]),
-            IntersectionPoint(_planes[0], _planes[3], _planes[5]),
-            IntersectionPoint(_planes[0], _planes[2], _planes[5]),
-            IntersectionPoint(_planes[1], _planes[2], _planes[4]),
-            IntersectionPoint(_planes[1], _planes[3], _planes[4]),
-            IntersectionPoint(_planes[1], _planes[3], _planes[5]),
-            IntersectionPoint(_planes[1], _planes[2], _planes[5]),
-            };
+            _corners =
+            [
+                IntersectionPoint(_planes[0], _planes[2], _planes[4]),
+                IntersectionPoint(_planes[0], _planes[3], _planes[4]),
+                IntersectionPoint(_planes[0], _planes[3], _planes[5]),
+                IntersectionPoint(_planes[0], _planes[2], _planes[5]),
+                IntersectionPoint(_planes[1], _planes[2], _planes[4]),
+                IntersectionPoint(_planes[1], _planes[3], _planes[4]),
+                IntersectionPoint(_planes[1], _planes[3], _planes[5]),
+                IntersectionPoint(_planes[1], _planes[2], _planes[5]),
+            ];
         }
 
+        /// <summary>
+        /// Gets the corners of the bounding frustum.
+        /// </summary>
         public IReadOnlyList<Vector3> Corners => _corners;
 
+        /// <summary>
+        /// Gets the planes of the bounding frustum.
+        /// </summary>
         public IReadOnlyList<Plane> Planes => _planes;
 
+        /// <summary>
+        /// Initializes the bounding frustum from a view-projection matrix.
+        /// </summary>
+        /// <param name="viewProjection">The view-projection matrix to create the frustum from.</param>
         public void Initialize(Matrix4x4 viewProjection)
         {
             _planes[0] = Plane.Normalize(new Plane(-viewProjection.M13, -viewProjection.M23, -viewProjection.M33, -viewProjection.M43));
@@ -112,39 +135,25 @@
         /// Retrieves the eight corners of the bounding frustum.
         /// </summary>
         /// <returns>An array of points representing the eight corners of the bounding frustum.</returns>
-        public Vector3[] GetCorners()
-        {
-            //Vector3[] results = new Vector3[CornerCount];
-            //GetCorners(results);
-            return _corners;
-        }
-
-        /// <summary>
-        /// Retrieves the eight corners of the bounding frustum.
-        /// </summary>
-        /// <returns>An array of points representing the eight corners of the bounding frustum.</returns>
         public void GetCorners(Vector3[] corners)
         {
-            if (corners == null)
-            {
-                throw new ArgumentNullException(nameof(corners));
-            }
+            ArgumentNullException.ThrowIfNull(corners);
 
             if (corners.Length < CornerCount)
             {
                 throw new ArgumentOutOfRangeException(nameof(corners), $"GetCorners need at least {CornerCount} elements to copy corners.");
             }
 
-            this._corners.CopyTo(corners, 0);
+            _corners.CopyTo(corners, 0);
         }
 
         /// <inheritdoc/>
-        public override bool Equals(object? obj) => obj is BoundingFrustum value && Equals(value);
+        public override bool Equals(object? obj)
+        {
+            return obj is BoundingFrustum value && Equals(value);
+        }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="BoundingFrustum"/> is equal to this instance.
-        /// </summary>
-        /// <param name="other">The <see cref="Int4"/> to compare with this instance.</param>
+        /// <inheritdoc/>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(BoundingFrustum other)
         {
@@ -208,19 +217,6 @@
             result.Z = (v1.Z + v2.Z + v3.Z) / f;
 
             return result;
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct Frustum
-    {
-        public Plane Plane0;
-        public Plane Plane1;
-        public Plane Plane2;
-        public Plane Plane3;
-
-        public Frustum()
-        {
         }
     }
 }

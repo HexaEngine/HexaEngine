@@ -1,8 +1,12 @@
-﻿namespace HexaEngine.Mathematics.HosekWilkie
+﻿namespace HexaEngine.Mathematics.Sky.HosekWilkie
 {
     using System;
     using System.Numerics;
+    using HexaEngine.Mathematics.Sky;
 
+    /// <summary>
+    /// Helper class for the Hosek-Wilkie sky model calculations.
+    /// </summary>
     public static unsafe class SkyModel
     {
         // See COPYING file for attribution information
@@ -3820,10 +3824,23 @@
     2.893432e+001,
 };
 
+        /// <summary>
+        /// The datasets RGB for the Hosek Skylight Model
+        /// </summary>
         public static readonly double[][] datasetsRGB = { datasetRGB1, datasetRGB2, datasetRGB3 };
 
+        /// <summary>
+        /// The datasets RGB RAD for the Hosek Skylight Model
+        /// </summary>
         public static readonly double[][] datasetsRGBRad = { datasetRGBRad1, datasetRGBRad2, datasetRGBRad3 };
 
+        /// <summary>
+        /// Evaluates a spline at a specific value.
+        /// </summary>
+        /// <param name="spline">Pointer to the spline data.</param>
+        /// <param name="stride">Stride value for accessing spline elements.</param>
+        /// <param name="value">The value at which to evaluate the spline.</param>
+        /// <returns>The evaluated value of the spline at the given value.</returns>
         public static double EvaluateSpline(double* spline, nint stride, double value)
         {
             return
@@ -3835,6 +3852,15 @@
                 1 * Math.Pow(value, 5) * spline[5 * stride];
         }
 
+        /// <summary>
+        /// Calculate sky parameters based on input turbidity, albedo, and sun_theta.
+        /// </summary>
+        /// <param name="dataset">Pointer to the dataset for interpolation.</param>
+        /// <param name="stride">Stride value for accessing dataset elements.</param>
+        /// <param name="turbidity">The turbidity value.</param>
+        /// <param name="albedo">The albedo value.</param>
+        /// <param name="sun_theta">The sun's zenith angle (in radians).</param>
+        /// <returns>Sky parameters based on the input conditions.</returns>
         public static double Evaluate(double* dataset, nint stride, float turbidity, float albedo, float sun_theta)
         {
             // splines are functions of elevation^1/3
@@ -3856,9 +3882,25 @@
             return a0t0 * (1.0f - albedo) * (1.0f - turbidityK) + a1t0 * albedo * (1.0f - turbidityK) + a0t1 * (1.0f - albedo) * turbidityK + a1t1 * albedo * turbidityK;
         }
 
+        /// <summary>
+        /// Computes the sky radiance using the Hosek-Wilkie sky model.
+        /// </summary>
+        /// <param name="cos_theta">Cosine of the zenith angle.</param>
+        /// <param name="gamma">Gamma parameter.</param>
+        /// <param name="cos_gamma">Cosine of gamma angle.</param>
+        /// <param name="A">Coefficient A.</param>
+        /// <param name="B">Coefficient B.</param>
+        /// <param name="C">Coefficient C.</param>
+        /// <param name="D">Coefficient D.</param>
+        /// <param name="E">Coefficient E.</param>
+        /// <param name="F">Coefficient F.</param>
+        /// <param name="G">Coefficient G.</param>
+        /// <param name="H">Coefficient H.</param>
+        /// <param name="I">Coefficient I.</param>
+        /// <returns>The computed sky radiance based on the input parameters.</returns>
         public static Vector3 HosekWilkie(float cos_theta, float gamma, float cos_gamma, Vector3 A, Vector3 B, Vector3 C, Vector3 D, Vector3 E, Vector3 F, Vector3 G, Vector3 H, Vector3 I)
         {
-            Vector3 chi = new Vector3(1.0f + cos_gamma * cos_gamma) / MathUtil.Pow(H * H + new Vector3(1.0f) - (H * (2.0f * cos_gamma)), new Vector3(1.5f));
+            Vector3 chi = new Vector3(1.0f + cos_gamma * cos_gamma) / MathUtil.Pow(H * H + new Vector3(1.0f) - H * (2.0f * cos_gamma), new Vector3(1.5f));
             Vector3 temp1 = A * MathUtil.Exp2(B * (1.0f / (cos_theta + 0.01f)));
             Vector3 temp2 = C + D * MathUtil.Exp2(E * gamma) + F * (gamma * gamma) + chi * G + I * (float)Math.Sqrt(Math.Max(0.0f, cos_theta));
             Vector3 temp = temp1 * temp2;
@@ -3866,6 +3908,13 @@
             return temp;
         }
 
+        /// <summary>
+        /// Calculates sky parameters based on turbidity, albedo, and sun direction.
+        /// </summary>
+        /// <param name="turbidity">Turbidity of the atmosphere.</param>
+        /// <param name="albedo">Surface albedo.</param>
+        /// <param name="sunDirection">Direction of the sun (assumes normalized).</param>
+        /// <returns>Sky parameters for the given environmental conditions.</returns>
         public static SkyParameters CalculateSkyParameters(float turbidity, float albedo, Vector3 sunDirection)
         {
             float sun_theta = MathF.Acos(Math.Clamp(sunDirection.Y, 0.0f, 1.0f)); //assumes normalized sun direction
