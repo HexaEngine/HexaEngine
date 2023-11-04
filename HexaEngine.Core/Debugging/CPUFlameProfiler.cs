@@ -5,6 +5,9 @@
     using System.Collections.Generic;
     using System.Diagnostics;
 
+    /// <summary>
+    /// A CPU flame profiler for measuring and visualizing execution time of various stages.
+    /// </summary>
     public unsafe class CPUFlameProfiler : ICPUFlameProfiler
     {
         private readonly ImGuiWidgetFlameGraph.ValuesGetter getter;
@@ -24,11 +27,18 @@
 
         private readonly bool avgResults = true;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CPUFlameProfiler"/> class.
+        /// </summary>
         public CPUFlameProfiler()
         {
             getter = ProfilerValueGetter;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CPUFlameProfiler"/> class with a list of predefined stages.
+        /// </summary>
+        /// <param name="stages">An array of stage names to be pre-created.</param>
         public CPUFlameProfiler(string[] stages)
         {
             getter = ProfilerValueGetter;
@@ -38,27 +48,48 @@
             }
         }
 
+        /// <summary>
+        /// Gets the current profiling entry.
+        /// </summary>
         public Entry* Current => &entries.Data[currentEntry];
 
+        /// <summary>
+        /// Gets the number of profiling stages created.
+        /// </summary>
         public int StageCount => nameToId.Count;
 
+        /// <summary>
+        /// Gets the flame graph values getter for ImGui visualization.
+        /// </summary>
         public ImGuiWidgetFlameGraph.ValuesGetter Getter => getter;
 
+        /// <summary>
+        /// Gets or sets a scope by index.
+        /// </summary>
+        /// <param name="index">The index of the scope to get or set.</param>
         public ref Scope this[int index]
         {
             get { return ref entries[currentEntry].Stages.Data[index]; }
         }
 
+        /// <summary>
+        /// Gets or sets a scope by name.
+        /// </summary>
+        /// <param name="index">The name of the scope to get or set.</param>
         public ref Scope this[string index]
         {
             get { return ref entries[currentEntry].Stages.Data[nameToId[index]]; }
         }
 
+        /// <inheritdoc/>
         double ICPUProfiler.this[string index]
         {
             get { return entries[currentEntry].Stages.Data[nameToId[index]].Duration; }
         }
 
+        /// <summary>
+        /// Begins a new profiling frame, clearing all previous stage data.
+        /// </summary>
         public void BeginFrame()
         {
             var prevEntry = entries.GetPointer(currentEntry);
@@ -67,6 +98,9 @@
             prevEntry->End = entries.GetPointer(currentEntry)->Start = (ulong)Stopwatch.GetTimestamp();
         }
 
+        /// <summary>
+        /// Ends the current profiling frame, processing stage data.
+        /// </summary>
         public void EndFrame()
         {
             Entry* entry = entries.GetPointer(currentEntry);
@@ -94,6 +128,10 @@
             }
         }
 
+        /// <summary>
+        /// Creates a new profiling stage with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the stage to create.</param>
         public void CreateStage(string name)
         {
             nameToId.Add(name, id);
@@ -105,6 +143,10 @@
             id++;
         }
 
+        /// <summary>
+        /// Destroys a profiling stage by name.
+        /// </summary>
+        /// <param name="name">The name of the stage to destroy.</param>
         public void DestroyStage(string name)
         {
             var id = nameToId[name];
@@ -124,6 +166,10 @@
             idToName.Remove(id);
         }
 
+        /// <summary>
+        /// Destroys a profiling stage by ID.
+        /// </summary>
+        /// <param name="id">The ID of the stage to destroy.</param>
         public void DestroyStage(uint id)
         {
             var name = idToName[id];
@@ -143,6 +189,10 @@
             idToName.Remove(id);
         }
 
+        /// <summary>
+        /// Begins profiling a stage with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the stage to begin profiling.</param>
         public void Begin(string name)
         {
             Trace.Assert(currentLevel < 255);
@@ -164,6 +214,10 @@
             stage->Used = true;
         }
 
+        /// <summary>
+        /// Ends profiling a stage with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the stage to end profiling.</param>
         public void End(string name)
         {
             Trace.Assert(currentLevel > 0);
@@ -186,6 +240,10 @@
             stage->Finalized = true;
         }
 
+        /// <summary>
+        /// Gets the index of the previous entry in the circular buffer.
+        /// </summary>
+        /// <returns>The index of the previous entry.</returns>
         public int GetCurrentEntryIndex()
         {
             return (currentEntry + bufferSize - 1) % bufferSize;

@@ -8,6 +8,9 @@ namespace HexaEngine.Editor
     using System.Numerics;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Provides a utility for immediate mode debugging to draw 3D shapes.
+    /// </summary>
     public static unsafe class DebugDraw
     {
         private static readonly DebugDrawCommandQueue queue = new();
@@ -21,18 +24,33 @@ namespace HexaEngine.Editor
         private const int COL32_A_SHIFT = 24;
         private const uint COL32_A_MASK = 0xFF000000;
 
+        /// <summary>
+        /// Saturates a float value to the range [0, 1].
+        /// </summary>
+        /// <param name="f">The input float value to saturate.</param>
+        /// <returns>The saturated float value within the [0, 1] range.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static float Saturate(float f)
         {
             return (f < 0.0f) ? 0.0f : (f > 1.0f) ? 1.0f : f;
         }
 
+        /// <summary>
+        /// Converts a floating-point value to an 8-bit integer value within the range [0, 255].
+        /// </summary>
+        /// <param name="val">The input floating-point value to convert.</param>
+        /// <returns>The 8-bit integer value within the [0, 255] range.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int F32ToInt8Sat(float val)
         {
             return ((int)(Saturate(val) * 255.0f + 0.5f));
         }
 
+        /// <summary>
+        /// Converts a floating-point vector (Vector4) color to a packed 32-bit color representation.
+        /// </summary>
+        /// <param name="i">The input floating-point color as a Vector4.</param>
+        /// <returns>The packed 32-bit color representation.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static uint ColorConvertFloat4ToU32(Vector4 i)
         {
@@ -44,6 +62,14 @@ namespace HexaEngine.Editor
             return o;
         }
 
+        /// <summary>
+        /// Transforms an array of positions with the specified color using a transformation matrix.
+        /// </summary>
+        /// <param name="verts">The array of vertices to transform.</param>
+        /// <param name="positions">The array of positions to transform.</param>
+        /// <param name="count">The number of positions to transform.</param>
+        /// <param name="matrix">The transformation matrix to apply.</param>
+        /// <param name="color">The color to apply to the vertices.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void TransformWithColor(DebugDrawVert* verts, Vector3[] positions, uint count, Matrix4x4 matrix, uint color)
         {
@@ -54,41 +80,73 @@ namespace HexaEngine.Editor
             }
         }
 
+        /// <summary>
+        /// Clears the draw commands and prepares for a new frame of drawing.
+        /// </summary>
         public static void NewFrame()
         {
             queue.Clear();
         }
 
+        /// <summary>
+        /// Renders the accumulated draw commands to the viewport.
+        /// </summary>
         public static void Render()
         {
             queue.ClearUnused();
         }
 
+        /// <summary>
+        /// Sets the viewport for rendering debug shapes.
+        /// </summary>
+        /// <param name="viewport">The viewport to set.</param>
         public static void SetViewport(Viewport viewport)
         {
             DebugDraw.viewport = viewport;
         }
 
+        /// <summary>
+        /// Gets the current viewport used for rendering.
+        /// </summary>
+        /// <returns>The current viewport.</returns>
         public static Viewport GetViewport()
         {
             return viewport;
         }
 
+        /// <summary>
+        /// Sets the camera matrix for rendering debug shapes.
+        /// </summary>
+        /// <param name="camera">The camera matrix to set.</param>
         public static void SetCamera(Matrix4x4 camera)
         {
             DebugDraw.camera = camera;
         }
 
+        /// <summary>
+        /// Gets the current camera matrix used for rendering.
+        /// </summary>
+        /// <returns>The current camera matrix.</returns>
         public static Matrix4x4 GetCamera()
         {
             return camera;
         }
 
+        /// <summary>
+        /// Gets the queue of debug draw commands for immediate mode rendering.
+        /// </summary>
+        /// <returns>The debug draw command queue.</returns>
         public static DebugDrawCommandQueue GetQueue()
         {
             return queue;
         }
 
+        /// <summary>
+        /// Draws a bounding frustum in the specified color.
+        /// </summary>
+        /// <param name="id">A unique identifier for the frustum draw command.</param>
+        /// <param name="frustum">The bounding frustum to be drawn.</param>
+        /// <param name="col">The color of the frustum.</param>
         public static void DrawFrustum(string id, BoundingFrustum frustum, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
@@ -120,6 +178,12 @@ namespace HexaEngine.Editor
             }
         }
 
+        /// <summary>
+        /// Draws a bounding box in the specified color.
+        /// </summary>
+        /// <param name="id">A unique identifier for the box draw command.</param>
+        /// <param name="box">The bounding box to be drawn.</param>
+        /// <param name="col">The color of the box.</param>
         public static void DrawBoundingBox(string id, BoundingBox box, Vector4 col)
         {
             const uint vertexCount = 8;
@@ -239,6 +303,12 @@ namespace HexaEngine.Editor
             new Vector3(-0.000000f,0.980785f,0.195090f),
         };
 
+        /// <summary>
+        /// Draws a bounding sphere in the specified color.
+        /// </summary>
+        /// <param name="id">A unique identifier for the sphere draw command.</param>
+        /// <param name="sphere">The bounding sphere to be drawn.</param>
+        /// <param name="col">The color of the sphere.</param>
         public static void DrawBoundingSphere(string id, BoundingSphere sphere, Vector4 col)
         {
             const uint vertexCount = 90;
@@ -351,6 +421,14 @@ namespace HexaEngine.Editor
             TransformWithColor(cmd.Vertices, spherePositions, vertexCount, Matrix4x4.CreateScale(sphere.Radius) * Matrix4x4.CreateTranslation(sphere.Center), color);
         }
 
+        /// <summary>
+        /// Draws a ray starting from a specified origin and extending in a given direction.
+        /// </summary>
+        /// <param name="id">A unique identifier for the ray draw command.</param>
+        /// <param name="origin">The starting point of the ray.</param>
+        /// <param name="direction">The direction in which the ray extends.</param>
+        /// <param name="normalize">True if the direction vector should be normalized; otherwise, false.</param>
+        /// <param name="col">The color of the ray.</param>
         public static void DrawRay(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
@@ -385,6 +463,14 @@ namespace HexaEngine.Editor
             cmd.Vertices[2].Color = color;
         }
 
+        /// <summary>
+        /// Draws a line from a specified origin in the given direction.
+        /// </summary>
+        /// <param name="id">A unique identifier for the line draw command.</param>
+        /// <param name="origin">The starting point of the line.</param>
+        /// <param name="direction">The direction in which the line extends.</param>
+        /// <param name="normalize">True if the direction vector should be normalized; otherwise, false.</param>
+        /// <param name="col">The color of the line.</param>
         public static void DrawLine(string id, Vector3 origin, Vector3 direction, bool normalize, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
@@ -405,6 +491,13 @@ namespace HexaEngine.Editor
             cmd.Vertices[1].Color = color;
         }
 
+        /// <summary>
+        /// Draws a line between a specified origin and destination points.
+        /// </summary>
+        /// <param name="id">A unique identifier for the line draw command.</param>
+        /// <param name="origin">The starting point of the line.</param>
+        /// <param name="destination">The ending point of the line.</param>
+        /// <param name="col">The color of the line.</param>
         public static void DrawLine(string id, Vector3 origin, Vector3 destination, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
@@ -421,6 +514,15 @@ namespace HexaEngine.Editor
             cmd.Vertices[1].Color = color;
         }
 
+        /// <summary>
+        /// Draws a ring in 3D space at a specified position and orientation.
+        /// </summary>
+        /// <param name="id">A unique identifier for the ring draw command.</param>
+        /// <param name="origin">The center point of the ring.</param>
+        /// <param name="orientation">The orientation (rotation) of the ring.</param>
+        /// <param name="majorAxis">The major axis of the ring.</param>
+        /// <param name="minorAxis">The minor axis of the ring.</param>
+        /// <param name="col">The color of the ring.</param>
         public static void DrawRing(string id, Vector3 origin, Quaternion orientation, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
@@ -460,6 +562,14 @@ namespace HexaEngine.Editor
             cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
         }
 
+        /// <summary>
+        /// Draws a ring in 3D space at a specified position with given major and minor axes.
+        /// </summary>
+        /// <param name="id">A unique identifier for the ring draw command.</param>
+        /// <param name="origin">The center point of the ring.</param>
+        /// <param name="majorAxis">The major axis of the ring.</param>
+        /// <param name="minorAxis">The minor axis of the ring.</param>
+        /// <param name="col">The color of the ring.</param>
         public static void DrawRing(string id, Vector3 origin, Vector3 majorAxis, Vector3 minorAxis, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
@@ -499,7 +609,14 @@ namespace HexaEngine.Editor
             cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
         }
 
-        public static void DrawRing(string id, Vector3 origin, (Vector3, Vector3) ellipse, Vector4 col)
+        /// <summary>
+        /// Draws a ring in 3D space at a specified position with given major and minor axes.
+        /// </summary>
+        /// <param name="id">A unique identifier for the ring draw command.</param>
+        /// <param name="origin">The center point of the ring.</param>
+        /// <param name="ellipse">The major axis and minor axis of the ring.</param>
+        /// <param name="col">The color of the ring.</param>
+        public static void DrawRing(string id, Vector3 origin, (Vector3 majorAxis, Vector3 minorAxis) ellipse, Vector4 col)
         {
             uint color = ColorConvertFloat4ToU32(col);
             const int c_ringSegments = 32;
@@ -514,8 +631,8 @@ namespace HexaEngine.Editor
                 }
             }
 
-            Vector3 majorAxis = ellipse.Item1;
-            Vector3 minorAxis = ellipse.Item2;
+            Vector3 majorAxis = ellipse.majorAxis;
+            Vector3 minorAxis = ellipse.minorAxis;
             float fAngleDelta = MathUtil.PI2 / c_ringSegments;
 
             // Instead of calling cos/sin for each segment we calculate
@@ -540,6 +657,16 @@ namespace HexaEngine.Editor
             cmd.Vertices[c_ringSegments] = cmd.Vertices[0];
         }
 
+        /// <summary>
+        /// Draws a 3D box at a specified position with the given orientation and dimensions.
+        /// </summary>
+        /// <param name="id">A unique identifier for the box draw command.</param>
+        /// <param name="origin">The center point of the box.</param>
+        /// <param name="orientation">The orientation (rotation) of the box.</param>
+        /// <param name="width">The width of the box.</param>
+        /// <param name="height">The height of the box.</param>
+        /// <param name="depth">The depth of the box.</param>
+        /// <param name="col">The color of the box.</param>
         public static void DrawBox(string id, Vector3 origin, Quaternion orientation, float width, float height, float depth, Vector4 col)
         {
             const uint vertexCount = 8;
@@ -564,6 +691,14 @@ new Vector3(+1, +1, +1),
             TransformWithColor(cmd.Vertices, pos, vertexCount, Matrix4x4.CreateScale(width, height, depth) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
         }
 
+        /// <summary>
+        /// Draws a 3D sphere at a specified position with the given orientation and radius.
+        /// </summary>
+        /// <param name="id">A unique identifier for the sphere draw command.</param>
+        /// <param name="origin">The center point of the sphere.</param>
+        /// <param name="orientation">The orientation (rotation) of the sphere.</param>
+        /// <param name="radius">The radius of the sphere.</param>
+        /// <param name="col">The color of the sphere.</param>
         public static void DrawSphere(string id, Vector3 origin, Quaternion orientation, float radius, Vector4 col)
         {
             const uint vertexCount = 90;
@@ -705,6 +840,15 @@ new Vector3(+1, +1, +1),
             new Vector3(0.195090f,0.990393f,-0.000000f),
         };
 
+        /// <summary>
+        /// Draws a 3D capsule at a specified position with the given orientation, radius, and length.
+        /// </summary>
+        /// <param name="id">A unique identifier for the capsule draw command.</param>
+        /// <param name="origin">The center point of the capsule.</param>
+        /// <param name="orientation">The orientation (rotation) of the capsule.</param>
+        /// <param name="radius">The radius of the capsule.</param>
+        /// <param name="length">The length of the capsule (excluding the two hemispheres).</param>
+        /// <param name="col">The color of the capsule.</param>
         public static void DrawCapsule(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
         {
             const uint vertexCount = 124;
@@ -921,6 +1065,15 @@ new Vector3(+1, +1, +1),
             new Vector3(-0.195090f,-1.000000f,0.980785f),
         };
 
+        /// <summary>
+        /// Draws a 3D cylinder at a specified position with the given orientation, radius, and length.
+        /// </summary>
+        /// <param name="id">A unique identifier for the cylinder draw command.</param>
+        /// <param name="origin">The center point of the cylinder.</param>
+        /// <param name="orientation">The orientation (rotation) of the cylinder.</param>
+        /// <param name="radius">The radius of the cylinder.</param>
+        /// <param name="length">The length of the cylinder.</param>
+        /// <param name="col">The color of the cylinder.</param>
         public static void DrawCylinder(string id, Vector3 origin, Quaternion orientation, float radius, float length, Vector4 col)
         {
             const uint vertexCount = 64;
@@ -1005,6 +1158,16 @@ new Vector3(+1, +1, +1),
             TransformWithColor(cmd.Vertices, cylinderPositions, vertexCount, Matrix4x4.CreateScale(radius, length, radius) * Matrix4x4.CreateFromQuaternion(orientation) * Matrix4x4.CreateTranslation(origin), color);
         }
 
+        /// <summary>
+        /// Draws a 3D triangle with the specified vertices, position, orientation, and color.
+        /// </summary>
+        /// <param name="id">A unique identifier for the triangle draw command.</param>
+        /// <param name="origin">The position of the triangle's local origin.</param>
+        /// <param name="orientation">The orientation (rotation) of the triangle.</param>
+        /// <param name="a">The first vertex of the triangle.</param>
+        /// <param name="b">The second vertex of the triangle.</param>
+        /// <param name="c">The third vertex of the triangle.</param>
+        /// <param name="col">The color of the triangle.</param>
         public static void DrawTriangle(string id, Vector3 origin, Quaternion orientation, Vector3 a, Vector3 b, Vector3 c, Vector4 col)
         {
             const uint vertexCount = 4;
@@ -1021,6 +1184,13 @@ new Vector3(+1, +1, +1),
             cmd.Vertices[3] = cmd.Vertices[0];
         }
 
+        /// <summary>
+        /// Draws a 2D grid in 3D space defined by the provided transformation matrix.
+        /// </summary>
+        /// <param name="id">A unique identifier for the grid draw command.</param>
+        /// <param name="matrix">The transformation matrix defining the orientation and position of the grid.</param>
+        /// <param name="size">The size of the grid (half-extent in each dimension).</param>
+        /// <param name="col">The color of the grid lines.</param>
         public static void DrawGrid(string id, Matrix4x4 matrix, int size, Vector4 col)
         {
             uint vertexCount = 2u * (uint)size * 2u + 4;

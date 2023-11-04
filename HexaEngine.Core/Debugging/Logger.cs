@@ -4,15 +4,34 @@
     using System.Diagnostics;
     using System.Text;
 
+    /// <summary>
+    /// Provides logging capabilities with various log writers and log levels.
+    /// </summary>
     public static class Logger
     {
+        /// <summary>
+        /// A semaphore used for controlling access to the logger.
+        /// </summary>
         private static readonly SemaphoreSlim semaphore = new(1);
+
+        /// <summary>
+        /// The current log level for filtering log messages.
+        /// </summary>
         private static LogSeverity logLevel;
 
+        /// <summary>
+        /// Gets a list of log writers used for writing log messages.
+        /// </summary>
         public static List<ILogWriter> Writers { get; } = new();
 
+        /// <summary>
+        /// Gets or sets the current log level.
+        /// </summary>
         public static LogSeverity LogLevel { get => logLevel; set => logLevel = value; }
 
+        /// <summary>
+        /// Flushes all log writers to ensure that pending log messages are written.
+        /// </summary>
         public static void Flush()
         {
             semaphore.Wait();
@@ -23,6 +42,9 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Clears log messages from all log writers.
+        /// </summary>
         public static void Clear()
         {
             semaphore.Wait();
@@ -33,6 +55,9 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Closes and disposes of all log writers.
+        /// </summary>
         public static void Close()
         {
             semaphore.Wait();
@@ -43,6 +68,11 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Handles errors that occur in asynchronous tasks by logging them.
+        /// </summary>
+        /// <param name="task">The task to handle.</param>
+        /// <returns>A completed task.</returns>
         public static Task HandleError(Task task)
         {
             if (!task.IsCompletedSuccessfully && task.Exception != null)
@@ -54,6 +84,10 @@
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Logs a log message.
+        /// </summary>
+        /// <param name="message">The log message to be logged.</param>
         public static void Log(LogMessage message)
         {
             if (message.Severity < logLevel)
@@ -66,6 +100,11 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Asynchronously logs a log message.
+        /// </summary>
+        /// <param name="message">The log message to be logged asynchronously.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogAsync(LogMessage message)
         {
             if (message.Severity < logLevel)
@@ -78,11 +117,20 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Logs a log message with a specific severity and message.
+        /// </summary>
+        /// <param name="severity">The severity level of the log message.</param>
+        /// <param name="message">The message to be logged.</param>
         public static void Log(LogSeverity severity, string? message)
         {
             Log(new LogMessage(severity, message ?? "null"));
         }
 
+        /// <summary>
+        /// Logs an exception.
+        /// </summary>
+        /// <param name="e">The exception to be logged.</param>
         public static void Log(Exception? e)
         {
             var message = e?.ToString() ?? "null";
@@ -90,6 +138,11 @@
             Log(new LogMessage(LogSeverity.Error, message));
         }
 
+        /// <summary>
+        /// A helper method that evaluates the log severity based on a log message.
+        /// </summary>
+        /// <param name="message">The log message to evaluate.</param>
+        /// <returns>The determined log severity.</returns>
         private static LogSeverity Evaluate(string message)
         {
             LogSeverity type = LogSeverity.Information;
@@ -133,6 +186,10 @@
             return type;
         }
 
+        /// <summary>
+        /// Logs an object's string representation with an automatically determined log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void Log(object? value)
         {
             var message = value?.ToString() ?? "null";
@@ -140,6 +197,10 @@
             Log(new LogMessage(type, message));
         }
 
+        /// <summary>
+        /// Logs a message with an automatically determined log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void Log(string? message)
         {
             var msg = message ?? "null";
@@ -147,6 +208,11 @@
             Log(new LogMessage(type, msg));
         }
 
+        /// <summary>
+        /// Logs a failed assertion with an error log severity.
+        /// </summary>
+        /// <param name="message">The assertion message.</param>
+        /// <param name="detailedMessage">The detailed message.</param>
         public static void Fail(string? message, string? detailedMessage)
         {
             StringBuilder sb = new();
@@ -168,8 +234,18 @@
             Log(new LogMessage(LogSeverity.Error, msg));
         }
 
+        /// <summary>
+        /// Logs a failed assertion with an error log severity, with no detailed message.
+        /// </summary>
+        /// <param name="message">The assertion message.</param>
         public static void Fail(string? message) => Fail(message, string.Empty);
 
+        /// <summary>
+        /// Asserts a condition and logs a failure if it is false.
+        /// </summary>
+        /// <param name="condition">The condition to assert.</param>
+        /// <param name="message">The assertion message.</param>
+        /// <param name="detailedMessage">The detailed message.</param>
         public static void Assert(bool condition, string? message, string? detailedMessage)
         {
             if (!condition)
@@ -178,10 +254,25 @@
             }
         }
 
+        /// <summary>
+        /// Asserts a condition and logs a failure if it is false, with no detailed message.
+        /// </summary>
+        /// <param name="condition">The condition to assert.</param>
+        /// <param name="message">The assertion message.</param>
         public static void Assert(bool condition, string? message) => Assert(condition, message, string.Empty);
 
+        /// <summary>
+        /// Asserts a condition and logs a failure if it is false, with no assertion message or detailed message.
+        /// </summary>
+        /// <param name="condition">The condition to assert.</param>
         public static void Assert(bool condition) => Assert(condition, string.Empty, string.Empty);
 
+        /// <summary>
+        /// Logs a message with the specified log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="severity">The log severity for the message.</param>
+        /// <param name="message">The message to log.</param>
         public static void LogIf(bool condition, LogSeverity severity, string? message)
         {
             if (condition)
@@ -190,6 +281,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with automatically determined log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static void LogIf(bool condition, string? message)
         {
             if (condition)
@@ -198,6 +294,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs an object's string representation if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static void LogIf(bool condition, object? value)
         {
             if (condition)
@@ -206,6 +307,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with the specified log severity if it is not null.
+        /// </summary>
+        /// <param name="severity">The log severity for the message.</param>
+        /// <param name="message">The message to log.</param>
         public static void LogIfNotNull(LogSeverity severity, string? message)
         {
             if (message != null)
@@ -214,6 +320,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with automatically determined log severity if it is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void LogIfNotNull(string? message)
         {
             if (message != null)
@@ -222,6 +332,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs an object's string representation if it is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void LogIfNotNull(object? value)
         {
             if (value != null)
@@ -230,17 +344,33 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a log message with a specified log severity and message.
+        /// </summary>
+        /// <param name="type">The log severity of the message.</param>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogAsync(LogSeverity type, string? message)
         {
             await LogAsync(new LogMessage(type, message ?? "null"));
         }
 
+        /// <summary>
+        /// Asynchronously logs an exception with an error log severity.
+        /// </summary>
+        /// <param name="e">The exception to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogAsync(Exception? e)
         {
             var message = e?.ToString() ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Error, message));
         }
 
+        /// <summary>
+        /// Asynchronously logs an object's string representation with an automatically determined log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogAsync(object? value)
         {
             var message = value?.ToString() ?? "null";
@@ -248,6 +378,11 @@
             await LogAsync(new LogMessage(type, message));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an automatically determined log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogAsync(string? message)
         {
             var msg = message ?? "null";
@@ -255,6 +390,12 @@
             await LogAsync(new LogMessage(type, msg));
         }
 
+        /// <summary>
+        /// Asynchronously logs a failed assertion with an error log severity.
+        /// </summary>
+        /// <param name="message">The assertion message.</param>
+        /// <param name="detailedMessage">The detailed message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task FailAsync(string? message, string? detailedMessage)
         {
             StringBuilder sb = new();
@@ -277,8 +418,20 @@
             throw new Exception(msg);
         }
 
+        /// <summary>
+        /// Asynchronously logs a failed assertion with an error log severity, with no detailed message.
+        /// </summary>
+        /// <param name="message">The assertion message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task FailAsync(string? message) => await FailAsync(message, string.Empty);
 
+        /// <summary>
+        /// Asynchronously asserts a condition and logs a failure if it is false.
+        /// </summary>
+        /// <param name="condition">The condition to assert.</param>
+        /// <param name="message">The assertion message.</param>
+        /// <param name="detailedMessage">The detailed message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task AssertAsync(bool condition, string? message, string? detailedMessage)
         {
             if (!condition)
@@ -287,10 +440,28 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously asserts a condition and logs a failure if it is false, with no detailed message.
+        /// </summary>
+        /// <param name="condition">The condition to assert.</param>
+        /// <param name="message">The assertion message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task AssertAsync(bool condition, string? message) => await AssertAsync(condition, message, string.Empty);
 
+        /// <summary>
+        /// Asynchronously asserts a condition and logs a failure if it is false, with no assertion message or detailed message.
+        /// </summary>
+        /// <param name="condition">The condition to assert.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task AssertAsync(bool condition) => await AssertAsync(condition, string.Empty, string.Empty);
 
+        /// <summary>
+        /// Asynchronously logs a message with the specified log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="severity">The log severity for the message.</param>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogIfAsync(bool condition, LogSeverity severity, string? message)
         {
             if (condition)
@@ -299,6 +470,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with automatically determined log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogIfAsync(bool condition, string? message)
         {
             if (condition)
@@ -307,6 +484,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an object's string representation if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogIfAsync(bool condition, object? value)
         {
             if (condition)
@@ -315,6 +498,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with the specified log severity if it is not null.
+        /// </summary>
+        /// <param name="severity">The log severity for the message.</param>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogIfNotNullAsync(LogSeverity severity, string? message)
         {
             if (message != null)
@@ -323,6 +512,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with automatically determined log severity if it is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogIfNotNullAsync(string? message)
         {
             if (message != null)
@@ -331,6 +525,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an object's string representation if it is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogIfNotNullAsync(object? value)
         {
             if (value != null)
@@ -339,42 +538,71 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a trace log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void Trace(object? value)
         {
             var message = value?.ToString() ?? "null";
             Log(new LogMessage(LogSeverity.Trace, message));
         }
 
+        /// <summary>
+        /// Logs a message with a trace log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void Trace(string? message)
         {
             var msg = message ?? "null";
             Log(new LogMessage(LogSeverity.Trace, msg));
         }
 
+        /// <summary>
+        /// Logs a message with an information log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void Info(object? value)
         {
             var message = value?.ToString() ?? "null";
             Log(new LogMessage(LogSeverity.Information, message));
         }
 
+        /// <summary>
+        /// Logs a message with an information log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void Info(string? message)
         {
             var msg = message ?? "null";
             Log(new LogMessage(LogSeverity.Information, msg));
         }
 
+        /// <summary>
+        /// Logs a message with a warning log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void Warn(object? value)
         {
             var message = value?.ToString() ?? "null";
             Log(new LogMessage(LogSeverity.Warning, message));
         }
 
+        /// <summary>
+        /// Logs a message with a warning log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void Warn(string? message)
         {
             var msg = message ?? "null";
             Log(new LogMessage(LogSeverity.Warning, msg));
         }
 
+        /// <summary>
+        /// Logs a message with an error log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void Error(object? value, bool throwException = false)
         {
             var message = value?.ToString() ?? "null";
@@ -383,6 +611,11 @@
                 throw new(message);
         }
 
+        /// <summary>
+        /// Logs a message with an error log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void Error(string? message, bool throwException = false)
         {
             var msg = message ?? "null";
@@ -391,6 +624,11 @@
                 throw new(msg);
         }
 
+        /// <summary>
+        /// Logs a message with a critical log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void Critical(object? value, bool throwException = false)
         {
             var message = value?.ToString() ?? "null";
@@ -399,6 +637,11 @@
                 throw new(message);
         }
 
+        /// <summary>
+        /// Logs a message with a critical log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void Critical(string? message, bool throwException = false)
         {
             var msg = message ?? "null";
@@ -407,42 +650,78 @@
                 throw new(msg);
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a trace log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task TraceAsync(object? value)
         {
             var message = value?.ToString() ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Trace, message));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a trace log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task TraceAsync(string? message)
         {
             var msg = message ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Trace, msg));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an information log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task InfoAsync(object? value)
         {
             var message = value?.ToString() ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Information, message));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an information log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task InfoAsync(string? message)
         {
             var msg = message ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Information, msg));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a warning log severity.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task WarnAsync(object? value)
         {
             var message = value?.ToString() ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Warning, message));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a warning log severity.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task WarnAsync(string? message)
         {
             var msg = message ?? "null";
             await LogAsync(new LogMessage(LogSeverity.Warning, msg));
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an error log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task ErrorAsync(object? value, bool throwException = false)
         {
             var message = value?.ToString() ?? "null";
@@ -451,6 +730,12 @@
                 throw new(message);
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an error log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task ErrorAsync(string? message, bool throwException = false)
         {
             var msg = message ?? "null";
@@ -459,6 +744,12 @@
                 throw new(message);
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a critical log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task CriticalAsync(object? value, bool throwException = false)
         {
             var message = value?.ToString() ?? "null";
@@ -467,6 +758,12 @@
                 throw new(message);
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a critical log severity and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task CriticalAsync(string? message, bool throwException = false)
         {
             var msg = message ?? "null";
@@ -475,6 +772,11 @@
                 throw new(message);
         }
 
+        /// <summary>
+        /// Logs a message with a trace log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static void TraceIf(bool condition, object? value)
         {
             if (condition)
@@ -483,6 +785,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a trace log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static void TraceIf(bool condition, string? message)
         {
             if (condition)
@@ -491,6 +798,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an information log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static void InfoIf(bool condition, object? value)
         {
             if (condition)
@@ -499,6 +811,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an information log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static void InfoIf(bool condition, string? message)
         {
             if (condition)
@@ -507,6 +824,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a warning log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static void WarnIf(bool condition, object? value)
         {
             if (condition)
@@ -515,6 +837,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a warning log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static void WarnIf(bool condition, string? message)
         {
             if (condition)
@@ -523,6 +850,12 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an error log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void ErrorIf(bool condition, object? value, bool throwException = false)
         {
             if (condition)
@@ -531,6 +864,12 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an error log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void ErrorIf(bool condition, string? message, bool throwException = false)
         {
             if (condition)
@@ -539,6 +878,12 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a critical log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void CriticalIf(bool condition, object? value, bool throwException = false)
         {
             if (condition)
@@ -547,6 +892,12 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a critical log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void CriticalIf(bool condition, string? message, bool throwException = false)
         {
             if (condition)
@@ -555,6 +906,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a trace log severity if the object is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void TraceIfNotNull(object? value)
         {
             if (value != null)
@@ -563,6 +918,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a trace log severity if the message is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void TraceIfNotNull(string? message)
         {
             if (message != null)
@@ -571,6 +930,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an information log severity if the object is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void InfoIfNotNull(object? value)
         {
             if (value != null)
@@ -579,6 +942,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an information log severity if the message is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void InfoIfNotNull(string? message)
         {
             if (message != null)
@@ -587,6 +954,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a warning log severity if the object is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static void WarnIfNotNull(object? value)
         {
             if (value != null)
@@ -595,6 +966,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a warning log severity if the message is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static void WarnIfNotNull(string? message)
         {
             if (message != null)
@@ -603,6 +978,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an error log severity if the object is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void ErrorIfNotNull(object? value, bool throwException = false)
         {
             if (value != null)
@@ -611,6 +991,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with an error log severity if the message is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void ErrorIfNotNull(string? message, bool throwException = false)
         {
             if (message != null)
@@ -619,6 +1004,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a critical log severity if the object is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void CriticalIfNotNull(object? value, bool throwException = false)
         {
             if (value != null)
@@ -627,6 +1017,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs a message with a critical log severity if the message is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static void CriticalIfNotNull(string? message, bool throwException = false)
         {
             if (message != null)
@@ -635,6 +1030,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a trace log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static async Task TraceIfAsync(bool condition, object? value)
         {
             if (condition)
@@ -643,6 +1043,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a trace log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static async Task TraceIfAsync(bool condition, string? message)
         {
             if (condition)
@@ -651,6 +1056,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an information log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static async Task InfoIfAsync(bool condition, object? value)
         {
             if (condition)
@@ -659,6 +1069,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an information log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static async Task InfoIfAsync(bool condition, string? message)
         {
             if (condition)
@@ -667,6 +1082,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a warning log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
         public static async Task WarnIfAsync(bool condition, object? value)
         {
             if (condition)
@@ -675,6 +1095,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a warning log severity if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
         public static async Task WarnIfAsync(bool condition, string? message)
         {
             if (condition)
@@ -683,6 +1108,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an error log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task ErrorIfAsync(bool condition, object? value, bool throwException = false)
         {
             if (condition)
@@ -691,6 +1122,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an error log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task ErrorIfAsync(bool condition, string? message, bool throwException = false)
         {
             if (condition)
@@ -699,6 +1136,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a critical log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task CriticalIfAsync(bool condition, object? value, bool throwException = false)
         {
             if (condition)
@@ -707,6 +1150,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a critical log severity if a condition is met and optionally throws an exception.
+        /// </summary>
+        /// <param name="condition">The condition for logging.</param>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task CriticalIfAsync(bool condition, string? message, bool throwException = false)
         {
             if (condition)
@@ -715,6 +1164,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a trace log severity if the object is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static async Task TraceIfNotNullAsync(object? value)
         {
             if (value != null)
@@ -723,6 +1176,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a trace log severity if the message is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static async Task TraceIfNotNullAsync(string? message)
         {
             if (message != null)
@@ -731,6 +1188,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an information log severity if the object is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static async Task InfoIfNotNullAsync(object? value)
         {
             if (value != null)
@@ -739,6 +1200,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an information log severity if the message is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static async Task InfoIfNotNullAsync(string? message)
         {
             if (message != null)
@@ -747,6 +1212,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a warning log severity if the object is not null.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
         public static async Task WarnIfNotNullAsync(object? value)
         {
             if (value != null)
@@ -755,6 +1224,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a warning log severity if the message is not null.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
         public static async Task WarnIfNotNullAsync(string? message)
         {
             if (message != null)
@@ -763,6 +1236,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an error log severity if the object is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task ErrorIfNotNullAsync(object? value, bool throwException = false)
         {
             if (value != null)
@@ -771,6 +1249,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with an error log severity if the message is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task ErrorIfNotNullAsync(string? message, bool throwException = false)
         {
             if (message != null)
@@ -779,6 +1262,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a critical log severity if the object is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="value">The object to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task CriticalIfNotNullAsync(object? value, bool throwException = false)
         {
             if (value != null)
@@ -787,6 +1275,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs a message with a critical log severity if the message is not null and optionally throws an exception.
+        /// </summary>
+        /// <param name="message">The message to log.</param>
+        /// <param name="throwException">Whether to throw an exception.</param>
         public static async Task CriticalIfNotNullAsync(string? message, bool throwException = false)
         {
             if (message != null)
@@ -795,24 +1288,42 @@
             }
         }
 
+        /// <summary>
+        /// Logs an exception and then rethrows it.
+        /// </summary>
+        /// <param name="exception">The exception to log and throw.</param>
         public static void Throw(Exception exception)
         {
             Log(exception);
             throw exception;
         }
 
+        /// <summary>
+        /// Logs an error message and then throws a new exception with the provided message.
+        /// </summary>
+        /// <param name="message">The error message to log and throw as an exception.</param>
         public static void Throw(string? message)
         {
             Log(LogSeverity.Error, message);
             throw new(message);
         }
 
+        /// <summary>
+        /// Logs an error message, then throws a new exception with the provided message and inner exception.
+        /// </summary>
+        /// <param name="message">The error message to log and throw as an exception.</param>
+        /// <param name="innerException">The inner exception to include in the thrown exception.</param>
         public static void Throw(string? message, Exception innerException)
         {
             Log(LogSeverity.Error, message);
             throw new(message, innerException);
         }
 
+        /// <summary>
+        /// Logs an exception and then rethrows it if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition to determine if the exception should be thrown.</param>
+        /// <param name="exception">The exception to log and potentially throw.</param>
         public static void ThrowIf(bool condition, Exception exception)
         {
             if (condition)
@@ -821,6 +1332,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs an error message and then throws a new exception with the provided message if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition to determine if the exception should be thrown.</param>
+        /// <param name="message">The error message to log and potentially throw as an exception.</param>
         public static void ThrowIf(bool condition, string? message)
         {
             if (condition)
@@ -829,6 +1345,12 @@
             }
         }
 
+        /// <summary>
+        /// Logs an error message, then throws a new exception with the provided message and inner exception if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition to determine if the exception should be thrown.</param>
+        /// <param name="message">The error message to log and potentially throw as an exception.</param>
+        /// <param name="innerException">The inner exception to include in the thrown exception.</param>
         public static void ThrowIf(bool condition, string? message, Exception innerException)
         {
             if (condition)
@@ -837,6 +1359,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs an exception and then rethrows it if the provided exception is not null.
+        /// </summary>
+        /// <param name="exception">The exception to log and potentially throw if it is not null.</param>
         public static void ThrowIfNotNull(Exception? exception)
         {
             if (exception != null)
@@ -845,6 +1371,10 @@
             }
         }
 
+        /// <summary>
+        /// Logs an error message and then throws a new exception with the provided message if the message is not null.
+        /// </summary>
+        /// <param name="message">The error message to log and potentially throw as an exception if it is not null.</param>
         public static void ThrowIfNotNull(string? message)
         {
             if (message != null)
@@ -853,6 +1383,11 @@
             }
         }
 
+        /// <summary>
+        /// Logs an error message, then throws a new exception with the provided message and inner exception if both are not null.
+        /// </summary>
+        /// <param name="message">The error message to log and potentially throw as an exception if it is not null.</param>
+        /// <param name="innerException">The inner exception to include in the thrown exception if it is not null.</param>
         public static void ThrowIfNotNull(string? message, Exception? innerException)
         {
             if (message != null && innerException != null)
@@ -861,24 +1396,42 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an exception and then rethrows it.
+        /// </summary>
+        /// <param name="exception">The exception to log and throw.</param>
         public static async Task ThrowAsync(Exception exception)
         {
             await LogAsync(exception);
             throw exception;
         }
 
+        /// <summary>
+        /// Asynchronously logs an error message and then throws a new exception with the provided message.
+        /// </summary>
+        /// <param name="message">The error message to log and throw as an exception.</param>
         public static async Task ThrowAsync(string? message)
         {
             await LogAsync(LogSeverity.Error, message);
             throw new(message);
         }
 
+        /// <summary>
+        /// Asynchronously logs an error message, then throws a new exception with the provided message and inner exception.
+        /// </summary>
+        /// <param name="message">The error message to log and throw as an exception.</param>
+        /// <param name="innerException">The inner exception to include in the thrown exception.</param>
         public static async Task ThrowAsync(string? message, Exception innerException)
         {
             await LogAsync(LogSeverity.Error, message);
             throw new(message, innerException);
         }
 
+        /// <summary>
+        /// Asynchronously logs an exception and then rethrows it if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition to determine if the exception should be thrown.</param>
+        /// <param name="exception">The exception to log and potentially throw.</param>
         public static async Task ThrowIfAsync(bool condition, Exception exception)
         {
             if (condition)
@@ -887,6 +1440,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an error message and then throws a new exception with the provided message if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition to determine if the exception should be thrown.</param>
+        /// <param name="message">The error message to log and potentially throw as an exception.</param>
         public static async Task ThrowIfAsync(bool condition, string? message)
         {
             if (condition)
@@ -895,6 +1453,12 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an error message, then throws a new exception with the provided message and inner exception if a condition is met.
+        /// </summary>
+        /// <param name="condition">The condition to determine if the exception should be thrown.</param>
+        /// <param name="message">The error message to log and potentially throw as an exception.</param>
+        /// <param name="innerException">The inner exception to include in the thrown exception.</param>
         public static async Task ThrowIfAsync(bool condition, string? message, Exception innerException)
         {
             if (condition)
@@ -903,6 +1467,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an exception and then rethrows it if the provided exception is not null.
+        /// </summary>
+        /// <param name="exception">The exception to log and potentially throw if it is not null.</param>
         public static async Task ThrowIfNotNullAsync(Exception? exception)
         {
             if (exception != null)
@@ -911,6 +1479,10 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an error message and then throws a new exception with the provided message if the message is not null.
+        /// </summary>
+        /// <param name="message">The error message to log and potentially throw as an exception if it is not null.</param>
         public static async Task ThrowIfNotNullAsync(string? message)
         {
             if (message != null)
@@ -919,6 +1491,11 @@
             }
         }
 
+        /// <summary>
+        /// Asynchronously logs an error message, then throws a new exception with the provided message and inner exception if both are not null.
+        /// </summary>
+        /// <param name="message">The error message to log and potentially throw as an exception if it is not null.</param>
+        /// <param name="innerException">The inner exception to include in the thrown exception if it is not null.</param>
         public static async Task ThrowIfNotNullAsync(string? message, Exception? innerException)
         {
             if (message != null && innerException != null)

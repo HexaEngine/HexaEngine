@@ -2,9 +2,19 @@
 {
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Provides extension methods for enumerations to cast them to integral types.
+    /// </summary>
     public static class EnumExtension
     {
-        // size-specific version
+        /// <summary>
+        /// Casts an enumeration value to the specified integral type, with type size checking.
+        /// </summary>
+        /// <typeparam name="TEnum">The enumeration type.</typeparam>
+        /// <typeparam name="TInt">The integral type to cast to.</typeparam>
+        /// <param name="enumValue">The enumeration value to cast.</param>
+        /// <returns>The casted value of the specified integral type.</returns>
+        /// <exception cref="Exception">Thrown when the size of the enumeration does not match the size of the target integral type.</exception>
         public static TInt AsInteger<TEnum, TInt>(this TEnum enumValue)
             where TEnum : unmanaged, Enum
             where TInt : unmanaged
@@ -14,7 +24,13 @@
             return value;
         }
 
-        // long version
+        /// <summary>
+        /// Casts an enumeration value to a long integral type with size checking.
+        /// </summary>
+        /// <typeparam name="TEnum">The enumeration type.</typeparam>
+        /// <param name="enumValue">The enumeration value to cast.</param>
+        /// <returns>The casted value of type long.</returns>
+        /// <exception cref="Exception">Thrown when the size of the enumeration does not match supported integral types.</exception>
         public static long AsInteger<TEnum>(this TEnum enumValue)
             where TEnum : unmanaged, Enum
         {

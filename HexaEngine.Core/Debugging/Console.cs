@@ -10,6 +10,9 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Provides a console-like interface for logging, displaying messages, and accepting commands within an ImGui window.
+    /// </summary>
     public static class ImGuiConsole
     {
         private static readonly List<ConsoleMessage> messages = new(maxMessages + 1);
@@ -39,6 +42,9 @@
         private static readonly unsafe ImGuiInputTextCallback inputTextCallback = InputCallback;
         private const int maxMessages = 4096;
 
+        /// <summary>
+        /// Initializes the ImGuiConsole, registers default commands, and sets default settings.
+        /// </summary>
         public static void Initialize()
         {
             Logger.Writers.Add(logListener);
@@ -66,8 +72,14 @@
             });
         }
 
+        /// <summary>
+        /// Gets or sets the foreground color used for console text.
+        /// </summary>
         public static ConsoleColor ForegroundColor { get => foregroundColor; set => foregroundColor = value; }
 
+        /// <summary>
+        /// Gets or sets the background color of the console window.
+        /// </summary>
         public static ConsoleColor BackgroundColor { get => backgroundColor; set => backgroundColor = value; }
 
         private class ConsoleLogWriter : ILogWriter
@@ -158,8 +170,14 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether the ImGuiConsole window is displayed.
+        /// </summary>
         public static bool IsDisplayed { get => consoleOpen; set => consoleOpen = value; }
 
+        /// <summary>
+        /// Restores the default settings for ImGuiConsole, including auto-scrolling, colored output, filtering bar, and timestamps.
+        /// </summary>
         public static void DefaultSettings()
         {
             // Settings
@@ -173,12 +191,21 @@
             windowAlpha = 1;
         }
 
+        /// <summary>
+        /// Registers a custom command with its corresponding callback.
+        /// </summary>
+        /// <param name="command">The name of the command.</param>
+        /// <param name="callback">The callback action to execute when the command is invoked.</param>
         public static void RegisterCommand(string command, Action<string[]> callback)
         {
             commands.Add(command, callback);
             cmdAutocomplete.Add(command, callback);
         }
 
+        /// <summary>
+        /// Writes a message to the ImGuiConsole.
+        /// </summary>
+        /// <param name="message">The message to write to the console.</param>
         public static void Write(string? message)
         {
             semaphore.Wait();
@@ -209,8 +236,16 @@
             scrollToBottom = true;
         }
 
+        /// <summary>
+        /// Writes an object's string representation to the ImGuiConsole.
+        /// </summary>
+        /// <param name="value">The object to write to the console as a string.</param>
         public static void Write(object? value) => Write(value?.ToString());
 
+        /// <summary>
+        /// Writes a message followed by a new line to the ImGuiConsole.
+        /// </summary>
+        /// <param name="msg">The message to write to the console.</param>
         public static void WriteLine(string? msg)
         {
             semaphore.Wait();
@@ -223,8 +258,15 @@
             scrollToBottom = true;
         }
 
+        /// <summary>
+        /// Writes an object's string representation followed by a new line to the ImGuiConsole.
+        /// </summary>
+        /// <param name="value">The object to write to the console as a string.</param>
         public static void WriteLine(object? value) => WriteLine(value?.ToString());
 
+        /// <summary>
+        /// Clears all messages from the ImGuiConsole.
+        /// </summary>
         public static void Clear()
         {
             semaphore.Wait();
@@ -232,6 +274,9 @@
             semaphore.Release();
         }
 
+        /// <summary>
+        /// Draws the ImGuiConsole window, allowing for logging, message display, and command input.
+        /// </summary>
         public static void Draw()
         {
             ImGui.PushStyleVar(ImGuiStyleVar.Alpha, windowAlpha);

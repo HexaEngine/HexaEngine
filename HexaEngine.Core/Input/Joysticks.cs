@@ -4,6 +4,9 @@
     using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Provides management and events for joysticks connected to the system.
+    /// </summary>
     public static class Joysticks
     {
         private static readonly List<Joystick> joysticks = new();
@@ -11,22 +14,51 @@
 
         private static readonly JoystickEventArgs joystickEventArgs = new();
 
+        /// <summary>
+        /// Gets a read-only list of connected joysticks.
+        /// </summary>
         public static IReadOnlyList<Joystick> Sticks => joysticks;
 
-        public static event EventHandler<JoystickEventArgs>? JoystickAdded;
+        /// <summary>
+        /// Event that occurs when a joystick is added or connected to the system.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickEventArgs>? JoystickAdded;
 
-        public static event EventHandler<JoystickEventArgs>? JoystickRemoved;
+        /// <summary>
+        /// Event that occurs when a joystick is removed or disconnected from the system.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickEventArgs>? JoystickRemoved;
 
-        public static event EventHandler<JoystickAxisMotionEventArgs>? AxisMotion;
+        /// <summary>
+        /// Event that occurs when there is axis motion on a joystick.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickAxisMotionEventArgs>? AxisMotion;
 
-        public static event EventHandler<JoystickBallMotionEventArgs>? BallMotion;
+        /// <summary>
+        /// Event that occurs when there is ball motion on a joystick.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickBallMotionEventArgs>? BallMotion;
 
-        public static event EventHandler<JoystickButtonEventArgs>? ButtonDown;
+        /// <summary>
+        /// Event that occurs when a button on a joystick is pressed down.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickButtonEventArgs>? ButtonDown;
 
-        public static event EventHandler<JoystickButtonEventArgs>? ButtonUp;
+        /// <summary>
+        /// Event that occurs when a button on a joystick is released.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickButtonEventArgs>? ButtonUp;
 
-        public static event EventHandler<JoystickHatMotionEventArgs>? HatMotion;
+        /// <summary>
+        /// Event that occurs when there is motion of the hat control on a joystick.
+        /// </summary>
+        public static event JoystickEventHandler<JoystickHatMotionEventArgs>? HatMotion;
 
+        /// <summary>
+        /// Gets a joystick by its unique identifier.
+        /// </summary>
+        /// <param name="joystickId">The unique identifier of the joystick.</param>
+        /// <returns>The joystick with the specified identifier.</returns>
         public static Joystick GetById(int joystickId)
         {
             return idToJoystick[joystickId];

@@ -19,6 +19,8 @@
         private readonly TerminalTraceListener traceListener;
         private readonly TerminalConsoleRedirect consoleRedirect;
 
+        public bool Shown { get; }
+
         public OutputTerminal()
         {
             traceListener = new(this);
@@ -46,10 +48,10 @@
                 }
 
                 string[] lines = message.Split(Environment.NewLine);
-                if (outputTerminal.messages.Count != 0 && !outputTerminal.messages[^1].Text.EndsWith(Environment.NewLine))
+                if (outputTerminal.messages.Count != 0 && !outputTerminal.messages[^1].Message.EndsWith(Environment.NewLine))
                 {
                     var msg = outputTerminal.messages[^1];
-                    msg.Text += lines[0];
+                    msg.Message += lines[0];
                     outputTerminal.messages[^1] = msg;
                     for (int i = 0; i < lines.Length; i++)
                     {
@@ -125,35 +127,9 @@
 
         private void AddMessage(string text)
         {
-            var color = TerminalColor.Text;
-            if (text.Contains("error", StringComparison.CurrentCultureIgnoreCase))
-            {
-                color = TerminalColor.Error;
-            }
-
-            if (text.Contains("err", StringComparison.CurrentCultureIgnoreCase))
-            {
-                color = TerminalColor.Error;
-            }
-
-            if (text.Contains("warn", StringComparison.CurrentCultureIgnoreCase))
-            {
-                color = TerminalColor.Warning;
-            }
-
-            if (text.Contains("wrn", StringComparison.CurrentCultureIgnoreCase))
-            {
-                color = TerminalColor.Warning;
-            }
-
-            if (text.Contains("warning", StringComparison.CurrentCultureIgnoreCase))
-            {
-                color = TerminalColor.Warning;
-            }
-
             lock (messages)
             {
-                messages.Add(new TerminalMessage() { Text = text, Color = color });
+                messages.Add(new TerminalMessage() { Message = text, Color = TerminalColor.Black });
             }
             scrollToBottom = true;
         }
@@ -193,9 +169,6 @@
 
                     ImGui.TextUnformatted("Color Palette");
                     ImGui.Indent();
-                    ImGui.ColorEdit4("Text##", ref colorPalette[TerminalColor.Text], flags);
-                    ImGui.ColorEdit4("Warning##", ref colorPalette[TerminalColor.Warning], flags);
-                    ImGui.ColorEdit4("Error##", ref colorPalette[TerminalColor.Error], flags);
 
                     ImGui.Unindent();
 
@@ -218,12 +191,12 @@
                     if (coloredOutput)
                     {
                         ImGui.PushStyleColor(ImGuiCol.Text, colorPalette[msg.Color]);
-                        ImGui.TextUnformatted(msg.Text);
+                        ImGui.TextUnformatted(msg.Message);
                         ImGui.PopStyleColor();
                     }
                     else
                     {
-                        ImGui.TextUnformatted(msg.Text);
+                        ImGui.TextUnformatted(msg.Message);
                     }
                 }
                 if (scrollToBottom && (ImGui.GetScrollY() >= ImGui.GetScrollMaxY() || autoScroll))
@@ -247,6 +220,21 @@
                 ImGui.PopTextWrapPos();
                 ImGui.EndTooltip();
             }
+        }
+
+        public void Focus()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Close()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Show()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
     using Hardware.Info;
+    using HexaEngine.Core.Extensions;
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Text;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -11,12 +11,24 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// A class responsible for handling unhandled exceptions and logging crash information.
+    /// </summary>
     public static class CrashLogger
     {
+        /// <summary>
+        /// Gets the file log writer used for crash logging.
+        /// </summary>
         public static readonly FileLogWriter FileLogWriter = new($"logs/app-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log");
+
+#nullable disable
         private static HardwareInfo info;
         private static Task task;
+#nullable restore
 
+        /// <summary>
+        /// Initializes the CrashLogger, setting up crash handling and logging.
+        /// </summary>
         public static void Initialize()
         {
             info = new HardwareInfo();
@@ -72,7 +84,7 @@
                 sb.AppendLine();
                 sb.AppendLine();
                 sb.AppendLine("Callstack:");
-                sb.AppendLine(exception.StackTrace.Replace(Environment.NewLine, "\n\t"));
+                sb.AppendLine(exception.StackTrace?.Replace(Environment.NewLine, "\n\t"));
 
                 var fileInfo = new FileInfo($"logs/crash-{DateTime.Now:yyyy-dd-M--HH-mm-ss}.log");
                 fileInfo.Directory?.Create();

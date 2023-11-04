@@ -2,6 +2,10 @@
 {
     using System.Numerics;
 
+    /// <summary>
+    /// A generic ring buffer for storing and calculating averages of a specified numeric type.
+    /// </summary>
+    /// <typeparam name="T">The type of values to store in the buffer. Must be a numeric struct type implementing <see cref="INumber{T}"/>.</typeparam>
     public unsafe class RingBuffer<T> where T : struct, INumber<T>
     {
         private readonly T[] rawValues;
@@ -14,6 +18,10 @@
         private int count = 0;
         private bool averageValues = true;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RingBuffer{T}"/> class with the specified length.
+        /// </summary>
+        /// <param name="length">The maximum length of the ring buffer.</param>
         public RingBuffer(int length)
         {
             rawValues = new T[length];
@@ -21,8 +29,14 @@
             this.length = length;
         }
 
+        /// <summary>
+        /// Gets the raw values stored in the ring buffer.
+        /// </summary>
         public T[] Raw => rawValues;
 
+        /// <summary>
+        /// Gets the values stored in the ring buffer. If <see cref="AverageValues"/> is set to true, it returns the averaged values; otherwise, it returns the raw values.
+        /// </summary>
         public T[] Values
         {
             get
@@ -31,18 +45,40 @@
             }
         }
 
+        /// <summary>
+        /// Gets the maximum length of the ring buffer.
+        /// </summary>
         public int Length => length;
 
+        /// <summary>
+        /// Gets the tail position in the ring buffer.
+        /// </summary>
         public int Tail => tail;
 
+        /// <summary>
+        /// Gets the head position in the ring buffer.
+        /// </summary>
         public int Head => head;
 
+        /// <summary>
+        /// Gets the value at the tail position in the ring buffer.
+        /// </summary>
         public T TailValue => Values[tail];
 
+        /// <summary>
+        /// Gets the value at the head position in the ring buffer.
+        /// </summary>
         public T HeadValue => Values[head];
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the values in the ring buffer should be averaged.
+        /// </summary>
         public bool AverageValues { get => averageValues; set => averageValues = value; }
 
+        /// <summary>
+        /// Adds a value to the ring buffer, updating the calculated average if necessary.
+        /// </summary>
+        /// <param name="value">The value to add to the ring buffer.</param>
         public void Add(T value)
         {
             if (value < default(T))
@@ -50,7 +86,7 @@
                 value = default;
             }
 
-            // Subtract the oldest _value from the sum if the buffer is full
+            // Subtract the oldest value from the sum if the buffer is full
             if (count == length)
             {
                 sum -= rawValues[tail];
@@ -61,7 +97,7 @@
                 countT++;
             }
 
-            // Add the new _value to the sum
+            // Add the new value to the sum
             sum += value;
 
             avgValues[head] = CalculateAverage();
@@ -71,11 +107,15 @@
             tail = (head - count + length) % length;
         }
 
+        /// <summary>
+        /// Calculates the average of the values in the ring buffer.
+        /// </summary>
+        /// <returns>The calculated average value.</returns>
         public T CalculateAverage()
         {
             if (count == 0)
             {
-                // The buffer is empty, return the default _value of T
+                // The buffer is empty, return the default value of T
                 return default;
             }
 
@@ -84,6 +124,10 @@
         }
     }
 
+    /// <summary>
+    /// An unsafe generic ring buffer for storing and calculating averages of a specified unmanaged numeric type.
+    /// </summary>
+    /// <typeparam name="T">The type of values to store in the buffer. Must be an unmanaged type implementing <see cref="INumber{T}"/>.</typeparam>
     public unsafe struct UnsafeRingBuffer<T> where T : unmanaged, INumber<T>
     {
         private T* rawValues;
@@ -96,6 +140,10 @@
         private int count = 0;
         private bool averageValues = true;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnsafeRingBuffer{T}"/> struct with the specified length.
+        /// </summary>
+        /// <param name="length">The maximum length of the ring buffer.</param>
         public UnsafeRingBuffer(int length)
         {
             rawValues = AllocT<T>(length);
@@ -103,8 +151,14 @@
             this.length = length;
         }
 
+        /// <summary>
+        /// Gets the raw values stored in the ring buffer.
+        /// </summary>
         public readonly T* Raw => rawValues;
 
+        /// <summary>
+        /// Gets the values stored in the ring buffer. If <see cref="AverageValues"/> is set to true, it returns the averaged values; otherwise, it returns the raw values.
+        /// </summary>
         public readonly T* Values
         {
             get
@@ -113,18 +167,40 @@
             }
         }
 
+        /// <summary>
+        /// Gets the maximum length of the ring buffer.
+        /// </summary>
         public readonly int Length => length;
 
+        /// <summary>
+        /// Gets the tail position in the ring buffer.
+        /// </summary>
         public readonly int Tail => tail;
 
+        /// <summary>
+        /// Gets the head position in the ring buffer.
+        /// </summary>
         public readonly int Head => head;
 
+        /// <summary>
+        /// Gets the value at the tail position in the ring buffer.
+        /// </summary>
         public readonly T TailValue => Values[tail];
 
+        /// <summary>
+        /// Gets the value at the head position in the ring buffer.
+        /// </summary>
         public readonly T HeadValue => Values[head - 1];
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the values in the ring buffer should be averaged.
+        /// </summary>
         public bool AverageValues { readonly get => averageValues; set => averageValues = value; }
 
+        /// <summary>
+        /// Adds a value to the ring buffer, updating the calculated average if necessary.
+        /// </summary>
+        /// <param name="value">The value to add to the ring buffer.</param>
         public void Add(T value)
         {
             if (value < default(T))
@@ -132,7 +208,7 @@
                 value = default;
             }
 
-            // Subtract the oldest _value from the sum if the buffer is full
+            // Subtract the oldest value from the sum if the buffer is full
             if (count == length)
             {
                 sum -= rawValues[tail];
@@ -143,7 +219,7 @@
                 countT++;
             }
 
-            // Add the new _value to the sum
+            // Add the new value to the sum
             sum += value;
 
             avgValues[head] = CalculateAverage();
@@ -153,11 +229,15 @@
             tail = (head - count + length) % length;
         }
 
+        /// <summary>
+        /// Calculates the average of the values in the ring buffer.
+        /// </summary>
+        /// <returns>The calculated average value.</returns>
         public readonly T CalculateAverage()
         {
             if (count == 0)
             {
-                // The buffer is empty, return the default _value of T
+                // The buffer is empty, return the default value of T
                 return default;
             }
 
@@ -165,6 +245,9 @@
             return sum / countT;
         }
 
+        /// <summary>
+        /// Releases the allocated memory for raw and average values and resets the buffer to its default state.
+        /// </summary>
         public void Release()
         {
             Free(rawValues);

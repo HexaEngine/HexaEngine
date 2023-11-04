@@ -4,44 +4,149 @@
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
+    /// <summary>
+    /// Provides a custom comparer for ConfigKey objects based on their Name property.
+    /// </summary>
     public class AZConfigKeyComparer : IComparer<ConfigKey>
     {
-        public static readonly AZConfigKeyComparer Default = new();
+        /// <summary>
+        /// Gets the default instance of the AZConfigKeyComparer.
+        /// </summary>
+        public static readonly AZConfigKeyComparer Instance = new();
 
+        /// <summary>
+        /// Compares two ConfigKey objects based on their Name property using StringComparer.Ordinal.Compare.
+        /// </summary>
+        /// <param name="x">The first ConfigKey to compare.</param>
+        /// <param name="y">The second ConfigKey to compare.</param>
+        /// <returns>
+        /// A value less than 0 if x's Name is less than y's Name, 0 if they are equal, and a value greater than 0 if x's Name is greater than y's Name.
+        /// </returns>
         public int Compare(ConfigKey? x, ConfigKey? y)
         {
-            return StringComparer.Ordinal.Compare(x.Name, y.Name);
+            return StringComparer.Ordinal.Compare(x?.Name, y?.Name);
         }
     }
 
+    /// <summary>
+    /// Provides a custom comparer for ConfigValue objects based on their Name property.
+    /// </summary>
     public class AZConfigValueComparer : IComparer<ConfigValue>
     {
-        public static readonly AZConfigValueComparer Default = new();
+        /// <summary>
+        /// Gets the default instance of the AZConfigValueComparer.
+        /// </summary>
+        public static readonly AZConfigValueComparer Instance = new();
 
+        /// <summary>
+        /// Compares two ConfigValue objects based on their Name property using StringComparer.Ordinal.Compare.
+        /// </summary>
+        /// <param name="x">The first ConfigValue to compare.</param>
+        /// <param name="y">The second ConfigValue to compare.</param>
+        /// <returns>
+        /// A value less than 0 if x's Name is less than y's Name, 0 if they are equal, and a value greater than 0 if x's Name is greater than y's Name.
+        /// </returns>
         public int Compare(ConfigValue? x, ConfigValue? y)
         {
-            return StringComparer.Ordinal.Compare(x.Name, y.Name);
+            return StringComparer.Ordinal.Compare(x?.Name, y?.Name);
         }
     }
 
+    /// <summary>
+    /// Provides a custom comparer for ConfigKey objects based on their Name property.
+    /// </summary>
+    public class ZAConfigKeyComparer : IComparer<ConfigKey>
+    {
+        /// <summary>
+        /// Gets the default instance of the ZAConfigKeyComparer.
+        /// </summary>
+        public static readonly ZAConfigKeyComparer Instance = new();
+
+        /// <summary>
+        /// Compares two ConfigKey objects based on their Name property using StringComparer.Ordinal.Compare.
+        /// </summary>
+        /// <param name="x">The first ConfigKey to compare.</param>
+        /// <param name="y">The second ConfigKey to compare.</param>
+        /// <returns>
+        /// A value less than 0 if x's Name is less than y's Name, 0 if they are equal, and a value greater than 0 if x's Name is greater than y's Name (sorting in reverse order).
+        /// </returns>
+        public int Compare(ConfigKey? x, ConfigKey? y)
+        {
+            return StringComparer.Ordinal.Compare(x?.Name, y?.Name) * -1;
+        }
+    }
+
+    /// <summary>
+    /// Provides a custom comparer for ConfigValue objects based on their Name property.
+    /// </summary>
+    public class ZAConfigValueComparer : IComparer<ConfigValue>
+    {
+        /// <summary>
+        /// Gets the default instance of the ZAConfigValueComparer.
+        /// </summary>
+        public static readonly ZAConfigValueComparer Instance = new();
+
+        /// <summary>
+        /// Compares two ConfigValue objects based on their Name property using StringComparer.Ordinal.Compare.
+        /// </summary>
+        /// <param name="x">The first ConfigValue to compare.</param>
+        /// <param name="y">The second ConfigValue to compare.</param>
+        /// <returns>
+        /// A value less than 0 if x's Name is less than y's Name, 0 if they are equal, and a value greater than 0 if x's Name is greater than y's Name (sorting in reverse order).
+        /// </returns>
+        public int Compare(ConfigValue? x, ConfigValue? y)
+        {
+            return StringComparer.Ordinal.Compare(x?.Name, y?.Name) * -1;
+        }
+    }
+
+    /// <summary>
+    /// Represents a configuration manager for handling a list of configuration keys.
+    /// </summary>
     public class Config
     {
         private readonly object _lock = new();
         private static Config? global;
 
+        /// <summary>
+        /// Gets or sets the list of configuration keys contained within this configuration.
+        /// </summary>
         public List<ConfigKey> Keys { get; set; } = new();
 
+        /// <summary>
+        /// Gets the synchronization object used for locking concurrent access to this configuration.
+        /// </summary>
         [JsonIgnore]
         public object SyncObject => _lock;
 
+        /// <summary>
+        /// Sorts the list of configuration keys based on their names.
+        /// </summary>
         public void Sort()
         {
             lock (_lock)
             {
-                Keys.Sort(AZConfigKeyComparer.Default);
+                Keys.Sort(AZConfigKeyComparer.Instance);
             }
         }
 
+        /// <summary>
+        /// Sorts the list of configuration keys based on the specified comparer.
+        /// </summary>
+        /// <param name="comparer">The comparer to use for sorting the configuration keys.</param>
+        public void Sort(IComparer<ConfigKey> comparer)
+        {
+            lock (_lock)
+            {
+                Keys.Sort(comparer);
+            }
+        }
+
+        /// <summary>
+        /// Gets a configuration key with the specified path.
+        /// </summary>
+        /// <param name="path">The path to the configuration key.</param>
+        /// <returns>The configuration key with the specified path, or null if not found.</returns>
         public ConfigKey? GetKey(string path)
         {
             lock (_lock)
@@ -50,6 +155,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets or creates a configuration key with the specified path.
+        /// </summary>
+        /// <param name="path">The path to the configuration key.</param>
+        /// <returns>The configuration key with the specified path or a new one if it doesn't exist.</returns>
         public ConfigKey GetOrCreateKey(string path)
         {
             lock (_lock)
@@ -64,6 +174,13 @@
             }
         }
 
+        /// <summary>
+        /// Generates or retrieves a subkey automatically based on the properties of the specified object.
+        /// </summary>
+        /// <typeparam name="T">The type of object used to generate the subkey.</typeparam>
+        /// <param name="t">The object used to generate the subkey.</param>
+        /// <param name="name">The name of the subkey.</param>
+        /// <returns>The generated or retrieved subkey.</returns>
         public ConfigKey GenerateSubKeyAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, string name)
         {
             lock (_lock)
@@ -80,6 +197,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the global configuration instance, loading it from "config.json" if it exists, or creating a new one if not.
+        /// </summary>
         public static Config Global
         {
             get
@@ -101,6 +221,9 @@
             }
         }
 
+        /// <summary>
+        /// Saves the configuration to a "config.json" file.
+        /// </summary>
         public void Save()
         {
             lock (_lock)

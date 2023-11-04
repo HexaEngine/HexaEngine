@@ -6,6 +6,11 @@
     using System.Text;
     using static Extensions.SdlErrorHandlingExtensions;
 
+    public delegate void JoystickEventHandler<TEventArgs>(Joystick sender, TEventArgs e);
+
+    /// <summary>
+    /// Represents a joystick input device.
+    /// </summary>
     public unsafe class Joystick : IDisposable
     {
         private static readonly Sdl sdl = Application.sdl;
@@ -26,6 +31,10 @@
 
         private bool disposedValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Joystick"/> class with the specified ID.
+        /// </summary>
+        /// <param name="id">The ID of the joystick.</param>
         public Joystick(int id)
         {
             this.id = id;
@@ -74,8 +83,14 @@
             this.guid = value;
         }
 
+        /// <summary>
+        /// Gets the ID of the joystick.
+        /// </summary>
         public int Id => id;
 
+        /// <summary>
+        /// Gets the name of the joystick.
+        /// </summary>
         public string Name
         {
             get
@@ -83,67 +98,152 @@
                 var name = sdl.JoystickNameS(joystick);
                 if (name == null)
                     SdlCheckError();
-                return name;
+                return name ?? string.Empty;
             }
         }
 
+        /// <summary>
+        /// Gets the vendor ID of the joystick.
+        /// </summary>
         public ushort Vendor => sdl.JoystickGetVendor(joystick);
 
+        /// <summary>
+        /// Gets the product ID of the joystick.
+        /// </summary>
         public ushort Product => sdl.JoystickGetProduct(joystick);
 
+        /// <summary>
+        /// Gets the product version of the joystick.
+        /// </summary>
         public ushort ProductVersion => sdl.JoystickGetProductVersion(joystick);
 
+        /// <summary>
+        /// Gets the serial number of the joystick.
+        /// </summary>
         public string Serial => sdl.JoystickGetSerialS(joystick);
 
+        /// <summary>
+        /// Gets the unique identifier (GUID) of the joystick.
+        /// </summary>
         public string Guid => guid;
 
+        /// <summary>
+        /// Gets a value indicating whether the joystick is attached and available.
+        /// </summary>
         public bool IsAttached => sdl.JoystickGetAttached(joystick) == SdlBool.True;
 
+        /// <summary>
+        /// Gets a value indicating whether the joystick is a virtual joystick.
+        /// </summary>
         public bool IsVirtual => sdl.JoystickIsVirtual(id) == SdlBool.True;
 
+        /// <summary>
+        /// Gets a value indicating whether the joystick has LED support.
+        /// </summary>
         public bool HasLED => sdl.JoystickHasLED(joystick) == SdlBool.True;
 
+        /// <summary>
+        /// Gets the type of the joystick.
+        /// </summary>
         public JoystickType Type => Helper.Convert(sdl.JoystickGetType(joystick));
 
+        /// <summary>
+        /// Gets or sets the deadzone value for joystick axes.
+        /// </summary>
         public short Deadzone { get => deadzone; set => deadzone = value; }
 
+        /// <summary>
+        /// Gets or sets the player index assigned to the joystick.
+        /// </summary>
         public int PlayerIndex { get => sdl.JoystickGetPlayerIndex(joystick); set => sdl.JoystickSetPlayerIndex(joystick, value); }
 
+        /// <summary>
+        /// Gets the current power level of the joystick.
+        /// </summary>
         public JoystickPowerLevel PowerLevel => Helper.Convert(sdl.JoystickCurrentPowerLevel(joystick));
 
+        /// <summary>
+        /// Gets the state of joystick axes as a dictionary with axis ID and their values.
+        /// </summary>
         public IReadOnlyDictionary<int, short> Axes => axes;
 
+        /// <summary>
+        /// Gets the state of joystick balls as a dictionary with ball ID and their relative motion values (X, Y).
+        /// </summary>
         public IReadOnlyDictionary<int, (int, int)> Balls => balls;
 
+        /// <summary>
+        /// Gets the state of joystick buttons as a dictionary with button ID and their states.
+        /// </summary>
         public IReadOnlyDictionary<int, JoystickButtonState> Buttons => buttons;
 
+        /// <summary>
+        /// Gets the state of joystick hats as a dictionary with hat ID and their states.
+        /// </summary>
         public IReadOnlyDictionary<int, JoystickHatState> Hats => hats;
 
-        public event EventHandler<JoystickAxisMotionEventArgs>? AxisMotion;
+        /// <summary>
+        /// Occurs when a joystick axis is moved.
+        /// </summary>
+        public event JoystickEventHandler<JoystickAxisMotionEventArgs>? AxisMotion;
 
-        public event EventHandler<JoystickBallMotionEventArgs>? BallMotion;
+        /// <summary>
+        /// Occurs when a joystick ball is moved.
+        /// </summary>
+        public event JoystickEventHandler<JoystickBallMotionEventArgs>? BallMotion;
 
-        public event EventHandler<JoystickButtonEventArgs>? ButtonDown;
+        /// <summary>
+        /// Occurs when a joystick button is pressed.
+        /// </summary>
+        public event JoystickEventHandler<JoystickButtonEventArgs>? ButtonDown;
 
-        public event EventHandler<JoystickButtonEventArgs>? ButtonUp;
+        /// <summary>
+        /// Occurs when a joystick button is released.
+        /// </summary>
+        public event JoystickEventHandler<JoystickButtonEventArgs>? ButtonUp;
 
-        public event EventHandler<JoystickHatMotionEventArgs>? HatMotion;
+        /// <summary>
+        /// Occurs when a joystick hat is moved.
+        /// </summary>
+        public event JoystickEventHandler<JoystickHatMotionEventArgs>? HatMotion;
 
+        /// <summary>
+        /// Initiates rumble feedback on the joystick using a low-frequency and high-frequency effect.
+        /// </summary>
+        /// <param name="lowFreq">The low-frequency effect strength (0 to 0xFFFF).</param>
+        /// <param name="highFreq">The high-frequency effect strength (0 to 0xFFFF).</param>
+        /// <param name="durationMs">The duration of the rumble effect in milliseconds.</param>
         public void Rumble(ushort lowFreq, ushort highFreq, uint durationMs)
         {
             sdl.JoystickRumble(joystick, lowFreq, highFreq, durationMs);
         }
 
+        /// <summary>
+        /// Initiates separate rumble feedback for the left and right triggers of the joystick.
+        /// </summary>
+        /// <param name="left">The strength of the rumble effect for the left trigger (0 to 0xFFFF).</param>
+        /// <param name="right">The strength of the rumble effect for the right trigger (0 to 0xFFFF).</param>
+        /// <param name="durationMs">The duration of the rumble effect in milliseconds.</param>
         public void RumbleTriggers(ushort left, ushort right, uint durationMs)
         {
             sdl.JoystickRumbleTriggers(joystick, left, right, durationMs);
         }
 
+        /// <summary>
+        /// Sets the LED color of the joystick using a Vector4 representing the color (RGBA).
+        /// </summary>
+        /// <param name="color">A Vector4 specifying the LED color (red, green, blue, and alpha components).</param>
         public void SetLED(Vector4 color)
         {
             sdl.JoystickSetLED(joystick, (byte)(color.X * 255), (byte)(color.Y * 255), (byte)(color.Z * 255));
         }
 
+        /// <summary>
+        /// Sets the LED color of the joystick using individual red, green, and blue color components.
+        /// </summary>
+        /// <param name="red">The red color component (0 to 255).</param>
+        /// <param name="green">The green color component (0 to 255).</param>
+        /// <param name="blue">The blue color component (0 to 255).</param>
         public void SetLED(byte red, byte green, byte blue)
         {
             sdl.JoystickSetLED(joystick, red, green, blue);
@@ -220,6 +320,10 @@
             return (this, hatMotionEventArgs);
         }
 
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -229,12 +333,18 @@
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="Joystick"/> class.
+        /// </summary>
         ~Joystick()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: false);
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

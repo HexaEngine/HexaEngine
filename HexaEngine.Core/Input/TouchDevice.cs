@@ -2,8 +2,18 @@
 {
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
-    using System;
 
+    /// <summary>
+    /// Represents a generic delegate for handling events in the TouchDevice class.
+    /// </summary>
+    /// <typeparam name="TEventArgs">The type of event arguments for the event.</typeparam>
+    /// <param name="sender">The source of the event, which is the TouchDevice that raised the event.</param>
+    /// <param name="e">The event arguments specific to the type of event being handled.</param>
+    public delegate void TouchDeviceEventHandler<TEventArgs>(TouchDevice sender, TEventArgs e);
+
+    /// <summary>
+    /// Represents a touch input device.
+    /// </summary>
     public unsafe class TouchDevice
     {
         private static readonly Sdl sdl = Application.sdl;
@@ -16,6 +26,10 @@
         private readonly TouchEventArgs touchEventArgs = new();
         private readonly TouchMotionEventArgs touchMotionEventArgs = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TouchDevice"/> class using the specified index.
+        /// </summary>
+        /// <param name="index">The index of the touch device.</param>
         public TouchDevice(int index)
         {
             id = sdl.GetTouchDevice(index);
@@ -32,6 +46,10 @@
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TouchDevice"/> class using the specified device ID.
+        /// </summary>
+        /// <param name="id">The ID of the touch device.</param>
         public TouchDevice(long id)
         {
             this.id = id;
@@ -48,19 +66,40 @@
             }
         }
 
+        /// <summary>
+        /// Gets the ID of the touch device.
+        /// </summary>
         public long Id => id;
 
+        /// <summary>
+        /// Gets the name of the touch device.
+        /// </summary>
         public string Name => name;
 
+        /// <summary>
+        /// Gets the type of the touch device.
+        /// </summary>
         public TouchDeviceType Type => type;
 
+        /// <summary>
+        /// Gets the number of fingers associated with the touch device.
+        /// </summary>
         public int FingerCount => fingers.Length;
 
-        public event EventHandler<TouchEventArgs>? TouchUp;
+        /// <summary>
+        /// Occurs when a finger is lifted off the touch device.
+        /// </summary>
+        public event TouchDeviceEventHandler<TouchEventArgs>? TouchUp;
 
-        public event EventHandler<TouchEventArgs>? TouchDown;
+        /// <summary>
+        /// Occurs when a finger is placed on the touch device.
+        /// </summary>
+        public event TouchDeviceEventHandler<TouchEventArgs>? TouchDown;
 
-        public event EventHandler<TouchMotionEventArgs>? TouchMotion;
+        /// <summary>
+        /// Occurs when a finger moves on the touch device.
+        /// </summary>
+        public event TouchDeviceEventHandler<TouchMotionEventArgs>? TouchMotion;
 
         internal (TouchDevice, TouchEventArgs) OnFingerUp(TouchFingerEvent evnt)
         {
@@ -117,31 +156,61 @@
             return (this, touchMotionEventArgs);
         }
 
+        /// <summary>
+        /// Checks if a finger with the specified ID is in the "down" state.
+        /// </summary>
+        /// <param name="fingerId">The ID of the finger to check.</param>
+        /// <returns>True if the finger is in the "down" state; otherwise, false.</returns>
         public bool IsDownById(long fingerId)
         {
             return IsDownByIndex(fingerIdToIndex[fingerId]);
         }
 
+        /// <summary>
+        /// Checks if a finger with the specified ID is in the "up" state.
+        /// </summary>
+        /// <param name="fingerId">The ID of the finger to check.</param>
+        /// <returns>True if the finger is in the "up" state; otherwise, false.</returns>
         public bool IsUpById(long fingerId)
         {
             return IsUpByIndex(fingerIdToIndex[fingerId]);
         }
 
+        /// <summary>
+        /// Checks if a finger at the specified index is in the "down" state.
+        /// </summary>
+        /// <param name="index">The index of the finger to check.</param>
+        /// <returns>True if the finger is in the "down" state; otherwise, false.</returns>
         public bool IsDownByIndex(int index)
         {
             return fingers[index].State == FingerState.Down;
         }
 
+        /// <summary>
+        /// Checks if a finger at the specified index is in the "up" state.
+        /// </summary>
+        /// <param name="index">The index of the finger to check.</param>
+        /// <returns>True if the finger is in the "up" state; otherwise, false.</returns>
         public bool IsUpByIndex(int index)
         {
             return fingers[index].State == FingerState.Up;
         }
 
+        /// <summary>
+        /// Gets a finger by its ID.
+        /// </summary>
+        /// <param name="fingerId">The ID of the finger to retrieve.</param>
+        /// <returns>The <see cref="Finger"/> associated with the specified ID.</returns>
         public Finger GetFingerById(long fingerId)
         {
             return GetFingerByIndex(fingerIdToIndex[fingerId]);
         }
 
+        /// <summary>
+        /// Gets a finger by its index.
+        /// </summary>
+        /// <param name="index">The index of the finger to retrieve.</param>
+        /// <returns>The <see cref="Finger"/> at the specified index.</returns>
         public Finger GetFingerByIndex(int index)
         {
             return fingers[index];

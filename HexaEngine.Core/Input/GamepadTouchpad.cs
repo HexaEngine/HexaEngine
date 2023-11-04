@@ -3,6 +3,17 @@
     using HexaEngine.Core.Input.Events;
     using Silk.NET.SDL;
 
+    /// <summary>
+    /// Represents a delegate for handling events related to a gamepad touchpad.
+    /// </summary>
+    /// <typeparam name="TEventArgs">The type of event arguments associated with the event.</typeparam>
+    /// <param name="sender">The sender of the event, which is the <see cref="GamepadTouchpad"/> triggering the event.</param>
+    /// <param name="e">The event arguments containing information about the event.</param>
+    public delegate void GamepadTouchpadEventHandler<TEventArgs>(GamepadTouchpad sender, TEventArgs e);
+
+    /// <summary>
+    /// Represents a touchpad on a gamepad controller.
+    /// </summary>
     public unsafe class GamepadTouchpad
     {
         private static readonly Sdl sdl = Application.sdl;
@@ -13,6 +24,11 @@
         private readonly GamepadTouchpadEventArgs touchpadEventArgs = new();
         private readonly GamepadTouchpadMotionEventArgs motionEventArgs = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GamepadTouchpad"/> class.
+        /// </summary>
+        /// <param name="id">The ID of the touchpad.</param>
+        /// <param name="controller">The game controller associated with the touchpad.</param>
         public GamepadTouchpad(int id, GameController* controller)
         {
             this.id = id;
@@ -30,15 +46,30 @@
             }
         }
 
+        /// <summary>
+        /// Gets the ID of the touchpad.
+        /// </summary>
         public int Id => id;
 
+        /// <summary>
+        /// Gets the number of fingers on the touchpad.
+        /// </summary>
         public int FingerCount => fingerStates.Length;
 
-        public event EventHandler<GamepadTouchpadEventArgs>? TouchPadDown;
+        /// <summary>
+        /// Occurs when a finger touches down on the touchpad.
+        /// </summary>
+        public event GamepadTouchpadEventHandler<GamepadTouchpadEventArgs>? TouchPadDown;
 
-        public event EventHandler<GamepadTouchpadMotionEventArgs>? TouchPadMotion;
+        /// <summary>
+        /// Occurs when a finger moves on the touchpad.
+        /// </summary>
+        public event GamepadTouchpadEventHandler<GamepadTouchpadMotionEventArgs>? TouchPadMotion;
 
-        public event EventHandler<GamepadTouchpadEventArgs>? TouchPadUp;
+        /// <summary>
+        /// Occurs when a finger lifts up from the touchpad.
+        /// </summary>
+        public event GamepadTouchpadEventHandler<GamepadTouchpadEventArgs>? TouchPadUp;
 
         internal (GamepadTouchpad Touchpad, GamepadTouchpadEventArgs EventArgs) OnTouchPadDown(ControllerTouchpadEvent even)
         {
@@ -104,21 +135,39 @@
             return (this, touchpadEventArgs);
         }
 
+        /// <summary>
+        /// Determines whether a finger on the touchpad is currently down.
+        /// </summary>
+        /// <param name="finger">The index of the finger on the touchpad.</param>
+        /// <returns><c>true</c> if the finger is currently down; otherwise, <c>false</c>.</returns>
         public bool IsDown(int finger)
         {
             return fingerStates[finger].State == FingerState.Down;
         }
 
+        /// <summary>
+        /// Determines whether a finger on the touchpad is currently up.
+        /// </summary>
+        /// <param name="finger">The index of the finger on the touchpad.</param>
+        /// <returns><c>true</c> if the finger is currently up; otherwise, <c>false</c>.</returns>
         public bool IsUp(int finger)
         {
             return fingerStates[finger].State == FingerState.Up;
         }
 
+        /// <summary>
+        /// Gets the state of the finger at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the finger on the touchpad.</param>
+        /// <returns>The state of the finger at the specified index.</returns>
         public GamepadTouchpadFinger GetFinger(int index)
         {
             return fingerStates[index];
         }
 
+        /// <summary>
+        /// Flushes the state of the touchpad, updating the finger states.
+        /// </summary>
         public void Flush()
         {
             for (int i = 0; i < fingerStates.Length; i++)

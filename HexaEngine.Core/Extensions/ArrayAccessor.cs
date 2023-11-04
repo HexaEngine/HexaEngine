@@ -5,17 +5,33 @@
     using System.Reflection;
     using System.Reflection.Emit;
 
+    /// <summary>
+    /// Provides a hacky way to access the local array of a <see cref="List{T}"/>.
+    /// </summary>
+    [Obsolete("Use a non hacky way of accessing the local array of a List<T>, will be removed next version")]
     internal static class ArrayAccessor<T>
     {
+        /// <summary>
+        /// Gets a delegate that can be used to retrieve the local array of a <see cref="List{T}"/>.
+        /// </summary>
         public static Func<List<T>, T[]> Getter;
 
         static ArrayAccessor()
         {
-            var dm = new DynamicMethod("get", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, typeof(T[]), new Type[] { typeof(List<T>) }, typeof(ArrayAccessor<T>), true);
+            // Create a DynamicMethod to access the internal array field.
+            var dm = new DynamicMethod("get", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard, typeof(T[]), [typeof(List<T>)], typeof(ArrayAccessor<T>), true);
             var il = dm.GetILGenerator();
-            il.Emit(OpCodes.Ldarg_0); // Load List<T> argument
-            il.Emit(OpCodes.Ldfld, typeof(List<T>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance)); // Replace argument by field
-            il.Emit(OpCodes.Ret); // Return field
+
+            // Load List<T> argument onto the evaluation stack.
+            il.Emit(OpCodes.Ldarg_0);
+
+            // Load the internal array field from the List<T> instance.
+            il.Emit(OpCodes.Ldfld, typeof(List<T>).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance));
+
+            // Return the internal array field.
+            il.Emit(OpCodes.Ret);
+
+            // Create a delegate from the DynamicMethod to get the internal array.
             Getter = (Func<List<T>, T[]>)dm.CreateDelegate(typeof(Func<List<T>, T[]>));
         }
     }

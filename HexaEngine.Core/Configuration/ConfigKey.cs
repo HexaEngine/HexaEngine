@@ -5,33 +5,74 @@
     using System.Numerics;
     using System.Reflection;
 
+    /// <summary>
+    /// Represents a configuration key that can contain values and subkeys.
+    /// </summary>
     public class ConfigKey
     {
         private readonly object _lock = new();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigKey"/> class with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the configuration key.</param>
         public ConfigKey(string name)
         {
             Name = name;
         }
 
+        /// <summary>
+        /// Gets or sets the name of the configuration key.
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets a list of configuration values associated with this key.
+        /// </summary>
         public List<ConfigValue> Values { get; set; } = new();
 
+        /// <summary>
+        /// Gets or sets a list of subkeys contained within this configuration key.
+        /// </summary>
         public List<ConfigKey> Keys { get; set; } = new();
 
+        /// <summary>
+        /// Gets an object used for synchronization to protect concurrent access to the key.
+        /// </summary>
         [JsonIgnore]
         public object SyncObject => _lock;
 
+        /// <summary>
+        /// Sorts the configuration values and subkeys of this key.
+        /// </summary>
         public void Sort()
         {
             lock (_lock)
             {
-                Values.Sort(AZConfigValueComparer.Default);
-                Keys.Sort(AZConfigKeyComparer.Default);
+                Values.Sort(AZConfigValueComparer.Instance);
+                Keys.Sort(AZConfigKeyComparer.Instance);
             }
         }
 
+        /// <summary>
+        /// Sorts the configuration values and subkeys of this key using custom comparers.
+        /// </summary>
+        /// <param name="keyComparer">The comparer to use for sorting subkeys.</param>
+        /// <param name="valueComparer">The comparer to use for sorting values.</param>
+        public void Sort(IComparer<ConfigKey> keyComparer, IComparer<ConfigValue> valueComparer)
+        {
+            lock (_lock)
+            {
+                Values.Sort(valueComparer);
+                Keys.Sort(keyComparer);
+            }
+        }
+
+        /// <summary>
+        /// Adds a subkey to this configuration key with the specified name.
+        /// </summary>
+        /// <param name="path">The name of the subkey to add.</param>
+        /// <returns>The newly added subkey.</returns>
         public ConfigKey AddKey(string path)
         {
             lock (_lock)
@@ -45,6 +86,11 @@
             }
         }
 
+        /// <summary>
+        /// Removes a subkey from this configuration key with the specified name.
+        /// </summary>
+        /// <param name="path">The name of the subkey to remove.</param>
+        /// <returns><c>true</c> if the subkey was removed; otherwise, <c>false</c>.</returns>
         public bool RemoveKey(string path)
         {
             lock (_lock)
@@ -62,6 +108,11 @@
             }
         }
 
+        /// <summary>
+        /// Gets or creates a subkey within this configuration key with the specified name.
+        /// </summary>
+        /// <param name="path">The name of the subkey to get or create.</param>
+        /// <returns>The subkey with the specified name, creating it if it doesn't exist.</returns>
         public ConfigKey GetOrCreateKey(string path)
         {
             lock (_lock)
@@ -76,6 +127,12 @@
             }
         }
 
+        /// <summary>
+        /// Tries to get a subkey by name within this configuration key.
+        /// </summary>
+        /// <param name="path">The name of the subkey to find.</param>
+        /// <param name="key">When this method returns, contains the subkey if found; otherwise, <c>null</c>.</param>
+        /// <returns><c>true</c> if the subkey was found; otherwise, <c>false</c>.</returns>
         public bool TryGetKey(string path, [NotNullWhen(true)] out ConfigKey? key)
         {
             lock (_lock)
@@ -85,6 +142,12 @@
             }
         }
 
+        /// <summary>
+        /// Tries to get the value associated with a key within this configuration key.
+        /// </summary>
+        /// <param name="key">The name of the key to find.</param>
+        /// <param name="value">When this method returns, contains the value if found; otherwise, <c>null</c>.</param>
+        /// <returns><c>true</c> if the key was found and has a value; otherwise, <c>false</c>.</returns>
         public bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
         {
             lock (_lock)
@@ -94,6 +157,12 @@
             }
         }
 
+        /// <summary>
+        /// Tries to get the configuration value associated with a key within this configuration key.
+        /// </summary>
+        /// <param name="key">The name of the key to find.</param>
+        /// <param name="value">When this method returns, contains the configuration value if found; otherwise, <c>null</c>.</param>
+        /// <returns><c>true</c> if the key was found and has a configuration value; otherwise, <c>false</c>.</returns>
         public bool TryGetKeyValue(string key, [NotNullWhen(true)] out ConfigValue? value)
         {
             lock (_lock)
@@ -103,6 +172,14 @@
             }
         }
 
+        /// <summary>
+        /// Tries to get a configuration value by key, creating it if it doesn't exist.
+        /// </summary>
+        /// <param name="key">The name of the key to find or create.</param>
+        /// <param name="defaultValue">The default value to set if the key doesn't exist.</param>
+        /// <param name="type">The data type of the configuration value.</param>
+        /// <param name="isReadOnly">A value indicating whether the configuration value is read-only.</param>
+        /// <param name="value">When this method returns, contains the configuration value.</param>
         public void TryGetOrAddKeyValue(string key, string? defaultValue, DataType type, bool isReadOnly, out ConfigValue value)
         {
             lock (_lock)
@@ -118,6 +195,15 @@
             }
         }
 
+        /// <summary>
+        /// Tries to get a value by key, creating it if it doesn't exist.
+        /// </summary>
+        /// <param name="key">The name of the key to find or create.</param>
+        /// <param name="defaultValue">The default value to set if the key doesn't exist.</param>
+        /// <param name="type">The data type of the value.</param>
+        /// <param name="isReadOnly">A value indicating whether the value is read-only.</param>
+        /// <param name="value">When this method returns, contains the value.</param>
+        /// <returns><c>true</c> if the value was found or created; otherwise, <c>false</c>.</returns>
         public bool TryGetOrAddValue(string key, string? defaultValue, DataType type, bool isReadOnly, [NotNullWhen(true)] out string? value)
         {
             lock (_lock)
@@ -133,6 +219,11 @@
             }
         }
 
+        /// <summary>
+        /// Determines whether this configuration key contains a subkey with the specified name.
+        /// </summary>
+        /// <param name="key">The name of the subkey to check for.</param>
+        /// <returns><c>true</c> if a subkey with the specified name exists; otherwise, <c>false</c></returns>.
         public bool ContainsKey(string key)
         {
             lock (_lock)
@@ -149,6 +240,12 @@
             }
         }
 
+        /// <summary>
+        /// Finds a configuration value in the provided list of values with the specified key.
+        /// </summary>
+        /// <param name="values">The list of configuration values to search in.</param>
+        /// <param name="key">The key to look for in the list of values.</param>
+        /// <returns>The configuration value with the specified key, or <c>null</c> if not found.</returns>
         public static ConfigValue? Find(List<ConfigValue> values, string key)
         {
             for (int i = 0; i < values.Count; i++)
@@ -162,6 +259,13 @@
             return null;
         }
 
+        /// <summary>
+        /// Adds a configuration value to the list of values in this configuration key.
+        /// </summary>
+        /// <param name="key">The name of the configuration value to add.</param>
+        /// <param name="type">The data type of the configuration value.</param>
+        /// <param name="value">The value to set for the configuration value.</param>
+        /// <param name="isReadOnly">A value indicating whether the configuration value is read-only.</param>
         public void AddValue(string key, DataType type, string? value, bool isReadOnly)
         {
             lock (_lock)
@@ -172,6 +276,14 @@
             }
         }
 
+        /// <summary>
+        /// Adds a configuration value to the list of values in this configuration key with an associated enum type.
+        /// </summary>
+        /// <param name="key">The name of the configuration value to add.</param>
+        /// <param name="type">The data type of the configuration value.</param>
+        /// <param name="value">The value to set for the configuration value.</param>
+        /// <param name="isReadOnly">A value indicating whether the configuration value is read-only.</param>
+        /// <param name="enumType">The enum type associated with the configuration value.</param>
         public void AddValue(string key, DataType type, string? value, bool isReadOnly, Type? enumType)
         {
             lock (_lock)
@@ -183,6 +295,11 @@
             }
         }
 
+        /// <summary>
+        /// Removes a configuration value from this configuration key with the specified name.
+        /// </summary>
+        /// <param name="key">The name of the configuration value to remove.</param>
+        /// <returns><c>true</c> if the configuration value was removed; otherwise, <c>false</c>.</returns>
         public bool RemoveValue(string key)
         {
             lock (_lock)
@@ -200,6 +317,13 @@
             }
         }
 
+        /// <summary>
+        /// Gets the integer value associated with the specified key. If the key does not exist,
+        /// it adds a new integer value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default integer value to add if the key doesn't exist.</param>
+        /// <returns>The integer value associated with the key or the default value if the key doesn't exist.</returns>
         public int GetOrAddValue(string key, int defaultValue)
         {
             lock (_lock)
@@ -218,6 +342,13 @@
             }
         }
 
+        /// <summary>
+        /// Gets the floating-point value associated with the specified key. If the key does not exist,
+        /// it adds a new floating-point value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default floating-point value to add if the key doesn't exist.</param>
+        /// <returns>The floating-point value associated with the key or the default value if the key doesn't exist.</returns>
         public float GetOrAddValue(string key, float defaultValue)
         {
             lock (_lock)
@@ -236,6 +367,13 @@
             }
         }
 
+        /// <summary>
+        /// Gets the boolean value associated with the specified key. If the key does not exist,
+        /// it adds a new boolean value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default boolean value to add if the key doesn't exist.</param>
+        /// <returns>The boolean value associated with the key or the default value if the key doesn't exist.</returns>
         public bool GetOrAddValue(string key, bool defaultValue)
         {
             lock (_lock)
@@ -254,6 +392,13 @@
             }
         }
 
+        /// <summary>
+        /// Gets a Vector3 value associated with the specified key. If the key does not exist,
+        /// it adds a new Vector3 value with the provided default value.
+        /// </summary>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default Vector3 value to add if the key doesn't exist.</param>
+        /// <returns>The Vector3 value associated with the key or the default value if the key doesn't exist.</returns>
         public Vector3 GetOrAddValue(string key, Vector3 defaultValue)
         {
             lock (_lock)
@@ -273,6 +418,14 @@
             }
         }
 
+        /// <summary>
+        /// Gets an enum value associated with the specified key. If the key does not exist,
+        /// it adds a new enum value with the provided default value.
+        /// </summary>
+        /// <typeparam name="T">The enum type.</typeparam>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default enum value to add if the key doesn't exist.</param>
+        /// <returns>The enum value associated with the key or the default value if the key doesn't exist.</returns>
         public T GetOrAddValue<T>(string key, T defaultValue) where T : struct, Enum
         {
             lock (_lock)
@@ -296,6 +449,17 @@
             }
         }
 
+        /// <summary>
+        /// Gets a value associated with the specified key and applies custom conversion functions.
+        /// If the key does not exist, it adds a new value with the provided default value.
+        /// </summary>
+        /// <typeparam name="T">The type of value to retrieve or add.</typeparam>
+        /// <param name="key">The key to look up or add.</param>
+        /// <param name="defaultValue">The default value to add if the key doesn't exist.</param>
+        /// <param name="type">The data type of the configuration value.</param>
+        /// <param name="convert">A function to convert a string to the target value type.</param>
+        /// <param name="convertBack">A function to convert the target value type back to a string.</param>
+        /// <returns>The value associated with the key or the default value if the key doesn't exist.</returns>
         public T GetOrAddValue<T>(string key, T defaultValue, DataType type, Func<string?, T> convert, Func<T, string?> convertBack)
         {
             lock (_lock)
@@ -310,6 +474,11 @@
             }
         }
 
+        /// <summary>
+        /// Sets a string value associated with the specified key.
+        /// </summary>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The string value to set.</param>
         public void SetValue(string key, string? value)
         {
             lock (_lock)
@@ -321,6 +490,12 @@
             }
         }
 
+        /// <summary>
+        /// Sets a value associated with the specified key. This overload is used for nullable value types.
+        /// </summary>
+        /// <typeparam name="T">The type of value to set.</typeparam>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The value to set.</param>
         public void SetValue<T>(string key, T? value)
         {
             lock (_lock)
@@ -332,6 +507,12 @@
             }
         }
 
+        /// <summary>
+        /// Sets an enum value associated with the specified key. This overload is used for nullable enum value types.
+        /// </summary>
+        /// <typeparam name="T">The enum type of the value to set.</typeparam>
+        /// <param name="key">The key for which to set the value.</param>
+        /// <param name="value">The enum value to set.</param>
         public void SetValue<T>(string key, T? value) where T : struct, Enum
         {
             lock (_lock)
@@ -344,6 +525,14 @@
             }
         }
 
+        /// <summary>
+        /// Generates a subkey automatically based on a provided object's public properties and the subkey name.
+        /// If a subkey with the same name already exists, it will be updated; otherwise, a new subkey will be added.
+        /// </summary>
+        /// <typeparam name="T">The type of the provided object, which determines the subkey's structure.</typeparam>
+        /// <param name="t">The object used to initialize the subkey's structure.</param>
+        /// <param name="name">The name of the subkey.</param>
+        /// <returns>The generated or updated subkey.</returns>
         public ConfigKey GenerateSubKeyAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, string name)
         {
             lock (_lock)
@@ -360,6 +549,12 @@
             }
         }
 
+        /// <summary>
+        /// Searches for a subkey with the specified name in the provided list of subkeys.
+        /// </summary>
+        /// <param name="keys">The list of subkeys to search within.</param>
+        /// <param name="name">The name of the subkey to find.</param>
+        /// <returns>The subkey with the specified name, or null if it is not found.</returns>
         public static ConfigKey? Find(List<ConfigKey> keys, string name)
         {
             for (int i = 0; i < keys.Count; i++)
@@ -702,7 +897,7 @@
                 return;
             }
             var property = configValue.Property;
-            var type = property.PropertyType;
+            var type = configValue.EnumType;
             var t = configValue.Instance;
 #nullable disable
             if (e != null)
@@ -718,6 +913,12 @@
 
         #endregion EventHandlers
 
+        /// <summary>
+        /// Automatically initializes and populates ConfigValue objects based on the public properties of the specified object of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of the object for which ConfigValue objects will be initialized.</typeparam>
+        /// <param name="t">The object for which ConfigValue objects will be initialized.</param>
+        /// <param name="allowReadOnly">Specifies whether to include read-only properties in the initialization (default is false).</param>
         public void InitAuto<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(T t, bool allowReadOnly = false)
         {
 #nullable disable

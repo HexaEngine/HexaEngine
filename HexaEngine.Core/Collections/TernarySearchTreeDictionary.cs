@@ -37,7 +37,7 @@ namespace HexaEngine.Core.Collections
     /// <see cref="SortedList"/> classes.
     /// </para>
     /// <para>
-    /// Please read the paper to get some insight on the stucture used below.
+    /// Please read the paper to get some insight on the structure used below.
     /// </para>
     /// </remarks>
     public class TernarySearchTreeDictionary<T> : IDictionary<string, T>, ICollection, IReadOnlyDictionary<string, T>
@@ -83,7 +83,7 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Constructor that adds multiple elements into the <see cref="TstDictionary"/>
+        /// Constructor that adds multiple elements into the <see cref="TernarySearchTreeDictionary{T}"/>
         /// </summary>
         /// <param name="values">The elements to add</param>
         /// <remarks>
@@ -92,7 +92,7 @@ namespace HexaEngine.Core.Collections
         public TernarySearchTreeDictionary(IEnumerable<KeyValuePair<string, T>> values) : this(values, StringComparer.Ordinal) { }
 
         /// <summary>
-        /// Constructor that adds multiple elements into the <see cref="TstDictionary"/>
+        /// Constructor that adds multiple elements into the <see cref="TernarySearchTreeDictionary{T}"/>
         /// </summary>
         /// <param name="values">The elements to add</param>
         /// <param name="comparer">Comparer used to compare keys</param>
@@ -105,7 +105,7 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Returns the comparer used to compare keys in the <see cref="TstDictionary"/>
+        /// Returns the comparer used to compare keys in the <see cref="TernarySearchTreeDictionary{T}"/>
         /// </summary>
         public IComparer<string>? Comparer
         {
@@ -113,11 +113,11 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Gets the number of key-and-_value pairs contained in the <see cref="TstDictionary"/>.
+        /// Gets the number of key-and-value pairs contained in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
-        /// <_value>
-        /// The number of key-and-_value pairs contained in the <see cref="TstDictionary"/>.
-        /// </_value>
+        /// <value>
+        /// The number of key-and-value pairs contained in the <see cref="TernarySearchTreeDictionary{T}"/>.
+        /// </value>
         /// <remarks>
         /// Complexity: O(N)
         /// </remarks>
@@ -137,10 +137,10 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Gets an <see cref="ICollection"/> containing the keys in the <see cref="TstDictionary"/>.
+        /// Gets an <see cref="ICollection"/> containing the keys in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         /// <returns>
-        /// An <see cref="ICollection"/> containing the keys in the <see cref="TstDictionary"/>.
+        /// An <see cref="ICollection"/> containing the keys in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </returns>
         public virtual ICollection<string> Keys
         {
@@ -157,10 +157,10 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Gets an <see cref="ICollection"/> containing the values in the <see cref="TstDictionary"/>.
+        /// Gets an <see cref="ICollection"/> containing the values in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         /// <returns>
-        /// An <see cref="ICollection"/> containing the values in the <see cref="TstDictionary"/>.
+        /// An <see cref="ICollection"/> containing the values in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </returns>
         public virtual ICollection<T> Values
         {
@@ -177,17 +177,17 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Gets or sets the _value associated with the specified key.
+        /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <remarks>
-        /// [C#] In C#, this property is the indexer for the <see cref="TstDictionary"/> class.
+        /// [C#] In C#, this property is the indexer for the <see cref="TernarySearchTreeDictionary{T}"/> class.
         /// </remarks>
-        /// <param name="key">The key whose _value to get or set.</param>
-        /// <_value>
-        /// The _value associated with the specified key.
+        /// <param name="key">The key whose value to get or set.</param>
+        /// <value>
+        /// The value associated with the specified key.
         /// If the specified key is not found, attempting to get it returns a null reference
         /// (Nothing in Visual Basic), and attempting to set it creates a new element using the specified key.
-        /// </_value>
+        /// </value>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is a null reference</exception>
         /// <exception cref="ArgumentException">
         /// The property is set and <paramref name="key"/> is an empty string
@@ -210,10 +210,7 @@ namespace HexaEngine.Core.Collections
             }
             set
             {
-                if (key == null)
-                {
-                    throw new ArgumentNullException("key");
-                }
+                ArgumentNullException.ThrowIfNull(key);
 
                 if (key.Length == 0)
                 {
@@ -235,26 +232,26 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Adds an element with the specified key and _value into the <see cref="TstDictionary"/>.
+        /// Adds an element with the specified key and value into the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
-        /// <param name="value">The _value of the element to add. The _value can be a null reference (Nothing in Visual Basic).</param>
+        /// <param name="value">The value of the element to add. The value can be a null reference (Nothing in Visual Basic).</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="key"/> is a null reference (Nothing in Visual Basic).
         /// </exception>
         /// <exception cref="ArgumentException"><paramref name="key"/> is an empty string</exception>
         /// <exception cref="ArgumentException">
-        /// An element with the same key already exists in the <see cref="TstDictionary"/>.
+        /// An element with the same key already exists in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </exception>
-        /// <exception cref="NotSupportedException">The <see cref="TstDictionary"/> is read-only.</exception>
-        /// <exception cref="NotSupportedException">The <see cref="TstDictionary"/> has a fixed size.</exception>
+        /// <exception cref="NotSupportedException">The <see cref="TernarySearchTreeDictionary{T}"/> is read-only.</exception>
+        /// <exception cref="NotSupportedException">The <see cref="TernarySearchTreeDictionary{T}"/> has a fixed size.</exception>
         public virtual void Add(string key, T value)
         {
             Add(new KeyValuePair<string, T>(key, value));
         }
 
         /// <summary>
-        /// Adds an element with the specified key and _value into the <see cref="TstDictionary"/>.
+        /// Adds an element with the specified key and value into the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         /// <param name="item">The element to add.</param>
         /// <exception cref="ArgumentNullException">
@@ -262,13 +259,13 @@ namespace HexaEngine.Core.Collections
         /// </exception>
         /// <exception cref="ArgumentException"><paramref name="item"/>.<c>Key</c> is an empty string</exception>
         /// <exception cref="ArgumentException">
-        /// An element with the same key already exists in the <see cref="TstDictionary"/>.
+        /// An element with the same key already exists in the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </exception>
         public void Add(KeyValuePair<string, T> item)
         {
             if (item.Key == null)
             {
-                throw new ArgumentNullException("key is null");
+                throw new ArgumentNullException(nameof(item));
             }
 
             if (item.Key.Length == 0)
@@ -279,10 +276,7 @@ namespace HexaEngine.Core.Collections
             ++_version;
 
             // creating root node if needed.
-            if (_root == null)
-            {
-                _root = new TstDictionaryEntry<T>(item.Key[0]);
-            }
+            _root ??= new TstDictionaryEntry<T>(item.Key[0]);
 
             // adding key
             var p = _root;
@@ -343,7 +337,7 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Adds multiple elements into the <see cref="TstDictionary"/>
+        /// Adds multiple elements into the <see cref="TernarySearchTreeDictionary{T}"/>
         /// </summary>
         /// <param name="values">The elements to add</param>
         /// <remarks>This method attempts to create a balanced tree</remarks>
@@ -354,7 +348,7 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Removes all elements from the <see cref="TstDictionary"/>.
+        /// Removes all elements from the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         public virtual void Clear()
         {
@@ -364,10 +358,10 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Determines whether the <see cref="TstDictionary"/> contains a specific key.
+        /// Determines whether the <see cref="TernarySearchTreeDictionary{T}"/> contains a specific key.
         /// </summary>
-        /// <param name="key">The key to locate in the <see cref="TstDictionary"/>.</param>
-        /// <returns>true if the <see cref="TstDictionary"/> contains an element with the specified key; otherwise, false.</returns>
+        /// <param name="key">The key to locate in the <see cref="TernarySearchTreeDictionary{T}"/>.</param>
+        /// <returns>true if the <see cref="TernarySearchTreeDictionary{T}"/> contains an element with the specified key; otherwise, false.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="key"/> is a null reference (Nothing in Visual Basic).
         /// </exception>
@@ -376,38 +370,32 @@ namespace HexaEngine.Core.Collections
         /// </remarks>
         public virtual bool ContainsKey(string key)
         {
-            if (key == null)
-            {
-                throw new ArgumentNullException("key");
-            }
+            ArgumentNullException.ThrowIfNull(key);
 
             var de = Find(key);
             return de != null && de.IsKey;
         }
 
-        /// <summary>Returns an enumerator that iterates through the <see cref="TstDictionary" />.</summary>
-        /// <returns>A enumerator structure for the <see cref="TstDictionary" />.</returns>
+        /// <summary>Returns an enumerator that iterates through the <see cref="TernarySearchTreeDictionary{T}" />.</summary>
+        /// <returns>A enumerator structure for the <see cref="TernarySearchTreeDictionary{T}" />.</returns>
         public virtual IEnumerator<KeyValuePair<string, T>> GetEnumerator()
         {
             return new TstDictionaryEnumerator<T>(this);
         }
 
         ///<summary>
-        /// Removes the element with the specified key from the <see cref="TstDictionary"/>.
+        /// Removes the element with the specified key from the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         /// <param name="key">The key of the element to remove.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="key"/> is a null reference (Nothing in Visual Basic).
         /// </exception>
         /// <exception cref="ArgumentException"><paramref name="key"/> is an empty string</exception>
-        /// <exception cref="NotSupportedException">The <see cref="TstDictionary"/> is read-only.</exception>
-        /// <exception cref="NotSupportedException">The <see cref="TstDictionary"/> has a fixed size.</exception>
+        /// <exception cref="NotSupportedException">The <see cref="TernarySearchTreeDictionary{T}"/> is read-only.</exception>
+        /// <exception cref="NotSupportedException">The <see cref="TernarySearchTreeDictionary{T}"/> has a fixed size.</exception>
         public virtual bool Remove(string key)
         {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
+            ArgumentNullException.ThrowIfNull(key);
 
             if (key.Length == 0)
             {
@@ -457,6 +445,11 @@ namespace HexaEngine.Core.Collections
             return true;
         }
 
+        /// <summary>
+        /// Retrieves a collection of key-value pairs where the keys start with the specified prefix.
+        /// </summary>
+        /// <param name="key">The prefix to search for.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of key-value pairs whose keys start with the specified prefix.</returns>
         public IEnumerable<KeyValuePair<string, T>> StartingWith(string key)
         {
             if (_root == null)
@@ -513,10 +506,10 @@ namespace HexaEngine.Core.Collections
             }
         }
 
-        /// <summary>Gets the _value associated with the specified key.</summary>
+        /// <summary>Gets the value associated with the specified key.</summary>
         /// <returns><c>true</c> if the <see cref="T:System.Collections.Generic.Dictionary`2" /> contains an element with the specified key; otherwise, <c>false</c>.</returns>
-        /// <param name="key">The key of the _value to get.</param>
-        /// <param name="value">When this method returns, contains the _value associated with the specified key, if the key is found; otherwise, the default _value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.</param>
+        /// <param name="key">The key of the value to get.</param>
+        /// <param name="value">When this method returns, contains the value associated with the specified key, if the key is found; otherwise, the default value for the type of the <paramref name="value" /> parameter. This parameter is passed uninitialized.</param>
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key" /> is null.
         /// </exception>
@@ -525,10 +518,7 @@ namespace HexaEngine.Core.Collections
 #pragma warning disable CS8601 // Possible null reference assignment.
             value = default;
 #pragma warning restore CS8601 // Possible null reference assignment.
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
+            ArgumentNullException.ThrowIfNull(key);
 
             if (!TryGetNode(key, null, out TernarySearchTreeDictionary<T>.TstDictionaryEntry<T>? entry))
             {
@@ -550,7 +540,7 @@ namespace HexaEngine.Core.Collections
         /// <summary>
         /// Finds the tst node matching the key.
         /// </summary>
-        /// <returns>the <see cref="TstDictionaryEntry"/> mathcing the key, null if not found.</returns>
+        /// <returns>the <see cref="TernarySearchTreeDictionary{T}"/> matching the key, null if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is null.</exception>
         protected virtual TstDictionaryEntry<T>? Find(string key)
         {
@@ -565,14 +555,11 @@ namespace HexaEngine.Core.Collections
         /// <summary>
         /// Finds the node matching the key.
         /// </summary>
-        /// <returns>the <see cref="TstDictionaryEntry"/> mathcing the key, null if not found.</returns>
+        /// <returns>the <see cref="TernarySearchTreeDictionary{T}"/> matching the key, null if not found.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="key"/> is null.</exception>
         protected virtual bool TryGetNode(string key, Stack<TstDictionaryEntry<T>>? stack, out TstDictionaryEntry<T>? entry)
         {
-            if (key == null)
-            {
-                throw new ArgumentNullException(nameof(key));
-            }
+            ArgumentNullException.ThrowIfNull(key);
 
             var n = key.Length;
             if (n == 0)
@@ -585,10 +572,7 @@ namespace HexaEngine.Core.Collections
             int cmp;
             while (index < n && p != null)
             {
-                if (stack != null)
-                {
-                    stack.Push(p);
-                }
+                stack?.Push(p);
 
                 cmp = _compare(key[index], p.SplitChar);
                 if (cmp < 0)
@@ -651,9 +635,9 @@ namespace HexaEngine.Core.Collections
         #region Explicit Interfaces
 
         /// <summary>
-        /// Returns an <see cref="IDictionaryEnumerator"/> that can iterate through the <see cref="TstDictionary"/>.
+        /// Returns an <see cref="IDictionaryEnumerator"/> that can iterate through the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
-        /// <returns>An <see cref="IDictionaryEnumerator"/> for the <see cref="TstDictionary"/>.</returns>
+        /// <returns>An <see cref="IDictionaryEnumerator"/> for the <see cref="TernarySearchTreeDictionary{T}"/>.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -670,34 +654,34 @@ namespace HexaEngine.Core.Collections
         }
 
         /// <summary>
-        /// Get a _value indicating whether access to the <see cref="TstDictionary"/> is synchronized (thread-safe).
+        /// Get a value indicating whether access to the <see cref="TernarySearchTreeDictionary{T}"/> is synchronized (thread-safe).
         /// </summary>
-        /// <_value>
-        /// true if access to the <see cref="TstDictionary"/> is synchronized (thread-safe);
+        /// <value>
+        /// true if access to the <see cref="TernarySearchTreeDictionary{T}"/> is synchronized (thread-safe);
         /// otherwise, false. The default is false.
-        /// </_value>
+        /// </value>
         bool ICollection.IsSynchronized
         {
             get { return false; }
         }
 
         /// <summary>
-        /// Gets an object that can be used to synchronize access to the <see cref="TstDictionary"/>.
+        /// Gets an object that can be used to synchronize access to the <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
-        /// <_value>
-        /// An object that can be used to synchronize access to the <see cref="TstDictionary"/>.
-        /// </_value>
+        /// <value>
+        /// An object that can be used to synchronize access to the <see cref="TernarySearchTreeDictionary{T}"/>.
+        /// </value>
         object ICollection.SyncRoot
         {
             get { return this; }
         }
 
         /// <summary>
-        /// Copies the <see cref="TstDictionary"/> elements to a one-dimensional Array instance at the specified index.
+        /// Copies the <see cref="TernarySearchTreeDictionary{T}"/> elements to a one-dimensional Array instance at the specified index.
         /// </summary>
         /// <param name="array">The one-dimensional <see cref="Array"/> that is the destination of the
         /// <see cref="DictionaryEntry"/>
-        /// objects copied from <see cref="TstDictionary"/>. The <see cref="Array"/> must have zero-based indexing.
+        /// objects copied from <see cref="TernarySearchTreeDictionary{T}"/>. The <see cref="Array"/> must have zero-based indexing.
         /// </param>
         /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="ArgumentNullException"><paramref name="array"/> is a null reference</exception>
@@ -711,24 +695,18 @@ namespace HexaEngine.Core.Collections
         /// <paramref name="arrayIndex"/> is equal to or greater than the length of <paramref name="array"/>.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// The number of elements in the source <see cref="TstDictionary"/> is greater than
+        /// The number of elements in the source <see cref="TernarySearchTreeDictionary{T}"/> is greater than
         /// the available space from <paramref name="arrayIndex"/> to the end of the destination array.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// The type of the source <see cref="TstDictionary"/> cannot be cast automatically
+        /// The type of the source <see cref="TernarySearchTreeDictionary{T}"/> cannot be cast automatically
         /// to the type of the destination array.
         /// </exception>
         void ICollection.CopyTo(Array array, int arrayIndex)
         {
-            if (array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
+            ArgumentNullException.ThrowIfNull(array);
 
-            if (arrayIndex < 0)
-            {
-                throw new ArgumentOutOfRangeException("index is negative");
-            }
+            ArgumentOutOfRangeException.ThrowIfNegative(arrayIndex);
 
             if (array.Rank > 1)
             {
@@ -764,15 +742,9 @@ namespace HexaEngine.Core.Collections
 
         void ICollection<KeyValuePair<string, T>>.CopyTo(KeyValuePair<string, T>[] array, int arrayIndex)
         {
-            if (array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
+            ArgumentNullException.ThrowIfNull(array);
 
-            if (arrayIndex < 0)
-            {
-                throw new ArgumentOutOfRangeException("index is negative");
-            }
+            ArgumentOutOfRangeException.ThrowIfNegative(arrayIndex);
 
             if (array.Rank > 1)
             {
@@ -804,7 +776,7 @@ namespace HexaEngine.Core.Collections
         #endregion Explicit Interfaces
 
         /// <summary>
-        /// Enumerates the elements of a <see cref="TstDictionary"/>.
+        /// Enumerates the elements of a <see cref="TernarySearchTreeDictionary{T}"/>.
         /// </summary>
         protected sealed class TstDictionaryEnumerator<S> : IEnumerator<KeyValuePair<string, S>>
         {
@@ -837,7 +809,7 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the current element in the collection.
             /// </summary>
-            /// <_value>The current element in the collection.</_value>
+            /// <value>The current element in the collection.</value>
             public KeyValuePair<string, S> Current
             {
                 get
@@ -855,7 +827,7 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the current element in the collection.
             /// </summary>
-            /// <_value>The current element in the collection.</_value>
+            /// <value>The current element in the collection.</value>
             object IEnumerator.Current
             {
                 get { return Current; }
@@ -928,6 +900,7 @@ namespace HexaEngine.Core.Collections
                 }
             }
 
+            /// <inheritdoc/>
             public void Dispose()
             {
                 // Do nothing
@@ -943,12 +916,11 @@ namespace HexaEngine.Core.Collections
             private TstDictionaryEntry<S>? _highChild;
             private TstDictionaryEntry<S>? _lowChild;
             private readonly char _splitChar;
-            private KeyValuePair<string, S> _value;
+            private KeyValuePair<string, S> value;
 
             /// <summary>
             /// Construct a tst node.
             /// </summary>
-            /// <param name="parent">parent node</param>
             /// <param name="splitChar">split character</param>
             public TstDictionaryEntry(char splitChar)
             {
@@ -961,44 +933,44 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the split character.
             /// </summary>
-            /// <_value>
+            /// <value>
             /// The split character.
-            /// </_value>
+            /// </value>
             public char SplitChar
             {
                 get { return _splitChar; }
             }
 
             /// <summary>
-            /// Gets a _value indicating wheter the node is a key.
+            /// Gets a value indicating whether the node is a key.
             /// </summary>
-            /// <_value>
-            /// true is the node is a key, false otherwize.
-            /// </_value>
+            /// <value>
+            /// true is the node is a key, false otherwise.
+            /// </value>
             public bool IsKey
             {
-                get { return _value.Key != null; }
+                get { return value.Key != null; }
             }
 
             /// <summary>
-            /// Gets the node _value.
+            /// Gets the node value.
             /// </summary>
-            /// <_value>
-            /// The node _value.
-            /// </_value>
-            /// <exception cref="InvalidOperationException">The node does not hold a key-_value pair.</exception>
+            /// <value>
+            /// The node value.
+            /// </value>
+            /// <exception cref="InvalidOperationException">The node does not hold a key-value pair.</exception>
             public KeyValuePair<string, S> Value
             {
-                get { return _value; }
-                set { _value = value; }
+                get { return value; }
+                set { this.value = value; }
             }
 
             /// <summary>
             /// Gets the node low child.
             /// </summary>
-            /// <_value>
+            /// <value>
             /// The low child.
-            /// </_value>
+            /// </value>
             public TstDictionaryEntry<S>? LowChild
             {
                 get { return _lowChild; }
@@ -1008,9 +980,9 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the node ep child.
             /// </summary>
-            /// <_value>
+            /// <value>
             /// The eq child.
-            /// </_value>
+            /// </value>
             public TstDictionaryEntry<S>? EqChild
             {
                 get { return _eqChild; }
@@ -1020,9 +992,9 @@ namespace HexaEngine.Core.Collections
             /// <summary>
             /// Gets the node high child.
             /// </summary>
-            /// <_value>
+            /// <value>
             /// The high child.
-            /// </_value>
+            /// </value>
             public TstDictionaryEntry<S>? HighChild
             {
                 get { return _highChild; }
@@ -1030,21 +1002,22 @@ namespace HexaEngine.Core.Collections
             }
 
             /// <summary>
-            /// Gets a _value indicating wheter the node has children.
+            /// Gets a value indicating whether the node has children.
             /// </summary>
-            /// <_value>
-            /// true if the node has children, false otherwize.
-            /// </_value>
+            /// <value>
+            /// true if the node has children, false otherwise.
+            /// </value>
             public bool HasChildren
             {
                 get { return LowChild != null || EqChild != null || HighChild != null; }
             }
 
+            /// <inheritdoc/>
             public override string ToString()
             {
                 if (IsKey)
                 {
-                    return string.Format("{0} {1}", SplitChar, _value.Key);
+                    return string.Format("{0} {1}", SplitChar, value.Key);
                 }
                 else
                 {

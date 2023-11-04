@@ -1,11 +1,16 @@
-﻿namespace HexaEngine.Core.Text
+﻿namespace HexaEngine.Core.Extensions
 {
-    public static class Extensions
+    using HexaEngine.Core.Text;
+
+    /// <summary>
+    /// Provides extension methods for formatting data sizes into human-readable formats.
+    /// </summary>
+    public static class TextExtensions
     {
         /// <summary>
-        /// Formats a nuint data size into a human-readable format.
+        /// Formats a <see cref="nuint"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this nuint value)
         {
@@ -13,9 +18,9 @@
         }
 
         /// <summary>
-        /// Formats a nint data size into a human-readable format.
+        /// Formats a <see cref="nint"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this nint value)
         {
@@ -23,9 +28,9 @@
         }
 
         /// <summary>
-        /// Formats a ulong data size into a human-readable format.
+        /// Formats a <see cref="ulong"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this ulong value)
         {
@@ -33,9 +38,9 @@
         }
 
         /// <summary>
-        /// Formats a long data size into a human-readable format.
+        /// Formats a <see cref="long"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this long value)
         {
@@ -43,9 +48,9 @@
         }
 
         /// <summary>
-        /// Formats a uint data size into a human-readable format.
+        /// Formats a <see cref="uint"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this uint value)
         {
@@ -53,9 +58,9 @@
         }
 
         /// <summary>
-        /// Formats a int data size into a human-readable format.
+        /// Formats a <see cref="int"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this int value)
         {
@@ -63,9 +68,9 @@
         }
 
         /// <summary>
-        /// Formats a ushort data size into a human-readable format.
+        /// Formats a <see cref="ushort"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this ushort value)
         {
@@ -73,9 +78,9 @@
         }
 
         /// <summary>
-        /// Formats a short data size into a human-readable format.
+        /// Formats a <see cref="short"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this short value)
         {
@@ -83,9 +88,9 @@
         }
 
         /// <summary>
-        /// Formats a byte data size into a human-readable format.
+        /// Formats a <see cref="byte"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this byte value)
         {
@@ -93,9 +98,9 @@
         }
 
         /// <summary>
-        /// Formats a sbyte data size into a human-readable format.
+        /// Formats a <see cref="sbyte"/> data size into a human-readable format.
         /// </summary>
-        /// <param name="s">The data size in bytes.</param>
+        /// <param name="value">The data size in bytes.</param>
         /// <returns>A human-readable format of the data size.</returns>
         public static string FormatDataSize(this sbyte value)
         {

@@ -1,85 +1,88 @@
 ﻿namespace HexaEngine.Core.Debugging
 {
+    /// <summary>
+    /// Defines the color codes used for console text and background colors.
+    /// </summary>
     public enum ConsoleColor
     {
-        //
-        // Summary:
-        //     The color black.
+        /// <summary>
+        /// Represents the color black.
+        /// </summary>
         Black = 0,
 
-        //
-        // Summary:
-        //     The color dark blue.
+        /// <summary>
+        /// Represents the color dark blue.
+        /// </summary>
         DarkBlue = 1,
 
-        //
-        // Summary:
-        //     The color dark green.
+        /// <summary>
+        /// Represents the color dark green.
+        /// </summary>
         DarkGreen = 2,
 
-        //
-        // Summary:
-        //     The color dark cyan (dark blue-green).
+        /// <summary>
+        /// Represents the color dark cyan.
+        /// </summary>
         DarkCyan = 3,
 
-        //
-        // Summary:
-        //     The color dark red.
+        /// <summary>
+        /// Represents the color dark red.
+        /// </summary>
         DarkRed = 4,
 
-        //
-        // Summary:
-        //     The color dark magenta (dark purplish-red).
+        /// <summary>
+        /// Represents the color dark magenta.
+        /// </summary>
         DarkMagenta = 5,
 
-        //
-        // Summary:
-        //     The color dark yellow (ochre).
+        /// <summary>
+        /// Represents the color dark yellow.
+        /// </summary>
         DarkYellow = 6,
 
-        //
-        // Summary:
-        //     The color gray.
+        /// <summary>
+        /// Represents the color gray.
+        /// </summary>
         Gray = 7,
 
-        //
-        // Summary:
-        //     The color dark gray.
+        /// <summary>
+        /// Represents the color dark gray.
+        /// </summary>
         DarkGray = 8,
 
-        //
-        // Summary:
-        //     The color blue.
+        /// <summary>
+        /// Represents the color blue.
+        /// </summary>
         Blue = 9,
 
-        //
-        // Summary:
-        //     The color green.
+        /// <summary>
+        /// Represents the color green.
+        /// </summary>
         Green = 10,
 
-        //
-        // Summary:
-        //     The color cyan (blue-green).
+        /// <summary>
+        /// Represents the color cyan.
+        /// </summary>
         Cyan = 11,
 
-        //
-        // Summary:
-        //     The color red.
+        /// <summary>
+        /// Represents the color red.
+        /// </summary>
         Red = 12,
 
-        //
-        // Summary:
-        //     The color magenta (purplish-red).
+        /// <summary>
+        /// Represents the color magenta.
+        /// </summary>
         Magenta = 13,
 
-        //
-        // Summary:
-        //     The color yellow.
+        /// <summary>
+        /// Represents the color yellow.
+        /// </summary>
         Yellow = 14,
 
-        //
-        // Summary:
-        //     The color white.
+        /// <summary>
+        /// Represents the color white.
+        /// </summary>
         White = 15
     }
 }

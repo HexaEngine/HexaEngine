@@ -1,10 +1,10 @@
 ﻿namespace HexaEngine.Editor.Widgets
 {
     using HexaEngine.Core.Graphics;
-    using HexaEngine.Core.Text;
     using HexaEngine.Editor.Attributes;
     using Hexa.NET.ImGui;
     using System.Numerics;
+    using HexaEngine.Core.Extensions;
 
     [EditorWindowCategory("Debug")]
     public class MemoryWidget : EditorWindow

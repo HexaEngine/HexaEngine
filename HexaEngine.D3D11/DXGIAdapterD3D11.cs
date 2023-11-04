@@ -301,7 +301,7 @@
             {
                 AdapterDesc1 desc;
                 adapter.GetDesc1(&desc);
-                gpus.Add(new(new(desc.Description), desc.VendorId, desc.DeviceId, desc.SubSysId, desc.Revision, desc.DedicatedVideoMemory, desc.DedicatedSystemMemory, desc.SharedSystemMemory, desc.AdapterLuid, desc.Flags));
+                gpus.Add(new(new(desc.Description), desc.VendorId, desc.DeviceId, desc.SubSysId, desc.Revision, desc.DedicatedVideoMemory, desc.DedicatedSystemMemory, desc.SharedSystemMemory, new(desc.AdapterLuid.Low, desc.AdapterLuid.High), desc.Flags));
 
                 if (((AdapterFlag)desc.Flags & AdapterFlag.Software) != AdapterFlag.None)
                 {

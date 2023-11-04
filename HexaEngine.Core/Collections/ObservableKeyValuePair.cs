@@ -1,59 +1,54 @@
 ﻿namespace HexaEngine.Core.Collections
 {
     using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents a key-value pair that implements the <see cref="INotifyPropertyChanged"/> interface.
+    /// </summary>
     [Serializable]
-    public class ObservableKeyValuePair<TKey, TValue> : INotifyPropertyChanged
+    public class ObservableKeyValuePair<TKey, TValue> : INotifyPropertyChanged where TKey : notnull
     {
-        #region properties
-
-#pragma warning disable CS8618 // Non-nullable field 'key' must contain a non-null _value when exiting constructor. Consider declaring the field as nullable.
         private TKey key;
-#pragma warning restore CS8618 // Non-nullable field 'key' must contain a non-null _value when exiting constructor. Consider declaring the field as nullable.
-#pragma warning disable CS8618 // Non-nullable field '_value' must contain a non-null _value when exiting constructor. Consider declaring the field as nullable.
         private TValue value;
-#pragma warning restore CS8618 // Non-nullable field '_value' must contain a non-null _value when exiting constructor. Consider declaring the field as nullable.
 
+        /// <summary>
+        /// Gets or sets the key of the key-value pair.
+        /// </summary>
         public TKey Key
         {
             get { return key; }
             set
             {
                 key = value;
-                OnPropertyChanged("Key");
+                OnPropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Gets or sets the value of the key-value pair.
+        /// </summary>
         public TValue Value
         {
             get { return value; }
             set
             {
                 this.value = value;
-                OnPropertyChanged("Value");
+                OnPropertyChanged();
             }
         }
 
-        #endregion properties
-
-        #region INotifyPropertyChanged Members
-
+        /// <inheritdoc/>
         [field: NonSerialized]
-#pragma warning disable CS8612 // Nullability of reference types in type of 'event PropertyChangedEventHandler ObservableKeyValuePair<TKey, TValue>.PropertyChanged' doesn't match implicitly implemented member 'event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged'.
-#pragma warning disable CS8618 // Non-nullable event 'PropertyChanged' must contain a non-null _value when exiting constructor. Consider declaring the event as nullable.
-        public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore CS8618 // Non-nullable event 'PropertyChanged' must contain a non-null _value when exiting constructor. Consider declaring the event as nullable.
-#pragma warning restore CS8612 // Nullability of reference types in type of 'event PropertyChangedEventHandler ObservableKeyValuePair<TKey, TValue>.PropertyChanged' doesn't match implicitly implemented member 'event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged'.
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public void OnPropertyChanged(string name)
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="name">The name of the property that changed.</param>
+        protected virtual void OnPropertyChanged([CallerMemberName] string name = "")
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-
-        #endregion INotifyPropertyChanged Members
     }
 }

@@ -4,6 +4,17 @@
     using Silk.NET.SDL;
     using System.Runtime.CompilerServices;
 
+    /// <summary>
+    /// Represents a generic delegate for handling gamepad events.
+    /// </summary>
+    /// <typeparam name="TEventArgs">The type of event-specific data or argument.</typeparam>
+    /// <param name="sender">The object that raises the event.</param>
+    /// <param name="e">The event-specific data or argument.</param>
+    public delegate void GamepadEventHandler<TEventArgs>(Gamepad sender, TEventArgs e);
+
+    /// <summary>
+    /// Provides a static class to manage gamepad devices and events.
+    /// </summary>
     public static unsafe class Gamepads
     {
         private static readonly List<Gamepad> gamepads = new();
@@ -11,28 +22,66 @@
 
         private static readonly GamepadEventArgs gamepadEventArgs = new();
 
+        /// <summary>
+        /// Gets a list of all connected gamepad controllers.
+        /// </summary>
         public static IReadOnlyList<Gamepad> Controllers => gamepads;
 
-        public static event EventHandler<GamepadEventArgs>? GamepadAdded;
+        /// <summary>
+        /// Occurs when a gamepad controller is added or connected.
+        /// </summary>
+        public static event GamepadEventHandler<GamepadEventArgs>? GamepadAdded;
 
-        public static event EventHandler<GamepadEventArgs>? GamepadRemoved;
+        /// <summary>
+        /// Occurs when a gamepad controller is removed or disconnected.
+        /// </summary>
+        public static event GamepadEventHandler<GamepadEventArgs>? GamepadRemoved;
 
-        public static event EventHandler<GamepadRemappedEventArgs>? Remapped;
+        /// <summary>
+        /// Occurs when a gamepad controller is remapped.
+        /// </summary>
+        public static event GamepadEventHandler<GamepadRemappedEventArgs>? Remapped;
 
-        public static event EventHandler<GamepadAxisMotionEventArgs>? AxisMotion;
+        /// <summary>
+        /// Occurs when a gamepad controller's axis is moved.
+        /// </summary>
+        public static event GamepadEventHandler<GamepadAxisMotionEventArgs>? AxisMotion;
 
-        public static event EventHandler<GamepadButtonEventArgs>? ButtonDown;
+        /// <summary>
+        /// Occurs when a button on a gamepad controller is pressed down.
+        /// </summary>
+        public static event GamepadEventHandler<GamepadButtonEventArgs>? ButtonDown;
 
-        public static event EventHandler<GamepadButtonEventArgs>? ButtonUp;
+        /// <summary>
+        /// Occurs when a button on a gamepad controller is released.
+        /// </summary>
+        public static event GamepadEventHandler<GamepadButtonEventArgs>? ButtonUp;
 
-        public static event EventHandler<GamepadTouchpadEventArgs>? TouchPadDown;
+        /// <summary>
+        /// Occurs when a touchpad on a gamepad controller is touched.
+        /// </summary>
+        public static event GamepadTouchpadEventHandler<GamepadTouchpadEventArgs>? TouchPadDown;
 
-        public static event EventHandler<GamepadTouchpadMotionEventArgs>? TouchPadMotion;
+        /// <summary>
+        /// Occurs when a touchpad on a gamepad controller is moved.
+        /// </summary>
+        public static event GamepadTouchpadEventHandler<GamepadTouchpadMotionEventArgs>? TouchPadMotion;
 
-        public static event EventHandler<GamepadTouchpadEventArgs>? TouchPadUp;
+        /// <summary>
+        /// Occurs when a touchpad on a gamepad controller is released.
+        /// </summary>
+        public static event GamepadTouchpadEventHandler<GamepadTouchpadEventArgs>? TouchPadUp;
 
-        public static event EventHandler<GamepadSensorUpdateEventArgs>? SensorUpdate;
+        /// <summary>
+        /// Occurs when a sensor on a gamepad controller is updated.
+        /// </summary>
+        public static event GamepadSensorEventHandler<GamepadSensorUpdateEventArgs>? SensorUpdate;
 
+        /// <summary>
+        /// Gets a gamepad controller by its unique identifier.
+        /// </summary>
+        /// <param name="gamepadId">The unique identifier of the gamepad controller.</param>
+        /// <returns>The gamepad controller associated with the provided identifier.</returns>
         public static Gamepad GetById(int gamepadId)
         {
             return idToGamepads[gamepadId];
