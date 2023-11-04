@@ -145,6 +145,7 @@
                 rtv = device.CreateRenderTargetView(texture);
                 rtv.DebugName = dbgName + ".RTV";
             }
+
             MemoryManager.Register(texture);
         }
 
@@ -608,7 +609,7 @@
             this.cpuAccessFlags = cpuAccessFlags;
             this.gpuAccessFlags = gpuAccessFlags;
             this.miscFlag = miscFlag;
-            description = new(format, width, height, arraySize, mipLevels, BindFlags.ShaderResource | BindFlags.RenderTarget, Usage.Default, cpuAccessFlags, 1, 0, miscFlag);
+            description = new(format, width, height, arraySize, mipLevels, BindFlags.None, Usage.Default, cpuAccessFlags, 1, 0, miscFlag);
 
             if ((cpuAccessFlags & CpuAccessFlags.Read) != 0 && (gpuAccessFlags & GpuAccessFlags.Read) != 0)
             {
@@ -618,6 +619,24 @@
             if ((cpuAccessFlags & CpuAccessFlags.Write) != 0 && (gpuAccessFlags & GpuAccessFlags.Write) != 0)
             {
                 throw new ArgumentException("Cpu and Gpu cannot write at the same time");
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Read) != 0)
+            {
+                description.Usage = Usage.Default;
+                description.BindFlags |= BindFlags.ShaderResource;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.Write) != 0)
+            {
+                description.Usage = Usage.Default;
+                description.BindFlags |= BindFlags.RenderTarget;
+            }
+
+            if ((gpuAccessFlags & GpuAccessFlags.UA) != 0)
+            {
+                description.Usage = Usage.Default;
+                description.BindFlags |= BindFlags.UnorderedAccess;
             }
 
             if ((cpuAccessFlags & CpuAccessFlags.Write) != 0)

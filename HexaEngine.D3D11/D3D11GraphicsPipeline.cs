@@ -20,9 +20,9 @@
         protected ComPtr<ID3D11GeometryShader> gs;
         protected ComPtr<ID3D11PixelShader> ps;
         protected ComPtr<ID3D11InputLayout> layout;
-        protected ComPtr<ID3D11RasterizerState> rasterizerState;
+        protected ComPtr<ID3D11RasterizerState2> rasterizerState;
         protected ComPtr<ID3D11DepthStencilState> depthStencilState;
-        protected ComPtr<ID3D11BlendState> blendState;
+        protected ComPtr<ID3D11BlendState1> blendState;
         protected GraphicsPipelineState state = GraphicsPipelineState.Default;
         protected bool valid;
         protected volatile bool initialized;
@@ -154,9 +154,10 @@
 
                 blendState = null;
 
-                ComPtr<ID3D11RasterizerState> rs;
+                ComPtr<ID3D11RasterizerState2> rs;
+
                 var rsDesc = Helper.Convert(value.Rasterizer);
-                device.Device.CreateRasterizerState(&rsDesc, &rs.Handle);
+                device.Device.CreateRasterizerState2(&rsDesc, &rs.Handle);
                 rasterizerState = rs;
                 Utils.SetDebugName(rasterizerState, $"{dbgName}.{nameof(rasterizerState)}");
 
@@ -166,9 +167,9 @@
                 depthStencilState = ds;
                 Utils.SetDebugName(depthStencilState, $"{dbgName}.{nameof(depthStencilState)}");
 
-                ComPtr<ID3D11BlendState> bs;
+                ComPtr<ID3D11BlendState1> bs;
                 var bsDesc = Helper.Convert(value.Blend);
-                device.Device.CreateBlendState(&bsDesc, &bs.Handle);
+                device.Device.CreateBlendState1(&bsDesc, &bs.Handle);
                 blendState = bs;
                 Utils.SetDebugName(blendState, $"{dbgName}.{nameof(blendState)}");
             }

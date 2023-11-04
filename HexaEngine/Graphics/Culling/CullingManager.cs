@@ -137,7 +137,7 @@
                 ActivateCulling = (cullingFlags & CullingFlags.Occlusion) != 0 ? 1 : 0,
                 NoofInstances = (uint)instanceCount,
                 NoofPropTypes = (uint)typeCount,
-                MaxMipLevel = (uint)mipChain.Mips,
+                MaxMipLevel = (uint)mipChain.MipLevels,
                 RTSize = new(mipChain.Width, mipChain.Height),
                 P00 = camera.Transform.Projection.M11,
                 P11 = camera.Transform.Projection.M22,

@@ -50,6 +50,14 @@
         [DefaultValue(false)]
         public bool AntialiasedLineEnable;
 
+        [XmlAttribute]
+        [DefaultValue(0)]
+        public uint ForcedSampleCount;
+
+        [XmlAttribute]
+        [DefaultValue(ConservativeRasterizationMode.Off)]
+        public ConservativeRasterizationMode ConservativeRaster;
+
         /// <summary>
         /// A built-in description with settings with settings for not culling any primitives.
         /// </summary>
@@ -89,6 +97,8 @@
             ScissorEnable = false;
             MultisampleEnable = true;
             AntialiasedLineEnable = false;
+            ForcedSampleCount = 0;
+            ConservativeRaster = ConservativeRasterizationMode.Off;
         }
 
         public RasterizerDescription(CullMode cullMode, FillMode fillMode, bool frontCounterClockwise, int depthBias, float depthBiasClamp, float slopeScaledDepthBias, bool depthClipEnable, bool scissorEnable, bool multisampleEnable, bool antialiasedLineEnable)
@@ -103,6 +113,24 @@
             ScissorEnable = scissorEnable;
             MultisampleEnable = multisampleEnable;
             AntialiasedLineEnable = antialiasedLineEnable;
+            ForcedSampleCount = 0;
+            ConservativeRaster = ConservativeRasterizationMode.Off;
+        }
+
+        public RasterizerDescription(CullMode cullMode, FillMode fillMode, bool frontCounterClockwise, int depthBias, float depthBiasClamp, float slopeScaledDepthBias, bool depthClipEnable, bool scissorEnable, bool multisampleEnable, bool antialiasedLineEnable, uint forcedSampleCount, ConservativeRasterizationMode conservativeRasterization)
+        {
+            FillMode = fillMode;
+            CullMode = cullMode;
+            FrontCounterClockwise = frontCounterClockwise;
+            DepthBias = depthBias;
+            DepthBiasClamp = depthBiasClamp;
+            SlopeScaledDepthBias = slopeScaledDepthBias;
+            DepthClipEnable = depthClipEnable;
+            ScissorEnable = scissorEnable;
+            MultisampleEnable = multisampleEnable;
+            AntialiasedLineEnable = antialiasedLineEnable;
+            ForcedSampleCount = forcedSampleCount;
+            ConservativeRaster = conservativeRasterization;
         }
 
         public override bool Equals(object? obj)
@@ -121,7 +149,9 @@
                    DepthClipEnable == other.DepthClipEnable &&
                    ScissorEnable == other.ScissorEnable &&
                    MultisampleEnable == other.MultisampleEnable &&
-                   AntialiasedLineEnable == other.AntialiasedLineEnable;
+                   AntialiasedLineEnable == other.AntialiasedLineEnable &&
+                   ForcedSampleCount == other.ForcedSampleCount &&
+                   ConservativeRaster == other.ConservativeRaster;
         }
 
         public override int GetHashCode()
@@ -137,6 +167,8 @@
             hash.Add(ScissorEnable);
             hash.Add(MultisampleEnable);
             hash.Add(AntialiasedLineEnable);
+            hash.Add(ForcedSampleCount);
+            hash.Add(ConservativeRaster);
             return hash.ToHashCode();
         }
 

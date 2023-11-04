@@ -96,7 +96,7 @@ namespace HexaEngine.Lights
             dbgName = $"ShadowAtlas: {Path.GetFileName(filename)}, Line: {lineNumber}";
             size = description.Size;
             layerCount = description.Layers;
-            texture = new(device, description.Size, description.Size, 1, description.Format, ResourceMiscFlag.None, BindFlags.ShaderResource | BindFlags.DepthStencil, filename, lineNumber);
+            texture = new(device, description.Format, description.Size, description.Size, filename: filename, lineNumber: lineNumber);
             texture.DebugName = dbgName;
 
             layers = AllocT<Layer>(description.Layers);
@@ -138,8 +138,7 @@ namespace HexaEngine.Lights
             this.size = size;
             this.layerCount = layerCount;
 
-            texture = new(device, size, size, 1, format, ResourceMiscFlag.None, BindFlags.ShaderResource | BindFlags.DepthStencil, filename, lineNumber);
-            texture.DebugName = "Shadow Atlas";
+            texture.Resize(device, size, size);
 
             layers = AllocT<Layer>(layerCount);
 

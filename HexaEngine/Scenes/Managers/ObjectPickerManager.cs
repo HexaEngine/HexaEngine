@@ -48,7 +48,7 @@
                 Topology = PrimitiveTopology.TriangleList,
             });
             texture = new(device, Format.R32G32B32A32UInt, width, height, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
-            depthStencil = new(device, width, height, Format.D32FloatS8X24UInt);
+            depthStencil = new(device, Format.D32Float, width, height);
 
             computePipeline = device.CreateComputePipeline(new()
             {

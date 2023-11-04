@@ -55,7 +55,7 @@
                 return;
             }
 
-            csmDepthBuffer = new(device, ShadowMapSize, ShadowMapSize, 3, Format.D32Float);
+            csmDepthBuffer = new(device, Format.D32Float, ShadowMapSize, ShadowMapSize, 3);
             if (Interlocked.Increment(ref instances) == 1)
             {
                 csmBuffer = new(device, 16, CpuAccessFlags.Write);

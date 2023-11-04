@@ -68,7 +68,7 @@
 
             profiler?.End($"HizDepthPass.CopyEffect");
 
-            for (uint i = 1; i < chain.Mips; i++)
+            for (uint i = 1; i < chain.MipLevels; i++)
             {
                 profiler?.Begin($"HizDepthPass.{i}x");
                 profiler?.Begin($"HizDepthPass.{i}x.Update");

@@ -1,4 +1,4 @@
-﻿namespace HexaEngine.OpenAL
+﻿namespace HexaEngine.Mathematics
 {
     using System.Numerics;
 

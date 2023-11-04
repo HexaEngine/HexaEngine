@@ -194,7 +194,7 @@
         {
             initialRadiance = new(device, Format.R16G16B16A16Float, (int)RTSize, (int)RTSize, 1, 1, CpuAccessFlags.None);
             reductionBuffer = new(device, 16, RTSize * NumSHTargets * NumFaces, Format.R32G32B32A32Float, false, false);
-            dsBuffer = new(device, (int)RTSize, (int)RTSize, Format.D24UNormS8UInt);
+            dsBuffer = new(device, Format.D32Float, (int)RTSize, (int)RTSize);
 
             cameraBuffer = new(device, CpuAccessFlags.Write);
 

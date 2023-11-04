@@ -1,6 +1,7 @@
 ﻿namespace HexaEngine.OpenAL
 {
     using HexaEngine.Core.Audio;
+    using HexaEngine.Mathematics;
     using Silk.NET.OpenAL;
     using System;
     using System.Numerics;

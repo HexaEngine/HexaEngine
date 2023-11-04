@@ -38,7 +38,7 @@
                 desc.Usage = Usage.Default;
                 desc.CPUAccessFlags = CpuAccessFlags.None;
                 desc.Format = Format.D16UNorm;
-                depths[i] = new(device, new(desc.Width, desc.Height, desc.ArraySize, Format.D32Float, BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default));
+                depths[i] = new(device, Format.D32Float, desc.Width, desc.Height, desc.ArraySize);
                 dsvs[i] = depths[i].DSV;
             }
 

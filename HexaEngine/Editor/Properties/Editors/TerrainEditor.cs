@@ -105,7 +105,7 @@
                 var device = context.Device;
                 var inputElements = TerrainCellData.InputElements;
 
-                depthStencil = new(device, 1024, 1024, Format.D32Float);
+                depthStencil = new(device, Format.D32Float, 1024, 1024);
 
                 brushOverlay = device.CreateGraphicsPipeline(new GraphicsPipelineDesc()
                 {

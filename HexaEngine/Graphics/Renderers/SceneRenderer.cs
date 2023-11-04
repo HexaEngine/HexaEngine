@@ -188,7 +188,7 @@ namespace HexaEngine.Rendering.Renderers
                 return;
             }
 
-            depthStencil = new(device, width, height, Format.D32Float);
+            depthStencil = new(device, Format.D32Float, width, height);
 
             var scene = SceneManager.Current;
             if (scene == null)

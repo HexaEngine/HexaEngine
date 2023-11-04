@@ -642,11 +642,13 @@
         public int Width;
         public int Height;
         public int ArraySize;
+        public int MipLevels;
         public BindFlags BindFlags;
         public Usage Usage;
         public CpuAccessFlags CPUAccessFlags;
         public DepthStencilViewFlags ViewFlags;
         public SampleDescription SampleDescription;
+        public ResourceMiscFlag MiscFlag;
 
         public static DepthStencilBufferDescription CreateDepthBufferSRV(int width, int height) => new(width, height, 1, Format.D32Float, BindFlags.ShaderResource | BindFlags.DepthStencil, Usage.Default, CpuAccessFlags.None, DepthStencilViewFlags.None, SampleDescription.Default);
 
@@ -657,6 +659,7 @@
             Width = width;
             Height = height;
             ArraySize = arraySize;
+            MipLevels = 1;
             Format = format;
             BindFlags = bindFlags;
             Usage = usage;
@@ -670,12 +673,28 @@
             Width = width;
             Height = height;
             ArraySize = arraySize;
+            MipLevels = 1;
             Format = format;
             BindFlags = bindFlags;
             Usage = usage;
             CPUAccessFlags = cPUAccessFlags;
             ViewFlags = viewFlags;
             SampleDescription = SampleDescription.Default;
+        }
+
+        public DepthStencilBufferDescription(int width, int height, int arraySize, int mipLevels, Format format, BindFlags bindFlags = BindFlags.DepthStencil | BindFlags.ShaderResource, Usage usage = Usage.Default, CpuAccessFlags cPUAccessFlags = CpuAccessFlags.None, DepthStencilViewFlags viewFlags = DepthStencilViewFlags.None, ResourceMiscFlag miscFlag = ResourceMiscFlag.None)
+        {
+            Width = width;
+            Height = height;
+            ArraySize = arraySize;
+            MipLevels = mipLevels;
+            Format = format;
+            BindFlags = bindFlags;
+            Usage = usage;
+            CPUAccessFlags = cPUAccessFlags;
+            ViewFlags = viewFlags;
+            SampleDescription = SampleDescription.Default;
+            MiscFlag = miscFlag;
         }
     }
 }

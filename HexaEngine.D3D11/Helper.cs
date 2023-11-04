@@ -1331,7 +1331,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RasterizerDesc Convert(RasterizerDescription description)
+        public static Silk.NET.Direct3D11.RasterizerDesc2 Convert(RasterizerDescription description)
         {
             return new()
             {
@@ -1344,7 +1344,20 @@
                 FrontCounterClockwise = description.FrontCounterClockwise,
                 MultisampleEnable = description.MultisampleEnable,
                 ScissorEnable = description.ScissorEnable,
-                SlopeScaledDepthBias = description.SlopeScaledDepthBias
+                SlopeScaledDepthBias = description.SlopeScaledDepthBias,
+                ForcedSampleCount = description.ForcedSampleCount,
+                ConservativeRaster = Convert(description.ConservativeRaster)
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Silk.NET.Direct3D11.ConservativeRasterizationMode Convert(ConservativeRasterizationMode conservativeRaster)
+        {
+            return conservativeRaster switch
+            {
+                ConservativeRasterizationMode.Off => Silk.NET.Direct3D11.ConservativeRasterizationMode.Off,
+                ConservativeRasterizationMode.On => Silk.NET.Direct3D11.ConservativeRasterizationMode.On,
+                _ => 0,
             };
         }
 
@@ -1372,7 +1385,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BlendDesc Convert(BlendDescription description)
+        public static Silk.NET.Direct3D11.BlendDesc1 Convert(BlendDescription description)
         {
             return new()
             {
@@ -1383,7 +1396,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.BlendDesc.RenderTargetBuffer Convert(RenderTargetBlendDescription[] descriptions)
+        public static Silk.NET.Direct3D11.BlendDesc1.RenderTargetBuffer Convert(RenderTargetBlendDescription[] descriptions)
         {
             return new()
             {
@@ -1399,18 +1412,45 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Silk.NET.Direct3D11.RenderTargetBlendDesc Convert(RenderTargetBlendDescription description)
+        public static Silk.NET.Direct3D11.RenderTargetBlendDesc1 Convert(RenderTargetBlendDescription description)
         {
             return new()
             {
                 BlendEnable = description.IsBlendEnabled,
+                LogicOpEnable = description.IsLogicOpEnabled,
                 BlendOp = Convert(description.BlendOperation),
                 BlendOpAlpha = Convert(description.BlendOperationAlpha),
                 DestBlend = Convert(description.DestinationBlend),
                 DestBlendAlpha = Convert(description.DestinationBlendAlpha),
-                RenderTargetWriteMask = (byte)Convert(description.RenderTargetWriteMask),
                 SrcBlend = Convert(description.SourceBlend),
                 SrcBlendAlpha = Convert(description.SourceBlendAlpha),
+                LogicOp = Convert(description.LogicOperation),
+                RenderTargetWriteMask = (byte)Convert(description.RenderTargetWriteMask),
+            };
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Silk.NET.Direct3D11.LogicOp Convert(LogicOperation logicOperation)
+        {
+            return logicOperation switch
+            {
+                LogicOperation.Clear => Silk.NET.Direct3D11.LogicOp.Clear,
+                LogicOperation.Set => Silk.NET.Direct3D11.LogicOp.Set,
+                LogicOperation.Copy => Silk.NET.Direct3D11.LogicOp.Copy,
+                LogicOperation.CopyInverted => Silk.NET.Direct3D11.LogicOp.CopyInverted,
+                LogicOperation.Noop => Silk.NET.Direct3D11.LogicOp.Noop,
+                LogicOperation.Invert => Silk.NET.Direct3D11.LogicOp.Invert,
+                LogicOperation.And => Silk.NET.Direct3D11.LogicOp.And,
+                LogicOperation.Nand => Silk.NET.Direct3D11.LogicOp.Nand,
+                LogicOperation.Or => Silk.NET.Direct3D11.LogicOp.Or,
+                LogicOperation.Nor => Silk.NET.Direct3D11.LogicOp.Nor,
+                LogicOperation.Xor => Silk.NET.Direct3D11.LogicOp.Xor,
+                LogicOperation.Equiv => Silk.NET.Direct3D11.LogicOp.Equiv,
+                LogicOperation.AndReverse => Silk.NET.Direct3D11.LogicOp.AndReverse,
+                LogicOperation.AndInverted => Silk.NET.Direct3D11.LogicOp.AndInverted,
+                LogicOperation.OrReverse => Silk.NET.Direct3D11.LogicOp.OrReverse,
+                LogicOperation.OrInverted => Silk.NET.Direct3D11.LogicOp.OrInverted,
+                _ => throw new NotImplementedException(),
             };
         }
 

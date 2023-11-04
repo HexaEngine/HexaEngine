@@ -425,7 +425,7 @@
             pointLight.Transform.Recalculate();
             lights.Add(new(pointLight));
 
-            depthStencil = new(device, 1024, 1024, Format.D32Float);
+            depthStencil = new(device, Format.D32Float, 1024, 1024);
             textureTonemap = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             texturePreview = new(device, Format.R16G16B16A16Float, 1024, 1024, 1, 1, CpuAccessFlags.None, GpuAccessFlags.RW);
             sampler = device.CreateSamplerState(SamplerStateDescription.LinearClamp);
